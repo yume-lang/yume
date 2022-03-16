@@ -344,6 +344,7 @@ class Yume::Compiler
       puts
 
       if matching_fn.nil? && matching_fn_def.is_a? AST::PrimitiveDefinition
+        known_type : Type? = nil
         v = case matching_fn_def.primitive
             when "libc"    then @builder.call(@libc[ex.name.name], args.map(&.llvm))
             when "add"     then @builder.add(args[0], args[1])
@@ -353,10 +354,12 @@ class Yume::Compiler
             when "icmp_eq" then @builder.icmp(LLVM::IntPredicate::EQ, args[0], args[1])
             when "icmp_gt" then @builder.icmp((signed_type?(args[0].type) ? LLVM::IntPredicate::SGT : LLVM::IntPredicate::UGT), args[0], args[1])
             when "slice_size" then @builder.extract_value(args[0], 1)
-            when "slice_ptr" then @builder.extract_value(args[0], 0)
+            when "slice_ptr"
+              known_type = PointerType.new args[0].type
+              @builder.extract_value(args[0], 0)
             else                raise "unknown primitive #{matching_fn_def.primitive}"
             end
-        Value.new(v, resolve_type matching_fn_def.return_type)
+        Value.new(v, known_type || resolve_type matching_fn_def.return_type)
       else
         if matching_fn.nil?
           matching_fn = declare(matching_fn_def, {"T" => args[0].type}).not_nil!
