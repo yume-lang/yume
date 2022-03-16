@@ -12,7 +12,7 @@ __primitive__(libc) puts(str U8*) I32
 __primitive__(libc) __varargs__ printf(format U8*) I32
 
 fn hello()
-  arr U8[] = U8[?h, ?e, ?l, ?l, ?o]
+  arr U8[] = U8[?h, ?e, ?l, ?l, ?o, 0]
   printf("string: %s\n", ptrto(arr))
   printf("size: %d\n", size(arr))
   return
