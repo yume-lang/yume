@@ -1,0 +1,15 @@
+fn foo(a I32, b I32, c I32) I32 = a
+
+fn foo(a I32, b I32) I32 = b
+
+fn foo(a U8, b I32) U8 = a
+
+fn foo(a I32, b U8) U8 = b
+
+fn main() I32
+  foo(1, 2, 3)
+  foo(4, 5)
+  foo(?a, 4)
+  foo(5, ?b)
+  return 0
+end

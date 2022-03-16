@@ -1,0 +1,33 @@
+__primitive__(add) :+(a I32, b I32) I32
+__primitive__(mod) :%(a I32, b I32) I32
+__primitive__(mul) :*(a I32, b I32) I32
+__primitive__(int_div) ://(a I32, b I32) I32
+__primitive__(icmp_eq) :==(a I32, b I32) Bool
+__primitive__(icmp_gt) :>(a I32, b I32) Bool
+
+__primitive__(slice_size) size<T>(arr T[]) I32
+
+__primitive__(libc) puts(str U8*) I32
+__primitive__(libc) __varargs__ printf(format U8*) I32
+
+fn foo<T>(x T) T = x
+
+fn collatz(int I32) I32
+  k I32 = 0
+  while int > 1
+    printf("%d -> ", int)
+    if int % 2 == 0
+      int = int // 2
+    else
+      int = int * 3 + 1
+    end
+    k = k + 1
+  end
+  printf("%d\n", int)
+  return k
+end
+
+fn main() I32
+  collatz(7)
+  return 0
+end

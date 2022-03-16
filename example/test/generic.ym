@@ -1,0 +1,13 @@
+__primitive__(icmp_gt) :>(a I32, b I32) Bool
+
+fn larger<T>(a T, b T) T
+  if a > b
+    return a
+  else
+    return b
+  end
+end
+
+fn main() I32
+  return larger(3, 7)
+end

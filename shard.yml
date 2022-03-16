@@ -1,0 +1,13 @@
+name: yume
+version: 0.1.0
+
+authors:
+  - Emilia Dreamer <emilia@rymiel.space>
+
+targets:
+  yume:
+    main: src/yume.cr
+
+crystal: 1.4.0-dev
+
+license: MIT
