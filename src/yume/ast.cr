@@ -139,7 +139,7 @@ module Yume::AST
 
   class ReturnStatement < Statement
     include AST
-    getter expression : Expression
+    getter expression : Expression?
 
     def initialize(@expression)
     end

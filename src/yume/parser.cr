@@ -120,9 +120,13 @@ class Yume::Parser(*T)
       consume_sep
       AST::IfStatement.new condition, body, else_clause
     elsif consume? :return
-      expression = parse_expression
-      consume_sep
-      AST::ReturnStatement.new expression
+      if consume? :sep
+        AST::ReturnStatement.new nil
+      else
+        expression = parse_expression
+        consume_sep
+        AST::ReturnStatement.new expression
+      end
     else
       declaration = peek? {
         t = parse_typed_name?
@@ -219,7 +223,7 @@ class Yume::Parser(*T)
     fn_name = parse_fn_name
     fn_generics = parse_fn_generics
     fn_args = parse_fn_args
-    fn_return = parse_type
+    fn_return = parse_type?
     AST::FunctionDeclaration.new(fn_name, fn_generics, fn_args, fn_return)
   end
 

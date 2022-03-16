@@ -377,7 +377,11 @@ class Yume::Compiler
     case st
     when AST::ReturnStatement
       # TODO: multiple returns
-      @builder.ret expression(st.expression)
+      if expr = st.expression
+        @builder.ret expression(expr)
+      else
+        @builder.ret
+      end
     when AST::DeclarationStatement
       raise "Duplicate declaration #{st}" if @fn_scope.has_key?(st.name.name)
       type = resolve_type st.name.type
