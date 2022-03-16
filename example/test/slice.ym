@@ -1,0 +1,22 @@
+__primitive__(add) :+(a I32, b I32) I32
+__primitive__(mod) :%(a I32, b I32) I32
+__primitive__(mul) :*(a I32, b I32) I32
+__primitive__(int_div) ://(a I32, b I32) I32
+__primitive__(icmp_eq) :==(a I32, b I32) Bool
+__primitive__(icmp_gt) :>(a I32, b I32) Bool
+
+__primitive__(slice_size) size<T>(arr T[]) I32
+
+__primitive__(libc) puts(str U8*) I32
+__primitive__(libc) __varargs__ printf(format U8*) I32
+
+fn hello()
+  arr U8[] = U8[?h, ?e, ?l, ?l, ?o]
+  printf("size: %d\n", size(arr))
+  return
+end
+
+fn main() I32
+  hello()
+  return 0
+end

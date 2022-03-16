@@ -207,6 +207,22 @@ class Yume::Parser(*T)
       AST::IntLiteral.new int
     elsif str = consume_val? :_str, String
       AST::StringLiteral.new str
+    elsif chr = consume_val? :_chr, String
+      AST::CharLiteral.new chr
+    elsif type = parse_type?
+      consume :"["
+      args = [] of AST::Expression
+      unless consume? :"]"
+        loop do
+          args << parse_expression
+          if consume? :"]"
+            break
+          else
+            consume :","
+          end
+        end
+      end
+      AST::ArrayLiteral.new(type, args)
     else
       debug_pos col: :light_red
       raise "Couldn't find an expression"
@@ -302,7 +318,8 @@ class Yume::Parser(*T)
     return nil if uword.nil?
     type = AST::SimpleType.new(uword)
     loop do
-      if consume?(:"[")
+      if peek?(:"[") { peek?(:"]") }
+        consume(:"[")
         consume(:"]")
         type = AST::SliceType.new(type)
       elsif consume?(:"*")
