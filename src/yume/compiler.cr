@@ -353,6 +353,7 @@ class Yume::Compiler
             when "icmp_eq" then @builder.icmp(LLVM::IntPredicate::EQ, args[0], args[1])
             when "icmp_gt" then @builder.icmp((signed_type?(args[0].type) ? LLVM::IntPredicate::SGT : LLVM::IntPredicate::UGT), args[0], args[1])
             when "slice_size" then @builder.extract_value(args[0], 1)
+            when "slice_ptr" then @builder.extract_value(args[0], 0)
             else                raise "unknown primitive #{matching_fn_def.primitive}"
             end
         Value.new(v, resolve_type matching_fn_def.return_type)
