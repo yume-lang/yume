@@ -4,9 +4,11 @@ An experiment in programming language design. Not meant to be used seriously!
 
 ## Usage
 
+The Yume compiler requires [Crystal](https://github.com/crystal-lang/crystal) to run.
+
 `crystal run src/yume.cr -- example/test.ym`
 
-Yume compiles to LLVM. The resulting binary will be in `out/yume.out`
+Yume compiles to LLVM statically. The resulting binary will be in `out/yume.out`
 
 ## Development
 
