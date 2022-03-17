@@ -230,12 +230,15 @@ module Yume::AST
     include AST
 
     abstract def decl : FunctionDeclaration
+
     def name : FnName
       decl.name
     end
+
     def args : Array(TypedName)
       decl.args.try(&.args) || [] of TypedName
     end
+
     def return_type : Type?
       decl.return_type
     end

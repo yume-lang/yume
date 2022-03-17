@@ -4,6 +4,7 @@ require "./ast"
 class Yume::Compiler
   abstract struct Type
     abstract def to_llvm(ctx : LLVM::Context) : LLVM::Type
+
     def to_llvm(ctx : LLVM::Context, generic_args : Hash(String, Type)) : LLVM::Type
       to_llvm(ctx)
     end
@@ -226,10 +227,10 @@ class Yume::Compiler
   def resolve_type(type : AST::Type?, fn_def : AST::FunctionDefinition? = nil) : Type
     return PrimitiveVoidType.new.as(Type) if type.nil?
     case type
-    in AST::PtrType then PointerType.new(resolve_type(type.type, fn_def))
-    in AST::SliceType then SliceType.new(resolve_type(type.type, fn_def))
+    in AST::PtrType    then PointerType.new(resolve_type(type.type, fn_def))
+    in AST::SliceType  then SliceType.new(resolve_type(type.type, fn_def))
     in AST::SimpleType then resolve_generic(type, fn_def) || @types[type.type]
-    in AST::Type then raise "Invalid type #{type}"
+    in AST::Type       then raise "Invalid type #{type}"
     end
   end
 
@@ -350,18 +351,18 @@ class Yume::Compiler
       if matching_fn.nil? && matching_fn_def.is_a? AST::PrimitiveDefinition
         known_type : Type? = nil
         v = case matching_fn_def.primitive
-            when "libc"    then @builder.call(@libc[ex.name.name], args.map(&.llvm))
-            when "add"     then @builder.add(args[0], args[1])
-            when "mul"     then @builder.mul(args[0], args[1])
-            when "mod"     then signed_type?(args[0].type) ? @builder.srem(args[0], args[1]) : @builder.urem(args[0], args[1])
-            when "int_div" then signed_type?(args[0].type) ? @builder.sdiv(args[0], args[1]) : @builder.udiv(args[0], args[1])
-            when "icmp_eq" then @builder.icmp(LLVM::IntPredicate::EQ, args[0], args[1])
-            when "icmp_gt" then @builder.icmp((signed_type?(args[0].type) ? LLVM::IntPredicate::SGT : LLVM::IntPredicate::UGT), args[0], args[1])
+            when "libc"       then @builder.call(@libc[ex.name.name], args.map(&.llvm))
+            when "add"        then @builder.add(args[0], args[1])
+            when "mul"        then @builder.mul(args[0], args[1])
+            when "mod"        then signed_type?(args[0].type) ? @builder.srem(args[0], args[1]) : @builder.urem(args[0], args[1])
+            when "int_div"    then signed_type?(args[0].type) ? @builder.sdiv(args[0], args[1]) : @builder.udiv(args[0], args[1])
+            when "icmp_eq"    then @builder.icmp(LLVM::IntPredicate::EQ, args[0], args[1])
+            when "icmp_gt"    then @builder.icmp((signed_type?(args[0].type) ? LLVM::IntPredicate::SGT : LLVM::IntPredicate::UGT), args[0], args[1])
             when "slice_size" then @builder.extract_value(args[0], 1)
             when "slice_ptr"
               known_type = PointerType.new args[0].type
               @builder.extract_value(args[0], 0)
-            else                raise "unknown primitive #{matching_fn_def.primitive}"
+            else raise "unknown primitive #{matching_fn_def.primitive}"
             end
         Value.new(v, known_type || resolve_type matching_fn_def.return_type)
       else
