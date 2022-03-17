@@ -6,15 +6,15 @@ __primitive__(icmp_eq) :==(a I32, b I32) Bool
 __primitive__(icmp_gt) :>(a I32, b I32) Bool
 
 __primitive__(slice_size) size<T>(arr T[]) I32
-__primitive__(slice_ptr) ptrto<T>(arr T[]) T*
+__primitive__(slice_ptr) ptr<T>(arr T[]) T*
 
 __primitive__(libc) puts(str U8*) I32
 __primitive__(libc) __varargs__ printf(format U8*) I32
 
 fn hello()
   arr U8[] = U8[?h, ?e, ?l, ?l, ?o, 0]
-  printf("string: %s\n", ptrto(arr))
-  printf("size: %d\n", size(arr))
+  printf("string: %s\n", arr.ptr())
+  printf("size: %d\n", arr.size())
   return
 end
 

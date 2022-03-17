@@ -165,7 +165,7 @@ class Yume::Parser(*T)
   end
 
   def parse_op(n = 0) : AST::Expression
-    return parse_primary if n == OPERATORS.size
+    return parse_receiver if n == OPERATORS.size
     left = parse_op(n + 1)
     loop do
       found_operator = false
@@ -183,6 +183,32 @@ class Yume::Parser(*T)
       break unless found_operator
     end
     left
+  end
+
+  def parse_receiver : AST::Expression
+    receiver = parse_primary
+    debug_pos
+    if consume? :"."
+      name = parse_fn_name
+      if consume? :"("
+        args = [receiver] of AST::Expression
+        unless consume? :")"
+          loop do
+            args << parse_expression
+            if consume? :")"
+              break
+            else
+              consume :","
+            end
+          end
+        end
+        AST::Call.new name, args
+      else
+        raise "properties aren't yet implemented"
+      end
+    else
+      receiver
+    end
   end
 
   def parse_primary : AST::Expression

@@ -33,7 +33,7 @@ module Yume
     match :__primitive__, :__varargs__
     match :"(", :")", :"[", :"]", :"<", :">"
     match :"==", :+, :"%", :"//", :"/", :"*"
-    match :"=", :",", :":"
+    match :"=", :",", :":", :"."
     match /[a-z_][a-zA-Z0-9_]*/, :_word, &.[0]
     match /[A-Z][a-zA-Z0-9]*/, :_uword, &.[0]
     match /[0-9]+/, :_int, &.[0].to_i64
