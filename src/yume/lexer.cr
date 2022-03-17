@@ -63,12 +63,14 @@ class Yume::Lexer(*T)
       end
 
       if pos == s_pos
+        unless found
+          raise "no match at pos #{pos}: `#{source[pos..pos + 30].dump_unquoted}`..."
+        end
         @eof = true
         return nil
       end
       break if found
       break if pos == source.size
-      raise "no match at pos #{pos}: `#{source[pos..pos + 30].dump_unquoted}`..."
     end
     @eof = ret.nil?
     return ret
