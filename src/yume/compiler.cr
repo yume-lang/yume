@@ -258,15 +258,20 @@ class Yume::Compiler
     ":#{m.try &.pos.s.to_s}".rjust 5
   end
 
-  def type_compatibility(a : Type, b : Type) : Int32
+  def type_compatibility(a : Type, b : Type, gen : Hash(String, Type)) : Int32
     if a == b
       return 2
     else
-      if b.is_a?(GenericType)
-        return 1
-      elsif b.is_a?(SliceType)
-        if a.is_a?(SliceType)
+      if b.is_a? GenericType
+        if gen.has_key?(b.name) && gen[b.name] != a
+          return 0
+        else
+          gen[b.name] = a
           return 1
+        end
+      elsif b.is_a? SliceType
+        if a.is_a? SliceType
+          return type_compatibility a.value, b.value, gen
         else
           return 0
         end
@@ -332,24 +337,25 @@ class Yume::Compiler
         next nil if sig.size > args.size
         valid = true
         compatibility = 0
+        generic_match = {} of String => Type
         args.each_with_index do |a, i|
           if i >= sig.size
             break valid = (o.is_a?(AST::PrimitiveDefinition) && o.varargs?)
           end
-          c = type_compatibility(a.type, sig[i])
+          c = type_compatibility(a.type, sig[i], generic_match)
           compatibility += c
           break valid = false if c.zero?
         end
-        valid ? {o, compatibility} : nil
+        valid ? {o, compatibility, generic_match} : nil
       end
 
-      matching_fn_def = matching.max_by(&.[1])[0]
-      puts "#{def_pos matching_fn_def} > Selected (#{matching.size})"
+      matching_fn_def, _, matching_generics = matching.max_by(&.[1])
+      puts "#{def_pos matching_fn_def} > Selected (#{matching.size}) (#{matching_generics.map { |k, v| "#{k} => #{v}" }.join ", "})"
       matching_fn = @fns[matching_fn_def]
+      @type_scope = matching_generics
       puts
 
       if matching_fn.nil? && matching_fn_def.is_a? AST::PrimitiveDefinition
-        known_type : Type? = nil
         v = case matching_fn_def.primitive
             when "libc"       then @builder.call(@libc[ex.name.name], args.map(&.llvm))
             when "add"        then @builder.add(args[0], args[1])
@@ -359,12 +365,12 @@ class Yume::Compiler
             when "icmp_eq"    then @builder.icmp(LLVM::IntPredicate::EQ, args[0], args[1])
             when "icmp_gt"    then @builder.icmp((signed_type?(args[0].type) ? LLVM::IntPredicate::SGT : LLVM::IntPredicate::UGT), args[0], args[1])
             when "slice_size" then @builder.extract_value(args[0], 1)
-            when "slice_ptr"
-              known_type = PointerType.new args[0].type
-              @builder.extract_value(args[0], 0)
+            when "slice_ptr"  then @builder.extract_value(args[0], 0)
             else raise "unknown primitive #{matching_fn_def.primitive}"
             end
-        Value.new(v, known_type || resolve_type matching_fn_def.return_type)
+        val = Value.new(v, resolve_type matching_fn_def.return_type)
+        @type_scope.clear
+        val
       else
         if matching_fn.nil?
           matching_fn = declare(matching_fn_def, {"T" => args[0].type}).not_nil!
