@@ -187,7 +187,6 @@ class Yume::Parser(*T)
 
   def parse_receiver : AST::Expression
     receiver = parse_primary
-    debug_pos
     if consume? :"."
       name = parse_fn_name
       if consume? :"("
@@ -256,6 +255,7 @@ class Yume::Parser(*T)
   end
 
   def consume_sep
+    return if @src.eof?
     consume(:sep)
     while consume?(:sep)
     end
