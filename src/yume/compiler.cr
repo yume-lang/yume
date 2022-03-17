@@ -31,6 +31,10 @@ class Yume::Compiler
     def to_llvm(ctx : LLVM::Context) : LLVM::Type
       ctx.void
     end
+
+    def to_s(io : IO)
+      io << "void"
+    end
   end
 
   struct PointerType < Type
