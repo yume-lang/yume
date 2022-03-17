@@ -147,9 +147,11 @@ class Yume::Compiler
   @types = Hash(String, Type).new
   getter! cur_ast_fn : AST::FunctionDefinition?
   getter! cur_llvm_fn : LLVM::Function?
+  getter! cur_ret_merge : LLVM::BasicBlock?
   @fn_scope = Hash(String, Value).new
   @type_scope = Hash(String, Type).new
   @instantiation_queue = Deque({AST::FunctionDefinition, LLVM::Function, Hash(String, Type)?}).new
+  @terminated = false
 
   def initialize(@program : AST::Program)
     @ctx = LLVM::Context.new
@@ -204,7 +206,18 @@ class Yume::Compiler
     end
     case k
     in AST::LongFunctionDefinition
+      if ret_type = k.return_type
+        type = resolve_type ret_type
+        @fn_scope[""] = Value.new(@builder.alloca(llvm_type(type), ":return"), type)
+      end
+      @cur_ret_merge = cur_llvm_fn.basic_blocks.append("return")
       compile_body k.body
+      @builder.position_at_end cur_ret_merge
+      if return_value = @fn_scope[""]?
+        @builder.ret @builder.load(return_value.llvm)
+      else
+        @builder.ret
+      end
     in AST::ShortFunctionDefinition
       @builder.ret expression(k.expression)
     in AST::FunctionDefinition
@@ -391,12 +404,11 @@ class Yume::Compiler
   def statement(st : AST::Statement)
     case st
     when AST::ReturnStatement
-      # TODO: multiple returns
       if expr = st.expression
-        @builder.ret expression(expr)
-      else
-        @builder.ret
+        @builder.store(expression(expr).llvm, @fn_scope[""].llvm)
       end
+      @builder.br(cur_ret_merge)
+      @terminated = true
     when AST::DeclarationStatement
       raise "Duplicate declaration #{st}" if @fn_scope.has_key?(st.name.name)
       type = resolve_type st.name.type
@@ -408,6 +420,7 @@ class Yume::Compiler
     when AST::ExpressionStatement
       expression(st.expression)
     when AST::IfStatement
+      no_merge = false
       condition = expression(st.condition)
       then_bb = cur_llvm_fn.basic_blocks.append("if.then")
       else_bb = cur_llvm_fn.basic_blocks.append("if.else")
@@ -415,13 +428,18 @@ class Yume::Compiler
       @builder.cond(condition, then_bb, else_bb)
       @builder.position_at_end then_bb
       compile_body(st.statements)
-      @builder.br(merge_bb)
+      body_terminated = @terminated
+      @builder.br(merge_bb) unless @terminated
       @builder.position_at_end else_bb
       if else_clause = st.else_clause
         compile_body(else_clause.statements)
+        @builder.br(merge_bb) unless @terminated
       end
-      @builder.br(merge_bb)
-      @builder.position_at_end merge_bb
+      if @terminated && body_terminated
+        merge_bb.delete
+      else
+        @builder.position_at_end merge_bb
+      end
     when AST::WhileStatement
       test_bb = cur_llvm_fn.basic_blocks.append("while.test")
       head_bb = cur_llvm_fn.basic_blocks.append("while.head")
@@ -447,6 +465,7 @@ class Yume::Compiler
   end
 
   def compile_body(sts : Array(AST::Statement))
+    @terminated = false
     sts.each do |st|
       statement st
     end
