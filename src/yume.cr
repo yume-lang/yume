@@ -8,11 +8,14 @@ require "./yume/parser"
 module Yume
   VERSION = "0.1.0"
 
-  private class DebugLexerConsumer
-    def initialize(@io : IO)
+  private class DebugLexerConsumer(*T)
+    def initialize(@input : Lexer(*T), @io : IO)
+      until (t = @input.token).nil?
+        add(*t)
+      end
     end
 
-    def add(sym : Symbol, r = nil, *, pos : Parser::Pos)
+    def add(sym : Symbol, r, pos : Range(Int32, Int32))
       Colorize.with.cyan.surround @io do
         sym.inspect @io
       end
@@ -22,11 +25,6 @@ module Yume
         @io << ")"
       end
       @io << " | ".colorize.dark_gray
-    end
-
-    def eof
-      @io << "EOF".colorize.red
-      @io.puts
     end
   end
 
@@ -50,8 +48,8 @@ module Yume
 
   {% if flag?("debug_lex") %}
     STDERR.puts
-    debug = DebugLexerConsumer.new STDERR
-    lexer.lex(input, debug)
+    lexer.lex(input)
+    debug = DebugLexerConsumer.new lexer, STDERR
     STDERR.puts
   {% end %}
 
