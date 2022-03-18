@@ -401,7 +401,7 @@ class Yume::Compiler
         val
       else
         if matching_fn.nil?
-          matching_fn = declare(matching_fn_def, {"T" => args[0].type}).not_nil!
+          matching_fn = declare(matching_fn_def, always_instantiate: true).not_nil!
           # instantiate(matching_fn_def, matching_fn)
           @instantiation_queue << {matching_fn_def, matching_fn, @type_scope.dup}
         end
@@ -491,15 +491,10 @@ class Yume::Compiler
     t.signed
   end
 
-  def declare(fn : AST::FunctionDefinition) : LLVM::Function?
-    declare(fn, {} of String => Type)
-  end
-
-  def declare(fn : AST::FunctionDefinition, generic_args : Hash(String, Type)) : LLVM::Function?
-    if fn.decl.generics && generic_args.empty?
+  def declare(fn : AST::FunctionDefinition, always_instantiate : Bool = false) : LLVM::Function?
+    if fn.decl.generics && !always_instantiate
       @fns[fn] = nil
     else
-      @type_scope = generic_args
       arg_types = fn.args.map { |i| llvm_type(resolve_type(i.type, fn)) }
       if fn.is_a? AST::PrimitiveDefinition
         f = nil
