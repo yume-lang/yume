@@ -2,6 +2,8 @@
 
 An experiment in programming language design. Not meant to be used seriously!
 
+Check out the `examples/` directory to see what the language looks like. All examples *should* compile!
+
 ## Usage
 
 The Yume compiler requires [Crystal](https://github.com/crystal-lang/crystal) to run.
