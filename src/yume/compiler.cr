@@ -13,15 +13,15 @@ class Yume::Compiler
       PointerType.new self
     end
 
-    INT_8      = IntegralType.signed 8
-    INT_16     = IntegralType.signed 16
-    INT_32     = IntegralType.signed 32
-    INT_64     = IntegralType.signed 64
-    UINT_8     = IntegralType.unsigned 8
-    UINT_16    = IntegralType.unsigned 16
-    UINT_32    = IntegralType.unsigned 32
-    UINT_64    = IntegralType.unsigned 64
-    BOOL       = PrimitiveBoolType.new
+    INT_8   = IntegralType.signed 8
+    INT_16  = IntegralType.signed 16
+    INT_32  = IntegralType.signed 32
+    INT_64  = IntegralType.signed 64
+    UINT_8  = IntegralType.unsigned 8
+    UINT_16 = IntegralType.unsigned 16
+    UINT_32 = IntegralType.unsigned 32
+    UINT_64 = IntegralType.unsigned 64
+    BOOL    = PrimitiveBoolType.new
   end
 
   abstract struct PrimitiveType < Type
@@ -394,7 +394,7 @@ class Yume::Compiler
             when "icmp_gt"    then @builder.icmp((signed_type?(args[0].type) ? LLVM::IntPredicate::SGT : LLVM::IntPredicate::UGT), args[0], args[1])
             when "slice_size" then @builder.extract_value(args[0], 1)
             when "slice_ptr"  then @builder.extract_value(args[0], 0)
-            else raise "unknown primitive #{matching_fn_def.primitive}"
+            else                   raise "unknown primitive #{matching_fn_def.primitive}"
             end
         val = Value.new(v, resolve_type matching_fn_def.return_type)
         @type_scope.clear
