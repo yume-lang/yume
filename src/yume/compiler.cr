@@ -9,9 +9,18 @@ class Yume::Compiler
       to_llvm(ctx)
     end
 
+    def ptr : PointerType
+      PointerType.new self
+    end
+
+    INT_8      = IntegralType.signed 8
+    INT_16     = IntegralType.signed 16
     INT_32     = IntegralType.signed 32
+    INT_64     = IntegralType.signed 64
     UINT_8     = IntegralType.unsigned 8
-    UINT_8_PTR = PointerType.new(UINT_8)
+    UINT_16    = IntegralType.unsigned 16
+    UINT_32    = IntegralType.unsigned 32
+    UINT_64    = IntegralType.unsigned 64
     BOOL       = PrimitiveBoolType.new
   end
 
@@ -159,8 +168,14 @@ class Yume::Compiler
     @builder = @ctx.new_builder
     add_libc_functions
 
+    @types["I8"] = Type::INT_8
+    @types["I16"] = Type::INT_16
     @types["I32"] = Type::INT_32
+    @types["I64"] = Type::INT_64
     @types["U8"] = Type::UINT_8
+    @types["U16"] = Type::UINT_16
+    @types["U32"] = Type::UINT_32
+    @types["U64"] = Type::UINT_64
     @types["Bool"] = Type::BOOL
 
     @program.statements.each do |s|
@@ -316,7 +331,7 @@ class Yume::Compiler
       s.global_constant = true
       s.linkage = LLVM::Linkage::Internal
       s.initializer = str_val
-      Value.new(@builder.bit_cast(s, @ctx.int8.pointer), Type::UINT_8_PTR)
+      Value.new(@builder.bit_cast(s, @ctx.int8.pointer), Type::UINT_8.ptr)
     when AST::ArrayLiteral
       args = ex.val.map { |i| expression i }
       val_type = resolve_type(ex.type)
