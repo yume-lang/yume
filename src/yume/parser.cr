@@ -186,7 +186,10 @@ class Yume::Parser(*T)
   end
 
   def parse_receiver : AST::Expression
-    receiver = parse_primary
+    parse_receiver(parse_primary)
+  end
+
+  def parse_receiver(receiver : AST::Expression) : AST::Expression
     if consume? :"."
       name = parse_fn_name
       if consume? :"("
@@ -201,7 +204,7 @@ class Yume::Parser(*T)
             end
           end
         end
-        AST::Call.new name, args
+        parse_receiver AST::Call.new name, args
       else
         raise "properties aren't yet implemented"
       end
