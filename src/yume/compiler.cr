@@ -413,6 +413,8 @@ class Yume::Compiler
               array = LLVM::Value.new LibLLVM.build_array_malloc(@builder, llvm_type(val_type), arr_size, "")
               array_ptr = @builder.bit_cast(array, llvm_type(PointerType.new(val_type)))
               slice_alloc = @builder.alloca llvm_type(slice_val)
+              slice_arr_ptr = @builder.inbounds_gep slice_alloc, @ctx.int32.const_int(0), @ctx.int32.const_int(0)
+              @builder.store array_ptr, slice_arr_ptr
               slice_size_ptr = @builder.inbounds_gep slice_alloc, @ctx.int32.const_int(0), @ctx.int32.const_int(1)
               @builder.store arr_size, slice_size_ptr
               @builder.load slice_alloc
