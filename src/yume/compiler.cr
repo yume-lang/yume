@@ -303,6 +303,12 @@ class Yume::Compiler
         else
           return 0
         end
+      elsif b.is_a? PointerType
+        if a.is_a? PointerType
+          return type_compatibility a.value, b.value, gen
+        else
+          return 0
+        end
       else
         return 0
       end
@@ -387,13 +393,29 @@ class Yume::Compiler
         v = case matching_fn_def.primitive
             when "libc"       then @builder.call(@libc[ex.name.name], args.map(&.llvm))
             when "add"        then @builder.add(args[0], args[1])
+            when "sub"        then @builder.sub(args[0], args[1])
             when "mul"        then @builder.mul(args[0], args[1])
             when "mod"        then signed_type?(args[0].type) ? @builder.srem(args[0], args[1]) : @builder.urem(args[0], args[1])
             when "int_div"    then signed_type?(args[0].type) ? @builder.sdiv(args[0], args[1]) : @builder.udiv(args[0], args[1])
             when "icmp_eq"    then @builder.icmp(LLVM::IntPredicate::EQ, args[0], args[1])
             when "icmp_gt"    then @builder.icmp((signed_type?(args[0].type) ? LLVM::IntPredicate::SGT : LLVM::IntPredicate::UGT), args[0], args[1])
+            when "get_at"     then @builder.load(@builder.inbounds_gep args[0].llvm, args[1].llvm)
+            when "set_at"
+              val = @builder.inbounds_gep args[0].llvm, args[1].llvm
+              @builder.store args[2].llvm, val
+              args[2].llvm
             when "slice_size" then @builder.extract_value(args[0], 1)
             when "slice_ptr"  then @builder.extract_value(args[0], 0)
+            when "slice_dup"
+              slice_val = args[0].type.as(SliceType)
+              val_type = slice_val.value
+              arr_size = @builder.extract_value(args[0], 1)
+              array = LLVM::Value.new LibLLVM.build_array_malloc(@builder, llvm_type(val_type), arr_size, "")
+              array_ptr = @builder.bit_cast(array, llvm_type(PointerType.new(val_type)))
+              slice_alloc = @builder.alloca llvm_type(slice_val)
+              slice_size_ptr = @builder.inbounds_gep slice_alloc, @ctx.int32.const_int(0), @ctx.int32.const_int(1)
+              @builder.store arr_size, slice_size_ptr
+              @builder.load slice_alloc
             else                   raise "unknown primitive #{matching_fn_def.primitive}"
             end
         val = Value.new(v, resolve_type matching_fn_def.return_type)

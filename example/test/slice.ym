@@ -1,4 +1,5 @@
 __primitive__(add) :+(a I32, b I32) I32
+__primitive__(sub) :-(a I32, b I32) I32
 __primitive__(mod) :%(a I32, b I32) I32
 __primitive__(mul) :*(a I32, b I32) I32
 __primitive__(int_div) ://(a I32, b I32) I32
@@ -7,14 +8,32 @@ __primitive__(icmp_gt) :>(a I32, b I32) Bool
 
 __primitive__(slice_size) size<T>(arr T[]) I32
 __primitive__(slice_ptr) ptr<T>(arr T[]) T*
+__primitive__(get_at) get_at<T>(ptr T*, offset I32) T
+__primitive__(set_at) set_at<T>(ptr T*, offset I32, val T) T
+__primitive__(slice_dup) dup_internal<T>(arr T[]) T[]
+
+fn dup<T>(arr T[]) T[]
+  dup_t T[] = arr.dup_internal()
+  count I32 = arr.size()
+  while count > 0
+    count = count - 1
+    dup_t.ptr().set_at(count, arr.ptr().get_at(count))
+  end
+  return dup_t
+end
 
 __primitive__(libc) puts(str U8*) I32
 __primitive__(libc) __varargs__ printf(format U8*) I32
 
 fn hello()
-  arr U8[] = U8[?h, ?e, ?l, ?l, ?o, 0]
-  printf("string: %s\n", arr.ptr())
-  printf("size: %d\n", arr.size())
+  a U8[] = U8[?h, ?e, ?l, ?l, ?o, 0]
+  b U8[] = a.dup()
+  printf("val of a: %s\n", a.ptr())
+  printf("val of b: %s\n", b.ptr())
+  printf("size of a: %d\n", a.size())
+  printf("size of b: %d\n", b.size())
+  printf("ptr of a: %p\n", a.ptr())
+  printf("ptr of b: %p\n", b.ptr())
   return
 end
 
