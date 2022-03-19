@@ -424,6 +424,7 @@ class Yume::Compiler
       else
         if matching_fn.nil?
           matching_fn = declare(matching_fn_def, always_instantiate: true).not_nil!
+          matching_fn.linkage = LLVM::Linkage::Internal
           # instantiate(matching_fn_def, matching_fn)
           @instantiation_queue << {matching_fn_def, matching_fn, @type_scope.dup}
         end
@@ -532,5 +533,8 @@ class Yume::Compiler
     @libc["puts"] = @mod.functions.add("puts", [@ctx.int8.pointer], @ctx.int32)
     @libc["printf"] = @mod.functions.add("printf", [@ctx.int8.pointer], @ctx.int32, varargs: true)
     @libc["donothing"] = @mod.functions.add("llvm.donothing", [] of LLVM::Type, @ctx.void)
+    @libc.each do |k, v|
+      v.linkage = LLVM::Linkage::External
+    end
   end
 end
