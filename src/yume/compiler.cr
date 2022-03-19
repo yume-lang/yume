@@ -240,8 +240,8 @@ class Yume::Compiler
     end
   end
 
-  def resolve_generic(type : AST::Type, fn_def : AST::FunctionDefinition?) : Type?
-    if inst = @type_scope[type.type]?
+  def resolve_generic(type : AST::Type, fn_def : AST::FunctionDefinition?, use_type_scope = true) : Type?
+    if use_type_scope && (inst = @type_scope[type.type]?)
       return inst
     end
     return nil if fn_def.nil?
@@ -252,12 +252,12 @@ class Yume::Compiler
     end
   end
 
-  def resolve_type(type : AST::Type?, fn_def : AST::FunctionDefinition? = nil) : Type
+  def resolve_type(type : AST::Type?, fn_def : AST::FunctionDefinition? = nil, use_type_scope = true) : Type
     return PrimitiveVoidType.new.as(Type) if type.nil?
     case type
-    in AST::PtrType    then PointerType.new(resolve_type(type.type, fn_def))
-    in AST::SliceType  then SliceType.new(resolve_type(type.type, fn_def))
-    in AST::SimpleType then resolve_generic(type, fn_def) || @types[type.type]
+    in AST::PtrType    then PointerType.new(resolve_type(type.type, fn_def, use_type_scope))
+    in AST::SliceType  then SliceType.new(resolve_type(type.type, fn_def, use_type_scope))
+    in AST::SimpleType then resolve_generic(type, fn_def, use_type_scope) || @types[type.type]
     in AST::Type       then raise "Invalid type #{type}"
     end
   end
@@ -474,9 +474,9 @@ class Yume::Compiler
 
   def type_signature(fn : AST::FunctionDefinition) : {Slice(Type), Type}
     args = Slice(Type).new(fn.args.size) do |i|
-      resolve_type(fn.args[i].type, fn)
+      resolve_type(fn.args[i].type, fn, false)
     end
-    {args, resolve_type(fn.return_type, fn)}
+    {args, resolve_type(fn.return_type, fn, false)}
   end
 
   def compile_body(sts : Array(AST::Statement))
