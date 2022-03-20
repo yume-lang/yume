@@ -326,7 +326,15 @@ class Yume::Compiler
         raise OverflowError.new
       end
     when AST::CharLiteral
-      Value.new(@ctx.int8.const_int(ex.val[0].ord), Type::UINT_8)
+      chr = ex.val[0]
+      if chr == '\\'
+        if ex.val == "\\0"
+          chr = '\0'
+        else
+          chr = ex.val[1]
+        end
+      end
+      Value.new(@ctx.int8.const_int(chr.ord), Type::UINT_8)
     when AST::VariableLiteral
       var = @fn_scope[ex.name]
       Value.new(@builder.load(var.llvm), var.type)
@@ -409,7 +417,8 @@ class Yume::Compiler
             when "slice_dup"
               slice_val = args[0].type.as(SliceType)
               val_type = slice_val.value
-              arr_size = @builder.extract_value(args[0], 1, "d.extract")
+              old_arr_size = @builder.extract_value(args[0], 1, "d.extract")
+              arr_size = @builder.add(old_arr_size, args[1])
               array = LLVM::Value.new LibLLVM.build_array_malloc(@builder, llvm_type(val_type), arr_size, "d.malloc")
               array_ptr = @builder.bit_cast(array, llvm_type(PointerType.new(val_type)))
               slice_alloc = @builder.alloca llvm_type(slice_val)

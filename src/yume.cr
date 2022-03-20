@@ -38,7 +38,7 @@ module Yume
     match /[A-Z][a-zA-Z0-9]*/, :_uword, &.[0]
     match /[0-9]+/, :_int, &.[0].to_i64
     match /"([^"]*)"/, :_str, &.[1]
-    match /\?(.)/, :_chr, &.[1]
+    match /\?(\\.|[^\\])/, :_chr, &.[1]
     match /[\n;]/, :sep
     match /$/, :eos
     skip /[^\S\r\n]/
