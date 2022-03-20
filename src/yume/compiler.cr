@@ -470,20 +470,33 @@ class Yume::Compiler
     when AST::ExpressionStatement
       expression(st.expression)
     when AST::IfStatement
-      no_merge = false
-      condition = expression(st.condition)
-      then_bb = cur_llvm_fn.basic_blocks.append("if.then")
-      else_bb = cur_llvm_fn.basic_blocks.append("if.else")
       merge_bb = cur_llvm_fn.basic_blocks.append("if.cont")
-      @builder.cond(condition, then_bb, else_bb)
-      @builder.position_at_end then_bb
-      compile_body(st.statements)
-      body_terminated = @terminated
-      @builder.br(merge_bb) unless @terminated
+      else_bb = cur_llvm_fn.basic_blocks.append("if.else")
+      next_test_bb = cur_llvm_fn.basic_blocks.append("if.test")
+      @builder.br next_test_bb
+      body_terminated = true
+      st.clauses.each_with_index do |clause, i|
+        test_bb = next_test_bb
+        body_bb = cur_llvm_fn.basic_blocks.append("if.then")
+        if i + 1 >= st.clauses.size
+          next_test_bb = else_bb
+        else
+          next_test_bb = cur_llvm_fn.basic_blocks.append("if.test")
+        end
+        @builder.position_at_end test_bb
+        condition = expression(clause.condition)
+        @builder.cond condition, body_bb, next_test_bb
+        @builder.position_at_end body_bb
+        compile_body(clause.body)
+        unless @terminated
+          body_terminated = @terminated
+          @builder.br merge_bb
+        end
+      end
       @builder.position_at_end else_bb
       if else_clause = st.else_clause
         compile_body(else_clause.statements)
-        @builder.br(merge_bb) unless @terminated
+        @builder.br merge_bb unless @terminated
       end
       if @terminated && body_terminated
         merge_bb.delete

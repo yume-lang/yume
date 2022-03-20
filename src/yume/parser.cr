@@ -102,23 +102,32 @@ class Yume::Parser(*T)
     elsif consume? :if
       condition = parse_expression
       consume_sep
-      body = [] of AST::Statement
+      clauses = [] of AST::IfClause
+      current_clause_body = [] of AST::Statement
       else_body = [] of AST::Statement
       in_else = false
       loop do
         if !in_else && consume? :else
-          consume_sep
-          in_else = true
+          if consume? :if
+            clauses << AST::IfClause.new condition, current_clause_body
+            condition = parse_expression
+            consume_sep
+            current_clause_body = [] of AST::Statement
+          else
+            consume_sep
+            in_else = true
+          end
         end
         break if consume? :end
         st = parse_statement
         if st
-          (in_else ? else_body : body) << st
+          (in_else ? else_body : current_clause_body) << st
         end
       end
+      clauses << AST::IfClause.new condition, current_clause_body
       else_clause = else_body.empty? ? nil : AST::ElseClause.new else_body
       consume_sep
-      AST::IfStatement.new condition, body, else_clause
+      AST::IfStatement.new clauses, else_clause
     elsif consume? :return
       if consume? :sep
         AST::ReturnStatement.new nil

@@ -175,13 +175,16 @@ module Yume::AST
     include AST
   end
 
+  record IfClause, condition : Expression, body : Array(Statement) do
+    include AST
+  end
+
   class IfStatement < Statement
     include AST
-    getter condition : Expression
-    getter statements : Array(Statement)
+    getter clauses : Array(IfClause)
     getter else_clause : ElseClause?
 
-    def initialize(@condition, @statements, @else_clause)
+    def initialize(@clauses, @else_clause)
     end
   end
 
