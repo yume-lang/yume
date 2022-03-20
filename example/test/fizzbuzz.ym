@@ -1,0 +1,31 @@
+__primitive__(add) :+(a I32, b I32) I32
+__primitive__(sub) :-(a I32, b I32) I32
+__primitive__(mod) :%(a I32, b I32) I32
+__primitive__(mul) :*(a I32, b I32) I32
+__primitive__(int_div) ://(a I32, b I32) I32
+__primitive__(icmp_eq) :==(a I32, b I32) Bool
+__primitive__(icmp_lt) :<(a I32, b I32) Bool
+
+__primitive__(libc) __varargs__ printf(format U8*) I32
+
+fn fizzbuzz(num I32)
+  if num % 15 == 0
+    printf("FizzBuzz\n")
+  else if num % 3 == 0
+    printf("Fizz\n")
+  else if num % 5 == 0
+    printf("Buzz\n")
+  else
+    printf("%d\n", num)
+  end
+  return
+end
+
+fn main() I32
+  num I32 = 0
+  while num < 100
+    num = num + 1
+    fizzbuzz(num)
+  end
+  return 0
+end
