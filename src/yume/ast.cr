@@ -1,29 +1,16 @@
 module Yume::AST
-  # TODO: actually use positions
-  record Pos, s : Int32, e : Int32 do
-    def inspect(io : IO) : Nil
-      io << "ChrPos["
-      to_s io
-      io << "]"
-    end
-
-    def to_s(io : IO) : Nil
-      io << s << ":" << e
-    end
-
-    def self.join(i : Array(Pos)) : Pos
-      s = i.min_of &.s
-      e = i.max_of &.e
-      Pos.new s, e
-    end
-  end
-
   # TODO: maybe remove completely, or at least add useful position functions
   module AST
-    property! pos_parts : Hash(Symbol, Pos)
+    alias Pos = Range(Int32, Int32)
+    property! pos : Pos
 
-    def pos
-      @pos_parts.nil? ? Pos.new(0, 0) : Pos.join(pos_parts.values)
+    def at(pos : Pos) : self
+      @pos = pos
+      self
+    end
+
+    def at(s : Int32, e : Int32) : self
+      at(s..e)
     end
 
     def pretty_print(pp) : Nil
@@ -32,23 +19,30 @@ module Yume::AST
       {% elsif @type.ancestors.includes?(Struct) && @type.overrides?(Struct, "inspect") %}
         pp.text inspect
       {% else %}
-        prefix = "#{"~".colorize.yellow}#{{{@type.name.split("AST::").last.id.stringify}}.colorize.yellow.dim}("
+        %pos = @pos
+        prefix = "#{%pos.nil? ? "" : "#{%pos.to_s.colorize.dark_gray}:"}#{{{@type.name.split("AST::").last.id.stringify}}.colorize.yellow.dim}("
         {% if @type.ancestors.includes?(Reference) %}
         executed = exec_recursive(:pretty_print) do
         {% end %}
           pp.surround(prefix, ")", left_break: "", right_break: nil) do
-            {% for ivar, i in @type.instance_vars.map(&.name).reject(&.== "pos_parts").sort %}
-              {% if i > 0 %}
-                pp.comma
-              {% end %}
-              %pos = @pos_parts.try &.[{{ivar.symbolize}}]?
+            {% ivars = @type.instance_vars.map(&.name).reject(&.== "pos").sort %}
+            {% if ivars.size == 1 %}
               pp.group do
-                pp.text "@#{{{ivar.id.stringify}}}#{".#{%pos || "?"}".colorize.dark_gray}="
-                pp.nest do
-                  pp.breakable ""
-                  @{{ivar.id}}.pretty_print(pp)
-                end
+                @{{ivars[0].id}}.pretty_print(pp)
               end
+            {% else %}
+              {% for ivar, i in ivars %}
+                {% if i > 0 %}
+                  pp.comma
+                {% end %}
+                pp.group do
+                  pp.text "@#{{{ivar.id.stringify}}}="
+                  pp.nest do
+                    pp.breakable ""
+                    @{{ivar.id}}.pretty_print(pp)
+                  end
+                end
+              {% end %}
             {% end %}
           end
         {% if @type.ancestors.includes?(Reference) %}

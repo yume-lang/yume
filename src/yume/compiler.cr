@@ -283,7 +283,7 @@ class Yume::Compiler
 
   # TODO: use positions again when they work
   private def def_pos(m : AST::FunctionDefinition?)
-    ":#{m.try &.pos.s.to_s}".rjust 5
+    ":#{m.try &.@pos.try &.to_s}".rjust 5
   end
 
   def type_compatibility(a : Type, b : Type, gen : Hash(String, Type)) : Int32

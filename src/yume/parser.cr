@@ -7,6 +7,7 @@ class Yume::Parser(*T)
   alias Standard = ::Yume::Parser(String, Int64)
 
   getter current_token : {Symbol, Union(*T)?, Range(Int32, Int32)}?
+  @last_char = 0
 
   def initialize(@src : Lexer(*T))
     next_token
@@ -48,6 +49,18 @@ class Yume::Parser(*T)
     else
       puts
     end
+  end
+
+  def positioned(& : ->T) : T forall T
+    start_pos = pos
+    ast_t = yield
+    ast_t.at start_pos, pos
+  end
+
+  def positioned?(& : ->T?) : T? forall T
+    start_pos = pos
+    ast_t = yield
+    ast_t ? ast_t.at(start_pos, pos) : ast_t
   end
 
   def parse_program : AST::Program
@@ -223,46 +236,48 @@ class Yume::Parser(*T)
   end
 
   def parse_primary : AST::Expression
-    if word = consume_val? :_word, String
-      if consume? :"("
+    positioned do
+      if word = consume_val? :_word, String
+        if consume? :"("
+          args = [] of AST::Expression
+          unless consume? :")"
+            loop do
+              args << parse_expression
+              if consume? :")"
+                break
+              else
+                consume :","
+              end
+            end
+          end
+          AST::Call.new AST::FnName.new(word), args
+        else
+          AST::VariableLiteral.new word
+        end
+      elsif int = consume_val? :_int, Int64
+        AST::IntLiteral.new int
+      elsif str = consume_val? :_str, String
+        AST::StringLiteral.new str
+      elsif chr = consume_val? :_chr, String
+        AST::CharLiteral.new chr
+      elsif type = parse_type?
+        consume :"["
         args = [] of AST::Expression
-        unless consume? :")"
+        unless consume? :"]"
           loop do
             args << parse_expression
-            if consume? :")"
+            if consume? :"]"
               break
             else
               consume :","
             end
           end
         end
-        AST::Call.new AST::FnName.new(word), args
+        AST::ArrayLiteral.new(type, args)
       else
-        AST::VariableLiteral.new word
+        debug_pos col: :light_red
+        raise "Couldn't find an expression"
       end
-    elsif int = consume_val? :_int, Int64
-      AST::IntLiteral.new int
-    elsif str = consume_val? :_str, String
-      AST::StringLiteral.new str
-    elsif chr = consume_val? :_chr, String
-      AST::CharLiteral.new chr
-    elsif type = parse_type?
-      consume :"["
-      args = [] of AST::Expression
-      unless consume? :"]"
-        loop do
-          args << parse_expression
-          if consume? :"]"
-            break
-          else
-            consume :","
-          end
-        end
-      end
-      AST::ArrayLiteral.new(type, args)
-    else
-      debug_pos col: :light_red
-      raise "Couldn't find an expression"
     end
   end
 
@@ -274,99 +289,115 @@ class Yume::Parser(*T)
   end
 
   def parse_fn_decl : AST::FunctionDeclaration
-    fn_name = parse_fn_name
-    fn_generics = parse_fn_generics
-    fn_args = parse_fn_args
-    fn_return = parse_type?
-    AST::FunctionDeclaration.new(fn_name, fn_generics, fn_args, fn_return)
+    positioned do
+      fn_name = parse_fn_name
+      fn_generics = parse_fn_generics
+      fn_args = parse_fn_args
+      fn_return = parse_type?
+      AST::FunctionDeclaration.new(fn_name, fn_generics, fn_args, fn_return)
+    end
   end
 
   def parse_fn_name : AST::FnName
-    if consume?(:":")
-      name = current!
-      AST::FnName.new(":" + name.not_nil![0].to_s)
-    else
-      AST::FnName.new consume_val :_word, String
+    positioned do
+      if consume?(:":")
+        name = current!
+        AST::FnName.new(":" + name.not_nil![0].to_s)
+      else
+        AST::FnName.new consume_val :_word, String
+      end
     end
   end
 
   def parse_fn_generics : AST::GenericArgs?
     return nil unless consume?(:"<")
-    args = [] of AST::Type
-    loop do
-      args << parse_type
-      if consume?(:">")
-        break
-      else
-        consume(:",")
-      end
-    end
-    AST::GenericArgs.new(args)
-  end
-
-  def parse_fn_args : AST::FnArgs
-    consume :"("
-    args = [] of AST::TypedName
-    unless consume?(:")")
+    positioned do
+      args = [] of AST::Type
       loop do
-        args << parse_typed_name
-        if consume?(:")")
+        args << parse_type
+        if consume?(:">")
           break
         else
           consume(:",")
         end
       end
+      AST::GenericArgs.new(args)
     end
-    AST::FnArgs.new(args)
+  end
+
+  def parse_fn_args : AST::FnArgs
+    positioned do
+      consume :"("
+      args = [] of AST::TypedName
+      unless consume?(:")")
+        loop do
+          args << parse_typed_name
+          if consume?(:")")
+            break
+          else
+            consume(:",")
+          end
+        end
+      end
+      AST::FnArgs.new(args)
+    end
   end
 
   def parse_typed_name : AST::TypedName
-    name = consume_val :_word, String
-    type = parse_type
-    AST::TypedName.new(type, name)
+    positioned do
+      name = consume_val :_word, String
+      type = parse_type
+      AST::TypedName.new(type, name)
+    end
   end
 
   def parse_typed_name? : AST::TypedName?
-    name = consume_val? :_word, String
-    if name
-      type = parse_type?
-      if type
-        AST::TypedName.new(type, name)
+    positioned? do
+      name = consume_val? :_word, String
+      if name
+        type = parse_type?
+        if type
+          AST::TypedName.new(type, name)
+        end
       end
     end
   end
 
   def parse_type : AST::Type
-    type = AST::SimpleType.new consume_val :_uword, String
-    loop do
-      if consume?(:"[")
-        consume(:"]")
-        type = AST::SliceType.new(type)
-      elsif consume?(:"*")
-        type = AST::PtrType.new(type)
-      else
-        break
+    positioned do
+      type = AST::SimpleType.new consume_val :_uword, String
+      loop do
+        if consume?(:"[")
+          consume(:"]")
+          type = AST::SliceType.new(type)
+        elsif consume?(:"*")
+          type = AST::PtrType.new(type)
+        else
+          break
+        end
       end
+      type
     end
-    type
   end
 
   def parse_type? : AST::Type?
-    uword = consume_val? :_uword, String
-    return nil if uword.nil?
-    type = AST::SimpleType.new(uword)
-    loop do
-      if peek?(:"[") { peek?(:"]") }
-        consume(:"[")
-        consume(:"]")
-        type = AST::SliceType.new(type)
-      elsif consume?(:"*")
-        type = AST::PtrType.new(type)
-      else
-        break
+    positioned? do
+      uword = consume_val? :_uword, String
+      return nil if uword.nil?
+      type = AST::SimpleType.new(uword)
+      loop do
+        if peek?(:"[") { peek?(:"]") }
+          consume(:"[")
+          consume(:"]")
+          type = AST::SliceType.new(type)
+        elsif consume?(:"*")
+          type = AST::PtrType.new(type)
+        else
+          break
+        end
       end
+      type
     end
-    type
   end
 
   macro consume?(kwd)
