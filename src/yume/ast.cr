@@ -67,6 +67,8 @@ module Yume::AST
 
     def initialize(@val : Int64)
     end
+
+    def_equals_and_hash @val
   end
 
   class VariableLiteral < Expression
@@ -75,6 +77,8 @@ module Yume::AST
 
     def initialize(@name)
     end
+
+    def_equals_and_hash @name
   end
 
   class StringLiteral < Expression
@@ -83,6 +87,8 @@ module Yume::AST
 
     def initialize(@val)
     end
+
+    def_equals_and_hash @val
   end
 
   class CharLiteral < Expression
@@ -91,6 +97,8 @@ module Yume::AST
 
     def initialize(@val)
     end
+
+    def_equals_and_hash @val
   end
 
   class ParenthesizedExpression < Expression
@@ -99,6 +107,8 @@ module Yume::AST
 
     def initialize(@val)
     end
+
+    def_equals_and_hash @val
   end
 
   class ArrayLiteral < Expression
@@ -108,6 +118,8 @@ module Yume::AST
 
     def initialize(@type, @val)
     end
+
+    def_equals_and_hash @type, @val
   end
 
   struct FnName
@@ -116,6 +128,8 @@ module Yume::AST
 
     def initialize(@name : String)
     end
+
+    def_equals_and_hash @name
   end
 
   class Call < Expression
@@ -125,6 +139,8 @@ module Yume::AST
 
     def initialize(@name, @args)
     end
+
+    def_equals_and_hash @name, @args
   end
 
   abstract class Statement
