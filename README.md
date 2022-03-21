@@ -8,7 +8,7 @@ Check out the `examples/` directory to see what the language looks like. All exa
 
 The Yume compiler requires [Crystal](https://github.com/crystal-lang/crystal) to run.
 
-`crystal run src/yume.cr -- example/test.ym`
+`crystal run src/yume_cli.cr -- example/test.ym`
 
 Yume compiles to LLVM statically. The resulting binary will be in `out/yume.out`
 

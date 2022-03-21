@@ -1,5 +1,3 @@
-require "colorize"
-require "json"
 require "./yume/compiler"
 require "./yume/style_walker"
 require "./yume/ast"
@@ -8,27 +6,7 @@ require "./yume/parser"
 module Yume
   VERSION = "0.1.0"
 
-  private class DebugLexerConsumer(*T)
-    def initialize(@input : Lexer(*T), @io : IO)
-      until (t = @input.token).nil?
-        add(*t)
-      end
-    end
-
-    def add(sym : Symbol, r, pos : Range(Int32, Int32))
-      Colorize.with.cyan.surround @io do
-        sym.inspect @io
-      end
-      if r
-        @io << "("
-        r.inspect @io
-        @io << ")"
-      end
-      @io << " | ".colorize.dark_gray
-    end
-  end
-
-  lexer = Lexer(String, Int64).build do
+  LEXER = Lexer(String, Int64).build do
     match :fn, :end, :return, :if, :else, :while
     match :__primitive__, :__varargs__
     match :"(", :")", :"[", :"]", :"<", :">"
@@ -43,29 +21,4 @@ module Yume
     match /$/, :eos
     skip /[^\S\r\n]/
   end
-
-  input = File.open(ARGV[0]? || "example/test.ym", &.gets_to_end)
-
-  {% if flag?("debug_lex") %}
-    STDERR.puts
-    lexer.lex(input)
-    debug = DebugLexerConsumer.new lexer, STDERR
-    STDERR.puts
-  {% end %}
-
-  lexer.lex(input)
-  puts String.build { |sb| StyleWalker.new lexer, sb }
-
-  lexer.lex(input)
-  program = Parser.new(lexer).parse_program
-
-  {% if flag?("debug_ast") %}
-    PrettyPrint.format(program, STDOUT, 119)
-    puts "\n\n"
-  {% end %}
-
-  compiler = Compiler.new program
-  File.open("out/out.ll", "w", &.puts(compiler.@mod.to_s))
-  `llc out/out.ll -o out/out.s -O3`
-  `clang out/out.s -static -o out/yume.out`
 end
