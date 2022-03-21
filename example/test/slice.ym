@@ -12,6 +12,9 @@ __primitive__(get_at) get_at<T>(ptr T*, offset I32) T
 __primitive__(set_at) set_at<T>(ptr T*, offset I32, val T) T
 __primitive__(slice_dup) dup_internal<T>(arr T[], extra I32) T[]
 
+__primitive__(libc) puts(str U8*) I32
+__primitive__(libc) __varargs__ printf(format U8*) I32
+
 fn dup<T>(arr T[]) T[]
   dup_t T[] = arr.dup_internal(0)
   count I32 = arr.size()
@@ -34,9 +37,6 @@ fn dup_append<T>(arr T[], last T) T[]
 end
 
 fn c_str(str U8[]) U8[] = str.dup_append(?\0)
-
-__primitive__(libc) puts(str U8*) I32
-__primitive__(libc) __varargs__ printf(format U8*) I32
 
 fn hello()
   a U8[] = U8[?h, ?e, ?l, ?l, ?o]

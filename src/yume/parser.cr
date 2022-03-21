@@ -51,13 +51,13 @@ class Yume::Parser(*T)
     end
   end
 
-  def positioned(& : ->T) : T forall T
+  def positioned(& : -> T) : T forall T
     start_pos = pos
     ast_t = yield
     ast_t.at start_pos, pos
   end
 
-  def positioned?(& : ->T?) : T? forall T
+  def positioned?(& : -> T?) : T? forall T
     start_pos = pos
     ast_t = yield
     ast_t ? ast_t.at(start_pos, pos) : ast_t

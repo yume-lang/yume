@@ -399,16 +399,16 @@ class Yume::Compiler
 
       if matching_fn.nil? && matching_fn_def.is_a? AST::PrimitiveDefinition
         v = case matching_fn_def.primitive
-            when "libc"       then @builder.call(@libc[ex.name.name], args.map(&.llvm))
-            when "add"        then @builder.add(args[0], args[1])
-            when "sub"        then @builder.sub(args[0], args[1])
-            when "mul"        then @builder.mul(args[0], args[1])
-            when "mod"        then signed_type?(args[0].type) ? @builder.srem(args[0], args[1]) : @builder.urem(args[0], args[1])
-            when "int_div"    then signed_type?(args[0].type) ? @builder.sdiv(args[0], args[1]) : @builder.udiv(args[0], args[1])
-            when "icmp_eq"    then @builder.icmp(LLVM::IntPredicate::EQ, args[0], args[1])
-            when "icmp_gt"    then @builder.icmp((signed_type?(args[0].type) ? LLVM::IntPredicate::SGT : LLVM::IntPredicate::UGT), args[0], args[1])
-            when "icmp_lt"    then @builder.icmp((signed_type?(args[0].type) ? LLVM::IntPredicate::SLT : LLVM::IntPredicate::ULT), args[0], args[1])
-            when "get_at"     then @builder.load(@builder.inbounds_gep(args[0].llvm, args[1].llvm, "get_at.offset"), "get_at.load")
+            when "libc"    then @builder.call(@libc[ex.name.name], args.map(&.llvm))
+            when "add"     then @builder.add(args[0], args[1])
+            when "sub"     then @builder.sub(args[0], args[1])
+            when "mul"     then @builder.mul(args[0], args[1])
+            when "mod"     then signed_type?(args[0].type) ? @builder.srem(args[0], args[1]) : @builder.urem(args[0], args[1])
+            when "int_div" then signed_type?(args[0].type) ? @builder.sdiv(args[0], args[1]) : @builder.udiv(args[0], args[1])
+            when "icmp_eq" then @builder.icmp(LLVM::IntPredicate::EQ, args[0], args[1])
+            when "icmp_gt" then @builder.icmp((signed_type?(args[0].type) ? LLVM::IntPredicate::SGT : LLVM::IntPredicate::UGT), args[0], args[1])
+            when "icmp_lt" then @builder.icmp((signed_type?(args[0].type) ? LLVM::IntPredicate::SLT : LLVM::IntPredicate::ULT), args[0], args[1])
+            when "get_at"  then @builder.load(@builder.inbounds_gep(args[0].llvm, args[1].llvm, "get_at.offset"), "get_at.load")
             when "set_at"
               val = @builder.inbounds_gep args[0].llvm, args[1].llvm, "set_at.offset"
               @builder.store args[2].llvm, val
@@ -428,7 +428,7 @@ class Yume::Compiler
               slice_size_ptr = @builder.inbounds_gep slice_alloc, @ctx.int32.const_int(0), @ctx.int32.const_int(1)
               @builder.store arr_size, slice_size_ptr
               @builder.load slice_alloc
-            else                   raise "unknown primitive #{matching_fn_def.primitive}"
+            else raise "unknown primitive #{matching_fn_def.primitive}"
             end
         val = Value.new(v, resolve_type matching_fn_def.return_type)
         @type_scope.clear

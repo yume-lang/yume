@@ -60,7 +60,7 @@ module Yume
   program = Parser.new(lexer).parse_program
 
   {% if flag?("debug_ast") %}
-    PrettyPrint.format(program, STDOUT, 139)
+    PrettyPrint.format(program, STDOUT, 119)
     puts "\n\n"
   {% end %}
 
