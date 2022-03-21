@@ -12,11 +12,13 @@ The Yume compiler requires [Crystal](https://github.com/crystal-lang/crystal) to
 
 Yume compiles to LLVM statically. The resulting binary will be in `out/yume.out`
 
-## Development
+## Compiler switches
 
-Compiler debug switches: `-Ddebug_ast`, `-Ddebug_parse`, `-Ddebug_lex`
+To apply these switches, add them in the `crystal run` command, before the `--`
 
-(Add these in the crystal run command, before the `--`)
+Optimize the resulting LLVM IR: `-Doptimize`
+
+Compiler debug switches: `-Ddebug_ast`, `-Ddebug_parse`, `-Ddebug_lex`, `-Ddebug_overload`
 
 ## Contributors
 

@@ -361,19 +361,22 @@ class Yume::Compiler
       overload_set = @fns.keys.select(&.name.name.== ex.name.name)
 
       args = ex.args.map { |i| expression i }
-      print "Calling `#{ex.name.name}` with args:\n        "
-      args.map(&.type).join STDOUT, ", "
-      puts "\nOverloads:"
 
-      overload_set.map { |i| {i, type_signature(i)} }.each do |m, (i, r)|
-        print "#{def_pos m} | "
-        i.join STDOUT, ", "
-        print ", ..." if m.is_a?(AST::PrimitiveDefinition) && m.varargs?
-        print " -> "
-        puts r
-      end
+      {% if flag?("debug_overload") %}
+        print "Calling `#{ex.name.name}` with args:\n        "
+        args.map(&.type).join STDOUT, ", "
+        puts "\nOverloads:"
 
-      # TODO: determine generics
+        overload_set.map { |i| {i, type_signature(i)} }.each do |m, (i, r)|
+          print "#{def_pos m} | "
+          i.join STDOUT, ", "
+          print ", ..." if m.is_a?(AST::PrimitiveDefinition) && m.varargs?
+          print " -> "
+          puts r
+        end
+      {% end %}
+
+      # TODO: better heuristics
       matching = overload_set.compact_map do |o|
         sig = type_signature(o)[0]
         next nil if sig.size > args.size
@@ -392,10 +395,13 @@ class Yume::Compiler
       end
 
       matching_fn_def, _, matching_generics = matching.max_by(&.[1])
-      puts "#{def_pos matching_fn_def} > Selected (#{matching.size}) (#{matching_generics.map { |k, v| "#{k} => #{v}" }.join ", "})"
       matching_fn = @fns[matching_fn_def]
       @type_scope = matching_generics
-      puts
+
+      {% if flag?("debug_overload") %}
+        puts "#{def_pos matching_fn_def} > Selected (#{matching.size}) (#{matching_generics.map { |k, v| "#{k} => #{v}" }.join ", "})"
+        puts
+      {% end %}
 
       if matching_fn.nil? && matching_fn_def.is_a? AST::PrimitiveDefinition
         v = case matching_fn_def.primitive
