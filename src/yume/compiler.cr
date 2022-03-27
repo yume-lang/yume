@@ -144,16 +144,24 @@ class Yume::Compiler
 
   struct StructType < Type
     getter name : String
-    getter fields : Array(Type)
-    @llvm_struct : LLVM::Type*
+    getter fields : Array(TypedName)
+    @llvm_struct : LLVM::Type**
 
-    def initialize(@name, @fields, ctx : LLVM::Context)
-      @llvm_struct = Pointer(LLVM::Type).malloc
-      @llvm_struct.value = ctx.struct(@fields.map(&.to_llvm ctx), @name)
+    def initialize(@name, @fields)
+      @llvm_struct = Pointer(Pointer(LLVM::Type)).malloc
+      @llvm_struct.value = Pointer(LLVM::Type).null
     end
 
     def to_llvm(ctx : LLVM::Context) : LLVM::Type
-      @llvm_struct.value
+      if @llvm_struct.value.null?
+        @llvm_struct.value = Pointer(LLVM::Type).malloc
+        @llvm_struct.value.value = ctx.struct(@fields.map(&.type.to_llvm ctx), @name)
+      end
+      @llvm_struct.value.value
+    end
+
+    def to_s(io : IO)
+      io << "." << @name << "{}"
     end
   end
 
@@ -205,7 +213,7 @@ class Yume::Compiler
           f.linkage = LLVM::Linkage::Internal
         end
       when AST::StructDefinition
-        @types[s.name] = StructType.new(s.name, [] of Type, @ctx)
+        @types[s.name] = StructType.new(s.name, s.fields.map { |i| resolve_type i })
       end
     end
     @fns.each do |k, v|
@@ -271,6 +279,12 @@ class Yume::Compiler
         GenericType.new(type.type)
       end
     end
+  end
+
+  record TypedName, type : Type, name : String
+
+  def resolve_type(type_name : AST::TypedName, fn_def : AST::FunctionDefinition? = nil, use_type_scope = true) : TypedName
+    TypedName.new(resolve_type(type_name.type), type_name.name)
   end
 
   def resolve_type(type : AST::Type?, fn_def : AST::FunctionDefinition? = nil, use_type_scope = true) : Type
