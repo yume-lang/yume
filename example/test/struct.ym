@@ -1,0 +1,7 @@
+struct Test
+end
+
+fn main() I32
+  var Test = Test()
+  return 0
+end

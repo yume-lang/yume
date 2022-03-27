@@ -137,6 +137,8 @@ module Yume::AST
     def_equals_and_hash @name, @args
   end
 
+  ast_record CtorCall < Expression, type : Type, args : Array(Expression)
+
   abstract class Statement
     include AST
   end
@@ -232,6 +234,8 @@ module Yume::AST
   record TypedName, type : Type, name : String do
     include AST
   end
+
+  ast_record StructDefinition < Statement, name : String, body : Array(Statement)
 
   abstract class FunctionDefinition < Statement
     include AST

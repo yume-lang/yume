@@ -7,7 +7,7 @@ module Yume
   VERSION = "0.1.0"
 
   LEXER = Lexer(String, Int64).build do
-    match :fn, :end, :return, :if, :else, :while
+    match :fn, :end, :return, :if, :else, :while, :struct
     match :__primitive__, :__varargs__
     match :"(", :")", :"[", :"]", :"<", :">"
     match :"==", :+, :"-", :"%", :"//", :"/", :"*"

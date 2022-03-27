@@ -150,6 +150,16 @@ class Yume::Parser(*T)
           consume_sep
           AST::ReturnStatement.new expression
         end
+      elsif consume? :struct
+        name = consume_val :_uword, String
+        consume_sep
+        body = [] of AST::Statement
+        until consume?(:end)
+          st = parse_statement
+          body << st if st
+        end
+        consume_sep
+        AST::StructDefinition.new(name, body)
       else
         declaration = peek? {
           t = parse_typed_name?
@@ -219,16 +229,7 @@ class Yume::Parser(*T)
       name = parse_fn_name
       if consume? :"("
         args = [receiver] of AST::Expression
-        unless consume? :")"
-          loop do
-            args << parse_expression
-            if consume? :")"
-              break
-            else
-              consume :","
-            end
-          end
-        end
+        parse_call_args args
         parse_receiver AST::Call.new name, args
       else
         parse_receiver AST::Call.new name, [receiver] of AST::Expression
@@ -243,21 +244,25 @@ class Yume::Parser(*T)
     end
   end
 
+  def parse_call_args(args = [] of AST::Expression) : Array(AST::Expression)
+    unless consume? :")"
+      loop do
+        args << parse_expression
+        if consume? :")"
+          break
+        else
+          consume :","
+        end
+      end
+    end
+    args
+  end
+
   def parse_primary : AST::Expression
     positioned do
       if word = consume_val? :_word, String
         if consume? :"("
-          args = [] of AST::Expression
-          unless consume? :")"
-            loop do
-              args << parse_expression
-              if consume? :")"
-                break
-              else
-                consume :","
-              end
-            end
-          end
+          args = parse_call_args
           AST::Call.new AST::FnName.new(word), args
         else
           AST::VariableLiteral.new word
@@ -269,19 +274,26 @@ class Yume::Parser(*T)
       elsif chr = consume_val? :_chr, String
         AST::CharLiteral.new chr
       elsif type = parse_type?
-        consume :"["
-        args = [] of AST::Expression
-        unless consume? :"]"
-          loop do
-            args << parse_expression
-            if consume? :"]"
-              break
-            else
-              consume :","
+        if consume? :"("
+          args = parse_call_args
+          AST::CtorCall.new type, args
+        elsif consume? :"["
+          args = [] of AST::Expression
+          unless consume? :"]"
+            loop do
+              args << parse_expression
+              if consume? :"]"
+                break
+              else
+                consume :","
+              end
             end
           end
+          AST::ArrayLiteral.new(type, args)
+        else
+          debug_pos col: :light_red
+          raise "Couldn't find an expression"
         end
-        AST::ArrayLiteral.new(type, args)
       else
         debug_pos col: :light_red
         raise "Couldn't find an expression"
