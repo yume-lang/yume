@@ -640,7 +640,10 @@ class Yume::Compiler
         llvm_name = "ym:#{fn.name.name}(#{fn.args.map { |i| resolve_type(i.type).to_s }.join ","})"
         f = @mod.functions.add llvm_name, arg_types, llvm_type(resolve_type(fn.return_type, fn))
       end
-      @fns[fn] = f
+      unless fn.decl.generics
+        @fns[fn] = f
+      end
+      f
     end
   end
 
