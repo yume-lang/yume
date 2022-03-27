@@ -18,7 +18,6 @@ fn fizzbuzz(num I32)
   else
     printf("%d\n", num)
   end
-  return
 end
 
 fn main() I32

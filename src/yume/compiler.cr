@@ -227,8 +227,12 @@ class Yume::Compiler
       end
       @cur_ret_merge = cur_llvm_fn.basic_blocks.append("return")
       compile_body k.body
+      return_value = @fn_scope[""]?
+      if return_value.nil? && !@terminated
+        @builder.br cur_ret_merge
+      end
       @builder.position_at_end cur_ret_merge
-      if return_value = @fn_scope[""]?
+      if return_value
         @builder.ret @builder.load(return_value.llvm)
       else
         @builder.ret
