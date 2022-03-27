@@ -49,7 +49,13 @@ class Yume::Compiler
 
   struct PointerType < Type
     @value : Pointer(Type)
-    def_equals_and_hash value
+
+    def_equals_and_hash @value.value
+
+    # HACK: This shouldn't be required...
+    def ==(other)
+      false
+    end
 
     def initialize(val : Type)
       @value = Pointer(Type).malloc 1
@@ -72,7 +78,12 @@ class Yume::Compiler
 
   struct SliceType < Type
     @value : Pointer(Type)
-    def_equals_and_hash value
+    def_equals_and_hash @value.value
+
+    # HACK: This shouldn't be required...
+    def ==(other)
+      false
+    end
 
     def initialize(val : Type)
       @value = Pointer(Type).malloc 1
@@ -161,7 +172,7 @@ class Yume::Compiler
     end
 
     def to_s(io : IO)
-      io << "." << @name << "{}"
+      io << "." << @name
     end
   end
 
