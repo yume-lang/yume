@@ -8,7 +8,7 @@ __primitive__(icmp_gt) :>(a I32, b I32) Bool
 
 __primitive__(slice_size) size<T>(arr T[]) I32
 __primitive__(slice_ptr) ptr<T>(arr T[]) T*
-__primitive__(get_at) get_at<T>(ptr T*, offset I32) T
+__primitive__(get_at) :[]<T>(ptr T*, offset I32) T
 __primitive__(set_at) set_at<T>(ptr T*, offset I32, val T) T
 __primitive__(slice_dup) dup_internal<T>(arr T[], extra I32) T[]
 
@@ -20,7 +20,7 @@ fn dup<T>(arr T[]) T[]
   count I32 = arr.size
   while count > 0
     count = count - 1
-    dup_t.ptr.set_at(count, arr.ptr.get_at(count))
+    dup_t.ptr.set_at(count, arr.ptr[count])
   end
   return dup_t
 end
@@ -30,7 +30,7 @@ fn dup_append<T>(arr T[], last T) T[]
   count I32 = arr.size
   while count > 0
     count = count - 1
-    dup_t.ptr.set_at(count, arr.ptr.get_at(count))
+    dup_t.ptr.set_at(count, arr.ptr[count])
   end
   dup_t.ptr.set_at(arr.size, last)
   return dup_t

@@ -183,6 +183,7 @@ class Yume::Parser(*T)
     {:"+", :"-"},
     {:"%", :"//", :"*"},
   ]
+  OPERATOR_FNS = OPERATORS.flat_map(&.each).map { |i| {i} } + [{:"[", :"]"}]
 
   def parse_expression : AST::Expression
     parse_op(0)
@@ -232,6 +233,11 @@ class Yume::Parser(*T)
       else
         parse_receiver AST::Call.new name, [receiver] of AST::Expression
       end
+    elsif consume? :"["
+      name = AST::FnName.new ":[]"
+      arg = parse_expression
+      consume :"]"
+      parse_receiver AST::Call.new name, [receiver, arg] of AST::Expression
     else
       receiver
     end
@@ -300,11 +306,25 @@ class Yume::Parser(*T)
     end
   end
 
+  def parse_operator_fn_name : String
+    OPERATOR_FNS.each do |i|
+      if consume?(i.first)
+        i.each_with_index do |j, k|
+          next if k.zero?
+          consume j
+        end
+        return i.map(&.to_s).join ""
+      end
+    end
+    debug_pos
+    raise "Invalid operator fn, expected one of"
+  end
+
   def parse_fn_name : AST::FnName
     positioned do
       if consume?(:":")
-        name = current!
-        AST::FnName.new(":" + name.not_nil![0].to_s)
+        name = parse_operator_fn_name
+        AST::FnName.new(":" + name)
       else
         AST::FnName.new consume_val :_word, String
       end
