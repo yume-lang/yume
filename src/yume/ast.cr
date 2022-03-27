@@ -55,51 +55,45 @@ module Yume::AST
     end
   end
 
+  macro ast_record(name, *properties)
+    class {{name.id}}
+      include AST
+      {% prop_names = [] of Nil %}
+      {% for property in properties %}
+        {% if property.is_a?(Assign) %}
+          getter {{property.target.id}}
+          {% prop_names << property.target.id %}
+        {% elsif property.is_a?(TypeDeclaration) %}
+          getter {{ property }}
+          {% prop_names << property.var.id %}
+        {% else %}
+          getter :{{property.id}}
+          {% prop_names << property %}
+        {% end %}
+      {% end %}
+
+      def initialize({{ *properties.map { |field| "@#{field.id}".id } }})
+      end
+
+      {{yield}}
+
+      def_equals_and_hash {{ *prop_names.map { |field| "@#{field.id}".id } }}
+    end
+  end
+
   # TODO: like, most of these should be records or something
 
   abstract class Expression
     include AST
   end
 
-  class IntLiteral < Expression
-    include AST
-    getter val : Int64
+  ast_record IntLiteral < Expression, val : Int64
 
-    def initialize(@val : Int64)
-    end
+  ast_record VariableLiteral < Expression, name : String
 
-    def_equals_and_hash @val
-  end
+  ast_record StringLiteral < Expression, val : String
 
-  class VariableLiteral < Expression
-    include AST
-    getter name : String
-
-    def initialize(@name)
-    end
-
-    def_equals_and_hash @name
-  end
-
-  class StringLiteral < Expression
-    include AST
-    getter val : String
-
-    def initialize(@val)
-    end
-
-    def_equals_and_hash @val
-  end
-
-  class CharLiteral < Expression
-    include AST
-    getter val : String
-
-    def initialize(@val)
-    end
-
-    def_equals_and_hash @val
-  end
+  ast_record CharLiteral < Expression, val : String
 
   class ParenthesizedExpression < Expression
     include AST
