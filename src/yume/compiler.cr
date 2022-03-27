@@ -464,9 +464,9 @@ class Yume::Compiler
               array = LLVM::Value.new LibLLVM.build_array_malloc(@builder, llvm_type(val_type), arr_size, "d.malloc")
               array_ptr = @builder.bit_cast(array, llvm_type(PointerType.new(val_type)))
               slice_alloc = @builder.alloca llvm_type(slice_val)
-              slice_arr_ptr = @builder.inbounds_gep slice_alloc, @ctx.int32.const_int(0), @ctx.int32.const_int(0)
+              slice_arr_ptr = @builder.inbounds_gep slice_alloc, @ctx.int32.const_int(0), @ctx.int32.const_int(0), "d.slice.arr.ptr"
               @builder.store array_ptr, slice_arr_ptr
-              slice_size_ptr = @builder.inbounds_gep slice_alloc, @ctx.int32.const_int(0), @ctx.int32.const_int(1)
+              slice_size_ptr = @builder.inbounds_gep slice_alloc, @ctx.int32.const_int(0), @ctx.int32.const_int(1), "d.slice.size.ptr"
               @builder.store arr_size, slice_size_ptr
               @builder.load slice_alloc
             else raise "unknown primitive #{matching_fn_def.primitive}"
@@ -487,7 +487,14 @@ class Yume::Compiler
       end
     when AST::CtorCall
       struct_type = resolve_type ex.type
+      unless struct_type.is_a? StructType
+        raise "Cannot construct a non-struct type #{struct_type}"
+      end
       instance = @builder.alloca llvm_type struct_type
+      ex.args.each_with_index do |field, i|
+        field_ptr = @builder.inbounds_gep instance, @ctx.int32.const_int(0), @ctx.int32.const_int(i), "ctor.field.#{struct_type.fields[i].name}"
+        @builder.store expression(field), field_ptr
+      end
       Value.new @builder.load(instance), struct_type
     when AST::FieldAccess
       object = expression ex.base

@@ -9,6 +9,7 @@ fn x(i Test) I32 = i::x
 fn y(i Test) I32 = i::y
 
 fn main() I32
+  var Test = Test(2, 3)
   printf("x: %d, y: %d\n", var.x, var.y)
   return 0
 end

@@ -237,7 +237,7 @@ module Yume::AST
     include AST
   end
 
-  ast_record StructDefinition < Statement, name : String, body : Array(Statement)
+  ast_record StructDefinition < Statement, name : String, fields : Array(TypedName), body : Array(Statement)
 
   abstract class FunctionDefinition < Statement
     include AST
