@@ -73,26 +73,38 @@ class Yume::Parser(*T)
   end
 
   def parse_statement : AST::Statement?
-    if consume? :__primitive__
-      consume :"("
-      primitive_name = consume_val(:_word, String)
-      consume :")"
-      is_varargs = !!consume?(:__varargs__)
-      decl = parse_fn_decl
-      fn = AST::PrimitiveDefinition.new(
-        decl: decl,
-        primitive: primitive_name,
-        varargs: is_varargs
-      )
-      consume_sep
-      fn
-    elsif consume? :fn
-      decl = parse_fn_decl
-      if consume?(:"=")
-        expression = parse_expression
+    positioned? do
+      if consume? :__primitive__
+        consume :"("
+        primitive_name = consume_val(:_word, String)
+        consume :")"
+        is_varargs = !!consume?(:__varargs__)
+        decl = parse_fn_decl
+        fn = AST::PrimitiveDefinition.new(
+          decl: decl,
+          primitive: primitive_name,
+          varargs: is_varargs
+        )
         consume_sep
-        AST::ShortFunctionDefinition.new(decl, expression)
-      else
+        fn
+      elsif consume? :fn
+        decl = parse_fn_decl
+        if consume?(:"=")
+          expression = parse_expression
+          consume_sep
+          AST::ShortFunctionDefinition.new(decl, expression)
+        else
+          consume_sep
+          body = [] of AST::Statement
+          until consume?(:end)
+            st = parse_statement
+            body << st if st
+          end
+          consume_sep
+          AST::LongFunctionDefinition.new decl, body
+        end
+      elsif consume? :while
+        condition = parse_expression
         consume_sep
         body = [] of AST::Statement
         until consume?(:end)
@@ -100,77 +112,67 @@ class Yume::Parser(*T)
           body << st if st
         end
         consume_sep
-        AST::LongFunctionDefinition.new decl, body
-      end
-    elsif consume? :while
-      condition = parse_expression
-      consume_sep
-      body = [] of AST::Statement
-      until consume?(:end)
-        st = parse_statement
-        body << st if st
-      end
-      consume_sep
-      AST::WhileStatement.new condition, body
-    elsif consume? :if
-      condition = parse_expression
-      consume_sep
-      clauses = [] of AST::IfClause
-      current_clause_body = [] of AST::Statement
-      else_body = [] of AST::Statement
-      in_else = false
-      loop do
-        if !in_else && consume? :else
-          if consume? :if
-            clauses << AST::IfClause.new condition, current_clause_body
-            condition = parse_expression
-            consume_sep
-            current_clause_body = [] of AST::Statement
-          else
-            consume_sep
-            in_else = true
+        AST::WhileStatement.new condition, body
+      elsif consume? :if
+        condition = parse_expression
+        consume_sep
+        clauses = [] of AST::IfClause
+        current_clause_body = [] of AST::Statement
+        else_body = [] of AST::Statement
+        in_else = false
+        loop do
+          if !in_else && consume? :else
+            if consume? :if
+              clauses << AST::IfClause.new condition, current_clause_body
+              condition = parse_expression
+              consume_sep
+              current_clause_body = [] of AST::Statement
+            else
+              consume_sep
+              in_else = true
+            end
+          end
+          break if consume? :end
+          st = parse_statement
+          if st
+            (in_else ? else_body : current_clause_body) << st
           end
         end
-        break if consume? :end
-        st = parse_statement
-        if st
-          (in_else ? else_body : current_clause_body) << st
-        end
-      end
-      clauses << AST::IfClause.new condition, current_clause_body
-      else_clause = else_body.empty? ? nil : AST::ElseClause.new else_body
-      consume_sep
-      AST::IfStatement.new clauses, else_clause
-    elsif consume? :return
-      if consume? :sep
-        AST::ReturnStatement.new nil
-      else
-        expression = parse_expression
+        clauses << AST::IfClause.new condition, current_clause_body
+        else_clause = else_body.empty? ? nil : AST::ElseClause.new else_body
         consume_sep
-        AST::ReturnStatement.new expression
-      end
-    else
-      declaration = peek? {
-        t = parse_typed_name?
-        t if t && consume?(:"=")
-      }
-      if declaration
-        value = parse_expression
-        consume_sep
-        AST::DeclarationStatement.new declaration, value
-      else
-        assignment = peek? {
-          t = consume_val? :_word, String
-          t if t && consume?(:"=")
-        }
-        if assignment
-          value = parse_expression
-          consume_sep
-          AST::AssignmentStatement.new assignment, value
+        AST::IfStatement.new clauses, else_clause
+      elsif consume? :return
+        if consume? :sep
+          AST::ReturnStatement.new nil
         else
           expression = parse_expression
           consume_sep
-          AST::ExpressionStatement.new expression
+          AST::ReturnStatement.new expression
+        end
+      else
+        declaration = peek? {
+          t = parse_typed_name?
+          t if t && consume?(:"=")
+        }
+        if declaration
+          value = parse_expression
+          consume_sep
+          AST::DeclarationStatement.new declaration, value
+        else
+          assignment = peek? {
+            t = consume_val? :_word, String
+            t if t && consume?(:"=")
+          }
+          if assignment
+            value = parse_expression
+            consume_sep
+            AST::AssignmentStatement.new assignment, value
+          else
+            expression = parse_expression
+            consume_sep
+            AST::ExpressionStatement.new expression
+          end
         end
       end
     end
