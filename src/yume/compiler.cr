@@ -142,6 +142,21 @@ class Yume::Compiler
     end
   end
 
+  struct StructType < Type
+    getter name : String
+    getter fields : Array(Type)
+    @llvm_struct : LLVM::Type*
+
+    def initialize(@name, @fields, ctx : LLVM::Context)
+      @llvm_struct = Pointer(LLVM::Type).malloc
+      @llvm_struct.value = ctx.struct(@fields.map(&.to_llvm ctx), @name)
+    end
+
+    def to_llvm(ctx : LLVM::Context) : LLVM::Type
+      @llvm_struct.value
+    end
+  end
+
   record Value, llvm : LLVM::Value, type : Type do
     def to_unsafe
       @llvm.to_unsafe
@@ -189,6 +204,8 @@ class Yume::Compiler
         else
           f.linkage = LLVM::Linkage::Internal
         end
+      when AST::StructDefinition
+        @types[s.name] = StructType.new(s.name, [] of Type, @ctx)
       end
     end
     @fns.each do |k, v|
@@ -454,10 +471,14 @@ class Yume::Compiler
         @type_scope.clear
         val
       end
+    when AST::CtorCall
+      struct_type = resolve_type ex.type
+      instance = @builder.alloca llvm_type struct_type
+      Value.new @builder.load(instance), struct_type
     else
-      STDERR.puts "Unknown expression #{ex}"
-      Value.new(llvm_type(resolve_type(cur_ast_fn.return_type)).null, resolve_type cur_ast_fn.return_type)
-      # raise "Unknown expression #{ex}"
+      # STDERR.puts "Unknown expression #{ex}"
+      # Value.new(llvm_type(resolve_type(cur_ast_fn.return_type)).null, resolve_type cur_ast_fn.return_type)
+      raise "Unknown expression #{ex}"
     end
   end
 
@@ -526,7 +547,7 @@ class Yume::Compiler
       @builder.br(test_bb)
       @builder.position_at_end merge_bb
     else
-      STDERR.puts "Unknown statement #{st}"
+      raise "Unknown statement #{st}"
     end
   end
 
