@@ -206,8 +206,8 @@ class Yume::Compiler
       when AST::FunctionDefinition
         f = declare(s)
         next if f.nil?
-        if s.name.name == "main" && s.args.empty?
-          f.name = "main"
+        if (s.name.name == "main" && s.args.empty?) || (s.decl.external?)
+          f.name = s.name.name
           f.linkage = LLVM::Linkage::External
         else
           f.linkage = LLVM::Linkage::Internal

@@ -327,11 +327,15 @@ class Yume::Parser(*T)
 
   def parse_fn_decl : AST::FunctionDeclaration
     positioned do
+      fn_external = false
+      if consume?(:__extern__)
+        fn_external = true
+      end
       fn_name = parse_fn_name
       fn_generics = parse_fn_generics
       fn_args = parse_fn_args
       fn_return = parse_type?
-      AST::FunctionDeclaration.new(fn_name, fn_generics, fn_args, fn_return)
+      AST::FunctionDeclaration.new(fn_name, fn_generics, fn_args, fn_return, fn_external)
     end
   end
 

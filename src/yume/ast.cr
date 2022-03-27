@@ -282,8 +282,9 @@ module Yume::AST
     getter return_type : Type?
     getter args : FnArgs
     getter generics : GenericArgs?
+    getter? external : Bool
 
-    def initialize(@name, @generics, @args, @return_type)
+    def initialize(@name, @generics, @args, @return_type, @external = false)
     end
   end
 
