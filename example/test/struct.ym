@@ -1,15 +1,21 @@
+__primitive__(add) :+(a I32, b I32) I32
 __primitive__(libc) __varargs__ printf(format U8*) I32
 
-struct Test
+struct Vector
   x I32
   y I32
 end
 
-fn x(i Test) I32 = i::x
-fn y(i Test) I32 = i::y
+fn x(i Vector) I32 = i::x
+fn y(i Vector) I32 = i::y
+fn :+(a Vector, b Vector) Vector = Vector(a::x + b::x, a::y + b::y)
 
 fn main() I32
-  var Test = Test(2, 3)
-  printf("x: %d, y: %d\n", var.x, var.y)
+  a Vector = Vector(2, 3)
+  b Vector = Vector(5, 1)
+  printf("a x: %d, y: %d\n", a.x, a.y)
+  printf("b x: %d, y: %d\n", b.x, b.y)
+  c Vector = a + b
+  printf("c x: %d, y: %d\n", c.x, c.y)
   return 0
 end
