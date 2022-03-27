@@ -534,7 +534,9 @@ class Yume::Compiler
       expression(st.expression)
     when AST::IfStatement
       merge_bb = cur_llvm_fn.basic_blocks.append("if.cont")
-      else_bb = cur_llvm_fn.basic_blocks.append("if.else")
+      if st.else_clause
+        else_bb = cur_llvm_fn.basic_blocks.append("if.else")
+      end
       next_test_bb = cur_llvm_fn.basic_blocks.append("if.test")
       @builder.br next_test_bb
       body_terminated = true
@@ -542,7 +544,7 @@ class Yume::Compiler
         test_bb = next_test_bb
         body_bb = cur_llvm_fn.basic_blocks.append("if.then")
         if i + 1 >= st.clauses.size
-          next_test_bb = else_bb
+          next_test_bb = else_bb || merge_bb
         else
           next_test_bb = cur_llvm_fn.basic_blocks.append("if.test")
         end
@@ -556,8 +558,8 @@ class Yume::Compiler
           @builder.br merge_bb
         end
       end
-      @builder.position_at_end else_bb
       if else_clause = st.else_clause
+        @builder.position_at_end else_bb.not_nil!
         compile_body(else_clause.statements)
         @builder.br merge_bb unless @terminated
       end
