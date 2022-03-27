@@ -15,23 +15,23 @@ __primitive__(slice_dup) dup_internal<T>(arr T[], extra I32) T[]
 __primitive__(libc) puts(str U8*) I32
 __primitive__(libc) __varargs__ printf(format U8*) I32
 
-fn dup<T>(arr T[]) T[]
-  dup_t T[] = arr.dup_internal(0)
-  count I32 = arr.size
+fn copy<T>(source T*, dest T*, amount I32)
+  count I32 = amount
   while count > 0
     count = count - 1
-    dup_t.ptr.set_at(count, arr.ptr[count])
+    dest.set_at(count, source[count])
   end
+end
+
+fn dup<T>(arr T[], extra I32) T[]
+  dup_t T[] = arr.dup_internal(extra)
+  copy(arr.ptr, dup_t.ptr, arr.size)
   return dup_t
 end
 
 fn dup_append<T>(arr T[], last T) T[]
   dup_t T[] = arr.dup_internal(1)
-  count I32 = arr.size
-  while count > 0
-    count = count - 1
-    dup_t.ptr.set_at(count, arr.ptr[count])
-  end
+  copy(arr.ptr, dup_t.ptr, arr.size)
   dup_t.ptr.set_at(arr.size, last)
   return dup_t
 end
