@@ -581,6 +581,7 @@ class Yume::Compiler
           @builder.br merge_bb
         end
       end
+      @terminated = false
       if else_clause = st.else_clause
         @builder.position_at_end else_bb.not_nil!
         compile_body(else_clause.statements)
@@ -589,6 +590,7 @@ class Yume::Compiler
       if @terminated && body_terminated
         merge_bb.delete
       else
+        @terminated = false
         @builder.position_at_end merge_bb
       end
     when AST::WhileStatement
