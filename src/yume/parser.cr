@@ -230,7 +230,7 @@ class Yume::Parser(*T)
         end
         parse_receiver AST::Call.new name, args
       else
-        raise "properties aren't yet implemented"
+        parse_receiver AST::Call.new name, [receiver] of AST::Expression
       end
     else
       receiver

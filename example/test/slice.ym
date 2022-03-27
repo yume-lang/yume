@@ -17,22 +17,22 @@ __primitive__(libc) __varargs__ printf(format U8*) I32
 
 fn dup<T>(arr T[]) T[]
   dup_t T[] = arr.dup_internal(0)
-  count I32 = arr.size()
+  count I32 = arr.size
   while count > 0
     count = count - 1
-    dup_t.ptr().set_at(count, arr.ptr().get_at(count))
+    dup_t.ptr.set_at(count, arr.ptr.get_at(count))
   end
   return dup_t
 end
 
 fn dup_append<T>(arr T[], last T) T[]
   dup_t T[] = arr.dup_internal(1)
-  count I32 = arr.size()
+  count I32 = arr.size
   while count > 0
     count = count - 1
-    dup_t.ptr().set_at(count, arr.ptr().get_at(count))
+    dup_t.ptr.set_at(count, arr.ptr.get_at(count))
   end
-  dup_t.ptr().set_at(arr.size(), last)
+  dup_t.ptr.set_at(arr.size, last)
   return dup_t
 end
 
@@ -40,9 +40,10 @@ fn c_str(str U8[]) U8[] = str.dup_append(?\0)
 
 fn hello()
   a U8[] = U8[?h, ?e, ?l, ?l, ?o]
-  printf("string: %s\n", a.c_str())
-  printf("size of a: %d\n", a.size())
-  printf("ptr of a: %p\n", a.ptr())
+  printf("string: %s\n", a.c_str)
+  printf("size of a: %d\n", a.size)
+  printf("size of a.c_str: %d\n", a.c_str.size)
+  printf("ptr of a: %p\n", a.ptr)
   return
 end
 
