@@ -139,6 +139,8 @@ module Yume::AST
 
   ast_record CtorCall < Expression, type : Type, args : Array(Expression)
 
+  ast_record FieldAccess < Expression, base : Expression, field : String
+
   abstract class Statement
     include AST
   end

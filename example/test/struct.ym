@@ -1,7 +1,14 @@
+__primitive__(libc) __varargs__ printf(format U8*) I32
+
 struct Test
+  x I32
+  y I32
 end
 
+fn x(i Test) I32 = i::x
+fn y(i Test) I32 = i::y
+
 fn main() I32
-  var Test = Test()
+  printf("x: %d, y: %d\n", var.x, var.y)
   return 0
 end

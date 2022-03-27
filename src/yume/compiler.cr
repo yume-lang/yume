@@ -362,7 +362,7 @@ class Yume::Compiler
       end
     when AST::CharLiteral
       chr = ex.val[0]
-      if chr == '\\'
+      if chr == '\\' # HACK
         if ex.val == "\\0"
           chr = '\0'
         else
@@ -489,6 +489,17 @@ class Yume::Compiler
       struct_type = resolve_type ex.type
       instance = @builder.alloca llvm_type struct_type
       Value.new @builder.load(instance), struct_type
+    when AST::FieldAccess
+      object = expression ex.base
+      object_type = object.type
+      unless object_type.is_a? StructType
+        raise "Cannot access the field of a non-struct type #{object_type}"
+      end
+      fields = object_type.fields
+      matching_field = fields.find(&.name.== ex.field)
+      raise "Unknown field #{ex.field} of object #{object_type}" if matching_field.nil?
+      field_val = @builder.extract_value(object, fields.index!(matching_field), "field.#{ex.field}")
+      Value.new field_val, matching_field.type
     else
       # STDERR.puts "Unknown expression #{ex}"
       # Value.new(llvm_type(resolve_type(cur_ast_fn.return_type)).null, resolve_type cur_ast_fn.return_type)

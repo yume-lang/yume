@@ -153,13 +153,26 @@ class Yume::Parser(*T)
       elsif consume? :struct
         name = consume_val :_uword, String
         consume_sep
+
+        fields = [] of AST::TypedName
         body = [] of AST::Statement
+
+        # TODO: make this less peek-heavy
+        loop do
+          field = peek? {
+            t = parse_typed_name?
+            t if t && consume?(:sep)
+          }
+          break if field.nil?
+          fields << field
+        end
+
         until consume?(:end)
           st = parse_statement
           body << st if st
         end
         consume_sep
-        AST::StructDefinition.new(name, body)
+        AST::StructDefinition.new(name, fields, body)
       else
         declaration = peek? {
           t = parse_typed_name?
@@ -239,6 +252,10 @@ class Yume::Parser(*T)
       arg = parse_expression
       consume :"]"
       parse_receiver AST::Call.new name, [receiver, arg] of AST::Expression
+    elsif consume? :":"
+      consume :":"
+      field = consume_val :_word, String
+      parse_receiver AST::FieldAccess.new receiver, field
     else
       receiver
     end
