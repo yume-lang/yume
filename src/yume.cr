@@ -10,7 +10,7 @@ module Yume
     match :fn, :end, :return, :if, :else, :while, :struct
     match :__primitive__, :__varargs__, :__extern__
     match :"(", :")", :"[", :"]", :"<", :">"
-    match :"==", :+, :"-", :"%", :"//", :"/", :"*"
+    match :"==", :"!=", :+, :"-", :"%", :"//", :"/", :"*"
     match :"=", :",", :":", :"."
     match /[a-z_][a-zA-Z0-9_]*/, :_word, &.[0]
     match /[A-Z][a-zA-Z0-9]*/, :_uword, &.[0]

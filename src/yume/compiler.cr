@@ -458,6 +458,7 @@ class Yume::Compiler
             when "mod"     then signed_type?(args[0].type) ? @builder.srem(args[0], args[1]) : @builder.urem(args[0], args[1])
             when "int_div" then signed_type?(args[0].type) ? @builder.sdiv(args[0], args[1]) : @builder.udiv(args[0], args[1])
             when "icmp_eq" then @builder.icmp(LLVM::IntPredicate::EQ, args[0], args[1])
+            when "icmp_ne" then @builder.icmp(LLVM::IntPredicate::NE, args[0], args[1])
             when "icmp_gt" then @builder.icmp((signed_type?(args[0].type) ? LLVM::IntPredicate::SGT : LLVM::IntPredicate::UGT), args[0], args[1])
             when "icmp_lt" then @builder.icmp((signed_type?(args[0].type) ? LLVM::IntPredicate::SLT : LLVM::IntPredicate::ULT), args[0], args[1])
             when "get_at"  then @builder.load(@builder.inbounds_gep(args[0].llvm, args[1].llvm, "get_at.offset"), "get_at.load")
