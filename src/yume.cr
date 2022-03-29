@@ -20,5 +20,6 @@ module Yume
     match /[\n;]/, :sep
     match /$/, :eos
     skip /[^\S\r\n]/
+    skip /#.*(?=\R)/
   end
 end
