@@ -517,8 +517,11 @@ class Yume::Compiler
         slice_size_ptr = @builder.inbounds_gep slice_alloc, @ctx.int32.const_int(0), @ctx.int32.const_int(1), "d.slice.size.ptr"
         @builder.store arr_size, slice_size_ptr
         Value.new @builder.load(slice_alloc), struct_type
+      elsif struct_type.is_a? IntegralType
+        arg = expression ex.args[0]
+        Value.new @builder.trunc(arg, llvm_type(struct_type), "i.ctor.#{struct_type}"), struct_type
       else
-        raise "Cannot construct a non-struct, non-slice type #{struct_type}"
+        raise "Cannot construct a non-struct, non-slice, non-integral type #{struct_type}"
       end
     when AST::FieldAccess
       object = expression ex.base
