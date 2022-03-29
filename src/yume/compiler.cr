@@ -552,6 +552,9 @@ class Yume::Compiler
     when AST::DeclarationStatement
       raise "Duplicate declaration #{st}" if @fn_scope.has_key?(st.name.name)
       type = resolve_type st.name.type
+      # FIXME
+      # This is.. not great, because declarations within loops will quite literally exhaust the entire stack space
+      # Declarations should go at the head of the function, similar to arguments and the return value
       lv = @fn_scope[st.name.name] = Value.new(@builder.alloca(llvm_type(type), st.name.name), type)
       @builder.store(expression(st.value), lv.llvm)
     when AST::AssignmentStatement
