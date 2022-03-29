@@ -1,0 +1,184 @@
+__primitive__(libc) __varargs__ printf(format U8*) I32
+__primitive__(libc) puts(string U8*) I32
+__primitive__(libc) putchar(char I32) I32
+
+__primitive__(slice_size) size<T>(arr T[]) I32
+__primitive__(slice_ptr) ptr<T>(arr T[]) T*
+__primitive__(get_at) :[]<T>(ptr T*, offset I32) T
+__primitive__(set_at) set_at<T>(ptr T*, offset I32, val T) T
+__primitive__(slice_dup) dup_internal<T>(arr T[], extra I32) T[]
+
+__primitive__(add) :+(a I32, b I32) I32
+__primitive__(add) :+(a U8, b U8) U8
+__primitive__(sub) :-(a I32, b I32) I32
+__primitive__(sub) :-(a U8, b U8) U8
+__primitive__(mod) :%(a I32, b I32) I32
+__primitive__(mul) :*(a I32, b I32) I32
+__primitive__(int_div) ://(a I32, b I32) I32
+__primitive__(icmp_eq) :==(a I32, b I32) Bool
+__primitive__(icmp_eq) :==(a U8, b U8) Bool
+__primitive__(icmp_ne) :!=(a U8, b U8) Bool
+__primitive__(icmp_gt) :>(a I32, b I32) Bool
+__primitive__(icmp_lt) :<(a I32, b I32) Bool
+
+fn :[]<T>(slice T[], offset I32) T = slice.ptr[offset]
+fn set_at<T>(slice T[], offset I32, val T) T = slice.ptr.set_at(offset, val)
+
+fn copy<T>(source T*, dest T*, amount I32)
+  count I32 = amount
+  while count > 0
+    count = count - 1
+    dest.set_at(count, source[count])
+  end
+end
+
+fn dup<T>(arr T[], extra I32) T[]
+  dup_t T[] = arr.dup_internal(extra)
+  copy(arr.ptr, dup_t.ptr, arr.size)
+  return dup_t
+end
+
+fn dup_append<T>(arr T[], last T) T[]
+  dup_t T[] = arr.dup_internal(1)
+  copy(arr.ptr, dup_t.ptr, arr.size)
+  dup_t.set_at(arr.size, last)
+  return dup_t
+end
+
+fn c_str(str U8[]) U8[] = str.dup_append(?\0)
+
+fn c_len(ptr U8*) I32
+  terminated I32 = 0
+  idx I32 = 0
+  while terminated == 0
+    chr U8 = ptr[idx]
+    if chr == ?\0
+      terminated = 1
+    else
+      idx = idx + 1
+    end
+  end
+  return idx
+end
+
+# TODO
+# Basically all of the functions above should be in some sort of "prelude"
+
+# TODO
+# This would be a lot clearer if i had enums
+struct Instruction
+  type I32
+  payload I32
+end
+
+fn parse(input U8[]) Instruction[]
+  i I32 = 0
+  instructions Instruction[] = Instruction[](input.size)
+  # TODO
+  # This should be dynamically sized...
+  stack I32[] = I32[](512)
+  stack_i I32 = 0
+  while i < input.size
+    chr U8 = input[i]
+    instruction Instruction = Instruction(0, 0)
+    # TODO
+    # This could be simplified if I had the `then` shorthand, and maybe
+    # eventually, switch-like stuff
+    if chr == ?>
+      instruction = Instruction(1, 0)
+    else if chr == ?<
+      instruction = Instruction(2, 0)
+    else if chr == ?+
+      instruction = Instruction(3, 0)
+    else if chr == ?-
+      instruction = Instruction(4, 0)
+    else if chr == ?.
+      instruction = Instruction(5, 0)
+    else if chr == ?,
+      instruction = Instruction(6, 0)
+    else if chr == ?[
+      # TODO
+      # This could be simplified if I had negative literals `-1`
+      instruction = Instruction(7, 0-1)
+      # TODO
+      # This could be simplified if I had indexed setters `[]=`
+      stack.set_at(stack_i, i)
+      # TODO
+      # This could be simplified if I had fused `+=`
+      stack_i = stack_i + 1
+    else if chr == ?]
+      stack_i = stack_i - 1
+      jump_target I32 = stack[stack_i]
+      instruction = Instruction(8, jump_target)
+      # TODO
+      # This could be simplified if I had setters
+      instructions.set_at(jump_target, Instruction(7, i))
+    end
+    instructions.set_at(i, instruction)
+    i = i + 1
+  end
+  return instructions
+end
+
+fn __extern__ main(argc I32, argv U8**) I32
+  # Hello world example function
+  word_ptr U8* = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++."
+  if argc > 1
+    word_ptr = argv[1]
+  end
+  # TODO
+  # Perhaps this could be constructed from the same pointer, instead of
+  # allocating a new one and copying it. It would probably require constructors
+  # to be a real feature, but slice constructors are a special case anyway
+  word U8[] = U8[](word_ptr.c_len)
+  copy(word_ptr, word.ptr, word.size)
+
+  instructions Instruction[] = parse(word)
+
+  pc I32 = 0
+  ptr I32 = 0
+  memory U8[] = U8[](65535)
+
+  # TODO
+  # This could be simplified if i had better iteration, i.e. something akin
+  # to a for-each loop
+  i I32 = 0
+  # TODO
+  # There should be an easier way to zero-fill a slice
+  while i < memory.size
+    memory.set_at(i, ?\0)
+    i = i + 1
+  end
+
+  while pc < instructions.size
+    instr Instruction = instructions[pc]
+    if instr::type == 1
+      ptr = ptr + 1
+    else if instr::type == 2
+      ptr = ptr - 1
+    else if instr::type == 3
+      # TODO
+      # There should be a better way to write integer literals of a certain type
+      # TODO
+      # Integer literals should be able to auto-cast themselves to the required size
+      memory.set_at(ptr, memory[ptr] + U8(1))
+    else if instr::type == 4
+      memory.set_at(ptr, memory[ptr] - U8(1))
+    else if instr::type == 5
+      printf("%c", memory[ptr])
+    else if instr::type == 7
+      if memory[ptr] == ?\0
+        pc = instr::payload
+      end
+    else if instr::type == 8
+      if memory[ptr] != ?\0
+        pc = instr::payload
+      end
+    else
+      return 2
+    end
+    pc = pc + 1
+  end
+
+  return 0
+end
