@@ -165,7 +165,7 @@ class Yume::Parser(*T)
         loop do
           field = peek? {
             t = parse_typed_name?
-            t if t && consume?(:sep)
+            t if t && consume_sep?
           }
           break if field.nil?
           fields << field
@@ -327,6 +327,16 @@ class Yume::Parser(*T)
     end
   end
 
+  def consume_sep? : Bool
+    return false if @src.eof?
+    if consume?(:sep)
+      while consume?(:sep)
+      end
+      return true
+    end
+    return false
+  end
+
   def consume_sep
     return if @src.eof?
     consume(:sep)
@@ -433,7 +443,11 @@ class Yume::Parser(*T)
 
   def parse_type : AST::Type
     positioned do
-      type = AST::SimpleType.new consume_val :_uword, String
+      if consume?(:self)
+        type = AST::SelfType.new
+      else
+        type = AST::SimpleType.new consume_val :_uword, String
+      end
       loop do
         if consume?(:"[")
           consume(:"]")
@@ -450,9 +464,13 @@ class Yume::Parser(*T)
 
   def parse_type? : AST::Type?
     positioned? do
-      uword = consume_val? :_uword, String
-      return nil if uword.nil?
-      type = AST::SimpleType.new(uword)
+      if consume?(:self)
+        type = AST::SelfType.new
+      elsif uword = consume_val? :_uword, String
+        type = AST::SimpleType.new(uword)
+      else
+        return nil
+      end
       loop do
         if peek?(:"[") { peek?(:"]") }
           consume(:"[")

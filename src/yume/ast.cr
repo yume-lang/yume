@@ -223,6 +223,8 @@ module Yume::AST
     end
   end
 
+  ast_record SelfType < Type
+
   record TypedName, type : Type, name : String do
     include AST
   end

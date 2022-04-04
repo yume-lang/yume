@@ -188,12 +188,35 @@ class Yume::Compiler
   @libc = Hash(String, LLVM::Function).new
   @fns = Hash(AST::FunctionDefinition, LLVM::Function?).new
   @types = Hash(String, Type).new
+  @fn_self_types = Hash(AST::FunctionDefinition, Type).new
   getter! cur_ast_fn : AST::FunctionDefinition?
   getter! cur_llvm_fn : LLVM::Function?
   @fn_scope = Hash(String, Value).new
   @type_scope = Hash(String, Type).new
   @instantiation_queue = Deque({AST::FunctionDefinition, LLVM::Function, Hash(String, Type)?}).new
   @terminated = false
+
+  def declare_body(body : Array(AST::Statement))
+    body.each do |s|
+      case s
+      when AST::FunctionDefinition
+        if self_type = @type_scope[""]?
+          @fn_self_types[s] = self_type
+        end
+        f = declare(s)
+        next if f.nil?
+        if (s.name.name == "main" && s.args.empty?) || (s.decl.external?)
+          f.name = s.name.name
+          f.linkage = LLVM::Linkage::External
+        else
+          f.linkage = LLVM::Linkage::Internal
+        end
+      when AST::StructDefinition
+        @types[s.name] = @type_scope[""] = StructType.new(s.name, s.fields.map { |i| resolve_type i })
+        declare_body s.body
+      end
+    end
+  end
 
   def initialize(@program : AST::Program)
     @ctx = LLVM::Context.new
@@ -211,25 +234,7 @@ class Yume::Compiler
     @types["U64"] = Type::UINT_64
     @types["Bool"] = Type::BOOL
 
-    @program.statements.each do |s|
-      case s
-      when AST::FunctionDefinition
-        f = declare(s)
-        next if f.nil?
-        if (s.name.name == "main" && s.args.empty?) || (s.decl.external?)
-          f.name = s.name.name
-          f.linkage = LLVM::Linkage::External
-        else
-          f.linkage = LLVM::Linkage::Internal
-        end
-      when AST::StructDefinition
-        @types[s.name] = StructType.new(s.name, s.fields.map { |i| resolve_type i })
-      end
-    end
-    @fns.each do |k, v|
-      next if v.nil?
-      @instantiation_queue << {k, v, nil}
-    end
+    declare_body @program.statements
 
     until @instantiation_queue.empty?
       k, v, gen = @instantiation_queue.pop
@@ -281,7 +286,7 @@ class Yume::Compiler
     end
     return nil if fn_def.nil?
     if gen = fn_def.decl.generics
-      if gen.args.any?(&.type.== type.type)
+      if gen.args.any? { |i| i.is_a? AST::SimpleType && i.type == type.type }
         GenericType.new(type.type)
       end
     end
@@ -299,6 +304,7 @@ class Yume::Compiler
     in AST::PtrType    then PointerType.new(resolve_type(type.type, fn_def, use_type_scope))
     in AST::SliceType  then SliceType.new(resolve_type(type.type, fn_def, use_type_scope))
     in AST::SimpleType then resolve_generic(type, fn_def, use_type_scope) || @types[type.type]
+    in AST::SelfType   then @type_scope[""]? || @fn_self_types[fn_def || cur_ast_fn]
     in AST::Type       then raise "Invalid type #{type}"
     end
   end
@@ -485,8 +491,6 @@ class Yume::Compiler
         if matching_fn.nil?
           matching_fn = declare(matching_fn_def, always_instantiate: true).not_nil!
           matching_fn.linkage = LLVM::Linkage::Internal
-          # instantiate(matching_fn_def, matching_fn)
-          @instantiation_queue << {matching_fn_def, matching_fn, @type_scope.dup}
         end
         val = Value.new(@builder.call(matching_fn, args.map(&.llvm)), resolve_type(matching_fn_def.not_nil!.return_type))
         @type_scope.clear
@@ -680,14 +684,18 @@ class Yume::Compiler
       @fns[fn] = nil
     else
       arg_types = fn.args.map { |i| llvm_type(resolve_type(i.type, fn)) }
+      ret_type = llvm_type(resolve_type(fn.return_type, fn))
       if fn.is_a? AST::PrimitiveDefinition
         f = nil
       else
         llvm_name = "ym:#{fn.name.name}(#{fn.args.map { |i| resolve_type(i.type).to_s }.join ","})"
-        f = @mod.functions.add llvm_name, arg_types, llvm_type(resolve_type(fn.return_type, fn))
+        f = @mod.functions.add llvm_name, arg_types, ret_type
       end
       unless fn.decl.generics
         @fns[fn] = f
+        if f
+          @instantiation_queue << {fn, f, @type_scope.dup}
+        end
       end
       f
     end

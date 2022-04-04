@@ -4,23 +4,21 @@ __primitive__(libc) __varargs__ printf(format U8*) I32
 struct Vector
   x I32
   y I32
-end
 
-# TODO
-# These field accessors will be implicitly defined one day
-fn x(i Vector) I32 = i::x
-fn y(i Vector) I32 = i::y
+  # TODO
+  # These field accessors will be implicitly defined one day
+  fn x(i self) I32 = i::x
+  fn y(i self) I32 = i::y
 
-fn x=(i Vector, j I32)
-  i::x = j
-end
-fn y=(i Vector, j I32)
-  i::y = j
-end
+  fn x=(i self, j I32)
+    i::x = j
+  end
+  fn y=(i self, j I32)
+    i::y = j
+  end
 
-# TODO
-# This should go inside of the struct declaration
-fn :+(a Vector, b Vector) Vector = Vector(a::x + b::x, a::y + b::y)
+  fn :+(a self, b self) self = self(a::x + b::x, a::y + b::y)
+end
 
 fn main() I32
   let a = Vector(2, 3)
