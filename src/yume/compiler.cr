@@ -608,6 +608,7 @@ class Yume::Compiler
       case target = st.target
       when AST::Call
         augmented_call = target.copy_with(
+          args: target.args.dup,
           name: target.name.copy_with(name:
             target.name.name + "="
           )
