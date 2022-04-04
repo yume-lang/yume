@@ -188,16 +188,12 @@ class Yume::Parser(*T)
           raise "Uninitialized variable declaration not yet supported"
         end
       else
-        assignment = peek? {
-          t = consume_val? :_word, String
-          t if t && consume?(:"=")
-        }
-        if assignment
+        expression = parse_expression
+        if consume?(:"=")
           value = parse_expression
           consume_sep
-          AST::AssignmentStatement.new assignment, value
+          AST::AssignmentStatement.new expression, value
         else
-          expression = parse_expression
           consume_sep
           AST::ExpressionStatement.new expression
         end
@@ -344,7 +340,7 @@ class Yume::Parser(*T)
       if consume?(:__extern__)
         fn_external = true
       end
-      fn_name = parse_fn_name
+      fn_name = parse_fn_name(allow_assignment: true)
       fn_generics = parse_fn_generics
       fn_args = parse_fn_args
       fn_return = parse_type?
@@ -366,13 +362,17 @@ class Yume::Parser(*T)
     raise "Invalid operator fn, expected one of"
   end
 
-  def parse_fn_name : AST::FnName
+  def parse_fn_name(allow_assignment = false) : AST::FnName
     positioned do
       if consume?(:":")
         name = parse_operator_fn_name
         AST::FnName.new(":" + name)
       else
-        AST::FnName.new consume_val :_word, String
+        name = consume_val :_word, String
+        if allow_assignment && consume?(:"=")
+          name += "="
+        end
+        AST::FnName.new(name)
       end
     end
   end

@@ -531,6 +531,19 @@ class Yume::Compiler
       raise "Unknown field #{ex.field} of object #{object_type}" if matching_field.nil?
       field_val = @builder.extract_value(@builder.load(object), fields.index!(matching_field), "field.#{ex.field}")
       Value.new field_val, matching_field.type
+    when AST::FieldModification
+      object = expression ex.target.base
+      value = expression ex.value
+      object_type = object.type
+      unless object_type.is_a? StructType
+        raise "Cannot access the field of a non-struct type #{object_type}"
+      end
+      fields = object_type.fields
+      matching_field = fields.find(&.name.== ex.target.field)
+      raise "Unknown field #{ex.target.field} of object #{object_type}" if matching_field.nil?
+      field_val = @builder.inbounds_gep(object.llvm, @ctx.int32.const_int(0), @ctx.int32.const_int(fields.index!(matching_field)), "field.#{ex.target.field}")
+      stored_val = @builder.store(value, field_val)
+      Value.new stored_val, value.type
     else
       # STDERR.puts "Unknown expression #{ex}"
       # Value.new(llvm_type(resolve_type(cur_ast_fn.return_type)).null, resolve_type cur_ast_fn.return_type)
@@ -562,8 +575,20 @@ class Yume::Compiler
       @fn_scope[st.name] = Value.new(lv, type)
       @builder.store(value, lv)
     when AST::AssignmentStatement
-      raise "Not declared #{st}" unless @fn_scope.has_key?(st.name)
-      @builder.store(expression(st.value), @fn_scope[st.name].llvm)
+      case target = st.target
+      when AST::Call
+        augmented_call = target.copy_with(
+          name: target.name.copy_with(name:
+            target.name.name + "="
+          )
+        )
+        augmented_call.args << st.value
+        expression(augmented_call)
+      when AST::FieldAccess
+        expression(AST::FieldModification.new(target, st.value))
+      else
+        raise "Not implemented"
+      end
     when AST::ExpressionStatement
       expression(st.expression)
     when AST::IfStatement

@@ -128,6 +128,8 @@ module Yume::AST
 
   ast_record FieldAccess < Expression, base : Expression, field : String
 
+  ast_record FieldModification < Expression, target : FieldAccess, value : Expression
+
   abstract class Statement
     include AST
   end
@@ -160,10 +162,10 @@ module Yume::AST
 
   class AssignmentStatement < Statement
     include AST
-    getter name : String
+    getter target : Expression
     getter value : Expression
 
-    def initialize(@name, @value)
+    def initialize(@target, @value)
     end
   end
 
