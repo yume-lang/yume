@@ -376,6 +376,9 @@ class Yume::Parser(*T)
     positioned do
       if consume?(:":")
         name = parse_operator_fn_name
+        if allow_assignment && consume?(:"=")
+          name += "="
+        end
         AST::FnName.new(":" + name)
       else
         name = consume_val :_word, String
