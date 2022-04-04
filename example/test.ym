@@ -13,7 +13,7 @@ __primitive__(libc) __varargs__ printf(format U8*) I32
 fn foo<T>(x T) T = x
 
 fn collatz(int I32) I32
-  k I32 = 0
+  let k I32 = 0
   while int > 1
     printf("%d -> ", int)
     if int % 2 == 0

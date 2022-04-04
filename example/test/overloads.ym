@@ -21,6 +21,6 @@ fn main() I32
   foo(4, 5)
   foo(?a, 4)
   foo(5, ?b)
-  d Test = Test(U8[](0), 0)
+  let d Test = Test(U8[](0), 0)
   return d.capacity
 end

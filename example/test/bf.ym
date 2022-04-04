@@ -25,7 +25,7 @@ fn :[]<T>(slice T[], offset I32) T = slice.ptr[offset]
 fn set_at<T>(slice T[], offset I32, val T) T = slice.ptr.set_at(offset, val)
 
 fn copy<T>(source T*, dest T*, amount I32)
-  count I32 = amount
+  let count I32 = amount
   while count > 0
     count = count - 1
     dest.set_at(count, source[count])
@@ -33,13 +33,13 @@ fn copy<T>(source T*, dest T*, amount I32)
 end
 
 fn dup<T>(arr T[], extra I32) T[]
-  dup_t T[] = arr.dup_internal(extra)
+  let dup_t T[] = arr.dup_internal(extra)
   copy(arr.ptr, dup_t.ptr, arr.size)
   return dup_t
 end
 
 fn dup_append<T>(arr T[], last T) T[]
-  dup_t T[] = arr.dup_internal(1)
+  let dup_t T[] = arr.dup_internal(1)
   copy(arr.ptr, dup_t.ptr, arr.size)
   dup_t.set_at(arr.size, last)
   return dup_t
@@ -48,10 +48,10 @@ end
 fn c_str(str U8[]) U8[] = str.dup_append(?\0)
 
 fn c_len(ptr U8*) I32
-  terminated I32 = 0
-  idx I32 = 0
+  let terminated I32 = 0
+  let idx I32 = 0
   while terminated == 0
-    chr U8 = ptr[idx]
+    let chr U8 = ptr[idx]
     if chr == ?\0
       terminated = 1
     else
@@ -72,15 +72,15 @@ struct Instruction
 end
 
 fn parse(input U8[]) Instruction[]
-  i I32 = 0
-  instructions Instruction[] = Instruction[](input.size)
+  let i I32 = 0
+  let instructions Instruction[] = Instruction[](input.size)
   # TODO
   # This should be dynamically sized...
-  stack I32[] = I32[](512)
-  stack_i I32 = 0
+  let stack I32[] = I32[](512)
+  let stack_i I32 = 0
   while i < input.size
-    chr U8 = input[i]
-    instruction Instruction = Instruction(0, 0)
+    let chr U8 = input[i]
+    let instruction Instruction = Instruction(0, 0)
     # TODO
     # This could be simplified if I had the `then` shorthand, and maybe
     # eventually, switch-like stuff
@@ -108,7 +108,7 @@ fn parse(input U8[]) Instruction[]
       stack_i = stack_i + 1
     else if chr == ?]
       stack_i = stack_i - 1
-      jump_target I32 = stack[stack_i]
+      let jump_target I32 = stack[stack_i]
       instruction = Instruction(8, jump_target)
       # TODO
       # This could be simplified if I had setters
@@ -122,7 +122,7 @@ end
 
 fn __extern__ main(argc I32, argv U8**) I32
   # Hello world example function
-  word_ptr U8* = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++."
+  let word_ptr U8* = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++."
   if argc > 1
     word_ptr = argv[1]
   end
@@ -130,19 +130,19 @@ fn __extern__ main(argc I32, argv U8**) I32
   # Perhaps this could be constructed from the same pointer, instead of
   # allocating a new one and copying it. It would probably require constructors
   # to be a real feature, but slice constructors are a special case anyway
-  word U8[] = U8[](word_ptr.c_len)
+  let word U8[] = U8[](word_ptr.c_len)
   copy(word_ptr, word.ptr, word.size)
 
-  instructions Instruction[] = parse(word)
+  let instructions Instruction[] = parse(word)
 
-  pc I32 = 0
-  ptr I32 = 0
-  memory U8[] = U8[](65535)
+  let pc I32 = 0
+  let ptr I32 = 0
+  let memory U8[] = U8[](65535)
 
   # TODO
   # This could be simplified if i had better iteration, i.e. something akin
   # to a for-each loop
-  i I32 = 0
+  let i I32 = 0
   # TODO
   # There should be an easier way to zero-fill a slice
   while i < memory.size
@@ -151,7 +151,7 @@ fn __extern__ main(argc I32, argv U8**) I32
   end
 
   while pc < instructions.size
-    instr Instruction = instructions[pc]
+    let instr Instruction = instructions[pc]
     if instr::type == 1
       ptr = ptr + 1
     else if instr::type == 2

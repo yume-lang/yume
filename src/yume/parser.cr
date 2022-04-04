@@ -173,29 +173,28 @@ class Yume::Parser(*T)
         end
         consume_sep
         AST::StructDefinition.new(name, fields, body)
-      else
-        declaration = peek? {
-          t = parse_typed_name?
-          t if t && consume?(:"=")
-        }
-        if declaration
+      elsif consume? :let
+        declaration = parse_typed_name
+        if consume?(:"=")
           value = parse_expression
           consume_sep
           AST::DeclarationStatement.new declaration, value
         else
-          assignment = peek? {
-            t = consume_val? :_word, String
-            t if t && consume?(:"=")
-          }
-          if assignment
-            value = parse_expression
-            consume_sep
-            AST::AssignmentStatement.new assignment, value
-          else
-            expression = parse_expression
-            consume_sep
-            AST::ExpressionStatement.new expression
-          end
+          raise "Uninitialized variable declaration not yet supported"
+        end
+      else
+        assignment = peek? {
+          t = consume_val? :_word, String
+          t if t && consume?(:"=")
+        }
+        if assignment
+          value = parse_expression
+          consume_sep
+          AST::AssignmentStatement.new assignment, value
+        else
+          expression = parse_expression
+          consume_sep
+          AST::ExpressionStatement.new expression
         end
       end
     end

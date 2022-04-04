@@ -21,7 +21,7 @@ fn fizzbuzz(num I32)
 end
 
 fn main() I32
-  num I32 = 0
+  let num I32 = 0
   while num < 100
     num = num + 1
     fizzbuzz(num)
