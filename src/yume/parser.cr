@@ -115,7 +115,9 @@ class Yume::Parser(*T)
         AST::WhileStatement.new condition, body
       elsif consume? :if
         condition = parse_expression
-        consume_sep
+        unless consume? :then
+          consume_sep
+        end
         clauses = [] of AST::IfClause
         current_clause_body = [] of AST::Statement
         else_body = [] of AST::Statement
@@ -125,7 +127,9 @@ class Yume::Parser(*T)
             if consume? :if
               clauses << AST::IfClause.new condition, current_clause_body
               condition = parse_expression
-              consume_sep
+              unless consume? :then
+                consume_sep
+              end
               current_clause_body = [] of AST::Statement
             else
               consume_sep

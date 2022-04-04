@@ -83,20 +83,13 @@ fn parse(input U8[]) Instruction[]
     let chr U8 = input[i]
     let instruction = Instruction(0, 0)
     # TODO
-    # This could be simplified if I had the `then` shorthand, and maybe
-    # eventually, switch-like stuff
-    if chr == ?>
-      instruction = Instruction(1, 0)
-    else if chr == ?<
-      instruction = Instruction(2, 0)
-    else if chr == ?+
-      instruction = Instruction(3, 0)
-    else if chr == ?-
-      instruction = Instruction(4, 0)
-    else if chr == ?.
-      instruction = Instruction(5, 0)
-    else if chr == ?,
-      instruction = Instruction(6, 0)
+    # This could be simplified if I had switch-like stuff
+    if      chr == ?> then instruction = Instruction(1, 0)
+    else if chr == ?< then instruction = Instruction(2, 0)
+    else if chr == ?+ then instruction = Instruction(3, 0)
+    else if chr == ?- then instruction = Instruction(4, 0)
+    else if chr == ?. then instruction = Instruction(5, 0)
+    else if chr == ?, then instruction = Instruction(6, 0)
     else if chr == ?[
       instruction = Instruction(7, -1)
       # TODO
