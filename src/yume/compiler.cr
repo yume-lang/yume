@@ -552,16 +552,17 @@ class Yume::Compiler
       expression(st.expression)
     when AST::IfStatement
       merge_bb = cur_llvm_fn.basic_blocks.append("if.cont")
-      if st.else_clause
-        else_bb = cur_llvm_fn.basic_blocks.append("if.else")
-      end
       next_test_bb = cur_llvm_fn.basic_blocks.append("if.test")
+      else_bb : LLVM::BasicBlock? = nil
       @builder.br next_test_bb
       body_terminated = true
       st.clauses.each_with_index do |clause, i|
         test_bb = next_test_bb
         body_bb = cur_llvm_fn.basic_blocks.append("if.then")
         if i + 1 >= st.clauses.size
+          if else_bb.nil? && st.else_clause
+            else_bb = cur_llvm_fn.basic_blocks.append("if.else")
+          end
           next_test_bb = else_bb || merge_bb
         else
           next_test_bb = cur_llvm_fn.basic_blocks.append("if.test")
