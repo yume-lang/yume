@@ -166,7 +166,7 @@ class Yume::Compiler
     def to_llvm(ctx : LLVM::Context) : LLVM::Type
       if @llvm_struct.value.null?
         @llvm_struct.value = Pointer(LLVM::Type).malloc
-        @llvm_struct.value.value = ctx.struct(@fields.map(&.type.to_llvm ctx), @name)
+        @llvm_struct.value.value = ctx.struct(@fields.map(&.type.to_llvm ctx), @name).pointer
       end
       @llvm_struct.value.value
     end
@@ -496,12 +496,13 @@ class Yume::Compiler
       struct_type = resolve_type ex.type
       if struct_type.is_a? StructType
         # TODO: Does this leak stack memory when put inside a loop? I think it does, but I don't know how this should otherwise be done
-        instance = @builder.alloca llvm_type struct_type
+        # TODO: Solve this by just making it a struct constructor
+        instance = @builder.alloca llvm_type(struct_type).element_type
         ex.args.each_with_index do |field, i|
           field_ptr = @builder.inbounds_gep instance, @ctx.int32.const_int(0), @ctx.int32.const_int(i), "ctor.field.#{struct_type.fields[i].name}"
           @builder.store expression(field), field_ptr
         end
-        Value.new @builder.load(instance), struct_type
+        Value.new instance, struct_type
       elsif struct_type.is_a? SliceType
         val_type = struct_type.value
         arr_size = expression ex.args[0]
@@ -528,7 +529,7 @@ class Yume::Compiler
       fields = object_type.fields
       matching_field = fields.find(&.name.== ex.field)
       raise "Unknown field #{ex.field} of object #{object_type}" if matching_field.nil?
-      field_val = @builder.extract_value(object, fields.index!(matching_field), "field.#{ex.field}")
+      field_val = @builder.extract_value(@builder.load(object), fields.index!(matching_field), "field.#{ex.field}")
       Value.new field_val, matching_field.type
     else
       # STDERR.puts "Unknown expression #{ex}"

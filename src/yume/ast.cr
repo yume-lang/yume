@@ -77,6 +77,10 @@ module Yume::AST
 
       {{yield}}
 
+      def copy_with({{ *prop_names.map { |field| "#{field.id} _#{field.id} = @#{field.id}".id } }})
+        self.class.new({{ *prop_names.map { |field| "_#{field.id}".id } }})
+      end
+
       def_equals_and_hash {{ *prop_names.map { |field| "@#{field.id}".id } }}
     end
   end
@@ -116,26 +120,9 @@ module Yume::AST
     def_equals_and_hash @type, @val
   end
 
-  struct FnName
-    include AST
-    getter name : String
+  ast_record FnName, name : String
 
-    def initialize(@name : String)
-    end
-
-    def_equals_and_hash @name
-  end
-
-  class Call < Expression
-    include AST
-    getter name : FnName
-    getter args : Array(Expression)
-
-    def initialize(@name, @args)
-    end
-
-    def_equals_and_hash @name, @args
-  end
+  ast_record Call < Expression, name : FnName, args : Array(Expression)
 
   ast_record CtorCall < Expression, type : Type, args : Array(Expression)
 
