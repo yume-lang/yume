@@ -190,7 +190,6 @@ class Yume::Compiler
   @types = Hash(String, Type).new
   getter! cur_ast_fn : AST::FunctionDefinition?
   getter! cur_llvm_fn : LLVM::Function?
-  getter! cur_ret_merge : LLVM::BasicBlock?
   @fn_scope = Hash(String, Value).new
   @type_scope = Hash(String, Type).new
   @instantiation_queue = Deque({AST::FunctionDefinition, LLVM::Function, Hash(String, Type)?}).new
@@ -257,20 +256,8 @@ class Yume::Compiler
     end
     case k
     in AST::LongFunctionDefinition
-      if ret_type = k.return_type
-        type = resolve_type ret_type
-        @fn_scope[""] = Value.new(@builder.alloca(llvm_type(type), ":return"), type)
-      end
-      @cur_ret_merge = cur_llvm_fn.basic_blocks.append("return")
       compile_body k.body
-      return_value = @fn_scope[""]?
-      if return_value.nil? && !@terminated
-        @builder.br cur_ret_merge
-      end
-      @builder.position_at_end cur_ret_merge
-      if return_value
-        @builder.ret @builder.load(return_value.llvm)
-      else
+      unless @terminated
         @builder.ret
       end
     in AST::ShortFunctionDefinition
@@ -545,9 +532,10 @@ class Yume::Compiler
     case st
     when AST::ReturnStatement
       if expr = st.expression
-        @builder.store(expression(expr).llvm, @fn_scope[""].llvm)
+        @builder.ret(expression(expr).llvm)
+      else
+        @builder.ret
       end
-      @builder.br(cur_ret_merge)
       @terminated = true
     when AST::DeclarationStatement
       raise "Duplicate declaration #{st}" if @fn_scope.has_key?(st.name.name)
