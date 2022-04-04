@@ -5,7 +5,7 @@ __primitive__(libc) putchar(char I32) I32
 __primitive__(slice_size) size<T>(arr T[]) I32
 __primitive__(slice_ptr) ptr<T>(arr T[]) T*
 __primitive__(get_at) :[]<T>(ptr T*, offset I32) T
-__primitive__(set_at) set_at<T>(ptr T*, offset I32, val T) T
+__primitive__(set_at) :[]=<T>(ptr T*, offset I32, val T) T
 __primitive__(slice_dup) dup_internal<T>(arr T[], extra I32) T[]
 
 __primitive__(add) :+(a I32, b I32) I32
@@ -23,13 +23,16 @@ __primitive__(icmp_gt) :>(a I32, b I32) Bool
 __primitive__(icmp_lt) :<(a I32, b I32) Bool
 
 fn :[]<T>(slice T[], offset I32) T = slice.ptr[offset]
-fn set_at<T>(slice T[], offset I32, val T) T = slice.ptr.set_at(offset, val)
+fn :[]=<T>(slice T[], offset I32, val T) T
+  slice.ptr[offset] = val
+  return val
+end
 
 fn copy<T>(source T*, dest T*, amount I32)
   let count I32 = amount
   while count > 0
     count = count - 1
-    dest.set_at(count, source[count])
+    dest[count] = source[count]
   end
 end
 
@@ -42,7 +45,7 @@ end
 fn dup_append<T>(arr T[], last T) T[]
   let dup_t T[] = arr.dup_internal(1)
   copy(arr.ptr, dup_t.ptr, arr.size)
-  dup_t.set_at(arr.size, last)
+  dup_t[arr.size] = last
   return dup_t
 end
 
@@ -92,9 +95,7 @@ fn parse(input U8[]) Instruction[]
     else if chr == ?, then instruction = Instruction(6, 0)
     else if chr == ?[
       instruction = Instruction(7, -1)
-      # TODO
-      # This could be simplified if I had indexed setters `[]=`
-      stack.set_at(stack_i, i)
+      stack[stack_i] = i
       # TODO
       # This could be simplified if I had fused `+=`
       stack_i = stack_i + 1
@@ -102,11 +103,9 @@ fn parse(input U8[]) Instruction[]
       stack_i = stack_i - 1
       let jump_target I32 = stack[stack_i]
       instruction = Instruction(8, jump_target)
-      # TODO
-      # This could be simplified if I had setters
-      instructions.set_at(jump_target, Instruction(7, i))
+      instructions[jump_target]::payload = i
     end
-    instructions.set_at(i, instruction)
+    instructions[i] = instruction
     i = i + 1
   end
   return instructions
@@ -138,7 +137,7 @@ fn __extern__ main(argc I32, argv U8**) I32
   # TODO
   # There should be an easier way to zero-fill a slice
   while i < memory.size
-    memory.set_at(i, ?\0)
+    memory[i] = ?\0
     i = i + 1
   end
 
@@ -153,9 +152,9 @@ fn __extern__ main(argc I32, argv U8**) I32
       # There should be a better way to write integer literals of a certain type
       # TODO
       # Integer literals should be able to auto-cast themselves to the required size
-      memory.set_at(ptr, memory[ptr] + U8(1))
+      memory[ptr] = memory[ptr] + U8(1)
     else if instr::type == 4
-      memory.set_at(ptr, memory[ptr] - U8(1))
+      memory[ptr] = memory[ptr] - U8(1)
     else if instr::type == 5
       printf("%c", memory[ptr])
     else if instr::type == 7
