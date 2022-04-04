@@ -244,8 +244,8 @@ class Yume::Compiler
   end
 
   def instantiate(k : AST::FunctionDefinition, v : LLVM::Function)
-    bb = v.basic_blocks.append "entry"
-    @builder.position_at_end bb
+    decl_bb = v.basic_blocks.append "decl"
+    @builder.position_at_end decl_bb
     @fn_scope.clear
     @cur_ast_fn = k
     @cur_llvm_fn = v
@@ -254,12 +254,20 @@ class Yume::Compiler
       lv = @fn_scope[a.name] = Value.new(@builder.alloca(llvm_type(type), a.name), type)
       @builder.store(v.params[i], lv.llvm)
     end
+
     case k
     in AST::LongFunctionDefinition
+      entry_bb = v.basic_blocks.append "entry"
+      @builder.position_at_end entry_bb
+
       compile_body k.body
+
       unless @terminated
         @builder.ret
       end
+
+      @builder.position_at_end decl_bb
+      @builder.br entry_bb
     in AST::ShortFunctionDefinition
       @builder.ret expression(k.expression)
     in AST::FunctionDefinition
@@ -374,7 +382,7 @@ class Yume::Compiler
     when AST::StringLiteral
       str = ex.val.gsub("\\n", "\n") # HACK
       str_val = @ctx.const_string str
-      s = @mod.globals.add(str_val.type, "str:" + str)
+      s = @mod.globals.add(str_val.type, "str:" + str.hash.to_s(16))
       s.global_constant = true
       s.linkage = LLVM::Linkage::Internal
       s.initializer = str_val
@@ -487,6 +495,7 @@ class Yume::Compiler
     when AST::CtorCall
       struct_type = resolve_type ex.type
       if struct_type.is_a? StructType
+        # TODO: Does this leak stack memory when put inside a loop? I think it does, but I don't know how this should otherwise be done
         instance = @builder.alloca llvm_type struct_type
         ex.args.each_with_index do |field, i|
           field_ptr = @builder.inbounds_gep instance, @ctx.int32.const_int(0), @ctx.int32.const_int(i), "ctor.field.#{struct_type.fields[i].name}"
@@ -540,11 +549,9 @@ class Yume::Compiler
     when AST::DeclarationStatement
       raise "Duplicate declaration #{st}" if @fn_scope.has_key?(st.name.name)
       type = resolve_type st.name.type
-      # FIXME
-      # This is.. not great, because declarations within loops will quite literally exhaust the entire stack space
-      # Declarations should go at the head of the function, similar to arguments and the return value
-      lv = @fn_scope[st.name.name] = Value.new(@builder.alloca(llvm_type(type), st.name.name), type)
-      @builder.store(expression(st.value), lv.llvm)
+      lv = hoisted { @builder.alloca(llvm_type(type), st.name.name) }
+      @fn_scope[st.name.name] = Value.new(lv, type)
+      @builder.store(expression(st.value), lv)
     when AST::AssignmentStatement
       raise "Not declared #{st}" unless @fn_scope.has_key?(st.name)
       @builder.store(expression(st.value), @fn_scope[st.name].llvm)
@@ -611,6 +618,15 @@ class Yume::Compiler
       resolve_type(fn.args[i].type, fn, false)
     end
     {args, resolve_type(fn.return_type, fn, false)}
+  end
+
+  def hoisted(&)
+    entry = cur_llvm_fn.basic_blocks.first
+    current = @builder.insert_block
+    @builder.position_at_end entry
+    r = yield
+    @builder.position_at_end current
+    r
   end
 
   def compile_body(sts : Array(AST::Statement))
