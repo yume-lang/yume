@@ -174,11 +174,12 @@ class Yume::Parser(*T)
         consume_sep
         AST::StructDefinition.new(name, fields, body)
       elsif consume? :let
-        declaration = parse_typed_name
+        name = consume_val :_word, String
+        type = parse_type?
         if consume?(:"=")
           value = parse_expression
           consume_sep
-          AST::DeclarationStatement.new declaration, value
+          AST::DeclarationStatement.new type, name, value
         else
           raise "Uninitialized variable declaration not yet supported"
         end

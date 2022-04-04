@@ -73,14 +73,14 @@ end
 
 fn parse(input U8[]) Instruction[]
   let i I32 = 0
-  let instructions Instruction[] = Instruction[](input.size)
+  let instructions = Instruction[](input.size)
   # TODO
   # This should be dynamically sized...
-  let stack I32[] = I32[](512)
+  let stack = I32[](512)
   let stack_i I32 = 0
   while i < input.size
     let chr U8 = input[i]
-    let instruction Instruction = Instruction(0, 0)
+    let instruction = Instruction(0, 0)
     # TODO
     # This could be simplified if I had the `then` shorthand, and maybe
     # eventually, switch-like stuff
@@ -130,14 +130,14 @@ fn __extern__ main(argc I32, argv U8**) I32
   # Perhaps this could be constructed from the same pointer, instead of
   # allocating a new one and copying it. It would probably require constructors
   # to be a real feature, but slice constructors are a special case anyway
-  let word U8[] = U8[](word_ptr.c_len)
+  let word = U8[](word_ptr.c_len)
   copy(word_ptr, word.ptr, word.size)
 
   let instructions Instruction[] = parse(word)
 
   let pc I32 = 0
   let ptr I32 = 0
-  let memory U8[] = U8[](65535)
+  let memory = U8[](65535)
 
   # TODO
   # This could be simplified if i had better iteration, i.e. something akin

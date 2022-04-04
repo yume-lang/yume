@@ -16,11 +16,11 @@ fn y(i Vector) I32 = i::y
 fn :+(a Vector, b Vector) Vector = Vector(a::x + b::x, a::y + b::y)
 
 fn main() I32
-  let a Vector = Vector(2, 3)
-  let b Vector = Vector(5, 1)
+  let a = Vector(2, 3)
+  let b = Vector(5, 1)
   printf("a x: %d, y: %d\n", a.x, a.y)
   printf("b x: %d, y: %d\n", b.x, b.y)
-  let c Vector = a + b
+  let c = a + b
   printf("c x: %d, y: %d\n", c.x, c.y)
   return 0
 end

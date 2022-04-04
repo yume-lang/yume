@@ -163,10 +163,11 @@ module Yume::AST
 
   class DeclarationStatement < Statement
     include AST
-    getter name : TypedName
+    getter type : Type?
+    getter name : String
     getter value : Expression
 
-    def initialize(@name, @value)
+    def initialize(@type, @name, @value)
     end
   end
 

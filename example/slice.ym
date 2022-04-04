@@ -39,7 +39,7 @@ end
 fn c_str(str U8[]) U8[] = str.dup_append(?\0)
 
 fn hello()
-  let a U8[] = U8[?h, ?e, ?l, ?l, ?o]
+  let a = U8[?h, ?e, ?l, ?l, ?o]
   printf("string: %s\n", a.c_str)
   printf("size of a: %d\n", a.size)
   printf("size of a.c_str: %d\n", a.c_str.size)

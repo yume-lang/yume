@@ -547,11 +547,19 @@ class Yume::Compiler
       end
       @terminated = true
     when AST::DeclarationStatement
-      raise "Duplicate declaration #{st}" if @fn_scope.has_key?(st.name.name)
-      type = resolve_type st.name.type
-      lv = hoisted { @builder.alloca(llvm_type(type), st.name.name) }
-      @fn_scope[st.name.name] = Value.new(lv, type)
-      @builder.store(expression(st.value), lv)
+      raise "Duplicate declaration #{st}" if @fn_scope.has_key?(st.name)
+
+      # TODO: Why does the type scope need to be saved here? Expressions probably shouldn't
+      # clobber the type scope like this, need to investigate if it can cause issues down the road
+      saved_type_scope = @type_scope
+      value = expression(st.value)
+      @type_scope = saved_type_scope
+      type = st.type.nil? ? value.type : resolve_type st.type
+
+      lv = hoisted { @builder.alloca(llvm_type(type), st.name) }
+
+      @fn_scope[st.name] = Value.new(lv, type)
+      @builder.store(value, lv)
     when AST::AssignmentStatement
       raise "Not declared #{st}" unless @fn_scope.has_key?(st.name)
       @builder.store(expression(st.value), @fn_scope[st.name].llvm)
