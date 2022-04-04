@@ -11,6 +11,7 @@ __primitive__(slice_dup) dup_internal<T>(arr T[], extra I32) T[]
 __primitive__(add) :+(a I32, b I32) I32
 __primitive__(add) :+(a U8, b U8) U8
 __primitive__(sub) :-(a I32, b I32) I32
+fn :-(a I32) I32 = 0 - a
 __primitive__(sub) :-(a U8, b U8) U8
 __primitive__(mod) :%(a I32, b I32) I32
 __primitive__(mul) :*(a I32, b I32) I32
@@ -97,9 +98,7 @@ fn parse(input U8[]) Instruction[]
     else if chr == ?,
       instruction = Instruction(6, 0)
     else if chr == ?[
-      # TODO
-      # This could be simplified if I had negative literals `-1`
-      instruction = Instruction(7, 0-1)
+      instruction = Instruction(7, -1)
       # TODO
       # This could be simplified if I had indexed setters `[]=`
       stack.set_at(stack_i, i)

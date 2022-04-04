@@ -213,7 +213,7 @@ class Yume::Parser(*T)
   end
 
   def parse_op(n = 0) : AST::Expression
-    return parse_receiver if n == OPERATORS.size
+    return parse_unary if n == OPERATORS.size
     left = parse_op(n + 1)
     loop do
       found_operator = false
@@ -231,6 +231,15 @@ class Yume::Parser(*T)
       break unless found_operator
     end
     left
+  end
+
+  def parse_unary : AST::Expression
+    if consume?(:"-")
+      value = parse_receiver
+      AST::Call.new(AST::FnName.new(":-"), [value])
+    else
+      parse_receiver
+    end
   end
 
   def parse_receiver : AST::Expression
