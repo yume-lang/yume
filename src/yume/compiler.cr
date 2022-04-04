@@ -9,6 +9,14 @@ class Yume::Compiler
       to_llvm(ctx)
     end
 
+    def to_llvm_value_type(ctx : LLVM::Context) : LLVM::Type
+      to_llvm(ctx)
+    end
+
+    def to_llvm_value_type(ctx : LLVM::Context, generic_args : Hash(String, Type)) : LLVM::Type
+      to_llvm_value_type(ctx)
+    end
+
     def ptr : PointerType
       PointerType.new self
     end
@@ -95,7 +103,7 @@ class Yume::Compiler
     end
 
     def to_llvm(ctx : LLVM::Context) : LLVM::Type
-      ctx.struct([value.to_llvm(ctx).pointer, ctx.int32])
+      ctx.struct([value.to_llvm_value_type(ctx).pointer, ctx.int32])
     end
 
     def to_s(io : IO)
@@ -169,6 +177,10 @@ class Yume::Compiler
         @llvm_struct.value.value = ctx.struct(@fields.map(&.type.to_llvm ctx), @name).pointer
       end
       @llvm_struct.value.value
+    end
+
+    def to_llvm_value_type(ctx : LLVM::Context) : LLVM::Type
+      to_llvm(ctx).element_type
     end
 
     def to_s(io : IO)
@@ -311,6 +323,10 @@ class Yume::Compiler
 
   def llvm_type(type : Type) : LLVM::Type
     type.to_llvm(@ctx, @type_scope)
+  end
+
+  def llvm_value_type(type : Type) : LLVM::Type
+    type.to_llvm_value_type(@ctx, @type_scope)
   end
 
   protected def optimize(llvm_mod)
@@ -462,10 +478,21 @@ class Yume::Compiler
             when "icmp_ne" then @builder.icmp(LLVM::IntPredicate::NE, args[0], args[1])
             when "icmp_gt" then @builder.icmp((signed_type?(args[0].type) ? LLVM::IntPredicate::SGT : LLVM::IntPredicate::UGT), args[0], args[1])
             when "icmp_lt" then @builder.icmp((signed_type?(args[0].type) ? LLVM::IntPredicate::SLT : LLVM::IntPredicate::ULT), args[0], args[1])
-            when "get_at"  then @builder.load(@builder.inbounds_gep(args[0].llvm, args[1].llvm, "get_at.offset"), "get_at.load")
+            when "get_at"
+              offset = @builder.inbounds_gep(args[0].llvm, args[1].llvm, "get_at.offset")
+              if (base = args[0].type).responds_to? :value && base.value.is_a? StructType
+                offset
+              else
+                @builder.load(offset, "get_at.load")
+              end
             when "set_at"
-              val = @builder.inbounds_gep args[0].llvm, args[1].llvm, "set_at.offset"
-              @builder.store args[2].llvm, val
+              offset = @builder.inbounds_gep args[0].llvm, args[1].llvm, "set_at.offset"
+              if (base = args[0].type).responds_to? :value && base.value.is_a? StructType
+                val = @builder.load args[2].llvm
+              else
+                val = args[2].llvm
+              end
+              @builder.store val, offset
               args[2].llvm
             when "slice_size" then @builder.extract_value(args[0], 1, "slice.size")
             when "slice_ptr"  then @builder.extract_value(args[0], 0, "slice.ptr")
@@ -500,7 +527,7 @@ class Yume::Compiler
       if struct_type.is_a? StructType
         # TODO: Does this leak stack memory when put inside a loop? I think it does, but I don't know how this should otherwise be done
         # TODO: Solve this by just making it a struct constructor
-        instance = @builder.alloca llvm_type(struct_type).element_type
+        instance = @builder.alloca llvm_value_type(struct_type)
         ex.args.each_with_index do |field, i|
           field_ptr = @builder.inbounds_gep instance, @ctx.int32.const_int(0), @ctx.int32.const_int(i), "ctor.field.#{struct_type.fields[i].name}"
           @builder.store expression(field), field_ptr
@@ -509,8 +536,8 @@ class Yume::Compiler
       elsif struct_type.is_a? SliceType
         val_type = struct_type.value
         arr_size = expression ex.args[0]
-        array = LLVM::Value.new LibLLVM.build_array_malloc(@builder, llvm_type(val_type), arr_size, "s.ctor.malloc")
-        array_ptr = @builder.bit_cast(array, llvm_type(PointerType.new(val_type)))
+        array = LLVM::Value.new LibLLVM.build_array_malloc(@builder, llvm_value_type(val_type), arr_size, "s.ctor.malloc")
+        array_ptr = @builder.bit_cast(array, llvm_value_type(val_type).pointer, "s.ctor.malloc.ptr")
         slice_alloc = @builder.alloca llvm_type(struct_type)
         slice_arr_ptr = @builder.inbounds_gep slice_alloc, @ctx.int32.const_int(0), @ctx.int32.const_int(0), "d.slice.arr.ptr"
         @builder.store array_ptr, slice_arr_ptr
