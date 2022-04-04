@@ -286,7 +286,11 @@ class Yume::Parser(*T)
 
   def parse_primary : AST::Expression
     positioned do
-      if word = consume_val? :_word, String
+      if consume? :"("
+        val = parse_expression
+        consume :")"
+        val
+      elsif word = consume_val? :_word, String
         if consume? :"("
           args = parse_call_args
           AST::Call.new AST::FnName.new(word), args
