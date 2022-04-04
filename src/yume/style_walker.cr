@@ -28,11 +28,11 @@ class Yume::StyleWalker(*T)
             Colorize::Color256.new 172
           elsif sym.in?(:_str, :_int)
             Colorize::ColorANSI::Magenta
-          elsif sym == :_uword
+          elsif sym.in?(:_uword, :self)
             Colorize::ColorANSI::LightBlue
           elsif sym.in?(:":=", :"=", :+, :-, :*, :"==", :%, :"//")
             Colorize::Color256.new 147
-          elsif sym.in?(:|, :";")
+          elsif sym.in?(:|, :";", :"::", :".")
             Colorize::ColorANSI::LightGray
           else
             Colorize::ColorANSI::White

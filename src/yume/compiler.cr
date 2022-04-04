@@ -205,12 +205,6 @@ class Yume::Compiler
         end
         f = declare(s)
         next if f.nil?
-        if (s.name.name == "main" && s.args.empty?) || (s.decl.external?)
-          f.name = s.name.name
-          f.linkage = LLVM::Linkage::External
-        else
-          f.linkage = LLVM::Linkage::Internal
-        end
       when AST::StructDefinition
         @types[s.name] = @type_scope[""] = StructType.new(s.name, s.fields.map { |i| resolve_type i })
         declare_body s.body
@@ -238,6 +232,12 @@ class Yume::Compiler
 
     until @instantiation_queue.empty?
       k, v, gen = @instantiation_queue.pop
+      if (k.name.name == "main" && k.args.empty?) || (k.decl.external?)
+        v.name = k.name.name
+        v.linkage = LLVM::Linkage::External
+      else
+        v.linkage = LLVM::Linkage::Internal
+      end
       @type_scope = gen if gen
       instantiate(k, v)
       @type_scope.clear
@@ -490,7 +490,6 @@ class Yume::Compiler
       else
         if matching_fn.nil?
           matching_fn = declare(matching_fn_def, always_instantiate: true).not_nil!
-          matching_fn.linkage = LLVM::Linkage::Internal
         end
         val = Value.new(@builder.call(matching_fn, args.map(&.llvm)), resolve_type(matching_fn_def.not_nil!.return_type))
         @type_scope.clear
@@ -590,7 +589,11 @@ class Yume::Compiler
         expression(augmented_call)
       when AST::FieldAccess
         expression(AST::FieldModification.new(target, st.value))
+      when AST::VariableLiteral
+        raise "Not declared #{st}" unless @fn_scope.has_key?(target.name)
+        @builder.store(expression(st.value), @fn_scope[target.name].llvm)
       else
+        p! target
         raise "Not implemented"
       end
     when AST::ExpressionStatement
@@ -693,9 +696,9 @@ class Yume::Compiler
       end
       unless fn.decl.generics
         @fns[fn] = f
-        if f
-          @instantiation_queue << {fn, f, @type_scope.dup}
-        end
+      end
+      if f
+        @instantiation_queue << {fn, f, @type_scope.dup}
       end
       f
     end
