@@ -6,10 +6,13 @@ struct Vector
   y I32
 end
 
+# TODO
 # These field accessors will be implicitly defined one day
 fn x(i Vector) I32 = i::x
 fn y(i Vector) I32 = i::y
 
+# TODO
+# This should go inside of the struct declaration
 fn :+(a Vector, b Vector) Vector = Vector(a::x + b::x, a::y + b::y)
 
 fn main() I32
