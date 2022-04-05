@@ -1,5 +1,3 @@
-__primitive__(slice_size) size<T>(arr T[]) I32
-
 struct Test
   body U8[]
   size I32

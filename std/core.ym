@@ -1,0 +1,66 @@
+__primitive__(libc) __varargs__ printf(format U8*) I32
+__primitive__(libc) puts(string U8*) I32
+__primitive__(libc) putchar(char I32) I32
+
+__primitive__(slice_size) size<T>(arr T[]) I32
+__primitive__(slice_ptr) ptr<T>(arr T[]) T*
+__primitive__(get_at) :[]<T>(ptr T*, offset I32) T
+__primitive__(set_at) :[]=<T>(ptr T*, offset I32, val T) T
+__primitive__(slice_dup) dup_internal<T>(arr T[], extra I32) T[]
+
+__primitive__(add) :+(a I32, b I32) I32
+__primitive__(add) :+(a U8, b U8) U8
+__primitive__(sub) :-(a I32, b I32) I32
+fn :-(a I32) I32 = 0 - a
+__primitive__(sub) :-(a U8, b U8) U8
+__primitive__(mod) :%(a I32, b I32) I32
+__primitive__(mul) :*(a I32, b I32) I32
+__primitive__(int_div) ://(a I32, b I32) I32
+__primitive__(icmp_eq) :==(a I32, b I32) Bool
+__primitive__(icmp_eq) :==(a U8, b U8) Bool
+__primitive__(icmp_ne) :!=(a U8, b U8) Bool
+__primitive__(icmp_gt) :>(a I32, b I32) Bool
+__primitive__(icmp_lt) :<(a I32, b I32) Bool
+
+fn :[]<T>(slice T[], offset I32) T = slice.ptr[offset]
+fn :[]=<T>(slice T[], offset I32, val T) T
+  slice.ptr[offset] = val
+  return val
+end
+
+fn copy<T>(source T*, dest T*, amount I32)
+  let count I32 = amount
+  while count > 0
+    count = count - 1
+    dest[count] = source[count]
+  end
+end
+
+fn dup<T>(arr T[], extra I32) T[]
+  let dup_t T[] = arr.dup_internal(extra)
+  copy(arr.ptr, dup_t.ptr, arr.size)
+  return dup_t
+end
+
+fn dup_append<T>(arr T[], last T) T[]
+  let dup_t T[] = arr.dup_internal(1)
+  copy(arr.ptr, dup_t.ptr, arr.size)
+  dup_t[arr.size] = last
+  return dup_t
+end
+
+fn c_str(str U8[]) U8[] = str.dup_append(?\0)
+
+fn c_len(ptr U8*) I32
+  let terminated I32 = 0
+  let idx I32 = 0
+  while terminated == 0
+    let chr U8 = ptr[idx]
+    if chr == ?\0
+      terminated = 1
+    else
+      idx = idx + 1
+    end
+  end
+  return idx
+end
