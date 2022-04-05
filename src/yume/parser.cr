@@ -65,6 +65,7 @@ class Yume::Parser(*T)
 
   def parse_program : AST::Program
     statements = [] of AST::Statement
+    consume_sep?
     until @src.eof?
       st = parse_statement
       statements << st if st

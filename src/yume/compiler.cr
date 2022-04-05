@@ -224,7 +224,7 @@ class Yume::Compiler
     end
   end
 
-  def initialize(@program : AST::Program)
+  def initialize(programs : Array(AST::Program))
     @ctx = LLVM::Context.new
     @mod = @ctx.new_module("yume")
     @builder = @ctx.new_builder
@@ -240,7 +240,9 @@ class Yume::Compiler
     @types["U64"] = Type::UINT_64
     @types["Bool"] = Type::BOOL
 
-    declare_body @program.statements
+    programs.each do |program|
+      declare_body program.statements
+    end
 
     until @instantiation_queue.empty?
       k, v, gen = @instantiation_queue.pop
@@ -711,6 +713,11 @@ class Yume::Compiler
   end
 
   def declare(fn : AST::FunctionDefinition, always_instantiate : Bool = false) : LLVM::Function?
+    # TODO: rehaul all of this logic, it is quite ugly
+    # Functions should be instantiated only when used, declaration should basically do nothing
+    # TODO: What is the difference between AST::FunctionDefinition and LLVM::Function, how are they used
+    # and why are they separate?
+    # TODO: Handle namespaced stuff properly
     if fn.decl.generics && !always_instantiate
       @fns[fn] = nil
     else
