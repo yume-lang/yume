@@ -7,12 +7,8 @@ struct Vector
   fn x(i self) I32 = i::x
   fn y(i self) I32 = i::y
 
-  fn x=(i self, j I32)
-    i::x = j
-  end
-  fn y=(i self, j I32)
-    i::y = j
-  end
+  fn x=(i self, j I32) I32 = i::x = j
+  fn y=(i self, j I32) I32 = i::y = j
 
   fn :+(a self, b self) self = self(a::x + b::x, a::y + b::y)
 end

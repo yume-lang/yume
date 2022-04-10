@@ -190,14 +190,8 @@ class Yume::Parser(*T)
         end
       else
         expression = parse_expression
-        if consume?(:"=")
-          value = parse_expression
-          consume_sep
-          AST::AssignmentStatement.new expression, value
-        else
-          consume_sep
-          AST::ExpressionStatement.new expression
-        end
+        consume_sep
+        AST::ExpressionStatement.new expression
       end
     end
   end
@@ -266,6 +260,9 @@ class Yume::Parser(*T)
       consume :":"
       field = consume_val :_word, String
       parse_receiver AST::FieldAccess.new receiver, field
+    elsif consume? :"="
+      value = parse_expression
+      parse_receiver AST::Assignment.new receiver, value
     else
       receiver
     end

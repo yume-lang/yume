@@ -99,16 +99,6 @@ module Yume::AST
 
   ast_record CharLiteral < Expression, val : String
 
-  class ParenthesizedExpression < Expression
-    include AST
-    getter val : Expression
-
-    def initialize(@val)
-    end
-
-    def_equals_and_hash @val
-  end
-
   class ArrayLiteral < Expression
     include AST
     getter val : Array(Expression)
@@ -128,7 +118,7 @@ module Yume::AST
 
   ast_record FieldAccess < Expression, base : Expression, field : String
 
-  ast_record FieldModification < Expression, target : FieldAccess, value : Expression
+  ast_record Assignment < Expression, target : Expression, value : Expression
 
   abstract class Statement
     include AST
@@ -157,15 +147,6 @@ module Yume::AST
     getter value : Expression
 
     def initialize(@type, @name, @value)
-    end
-  end
-
-  class AssignmentStatement < Statement
-    include AST
-    getter target : Expression
-    getter value : Expression
-
-    def initialize(@target, @value)
     end
   end
 
