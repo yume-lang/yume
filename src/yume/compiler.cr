@@ -103,7 +103,7 @@ class Yume::Compiler
     end
 
     def to_llvm(ctx : LLVM::Context) : LLVM::Type
-      ctx.struct([value.to_llvm_value_type(ctx).pointer, ctx.int32])
+      ctx.struct([value.to_llvm(ctx).pointer, ctx.int32])
     end
 
     def to_s(io : IO)
@@ -480,20 +480,10 @@ class Yume::Compiler
             when "icmp_lt" then @builder.icmp((signed_type?(args[0].type) ? LLVM::IntPredicate::SLT : LLVM::IntPredicate::ULT), args[0], args[1])
             when "get_at"
               offset = @builder.inbounds_gep(args[0].llvm, args[1].llvm, "get_at.offset")
-              # TODO: Get rid of this "reference semantics hack"
-              if (base = args[0].type).responds_to? :value && base.value.is_a? StructType
-                offset
-              else
-                @builder.load(offset, "get_at.load")
-              end
+              @builder.load(offset, "get_at.load")
             when "set_at"
               offset = @builder.inbounds_gep args[0].llvm, args[1].llvm, "set_at.offset"
-              # TODO: Get rid of this "reference semantics hack"
-              if (base = args[0].type).responds_to? :value && base.value.is_a? StructType
-                val = @builder.load args[2].llvm
-              else
-                val = args[2].llvm
-              end
+              val = args[2].llvm
               @builder.store val, offset
               args[2].llvm
             when "slice_size" then @builder.extract_value(args[0], 1, "slice.size")
@@ -536,8 +526,8 @@ class Yume::Compiler
       elsif struct_type.is_a? SliceType
         val_type = struct_type.value
         arr_size = expression ex.args[0]
-        array = LLVM::Value.new LibLLVM.build_array_malloc(@builder, llvm_value_type(val_type), arr_size, "s.ctor.malloc")
-        array_ptr = @builder.bit_cast(array, llvm_value_type(val_type).pointer, "s.ctor.malloc.ptr")
+        array = LLVM::Value.new LibLLVM.build_array_malloc(@builder, llvm_type(val_type), arr_size, "s.ctor.malloc")
+        array_ptr = @builder.bit_cast(array, llvm_type(val_type).pointer, "s.ctor.malloc.ptr")
         slice_alloc = @builder.alloca llvm_type(struct_type)
         slice_arr_ptr = @builder.inbounds_gep slice_alloc, @ctx.int32.const_int(0), @ctx.int32.const_int(0), "d.slice.arr.ptr"
         @builder.store array_ptr, slice_arr_ptr
