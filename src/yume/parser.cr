@@ -295,6 +295,13 @@ class Yume::Parser(*T)
         else
           AST::VariableLiteral.new word
         end
+      elsif consume? :self
+        if consume? :"("
+          args = parse_call_args
+          AST::CtorCall.new AST::SelfType.new, args
+        else
+          AST::VariableLiteral.new "self"
+        end
       elsif int = consume_val? :_int, Int64
         AST::IntLiteral.new int
       elsif str = consume_val? :_str, String
@@ -414,7 +421,11 @@ class Yume::Parser(*T)
       args = [] of AST::TypedName
       unless consume?(:")")
         loop do
-          args << parse_typed_name
+          if consume?(:self)
+            args << AST::TypedName.new(AST::SelfType.new, "self")
+          else
+            args << parse_typed_name
+          end
           if consume?(:")")
             break
           else

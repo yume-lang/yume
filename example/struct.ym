@@ -4,11 +4,11 @@ struct Vector
 
   # TODO
   # These field accessors will be implicitly defined one day
-  fn x(i self) I32 = i::x
-  fn y(i self) I32 = i::y
+  fn x(self) I32 = self::x
+  fn y(self) I32 = self::y
 
-  fn x=(i self, j I32) I32 = i::x = j
-  fn y=(i self, j I32) I32 = i::y = j
+  fn x=(self, j I32) I32 = self::x = j
+  fn y=(self, j I32) I32 = self::y = j
 
   fn :+(a self, b self) self = self(a::x + b::x, a::y + b::y)
 end
