@@ -288,7 +288,7 @@ class Yume::Compiler
       @builder.position_at_end decl_bb
       @builder.br entry_bb
     in AST::ShortFunctionDefinition
-      @builder.ret expression(k.expression)
+      @builder.ret expression k.expression
     in AST::FunctionDefinition
       raise "Unknown function kind #{k}"
     end
@@ -527,9 +527,7 @@ class Yume::Compiler
     when AST::CtorCall
       struct_type = resolve_type ex.type
       if struct_type.is_a? StructType
-        # TODO: Does this leak stack memory when put inside a loop? I think it does, but I don't know how this should otherwise be done
-        # TODO: Solve this by just making it a struct constructor
-        instance = @builder.alloca llvm_value_type(struct_type)
+        instance = LLVM::Value.new LibLLVM.build_malloc(@builder, llvm_value_type(struct_type), "ctor.malloc")
         ex.args.each_with_index do |field, i|
           field_ptr = @builder.inbounds_gep instance, @ctx.int32.const_int(0), @ctx.int32.const_int(i), "ctor.field.#{struct_type.fields[i].name}"
           @builder.store expression(field), field_ptr
@@ -718,6 +716,7 @@ class Yume::Compiler
     # TODO: What is the difference between AST::FunctionDefinition and LLVM::Function, how are they used
     # and why are they separate?
     # TODO: Handle namespaced stuff properly
+    # TODO: proper reference semantics
     if fn.decl.generics && !always_instantiate
       @fns[fn] = nil
     else
