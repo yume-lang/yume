@@ -1,4 +1,4 @@
-fn larger<T>(a T, b T) T
+def larger<T>(a T, b T) T
   if a > b
     return a
   else
@@ -6,6 +6,6 @@ fn larger<T>(a T, b T) T
   end
 end
 
-fn main() I32
+def main() I32
   return larger(3, 7)
 end

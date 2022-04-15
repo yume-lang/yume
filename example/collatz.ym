@@ -1,4 +1,4 @@
-fn collatz(int I32) I32
+def collatz(int I32) I32
   let k I32 = 0
   while int > 1
     printf("%d -> ", int)
@@ -13,7 +13,7 @@ fn collatz(int I32) I32
   return k
 end
 
-fn main() I32
+def main() I32
   collatz(7)
   return 0
 end

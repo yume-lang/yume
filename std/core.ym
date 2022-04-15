@@ -11,7 +11,7 @@ __primitive__(slice_dup) dup_internal<T>(arr T[], extra I32) T[]
 __primitive__(add) :+(a I32, b I32) I32
 __primitive__(add) :+(a U8, b U8) U8
 __primitive__(sub) :-(a I32, b I32) I32
-fn :-(a I32) I32 = 0 - a
+def :-(a I32) I32 = 0 - a
 __primitive__(sub) :-(a U8, b U8) U8
 __primitive__(mod) :%(a I32, b I32) I32
 __primitive__(mul) :*(a I32, b I32) I32
@@ -22,13 +22,13 @@ __primitive__(icmp_ne) :!=(a U8, b U8) Bool
 __primitive__(icmp_gt) :>(a I32, b I32) Bool
 __primitive__(icmp_lt) :<(a I32, b I32) Bool
 
-fn :[]<T>(slice T[], offset I32) T = slice.ptr[offset]
-fn :[]=<T>(slice T[], offset I32, val T) T
+def :[]<T>(slice T[], offset I32) T = slice.ptr[offset]
+def :[]=<T>(slice T[], offset I32, val T) T
   slice.ptr[offset] = val
   return val
 end
 
-fn copy<T>(source T*, dest T*, amount I32)
+def copy<T>(source T*, dest T*, amount I32)
   let count I32 = amount
   while count > 0
     count = count - 1
@@ -36,22 +36,22 @@ fn copy<T>(source T*, dest T*, amount I32)
   end
 end
 
-fn dup<T>(arr T[], extra I32) T[]
+def dup<T>(arr T[], extra I32) T[]
   let dup_t T[] = arr.dup_internal(extra)
   copy(arr.ptr, dup_t.ptr, arr.size)
   return dup_t
 end
 
-fn dup_append<T>(arr T[], last T) T[]
+def dup_append<T>(arr T[], last T) T[]
   let dup_t T[] = arr.dup_internal(1)
   copy(arr.ptr, dup_t.ptr, arr.size)
   dup_t[arr.size] = last
   return dup_t
 end
 
-fn c_str(str U8[]) U8[] = str.dup_append(?\0)
+def c_str(str U8[]) U8[] = str.dup_append(?\0)
 
-fn c_len(ptr U8*) I32
+def c_len(ptr U8*) I32
   let terminated I32 = 0
   let idx I32 = 0
   while terminated == 0

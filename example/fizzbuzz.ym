@@ -1,4 +1,4 @@
-fn fizzbuzz(num I32)
+def fizzbuzz(num I32)
   if num % 15 == 0
     printf("FizzBuzz\n")
   else if num % 3 == 0
@@ -10,7 +10,7 @@ fn fizzbuzz(num I32)
   end
 end
 
-fn main() I32
+def main() I32
   let num I32 = 0
   while num < 100
     num = num + 1

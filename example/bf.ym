@@ -5,7 +5,7 @@ struct Instruction
   payload I32
 end
 
-fn parse(input U8[]) Instruction[]
+def parse(input U8[]) Instruction[]
   let i I32 = 0
   let instructions = Instruction[](input.size)
   # TODO
@@ -41,7 +41,7 @@ fn parse(input U8[]) Instruction[]
   return instructions
 end
 
-fn __extern__ main(argc I32, argv U8**) I32
+def __extern__ main(argc I32, argv U8**) I32
   # Hello world example function
   let word_ptr U8* = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++."
   if argc > 1

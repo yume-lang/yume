@@ -88,7 +88,7 @@ class Yume::Parser(*T)
         )
         consume_sep
         fn
-      elsif consume? :fn
+      elsif consume? :def
         decl = parse_fn_decl
         if consume?(:"=")
           expression = parse_expression

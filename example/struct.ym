@@ -4,16 +4,16 @@ struct Vector
 
   # TODO
   # These field accessors will be implicitly defined one day
-  fn x(self) I32 = self::x
-  fn y(self) I32 = self::y
+  def x(self) I32 = self::x
+  def y(self) I32 = self::y
 
-  fn x=(self, j I32) I32 = self::x = j
-  fn y=(self, j I32) I32 = self::y = j
+  def x=(self, j I32) I32 = self::x = j
+  def y=(self, j I32) I32 = self::y = j
 
-  fn :+(a self, b self) self = self(a::x + b::x, a::y + b::y)
+  def :+(a self, b self) self = self(a::x + b::x, a::y + b::y)
 end
 
-fn main() I32
+def main() I32
   let a = Vector(2, 3)
   let b = Vector(5, 1)
   printf("a %p x: %d, y: %d\n", a, a.x, a.y)

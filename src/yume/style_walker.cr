@@ -24,7 +24,7 @@ class Yume::StyleWalker(*T)
       end
     end
     @last = pos.end
-    col = if sym.in?(:fn, :let, :if, :then, :else, :do, :end, :while, :return, :struct, :__primitive__, :__varargs__)
+    col = if sym.in?(:def, :let, :if, :then, :else, :do, :end, :while, :return, :struct, :__primitive__, :__varargs__)
             Colorize::Color256.new 172
           elsif sym.in?(:_str, :_int)
             Colorize::ColorANSI::Magenta

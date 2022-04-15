@@ -3,18 +3,18 @@ struct Test
   size I32
 end
 
-fn capacity(d Test) I32 = d::body.size
-fn size(d Test) I32 = d::size
+def capacity(d Test) I32 = d::body.size
+def size(d Test) I32 = d::size
 
-fn foo(a I32, b I32, c I32) I32 = a
+def foo(a I32, b I32, c I32) I32 = a
 
-fn foo(a I32, b I32) I32 = b
+def foo(a I32, b I32) I32 = b
 
-fn foo(a U8, b I32) U8 = a
+def foo(a U8, b I32) U8 = a
 
-fn foo(a I32, b U8) U8 = b
+def foo(a I32, b U8) U8 = b
 
-fn main() I32
+def main() I32
   foo(1, 2, 3)
   foo(4, 5)
   foo(?a, 4)
