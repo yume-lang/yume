@@ -75,25 +75,26 @@ class Yume::Parser(*T)
 
   def parse_statement : AST::Statement?
     positioned? do
-      if consume? :__primitive__
-        consume :"("
-        primitive_name = consume_val(:_word, String)
-        consume :")"
-        is_varargs = !!consume?(:__varargs__)
-        decl = parse_fn_decl
-        fn = AST::PrimitiveDefinition.new(
-          decl: decl,
-          primitive: primitive_name,
-          varargs: is_varargs
-        )
-        consume_sep
-        fn
-      elsif consume? :def
+      if consume? :def
         decl = parse_fn_decl
         if consume?(:"=")
-          expression = parse_expression
-          consume_sep
-          AST::ShortFunctionDefinition.new(decl, expression)
+          if consume? :__primitive__
+            consume :"("
+            primitive_name = consume_val(:_word, String)
+            consume :")"
+            is_varargs = !!consume?(:__varargs__)
+            fn = AST::PrimitiveDefinition.new(
+              decl: decl,
+              primitive: primitive_name,
+              varargs: is_varargs
+            )
+            consume_sep
+            fn
+          else
+            expression = parse_expression
+            consume_sep
+            AST::ShortFunctionDefinition.new(decl, expression)
+          end
         else
           consume_sep
           body = [] of AST::Statement
