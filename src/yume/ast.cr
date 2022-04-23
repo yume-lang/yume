@@ -99,6 +99,8 @@ module Yume::AST
 
   ast_record CharLiteral < Expression, val : String
 
+  ast_record BoolLiteral < Expression, val : Bool
+
   class ArrayLiteral < Expression
     include AST
     getter val : Array(Expression)

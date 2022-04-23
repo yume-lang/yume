@@ -386,6 +386,8 @@ class Yume::Compiler
       else
         raise OverflowError.new
       end
+    when AST::BoolLiteral
+      Value.new(@ctx.int1.const_int(ex.val ? 1 : 0), Type::BOOL)
     when AST::CharLiteral
       chr = ex.val[0]
       if chr == '\\' # HACK

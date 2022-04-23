@@ -304,6 +304,10 @@ class Yume::Parser(*T)
         else
           AST::VariableLiteral.new "self"
         end
+      elsif consume? :true
+        AST::BoolLiteral.new true
+      elsif consume? :false
+        AST::BoolLiteral.new false
       elsif int = consume_val? :_int, Int64
         AST::IntLiteral.new int
       elsif str = consume_val? :_str, String
