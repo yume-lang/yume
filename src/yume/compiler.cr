@@ -103,7 +103,7 @@ class Yume::Compiler
     end
 
     def to_llvm(ctx : LLVM::Context) : LLVM::Type
-      ctx.struct([value.to_llvm(ctx).pointer, ctx.int32])
+      ctx.struct([value.to_llvm(ctx).pointer, ctx.int64])
     end
 
     def to_s(io : IO)
@@ -130,7 +130,9 @@ class Yume::Compiler
     def to_llvm(ctx : LLVM::Context) : LLVM::Type
       case @size
       when  8 then ctx.int8
+      when 16 then ctx.int16
       when 32 then ctx.int32
+      when 64 then ctx.int64
       else         raise "Invalid int size #{@size}"
       end
     end
@@ -418,7 +420,7 @@ class Yume::Compiler
       s.initializer = arr_val
       s.linkage = LLVM::Linkage::Internal
       array = @builder.bit_cast(s, llvm_type(PointerType.new(val_type)))
-      slice = @ctx.const_struct([array, @ctx.int32.const_int(args.size)])
+      slice = @ctx.const_struct([array, @ctx.int64.const_int(args.size)])
       Value.new(slice, SliceType.new(val_type))
     when AST::Call
       overload_set = @fns.keys.select(&.name.name.== ex.name.name)
