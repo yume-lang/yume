@@ -158,6 +158,7 @@ class Yume::Parser(*T)
         end
       elsif consume? :struct
         name = consume_val :_uword, String
+        generics = parse_fn_generics
         consume_sep
 
         fields = [] of AST::TypedName
@@ -178,7 +179,7 @@ class Yume::Parser(*T)
           body << st if st
         end
         consume_sep
-        AST::StructDefinition.new(name, fields, body)
+        AST::StructDefinition.new(name, generics, fields, body)
       elsif consume? :let
         name = consume_val :_word, String
         type = parse_type?
@@ -495,6 +496,9 @@ class Yume::Parser(*T)
           type = AST::SliceType.new(type)
         elsif consume?(:"*")
           type = AST::PtrType.new(type)
+        elsif peek?(:"<")
+          generics = parse_fn_generics
+          type = AST::TemplatedType.new(type.as(AST::SimpleType), generics.not_nil!)
         else
           break
         end

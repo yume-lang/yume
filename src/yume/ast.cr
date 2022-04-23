@@ -206,11 +206,13 @@ module Yume::AST
 
   ast_record SelfType < Type
 
+  ast_record TemplatedType < Type, base : SimpleType, generics : GenericArgs
+
   record TypedName, type : Type, name : String do
     include AST
   end
 
-  ast_record StructDefinition < Statement, name : String, fields : Array(TypedName), body : Array(Statement)
+  ast_record StructDefinition < Statement, name : String, generics : GenericArgs?, fields : Array(TypedName), body : Array(Statement)
 
   abstract class FunctionDefinition < Statement
     include AST
