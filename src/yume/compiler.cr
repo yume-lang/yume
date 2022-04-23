@@ -232,14 +232,10 @@ class Yume::Compiler
     @builder = @ctx.new_builder
     add_libc_functions
 
-    @types["I8"] = Type::INT_8
-    @types["I16"] = Type::INT_16
-    @types["I32"] = Type::INT_32
-    @types["I64"] = Type::INT_64
-    @types["U8"] = Type::UINT_8
-    @types["U16"] = Type::UINT_16
-    @types["U32"] = Type::UINT_32
-    @types["U64"] = Type::UINT_64
+    {8, 16, 32, 64}.each do |size|
+      @types["I#{size}"] = IntegralType.signed size
+      @types["U#{size}"] = IntegralType.unsigned size
+    end
     @types["Bool"] = Type::BOOL
 
     programs.each do |program|
