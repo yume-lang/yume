@@ -203,7 +203,7 @@ class Yume::Parser(*T)
     {:"+", :"-"},
     {:"%", :"//", :"*"},
   ]
-  OPERATOR_FNS = OPERATORS.flat_map(&.each).map { |i| {i} } + [{:"[", :"]"}]
+  OPERATOR_FNS = OPERATORS.flat_map(&.each).map { |i| {i} } + [{:"[", :"]"}, {:"!"}]
 
   def parse_expression : AST::Expression
     parse_op(0)
@@ -234,6 +234,9 @@ class Yume::Parser(*T)
     if consume?(:"-")
       value = parse_receiver
       AST::Call.new(AST::FnName.new(":-"), [value])
+    elsif consume?(:"!")
+      value = parse_receiver
+      AST::Call.new(AST::FnName.new(":!"), [value])
     else
       parse_receiver
     end
