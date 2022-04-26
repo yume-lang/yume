@@ -1,0 +1,12 @@
+struct Array<T>
+  body T[]
+  size I64
+
+  def capacity(self) I64 = self::body.size
+  def size(self) I64 = self::size
+end
+
+def main() I32
+  let t = Array<I32>(I32[](0), I64(0))
+  return 0
+end

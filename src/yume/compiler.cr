@@ -3,18 +3,18 @@ require "./ast"
 
 class Yume::Compiler
   abstract struct Type
-    abstract def to_llvm(ctx : LLVM::Context) : LLVM::Type
+    abstract def to_llvm(ctx : LLVM::Context, generic_args : Hash(String, Type)) : LLVM::Type
 
-    def to_llvm(ctx : LLVM::Context, generic_args : Hash(String, Type)) : LLVM::Type
-      to_llvm(ctx)
+    def to_llvm(ctx : LLVM::Context) : LLVM::Type
+      to_llvm(ctx, Hash(String, Type).new)
     end
 
     def to_llvm_value_type(ctx : LLVM::Context) : LLVM::Type
-      to_llvm(ctx)
+      to_llvm_value_type(ctx, Hash(String, Type).new)
     end
 
     def to_llvm_value_type(ctx : LLVM::Context, generic_args : Hash(String, Type)) : LLVM::Type
-      to_llvm_value_type(ctx)
+      to_llvm(ctx, generic_args)
     end
 
     def ptr : PointerType
@@ -36,7 +36,7 @@ class Yume::Compiler
   end
 
   struct PrimitiveBoolType < PrimitiveType
-    def to_llvm(ctx : LLVM::Context) : LLVM::Type
+    def to_llvm(ctx : LLVM::Context, generic_args : Hash(String, Type)) : LLVM::Type
       ctx.int1
     end
 
@@ -46,7 +46,7 @@ class Yume::Compiler
   end
 
   struct PrimitiveVoidType < PrimitiveType
-    def to_llvm(ctx : LLVM::Context) : LLVM::Type
+    def to_llvm(ctx : LLVM::Context, generic_args : Hash(String, Type)) : LLVM::Type
       ctx.void
     end
 
@@ -74,8 +74,8 @@ class Yume::Compiler
       @value.value
     end
 
-    def to_llvm(ctx : LLVM::Context) : LLVM::Type
-      value.to_llvm(ctx).pointer
+    def to_llvm(ctx : LLVM::Context, generic_args : Hash(String, Type)) : LLVM::Type
+      value.to_llvm(ctx, generic_args).pointer
     end
 
     def to_s(io : IO)
@@ -102,8 +102,8 @@ class Yume::Compiler
       @value.value
     end
 
-    def to_llvm(ctx : LLVM::Context) : LLVM::Type
-      ctx.struct([value.to_llvm(ctx).pointer, ctx.int64])
+    def to_llvm(ctx : LLVM::Context, generic_args : Hash(String, Type)) : LLVM::Type
+      ctx.struct([value.to_llvm(ctx, generic_args).pointer, ctx.int64])
     end
 
     def to_s(io : IO)
@@ -127,7 +127,7 @@ class Yume::Compiler
       new(size, false)
     end
 
-    def to_llvm(ctx : LLVM::Context) : LLVM::Type
+    def to_llvm(ctx : LLVM::Context, generic_args : Hash(String, Type)) : LLVM::Type
       case @size
       when  8 then ctx.int8
       when 16 then ctx.int16
@@ -158,35 +158,58 @@ class Yume::Compiler
       generic_args[@name].to_llvm(ctx, generic_args)
     end
 
+    def to_llvm_value_type(ctx : LLVM::Context, generic_args : Hash(String, Type)) : LLVM::Type
+      to_llvm ctx, generic_args
+    end
+
     def to_s(io : IO)
       io << "<" << @name << ">"
     end
   end
 
   struct StructType < Type
-    getter name : String
+    getter raw_name : String
     getter fields : Array(TypedName)
+    getter generics : Array(String)?
     @llvm_struct : LLVM::Type**
 
-    def initialize(@name, @fields)
+    def initialize(@raw_name, @fields, @generics)
       @llvm_struct = Pointer(Pointer(LLVM::Type)).malloc
       @llvm_struct.value = Pointer(LLVM::Type).null
     end
 
-    def to_llvm(ctx : LLVM::Context) : LLVM::Type
+    def to_llvm(ctx : LLVM::Context, generic_args : Hash(String, Type)) : LLVM::Type
       if @llvm_struct.value.null?
         @llvm_struct.value = Pointer(LLVM::Type).malloc
-        @llvm_struct.value.value = ctx.struct(@fields.map(&.type.to_llvm ctx), @name).pointer
+        @llvm_struct.value.value = ctx.struct(@fields.map(&.type.to_llvm ctx, generic_args), name generic_args).pointer
       end
       @llvm_struct.value.value
     end
 
-    def to_llvm_value_type(ctx : LLVM::Context) : LLVM::Type
-      to_llvm(ctx).element_type
+    def to_llvm_value_type(ctx : LLVM::Context, generic_args : Hash(String, Type)) : LLVM::Type
+      to_llvm(ctx, generic_args).element_type
+    end
+
+    def name(generic_args : Hash(String, Type)? = nil) : String
+      String.build do |str|
+        str << "ym:" << @raw_name
+        if generic_args && (g = generics)
+          str << "<"
+          g.each_with_index do |i, j|
+            str << ", " unless j.zero?
+            str << generic_args[i]? || "?"
+          end
+          str << ">"
+        end
+      end
     end
 
     def to_s(io : IO)
-      io << "." << @name
+      io << "." << @raw_name
+      generics.try &.each_index do |i|
+        io << ", " unless i.zero?
+        io << "?"
+      end
     end
   end
 
@@ -211,6 +234,8 @@ class Yume::Compiler
   @instantiation_queue = Deque({AST::FunctionDefinition, LLVM::Function, Hash(String, Type)?}).new
   @terminated = false
 
+  alias GenericHolder = AST::FunctionDefinition | AST::StructDefinition
+
   def declare_body(body : Array(AST::Statement))
     body.each do |s|
       case s
@@ -223,7 +248,7 @@ class Yume::Compiler
           declare(s)
         end
       when AST::StructDefinition
-        @types[s.name] = @type_scope[""] = StructType.new(s.name, s.fields.map { |i| resolve_type i })
+        @types[s.name] = @type_scope[""] = StructType.new(s.name, s.fields.map { |i| resolve_type i, s }, s.generics.try &.args.map { |i| i.as(AST::SimpleType).type })
         declare_body s.body
       end
     end
@@ -301,12 +326,12 @@ class Yume::Compiler
     end
   end
 
-  def resolve_generic(type : AST::Type, fn_def : AST::FunctionDefinition?, use_type_scope = true) : Type?
+  def resolve_generic(type : AST::Type, decl : GenericHolder?, use_type_scope = true) : Type?
     if use_type_scope && (inst = @type_scope[type.type]?)
       return inst
     end
-    return nil if fn_def.nil?
-    if gen = fn_def.decl.generics
+    return nil if decl.nil?
+    if gen = decl.generics
       if gen.args.any? { |i| i.is_a? AST::SimpleType && i.type == type.type }
         GenericType.new(type.type)
       end
@@ -315,17 +340,24 @@ class Yume::Compiler
 
   record TypedName, type : Type, name : String
 
-  def resolve_type(type_name : AST::TypedName, fn_def : AST::FunctionDefinition? = nil, use_type_scope = true) : TypedName
-    TypedName.new(resolve_type(type_name.type), type_name.name)
+  def resolve_type(type_name : AST::TypedName, decl : GenericHolder? = nil, use_type_scope = true) : TypedName
+    TypedName.new(resolve_type(type_name.type, decl, use_type_scope), type_name.name)
   end
 
-  def resolve_type(type : AST::Type?, fn_def : AST::FunctionDefinition? = nil, use_type_scope = true) : Type
+  def resolve_type(type : AST::Type?, decl : GenericHolder? = nil, use_type_scope = true) : Type
     return PrimitiveVoidType.new.as(Type) if type.nil?
     case type
-    in AST::PtrType    then PointerType.new(resolve_type(type.type, fn_def, use_type_scope))
-    in AST::SliceType  then SliceType.new(resolve_type(type.type, fn_def, use_type_scope))
-    in AST::SimpleType then resolve_generic(type, fn_def, use_type_scope) || @types[type.type]
-    in AST::SelfType   then @type_scope[""]? || @fn_self_types[fn_def || cur_ast_fn]
+    in AST::PtrType    then PointerType.new(resolve_type(type.type, decl, use_type_scope))
+    in AST::SliceType  then SliceType.new(resolve_type(type.type, decl, use_type_scope))
+    in AST::SimpleType then resolve_generic(type, decl, use_type_scope) || @types[type.type]
+    in AST::TemplatedType
+      # TODO: proper short-circuiting logic
+      base = resolve_type(type.base, decl, use_type_scope).as StructType
+      type.generics.args.each_with_index do |i, j|
+        @type_scope[base.generics.not_nil![j]] = resolve_type(i, decl, use_type_scope)
+      end
+      base
+    in AST::SelfType   then @type_scope[""]? || @fn_self_types[decl || cur_ast_fn]
     in AST::Type       then raise "Invalid type #{type}"
     end
   end

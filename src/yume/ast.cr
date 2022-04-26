@@ -240,6 +240,10 @@ module Yume::AST
     def return_type : Type?
       decl.return_type
     end
+
+    def generics : GenericArgs?
+      decl.generics
+    end
   end
 
   struct GenericArgs
