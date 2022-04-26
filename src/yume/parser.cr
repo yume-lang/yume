@@ -338,8 +338,13 @@ class Yume::Parser(*T)
           end
           AST::ArrayLiteral.new(type, args)
         else
-          debug_pos col: :light_red
-          raise "Couldn't find an expression"
+          if type.is_a? AST::SliceType
+            # This was parsed as a type literal, but it's actually an empty typed array literal
+            AST::ArrayLiteral.new(type.type, [] of AST::Expression)
+          else
+            debug_pos col: :light_red
+            raise "Couldn't find an expression"
+          end
         end
       else
         debug_pos col: :light_red
