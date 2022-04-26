@@ -226,7 +226,7 @@ class Yume::Compiler
     end
   end
 
-  def initialize(programs : Array(AST::Program))
+  def initialize(programs : Array(AST::Program), @filenames : Array(String) = [] of String, @file_line_breaks : Array(Array(Int32)) = [] of Array(Int32))
     @ctx = LLVM::Context.new
     @mod = @ctx.new_module("yume")
     @builder = @ctx.new_builder
@@ -344,6 +344,24 @@ class Yume::Compiler
     module_pass_manager.run llvm_mod
   end
 
+  private def def_pos(m)
+    pos = m.try &.pos?
+    r_begin = pos.try &.range.begin
+    real_pos = r_begin
+    file = pos.try &.file
+    file = nil if file == -1
+    if file
+      filename = @filenames[file]?
+      filename = Path.new(filename).relative_to(Dir.current) if filename
+      line_breaks = @file_line_breaks[file]?
+      if line_breaks && r_begin
+        line = line_breaks.bsearch_index { |i| i >= r_begin } || 0
+        col = r_begin - line_breaks[Math.max(line-1, 0)]
+        real_pos = "#{line+1}:#{col+1}"
+      end
+    end
+
+    "#{filename || file || "?"}:#{real_pos}".rjust 24
   # TODO: use positions again when they work
   private def def_pos(m : AST::FunctionDefinition?)
     ":#{m.try &.@pos.try &.begin}".rjust 5
@@ -426,7 +444,8 @@ class Yume::Compiler
       args = ex.args.map { |i| expression i }
 
       {% if flag?("debug_overload") %}
-        print "Calling `#{ex.name.name}` with args:\n        "
+        puts "#{def_pos ex} < Calling `#{ex.name.name}` with args:"
+        print " " * 27
         args.map(&.type).join STDOUT, ", "
         puts "\nOverloads:"
 

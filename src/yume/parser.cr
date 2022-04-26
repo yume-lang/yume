@@ -9,7 +9,7 @@ class Yume::Parser(*T)
   getter current_token : {Symbol, Union(*T)?, Range(Int32, Int32)}?
   @last_char = 0
 
-  def initialize(@src : Lexer(*T))
+  def initialize(@src : Lexer(*T), @file_id : Int32 = -1)
     next_token
   end
 
@@ -54,13 +54,16 @@ class Yume::Parser(*T)
   def positioned(& : -> T) : T forall T
     start_pos = pos
     ast_t = yield
-    ast_t.at start_pos, pos
+    if ast_t.pos?.nil?
+      ast_t.at start_pos, pos, @file_id
+    end
+    ast_t
   end
 
   def positioned?(& : -> T?) : T? forall T
     start_pos = pos
     ast_t = yield
-    ast_t ? ast_t.at(start_pos, pos) : ast_t
+    ast_t ? ast_t.at(start_pos, pos, @file_id) : ast_t
   end
 
   def parse_program : AST::Program
@@ -206,7 +209,7 @@ class Yume::Parser(*T)
   OPERATOR_FNS = OPERATORS.flat_map(&.each).map { |i| {i} } + [{:"[", :"]"}, {:"!"}]
 
   def parse_expression : AST::Expression
-    parse_op(0)
+    positioned { parse_op(0) }
   end
 
   def parse_op(n = 0) : AST::Expression
@@ -243,7 +246,7 @@ class Yume::Parser(*T)
   end
 
   def parse_receiver : AST::Expression
-    parse_receiver(parse_primary)
+    positioned { parse_receiver(parse_primary) }
   end
 
   def parse_receiver(receiver : AST::Expression) : AST::Expression

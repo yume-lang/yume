@@ -1,7 +1,11 @@
 module Yume::AST
   # TODO: maybe remove completely, or at least add useful position functions
   module AST
-    alias Pos = Range(Int32, Int32)
+    record Pos, range : Range(Int32, Int32), file : Int32 do
+      def to_s(io : IO)
+        io << range.begin << ":" << (range.end - range.begin)
+      end
+    end
     property! pos : Pos
 
     def at(pos : Pos) : self
@@ -10,7 +14,11 @@ module Yume::AST
     end
 
     def at(s : Int32, e : Int32) : self
-      at(s..e)
+      at(Pos.new s..e, -1)
+    end
+
+    def at(s : Int32, e : Int32, file : Int32) : self
+      at(Pos.new s..e, file)
     end
 
     def pretty_print(pp) : Nil
