@@ -200,13 +200,14 @@ class Yume::Compiler
   @mod : LLVM::Module
   @builder : LLVM::Builder
   @libc = Hash(String, LLVM::Function).new
-  @fns = Hash(AST::FunctionDefinition, LLVM::Function?).new
+  @fns = Array(AST::FunctionDefinition).new
   @types = Hash(String, Type).new
   @fn_self_types = Hash(AST::FunctionDefinition, Type).new
   getter! cur_ast_fn : AST::FunctionDefinition?
   getter! cur_llvm_fn : LLVM::Function?
   @fn_scope = Hash(String, Value).new
   @type_scope = Hash(String, Type).new
+  @instantiated_cache = Set(UInt64).new
   @instantiation_queue = Deque({AST::FunctionDefinition, LLVM::Function, Hash(String, Type)?}).new
   @terminated = false
 
@@ -217,8 +218,10 @@ class Yume::Compiler
         if self_type = @type_scope[""]?
           @fn_self_types[s] = self_type
         end
-        f = declare(s)
-        next if f.nil?
+        @fns << s
+        if s.name.name == "main" || s.decl.external?
+          declare(s)
+        end
       when AST::StructDefinition
         @types[s.name] = @type_scope[""] = StructType.new(s.name, s.fields.map { |i| resolve_type i })
         declare_body s.body
@@ -244,6 +247,12 @@ class Yume::Compiler
 
     until @instantiation_queue.empty?
       k, v, gen = @instantiation_queue.pop
+      fn_hash = {k, gen}.hash
+      if @instantiated_cache.includes? fn_hash
+        next
+      else
+        @instantiated_cache << fn_hash
+      end
       if k.name.name == "main" || k.decl.external?
         v.name = k.name.name # Removes mangling
         v.linkage = LLVM::Linkage::External
@@ -449,7 +458,7 @@ class Yume::Compiler
       slice = @ctx.const_struct([array, @ctx.int64.const_int(args.size)])
       Value.new(slice, SliceType.new(val_type))
     when AST::Call
-      overload_set = @fns.keys.select(&.name.name.== ex.name.name)
+      overload_set = @fns.select(&.name.name.== ex.name.name)
 
       args = ex.args.map { |i| expression i }
 
@@ -487,8 +496,8 @@ class Yume::Compiler
       end
 
       matching_fn_def, _, matching_generics = matching.max_by(&.[1])
-      matching_fn = @fns[matching_fn_def]
       @type_scope = matching_generics
+      matching_fn = declare matching_fn_def
 
       {% if flag?("debug_overload") %}
         puts "#{def_pos matching_fn_def} > Selected (#{matching.size}) (#{matching_generics.map { |k, v| "#{k} => #{v}" }.join ", "})"
@@ -544,7 +553,7 @@ class Yume::Compiler
         val
       else
         if matching_fn.nil?
-          matching_fn = declare(matching_fn_def, always_instantiate: true).not_nil!
+          matching_fn = declare(matching_fn_def).not_nil!
         end
         val = Value.new(@builder.call(matching_fn, args.map(&.llvm)), resolve_type(matching_fn_def.not_nil!.return_type))
         @type_scope.clear
@@ -740,32 +749,28 @@ class Yume::Compiler
     fn_def.is_a?(AST::PrimitiveDefinition) && fn_def.varargs?
   end
 
-  def declare(fn : AST::FunctionDefinition, always_instantiate : Bool = false) : LLVM::Function?
+  def declare(fn : AST::FunctionDefinition) : LLVM::Function?
     # TODO: rehaul all of this logic, it is quite ugly
     # Functions should be instantiated only when used, declaration should basically do nothing
     # TODO: What is the difference between AST::FunctionDefinition and LLVM::Function, how are they used
     # and why are they separate?
     # TODO: Handle namespaced stuff properly
     # TODO: proper reference semantics
-    if fn.decl.generics && !always_instantiate
-      @fns[fn] = nil
+    puts "declare"
+    pp! fn
+    puts "--"
+    arg_types = fn.args.map { |i| llvm_type(resolve_type(i.type, fn)) }
+    ret_type = llvm_type(resolve_type(fn.return_type, fn))
+    if fn.is_a? AST::PrimitiveDefinition
+      f = nil
     else
-      arg_types = fn.args.map { |i| llvm_type(resolve_type(i.type, fn)) }
-      ret_type = llvm_type(resolve_type(fn.return_type, fn))
-      if fn.is_a? AST::PrimitiveDefinition
-        f = nil
-      else
-        llvm_name = "ym:#{fn.name.name}(#{fn.args.map { |i| resolve_type(i.type).to_s }.join ","})"
-        f = @mod.functions.add llvm_name, arg_types, ret_type
-      end
-      unless fn.decl.generics
-        @fns[fn] = f
-      end
-      if f
-        @instantiation_queue << {fn, f, @type_scope.dup}
-      end
-      f
+      llvm_name = "ym:#{fn.name.name}(#{fn.args.map { |i| resolve_type(i.type).to_s }.join ","})"
+      f = @mod.functions.add llvm_name, arg_types, ret_type
     end
+    if f
+      @instantiation_queue << {fn, f, @type_scope.dup}
+    end
+    f
   end
 
   def add_libc_functions
