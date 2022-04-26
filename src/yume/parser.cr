@@ -342,13 +342,11 @@ class Yume::Parser(*T)
             # This was parsed as a type literal, but it's actually an empty typed array literal
             AST::ArrayLiteral.new(type.type, [] of AST::Expression)
           else
-            debug_pos col: :light_red
-            raise "Couldn't find an expression"
+            fatal_pos "Couldn't find an expression"
           end
         end
       else
-        debug_pos col: :light_red
-        raise "Couldn't find an expression"
+        fatal_pos "Couldn't find an expression"
       end
     end
   end
@@ -530,11 +528,15 @@ class Yume::Parser(*T)
     consume({{ kwd }}, comment: "@#{{{ @def.name.stringify }}}:#{ __LINE__ }")
   end
 
+  macro fatal_pos(msg)
+    debug_pos(col: :light_red, comment: "@#{{{ @def.name.stringify }}}:#{ __LINE__ }")
+    raise {{ msg }}
+  end
+
   def consume(kwd : Symbol, *, comment = "")
     t = consume?(kwd, comment: comment, col: :magenta)
     unless t
-      debug_pos col: :light_red
-      raise "Expected #{kwd} here, but found #{@current_token.try(&.[0])}!"
+      fatal_pos "Expected #{kwd} here, but found #{@current_token.try(&.[0])}!"
     end
     t
   end
