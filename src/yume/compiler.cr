@@ -362,16 +362,31 @@ class Yume::Compiler
     end
 
     "#{filename || file || "?"}:#{real_pos}".rjust 24
-  # TODO: use positions again when they work
-  private def def_pos(m : AST::FunctionDefinition?)
-    ":#{m.try &.@pos.try &.begin}".rjust 5
+  end
+
+  def type_cast(val : Value, type : Type) : Value
+    val_type = val.type
+    if val_type == type
+      return val
+    elsif val_type.is_a? IntegralType && type.is_a? IntegralType
+      if val_type.signed == type.signed && val_type.size <= type.size
+        return Value.new((val_type.signed ? @builder.sext(val, llvm_type type) : @builder.zext(val, llvm_type type)), type)
+      end
+    end
+    raise "Can't cast #{val} to #{type}"
   end
 
   def type_compatibility(a : Type, b : Type, gen : Hash(String, Type)) : Int32
     if a == b
       return 2
     else
-      if b.is_a? GenericType
+      if b.is_a? IntegralType
+        if a.is_a? IntegralType
+          if a.signed == b.signed && a.size <= b.size
+            return 1
+          end
+        end
+      elsif b.is_a? GenericType
         if gen.has_key?(b.name) && gen[b.name] != a
           return 0
         else
@@ -381,18 +396,13 @@ class Yume::Compiler
       elsif b.is_a? SliceType
         if a.is_a? SliceType
           return type_compatibility a.value, b.value, gen
-        else
-          return 0
         end
       elsif b.is_a? PointerType
         if a.is_a? PointerType
           return type_compatibility a.value, b.value, gen
-        else
-          return 0
         end
-      else
-        return 0
       end
+      return 0
     end
   end
 
@@ -452,7 +462,7 @@ class Yume::Compiler
         overload_set.map { |i| {i, type_signature(i)} }.each do |m, (i, r)|
           print "#{def_pos m} | "
           i.join STDOUT, ", "
-          print ", ..." if m.is_a?(AST::PrimitiveDefinition) && m.varargs?
+          print ", ..." if varargs? m
           print " -> "
           puts r
         end
@@ -467,7 +477,7 @@ class Yume::Compiler
         generic_match = {} of String => Type
         args.each_with_index do |a, i|
           if i >= sig.size
-            break valid = (o.is_a?(AST::PrimitiveDefinition) && o.varargs?)
+            break valid = varargs? o
           end
           c = type_compatibility(a.type, sig[i], generic_match)
           compatibility += c
@@ -484,6 +494,13 @@ class Yume::Compiler
         puts "#{def_pos matching_fn_def} > Selected (#{matching.size}) (#{matching_generics.map { |k, v| "#{k} => #{v}" }.join ", "})"
         puts
       {% end %}
+
+      args = args.map_with_index do |a, i|
+        if varargs?(matching_fn_def) && matching_fn_def.args[i]?.nil?
+          next a
+        end
+        type_cast(a, resolve_type(matching_fn_def.args[i].type))
+      end
 
       if matching_fn.nil? && matching_fn_def.is_a? AST::PrimitiveDefinition
         v = case matching_fn_def.primitive
@@ -717,6 +734,10 @@ class Yume::Compiler
   def signed_type?(t : Type) : Bool
     raise "Can't check signedness of non-integral type" unless t.is_a? IntegralType
     t.signed
+  end
+
+  def varargs?(fn_def : AST::FunctionDefinition) : Bool
+    fn_def.is_a?(AST::PrimitiveDefinition) && fn_def.varargs?
   end
 
   def declare(fn : AST::FunctionDefinition, always_instantiate : Bool = false) : LLVM::Function?
