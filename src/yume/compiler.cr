@@ -561,7 +561,7 @@ class Yume::Compiler
         Value.new instance, struct_type
       elsif struct_type.is_a? SliceType
         val_type = struct_type.value
-        arr_size = expression ex.args[0]
+        arr_size = type_cast expression(ex.args[0]), Type::INT_64
         array = LLVM::Value.new LibLLVM.build_array_malloc(@builder, llvm_type(val_type), arr_size, "s.ctor.malloc")
         array_ptr = @builder.bit_cast(array, llvm_type(val_type).pointer, "s.ctor.malloc.ptr")
         slice_alloc = @builder.alloca llvm_type(struct_type)
