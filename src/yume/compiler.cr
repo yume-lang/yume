@@ -244,8 +244,8 @@ class Yume::Compiler
 
     until @instantiation_queue.empty?
       k, v, gen = @instantiation_queue.pop
-      if (k.name.name == "main" && k.args.empty?) || (k.decl.external?)
-        v.name = k.name.name
+      if k.name.name == "main" || k.decl.external?
+        v.name = k.name.name # Removes mangling
         v.linkage = LLVM::Linkage::External
       else
         v.linkage = LLVM::Linkage::Internal
