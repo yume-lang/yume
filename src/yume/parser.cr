@@ -137,7 +137,7 @@ class Yume::Parser(*T)
               end
               current_clause_body = [] of AST::Statement
             else
-              consume_sep
+              consume_sep?
               in_else = true
             end
           end
