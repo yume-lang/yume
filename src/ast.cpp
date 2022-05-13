@@ -55,7 +55,7 @@ auto Program::parse(TokenIterator& tokens) -> unique_ptr<Program> {
 }
 void Program::visit(Visitor& visitor) const { visitor.visit(m_body); }
 
-auto DeclStatement::parse(TokenIterator& tokens) -> unique_ptr<DeclStatement> {
+auto FnDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement> {
   const string name = consume_word(tokens);
   consume(tokens, Symbol, SYMBOL_LPAREN);
 
@@ -72,15 +72,25 @@ auto DeclStatement::parse(TokenIterator& tokens) -> unique_ptr<DeclStatement> {
   }
 
   auto compound = std::make_unique<Compound>(body);
-  return unique_ptr<DeclStatement>(new DeclStatement(name, args, std::move(return_type), compound));
+  return unique_ptr<FnDeclStatement>(new FnDeclStatement(name, args, std::move(return_type), compound));
 }
-void DeclStatement::visit(Visitor& visitor) const { visitor.visit(m_name, m_args, m_ret, m_body); }
+void FnDeclStatement::visit(Visitor& visitor) const { visitor.visit(m_name, m_args, m_ret, m_body); }
+
+auto VarDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<VarDeclStatement> {
+  const string name = consume_word(tokens);
+  auto type = unique_ptr<Type>{};
+
+  return unique_ptr<VarDeclStatement>(new VarDeclStatement(name, std::move(type)));
+}
+void VarDeclStatement::visit(Visitor& visitor) const { visitor.visit(m_name, m_type); }
 
 auto Statement::parse(TokenIterator& tokens) -> unique_ptr<Statement> {
   auto stat = unique_ptr<Statement>();
 
   if (tokens->is_keyword(KEYWORD_DEF)) {
-    stat = DeclStatement::parse(++tokens);
+    stat = FnDeclStatement::parse(++tokens);
+  } else if (tokens->is_keyword(KEYWORD_LET)) {
+    stat = VarDeclStatement::parse(++tokens);
   } else {
     ++tokens;
     // throw std::runtime_error("Can't make a statement from here!");

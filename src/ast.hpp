@@ -24,13 +24,14 @@ protected:
   ~AST() = default;
 };
 
-enum struct Kind { Unknown, Number, Decl, Program, SimpleType, TypeName, Compound };
+enum struct Kind { Unknown, Number, FnDecl, VarDecl, Program, SimpleType, TypeName, Compound };
 
 auto inline constexpr kind_name(Kind type) -> const char* {
   switch (type) {
   case Kind::Unknown: return "unknown";
   case Kind::Number: return "number";
-  case Kind::Decl: return "decl";
+  case Kind::FnDecl: return "fn decl";
+  case Kind::VarDecl: return "var decl";
   case Kind::Program: return "program";
   case Kind::SimpleType: return "simple type";
   case Kind::TypeName: return "type name";
@@ -102,20 +103,35 @@ public:
   [[nodiscard]] inline auto kind() const -> Kind override { return Kind::Compound; };
 };
 
-class DeclStatement : public Statement, public AST {
+class FnDeclStatement : public Statement, public AST {
   string m_name;
   vector<unique_ptr<TypeName>> m_args;
   unique_ptr<Type> m_ret;
   unique_ptr<Compound> m_body;
 
 private:
-  inline DeclStatement(string name, vector<unique_ptr<TypeName>>& args, unique_ptr<Type> ret, unique_ptr<Compound>& body)
+  inline FnDeclStatement(string name, vector<unique_ptr<TypeName>>& args, unique_ptr<Type> ret,
+                         unique_ptr<Compound>& body)
       : m_name{std::move(name)}, m_args{std::move(args)}, m_ret{std::move(ret)}, m_body{std::move(body)} {};
 
 public:
   void visit(Visitor& visitor) const override;
-  [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<DeclStatement>;
-  [[nodiscard]] inline auto kind() const -> Kind override { return Kind::Decl; };
+  [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement>;
+  [[nodiscard]] inline auto kind() const -> Kind override { return Kind::FnDecl; };
+  [[nodiscard]] inline auto describe() const -> string override { return m_name; };
+};
+
+class VarDeclStatement : public Statement, public AST {
+  string m_name;
+  unique_ptr<Type> m_type;
+
+private:
+  inline VarDeclStatement(string name, unique_ptr<Type> type) : m_name{std::move(name)}, m_type{std::move(type)} {};
+
+public:
+  void visit(Visitor& visitor) const override;
+  [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<VarDeclStatement>;
+  [[nodiscard]] inline auto kind() const -> Kind override { return Kind::VarDecl; };
   [[nodiscard]] inline auto describe() const -> string override { return m_name; };
 };
 
