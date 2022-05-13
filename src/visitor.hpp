@@ -45,6 +45,14 @@ public:
     }
   }
 
+  template <typename T> inline void visit(const optional<T>& opt) {
+    if (opt.has_value()) {
+      visit(*opt);
+    } else {
+      visit(nullptr);
+    }
+  }
+
   template <typename T, typename U, typename... Ts> inline void visit(T&& t, U&& u, Ts&&... ts) {
     visit(t);
     visit(u);

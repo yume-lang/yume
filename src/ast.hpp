@@ -48,7 +48,7 @@ protected:
 public:
   virtual void inline visit(Visitor& visitor) const {};
   [[nodiscard]] virtual auto kind() const -> Kind = 0;
-  [[nodiscard]] virtual auto inline describe() const -> string { return std::string{"unknown "} + kind_name(kind()); };
+  [[nodiscard]] virtual auto inline describe() const -> string { return string{"unknown "} + kind_name(kind()); };
 
   virtual ~Expr() = default;
 };
@@ -63,6 +63,7 @@ private:
 
 public:
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<SimpleType>;
+  [[nodiscard]] static auto try_parse(TokenIterator& tokens) -> optional<unique_ptr<SimpleType>>;
   [[nodiscard]] auto inline kind() const -> Kind override { return Kind::SimpleType; };
   [[nodiscard]] inline auto describe() const -> string override { return m_name; };
 };
@@ -123,10 +124,10 @@ public:
 
 class VarDeclStatement : public Statement, public AST {
   string m_name;
-  unique_ptr<Type> m_type;
+  optional<unique_ptr<Type>> m_type;
 
 private:
-  inline VarDeclStatement(string name, unique_ptr<Type> type) : m_name{move(name)}, m_type{move(type)} {};
+  inline VarDeclStatement(string name, optional<unique_ptr<Type>> type) : m_name{move(name)}, m_type{move(type)} {};
 
 public:
   void visit(Visitor& visitor) const override;

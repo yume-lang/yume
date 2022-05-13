@@ -23,7 +23,7 @@ struct Token {
     }
   };
 
-  using Payload = std::optional<Atom>;
+  using Payload = optional<Atom>;
 
   Type m_type;
   Payload m_payload;

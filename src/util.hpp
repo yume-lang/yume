@@ -12,11 +12,13 @@
 #include <set>
 #include <utility>
 #include <vector>
+#include <optional>
 
 namespace yume {
 
 template <typename T> using vector = std::vector<T>;
 template <typename T> using unique_ptr = std::unique_ptr<T>;
+template <typename T> using optional = std::optional<T>;
 using string = std::string;
 
 auto inline open_file(const char* filename) -> unique_ptr<llvm::raw_pwrite_stream> {

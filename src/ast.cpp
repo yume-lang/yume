@@ -78,7 +78,9 @@ void FnDeclStatement::visit(Visitor& visitor) const { visitor.visit(m_name, m_ar
 
 auto VarDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<VarDeclStatement> {
   const string name = consume_word(tokens);
-  auto type = unique_ptr<Type>{};
+  auto type = SimpleType::try_parse(tokens);
+
+  consume(tokens, Symbol, SYMBOL_EQ);
 
   return unique_ptr<VarDeclStatement>(new VarDeclStatement(name, move(type)));
 }
@@ -102,6 +104,18 @@ auto SimpleType::parse(TokenIterator& tokens) -> unique_ptr<SimpleType> {
   const string name = consume_word(tokens);
   if (isupper(name.front()) == 0) {
     throw std::runtime_error("Expected capitalized payload for simple type");
+  }
+
+  return unique_ptr<SimpleType>(new SimpleType(name));
+}
+
+auto SimpleType::try_parse(TokenIterator& tokens) -> optional<unique_ptr<SimpleType>> {
+  if (tokens->m_type != Word || !tokens->m_payload.has_value()) {
+    return {};
+  }
+  const string name = consume_word(tokens);
+  if (isupper(name.front()) == 0) {
+    return {};
   }
 
   return unique_ptr<SimpleType>(new SimpleType(name));
