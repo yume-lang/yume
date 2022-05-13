@@ -27,7 +27,7 @@ void DotVisitor::visit(const ast::Expr& expr) {
   }
   m_stream << AST_KEY << m_index << " [label=<<B>";
   xml_escape(m_stream, string(ast::kind_name(expr.kind())));
-  m_stream << "</B><BR/>" << expr.describe() << ">];\n";
+  m_stream << "</B>>];\n";
   auto restore_parent = set_parent(m_index);
   m_index++;
   expr.visit(*this);

@@ -4,6 +4,8 @@
 
 #include "ast.hpp"
 
+#include <memory>
+
 namespace yume::ast {
 using namespace yume::atom_literal;
 using namespace std::literals::string_literals;
@@ -11,6 +13,7 @@ using namespace std::literals::string_literals;
 constexpr static auto Symbol = Token::Type::Symbol;
 constexpr static auto Word = Token::Type::Word;
 constexpr static auto Separator = Token::Type::Separator;
+constexpr static auto Number = Token::Type::Number;
 
 static const Atom KEYWORD_DEF = "def"_a;
 static const Atom KEYWORD_END = "end"_a;
@@ -26,12 +29,16 @@ void ignore_separator(TokenIterator& tokens) {
   }
 }
 
-void consume(TokenIterator& tokens, Token::Type tokenType, Atom payload) {
-  ignore_separator(tokens);
-  if (tokens->m_type != tokenType) {
-    throw std::runtime_error("Expected token type "s + Token::type_name(tokenType) + ", got " +
+void expect(TokenIterator& tokens, Token::Type token_type) {
+  if (tokens->m_type != token_type) {
+    throw std::runtime_error("Expected token type "s + Token::type_name(token_type) + ", got " +
                              Token::type_name(tokens->m_type));
   }
+}
+
+void consume(TokenIterator& tokens, Token::Type token_type, Atom payload) {
+  ignore_separator(tokens);
+  expect(tokens, token_type);
   if (tokens->m_payload != payload) {
     throw std::runtime_error("Expected payload atom "s + string(payload) + ", got " + string(*tokens->m_payload));
   }
@@ -93,9 +100,11 @@ auto VarDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<VarDeclStateme
 
   consume(tokens, Symbol, SYMBOL_EQ);
 
-  return unique_ptr<VarDeclStatement>(new VarDeclStatement(name, move(type)));
+  auto init = Expr::parse(tokens);
+
+  return unique_ptr<VarDeclStatement>(new VarDeclStatement(name, move(type), move(init)));
 }
-void VarDeclStatement::visit(Visitor& visitor) const { visitor.visit(m_name, m_type); }
+void VarDeclStatement::visit(Visitor& visitor) const { visitor.visit(m_name, m_type, m_init); }
 
 auto Statement::parse(TokenIterator& tokens) -> unique_ptr<Statement> {
   auto stat = unique_ptr<Statement>();
@@ -131,6 +140,7 @@ auto SimpleType::try_parse(TokenIterator& tokens) -> optional<unique_ptr<SimpleT
 
   return unique_ptr<SimpleType>(new SimpleType(name));
 }
+void SimpleType::visit(Visitor& visitor) const { visitor.visit(m_name); }
 
 auto TypeName::parse(TokenIterator& tokens) -> unique_ptr<TypeName> {
   const string name = consume_word(tokens);
@@ -139,4 +149,19 @@ auto TypeName::parse(TokenIterator& tokens) -> unique_ptr<TypeName> {
 }
 void TypeName::visit(Visitor& visitor) const { visitor.visit(m_name, m_type); }
 void Compound::visit(Visitor& visitor) const { visitor.visit(m_body); }
+
+auto Expr::parse(TokenIterator& tokens) -> unique_ptr<Expr> {
+  if (tokens->m_type == Number) {
+    return NumberExpr::parse(tokens);
+  }
+  return nullptr;
+}
+
+auto NumberExpr::parse(TokenIterator& tokens) -> unique_ptr<NumberExpr> {
+  expect(tokens, Number);
+  auto value = stoll(*tokens++->m_payload->m_str);
+
+  return std::make_unique<NumberExpr>(value);
+}
+void NumberExpr::visit(Visitor& visitor) const { visitor.visit(describe()); }
 } // namespace yume::ast

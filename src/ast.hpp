@@ -49,8 +49,9 @@ public:
   virtual void inline visit(Visitor& visitor) const {};
   [[nodiscard]] virtual auto kind() const -> Kind = 0;
   [[nodiscard]] virtual auto inline describe() const -> string { return string{"unknown "} + kind_name(kind()); };
-
   virtual ~Expr() = default;
+
+  [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<Expr>;
 };
 
 class Type : public Expr {};
@@ -62,6 +63,7 @@ private:
   explicit inline SimpleType(string name) : m_name{move(name)} {};
 
 public:
+  void visit(Visitor& visitor) const override;
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<SimpleType>;
   [[nodiscard]] static auto try_parse(TokenIterator& tokens) -> optional<unique_ptr<SimpleType>>;
   [[nodiscard]] auto inline kind() const -> Kind override { return Kind::SimpleType; };
@@ -87,7 +89,10 @@ class NumberExpr : public Expr, public AST {
 
 public:
   explicit inline NumberExpr(int64_t val) : m_val(val) {}
+  void visit(Visitor& visitor) const override;
+  [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<NumberExpr>;
   [[nodiscard]] auto inline kind() const -> Kind override { return Kind::Number; };
+  [[nodiscard]] inline auto describe() const -> string override { return std::to_string(m_val); };
 };
 
 class Statement : public Expr {
@@ -125,9 +130,11 @@ public:
 class VarDeclStatement : public Statement, public AST {
   string m_name;
   optional<unique_ptr<Type>> m_type;
+  unique_ptr<Expr> m_init;
 
 private:
-  inline VarDeclStatement(string name, optional<unique_ptr<Type>> type) : m_name{move(name)}, m_type{move(type)} {};
+  inline VarDeclStatement(string name, optional<unique_ptr<Type>> type, unique_ptr<Expr> init)
+      : m_name{move(name)}, m_type{move(type)}, m_init(move(init)){};
 
 public:
   void visit(Visitor& visitor) const override;
