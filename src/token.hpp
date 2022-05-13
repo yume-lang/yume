@@ -13,13 +13,14 @@
 
 namespace yume {
 struct Token {
-  enum struct Type { Word, Whitespace, Symbol, Literal };
+  enum struct Type { Word, Whitespace, Symbol, Literal, Separator };
   static auto inline constexpr type_name(Type type) -> const char* {
     switch (type) {
     case Token::Type::Word: return "Word";
     case Token::Type::Whitespace: return "Whitespace";
     case Token::Type::Symbol: return "Symbol";
     case Token::Type::Literal: return "Literal";
+    case Token::Type::Separator: return "Separator";
     }
   };
 
@@ -28,7 +29,9 @@ struct Token {
   Type m_type;
   Payload m_payload;
 
-  inline constexpr auto is_keyword(const Atom& str) const -> bool { return m_type == Type::Word && m_payload == str; }
+  [[nodiscard]] inline constexpr auto is_keyword(const Atom& str) const -> bool {
+    return m_type == Type::Word && m_payload == str;
+  }
 
   explicit inline Token(Type type) : m_type(type) {}
   inline Token(Type type, Payload payload) : m_type(type), m_payload(payload) {}

@@ -5,7 +5,6 @@
 #include "token.hpp"
 #include <algorithm>
 #include <iostream>
-#include <sstream>
 #include <utility>
 #include <vector>
 
@@ -48,6 +47,7 @@ struct Tokenizer {
 
     while (!m_in.eof()) {
       if (!selectCharacteristic({
+              {Token::Type::Separator,  '\n'              },
               {Token::Type::Whitespace, std::isspace      },
               {Token::Type::Word,       isword            },
               {Token::Type::Literal,    std::isdigit      },

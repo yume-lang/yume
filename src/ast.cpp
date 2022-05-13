@@ -10,6 +10,7 @@ using namespace std::literals::string_literals;
 
 constexpr static auto Symbol = Token::Type::Symbol;
 constexpr static auto Word = Token::Type::Word;
+constexpr static auto Separator = Token::Type::Separator;
 
 static const Atom KEYWORD_DEF = "def"_a;
 static const Atom KEYWORD_END = "end"_a;
@@ -19,7 +20,14 @@ static const Atom SYMBOL_EQ = "="_a;
 static const Atom SYMBOL_LPAREN = "("_a;
 static const Atom SYMBOL_RPAREN = ")"_a;
 
-auto consume(TokenIterator& tokens, Token::Type tokenType, Atom payload) {
+void ignore_separator(TokenIterator& tokens) {
+  while (tokens->m_type == Separator) {
+    tokens++;
+  }
+}
+
+void consume(TokenIterator& tokens, Token::Type tokenType, Atom payload) {
+  ignore_separator(tokens);
   if (tokens->m_type != tokenType) {
     throw std::runtime_error("Expected token type "s + Token::type_name(tokenType) + ", got " +
                              Token::type_name(tokens->m_type));
@@ -41,6 +49,7 @@ auto try_consume(TokenIterator& tokens, Token::Type tokenType, Atom payload) -> 
 }
 
 auto consume_word(TokenIterator& tokens) -> string {
+  ignore_separator(tokens);
   if (tokens->m_type != Word) {
     throw std::runtime_error("Expected word");
   }
@@ -65,10 +74,12 @@ auto FnDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement
   }
 
   auto return_type = SimpleType::parse(tokens);
+  ignore_separator(tokens);
 
   auto body = vector<unique_ptr<Statement>>{};
   while (!try_consume(tokens, Word, KEYWORD_END)) {
     body.push_back(Statement::parse(tokens));
+    ignore_separator(tokens);
   }
 
   auto compound = std::make_unique<Compound>(body);
