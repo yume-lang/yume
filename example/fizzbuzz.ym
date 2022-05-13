@@ -1,0 +1,20 @@
+def fizzbuzz(num I32)
+  if num % 15 == 0
+    printf("FizzBuzz\n")
+  else if num % 3 == 0
+    printf("Fizz\n")
+  else if num % 5 == 0
+    printf("Buzz\n")
+  else
+    printf("%d\n", num)
+  end
+end
+
+def main() I32
+  let num I32 = 0
+  while num < 100
+    num = num + 1
+    fizzbuzz(num)
+  end
+  return 0
+end

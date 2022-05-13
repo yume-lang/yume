@@ -1,0 +1,105 @@
+# TODO
+# This would be a lot clearer if i had enums
+struct Instruction
+  type I32
+  payload I32
+end
+
+def parse(input U8[]) Instruction[]
+  let i I32 = 0
+  let instructions = Instruction[](input.size)
+  # TODO
+  # This should be dynamically sized...
+  let stack = I32[](512)
+  let stack_i I32 = 0
+  while i < input.size
+    let chr U8 = input[i]
+    let instruction = Instruction(0, 0)
+    # TODO
+    # This could be simplified if I had switch-like stuff
+    if      chr == ?> then instruction = Instruction(1, 0)
+    else if chr == ?< then instruction = Instruction(2, 0)
+    else if chr == ?+ then instruction = Instruction(3, 0)
+    else if chr == ?- then instruction = Instruction(4, 0)
+    else if chr == ?. then instruction = Instruction(5, 0)
+    else if chr == ?, then instruction = Instruction(6, 0)
+    else if chr == ?[
+      instruction = Instruction(7, -1)
+      stack[stack_i] = i
+      # TODO
+      # This could be simplified if I had fused `+=`
+      stack_i = stack_i + 1
+    else if chr == ?]
+      stack_i = stack_i - 1
+      let jump_target I32 = stack[stack_i]
+      instruction = Instruction(8, jump_target)
+      instructions[jump_target]::payload = i
+    end
+    instructions[i] = instruction
+    i = i + 1
+  end
+  return instructions
+end
+
+def main(argc I32, argv U8**) I32
+  # Hello world example function
+  let word_ptr U8* = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++."
+  if argc > 1
+    word_ptr = argv[1]
+  end
+  # TODO
+  # Perhaps this could be constructed from the same pointer, instead of
+  # allocating a new one and copying it. It would probably require constructors
+  # to be a real feature, but slice constructors are a special case anyway
+  let word = U8[](word_ptr.c_len)
+  copy(word_ptr, word.ptr, word.size)
+
+  let instructions Instruction[] = parse(word)
+
+  let pc I32 = 0
+  let ptr I32 = 0
+  let memory = U8[](65535)
+
+  # TODO
+  # This could be simplified if i had better iteration, i.e. something akin
+  # to a for-each loop
+  let i I32 = 0
+  # TODO
+  # There should be an easier way to zero-fill a slice
+  while i < memory.size
+    memory[i] = ?\0
+    i = i + 1
+  end
+
+  while pc < instructions.size
+    let instr Instruction = instructions[pc]
+    if instr::type == 1
+      ptr = ptr + 1
+    else if instr::type == 2
+      ptr = ptr - 1
+    else if instr::type == 3
+      # TODO
+      # There should be a better way to write integer literals of a certain type
+      # TODO
+      # Integer literals should be able to auto-cast themselves to the required size
+      memory[ptr] = memory[ptr] + U8(1)
+    else if instr::type == 4
+      memory[ptr] = memory[ptr] - U8(1)
+    else if instr::type == 5
+      printf("%c", memory[ptr])
+    else if instr::type == 7
+      if memory[ptr] == ?\0
+        pc = instr::payload
+      end
+    else if instr::type == 8
+      if memory[ptr] != ?\0
+        pc = instr::payload
+      end
+    else
+      return 2
+    end
+    pc = pc + 1
+  end
+
+  return 0
+end

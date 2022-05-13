@@ -1,0 +1,11 @@
+def larger<T>(a T, b T) T
+  if a > b
+    return a
+  else
+    return b
+  end
+end
+
+def main() I32
+  return larger(3, 7)
+end

@@ -1,0 +1,26 @@
+struct Vector
+  x I32
+  y I32
+
+  # TODO
+  # These field accessors will be implicitly defined one day
+  def x(self) I32 = self::x
+  def y(self) I32 = self::y
+
+  def x=(self, j I32) I32 = self::x = j
+  def y=(self, j I32) I32 = self::y = j
+
+  def :+(a self, b self) self = self(a::x + b::x, a::y + b::y)
+end
+
+def main() I32
+  let a = Vector(2, 3)
+  let b = Vector(5, 1)
+  printf("a %p x: %d, y: %d\n", a, a.x, a.y)
+  printf("b %p x: %d, y: %d\n", b, b.x, b.y)
+  let c = a + b
+  printf("c %p x: %d, y: %d\n", c, c.x, c.y)
+  c.x = 9
+  printf("c %p x: %d, y: %d\n", c, c.x, c.y)
+  return 0
+end

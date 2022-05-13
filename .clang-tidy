@@ -1,0 +1,2 @@
+Checks:          'clang-diagnostic-*,clang-analyzer-*,modernize-*,cppcoreguidelines-*,readability-*,performance-*,bugprone-*,-cppcoreguidelines-macro-usage,-readability-identifier-length,-misc-no-recursion'
+FormatStyle:     file
