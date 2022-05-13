@@ -59,7 +59,7 @@ class SimpleType : public Type, public AST {
   string m_name;
 
 private:
-  explicit inline SimpleType(string name) : m_name{std::move(name)} {};
+  explicit inline SimpleType(string name) : m_name{move(name)} {};
 
 public:
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<SimpleType>;
@@ -72,7 +72,7 @@ class TypeName : public Expr, public AST {
   string m_name;
 
 private:
-  explicit inline TypeName(unique_ptr<Type>& type, string name) : m_type{std::move(type)}, m_name{std::move(name)} {};
+  explicit inline TypeName(unique_ptr<Type>& type, string name) : m_type{move(type)}, m_name{move(name)} {};
 
 public:
   void visit(Visitor& visitor) const override;
@@ -99,7 +99,7 @@ class Compound : public Statement, public AST {
 
 public:
   void visit(Visitor& visitor) const override;
-  explicit inline Compound(vector<unique_ptr<Statement>>& body) : m_body{std::move(body)} {};
+  explicit inline Compound(vector<unique_ptr<Statement>>& body) : m_body{move(body)} {};
   [[nodiscard]] inline auto kind() const -> Kind override { return Kind::Compound; };
 };
 
@@ -112,7 +112,7 @@ class FnDeclStatement : public Statement, public AST {
 private:
   inline FnDeclStatement(string name, vector<unique_ptr<TypeName>>& args, unique_ptr<Type> ret,
                          unique_ptr<Compound>& body)
-      : m_name{std::move(name)}, m_args{std::move(args)}, m_ret{std::move(ret)}, m_body{std::move(body)} {};
+      : m_name{move(name)}, m_args{move(args)}, m_ret{move(ret)}, m_body{move(body)} {};
 
 public:
   void visit(Visitor& visitor) const override;
@@ -126,7 +126,7 @@ class VarDeclStatement : public Statement, public AST {
   unique_ptr<Type> m_type;
 
 private:
-  inline VarDeclStatement(string name, unique_ptr<Type> type) : m_name{std::move(name)}, m_type{std::move(type)} {};
+  inline VarDeclStatement(string name, unique_ptr<Type> type) : m_name{move(name)}, m_type{move(type)} {};
 
 public:
   void visit(Visitor& visitor) const override;
@@ -139,7 +139,7 @@ class Program : public Statement, public AST {
   vector<unique_ptr<Statement>> m_body;
 
 private:
-  explicit inline Program(vector<unique_ptr<Statement>>& body) : m_body{std::move(body)} {}
+  explicit inline Program(vector<unique_ptr<Statement>>& body) : m_body{move(body)} {}
 
 public:
   void visit(Visitor& visitor) const override;

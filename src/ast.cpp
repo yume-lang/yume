@@ -49,7 +49,7 @@ auto consume_word(TokenIterator& tokens) -> string {
 
 auto Program::parse(TokenIterator& tokens) -> unique_ptr<Program> {
   auto statements = vector<unique_ptr<Statement>>{};
-  statements.push_back(std::move(Statement::parse(tokens)));
+  statements.push_back(move(Statement::parse(tokens)));
 
   return unique_ptr<Program>(new Program(statements));
 }
@@ -72,7 +72,7 @@ auto FnDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement
   }
 
   auto compound = std::make_unique<Compound>(body);
-  return unique_ptr<FnDeclStatement>(new FnDeclStatement(name, args, std::move(return_type), compound));
+  return unique_ptr<FnDeclStatement>(new FnDeclStatement(name, args, move(return_type), compound));
 }
 void FnDeclStatement::visit(Visitor& visitor) const { visitor.visit(m_name, m_args, m_ret, m_body); }
 
@@ -80,7 +80,7 @@ auto VarDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<VarDeclStateme
   const string name = consume_word(tokens);
   auto type = unique_ptr<Type>{};
 
-  return unique_ptr<VarDeclStatement>(new VarDeclStatement(name, std::move(type)));
+  return unique_ptr<VarDeclStatement>(new VarDeclStatement(name, move(type)));
 }
 void VarDeclStatement::visit(Visitor& visitor) const { visitor.visit(m_name, m_type); }
 
