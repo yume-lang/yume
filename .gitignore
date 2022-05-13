@@ -1,7 +1,3 @@
-### C++ template
-# Prerequisites
-*.d
-
 # Compiled Object files
 *.slo
 *.lo
@@ -12,31 +8,17 @@
 *.gch
 *.pch
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
 # Executables
 *.exe
 *.out
 *.app
 
-### CMake template
+# CMake
 CMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles
 CMakeScripts
+cmake-build-debug
 Testing
 Makefile
 cmake_install.cmake
@@ -45,11 +27,11 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 
-### Example user template template
-### Example user template
-
 # IntelliJ project files
 .idea
 *.iml
 out
 gen
+
+# Other
+bin
