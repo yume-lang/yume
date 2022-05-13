@@ -59,10 +59,8 @@ class Type : public Expr {};
 class SimpleType : public Type, public AST {
   string m_name;
 
-private:
-  explicit inline SimpleType(string name) : m_name{move(name)} {};
-
 public:
+  explicit inline SimpleType(string name) : m_name{move(name)} {};
   void visit(Visitor& visitor) const override;
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<SimpleType>;
   [[nodiscard]] static auto try_parse(TokenIterator& tokens) -> optional<unique_ptr<SimpleType>>;
@@ -74,10 +72,8 @@ class TypeName : public Expr, public AST {
   unique_ptr<Type> m_type;
   string m_name;
 
-private:
-  explicit inline TypeName(unique_ptr<Type>& type, string name) : m_type{move(type)}, m_name{move(name)} {};
-
 public:
+  inline TypeName(unique_ptr<Type>& type, string name) : m_type{move(type)}, m_name{move(name)} {};
   void visit(Visitor& visitor) const override;
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<TypeName>;
   [[nodiscard]] auto inline kind() const -> Kind override { return Kind::TypeName; };
@@ -115,12 +111,10 @@ class FnDeclStatement : public Statement, public AST {
   unique_ptr<Type> m_ret;
   unique_ptr<Compound> m_body;
 
-private:
+public:
   inline FnDeclStatement(string name, vector<unique_ptr<TypeName>>& args, unique_ptr<Type> ret,
                          unique_ptr<Compound>& body)
       : m_name{move(name)}, m_args{move(args)}, m_ret{move(ret)}, m_body{move(body)} {};
-
-public:
   void visit(Visitor& visitor) const override;
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement>;
   [[nodiscard]] inline auto kind() const -> Kind override { return Kind::FnDecl; };
@@ -132,11 +126,9 @@ class VarDeclStatement : public Statement, public AST {
   optional<unique_ptr<Type>> m_type;
   unique_ptr<Expr> m_init;
 
-private:
+public:
   inline VarDeclStatement(string name, optional<unique_ptr<Type>> type, unique_ptr<Expr> init)
       : m_name{move(name)}, m_type{move(type)}, m_init(move(init)){};
-
-public:
   void visit(Visitor& visitor) const override;
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<VarDeclStatement>;
   [[nodiscard]] inline auto kind() const -> Kind override { return Kind::VarDecl; };
@@ -146,13 +138,10 @@ public:
 class Program : public Statement, public AST {
   vector<unique_ptr<Statement>> m_body;
 
-private:
-  explicit inline Program(vector<unique_ptr<Statement>>& body) : m_body{move(body)} {}
-
 public:
+  explicit inline Program(vector<unique_ptr<Statement>>& body) : m_body{move(body)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<Program>;
-  [[nodiscard]] auto inline body() const -> const vector<unique_ptr<Statement>>& { return m_body; }
   [[nodiscard]] constexpr auto inline kind() const -> Kind override { return Kind::Program; };
 };
 } // namespace yume::ast
