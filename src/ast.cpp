@@ -4,11 +4,13 @@
 
 #include "ast.hpp"
 
+#include <experimental/source_location>
 #include <memory>
 
 namespace yume::ast {
 using namespace yume::atom_literal;
 using namespace std::literals::string_literals;
+using std::experimental::source_location;
 
 constexpr static auto Symbol = Token::Type::Symbol;
 constexpr static auto Word = Token::Type::Word;
@@ -29,18 +31,26 @@ void ignore_separator(TokenIterator& tokens) {
   }
 }
 
-void expect(TokenIterator& tokens, Token::Type token_type) {
+auto at(const source_location location = source_location::current()) -> string {
+  return string(location.file_name()) + ":" + std::to_string(location.line()) + ":" +
+         std::to_string(location.column()) + " in " + location.function_name();
+}
+
+void expect(TokenIterator& tokens, Token::Type token_type,
+            const source_location location = source_location::current()) {
   if (tokens->m_type != token_type) {
     throw std::runtime_error("Expected token type "s + Token::type_name(token_type) + ", got " +
-                             Token::type_name(tokens->m_type));
+                             Token::type_name(tokens->m_type) + " at " + at(location));
   }
 }
 
-void consume(TokenIterator& tokens, Token::Type token_type, Atom payload) {
+void consume(TokenIterator& tokens, Token::Type token_type, Atom payload,
+             const source_location location = source_location::current()) {
   ignore_separator(tokens);
   expect(tokens, token_type);
   if (tokens->m_payload != payload) {
-    throw std::runtime_error("Expected payload atom "s + string(payload) + ", got " + string(*tokens->m_payload));
+    throw std::runtime_error("Expected payload atom "s + string(payload) + ", got " + string(*tokens->m_payload) +
+                             " at " + at(location));
   }
 
   tokens++;
@@ -55,10 +65,11 @@ auto try_consume(TokenIterator& tokens, Token::Type tokenType, Atom payload) -> 
   return true;
 }
 
-auto consume_word(TokenIterator& tokens) -> string {
+auto consume_word(TokenIterator& tokens,
+                  const source_location location = source_location::current()) -> string {
   ignore_separator(tokens);
   if (tokens->m_type != Word) {
-    throw std::runtime_error("Expected word");
+    throw std::runtime_error("Expected word"s + " at " + at(location));
   }
   return *tokens++->m_payload;
 }
@@ -85,7 +96,10 @@ auto FnDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement
 
   auto body = vector<unique_ptr<Statement>>{};
   while (!try_consume(tokens, Word, KEYWORD_END)) {
-    body.push_back(Statement::parse(tokens));
+    auto stat = Statement::parse(tokens);
+    if (stat != nullptr) { // TODO(rymiel): remove check when all statement types are implemented
+      body.push_back(move(stat));
+    }
     ignore_separator(tokens);
   }
 
@@ -114,8 +128,7 @@ auto Statement::parse(TokenIterator& tokens) -> unique_ptr<Statement> {
   } else if (tokens->is_keyword(KEYWORD_LET)) {
     stat = VarDeclStatement::parse(++tokens);
   } else {
-    ++tokens;
-    // throw std::runtime_error("Can't make a statement from here!");
+    throw std::runtime_error("Can't make a statement from here!");
   }
   return stat;
 }

@@ -7,7 +7,7 @@ auto main() -> int {
   auto tokens = yume::tokenize_remove_whitespace(std::cin);
   std::cout << "tokens:\n";
   for (auto& i : tokens) {
-    std::cout << i << "\n";
+    std::cout << "  " << i << "\n";
   }
   std::cout << "\n";
   std::cout.flush();
@@ -25,7 +25,7 @@ auto main() -> int {
   }
   std::cout << "unconsumed tokens:\n";
   for (; token_it != tokens.end(); token_it++) {
-    std::cout << *token_it << "\n";
+    std::cout << "  " << *token_it << "\n";
   }
   std::cout << "\n";
   std::cout.flush();
