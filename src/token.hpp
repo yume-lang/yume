@@ -13,13 +13,14 @@
 
 namespace yume {
 struct Token {
-  enum struct Type { Word, Whitespace, Symbol, Literal, Separator };
+  enum struct Type { Word, Whitespace, Symbol, Literal, Number, Separator };
   static auto inline constexpr type_name(Type type) -> const char* {
     switch (type) {
     case Token::Type::Word: return "Word";
     case Token::Type::Whitespace: return "Whitespace";
     case Token::Type::Symbol: return "Symbol";
     case Token::Type::Literal: return "Literal";
+    case Token::Type::Number: return "Number";
     case Token::Type::Separator: return "Separator";
     }
   };

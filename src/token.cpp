@@ -49,9 +49,9 @@ struct Tokenizer {
       if (!selectCharacteristic({
               {Token::Type::Separator,  '\n'              },
               {Token::Type::Whitespace, std::isspace      },
-              {Token::Type::Word,       isword            },
-              {Token::Type::Literal,    std::isdigit      },
+              {Token::Type::Number,     std::isdigit      },
               {Token::Type::Literal,    isstr             },
+              {Token::Type::Word,       isword            },
               {Token::Type::Symbol,     R"(()<>="%-+,/*\)"},
       })) {
         string message = "Tokenizer didn't recognize ";
