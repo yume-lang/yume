@@ -20,20 +20,24 @@ constexpr static auto Number = Token::Type::Number;
 static const Atom KEYWORD_DEF = "def"_a;
 static const Atom KEYWORD_END = "end"_a;
 static const Atom KEYWORD_LET = "let"_a;
+static const Atom KEYWORD_WHILE = "while"_a;
 
 static const Atom SYMBOL_EQ = "="_a;
 static const Atom SYMBOL_LPAREN = "("_a;
 static const Atom SYMBOL_RPAREN = ")"_a;
 
-void ignore_separator(TokenIterator& tokens) {
-  while (tokens->m_type == Separator) {
-    tokens++;
-  }
-}
-
 auto at(const source_location location = source_location::current()) -> string {
   return string(location.file_name()) + ":" + std::to_string(location.line()) + ":" +
          std::to_string(location.column()) + " in " + location.function_name();
+}
+
+void ignore_separator(TokenIterator& tokens, const source_location location = source_location::current()) {
+  while (tokens->m_type == Separator) {
+#ifdef YUME_SPEW_CONSUMED_TOKENS
+    std::cerr << "consumed " << *tokens << " at " << at(location) << "\n";
+#endif
+    ++tokens;
+  }
 }
 
 void expect(TokenIterator& tokens, Token::Type token_type,
@@ -53,25 +57,41 @@ void consume(TokenIterator& tokens, Token::Type token_type, Atom payload,
                              " at " + at(location));
   }
 
+#ifdef YUME_SPEW_CONSUMED_TOKENS
+  std::cerr << "consume: " << *tokens << " at " << at(location) << "\n";
+#endif
+
   tokens++;
 }
 
-auto try_consume(TokenIterator& tokens, Token::Type tokenType, Atom payload) -> bool {
+auto try_consume(TokenIterator& tokens, Token::Type tokenType, Atom payload,
+                 const source_location location = source_location::current()) -> bool {
   if (tokens->m_type != tokenType || tokens->m_payload != payload) {
     return false;
   }
+
+#ifdef YUME_SPEW_CONSUMED_TOKENS
+  std::cerr << "try_consume: " << *tokens << " at " << at(location) << "\n";
+#endif
 
   tokens++;
   return true;
 }
 
-auto consume_word(TokenIterator& tokens,
-                  const source_location location = source_location::current()) -> string {
+auto next(TokenIterator& tokens, const source_location location = source_location::current()) -> Token {
+  auto tok = *tokens++;
+#ifdef YUME_SPEW_CONSUMED_TOKENS
+  std::cerr << "next: " << tok << " at " << at(location) << "\n";
+#endif
+  return tok;
+}
+
+auto consume_word(TokenIterator& tokens, const source_location location = source_location::current()) -> string {
   ignore_separator(tokens);
   if (tokens->m_type != Word) {
     throw std::runtime_error("Expected word"s + " at " + at(location));
   }
-  return *tokens++->m_payload;
+  return *next(tokens, location).m_payload;
 }
 
 auto Program::parse(TokenIterator& tokens) -> unique_ptr<Program> {
@@ -172,7 +192,7 @@ auto Expr::parse(TokenIterator& tokens) -> unique_ptr<Expr> {
 
 auto NumberExpr::parse(TokenIterator& tokens) -> unique_ptr<NumberExpr> {
   expect(tokens, Number);
-  auto value = stoll(*tokens++->m_payload->m_str);
+  auto value = stoll(*next(tokens).m_payload->m_str);
 
   return std::make_unique<NumberExpr>(value);
 }
