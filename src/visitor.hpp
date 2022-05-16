@@ -9,6 +9,7 @@ namespace yume {
 class Visitor;
 namespace ast {
 struct Expr;
+struct ExprStatement;
 }
 } // namespace yume
 
@@ -38,7 +39,7 @@ public:
   }
 
   template <typename T> inline void visit(const unique_ptr<T>& ptr) {
-    if (ptr.get() != nullptr) {
+    if (ptr) {
       visit(*ptr);
     } else {
       visit(nullptr);
@@ -75,6 +76,7 @@ class DotVisitor : public Visitor {
     m_parent = new_parent;
     return restore_parent;
   }
+  void visit_expr(const ast::Expr& expr, bool is_expr_stat);
 
 public:
   explicit DotVisitor(llvm::raw_ostream& stream) : m_stream{stream} {
