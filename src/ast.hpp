@@ -24,7 +24,21 @@ protected:
   ~AST() = default;
 };
 
-enum struct Kind { Unknown, Number, FnDecl, VarDecl, Program, SimpleType, TypeName, Compound };
+enum struct Kind {
+  Unknown,
+  Number,
+  FnDecl,
+  VarDecl,
+  Program,
+  SimpleType,
+  TypeName,
+  Compound,
+  WhileStatement,
+  Call,
+  Var,
+  ExprStatement,
+  Assign
+};
 
 auto inline constexpr kind_name(Kind type) -> const char* {
   switch (type) {
@@ -36,6 +50,12 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case Kind::SimpleType: return "simple type";
   case Kind::TypeName: return "type name";
   case Kind::Compound: return "compound";
+  case Kind::WhileStatement: return "while statement";
+  case Kind::Call: return "call";
+  case Kind::Var: return "var";
+  case Kind::ExprStatement: return "expr statement";
+  case Kind::Assign: return "assign";
+  default: return "?";
   }
 }
 
@@ -91,6 +111,39 @@ public:
   [[nodiscard]] inline auto describe() const -> string override { return std::to_string(m_val); };
 };
 
+class VarExpr : public Expr, public AST {
+  string m_name;
+
+public:
+  explicit inline VarExpr(string name) : m_name(move(name)) {}
+  void visit(Visitor& visitor) const override;
+  [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<VarExpr>;
+  [[nodiscard]] auto inline kind() const -> Kind override { return Kind::Var; };
+  [[nodiscard]] inline auto describe() const -> string override { return m_name; };
+};
+
+class CallExpr : public Expr, public AST {
+  string m_name;
+  vector<unique_ptr<Expr>> m_args;
+
+public:
+  inline CallExpr(string name, vector<unique_ptr<Expr>>& args) : m_name{move(name)}, m_args{move(args)} {};
+  void visit(Visitor& visitor) const override;
+  [[nodiscard]] auto inline kind() const -> Kind override { return Kind::Call; };
+  [[nodiscard]] inline auto describe() const -> string override { return m_name; };
+};
+
+class AssignExpr : public Expr, public AST {
+  unique_ptr<Expr> m_target;
+  unique_ptr<Expr> m_value;
+
+public:
+  inline AssignExpr(unique_ptr<Expr>& target, unique_ptr<Expr>& value)
+      : m_target{move(target)}, m_value{move(value)} {};
+  void visit(Visitor& visitor) const override;
+  [[nodiscard]] auto inline kind() const -> Kind override { return Kind::Assign; };
+};
+
 class Statement : public Expr {
 public:
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<Statement>;
@@ -133,6 +186,28 @@ public:
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<VarDeclStatement>;
   [[nodiscard]] inline auto kind() const -> Kind override { return Kind::VarDecl; };
   [[nodiscard]] inline auto describe() const -> string override { return m_name; };
+};
+
+class WhileStatement : public Statement, public AST {
+  unique_ptr<Expr> m_cond;
+  unique_ptr<Compound> m_body;
+
+public:
+  inline WhileStatement(unique_ptr<Expr> cond, unique_ptr<Compound> body) : m_cond{move(cond)}, m_body{move(body)} {};
+  void visit(Visitor& visitor) const override;
+  [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<WhileStatement>;
+  [[nodiscard]] inline auto kind() const -> Kind override { return Kind::WhileStatement; };
+};
+
+class ExprStatement : public Statement, public AST {
+  unique_ptr<Expr> m_expr;
+
+public:
+  explicit inline ExprStatement(unique_ptr<Expr> expr) : m_expr{move(expr)} {};
+  void visit(Visitor& visitor) const override;
+  [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<ExprStatement>;
+  [[nodiscard]] inline auto kind() const -> Kind override { return Kind::ExprStatement; };
+  [[nodiscard]] inline auto expr() const -> const unique_ptr<Expr>& { return m_expr; };
 };
 
 class Program : public Statement, public AST {
