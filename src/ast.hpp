@@ -34,6 +34,8 @@ enum struct Kind {
   TypeName,
   Compound,
   WhileStatement,
+  IfStatement,
+  IfClause,
   Call,
   Var,
   ExprStatement,
@@ -51,6 +53,8 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case Kind::TypeName: return "type name";
   case Kind::Compound: return "compound";
   case Kind::WhileStatement: return "while statement";
+  case Kind::IfStatement: return "if statement";
+  case Kind::IfClause: return "if clause";
   case Kind::Call: return "call";
   case Kind::Var: return "var";
   case Kind::ExprStatement: return "expr statement";
@@ -197,6 +201,27 @@ public:
   void visit(Visitor& visitor) const override;
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<WhileStatement>;
   [[nodiscard]] inline auto kind() const -> Kind override { return Kind::WhileStatement; };
+};
+
+class IfClause : public Expr, public AST {
+  unique_ptr<Expr> m_cond;
+  unique_ptr<Compound> m_body;
+
+public:
+  inline IfClause(unique_ptr<Expr>& cond, unique_ptr<Compound>& body) : m_cond{move(cond)}, m_body{move(body)} {};
+  void visit(Visitor& visitor) const override;
+  [[nodiscard]] inline auto kind() const -> Kind override { return Kind::IfClause; };
+};
+
+class IfStatement : public Statement, public AST {
+  vector<unique_ptr<IfClause>> m_clauses;
+  optional<unique_ptr<Compound>> m_else_clause;
+
+public:
+  inline IfStatement(vector<unique_ptr<IfClause>>& clauses, optional<unique_ptr<Compound>> else_clause) : m_clauses{move(clauses)}, m_else_clause{move(else_clause)} {};
+  void visit(Visitor& visitor) const override;
+  [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<IfStatement>;
+  [[nodiscard]] inline auto kind() const -> Kind override { return Kind::IfStatement; };
 };
 
 class ExprStatement : public Statement, public AST {

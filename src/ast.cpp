@@ -17,9 +17,11 @@ constexpr static auto Word = Token::Type::Word;
 constexpr static auto Separator = Token::Type::Separator;
 constexpr static auto Number = Token::Type::Number;
 
+static const Atom KEYWORD_IF = "if"_a;
 static const Atom KEYWORD_DEF = "def"_a;
 static const Atom KEYWORD_END = "end"_a;
 static const Atom KEYWORD_LET = "let"_a;
+static const Atom KEYWORD_ELSE = "else"_a;
 static const Atom KEYWORD_WHILE = "while"_a;
 
 static const Atom SYMBOL_EQ = "="_a;
@@ -171,6 +173,53 @@ auto WhileStatement::parse(TokenIterator& tokens) -> unique_ptr<WhileStatement> 
 }
 void WhileStatement::visit(Visitor& visitor) const { visitor.visit(m_cond, m_body); }
 
+auto IfStatement::parse(TokenIterator& tokens) -> unique_ptr<IfStatement> {
+  auto cond = Expr::parse(tokens);
+  ignore_separator(tokens);
+
+  auto clauses = vector<unique_ptr<IfClause>>{};
+  auto current_body = vector<unique_ptr<Statement>>{};
+  auto else_body = vector<unique_ptr<Statement>>{};
+  bool in_else = false;
+
+  while (true) {
+    if (try_consume(tokens, Word, KEYWORD_END)) {
+      break;
+    }
+    if (try_consume(tokens, Word, KEYWORD_ELSE)) {
+      if (in_else && try_consume(tokens, Word, KEYWORD_IF)) {
+        auto compound = std::make_unique<Compound>(current_body);
+        clauses.push_back(std::make_unique<IfClause>(cond, compound));
+        current_body = vector<unique_ptr<Statement>>{};
+        cond = Expr::parse(tokens);
+      } else {
+        in_else = true;
+      }
+      ignore_separator(tokens);
+    }
+    auto st = Statement::parse(tokens);
+    if (in_else) {
+      else_body.push_back(move(st));
+    } else {
+      current_body.push_back(move(st));
+    }
+  }
+
+  auto compound = std::make_unique<Compound>(current_body);
+  clauses.push_back(std::make_unique<IfClause>(cond, compound));
+
+  auto else_clause = optional<unique_ptr<Compound>>{};
+  if (!else_body.empty()) {
+    else_clause = std::make_unique<Compound>(else_body);
+  }
+
+  ignore_separator(tokens);
+
+  return std::make_unique<IfStatement>(clauses, move(else_clause));
+}
+void IfStatement::visit(Visitor& visitor) const { visitor.visit(m_clauses, m_else_clause); }
+void IfClause::visit(Visitor& visitor) const { visitor.visit(m_cond, m_body); }
+
 auto operators() {
   const static vector<vector<string>> OPERATORS = {
       {"==", "!=", ">", "<"},
@@ -243,9 +292,13 @@ auto Statement::parse(TokenIterator& tokens) -> unique_ptr<Statement> {
     stat = VarDeclStatement::parse(++tokens);
   } else if (tokens->is_keyword(KEYWORD_WHILE)) {
     stat = WhileStatement::parse(++tokens);
+  } else if (tokens->is_keyword(KEYWORD_IF)) {
+    stat = IfStatement::parse(++tokens);
   } else {
     stat = ExprStatement::parse(tokens);
   }
+
+  ignore_separator(tokens);
   return stat;
 }
 
