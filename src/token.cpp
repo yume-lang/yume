@@ -23,6 +23,7 @@ struct Characteristic {
   Characteristic(Token::Type type, char c) : m_fn([check = c](char c, int i) { return c == check; }), m_type(type) {}
   Characteristic(Token::Type type, const char* cs)
       : m_fn([checks = string(cs)](char c, int i) { return i == 0 && checks.find(c) != string::npos; }), m_type(type) {}
+  Characteristic(Token::Type type, string s) : m_fn([s = move(s)](char c, int i) { return s[i] == c; }), m_type(type) {}
 };
 
 struct Tokenizer {
@@ -31,6 +32,7 @@ struct Tokenizer {
   char m_last;
 
   void tokenize() {
+    using namespace std::literals::string_literals;
     auto isword = [](int c, int i) { return (i == 0 && std::isalpha(c) != 0) || std::isalnum(c) != 0; };
     auto isstr = [end = false](int c, int i) mutable {
       if (i == 0) {
@@ -47,14 +49,16 @@ struct Tokenizer {
 
     int i = 0;
     while (!m_in.eof()) {
-      if (!selectCharacteristic({
-              {Token::Type::Separator,  '\n'              },
-              {Token::Type::Whitespace, std::isspace      },
-              {Token::Type::Number,     std::isdigit      },
-              {Token::Type::Literal,    isstr             },
-              {Token::Type::Word,       isword            },
-              {Token::Type::Symbol,     R"(()<>="%-+,/*\)"},
-      })) {
+      if (!selectCharacteristic(
+              {
+                  {Token::Type::Separator,  '\n'              },
+                  {Token::Type::Whitespace, std::isspace      },
+                  {Token::Type::Number,     std::isdigit      },
+                  {Token::Type::Literal,    isstr             },
+                  {Token::Type::Word,       isword            },
+                  {Token::Type::Symbol,     "=="s             },
+                  {Token::Type::Symbol,     "//"s             },
+                  {Token::Type::Symbol,     R"(()<>="%-+,/*\)"},
       },
               i)) {
         string message = "Tokenizer didn't recognize ";
