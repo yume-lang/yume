@@ -45,6 +45,7 @@ struct Tokenizer {
       return true;
     };
 
+    int i = 0;
     while (!m_in.eof()) {
       if (!selectCharacteristic({
               {Token::Type::Separator,  '\n'              },
@@ -54,10 +55,13 @@ struct Tokenizer {
               {Token::Type::Word,       isword            },
               {Token::Type::Symbol,     R"(()<>="%-+,/*\)"},
       })) {
+      },
+              i)) {
         string message = "Tokenizer didn't recognize ";
         message += m_last;
         throw std::runtime_error(message);
       }
+      i++;
     }
   }
 
@@ -77,10 +81,10 @@ private:
 
   [[nodiscard]] auto isCharacteristic(const char_fn& fun) const -> bool { return fun(m_last, 0) != 0; }
 
-  auto selectCharacteristic(std::initializer_list<Characteristic> list) -> bool {
+  auto selectCharacteristic(std::initializer_list<Characteristic> list, int i) -> bool {
     return std::ranges::any_of(list, [&](const auto& c) {
       if (isCharacteristic(c.m_fn)) {
-        m_tokens.emplace_back(c.m_type, consumeCharacteristic(c.m_fn));
+        m_tokens.emplace_back(c.m_type, consumeCharacteristic(c.m_fn), i);
         return true;
       }
       return false;
@@ -135,7 +139,7 @@ auto operator<<(std::ostream& os, const Token& token) -> std::ostream& {
         break;
       }
     }
-    os << '"';
+    os << "\", " << token.m_i;
     // os << ", " << static_cast<const void*>(*token.m_payload);
   }
   os << ")";

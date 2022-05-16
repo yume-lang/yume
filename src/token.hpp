@@ -29,6 +29,7 @@ struct Token {
 
   Type m_type;
   Payload m_payload;
+  int m_i = -1;
 
   [[nodiscard]] inline constexpr auto is_keyword(const Atom& str) const -> bool {
     return m_type == Type::Word && m_payload == str;
@@ -36,6 +37,7 @@ struct Token {
 
   explicit inline Token(Type type) : m_type(type) {}
   inline Token(Type type, Payload payload) : m_type(type), m_payload(payload) {}
+  inline Token(Type type, Payload payload, int i) : m_type(type), m_payload(payload), m_i{i} {}
 
   friend auto operator<<(std::ostream& os, const Token& token) -> std::ostream&;
 };
