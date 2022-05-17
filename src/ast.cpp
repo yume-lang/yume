@@ -24,9 +24,19 @@ static const Atom KEYWORD_LET = "let"_a;
 static const Atom KEYWORD_ELSE = "else"_a;
 static const Atom KEYWORD_WHILE = "while"_a;
 
+static const Atom SYMBOL_COMMA = ","_a;
 static const Atom SYMBOL_EQ = "="_a;
 static const Atom SYMBOL_LPAREN = "("_a;
 static const Atom SYMBOL_RPAREN = ")"_a;
+static const Atom SYMBOL_EQ_EQ = "=="_a;
+static const Atom SYMBOL_NEQ = "!="_a;
+static const Atom SYMBOL_GT = ">"_a;
+static const Atom SYMBOL_LT = "<"_a;
+static const Atom SYMBOL_PLUS = "+"_a;
+static const Atom SYMBOL_MINUS = "-"_a;
+static const Atom SYMBOL_PERCENT = "%"_a;
+static const Atom SYMBOL_SLASH_SLASH = "//"_a;
+static const Atom SYMBOL_ASTERISK = "*"_a;
 
 auto at(const source_location location = source_location::current()) -> string {
   return string(location.file_name()) + ":" + std::to_string(location.line()) + ":" +
@@ -221,10 +231,11 @@ void IfStatement::visit(Visitor& visitor) const { visitor.visit(m_clauses, m_els
 void IfClause::visit(Visitor& visitor) const { visitor.visit(m_cond, m_body); }
 
 auto operators() {
-  const static vector<vector<string>> OPERATORS = {
-      {"==", "!=", ">", "<"},
-      {"+",    "-"     },
-      {"%",  "//", "*"  },
+  // TODO: why does clang-format do this?
+  const static vector<vector<Atom>> OPERATORS = {
+      {SYMBOL_EQ_EQ,   SYMBOL_NEQ,         SYMBOL_GT, SYMBOL_LT},
+      {SYMBOL_PLUS,              SYMBOL_MINUS                     },
+      {SYMBOL_PERCENT, SYMBOL_SLASH_SLASH, SYMBOL_ASTERISK     },
   };
   return OPERATORS;
 }
@@ -266,7 +277,7 @@ auto parse_operator(TokenIterator& tokens, int n = 0) -> unique_ptr<Expr> {
   while (true) {
     auto found_operator = false;
     for (const auto& op : ops[n]) {
-      if (try_consume(tokens, Symbol, make_atom(op))) {
+      if (try_consume(tokens, Symbol, op)) {
         auto right = parse_operator(tokens, n + 1);
         auto args = vector<unique_ptr<Expr>>{};
         args.push_back(move(left));
