@@ -116,6 +116,7 @@ auto tokenize(std::istream& in) -> vector<Token> {
 auto tokenize_remove_whitespace(std::istream& in) -> vector<Token> {
   vector<Token> original = tokenize(in);
   vector<Token> filtered{};
+  filtered.reserve(original.size());
   std::copy_if(original.begin(), original.end(), std::back_inserter(filtered),
                [](const Token& t) { return t.m_type != Token::Type::Whitespace; });
   return filtered;

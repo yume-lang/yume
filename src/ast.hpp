@@ -84,13 +84,20 @@ struct TokenIterator {
   [[nodiscard]] constexpr auto operator*() const noexcept -> Token {
     return m_iterator.operator*();
   }
-  constexpr auto operator++() noexcept -> TokenIterator& {
+  constexpr auto operator++() -> TokenIterator& {
+    if (end()) {
+      throw std::runtime_error("Can't increment past end");
+    }
     ++m_iterator;
     return *this;
   }
-  auto operator++(int) noexcept {
+  auto operator++(int) -> const TokenIterator {
+    if (end()) {
+      throw std::runtime_error("Can't increment past end");
+    }
     return TokenIterator{m_iterator++, m_end};
   }
+  [[nodiscard]] auto begin() const -> VectorTokenIterator { return m_iterator; }
 };
 
 class Expr {

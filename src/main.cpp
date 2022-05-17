@@ -25,7 +25,7 @@ auto main() -> int {
   }
   std::cout << "unconsumed tokens:\n";
   while (!token_it.end()) {
-    std::cout << "  " << *token_it << "\n";
+    std::cout << "  " << *token_it++ << "\n";
   }
   std::cout << "\n";
   std::cout.flush();
