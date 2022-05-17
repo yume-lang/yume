@@ -28,7 +28,7 @@ void DotVisitor::emit_debug_header() {
 #endif
 }
 
-void DotVisitor::header(bool is_inline) {
+void DotVisitor::header(const char* label, bool is_inline) {
   if (m_finalized) {
     throw std::runtime_error("Can't visit with DotVisitor when already finalized");
   }
@@ -36,7 +36,7 @@ void DotVisitor::header(bool is_inline) {
   if (m_write_to_buffer) {
     m_write_to_buffer = false;
     if ((m_children > 0) && m_parent == m_open_parent) {
-      m_lines.emplace_back(m_parent, m_index - 1);
+      m_lines.emplace_back(m_parent, m_index - 1, m_prev_label);
       stream() << ">];\n" << AST_KEY << m_index - 1 << " [label=<";
       m_open_parent = -1;
     }
@@ -58,13 +58,15 @@ void DotVisitor::header(bool is_inline) {
       m_open = false;
     }
     if (m_index != 0) {
-      m_lines.emplace_back(m_parent, m_index);
+      m_lines.emplace_back(m_parent, m_index, label);
     }
 
     stream() << AST_KEY << m_index << " [label=<";
     emit_debug_header();
     m_open = true;
   }
+
+  m_prev_label = label;
 }
 
 void DotVisitor::footer(bool is_inline) {
@@ -76,8 +78,8 @@ void DotVisitor::footer(bool is_inline) {
   m_index++;
 }
 
-void DotVisitor::visit_expr(const ast::Expr& expr, bool is_expr_stat) {
-  header(false);
+void DotVisitor::visit_expr(const ast::Expr& expr, bool is_expr_stat, const char* label) {
+  header(label, false);
 
   stream() << "<B>";
   xml_escape(stream(), string(ast::kind_name(expr.kind())));
@@ -93,29 +95,32 @@ void DotVisitor::visit_expr(const ast::Expr& expr, bool is_expr_stat) {
   m_children = ++restore_children;
 }
 
-void DotVisitor::visit(const ast::Expr& expr) {
+auto DotVisitor::visit(const ast::Expr& expr, const char* label) -> DotVisitor& {
   if (expr.kind() == ast::Kind::ExprStatement) {
     const auto& expr_stat = dynamic_cast<const ast::ExprStatement&>(expr);
-    visit_expr(*expr_stat.expr(), true);
+    visit_expr(*expr_stat.expr(), true, label);
   } else {
-    visit_expr(expr, false);
+    visit_expr(expr, false, label);
   }
+  return *this;
 }
 
-void DotVisitor::visit(const string& str) {
-  header(true);
+auto DotVisitor::visit(const string& str, const char* label) -> DotVisitor& {
+  header(label, label == nullptr);
 
   stream() << "<I>";
   xml_escape(stream(), str);
   stream() << "</I>";
 
-  footer(true);
+  footer(label == nullptr);
+  return *this;
 }
-void DotVisitor::visit(std::nullptr_t) {
-  header(true);
+auto DotVisitor::visit(std::nullptr_t, const char* label) -> DotVisitor& {
+  header(label, label == nullptr);
 
   stream() << "<I><FONT COLOR=\"RED\">NULL</FONT></I>";
 
-  footer(true);
+  footer(label == nullptr);
+  return *this;
 }
 } // namespace yume

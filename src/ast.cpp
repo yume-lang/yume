@@ -151,7 +151,7 @@ auto FnDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement
 
   return std::make_unique<FnDeclStatement>(name, args, move(return_type), std::make_unique<Compound>(body));
 }
-void FnDeclStatement::visit(Visitor& visitor) const { visitor.visit(m_name, m_args, m_ret, m_body); }
+void FnDeclStatement::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_args, "arg").visit(m_ret, "ret").visit(m_body); }
 
 auto VarDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<VarDeclStatement> {
   const string name = consume_word(tokens);
@@ -163,7 +163,7 @@ auto VarDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<VarDeclStateme
 
   return std::make_unique<VarDeclStatement>(name, move(type), move(init));
 }
-void VarDeclStatement::visit(Visitor& visitor) const { visitor.visit(m_name, m_type, m_init); }
+void VarDeclStatement::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_type).visit(m_init); }
 
 auto WhileStatement::parse(TokenIterator& tokens) -> unique_ptr<WhileStatement> {
   auto cond = Expr::parse(tokens);
@@ -183,7 +183,7 @@ auto WhileStatement::parse(TokenIterator& tokens) -> unique_ptr<WhileStatement> 
 
   return std::make_unique<WhileStatement>(move(cond), move(compound));
 }
-void WhileStatement::visit(Visitor& visitor) const { visitor.visit(m_cond, m_body); }
+void WhileStatement::visit(Visitor& visitor) const { visitor.visit(m_cond).visit(m_body); }
 
 auto ReturnStatement::parse(TokenIterator& tokens) -> unique_ptr<ReturnStatement> {
   auto expr = Expr::parse(tokens);
@@ -235,8 +235,8 @@ auto IfStatement::parse(TokenIterator& tokens) -> unique_ptr<IfStatement> {
 
   return std::make_unique<IfStatement>(clauses, move(else_clause));
 }
-void IfStatement::visit(Visitor& visitor) const { visitor.visit(m_clauses, m_else_clause); }
-void IfClause::visit(Visitor& visitor) const { visitor.visit(m_cond, m_body); }
+void IfStatement::visit(Visitor& visitor) const { visitor.visit(m_clauses).visit(m_else_clause); }
+void IfClause::visit(Visitor& visitor) const { visitor.visit(m_cond).visit(m_body); }
 
 auto operators() {
   // TODO: why does clang-format do this?
@@ -365,7 +365,7 @@ auto TypeName::parse(TokenIterator& tokens) -> unique_ptr<TypeName> {
   unique_ptr<Type> type = SimpleType::parse(tokens);
   return std::make_unique<TypeName>(type, name);
 }
-void TypeName::visit(Visitor& visitor) const { visitor.visit(m_name, m_type); }
+void TypeName::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_type); }
 void Compound::visit(Visitor& visitor) const { visitor.visit(m_body); }
 
 auto Expr::parse(TokenIterator& tokens) -> unique_ptr<Expr> { return parse_operator(tokens, 0); }
@@ -388,7 +388,7 @@ void StringExpr::visit(Visitor& visitor) const { visitor.visit(m_val); }
 
 void VarExpr::visit(Visitor& visitor) const { visitor.visit(m_name); }
 
-void CallExpr::visit(Visitor& visitor) const { visitor.visit(m_name, m_args); }
+void CallExpr::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_args); }
 
-void AssignExpr::visit(Visitor& visitor) const { visitor.visit(m_target, m_value); }
+void AssignExpr::visit(Visitor& visitor) const { visitor.visit(m_target).visit(m_value); }
 } // namespace yume::ast

@@ -26,38 +26,42 @@ public:
   auto operator=(Visitor&) -> Visitor& = delete;
   auto operator=(Visitor&&) -> Visitor& = default;
 
-  virtual void visit(const ast::Expr&) = 0;
+  virtual auto visit(const ast::Expr&, const char*) -> Visitor& = 0;
 
-  virtual void visit(std::nullptr_t) = 0;
+  virtual auto visit(std::nullptr_t, const char*) -> Visitor& = 0;
 
-  virtual void visit(const string&) = 0;
+  virtual auto visit(const string&, const char*) -> Visitor& = 0;
 
-  template <typename T> inline void visit(const vector<T>& vector) {
+  inline virtual auto visit(const ast::Expr& expr) -> Visitor& { return visit(expr, (const char*)nullptr); };
+
+  inline virtual auto visit(std::nullptr_t) -> Visitor& { return visit(nullptr, (const char*)nullptr); };
+
+  inline virtual auto visit(const string& str) -> Visitor& { return visit(str, (const char*)nullptr); };
+
+  template <typename T> inline auto visit(const vector<T>& vector, const char* label = nullptr) -> Visitor& {
+    Visitor& vis = *this;
     for (const auto& i : vector) {
-      visit(i);
+      vis = std::move(vis.visit(i, label));
     }
+    return vis;
   }
 
-  template <typename T> inline void visit(const unique_ptr<T>& ptr) {
+  template <typename T> inline auto visit(const unique_ptr<T>& ptr, const char* label = nullptr) -> Visitor& {
     if (ptr) {
-      visit(*ptr);
-    } else {
-      visit(nullptr);
+      return visit(*ptr, label);
     }
+    return visit(nullptr, label);
   }
 
-  template <typename T> inline void visit(const optional<T>& opt) {
+  template <typename T> inline auto visit(const optional<T>& opt, const char* label = nullptr) -> Visitor& {
     if (opt.has_value()) {
-      visit(*opt);
-    } else {
-      visit(nullptr);
+      return visit(*opt, label);
     }
+    return visit(nullptr, label);
   }
 
-  template <typename T, typename U, typename... Ts> inline void visit(T&& t, U&& u, Ts&&... ts) {
-    visit(t);
-    visit(u);
-    visit(ts...);
+  template <typename T> inline auto visit(const std::pair<T, const char*>& pair) -> Visitor& {
+    return visit(pair.first, pair.second);
   }
 
   inline void visit() {}
@@ -71,8 +75,9 @@ class DotVisitor : public Visitor {
   bool m_finalized = false;
   bool m_open = false;
   bool m_write_to_buffer = false;
-  vector<std::pair<int, int>> m_lines{};
+  vector<std::tuple<int, int, const char*>> m_lines{};
   string m_buffer{};
+  const char* m_prev_label{};
   int m_children{};
   int m_index{};
   int m_parent{};
@@ -94,10 +99,10 @@ class DotVisitor : public Visitor {
     }
     return m_direct_stream;
   }
-  void header(bool is_inline);
+  void header(const char* label, bool is_inline);
   void footer(bool is_inline);
   void emit_debug_header();
-  void visit_expr(const ast::Expr& expr, bool is_expr_stat);
+  void visit_expr(const ast::Expr& expr, bool is_expr_stat, const char* label);
 
 public:
   explicit DotVisitor(llvm::raw_ostream& stream_) : m_direct_stream{stream_}, m_buffer_stream{m_buffer} {
@@ -105,11 +110,11 @@ public:
   };
   ~DotVisitor() override = default;
 
-  void visit(const ast::Expr& expr) override;
+  auto visit(const ast::Expr& expr, const char* label) -> DotVisitor& override;
 
-  void visit(std::nullptr_t null) override;
+  auto visit(std::nullptr_t null, const char* label) -> DotVisitor& override;
 
-  void visit(const string& str) override;
+  auto visit(const string& str, const char* label) -> DotVisitor& override;
 
   inline void finalize() {
     if (m_write_to_buffer) {
@@ -123,7 +128,11 @@ public:
       stream() << ">];\n";
     }
     for (const auto& i : m_lines) {
-      stream() << AST_KEY << i.first << " -> " << AST_KEY << i.second << ";\n";
+      stream() << AST_KEY << get<0>(i) << " -> " << AST_KEY << get<1>(i);
+      if (const char* s = get<2>(i); s != nullptr) {
+        stream() << " [label=\"" << s << "\"]";
+      }
+      stream() << ";\n";
     }
     m_finalized = true;
     stream() << "\n}";

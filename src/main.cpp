@@ -16,7 +16,7 @@ auto main() -> int {
     std::unique_ptr<llvm::raw_ostream> dot = yume::open_file("output.dot");
     auto visitor = yume::DotVisitor{*dot};
     auto program = yume::ast::Program::parse(token_it);
-    visitor.visit(*program);
+    visitor.Visitor::visit(*program);
     visitor.finalize();
   } catch (std::exception& exc) {
     std::cout.flush();
