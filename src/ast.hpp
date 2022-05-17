@@ -203,11 +203,11 @@ public:
 class FnDeclStatement : public Statement, public AST {
   string m_name;
   vector<unique_ptr<TypeName>> m_args;
-  unique_ptr<Type> m_ret;
+  optional<unique_ptr<Type>> m_ret;
   unique_ptr<Compound> m_body;
 
 public:
-  inline FnDeclStatement(string name, vector<unique_ptr<TypeName>>& args, unique_ptr<Type> ret,
+  inline FnDeclStatement(string name, vector<unique_ptr<TypeName>>& args, optional<unique_ptr<Type>> ret,
                          unique_ptr<Compound> body)
       : m_name{move(name)}, m_args{move(args)}, m_ret{move(ret)}, m_body{move(body)} {};
   void visit(Visitor& visitor) const override;
