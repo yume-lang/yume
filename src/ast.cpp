@@ -195,7 +195,7 @@ auto IfStatement::parse(TokenIterator& tokens) -> unique_ptr<IfStatement> {
       break;
     }
     if (try_consume(tokens, Word, KEYWORD_ELSE)) {
-      if (in_else && try_consume(tokens, Word, KEYWORD_IF)) {
+      if (!in_else && try_consume(tokens, Word, KEYWORD_IF)) {
         clauses.push_back(std::make_unique<IfClause>(move(cond), std::make_unique<Compound>(current_body)));
         current_body = vector<unique_ptr<Statement>>{};
         cond = Expr::parse(tokens);
