@@ -147,8 +147,7 @@ auto FnDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement
     ignore_separator(tokens);
   }
 
-  auto compound = std::make_unique<Compound>(body);
-  return std::make_unique<FnDeclStatement>(name, args, move(return_type), compound);
+  return std::make_unique<FnDeclStatement>(name, args, move(return_type), std::make_unique<Compound>(body));
 }
 void FnDeclStatement::visit(Visitor& visitor) const { visitor.visit(m_name, m_args, m_ret, m_body); }
 
@@ -207,8 +206,7 @@ auto IfStatement::parse(TokenIterator& tokens) -> unique_ptr<IfStatement> {
     }
     if (try_consume(tokens, Word, KEYWORD_ELSE)) {
       if (in_else && try_consume(tokens, Word, KEYWORD_IF)) {
-        auto compound = std::make_unique<Compound>(current_body);
-        clauses.push_back(std::make_unique<IfClause>(cond, compound));
+        clauses.push_back(std::make_unique<IfClause>(move(cond), std::make_unique<Compound>(current_body)));
         current_body = vector<unique_ptr<Statement>>{};
         cond = Expr::parse(tokens);
       } else {
@@ -224,8 +222,7 @@ auto IfStatement::parse(TokenIterator& tokens) -> unique_ptr<IfStatement> {
     }
   }
 
-  auto compound = std::make_unique<Compound>(current_body);
-  clauses.push_back(std::make_unique<IfClause>(cond, compound));
+  clauses.push_back(std::make_unique<IfClause>(move(cond), std::make_unique<Compound>(current_body)));
 
   auto else_clause = optional<unique_ptr<Compound>>{};
   if (!else_body.empty()) {
