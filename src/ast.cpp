@@ -244,6 +244,9 @@ auto parse_primary(TokenIterator& tokens) -> unique_ptr<Expr> {
   if (tokens->m_type == Number) {
     return NumberExpr::parse(tokens);
   }
+  if (tokens->m_type == Token::Type::Literal) {
+    return StringExpr::parse(tokens);
+  }
   if (tokens->m_type == Word) {
     auto name = consume_word(tokens);
     if (try_consume(tokens, Symbol, SYMBOL_LPAREN)) {

@@ -27,6 +27,7 @@ protected:
 enum struct Kind {
   Unknown,
   Number,
+  String,
   FnDecl,
   VarDecl,
   Program,
@@ -46,6 +47,7 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   switch (type) {
   case Kind::Unknown: return "unknown";
   case Kind::Number: return "number";
+  case Kind::String: return "string";
   case Kind::FnDecl: return "fn decl";
   case Kind::VarDecl: return "var decl";
   case Kind::Program: return "program";
@@ -115,13 +117,23 @@ public:
   [[nodiscard]] inline auto describe() const -> string override { return std::to_string(m_val); };
 };
 
+class StringExpr : public Expr, public AST {
+  string m_val;
+
+public:
+  explicit inline StringExpr(string val) : m_val(move(val)) {}
+  void visit(Visitor& visitor) const override;
+  [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<StringExpr>;
+  [[nodiscard]] auto inline kind() const -> Kind override { return Kind::String; };
+  [[nodiscard]] inline auto describe() const -> string override { return m_val; };
+};
+
 class VarExpr : public Expr, public AST {
   string m_name;
 
 public:
   explicit inline VarExpr(string name) : m_name(move(name)) {}
   void visit(Visitor& visitor) const override;
-  [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<VarExpr>;
   [[nodiscard]] auto inline kind() const -> Kind override { return Kind::Var; };
   [[nodiscard]] inline auto describe() const -> string override { return m_name; };
 };
