@@ -60,6 +60,7 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case Kind::Call: return "call";
   case Kind::Var: return "var";
   case Kind::ExprStatement: return "expr statement";
+  case Kind::ReturnStatement: return "return statement";
   case Kind::Assign: return "assign";
   default: return "?";
   }

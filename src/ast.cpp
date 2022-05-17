@@ -23,6 +23,7 @@ static const Atom KEYWORD_END = "end"_a;
 static const Atom KEYWORD_LET = "let"_a;
 static const Atom KEYWORD_ELSE = "else"_a;
 static const Atom KEYWORD_WHILE = "while"_a;
+static const Atom KEYWORD_RETURN = "return"_a;
 
 static const Atom SYMBOL_COMMA = ","_a;
 static const Atom SYMBOL_EQ = "="_a;
@@ -183,6 +184,14 @@ auto WhileStatement::parse(TokenIterator& tokens) -> unique_ptr<WhileStatement> 
 }
 void WhileStatement::visit(Visitor& visitor) const { visitor.visit(m_cond, m_body); }
 
+auto ReturnStatement::parse(TokenIterator& tokens) -> unique_ptr<ReturnStatement> {
+  auto expr = Expr::parse(tokens);
+  ignore_separator(tokens);
+
+  return std::make_unique<ReturnStatement>(optional<unique_ptr<Expr>>{move(expr)});
+}
+void ReturnStatement::visit(Visitor& visitor) const { visitor.visit(m_expr); }
+
 auto IfStatement::parse(TokenIterator& tokens) -> unique_ptr<IfStatement> {
   auto cond = Expr::parse(tokens);
   ignore_separator(tokens);
@@ -320,6 +329,8 @@ auto Statement::parse(TokenIterator& tokens) -> unique_ptr<Statement> {
     stat = WhileStatement::parse(++tokens);
   } else if (tokens->is_keyword(KEYWORD_IF)) {
     stat = IfStatement::parse(++tokens);
+  } else if (tokens->is_keyword(KEYWORD_RETURN)) {
+    stat = ReturnStatement::parse(++tokens);
   } else {
     stat = ExprStatement::parse(tokens);
   }
