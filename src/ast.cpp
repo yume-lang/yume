@@ -245,7 +245,19 @@ auto parse_primary(TokenIterator& tokens) -> unique_ptr<Expr> {
     return NumberExpr::parse(tokens);
   }
   if (tokens->m_type == Word) {
-    return VarExpr::parse(tokens);
+    auto name = consume_word(tokens);
+    if (try_consume(tokens, Symbol, SYMBOL_LPAREN)) {
+      int n = 0;
+      auto args = vector<unique_ptr<Expr>>{};
+      while (!try_consume(tokens, Symbol, SYMBOL_RPAREN)) {
+        if (n++ > 0) {
+          consume(tokens, Symbol, SYMBOL_COMMA);
+        }
+        args.push_back(Expr::parse(tokens));
+      }
+      return std::make_unique<CallExpr>(name, args);
+    }
+    return std::make_unique<VarExpr>(name);
   }
   tokens++;
   return nullptr;
@@ -353,11 +365,14 @@ auto NumberExpr::parse(TokenIterator& tokens) -> unique_ptr<NumberExpr> {
 }
 void NumberExpr::visit(Visitor& visitor) const { visitor.visit(describe()); }
 
-auto VarExpr::parse(TokenIterator& tokens) -> unique_ptr<VarExpr> {
-  auto name = consume_word(tokens);
+auto StringExpr::parse(TokenIterator& tokens) -> unique_ptr<StringExpr> {
+  expect(tokens, Token::Type::Literal);
+  auto value = *next(tokens).m_payload->m_str;
 
-  return std::make_unique<VarExpr>(name);
+  return std::make_unique<StringExpr>(value);
 }
+void StringExpr::visit(Visitor& visitor) const { visitor.visit(m_val); }
+
 void VarExpr::visit(Visitor& visitor) const { visitor.visit(m_name); }
 
 void CallExpr::visit(Visitor& visitor) const { visitor.visit(m_name, m_args); }
