@@ -67,7 +67,31 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   }
 }
 
-using TokenIterator = vector<Token>::iterator;
+using VectorTokenIterator = vector<Token>::iterator;
+
+struct TokenIterator {
+  VectorTokenIterator m_iterator;
+  VectorTokenIterator m_end;
+
+  inline constexpr TokenIterator(const VectorTokenIterator& iterator, const VectorTokenIterator& end) : m_iterator{iterator}, m_end{end} {}
+
+  [[nodiscard]] constexpr auto end() const noexcept -> bool {
+    return m_iterator == m_end;
+  }
+  [[nodiscard]] auto constexpr operator->() const noexcept -> Token* {
+    return m_iterator.operator->();
+  }
+  [[nodiscard]] constexpr auto operator*() const noexcept -> Token {
+    return m_iterator.operator*();
+  }
+  constexpr auto operator++() noexcept -> TokenIterator& {
+    ++m_iterator;
+    return *this;
+  }
+  auto operator++(int) noexcept {
+    return TokenIterator{m_iterator++, m_end};
+  }
+};
 
 class Expr {
 protected:

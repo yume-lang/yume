@@ -109,7 +109,9 @@ auto consume_word(TokenIterator& tokens, const source_location location = source
 
 auto Program::parse(TokenIterator& tokens) -> unique_ptr<Program> {
   auto statements = vector<unique_ptr<Statement>>{};
-  statements.push_back(move(Statement::parse(tokens)));
+  while (!tokens.end()) {
+    statements.push_back(move(Statement::parse(tokens)));
+  }
 
   return std::make_unique<Program>(statements);
 }

@@ -35,9 +35,9 @@ struct Token {
     return m_type == Type::Word && m_payload == str;
   }
 
-  explicit inline Token(Type type) : m_type(type) {}
-  inline Token(Type type, Payload payload) : m_type(type), m_payload(payload) {}
-  inline Token(Type type, Payload payload, int i) : m_type(type), m_payload(payload), m_i{i} {}
+  explicit constexpr inline Token(Type type) : m_type(type) {}
+  inline constexpr Token(Type type, Payload payload) : m_type(type), m_payload(payload) {}
+  inline constexpr Token(Type type, Payload payload, int i) : m_type(type), m_payload(payload), m_i{i} {}
 
   friend auto operator<<(std::ostream& os, const Token& token) -> std::ostream&;
 };

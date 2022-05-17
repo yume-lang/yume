@@ -11,7 +11,7 @@ auto main() -> int {
   }
   std::cout << "\n";
   std::cout.flush();
-  auto token_it = tokens.begin();
+  auto token_it = yume::ast::TokenIterator{tokens.begin(), tokens.end()};
   try {
     std::unique_ptr<llvm::raw_ostream> dot = yume::open_file("output.dot");
     auto visitor = yume::DotVisitor{*dot};
@@ -24,7 +24,7 @@ auto main() -> int {
     std::cerr.flush();
   }
   std::cout << "unconsumed tokens:\n";
-  for (; token_it != tokens.end(); token_it++) {
+  while (!token_it.end()) {
     std::cout << "  " << *token_it << "\n";
   }
   std::cout << "\n";
