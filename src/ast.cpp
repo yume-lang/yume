@@ -118,13 +118,7 @@ auto Program::parse(TokenIterator& tokens) -> unique_ptr<Program> {
 void Program::visit(Visitor& visitor) const { visitor.visit(m_body); }
 
 auto ExprStatement::parse(TokenIterator& tokens) -> unique_ptr<ExprStatement> {
-  auto expr = Expr::parse(tokens);
-
-  if (!expr) { // TODO(rymiel): remove check when all statement types are implemented
-    return nullptr;
-  }
-
-  return std::make_unique<ExprStatement>(move(expr));
+  return std::make_unique<ExprStatement>(Expr::parse(tokens));
 }
 void ExprStatement::visit(Visitor& visitor) const { visitor.visit(m_expr); }
 
@@ -137,15 +131,12 @@ auto FnDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement
     args.push_back(TypeName::parse(tokens));
   }
 
-  auto return_type = SimpleType::parse(tokens);
+  auto return_type = SimpleType::try_parse(tokens);
   ignore_separator(tokens);
 
   auto body = vector<unique_ptr<Statement>>{};
   while (!try_consume(tokens, Word, KEYWORD_END)) {
-    auto stat = Statement::parse(tokens);
-    if (stat != nullptr) { // TODO(rymiel): remove check when all statement types are implemented
-      body.push_back(move(stat));
-    }
+    body.push_back(Statement::parse(tokens));
     ignore_separator(tokens);
   }
 
@@ -172,10 +163,7 @@ auto WhileStatement::parse(TokenIterator& tokens) -> unique_ptr<WhileStatement> 
 
   auto body = vector<unique_ptr<Statement>>{};
   while (!try_consume(tokens, Word, KEYWORD_END)) {
-    auto stat = Statement::parse(tokens);
-    if (stat != nullptr) { // TODO(rymiel): remove check when all statement types are implemented
-      body.push_back(move(stat));
-    }
+    body.push_back(Statement::parse(tokens));
     ignore_separator(tokens);
   }
 
