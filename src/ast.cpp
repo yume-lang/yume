@@ -45,6 +45,12 @@ auto at(const source_location location = source_location::current()) -> string {
          std::to_string(location.column()) + " in " + location.function_name();
 }
 
+auto to_string(Token token) -> string {
+  std::stringstream ss{};
+  ss << token;
+  return ss.str();
+}
+
 void ignore_separator(TokenIterator& tokens, const source_location location = source_location::current()) {
   while (tokens->m_type == Separator && !tokens.end()) {
 #ifdef YUME_SPEW_CONSUMED_TOKENS
@@ -57,18 +63,23 @@ void ignore_separator(TokenIterator& tokens, const source_location location = so
 void expect(TokenIterator& tokens, Token::Type token_type,
             const source_location location = source_location::current()) {
   if (tokens->m_type != token_type) {
-    throw std::runtime_error("Expected token type "s + Token::type_name(token_type) + ", got " +
-                             Token::type_name(tokens->m_type) + " at " + at(location));
+    throw std::runtime_error("Expected token type "s + Token::type_name(token_type) + ", got " + to_string(*tokens) +
+                             " at " + at(location));
   }
+}
+
+void require_separator(TokenIterator& tokens, const source_location location = source_location::current()) {
+  expect(tokens, Separator, location);
+  ignore_separator(tokens, location);
 }
 
 void consume(TokenIterator& tokens, Token::Type token_type, Atom payload,
              const source_location location = source_location::current()) {
   ignore_separator(tokens);
-  expect(tokens, token_type);
+  expect(tokens, token_type, location);
   if (tokens->m_payload != payload) {
-    throw std::runtime_error("Expected payload atom "s + string(payload) + ", got " + string(*tokens->m_payload) +
-                             " at " + at(location));
+    throw std::runtime_error("Expected payload atom "s + string(payload) + ", got " + to_string(*tokens) + " at " +
+                             at(location));
   }
 
 #ifdef YUME_SPEW_CONSUMED_TOKENS
@@ -103,7 +114,7 @@ auto next(TokenIterator& tokens, const source_location location = source_locatio
 auto consume_word(TokenIterator& tokens, const source_location location = source_location::current()) -> string {
   ignore_separator(tokens);
   if (tokens->m_type != Word) {
-    throw std::runtime_error("Expected word"s + " at " + at(location));
+    throw std::runtime_error("Expected word, got "s + to_string(*tokens) + " at " + at(location));
   }
   return *next(tokens, location).m_payload;
 }
@@ -137,7 +148,7 @@ auto FnDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement
   }
 
   auto return_type = SimpleType::try_parse(tokens);
-  ignore_separator(tokens);
+  require_separator(tokens);
 
   auto body = vector<unique_ptr<Statement>>{};
   while (!try_consume(tokens, Word, KEYWORD_END)) {
@@ -147,7 +158,9 @@ auto FnDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement
 
   return std::make_unique<FnDeclStatement>(name, args, move(return_type), std::make_unique<Compound>(body));
 }
-void FnDeclStatement::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_args, "arg").visit(m_ret, "ret").visit(m_body); }
+void FnDeclStatement::visit(Visitor& visitor) const {
+  visitor.visit(m_name).visit(m_args, "arg").visit(m_ret, "ret").visit(m_body);
+}
 
 auto VarDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<VarDeclStatement> {
   const string name = consume_word(tokens);
@@ -188,7 +201,7 @@ void ReturnStatement::visit(Visitor& visitor) const { visitor.visit(m_expr); }
 
 auto IfStatement::parse(TokenIterator& tokens) -> unique_ptr<IfStatement> {
   auto cond = Expr::parse(tokens);
-  ignore_separator(tokens);
+  require_separator(tokens); // todo(rymiel): compact `then`
 
   auto clauses = vector<unique_ptr<IfClause>>{};
   auto current_body = vector<unique_ptr<Statement>>{};
@@ -207,7 +220,7 @@ auto IfStatement::parse(TokenIterator& tokens) -> unique_ptr<IfStatement> {
       } else {
         in_else = true;
       }
-      ignore_separator(tokens);
+      require_separator(tokens);
     }
     auto st = Statement::parse(tokens);
     if (in_else) {
@@ -228,7 +241,7 @@ auto IfStatement::parse(TokenIterator& tokens) -> unique_ptr<IfStatement> {
 
   return std::make_unique<IfStatement>(clauses, move(else_clause));
 }
-void IfStatement::visit(Visitor& visitor) const { visitor.visit(m_clauses).visit(m_else_clause); }
+void IfStatement::visit(Visitor& visitor) const { visitor.visit(m_clauses).visit(m_else_clause, "else"); }
 void IfClause::visit(Visitor& visitor) const { visitor.visit(m_cond).visit(m_body); }
 
 auto operators() {
@@ -327,7 +340,7 @@ auto Statement::parse(TokenIterator& tokens) -> unique_ptr<Statement> {
     stat = ExprStatement::parse(tokens);
   }
 
-  ignore_separator(tokens);
+  require_separator(tokens);
   return stat;
 }
 
