@@ -135,6 +135,7 @@ auto ExprStatement::parse(TokenIterator& tokens) -> unique_ptr<ExprStatement> {
 void ExprStatement::visit(Visitor& visitor) const { visitor.visit(m_expr); }
 
 auto FnDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement> {
+  consume(tokens, Word, KEYWORD_DEF);
   const string name = consume_word(tokens);
   consume(tokens, Symbol, SYMBOL_LPAREN);
 
@@ -163,6 +164,7 @@ void FnDeclStatement::visit(Visitor& visitor) const {
 }
 
 auto VarDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<VarDeclStatement> {
+  consume(tokens, Word, KEYWORD_LET);
   const string name = consume_word(tokens);
   auto type = SimpleType::try_parse(tokens);
 
@@ -175,6 +177,7 @@ auto VarDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<VarDeclStateme
 void VarDeclStatement::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_type).visit(m_init); }
 
 auto WhileStatement::parse(TokenIterator& tokens) -> unique_ptr<WhileStatement> {
+  consume(tokens, Word, KEYWORD_WHILE);
   auto cond = Expr::parse(tokens);
 
   ignore_separator(tokens);
@@ -192,6 +195,7 @@ auto WhileStatement::parse(TokenIterator& tokens) -> unique_ptr<WhileStatement> 
 void WhileStatement::visit(Visitor& visitor) const { visitor.visit(m_cond).visit(m_body); }
 
 auto ReturnStatement::parse(TokenIterator& tokens) -> unique_ptr<ReturnStatement> {
+  consume(tokens, Word, KEYWORD_RETURN);
   auto expr = Expr::parse(tokens);
   ignore_separator(tokens);
 
@@ -200,6 +204,7 @@ auto ReturnStatement::parse(TokenIterator& tokens) -> unique_ptr<ReturnStatement
 void ReturnStatement::visit(Visitor& visitor) const { visitor.visit(m_expr); }
 
 auto IfStatement::parse(TokenIterator& tokens) -> unique_ptr<IfStatement> {
+  consume(tokens, Word, KEYWORD_IF);
   auto cond = Expr::parse(tokens);
   require_separator(tokens); // todo(rymiel): compact `then`
 
@@ -327,15 +332,15 @@ auto Statement::parse(TokenIterator& tokens) -> unique_ptr<Statement> {
   auto stat = unique_ptr<Statement>();
 
   if (tokens->is_keyword(KEYWORD_DEF)) {
-    stat = FnDeclStatement::parse(++tokens);
+    stat = FnDeclStatement::parse(tokens);
   } else if (tokens->is_keyword(KEYWORD_LET)) {
-    stat = VarDeclStatement::parse(++tokens);
+    stat = VarDeclStatement::parse(tokens);
   } else if (tokens->is_keyword(KEYWORD_WHILE)) {
-    stat = WhileStatement::parse(++tokens);
+    stat = WhileStatement::parse(tokens);
   } else if (tokens->is_keyword(KEYWORD_IF)) {
-    stat = IfStatement::parse(++tokens);
+    stat = IfStatement::parse(tokens);
   } else if (tokens->is_keyword(KEYWORD_RETURN)) {
-    stat = ReturnStatement::parse(++tokens);
+    stat = ReturnStatement::parse(tokens);
   } else {
     stat = ExprStatement::parse(tokens);
   }
