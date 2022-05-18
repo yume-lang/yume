@@ -31,7 +31,7 @@ struct Tokenizer {
   std::istream& m_in;
   char m_last;
 
-  void tokenize() {
+  constexpr void tokenize() {
     using namespace std::literals::string_literals;
     auto isword = [](int c, int i) { return (i == 0 && std::isalpha(c) != 0) || std::isalnum(c) != 0 || c == '_'; };
     auto isstr = [end = false](int c, int i) mutable {
@@ -46,19 +46,21 @@ struct Tokenizer {
       }
       return true;
     };
+    auto iscomment = [](int c, int i) { return (i == 0 && c == '#') || (i > 0 && c != '\n'); };
 
     int i = 0;
     while (!m_in.eof()) {
       if (!selectCharacteristic(
               {
-                  {Token::Type::Separator,  '\n'                     },
-                  {Token::Type::Whitespace, std::isspace             },
-                  {Token::Type::Number,     std::isdigit             },
-                  {Token::Type::Literal,    isstr                    },
-                  {Token::Type::Word,       isword                   },
-                  {Token::Type::Symbol,     "=="s                    },
-                  {Token::Type::Symbol,     "//"s                    },
-                  {Token::Type::Symbol,     R"(()[]<>=:#"%-+.,!?/*\)"},
+                  {Token::Type::Separator, '\n'                     },
+                  {Token::Type::Skip,      std::isspace             },
+                  {Token::Type::Skip,      iscomment                },
+                  {Token::Type::Number,    std::isdigit             },
+                  {Token::Type::Literal,   isstr                    },
+                  {Token::Type::Word,      isword                   },
+                  {Token::Type::Symbol,    "=="s                    },
+                  {Token::Type::Symbol,    "//"s                    },
+                  {Token::Type::Symbol,    R"(()[]<>=:#"%-+.,!?/*\)"},
       },
               i)) {
         string message = "Tokenizer didn't recognize ";
@@ -72,20 +74,20 @@ struct Tokenizer {
   explicit Tokenizer(std::istream& in) : m_in(in), m_last(next()) {}
 
 private:
-  auto next() -> char {
+  constexpr auto next() -> char {
     m_in.get(m_last);
     return m_last;
   }
 
-  auto swap() -> char {
+  constexpr auto swap() -> char {
     auto c = m_last;
     next();
     return c;
   }
 
-  [[nodiscard]] auto isCharacteristic(const char_fn& fun) const -> bool { return fun(m_last, 0) != 0; }
+  [[nodiscard]] constexpr auto isCharacteristic(const char_fn& fun) const -> bool { return fun(m_last, 0) != 0; }
 
-  auto selectCharacteristic(std::initializer_list<Characteristic> list, int i) -> bool {
+  constexpr auto selectCharacteristic(std::initializer_list<Characteristic> list, int i) -> bool {
     return std::ranges::any_of(list, [&](const auto& c) {
       if (isCharacteristic(c.m_fn)) {
         m_tokens.emplace_back(c.m_type, consumeCharacteristic(c.m_fn), i);
@@ -95,30 +97,30 @@ private:
     });
   }
 
-  auto consumeCharacteristic(const char_fn& fun) -> Atom {
-    auto out = std::stringstream{};
+  constexpr auto consumeCharacteristic(const char_fn& fun) -> Atom {
+    auto out = std::string{};
     int i = 0;
     while (fun(m_last, i) != 0 && !m_in.eof()) {
-      out.put(swap());
+      out += swap();
       i++;
     }
 
-    return make_atom(out.str());
+    return make_atom(out);
   };
 };
 
-auto tokenize(std::istream& in) -> vector<Token> {
+auto tokenize_preserve_skipped(std::istream& in) -> vector<Token> {
   auto tokenizer = Tokenizer(in);
   tokenizer.tokenize();
   return tokenizer.m_tokens;
 }
 
-auto tokenize_remove_whitespace(std::istream& in) -> vector<Token> {
-  vector<Token> original = tokenize(in);
+auto tokenize(std::istream& in) -> vector<Token> {
+  vector<Token> original = tokenize_preserve_skipped(in);
   vector<Token> filtered{};
   filtered.reserve(original.size());
   std::copy_if(original.begin(), original.end(), std::back_inserter(filtered),
-               [](const Token& t) { return t.m_type != Token::Type::Whitespace; });
+               [](const Token& t) { return t.m_type != Token::Type::Skip; });
   return filtered;
 }
 

@@ -13,11 +13,11 @@
 
 namespace yume {
 struct Token {
-  enum struct Type { Word, Whitespace, Symbol, Literal, Number, Separator };
+  enum struct Type { Word, Skip, Symbol, Literal, Number, Separator };
   static auto inline constexpr type_name(Type type) -> const char* {
     switch (type) {
     case Token::Type::Word: return "Word";
-    case Token::Type::Whitespace: return "Whitespace";
+    case Token::Type::Skip: return "Skip";
     case Token::Type::Symbol: return "Symbol";
     case Token::Type::Literal: return "Literal";
     case Token::Type::Number: return "Number";
@@ -42,9 +42,9 @@ struct Token {
   friend auto operator<<(std::ostream& os, const Token& token) -> std::ostream&;
 };
 
-auto tokenize(std::istream& in) -> vector<Token>;
+auto tokenize_preserve_skipped(std::istream& in) -> vector<Token>;
 
-auto tokenize_remove_whitespace(std::istream& in) -> vector<Token>;
+auto tokenize(std::istream& in) -> vector<Token>;
 } // namespace yume
 
 #endif // YUME_CPP_TOKEN_HPP

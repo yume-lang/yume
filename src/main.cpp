@@ -4,7 +4,7 @@
 #include <iostream>
 
 auto main() -> int {
-  auto tokens = yume::tokenize_remove_whitespace(std::cin);
+  auto tokens = yume::tokenize(std::cin);
   std::cout << "tokens:\n";
   for (auto& i : tokens) {
     std::cout << "  " << i << "\n";
