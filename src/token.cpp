@@ -51,13 +51,13 @@ struct Tokenizer {
     while (!m_in.eof()) {
       if (!selectCharacteristic(
               {
-                  {Token::Type::Separator,  '\n'                    },
-                  {Token::Type::Whitespace, std::isspace            },
-                  {Token::Type::Number,     std::isdigit            },
-                  {Token::Type::Literal,    isstr                   },
-                  {Token::Type::Word,       isword                  },
-                  {Token::Type::Symbol,     "=="s                   },
-                  {Token::Type::Symbol,     "//"s                   },
+                  {Token::Type::Separator,  '\n'                     },
+                  {Token::Type::Whitespace, std::isspace             },
+                  {Token::Type::Number,     std::isdigit             },
+                  {Token::Type::Literal,    isstr                    },
+                  {Token::Type::Word,       isword                   },
+                  {Token::Type::Symbol,     "=="s                    },
+                  {Token::Type::Symbol,     "//"s                    },
                   {Token::Type::Symbol,     R"(()[]<>=:#"%-+.,!?/*\)"},
       },
               i)) {

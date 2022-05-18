@@ -9,10 +9,10 @@
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/raw_ostream.h>
 #include <memory>
+#include <optional>
 #include <set>
 #include <utility>
 #include <vector>
-#include <optional>
 
 namespace yume {
 

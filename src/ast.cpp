@@ -256,8 +256,8 @@ void IfClause::visit(Visitor& visitor) const { visitor.visit(m_cond).visit(m_bod
 auto operators() {
   // TODO: why does clang-format do this?
   const static vector<vector<Atom>> OPERATORS = {
-      {SYM_EQ_EQ,      SYM_NEQ,            SYM_GT, SYM_LT},
-      {SYM_PLUS,              SYM_MINUS                        },
+      {SYM_EQ_EQ,   SYM_NEQ,         SYM_GT, SYM_LT},
+      {SYM_PLUS,           SYM_MINUS                  },
       {SYM_PERCENT, SYM_SLASH_SLASH, SYM_STAR     },
   };
   return OPERATORS;
