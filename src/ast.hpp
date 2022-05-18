@@ -32,6 +32,7 @@ enum struct Kind {
   VarDecl,
   Program,
   SimpleType,
+  QualType,
   TypeName,
   Compound,
   WhileStatement,
@@ -53,6 +54,7 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case Kind::VarDecl: return "var decl";
   case Kind::Program: return "program";
   case Kind::SimpleType: return "simple type";
+  case Kind::QualType: return "qual type";
   case Kind::TypeName: return "type name";
   case Kind::Compound: return "compound";
   case Kind::WhileStatement: return "while statement";
@@ -73,17 +75,12 @@ struct TokenIterator {
   VectorTokenIterator m_iterator;
   VectorTokenIterator m_end;
 
-  inline constexpr TokenIterator(const VectorTokenIterator& iterator, const VectorTokenIterator& end) : m_iterator{iterator}, m_end{end} {}
+  inline constexpr TokenIterator(const VectorTokenIterator& iterator, const VectorTokenIterator& end)
+      : m_iterator{iterator}, m_end{end} {}
 
-  [[nodiscard]] constexpr auto end() const noexcept -> bool {
-    return m_iterator == m_end;
-  }
-  [[nodiscard]] auto constexpr operator->() const noexcept -> Token* {
-    return m_iterator.operator->();
-  }
-  [[nodiscard]] constexpr auto operator*() const noexcept -> Token {
-    return m_iterator.operator*();
-  }
+  [[nodiscard]] constexpr auto end() const noexcept -> bool { return m_iterator == m_end; }
+  [[nodiscard]] auto constexpr operator->() const noexcept -> Token* { return m_iterator.operator->(); }
+  [[nodiscard]] constexpr auto operator*() const noexcept -> Token { return m_iterator.operator*(); }
   constexpr auto operator++() -> TokenIterator& {
     if (end()) {
       throw std::runtime_error("Can't increment past end");
@@ -113,7 +110,11 @@ public:
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<Expr>;
 };
 
-class Type : public Expr {};
+class Type : public Expr {
+public:
+  [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<Type>;
+  [[nodiscard]] static auto try_parse(TokenIterator& tokens) -> optional<unique_ptr<Type>>;
+};
 
 class SimpleType : public Type, public AST {
   string m_name;
@@ -121,10 +122,28 @@ class SimpleType : public Type, public AST {
 public:
   explicit inline SimpleType(string name) : m_name{move(name)} {};
   void visit(Visitor& visitor) const override;
-  [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<SimpleType>;
-  [[nodiscard]] static auto try_parse(TokenIterator& tokens) -> optional<unique_ptr<SimpleType>>;
   [[nodiscard]] auto inline kind() const -> Kind override { return Kind::SimpleType; };
   [[nodiscard]] inline auto describe() const -> string override { return m_name; };
+};
+
+class QualType : public Type, public AST {
+public:
+  enum struct Qualifier { Ptr };
+
+private:
+  unique_ptr<Type> m_base;
+  Qualifier m_qualifier;
+
+public:
+  explicit inline QualType(unique_ptr<Type> base, Qualifier qualifier) : m_base{move(base)}, m_qualifier{qualifier} {};
+  void visit(Visitor& visitor) const override;
+  [[nodiscard]] auto inline kind() const -> Kind override { return Kind::QualType; };
+  [[nodiscard]] inline auto describe() const -> string override {
+    switch (m_qualifier) {
+    case Qualifier::Ptr: return "ptr";
+    default: return "";
+    }
+  };
 };
 
 class TypeName : public Expr, public AST {

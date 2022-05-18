@@ -21,6 +21,7 @@ static const Atom KEYWORD_IF = "if"_a;
 static const Atom KEYWORD_DEF = "def"_a;
 static const Atom KEYWORD_END = "end"_a;
 static const Atom KEYWORD_LET = "let"_a;
+static const Atom KEYWORD_PTR = "ptr"_a;
 static const Atom KEYWORD_ELSE = "else"_a;
 static const Atom KEYWORD_WHILE = "while"_a;
 static const Atom KEYWORD_RETURN = "return"_a;
@@ -330,16 +331,21 @@ auto Statement::parse(TokenIterator& tokens) -> unique_ptr<Statement> {
   return stat;
 }
 
-auto SimpleType::parse(TokenIterator& tokens) -> unique_ptr<SimpleType> {
+auto Type::parse(TokenIterator& tokens) -> unique_ptr<Type> {
   const string name = consume_word(tokens);
   if (isupper(name.front()) == 0) {
     throw std::runtime_error("Expected capitalized payload for simple type");
   }
 
-  return std::make_unique<SimpleType>(name);
+  unique_ptr<Type> base = std::make_unique<SimpleType>(name);
+  if (try_consume(tokens, Word, KEYWORD_PTR)) {
+    base = std::make_unique<QualType>(move(base), QualType::Qualifier::Ptr);
+  }
+
+  return base;
 }
 
-auto SimpleType::try_parse(TokenIterator& tokens) -> optional<unique_ptr<SimpleType>> {
+auto Type::try_parse(TokenIterator& tokens) -> optional<unique_ptr<Type>> {
   if (tokens->m_type != Word || !tokens->m_payload.has_value()) {
     return {};
   }
@@ -348,13 +354,19 @@ auto SimpleType::try_parse(TokenIterator& tokens) -> optional<unique_ptr<SimpleT
     return {};
   }
 
-  return std::make_unique<SimpleType>(name);
+  unique_ptr<Type> base = std::make_unique<SimpleType>(name);
+  if (try_consume(tokens, Word, KEYWORD_PTR)) {
+    base = std::make_unique<QualType>(move(base), QualType::Qualifier::Ptr);
+  }
+
+  return base;
 }
 void SimpleType::visit(Visitor& visitor) const { visitor.visit(m_name); }
+void QualType::visit(Visitor& visitor) const { visitor.visit(m_base, describe().c_str()); }
 
 auto TypeName::parse(TokenIterator& tokens) -> unique_ptr<TypeName> {
   const string name = consume_word(tokens);
-  unique_ptr<Type> type = SimpleType::parse(tokens);
+  unique_ptr<Type> type = Type::parse(tokens);
   return std::make_unique<TypeName>(type, name);
 }
 void TypeName::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_type); }
