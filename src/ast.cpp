@@ -17,28 +17,32 @@ constexpr static auto Word = Token::Type::Word;
 constexpr static auto Separator = Token::Type::Separator;
 constexpr static auto Number = Token::Type::Number;
 
-static const Atom KEYWORD_IF = "if"_a;
-static const Atom KEYWORD_DEF = "def"_a;
-static const Atom KEYWORD_END = "end"_a;
-static const Atom KEYWORD_LET = "let"_a;
-static const Atom KEYWORD_PTR = "ptr"_a;
-static const Atom KEYWORD_ELSE = "else"_a;
-static const Atom KEYWORD_WHILE = "while"_a;
-static const Atom KEYWORD_RETURN = "return"_a;
+static const Atom KWD_IF = "if"_a;
+static const Atom KWD_DEF = "def"_a;
+static const Atom KWD_END = "end"_a;
+static const Atom KWD_LET = "let"_a;
+static const Atom KWD_PTR = "ptr"_a;
+static const Atom KWD_ELSE = "else"_a;
+static const Atom KWD_WHILE = "while"_a;
+static const Atom KWD_RETURN = "return"_a;
 
-static const Atom SYMBOL_COMMA = ","_a;
-static const Atom SYMBOL_EQ = "="_a;
-static const Atom SYMBOL_LPAREN = "("_a;
-static const Atom SYMBOL_RPAREN = ")"_a;
-static const Atom SYMBOL_EQ_EQ = "=="_a;
-static const Atom SYMBOL_NEQ = "!="_a;
-static const Atom SYMBOL_GT = ">"_a;
-static const Atom SYMBOL_LT = "<"_a;
-static const Atom SYMBOL_PLUS = "+"_a;
-static const Atom SYMBOL_MINUS = "-"_a;
-static const Atom SYMBOL_PERCENT = "%"_a;
-static const Atom SYMBOL_SLASH_SLASH = "//"_a;
-static const Atom SYMBOL_ASTERISK = "*"_a;
+static const Atom SYM_COMMA = ","_a;
+static const Atom SYM_EQ = "="_a;
+static const Atom SYM_LPAREN = "("_a;
+static const Atom SYM_RPAREN = ")"_a;
+static const Atom SYM_LBRACKET = "["_a;
+static const Atom SYM_RBRACKET = "]"_a;
+static const Atom SYM_LBRACE = "{"_a;
+static const Atom SYM_RBRACE = "}"_a;
+static const Atom SYM_EQ_EQ = "=="_a;
+static const Atom SYM_NEQ = "!="_a;
+static const Atom SYM_GT = ">"_a;
+static const Atom SYM_LT = "<"_a;
+static const Atom SYM_PLUS = "+"_a;
+static const Atom SYM_MINUS = "-"_a;
+static const Atom SYM_PERCENT = "%"_a;
+static const Atom SYM_SLASH_SLASH = "//"_a;
+static const Atom SYM_STAR = "*"_a;
 
 auto at(const source_location location = source_location::current()) -> string {
   return string(location.file_name()) + ":" + std::to_string(location.line()) + ":" +
@@ -135,15 +139,15 @@ auto ExprStatement::parse(TokenIterator& tokens) -> unique_ptr<ExprStatement> {
 void ExprStatement::visit(Visitor& visitor) const { visitor.visit(m_expr); }
 
 auto FnDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement> {
-  consume(tokens, Word, KEYWORD_DEF);
+  consume(tokens, Word, KWD_DEF);
   const string name = consume_word(tokens);
-  consume(tokens, Symbol, SYMBOL_LPAREN);
+  consume(tokens, Symbol, SYM_LPAREN);
 
   auto args = vector<unique_ptr<TypeName>>{};
   int i = 0;
-  while (!try_consume(tokens, Symbol, SYMBOL_RPAREN)) {
+  while (!try_consume(tokens, Symbol, SYM_RPAREN)) {
     if (i++ > 0) {
-      consume(tokens, Symbol, SYMBOL_COMMA);
+      consume(tokens, Symbol, SYM_COMMA);
     }
     args.push_back(TypeName::parse(tokens));
   }
@@ -152,7 +156,7 @@ auto FnDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement
   require_separator(tokens);
 
   auto body = vector<unique_ptr<Statement>>{};
-  while (!try_consume(tokens, Word, KEYWORD_END)) {
+  while (!try_consume(tokens, Word, KWD_END)) {
     body.push_back(Statement::parse(tokens));
     ignore_separator(tokens);
   }
@@ -164,11 +168,11 @@ void FnDeclStatement::visit(Visitor& visitor) const {
 }
 
 auto VarDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<VarDeclStatement> {
-  consume(tokens, Word, KEYWORD_LET);
+  consume(tokens, Word, KWD_LET);
   const string name = consume_word(tokens);
   auto type = SimpleType::try_parse(tokens);
 
-  consume(tokens, Symbol, SYMBOL_EQ);
+  consume(tokens, Symbol, SYM_EQ);
 
   auto init = Expr::parse(tokens);
 
@@ -177,13 +181,13 @@ auto VarDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<VarDeclStateme
 void VarDeclStatement::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_type).visit(m_init); }
 
 auto WhileStatement::parse(TokenIterator& tokens) -> unique_ptr<WhileStatement> {
-  consume(tokens, Word, KEYWORD_WHILE);
+  consume(tokens, Word, KWD_WHILE);
   auto cond = Expr::parse(tokens);
 
   ignore_separator(tokens);
 
   auto body = vector<unique_ptr<Statement>>{};
-  while (!try_consume(tokens, Word, KEYWORD_END)) {
+  while (!try_consume(tokens, Word, KWD_END)) {
     body.push_back(Statement::parse(tokens));
     ignore_separator(tokens);
   }
@@ -195,7 +199,7 @@ auto WhileStatement::parse(TokenIterator& tokens) -> unique_ptr<WhileStatement> 
 void WhileStatement::visit(Visitor& visitor) const { visitor.visit(m_cond).visit(m_body); }
 
 auto ReturnStatement::parse(TokenIterator& tokens) -> unique_ptr<ReturnStatement> {
-  consume(tokens, Word, KEYWORD_RETURN);
+  consume(tokens, Word, KWD_RETURN);
   auto expr = Expr::parse(tokens);
   ignore_separator(tokens);
 
@@ -204,7 +208,7 @@ auto ReturnStatement::parse(TokenIterator& tokens) -> unique_ptr<ReturnStatement
 void ReturnStatement::visit(Visitor& visitor) const { visitor.visit(m_expr); }
 
 auto IfStatement::parse(TokenIterator& tokens) -> unique_ptr<IfStatement> {
-  consume(tokens, Word, KEYWORD_IF);
+  consume(tokens, Word, KWD_IF);
   auto cond = Expr::parse(tokens);
   require_separator(tokens); // todo(rymiel): compact `then`
 
@@ -214,11 +218,11 @@ auto IfStatement::parse(TokenIterator& tokens) -> unique_ptr<IfStatement> {
   bool in_else = false;
 
   while (true) {
-    if (try_consume(tokens, Word, KEYWORD_END)) {
+    if (try_consume(tokens, Word, KWD_END)) {
       break;
     }
-    if (try_consume(tokens, Word, KEYWORD_ELSE)) {
-      if (!in_else && try_consume(tokens, Word, KEYWORD_IF)) {
+    if (try_consume(tokens, Word, KWD_ELSE)) {
+      if (!in_else && try_consume(tokens, Word, KWD_IF)) {
         clauses.push_back(std::make_unique<IfClause>(move(cond), std::make_unique<Compound>(current_body)));
         current_body = vector<unique_ptr<Statement>>{};
         cond = Expr::parse(tokens);
@@ -252,9 +256,9 @@ void IfClause::visit(Visitor& visitor) const { visitor.visit(m_cond).visit(m_bod
 auto operators() {
   // TODO: why does clang-format do this?
   const static vector<vector<Atom>> OPERATORS = {
-      {SYMBOL_EQ_EQ,   SYMBOL_NEQ,         SYMBOL_GT, SYMBOL_LT},
-      {SYMBOL_PLUS,              SYMBOL_MINUS                     },
-      {SYMBOL_PERCENT, SYMBOL_SLASH_SLASH, SYMBOL_ASTERISK     },
+      {SYM_EQ_EQ,      SYM_NEQ,            SYM_GT, SYM_LT},
+      {SYM_PLUS,              SYM_MINUS                        },
+      {SYM_PERCENT, SYM_SLASH_SLASH, SYM_STAR     },
   };
   return OPERATORS;
 }
@@ -268,12 +272,12 @@ auto parse_primary(TokenIterator& tokens) -> unique_ptr<Expr> {
   }
   if (tokens->m_type == Word) {
     auto name = consume_word(tokens);
-    if (try_consume(tokens, Symbol, SYMBOL_LPAREN)) {
+    if (try_consume(tokens, Symbol, SYM_LPAREN)) {
       int n = 0;
       auto args = vector<unique_ptr<Expr>>{};
-      while (!try_consume(tokens, Symbol, SYMBOL_RPAREN)) {
+      while (!try_consume(tokens, Symbol, SYM_RPAREN)) {
         if (n++ > 0) {
-          consume(tokens, Symbol, SYMBOL_COMMA);
+          consume(tokens, Symbol, SYM_COMMA);
         }
         args.push_back(Expr::parse(tokens));
       }
@@ -287,7 +291,7 @@ auto parse_primary(TokenIterator& tokens) -> unique_ptr<Expr> {
 
 auto parse_receiver(TokenIterator& tokens, unique_ptr<Expr> receiver) -> unique_ptr<Expr> {
   // TODO
-  if (try_consume(tokens, Symbol, SYMBOL_EQ)) {
+  if (try_consume(tokens, Symbol, SYM_EQ)) {
     auto value = Expr::parse(tokens);
     auto assign = std::make_unique<AssignExpr>(receiver, value);
     return parse_receiver(tokens, move(assign));
@@ -331,15 +335,15 @@ auto parse_operator(TokenIterator& tokens, int n = 0) -> unique_ptr<Expr> {
 auto Statement::parse(TokenIterator& tokens) -> unique_ptr<Statement> {
   auto stat = unique_ptr<Statement>();
 
-  if (tokens->is_keyword(KEYWORD_DEF)) {
+  if (tokens->is_keyword(KWD_DEF)) {
     stat = FnDeclStatement::parse(tokens);
-  } else if (tokens->is_keyword(KEYWORD_LET)) {
+  } else if (tokens->is_keyword(KWD_LET)) {
     stat = VarDeclStatement::parse(tokens);
-  } else if (tokens->is_keyword(KEYWORD_WHILE)) {
+  } else if (tokens->is_keyword(KWD_WHILE)) {
     stat = WhileStatement::parse(tokens);
-  } else if (tokens->is_keyword(KEYWORD_IF)) {
+  } else if (tokens->is_keyword(KWD_IF)) {
     stat = IfStatement::parse(tokens);
-  } else if (tokens->is_keyword(KEYWORD_RETURN)) {
+  } else if (tokens->is_keyword(KWD_RETURN)) {
     stat = ReturnStatement::parse(tokens);
   } else {
     stat = ExprStatement::parse(tokens);
@@ -356,7 +360,7 @@ auto Type::parse(TokenIterator& tokens) -> unique_ptr<Type> {
   }
 
   unique_ptr<Type> base = std::make_unique<SimpleType>(name);
-  if (try_consume(tokens, Word, KEYWORD_PTR)) {
+  if (try_consume(tokens, Word, KWD_PTR)) {
     base = std::make_unique<QualType>(move(base), QualType::Qualifier::Ptr);
   }
 
@@ -373,7 +377,7 @@ auto Type::try_parse(TokenIterator& tokens) -> optional<unique_ptr<Type>> {
   }
 
   unique_ptr<Type> base = std::make_unique<SimpleType>(name);
-  if (try_consume(tokens, Word, KEYWORD_PTR)) {
+  if (try_consume(tokens, Word, KWD_PTR)) {
     base = std::make_unique<QualType>(move(base), QualType::Qualifier::Ptr);
   }
 
