@@ -127,7 +127,11 @@ auto FnDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement
   consume(tokens, Symbol, SYMBOL_LPAREN);
 
   auto args = vector<unique_ptr<TypeName>>{};
+  int i = 0;
   while (!try_consume(tokens, Symbol, SYMBOL_RPAREN)) {
+    if (i++ > 0) {
+      consume(tokens, Symbol, SYMBOL_COMMA);
+    }
     args.push_back(TypeName::parse(tokens));
   }
 
