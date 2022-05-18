@@ -109,6 +109,17 @@ auto try_consume(TokenIterator& tokens, Token::Type tokenType, Atom payload,
   return true;
 }
 
+void consume_with_separators_until(TokenIterator& tokens, Token::Type token_type, Atom payload, auto action,
+                                   const source_location location = source_location::current()) {
+  int i = 0;
+  while (!try_consume(tokens, token_type, payload, location)) {
+    if (i++ > 0) {
+      consume(tokens, Symbol, SYM_COMMA);
+    }
+    action();
+  }
+}
+
 auto next(TokenIterator& tokens, const source_location location = source_location::current()) -> Token {
   auto tok = *tokens++;
 #ifdef YUME_SPEW_CONSUMED_TOKENS
@@ -143,16 +154,14 @@ void ExprStatement::visit(Visitor& visitor) const { visitor.visit(m_expr); }
 auto FnDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement> {
   consume(tokens, Word, KWD_DEF);
   const string name = consume_word(tokens);
+  auto type_args = vector<string>{};
+  if (try_consume(tokens, Symbol, SYM_LT)) {
+    consume_with_separators_until(tokens, Symbol, SYM_GT, [&] { type_args.push_back(consume_word(tokens)); });
+  }
   consume(tokens, Symbol, SYM_LPAREN);
 
   auto args = vector<unique_ptr<TypeName>>{};
-  int i = 0;
-  while (!try_consume(tokens, Symbol, SYM_RPAREN)) {
-    if (i++ > 0) {
-      consume(tokens, Symbol, SYM_COMMA);
-    }
-    args.push_back(TypeName::parse(tokens));
-  }
+  consume_with_separators_until(tokens, Symbol, SYM_RPAREN, [&] { args.push_back(TypeName::parse(tokens)); });
 
   auto return_type = SimpleType::try_parse(tokens);
   auto body = vector<unique_ptr<Statement>>{};
@@ -163,7 +172,7 @@ auto FnDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement
       auto primitive = consume_word(tokens);
       consume(tokens, Symbol, SYM_RPAREN);
       auto varargs = try_consume(tokens, Word, KWD_VARARGS);
-      return std::make_unique<FnDeclStatement>(name, args, move(return_type), varargs, primitive);
+      return std::make_unique<FnDeclStatement>(name, args, type_args, move(return_type), varargs, primitive);
     }
     auto expr = Expr::parse(tokens);
     body.push_back(std::make_unique<ReturnStatement>(move(expr)));
@@ -176,10 +185,10 @@ auto FnDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement
     }
   }
 
-  return std::make_unique<FnDeclStatement>(name, args, move(return_type), std::make_unique<Compound>(body));
+  return std::make_unique<FnDeclStatement>(name, args, type_args, move(return_type), std::make_unique<Compound>(body));
 }
 void FnDeclStatement::visit(Visitor& visitor) const {
-  visitor.visit(m_name).visit(m_args, "arg").visit(m_ret, "ret");
+  visitor.visit(m_name).visit(m_args, "arg").visit(m_type_args, "type arg").visit(m_ret, "ret");
   if (const auto* s = get_if<string>(&m_body); s) {
     visitor.visit(*s, "primitive");
   } else {

@@ -230,16 +230,18 @@ class FnDeclStatement : public Statement, public AST {
   string m_name;
   bool m_varargs{};
   vector<unique_ptr<TypeName>> m_args;
+  vector<string> m_type_args;
   optional<unique_ptr<Type>> m_ret;
   variant<unique_ptr<Compound>, string> m_body;
 
 public:
-  inline FnDeclStatement(string name, vector<unique_ptr<TypeName>>& args, optional<unique_ptr<Type>> ret,
-                         unique_ptr<Compound> body)
-      : m_name{move(name)}, m_args{move(args)}, m_ret{move(ret)}, m_body{move(body)} {};
-  inline FnDeclStatement(string name, vector<unique_ptr<TypeName>>& args, optional<unique_ptr<Type>> ret, bool varargs,
-                         string primitive)
-      : m_name{move(name)}, m_args{move(args)}, m_ret{move(ret)}, m_varargs{varargs}, m_body{move(primitive)} {};
+  inline FnDeclStatement(string name, vector<unique_ptr<TypeName>>& args, vector<string>& type_args,
+                         optional<unique_ptr<Type>> ret, unique_ptr<Compound> body)
+      : m_name{move(name)}, m_args{move(args)}, m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(body)} {};
+  inline FnDeclStatement(string name, vector<unique_ptr<TypeName>>& args, vector<string>& type_args,
+                         optional<unique_ptr<Type>> ret, bool varargs, string primitive)
+      : m_name{move(name)}, m_args{move(args)},
+        m_type_args{move(type_args)}, m_ret{move(ret)}, m_varargs{varargs}, m_body{move(primitive)} {};
   void visit(Visitor& visitor) const override;
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement>;
   [[nodiscard]] inline auto kind() const -> Kind override { return Kind::FnDecl; };
