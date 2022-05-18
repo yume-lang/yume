@@ -45,11 +45,9 @@ void DotVisitor::header(const char* label, bool is_inline) {
     }
     stream() << m_buffer;
   }
-  if (is_inline) {
-    if (m_children == 0) {
-      m_buffer = "";
-      m_write_to_buffer = true;
-    }
+  if (is_inline && m_children == 0) {
+    m_buffer = "";
+    m_write_to_buffer = true;
     emit_debug_header();
     m_open_parent = m_parent;
   } else {
@@ -58,7 +56,7 @@ void DotVisitor::header(const char* label, bool is_inline) {
       m_open = false;
     }
     if (m_index != 0) {
-      m_lines.emplace_back(m_parent, m_index, label);
+      m_lines.emplace_back(m_parent, m_index, label == nullptr ? "" : label);
     }
 
     stream() << AST_KEY << m_index << " [label=<";
@@ -66,7 +64,7 @@ void DotVisitor::header(const char* label, bool is_inline) {
     m_open = true;
   }
 
-  m_prev_label = label;
+  m_prev_label = label == nullptr ? "" : label;
 }
 
 void DotVisitor::footer(bool is_inline) {

@@ -57,7 +57,7 @@ public:
     if (opt.has_value()) {
       return visit(*opt, label);
     }
-    return visit(nullptr, label);
+    return *this;
   }
 
   template <typename T> inline auto visit(const std::pair<T, const char*>& pair) -> Visitor& {
@@ -75,9 +75,9 @@ class DotVisitor : public Visitor {
   bool m_finalized = false;
   bool m_open = false;
   bool m_write_to_buffer = false;
-  vector<std::tuple<int, int, const char*>> m_lines{};
+  vector<std::tuple<int, int, string>> m_lines{};
   string m_buffer{};
-  const char* m_prev_label{};
+  string m_prev_label{};
   int m_children{};
   int m_index{};
   int m_parent{};
@@ -129,7 +129,7 @@ public:
     }
     for (const auto& i : m_lines) {
       stream() << AST_KEY << get<0>(i) << " -> " << AST_KEY << get<1>(i);
-      if (const char* s = get<2>(i); s != nullptr) {
+      if (auto s = get<2>(i); !s.empty()) {
         stream() << " [label=\"" << s << "\"]";
       }
       stream() << ";\n";
