@@ -25,6 +25,8 @@ static const Atom KWD_PTR = "ptr"_a;
 static const Atom KWD_ELSE = "else"_a;
 static const Atom KWD_WHILE = "while"_a;
 static const Atom KWD_RETURN = "return"_a;
+static const Atom KWD_VARARGS = "__varargs__"_a;
+static const Atom KWD_PRIMITIVE = "__primitive__"_a;
 
 static const Atom SYM_COMMA = ","_a;
 static const Atom SYM_EQ = "="_a;
@@ -153,18 +155,39 @@ auto FnDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement
   }
 
   auto return_type = SimpleType::try_parse(tokens);
-  require_separator(tokens);
-
   auto body = vector<unique_ptr<Statement>>{};
-  while (!try_consume(tokens, Word, KWD_END)) {
-    body.push_back(Statement::parse(tokens));
-    ignore_separator(tokens);
+
+  if (try_consume(tokens, Symbol, SYM_EQ)) {
+    if (try_consume(tokens, Word, KWD_PRIMITIVE)) {
+      consume(tokens, Symbol, SYM_LPAREN);
+      auto primitive = consume_word(tokens);
+      consume(tokens, Symbol, SYM_RPAREN);
+      auto varargs = try_consume(tokens, Word, KWD_VARARGS);
+      return std::make_unique<FnDeclStatement>(name, args, move(return_type), varargs, primitive);
+    }
+    auto expr = Expr::parse(tokens);
+    body.push_back(std::make_unique<ReturnStatement>(move(expr)));
+  } else {
+    require_separator(tokens);
+
+    while (!try_consume(tokens, Word, KWD_END)) {
+      body.push_back(Statement::parse(tokens));
+      ignore_separator(tokens);
+    }
   }
 
   return std::make_unique<FnDeclStatement>(name, args, move(return_type), std::make_unique<Compound>(body));
 }
 void FnDeclStatement::visit(Visitor& visitor) const {
-  visitor.visit(m_name).visit(m_args, "arg").visit(m_ret, "ret").visit(m_body);
+  visitor.visit(m_name).visit(m_args, "arg").visit(m_ret, "ret");
+  if (const auto* s = get_if<string>(&m_body); s) {
+    visitor.visit(*s, "primitive");
+  } else {
+    visitor.visit(get<unique_ptr<Compound>>(m_body));
+  }
+  if (m_varargs) {
+    visitor.visit("varargs");
+  }
 }
 
 auto VarDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<VarDeclStatement> {
@@ -201,7 +224,6 @@ void WhileStatement::visit(Visitor& visitor) const { visitor.visit(m_cond).visit
 auto ReturnStatement::parse(TokenIterator& tokens) -> unique_ptr<ReturnStatement> {
   consume(tokens, Word, KWD_RETURN);
   auto expr = Expr::parse(tokens);
-  ignore_separator(tokens);
 
   return std::make_unique<ReturnStatement>(optional<unique_ptr<Expr>>{move(expr)});
 }
