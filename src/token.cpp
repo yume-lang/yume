@@ -33,7 +33,7 @@ struct Tokenizer {
 
   void tokenize() {
     using namespace std::literals::string_literals;
-    auto isword = [](int c, int i) { return (i == 0 && std::isalpha(c) != 0) || std::isalnum(c) != 0; };
+    auto isword = [](int c, int i) { return (i == 0 && std::isalpha(c) != 0) || std::isalnum(c) != 0 || c == '_'; };
     auto isstr = [end = false](int c, int i) mutable {
       if (i == 0) {
         return c == '"';
@@ -51,14 +51,14 @@ struct Tokenizer {
     while (!m_in.eof()) {
       if (!selectCharacteristic(
               {
-                  {Token::Type::Separator,  '\n'              },
-                  {Token::Type::Whitespace, std::isspace      },
-                  {Token::Type::Number,     std::isdigit      },
-                  {Token::Type::Literal,    isstr             },
-                  {Token::Type::Word,       isword            },
-                  {Token::Type::Symbol,     "=="s             },
-                  {Token::Type::Symbol,     "//"s             },
-                  {Token::Type::Symbol,     R"(()<>="%-+,/*\)"},
+                  {Token::Type::Separator,  '\n'                    },
+                  {Token::Type::Whitespace, std::isspace            },
+                  {Token::Type::Number,     std::isdigit            },
+                  {Token::Type::Literal,    isstr                   },
+                  {Token::Type::Word,       isword                  },
+                  {Token::Type::Symbol,     "=="s                   },
+                  {Token::Type::Symbol,     "//"s                   },
+                  {Token::Type::Symbol,     R"(()[]<>=:#"%-+.,!?/*\)"},
       },
               i)) {
         string message = "Tokenizer didn't recognize ";
