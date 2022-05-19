@@ -3,42 +3,44 @@ def puts(string U8 ptr) I32 = __primitive__(libc)
 def putchar(char I32) I32 = __primitive__(libc)
 
 def size<T>(arr T[]) I64 = __primitive__(slice_size)
-def ptr<T>(arr T[]) T* = __primitive__(slice_ptr)
-def :[]<T>(ptr T*, offset I64) T = __primitive__(get_at)
-def :[]=<T>(ptr T*, offset I64, val T) T = __primitive__(set_at)
+def ptr<T>(arr T[]) T ptr = __primitive__(slice_ptr)
+def []<T>(ptr T ptr, offset I64) T = __primitive__(get_at)
+def []=<T>(ptr T ptr, offset I64, val T) T = __primitive__(set_at)
 def dup_internal<T>(arr T[], extra I64) T[] = __primitive__(slice_dup)
 
 # TODO: most of these should be templated
-def :+(a I32, b I32) I32 = __primitive__(add)
-def :+(a I64, b I64) I64 = __primitive__(add)
-def :+(a U8, b U8) U8 = __primitive__(add)
-def :-(a I32, b I32) I32 = __primitive__(sub)
-def :-(a I64, b I64) I64 = __primitive__(sub)
-def :-(a I32) I32 = 0 - a
-def :-(a U8, b U8) U8 = __primitive__(sub)
-def :%(a I32, b I32) I32 = __primitive__(mod)
-def :*(a I32, b I32) I32 = __primitive__(mul)
-def ://(a I32, b I32) I32 = __primitive__(int_div)
-def :==(a I32, b I32) Bool = __primitive__(icmp_eq)
-def :==(a U8, b U8) Bool = __primitive__(icmp_eq)
-def :!=(a U8, b U8) Bool = __primitive__(icmp_ne)
-def :>(a I32, b I32) Bool = __primitive__(icmp_gt)
-def :>(a I64, b I64) Bool = __primitive__(icmp_gt)
-def :<(a I32, b I32) Bool = __primitive__(icmp_lt)
-def :<(a I64, b I64) Bool = __primitive__(icmp_lt)
-def :!(a Bool) Bool
-  if a then return false
-  else return true
+def +(a I32, b I32) I32 = __primitive__(add)
+def +(a I64, b I64) I64 = __primitive__(add)
+def +(a U8, b U8) U8 = __primitive__(add)
+def -(a I32, b I32) I32 = __primitive__(sub)
+def -(a I64, b I64) I64 = __primitive__(sub)
+def -(a I32) I32 = 0 - a
+def -(a U8, b U8) U8 = __primitive__(sub)
+def %(a I32, b I32) I32 = __primitive__(mod)
+def *(a I32, b I32) I32 = __primitive__(mul)
+def //(a I32, b I32) I32 = __primitive__(int_div)
+def ==(a I32, b I32) Bool = __primitive__(icmp_eq)
+def ==(a U8, b U8) Bool = __primitive__(icmp_eq)
+def !=(a U8, b U8) Bool = __primitive__(icmp_ne)
+def >(a I32, b I32) Bool = __primitive__(icmp_gt)
+def >(a I64, b I64) Bool = __primitive__(icmp_gt)
+def <(a I32, b I32) Bool = __primitive__(icmp_lt)
+def <(a I64, b I64) Bool = __primitive__(icmp_lt)
+def !(a Bool) Bool
+  if a
+    return false
+  else
+    return true
   end
 end
 
-def :[]<T>(slice T[], offset I64) T = slice.ptr[offset]
-def :[]=<T>(slice T[], offset I64, val T) T
+def []<T>(slice T[], offset I64) T = slice.ptr[offset]
+def []=<T>(slice T[], offset I64, val T) T
   slice.ptr[offset] = val
   return val
 end
 
-def copy<T>(source T*, dest T*, amount I64)
+def copy<T>(source T ptr, dest T ptr, amount I64)
   let count I64 = amount
   while count > I64(0)
     count = count - I64(1)
@@ -59,14 +61,14 @@ def dup_append<T>(arr T[], last T) T[]
   return dup_t
 end
 
-def c_str(str U8[]) U8[] = str.dup_append(?\0)
+def c_str(str U8[]) U8[] = str.dup_append(0)
 
-def c_len(ptr U8*) I64
+def c_len(ptr U8 ptr) I64
   let terminated Bool = false
   let idx I64 = I64(0)
   while !terminated
     let chr U8 = ptr[idx]
-    if chr == ?\0
+    if chr == 0
       terminated = true
     else
       idx = idx + I64(1)
