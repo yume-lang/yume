@@ -46,6 +46,17 @@ static const Atom SYM_MINUS = "-"_a;
 static const Atom SYM_PERCENT = "%"_a;
 static const Atom SYM_SLASH_SLASH = "//"_a;
 static const Atom SYM_STAR = "*"_a;
+static const Atom SYM_BANG = "!"_a;
+
+auto operators() {
+  // TODO: why does clang-format do this?
+  const static vector<vector<Atom>> OPERATORS = {
+      {SYM_EQ_EQ,   SYM_NEQ,         SYM_GT, SYM_LT},
+      {SYM_PLUS,           SYM_MINUS                  },
+      {SYM_PERCENT, SYM_SLASH_SLASH, SYM_STAR     },
+  };
+  return OPERATORS;
+}
 
 auto at(const source_location location = source_location::current()) -> string {
   return string(location.file_name()) + ":" + std::to_string(location.line()) + ":" +
@@ -164,9 +175,43 @@ auto ExprStatement::parse(TokenIterator& tokens) -> unique_ptr<ExprStatement> {
 }
 void ExprStatement::visit(Visitor& visitor) const { visitor.visit(m_expr); }
 
+auto parse_fn_name(TokenIterator& tokens) -> string {
+  string name{};
+  if (tokens->m_type == Word) {
+    name = consume_word(tokens);
+  } else if (tokens->m_type == Symbol) {
+    bool found_op = false;
+    for (const auto& op_row : operators()) {
+      for (const auto& op : op_row) {
+        if (try_consume(tokens, Symbol, op)) {
+          found_op = true;
+          name = op;
+          break;
+        }
+      }
+      if (found_op) {
+        break;
+      }
+    }
+
+    if (try_consume(tokens, Symbol, SYM_LBRACKET)) {
+      consume(tokens, Symbol, SYM_RBRACKET);
+      name = "[]";
+    } else if (try_consume(tokens, Symbol, SYM_BANG)) {
+      name = "!";
+    }
+  }
+
+  if (try_consume(tokens, Symbol, SYM_EQ)) {
+    name += "=";
+  }
+
+  return name;
+}
+
 auto FnDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement> {
   consume(tokens, Word, KWD_DEF);
-  const string name = consume_word(tokens);
+  const string name = parse_fn_name(tokens);
   auto type_args = vector<string>{};
   if (try_consume(tokens, Symbol, SYM_LT)) {
     consume_with_separators_until(tokens, Symbol, SYM_GT, [&] { type_args.push_back(consume_word(tokens)); });
@@ -290,22 +335,12 @@ auto IfStatement::parse(TokenIterator& tokens) -> unique_ptr<IfStatement> {
     else_clause = std::make_unique<Compound>(else_body);
   }
 
-  ignore_separator(tokens);
+  // ignore_separator(tokens);
 
   return std::make_unique<IfStatement>(clauses, move(else_clause));
 }
 void IfStatement::visit(Visitor& visitor) const { visitor.visit(m_clauses).visit(m_else_clause, "else"); }
 void IfClause::visit(Visitor& visitor) const { visitor.visit(m_cond).visit(m_body); }
-
-auto operators() {
-  // TODO: why does clang-format do this?
-  const static vector<vector<Atom>> OPERATORS = {
-      {SYM_EQ_EQ,   SYM_NEQ,         SYM_GT, SYM_LT},
-      {SYM_PLUS,           SYM_MINUS                  },
-      {SYM_PERCENT, SYM_SLASH_SLASH, SYM_STAR     },
-  };
-  return OPERATORS;
-}
 
 auto parse_primary(TokenIterator& tokens) -> unique_ptr<Expr> {
   if (tokens->m_type == Number) {
@@ -317,15 +352,9 @@ auto parse_primary(TokenIterator& tokens) -> unique_ptr<Expr> {
   if (tokens->m_type == Word) {
     auto name = consume_word(tokens);
     if (try_consume(tokens, Symbol, SYM_LPAREN)) {
-      int n = 0;
-      auto args = vector<unique_ptr<Expr>>{};
-      while (!try_consume(tokens, Symbol, SYM_RPAREN)) {
-        if (n++ > 0) {
-          consume(tokens, Symbol, SYM_COMMA);
-        }
-        args.push_back(Expr::parse(tokens));
-      }
-      return std::make_unique<CallExpr>(name, args);
+      auto call_args = vector<unique_ptr<Expr>>{};
+      consume_with_separators_until(tokens, Symbol, SYM_RPAREN, [&] { call_args.push_back(Expr::parse(tokens)); });
+      return std::make_unique<CallExpr>(name, call_args);
     }
     return std::make_unique<VarExpr>(name);
   }
@@ -350,6 +379,14 @@ auto parse_receiver(TokenIterator& tokens, unique_ptr<Expr> receiver) -> unique_
     auto value = Expr::parse(tokens);
     auto assign = std::make_unique<AssignExpr>(receiver, value);
     return parse_receiver(tokens, move(assign));
+  }
+  if (try_consume(tokens, Symbol, SYM_LBRACKET)) {
+    auto args = vector<unique_ptr<Expr>>{};
+    args.push_back(move(receiver));
+    args.push_back(Expr::parse(tokens));
+    consume(tokens, Symbol, SYM_RBRACKET);
+    auto call = std::make_unique<CallExpr>("[]", args);
+    return parse_receiver(tokens, move(call));
   }
   return receiver;
 }
