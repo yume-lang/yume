@@ -2,9 +2,15 @@
 #include "compiler.hpp"
 #include "token.hpp"
 #include <iostream>
+#include <fstream>
 
-auto main() -> int {
-  auto tokens = yume::tokenize(std::cin);
+auto main(int argc, const char** argv) -> int {
+  std::unique_ptr<std::istream> file_stream{};
+  if (argc > 1) {
+    file_stream = std::make_unique<std::ifstream>(argv[1]);
+  }
+      
+  auto tokens = yume::tokenize(argc > 1 ? *file_stream : std::cin);
   std::cout << "tokens:\n";
   for (auto& i : tokens) {
     std::cout << "  " << i << "\n";
