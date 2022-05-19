@@ -29,6 +29,7 @@ static const Atom KWD_VARARGS = "__varargs__"_a;
 static const Atom KWD_PRIMITIVE = "__primitive__"_a;
 
 static const Atom SYM_COMMA = ","_a;
+static const Atom SYM_DOT = "."_a;
 static const Atom SYM_EQ = "="_a;
 static const Atom SYM_LPAREN = "("_a;
 static const Atom SYM_RPAREN = ")"_a;
@@ -322,6 +323,17 @@ auto parse_primary(TokenIterator& tokens) -> unique_ptr<Expr> {
 
 auto parse_receiver(TokenIterator& tokens, unique_ptr<Expr> receiver) -> unique_ptr<Expr> {
   // TODO
+  if (try_consume(tokens, Symbol, SYM_DOT)) {
+    auto name = consume_word(tokens);
+    if (try_consume(tokens, Symbol, SYM_LPAREN)) {
+      auto call_args = vector<unique_ptr<Expr>>{};
+      consume_with_separators_until(tokens, Symbol, SYM_RPAREN, [&] { call_args.push_back(Expr::parse(tokens)); });
+      auto call = std::make_unique<CallExpr>(name, call_args);
+      return parse_receiver(tokens, move(call));
+    }
+    auto access = std::make_unique<FieldAccessExpr>(receiver, name);
+    return parse_receiver(tokens, move(access));
+  }
   if (try_consume(tokens, Symbol, SYM_EQ)) {
     auto value = Expr::parse(tokens);
     auto assign = std::make_unique<AssignExpr>(receiver, value);
@@ -448,4 +460,6 @@ void VarExpr::visit(Visitor& visitor) const { visitor.visit(m_name); }
 void CallExpr::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_args); }
 
 void AssignExpr::visit(Visitor& visitor) const { visitor.visit(m_target).visit(m_value); }
+
+void FieldAccessExpr::visit(Visitor& visitor) const { visitor.visit(m_base).visit(m_field); }
 } // namespace yume::ast

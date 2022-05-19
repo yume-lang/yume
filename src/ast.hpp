@@ -42,7 +42,8 @@ enum struct Kind {
   Var,
   ExprStatement,
   ReturnStatement,
-  Assign
+  Assign,
+  FieldAccess,
 };
 
 auto inline constexpr kind_name(Kind type) -> const char* {
@@ -65,6 +66,7 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case Kind::ExprStatement: return "expr statement";
   case Kind::ReturnStatement: return "return statement";
   case Kind::Assign: return "assign";
+  case Kind::FieldAccess: return "field access";
   default: return "?";
   }
 }
@@ -210,6 +212,16 @@ public:
       : m_target{move(target)}, m_value{move(value)} {};
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto inline kind() const -> Kind override { return Kind::Assign; };
+};
+
+class FieldAccessExpr : public Expr, public AST {
+  unique_ptr<Expr> m_base;
+  string m_field;
+
+public:
+  inline FieldAccessExpr(unique_ptr<Expr>& base, string field) : m_base{move(base)}, m_field{move(field)} {};
+  void visit(Visitor& visitor) const override;
+  [[nodiscard]] auto inline kind() const -> Kind override { return Kind::FieldAccess; };
 };
 
 class Statement : public Expr {
