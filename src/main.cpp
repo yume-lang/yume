@@ -29,12 +29,17 @@ auto main(int argc, const char** argv) -> int {
     std::cerr << exc.what() << "\n";
     std::cerr.flush();
   }
-  std::cout << "unconsumed tokens:\n";
-  while (!token_it.end()) {
-    std::cout << "  " << *token_it++ << "\n";
+
+  if (!token_it.end()) {
+    std::cout << "unconsumed tokens:\n";
+    while (!token_it.end()) {
+      std::cout << "  " << *token_it++ << "\n";
+    }
+    std::cout << "\n";
+    std::cout.flush();
+
+    exit(2);
   }
-  std::cout << "\n";
-  std::cout.flush();
 
   try {
     auto compiler = yume::Compiler{};
@@ -45,7 +50,7 @@ auto main(int argc, const char** argv) -> int {
     compiler.write_object("output.o", true);
   } catch (std::exception& exc) {
     std::cerr << exc.what() << "\n";
-    exit(EXIT_FAILURE);
+    exit(1);
   }
   return EXIT_SUCCESS;
 }
