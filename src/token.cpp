@@ -31,7 +31,7 @@ struct Tokenizer {
   std::istream& m_in;
   char m_last;
 
-  constexpr void tokenize() {
+  void tokenize() {
     using namespace std::literals::string_literals;
     auto isword = [](int c, int i) { return (i == 0 && std::isalpha(c) != 0) || std::isalnum(c) != 0 || c == '_'; };
     auto isstr = [end = false](int c, int i) mutable {
@@ -74,20 +74,20 @@ struct Tokenizer {
   explicit Tokenizer(std::istream& in) : m_in(in), m_last(next()) {}
 
 private:
-  constexpr auto next() -> char {
+  auto next() -> char {
     m_in.get(m_last);
     return m_last;
   }
 
-  constexpr auto swap() -> char {
+  auto swap() -> char {
     auto c = m_last;
     next();
     return c;
   }
 
-  [[nodiscard]] constexpr auto isCharacteristic(const char_fn& fun) const -> bool { return fun(m_last, 0) != 0; }
+  [[nodiscard]] auto isCharacteristic(const char_fn& fun) const -> bool { return fun(m_last, 0) != 0; }
 
-  constexpr auto selectCharacteristic(std::initializer_list<Characteristic> list, int i) -> bool {
+  auto selectCharacteristic(std::initializer_list<Characteristic> list, int i) -> bool {
     return std::ranges::any_of(list, [&](const auto& c) {
       if (isCharacteristic(c.m_fn)) {
         m_tokens.emplace_back(c.m_type, consumeCharacteristic(c.m_fn), i);
@@ -97,7 +97,7 @@ private:
     });
   }
 
-  constexpr auto consumeCharacteristic(const char_fn& fun) -> Atom {
+  auto consumeCharacteristic(const char_fn& fun) -> Atom {
     auto out = std::string{};
     int i = 0;
     while (fun(m_last, i) != 0 && !m_in.eof()) {
