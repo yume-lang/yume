@@ -83,6 +83,9 @@ struct TokenIterator {
   [[nodiscard]] constexpr auto end() const noexcept -> bool { return m_iterator == m_end; }
   [[nodiscard]] auto constexpr operator->() const noexcept -> Token* { return m_iterator.operator->(); }
   [[nodiscard]] constexpr auto operator*() const noexcept -> Token { return m_iterator.operator*(); }
+  [[nodiscard]] constexpr auto operator+(int i) const noexcept -> TokenIterator {
+    return TokenIterator{m_iterator + i, m_end};
+  }
   constexpr auto operator++() -> TokenIterator& {
     if (end()) {
       throw std::runtime_error("Can't increment past end");
@@ -130,7 +133,7 @@ public:
 
 class QualType : public Type, public AST {
 public:
-  enum struct Qualifier { Ptr };
+  enum struct Qualifier { Ptr, Slice };
 
 private:
   unique_ptr<Type> m_base;
@@ -143,6 +146,7 @@ public:
   [[nodiscard]] inline auto describe() const -> string override {
     switch (m_qualifier) {
     case Qualifier::Ptr: return "ptr";
+    case Qualifier::Slice: return "slice";
     default: return "";
     }
   };

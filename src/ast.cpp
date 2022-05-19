@@ -110,12 +110,24 @@ auto try_consume(TokenIterator& tokens, Token::Type tokenType, Atom payload,
   return true;
 }
 
+auto try_peek(TokenIterator& tokens, int ahead, Token::Type token_type, Atom payload,
+              const source_location location = source_location::current()) -> bool {
+  auto token = tokens + ahead;
+
+#ifdef YUME_SPEW_CONSUMED_TOKENS
+  std::cerr << "try_peek ahead by " << ahead << ": expected " << Token::type_name(token_type) << " " << string(payload)
+            << ", got " << *token << " at " << at(location) << "\n";
+#endif
+
+  return !(token->m_type != token_type || token->m_payload != payload);
+}
+
 void consume_with_separators_until(TokenIterator& tokens, Token::Type token_type, Atom payload, auto action,
                                    const source_location location = source_location::current()) {
   int i = 0;
   while (!try_consume(tokens, token_type, payload, location)) {
     if (i++ > 0) {
-      consume(tokens, Symbol, SYM_COMMA);
+      consume(tokens, Symbol, SYM_COMMA, location);
     }
     action();
   }
@@ -403,8 +415,15 @@ auto Type::parse(TokenIterator& tokens) -> unique_ptr<Type> {
   }
 
   unique_ptr<Type> base = std::make_unique<SimpleType>(name);
-  if (try_consume(tokens, Word, KWD_PTR)) {
-    base = std::make_unique<QualType>(move(base), QualType::Qualifier::Ptr);
+  while (true) {
+    if (try_consume(tokens, Word, KWD_PTR)) {
+      base = std::make_unique<QualType>(move(base), QualType::Qualifier::Ptr);
+    } else if (try_consume(tokens, Symbol, SYM_LBRACKET)) {
+      consume(tokens, Symbol, SYM_RBRACKET);
+      base = std::make_unique<QualType>(move(base), QualType::Qualifier::Slice);
+    } else {
+      break;
+    }
   }
 
   return base;
@@ -420,8 +439,16 @@ auto Type::try_parse(TokenIterator& tokens) -> optional<unique_ptr<Type>> {
   }
 
   unique_ptr<Type> base = std::make_unique<SimpleType>(name);
-  if (try_consume(tokens, Word, KWD_PTR)) {
-    base = std::make_unique<QualType>(move(base), QualType::Qualifier::Ptr);
+  while (true) {
+    if (try_consume(tokens, Word, KWD_PTR)) {
+      base = std::make_unique<QualType>(move(base), QualType::Qualifier::Ptr);
+    } else if (try_peek(tokens, 0, Symbol, SYM_LBRACKET) && try_peek(tokens, 1, Symbol, SYM_RBRACKET)) {
+      consume(tokens, Symbol, SYM_LBRACKET);
+      consume(tokens, Symbol, SYM_RBRACKET);
+      base = std::make_unique<QualType>(move(base), QualType::Qualifier::Slice);
+    } else {
+      break;
+    }
   }
 
   return base;
