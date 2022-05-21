@@ -129,6 +129,8 @@ public:
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto inline kind() const -> Kind override { return Kind::SimpleType; };
   [[nodiscard]] inline auto describe() const -> string override { return m_name; };
+
+  [[nodiscard]] constexpr auto inline name() const -> const auto& { return m_name; };
 };
 
 class QualType : public Type, public AST {
@@ -150,6 +152,9 @@ public:
     default: return "";
     }
   };
+
+  [[nodiscard]] constexpr auto inline qualifier() const -> const auto& { return m_qualifier; };
+  [[nodiscard]] constexpr auto inline base() const -> const auto& { return m_base; };
 };
 
 class TypeName : public Expr, public AST {
@@ -162,6 +167,9 @@ public:
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<TypeName>;
   [[nodiscard]] auto inline kind() const -> Kind override { return Kind::TypeName; };
   [[nodiscard]] inline auto describe() const -> string override { return m_name; };
+
+  [[nodiscard]] constexpr auto inline type() const -> const auto& { return m_type; };
+  [[nodiscard]] constexpr auto inline name() const -> const auto& { return m_name; };
 };
 
 class NumberExpr : public Expr, public AST {
@@ -262,6 +270,12 @@ public:
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement>;
   [[nodiscard]] inline auto kind() const -> Kind override { return Kind::FnDecl; };
   [[nodiscard]] inline auto describe() const -> string override { return m_name; };
+
+  [[nodiscard]] constexpr auto inline name() const -> const auto& { return m_name; };
+  [[nodiscard]] constexpr auto inline args() const -> const auto& { return m_args; };
+  [[nodiscard]] constexpr auto inline ret() const -> const auto& { return m_ret; };
+  [[nodiscard]] constexpr auto inline body() const -> const auto& { return m_body; };
+  [[nodiscard]] constexpr auto inline varargs() const -> bool { return m_varargs; };
 };
 
 class VarDeclStatement : public Statement, public AST {
@@ -340,5 +354,7 @@ public:
   void visit(Visitor& visitor) const override;
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<Program>;
   [[nodiscard]] constexpr auto inline kind() const -> Kind override { return Kind::Program; };
+
+  [[nodiscard]] constexpr auto inline body() const -> const auto& { return m_body; };
 };
 } // namespace yume::ast

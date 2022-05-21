@@ -6,6 +6,8 @@
 #define YUME_CPP_COMPILER_HPP
 
 #include "util.hpp"
+#include "ast.hpp"
+#include <map>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/LegacyPassManager.h>
@@ -21,6 +23,9 @@ namespace yume {
 using namespace llvm;
 
 class Compiler {
+  unique_ptr<ast::Program> m_program;
+  std::map<string, llvm::Type*> m_known_types;
+
   unique_ptr<LLVMContext> m_context;
   unique_ptr<IRBuilder<>> m_builder;
   unique_ptr<Module> m_module;
@@ -29,11 +34,13 @@ class Compiler {
 public:
   [[nodiscard]] auto module() const -> const auto& { return m_module; }
 
-  Compiler();
+  explicit Compiler(unique_ptr<ast::Program> program);
 
-  void add_main();
+  void add(const ast::FnDeclStatement& fn_decl);
 
   void write_object(const char* filename, bool binary);
+
+  auto convert_type(const ast::Type& ast_type) -> llvm::Type*;
 };
 } // namespace yume
 
