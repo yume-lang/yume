@@ -70,7 +70,7 @@ auto to_string(Token token) -> string {
 }
 
 void ignore_separator(TokenIterator& tokens, const source_location location = source_location::current()) {
-  while (tokens->m_type == Separator && !tokens.end()) {
+  while (!tokens.end() && tokens->m_type == Separator) {
 #ifdef YUME_SPEW_CONSUMED_TOKENS
     std::cerr << "consumed " << *tokens << " at " << at(location) << "\n";
 #endif
