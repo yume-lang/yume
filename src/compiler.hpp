@@ -41,6 +41,10 @@ public:
   void write_object(const char* filename, bool binary);
 
   auto convert_type(const ast::Type& ast_type) -> llvm::Type*;
+
+  auto mangle_name(const ast::FnDeclStatement& fn_decl) -> string;
+
+  auto mangle_name(const ast::Type& ast_type) -> string;
 };
 } // namespace yume
 

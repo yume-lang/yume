@@ -82,7 +82,12 @@ void Compiler::add(const ast::FnDeclStatement& fn_decl) {
   }
   FunctionType* fn_t = FunctionType::get(ret_type, args, fn_decl.varargs());
 
-  Function* fn = Function::Create(fn_t, Function::ExternalLinkage, fn_decl.name(), m_module.get());
+  string name = fn_decl.name();
+  if (name != "main") {
+    name = mangle_name(fn_decl);
+  }
+
+  Function* fn = Function::Create(fn_t, Function::ExternalLinkage, name, m_module.get());
 
   int arg_i = 0;
   for (auto& arg : fn->args()) {
@@ -110,5 +115,40 @@ void Compiler::write_object(const char* filename, bool binary) {
 
   pass.run(*m_module);
   dest->flush();
+}
+
+auto Compiler::mangle_name(const ast::FnDeclStatement& fn_decl) -> string {
+  std::stringstream ss{};
+  ss << "_Ym.";
+  ss << fn_decl.name();
+  ss << "(";
+  int idx = 0;
+  for (const auto& i : fn_decl.args()) {
+    if (idx++ > 0) {
+      ss << ",";
+    }
+    ss << mangle_name(*i->type());
+  }
+  ss << ")";
+  if (auto* ret = fn_decl.ret()->get(); ret != nullptr) {
+    ss << mangle_name(*ret);
+  }
+  return ss.str();
+}
+
+auto Compiler::mangle_name(const ast::Type& ast_type) -> string {
+  if (ast_type.kind() == ast::Kind::SimpleType) {
+    const auto& simple_type = dynamic_cast<const ast::SimpleType&>(ast_type);
+    return simple_type.name();
+  }
+  std::stringstream ss{};
+  const auto& qual_type = dynamic_cast<const ast::QualType&>(ast_type);
+  auto qualifier = qual_type.qualifier();
+  ss << mangle_name(*qual_type.base());
+  switch (qualifier) {
+  case ast::QualType::Qualifier::Ptr: ss << "*"; break;
+  case ast::QualType::Qualifier::Slice: ss << "["; break;
+  }
+  return ss.str();
 }
 } // namespace yume
