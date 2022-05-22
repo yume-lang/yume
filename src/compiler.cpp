@@ -34,8 +34,8 @@ Compiler::Compiler(unique_ptr<ast::Program> program) : m_program(move(program)) 
   m_module->setTargetTriple(targetTriple);
 
   for (auto i : {8, 16, 32, 64}) {
-    m_known_types.insert({"I"s + std::to_string(i), Type::getIntNTy(*m_context, i)});
-    m_known_types.insert({"U"s + std::to_string(i), Type::getIntNTy(*m_context, i)});
+    m_known_types.insert({"I"s + std::to_string(i), std::make_unique<ty::IntegerType>(i, true)});
+    m_known_types.insert({"U"s + std::to_string(i), std::make_unique<ty::IntegerType>(i, false)});
   }
 
   for (const auto& i : m_program->body()) {
@@ -45,26 +45,42 @@ Compiler::Compiler(unique_ptr<ast::Program> program) : m_program(move(program)) 
   }
 }
 
-auto Compiler::convert_type(const ast::Type& ast_type) -> llvm::Type* {
+auto Compiler::convert_type(const ast::Type& ast_type) -> ty::Type& {
+  static unique_ptr<ty::Type> unknown_type = std::make_unique<ty::UnknownType>();
+
   if (ast_type.kind() == ast::Kind::SimpleType) {
     const auto& simple_type = dynamic_cast<const ast::SimpleType&>(ast_type);
     auto name = simple_type.name();
     auto val = m_known_types.find(name);
     if (val != m_known_types.end()) {
-      return val->second;
+      return *val->second;
     }
   } else {
     const auto& qual_type = dynamic_cast<const ast::QualType&>(ast_type);
     auto qualifier = qual_type.qualifier();
+    return convert_type(*qual_type.base()).known_qual(qualifier);
+  }
+
+  return *unknown_type;
+}
+
+auto Compiler::llvm_type(const ty::Type& type) -> llvm::Type* {
+  if (type.kind() == ty::Kind::Integer) {
+    const auto& int_type = dynamic_cast<const ty::IntegerType&>(type);
+    return llvm::Type::getIntNTy(*m_context, int_type.size());
+  }
+  if (type.kind() == ty::Kind::Qual) {
+    const auto& qual_type = dynamic_cast<const ty::QualType&>(type);
+    auto qualifier = qual_type.qualifier();
     switch (qualifier) {
-    case ast::QualType::Qualifier::Ptr: return PointerType::getUnqual(convert_type(*qual_type.base()));
+    case ast::QualType::Qualifier::Ptr: return llvm::PointerType::getUnqual(llvm_type(qual_type.base()));
     case ast::QualType::Qualifier::Slice: {
       auto args = vector<Type*>{};
-      args.push_back(PointerType::getUnqual(convert_type(*qual_type.base())));
-      args.push_back(Type::getInt64PtrTy(*m_context));
-      return StructType::get(*m_context, args);
+      args.push_back(llvm::PointerType::getUnqual(llvm_type(qual_type.base())));
+      args.push_back(llvm::Type::getInt64PtrTy(*m_context));
+      return llvm::StructType::get(*m_context, args);
     }
-    default: return convert_type(*qual_type.base());
+    default: return llvm_type(qual_type.base());
     }
   }
 
@@ -72,15 +88,15 @@ auto Compiler::convert_type(const ast::Type& ast_type) -> llvm::Type* {
 }
 
 void Compiler::add(const ast::FnDeclStatement& fn_decl) {
-  auto* ret_type = Type::getVoidTy(*m_context);
-  auto args = vector<Type*>{};
-  if (fn_decl.ret().has_value()) {
-    ret_type = convert_type(**fn_decl.ret());
+  auto* ret_type = llvm::Type::getVoidTy(*m_context);
+  auto args = vector<llvm::Type*>{};
+  if (fn_decl.ret()) {
+    ret_type = llvm_type(convert_type(*fn_decl.ret().value()));
   }
   for (const auto& i : fn_decl.args()) {
-    args.push_back(convert_type(*i->type()));
+    args.push_back(llvm_type(convert_type(*i->type())));
   }
-  FunctionType* fn_t = FunctionType::get(ret_type, args, fn_decl.varargs());
+  llvm::FunctionType* fn_t = llvm::FunctionType::get(ret_type, args, fn_decl.varargs());
 
   string name = fn_decl.name();
   if (name != "main") {

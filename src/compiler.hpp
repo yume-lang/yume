@@ -7,6 +7,7 @@
 
 #include "util.hpp"
 #include "ast.hpp"
+#include "type.hpp"
 #include <map>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/LLVMContext.h>
@@ -24,7 +25,7 @@ using namespace llvm;
 
 class Compiler {
   unique_ptr<ast::Program> m_program;
-  std::map<string, llvm::Type*> m_known_types;
+  std::map<string, std::unique_ptr<ty::Type>> m_known_types;
 
   unique_ptr<LLVMContext> m_context;
   unique_ptr<IRBuilder<>> m_builder;
@@ -40,7 +41,9 @@ public:
 
   void write_object(const char* filename, bool binary);
 
-  auto convert_type(const ast::Type& ast_type) -> llvm::Type*;
+  auto convert_type(const ast::Type& ast_type) -> ty::Type&;
+
+  auto llvm_type(const ty::Type& type) -> llvm::Type*;
 
   auto mangle_name(const ast::FnDeclStatement& fn_decl) -> string;
 
