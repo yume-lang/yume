@@ -38,10 +38,19 @@ Compiler::Compiler(unique_ptr<ast::Program> program) : m_program(move(program)) 
     m_known_types.insert({"U"s + std::to_string(i), std::make_unique<ty::IntegerType>(i, false)});
   }
 
+  vector<Fn*> pending_body{};
+
   for (const auto& i : m_program->body()) {
     if (i->kind() == ast::Kind::FnDecl) {
-      add(dynamic_cast<const ast::FnDeclStatement&>(*i));
+      auto& fn_decl_ptr = dynamic_cast<ast::FnDeclStatement&>(*i);
+      auto* llvm_fn = declare(fn_decl_ptr);
+      auto& r = m_fn_decls.emplace_back(std::make_unique<Fn>(fn_decl_ptr, llvm_fn));
+      pending_body.push_back(r.get());
     }
+  }
+
+  for (auto* i : pending_body) {
+    define(*i);
   }
 }
 
@@ -87,7 +96,7 @@ auto Compiler::llvm_type(const ty::Type& type) -> llvm::Type* {
   return Type::getVoidTy(*m_context);
 }
 
-void Compiler::add(const ast::FnDeclStatement& fn_decl) {
+auto Compiler::declare(const ast::FnDeclStatement& fn_decl) -> Function* {
   auto* ret_type = llvm::Type::getVoidTy(*m_context);
   auto args = vector<llvm::Type*>{};
   if (fn_decl.ret()) {
@@ -111,14 +120,95 @@ void Compiler::add(const ast::FnDeclStatement& fn_decl) {
     arg_i++;
   }
 
+  return fn;
+}
+
+void Compiler::define(Fn& fn) {
+  m_current_fn = &fn;
   BasicBlock* bb = BasicBlock::Create(*m_context, "entry", fn);
   m_builder->SetInsertPoint(bb);
-  m_builder->CreateRet(m_builder->getInt32(0));
-  verifyFunction(*fn);
+
+  if (const auto* body = get_if<unique_ptr<ast::Compound>>(&fn.body()); body != nullptr) {
+    statement(**body);
+  }
+  // m_builder->CreateRet(m_builder->getInt32(0));
+  verifyFunction(*fn, &llvm::errs());
+}
+
+void Compiler::statement(const ast::Compound& stat) {
+  for (const auto& i : stat.body()) {
+    body_statement(*i);
+  }
+}
+
+void Compiler::statement(const ast::WhileStatement& stat) {}
+
+void Compiler::statement(const ast::IfStatement& stat) {}
+
+void Compiler::statement(const ast::ExprStatement& stat) {}
+
+void Compiler::statement(const ast::ReturnStatement& stat) {
+  if (stat.expr().has_value()) {
+    auto* val = body_expression(**stat.expr());
+    m_builder->CreateRet(val);
+    return;
+  }
+  m_builder->CreateRetVoid();
+}
+
+void Compiler::statement(const ast::VarDeclStatement& stat) {
+  llvm::Type* var_type = nullptr;
+  if (stat.type().has_value()) {
+    var_type = llvm_type(convert_type(**stat.type()));
+  }
+
+  auto* alloc = m_builder->CreateAlloca(var_type, nullptr, stat.name());
+  auto* val = body_expression(*stat.init());
+  m_current_fn->m_scope.insert({stat.name(), alloc});
+  m_builder->CreateStore(val, alloc);
+}
+
+void Compiler::body_statement(const ast::Statement& stat) {
+  auto kind = stat.kind();
+  switch (kind) {
+  case ast::Kind::Compound: return statement(dynamic_cast<const ast::Compound&>(stat));
+  case ast::Kind::WhileStatement: return statement(dynamic_cast<const ast::WhileStatement&>(stat));
+  case ast::Kind::IfStatement: return statement(dynamic_cast<const ast::IfStatement&>(stat));
+  case ast::Kind::ExprStatement: return statement(dynamic_cast<const ast::ExprStatement&>(stat));
+  case ast::Kind::ReturnStatement: return statement(dynamic_cast<const ast::ReturnStatement&>(stat));
+  case ast::Kind::VarDecl: return statement(dynamic_cast<const ast::VarDeclStatement&>(stat));
+  default: throw std::logic_error("Unimplemented body statement "s + kind_name(kind));
+  }
+}
+
+auto Compiler::expression(const ast::NumberExpr& expr) -> llvm::Value* {
+  auto val = expr.val();
+  if (val > std::numeric_limits<int32_t>::max()) {
+    return m_builder->getInt64(val);
+  }
+  return m_builder->getInt32(val);
+}
+
+auto Compiler::expression(const ast::VarExpr& expr) -> llvm::Value* {
+  auto* val = m_current_fn->m_scope.find(expr.name())->second;
+  return m_builder->CreateLoad(val->getType()->getPointerElementType(), val);
+}
+
+auto Compiler::body_expression(const ast::Expr& expr) -> llvm::Value* {
+  auto kind = expr.kind();
+  switch (kind) {
+  case ast::Kind::Number:
+    return expression(dynamic_cast<const ast::NumberExpr&>(expr));
+    //  case ast::Kind::String: break;
+    //  case ast::Kind::Call: break;
+  case ast::Kind::Var:
+    return expression(dynamic_cast<const ast::VarExpr&>(expr));
+    //  case ast::Kind::Assign: break;
+  default: throw std::logic_error("Unimplemented body expression "s + kind_name(kind));
+  }
 }
 
 void Compiler::write_object(const char* filename, bool binary) {
-
   auto dest = open_file(filename);
 
   legacy::PassManager pass;

@@ -181,6 +181,8 @@ public:
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<NumberExpr>;
   [[nodiscard]] auto inline kind() const -> Kind override { return Kind::Number; };
   [[nodiscard]] inline auto describe() const -> string override { return std::to_string(m_val); };
+
+  [[nodiscard]] inline auto val() const { return m_val; };
 };
 
 class StringExpr : public Expr, public AST {
@@ -202,6 +204,8 @@ public:
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto inline kind() const -> Kind override { return Kind::Var; };
   [[nodiscard]] inline auto describe() const -> string override { return m_name; };
+
+  [[nodiscard]] constexpr auto inline name() const -> const auto& { return m_name; };
 };
 
 class CallExpr : public Expr, public AST {
@@ -248,6 +252,8 @@ public:
   void visit(Visitor& visitor) const override;
   explicit inline Compound(vector<unique_ptr<Statement>>& body) : m_body{move(body)} {};
   [[nodiscard]] inline auto kind() const -> Kind override { return Kind::Compound; };
+
+  [[nodiscard]] constexpr auto inline body() const -> const auto& { return m_body; };
 };
 
 class FnDeclStatement : public Statement, public AST {
@@ -290,6 +296,10 @@ public:
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<VarDeclStatement>;
   [[nodiscard]] inline auto kind() const -> Kind override { return Kind::VarDecl; };
   [[nodiscard]] inline auto describe() const -> string override { return m_name; };
+
+  [[nodiscard]] constexpr auto inline name() const -> const auto& { return m_name; };
+  [[nodiscard]] constexpr auto inline type() const -> const auto& { return m_type; };
+  [[nodiscard]] constexpr auto inline init() const -> const auto& { return m_init; };
 };
 
 class WhileStatement : public Statement, public AST {
@@ -333,6 +343,8 @@ public:
   void visit(Visitor& visitor) const override;
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<ReturnStatement>;
   [[nodiscard]] inline auto kind() const -> Kind override { return Kind::ReturnStatement; };
+
+  [[nodiscard]] inline auto expr() const -> const optional<unique_ptr<Expr>>& { return m_expr; };
 };
 
 class ExprStatement : public Statement, public AST {
