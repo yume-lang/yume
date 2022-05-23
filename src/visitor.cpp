@@ -96,7 +96,7 @@ void DotVisitor::visit_expr(const ast::Expr& expr, bool is_expr_stat, const char
 auto DotVisitor::visit(const ast::Expr& expr, const char* label) -> DotVisitor& {
   if (expr.kind() == ast::Kind::ExprStatement) {
     const auto& expr_stat = dynamic_cast<const ast::ExprStatement&>(expr);
-    visit_expr(*expr_stat.expr(), true, label);
+    visit_expr(expr_stat.expr(), true, label);
   } else {
     visit_expr(expr, false, label);
   }

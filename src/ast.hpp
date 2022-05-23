@@ -131,7 +131,7 @@ public:
   [[nodiscard]] auto inline kind() const -> Kind override { return Kind::SimpleType; };
   [[nodiscard]] inline auto describe() const -> string override { return m_name; };
 
-  [[nodiscard]] constexpr auto inline name() const -> const auto& { return m_name; };
+  [[nodiscard]] constexpr auto inline name() const -> string { return m_name; };
 };
 
 class QualType : public Type, public AST {
@@ -154,8 +154,8 @@ public:
     }
   };
 
-  [[nodiscard]] constexpr auto inline qualifier() const -> const auto& { return m_qualifier; };
-  [[nodiscard]] constexpr auto inline base() const -> const auto& { return m_base; };
+  [[nodiscard]] constexpr auto inline qualifier() const -> Qualifier { return m_qualifier; };
+  [[nodiscard]] constexpr auto inline base() const -> const auto& { return *m_base; };
 };
 
 class TypeName : public Expr, public AST {
@@ -169,8 +169,8 @@ public:
   [[nodiscard]] auto inline kind() const -> Kind override { return Kind::TypeName; };
   [[nodiscard]] inline auto describe() const -> string override { return m_name; };
 
-  [[nodiscard]] constexpr auto inline type() const -> const auto& { return m_type; };
-  [[nodiscard]] constexpr auto inline name() const -> const auto& { return m_name; };
+  [[nodiscard]] constexpr auto inline type() const -> const auto& { return *m_type; };
+  [[nodiscard]] constexpr auto inline name() const -> string { return m_name; };
 };
 
 class NumberExpr : public Expr, public AST {
@@ -183,7 +183,7 @@ public:
   [[nodiscard]] auto inline kind() const -> Kind override { return Kind::Number; };
   [[nodiscard]] inline auto describe() const -> string override { return std::to_string(m_val); };
 
-  [[nodiscard]] inline auto val() const { return m_val; };
+  [[nodiscard]] inline auto val() const -> int64_t { return m_val; };
 };
 
 class StringExpr : public Expr, public AST {
@@ -195,6 +195,8 @@ public:
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<StringExpr>;
   [[nodiscard]] auto inline kind() const -> Kind override { return Kind::String; };
   [[nodiscard]] inline auto describe() const -> string override { return m_val; };
+
+  [[nodiscard]] constexpr auto inline val() const -> string { return m_val; };
 };
 
 class VarExpr : public Expr, public AST {
@@ -206,7 +208,7 @@ public:
   [[nodiscard]] auto inline kind() const -> Kind override { return Kind::Var; };
   [[nodiscard]] inline auto describe() const -> string override { return m_name; };
 
-  [[nodiscard]] constexpr auto inline name() const -> const auto& { return m_name; };
+  [[nodiscard]] constexpr auto inline name() const -> string { return m_name; };
 };
 
 class CallExpr : public Expr, public AST {
@@ -254,7 +256,7 @@ public:
   explicit inline Compound(vector<unique_ptr<Statement>>& body) : m_body{move(body)} {};
   [[nodiscard]] inline auto kind() const -> Kind override { return Kind::Compound; };
 
-  [[nodiscard]] constexpr auto inline body() const -> const auto& { return m_body; };
+  [[nodiscard]] auto inline body() const { return dereference_view(m_body); };
 };
 
 class FnDeclStatement : public Statement, public AST {
@@ -278,9 +280,9 @@ public:
   [[nodiscard]] inline auto kind() const -> Kind override { return Kind::FnDecl; };
   [[nodiscard]] inline auto describe() const -> string override { return m_name; };
 
-  [[nodiscard]] constexpr auto inline name() const -> const auto& { return m_name; };
-  [[nodiscard]] constexpr auto inline args() const -> const auto& { return m_args; };
-  [[nodiscard]] constexpr auto inline ret() const -> const auto& { return m_ret; };
+  [[nodiscard]] constexpr auto inline name() const -> string { return m_name; };
+  [[nodiscard]] constexpr auto inline args() const { return dereference_view(m_args); };
+  [[nodiscard]] constexpr auto inline ret() const { return try_dereference(m_ret); };
   [[nodiscard]] constexpr auto inline body() const -> const auto& { return m_body; };
   [[nodiscard]] constexpr auto inline varargs() const -> bool { return m_varargs; };
 };
@@ -298,9 +300,9 @@ public:
   [[nodiscard]] inline auto kind() const -> Kind override { return Kind::VarDecl; };
   [[nodiscard]] inline auto describe() const -> string override { return m_name; };
 
-  [[nodiscard]] constexpr auto inline name() const -> const auto& { return m_name; };
-  [[nodiscard]] constexpr auto inline type() const -> const auto& { return m_type; };
-  [[nodiscard]] constexpr auto inline init() const -> const auto& { return m_init; };
+  [[nodiscard]] constexpr auto inline name() const -> string { return m_name; };
+  [[nodiscard]] constexpr auto inline type() const { return try_dereference(m_type); };
+  [[nodiscard]] constexpr auto inline init() const -> const auto& { return *m_init; };
 };
 
 class WhileStatement : public Statement, public AST {
@@ -345,7 +347,7 @@ public:
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<ReturnStatement>;
   [[nodiscard]] inline auto kind() const -> Kind override { return Kind::ReturnStatement; };
 
-  [[nodiscard]] inline auto expr() const -> const optional<unique_ptr<Expr>>& { return m_expr; };
+  [[nodiscard]] inline auto expr() const { return try_dereference(m_expr); };
 };
 
 class ExprStatement : public Statement, public AST {
@@ -356,7 +358,8 @@ public:
   void visit(Visitor& visitor) const override;
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<ExprStatement>;
   [[nodiscard]] inline auto kind() const -> Kind override { return Kind::ExprStatement; };
-  [[nodiscard]] inline auto expr() const -> const unique_ptr<Expr>& { return m_expr; };
+
+  [[nodiscard]] inline auto expr() const -> const auto& { return *m_expr; };
 };
 
 class Program : public Statement, public AST {
@@ -368,6 +371,6 @@ public:
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<Program>;
   [[nodiscard]] constexpr auto inline kind() const -> Kind override { return Kind::Program; };
 
-  [[nodiscard]] constexpr auto inline body() const -> const auto& { return m_body; };
+  [[nodiscard]] constexpr auto inline body() const { return dereference_view(m_body); };
 };
 } // namespace yume::ast

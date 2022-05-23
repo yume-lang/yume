@@ -42,8 +42,8 @@ Compiler::Compiler(unique_ptr<ast::Program> program) : m_program(move(program)) 
   vector<Fn*> pending_body{};
 
   for (const auto& i : m_program->body()) {
-    if (i->kind() == ast::Kind::FnDecl) {
-      auto& fn_decl_ptr = dynamic_cast<ast::FnDeclStatement&>(*i);
+    if (i.kind() == ast::Kind::FnDecl) {
+      auto& fn_decl_ptr = dynamic_cast<const ast::FnDeclStatement&>(i);
       auto* llvm_fn = declare(fn_decl_ptr);
       auto& r = m_fn_decls.emplace_back(std::make_unique<Fn>(fn_decl_ptr, llvm_fn));
       pending_body.push_back(r.get());
@@ -68,7 +68,7 @@ auto Compiler::convert_type(const ast::Type& ast_type) -> ty::Type& {
   } else {
     const auto& qual_type = dynamic_cast<const ast::QualType&>(ast_type);
     auto qualifier = qual_type.qualifier();
-    return convert_type(*qual_type.base()).known_qual(qualifier);
+    return convert_type(qual_type.base()).known_qual(qualifier);
   }
 
   return *unknown_type;
@@ -101,10 +101,10 @@ auto Compiler::declare(const ast::FnDeclStatement& fn_decl) -> Function* {
   auto* ret_type = llvm::Type::getVoidTy(*m_context);
   auto args = vector<llvm::Type*>{};
   if (fn_decl.ret()) {
-    ret_type = llvm_type(convert_type(*fn_decl.ret().value()));
+    ret_type = llvm_type(convert_type(fn_decl.ret().value()));
   }
   for (const auto& i : fn_decl.args()) {
-    args.push_back(llvm_type(convert_type(*i->type())));
+    args.push_back(llvm_type(convert_type(i.type())));
   }
   llvm::FunctionType* fn_t = llvm::FunctionType::get(ret_type, args, fn_decl.varargs());
 
@@ -117,7 +117,7 @@ auto Compiler::declare(const ast::FnDeclStatement& fn_decl) -> Function* {
 
   int arg_i = 0;
   for (auto& arg : fn->args()) {
-    arg.setName(fn_decl.args()[arg_i]->name());
+    arg.setName(fn_decl.args().begin()[arg_i].name());
     arg_i++;
   }
 
@@ -138,7 +138,7 @@ void Compiler::define(Fn& fn) {
 
 void Compiler::statement(const ast::Compound& stat) {
   for (const auto& i : stat.body()) {
-    body_statement(*i);
+    body_statement(i);
   }
 }
 
@@ -150,7 +150,7 @@ void Compiler::statement(const ast::ExprStatement& stat) {}
 
 void Compiler::statement(const ast::ReturnStatement& stat) {
   if (stat.expr().has_value()) {
-    auto* val = body_expression(**stat.expr());
+    auto* val = body_expression(stat.expr().value());
     m_builder->CreateRet(val);
     return;
   }
@@ -160,11 +160,11 @@ void Compiler::statement(const ast::ReturnStatement& stat) {
 void Compiler::statement(const ast::VarDeclStatement& stat) {
   llvm::Type* var_type = nullptr;
   if (stat.type().has_value()) {
-    var_type = llvm_type(convert_type(**stat.type()));
+    var_type = llvm_type(convert_type(stat.type().value()));
   }
 
   auto* alloc = m_builder->CreateAlloca(var_type, nullptr, stat.name());
-  auto* val = body_expression(*stat.init());
+  auto* val = body_expression(stat.init());
   m_current_fn->m_scope.insert({stat.name(), alloc});
   m_builder->CreateStore(val, alloc);
 }
@@ -234,11 +234,11 @@ auto Compiler::mangle_name(const ast::FnDeclStatement& fn_decl) -> string {
     if (idx++ > 0) {
       ss << ",";
     }
-    ss << mangle_name(*i->type());
+    ss << mangle_name(i.type());
   }
   ss << ")";
-  if (auto* ret = fn_decl.ret()->get(); ret != nullptr) {
-    ss << mangle_name(*ret);
+  if (fn_decl.ret().has_value()) {
+    ss << mangle_name(fn_decl.ret().value());
   }
   return ss.str();
 }
@@ -251,7 +251,7 @@ auto Compiler::mangle_name(const ast::Type& ast_type) -> string {
   std::stringstream ss{};
   const auto& qual_type = dynamic_cast<const ast::QualType&>(ast_type);
   auto qualifier = qual_type.qualifier();
-  ss << mangle_name(*qual_type.base());
+  ss << mangle_name(qual_type.base());
   switch (qualifier) {
   case ast::QualType::Qualifier::Ptr: ss << "*"; break;
   case ast::QualType::Qualifier::Slice: ss << "["; break;

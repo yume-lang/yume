@@ -24,11 +24,11 @@ namespace yume {
 using namespace llvm;
 
 struct Fn {
-  ast::FnDeclStatement& m_ast_decl;
+  const ast::FnDeclStatement& m_ast_decl;
   llvm::Function* m_llvm_fn;
   std::map<string, llvm::Value*> m_scope{};
 
-  inline Fn(ast::FnDeclStatement& ast_decl, llvm::Function* llvm_fn) : m_ast_decl(ast_decl), m_llvm_fn(llvm_fn) {}
+  inline Fn(const ast::FnDeclStatement& ast_decl, llvm::Function* llvm_fn) : m_ast_decl(ast_decl), m_llvm_fn(llvm_fn) {}
 
   [[nodiscard]] auto inline body() const -> const auto& { return m_ast_decl.body(); };
 

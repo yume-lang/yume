@@ -173,7 +173,7 @@ struct Atom {
   constexpr Atom() = delete;
   explicit Atom(const string* str) : m_str{str} {}
 
-  constexpr operator std::string() const { // NOLINT(google-explicit-constructor)
+  operator std::string() const { // NOLINT(google-explicit-constructor)
     return *m_str;
   }
   auto inline operator<=>(const Atom& other) const noexcept = default;
