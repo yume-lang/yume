@@ -5,12 +5,33 @@
 #include "token.hpp"
 #include <algorithm>
 #include <iostream>
+#include <ranges>
 #include <utility>
 #include <vector>
 
 namespace yume {
 using char_raw_fn = int(int);
 using char_fn = std::function<int(int, int)>;
+
+#if __cpp_lib_ranges >= 201911L
+inline constexpr auto any_of = std::ranges::any_of;
+#else
+
+struct any_of_fn {
+  template <std::input_iterator I, std::sentinel_for<I> S, std::indirect_unary_predicate<I> Pred>
+  constexpr auto operator()(I first, S last, Pred pred) const -> bool {
+    return std::find_if(first, last, std::ref(pred)) != last;
+  }
+
+  template <std::ranges::input_range R, std::indirect_unary_predicate<std::ranges::iterator_t<R>> Pred>
+  constexpr auto operator()(R&& r, Pred pred) const -> bool {
+    return operator()(std::ranges::begin(r), std::ranges::end(r), std::ref(pred));
+  }
+};
+
+inline constexpr any_of_fn any_of;
+
+#endif
 
 struct Characteristic {
   char_fn m_fn;
@@ -88,7 +109,7 @@ private:
   [[nodiscard]] auto isCharacteristic(const char_fn& fun) const -> bool { return fun(m_last, 0) != 0; }
 
   auto selectCharacteristic(std::initializer_list<Characteristic> list, int i) -> bool {
-    return std::ranges::any_of(list, [&](const auto& c) {
+    return any_of(list, [&](const auto& c) {
       if (isCharacteristic(c.m_fn)) {
         m_tokens.emplace_back(c.m_type, consumeCharacteristic(c.m_fn), i);
         return true;

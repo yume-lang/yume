@@ -3,6 +3,7 @@
 //
 
 #include "compiler.hpp"
+#include <sstream>
 
 namespace yume {
 using namespace std::literals::string_literals;

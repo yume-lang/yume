@@ -4,13 +4,37 @@
 
 #include "ast.hpp"
 
+#if __cpp_lib_source_location >= 201907L
 #include <experimental/source_location>
+#endif
 #include <memory>
+#include <sstream>
 
 namespace yume::ast {
 using namespace yume::atom_literal;
 using namespace std::literals::string_literals;
+
+#if __cpp_lib_source_location >= 201907L
 using std::experimental::source_location;
+#else
+struct source_location {
+  constexpr auto file_name() const {
+    return "??";
+  }
+  constexpr auto function_name() const {
+    return "??";
+  }
+  constexpr auto line() const {
+    return -1;
+  }
+  constexpr auto column() const {
+    return -1;
+  }
+  static inline constexpr auto current() {
+    return source_location{};
+  }
+};
+#endif
 
 constexpr static auto Symbol = Token::Type::Symbol;
 constexpr static auto Word = Token::Type::Word;

@@ -7,6 +7,7 @@
 #include "token.hpp"
 #include "visitor.hpp"
 #include <cstdint>
+#include <ranges>
 #include <span>
 #include <utility>
 #include <vector>
