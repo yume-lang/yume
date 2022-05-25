@@ -1,3 +1,5 @@
+def printf(format U8 ptr) I32 = __primitive__(libc) __varargs__
+
 def collatz(int I32) I32
   let k I32 = 0
   while int > 1

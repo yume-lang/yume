@@ -19,18 +19,23 @@
 #include <llvm/Target/TargetMachine.h>
 #include <llvm/Target/TargetOptions.h>
 #include <map>
+#include <queue>
 
 namespace yume {
 using namespace llvm;
 
+class Compiler;
+
 struct Fn {
   const ast::FnDeclStatement& m_ast_decl;
-  llvm::Function* m_llvm_fn;
-  std::map<string, llvm::Value*> m_scope{};
+  // TODO: multiple instantiations
+  llvm::Function* m_llvm_fn{};
 
-  inline Fn(const ast::FnDeclStatement& ast_decl, llvm::Function* llvm_fn) : m_ast_decl(ast_decl), m_llvm_fn(llvm_fn) {}
+  inline explicit Fn(const ast::FnDeclStatement& ast_decl) : m_ast_decl(ast_decl) {}
 
   [[nodiscard]] auto inline body() const -> const auto& { return m_ast_decl.body(); };
+
+  [[nodiscard]] auto declaration(Compiler& compiler, bool mangle = true) -> llvm::Function*;
 
   operator llvm::Function*() const { // NOLINT(google-explicit-constructor)
     return m_llvm_fn;
@@ -40,9 +45,11 @@ struct Fn {
 class Compiler {
   unique_ptr<ast::Program> m_program;
   std::map<string, unique_ptr<ty::Type>> m_known_types{};
-  vector<unique_ptr<Fn>> m_fn_decls{};
+  vector<Fn> m_fns{};
+  std::queue<Fn*> m_decl_queue{};
 
   Fn* m_current_fn{};
+  std::map<string, llvm::Value*> m_scope{};
 
   unique_ptr<LLVMContext> m_context;
   unique_ptr<IRBuilder<>> m_builder;
@@ -54,7 +61,7 @@ public:
 
   explicit Compiler(unique_ptr<ast::Program> program);
 
-  auto declare(const ast::FnDeclStatement& fn_decl) -> Function*;
+  [[nodiscard]] auto declare(Fn&, bool mangle = true) -> llvm::Function*;
 
   void define(Fn&);
 
@@ -81,6 +88,7 @@ protected:
 
   auto expression(const ast::NumberExpr&) -> llvm::Value*;
   auto expression(const ast::VarExpr&) -> llvm::Value*;
+  auto expression(const ast::CallExpr&) -> llvm::Value*;
 };
 } // namespace yume
 

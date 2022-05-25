@@ -39,19 +39,20 @@ Compiler::Compiler(unique_ptr<ast::Program> program) : m_program(move(program)) 
     m_known_types.insert({"U"s + std::to_string(i), std::make_unique<ty::IntegerType>(i, false)});
   }
 
-  vector<Fn*> pending_body{};
-
   for (const auto& i : m_program->body()) {
     if (i.kind() == ast::Kind::FnDecl) {
-      auto& fn_decl_ptr = dynamic_cast<const ast::FnDeclStatement&>(i);
-      auto* llvm_fn = declare(fn_decl_ptr);
-      auto& r = m_fn_decls.emplace_back(std::make_unique<Fn>(fn_decl_ptr, llvm_fn));
-      pending_body.push_back(r.get());
+      const auto& fn_decl = dynamic_cast<const ast::FnDeclStatement&>(i);
+      auto& fn = m_fns.emplace_back(fn_decl);
+      if (fn_decl.name() == "main") {
+        fn.m_llvm_fn = declare(fn, false);
+      }
     }
   }
 
-  for (auto* i : pending_body) {
-    define(*i);
+  while (!m_decl_queue.empty()) {
+    auto* next = m_decl_queue.front();
+    m_decl_queue.pop();
+    define(*next);
   }
 }
 
@@ -97,7 +98,11 @@ auto Compiler::llvm_type(const ty::Type& type) -> llvm::Type* {
   return Type::getVoidTy(*m_context);
 }
 
-auto Compiler::declare(const ast::FnDeclStatement& fn_decl) -> Function* {
+auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
+  if (fn.m_llvm_fn != nullptr) {
+    return fn.m_llvm_fn;
+  }
+  const auto& fn_decl = fn.m_ast_decl;
   auto* ret_type = llvm::Type::getVoidTy(*m_context);
   auto args = vector<llvm::Type*>{};
   if (fn_decl.ret()) {
@@ -109,23 +114,28 @@ auto Compiler::declare(const ast::FnDeclStatement& fn_decl) -> Function* {
   llvm::FunctionType* fn_t = llvm::FunctionType::get(ret_type, args, fn_decl.varargs());
 
   string name = fn_decl.name();
-  if (name != "main") {
+  if (mangle) {
     name = mangle_name(fn_decl);
   }
 
-  Function* fn = Function::Create(fn_t, Function::ExternalLinkage, name, m_module.get());
+  auto linkage = mangle ? Function::InternalLinkage : Function::ExternalLinkage;
+  Function* llvm_fn = Function::Create(fn_t, linkage, name, m_module.get());
 
   int arg_i = 0;
-  for (auto& arg : fn->args()) {
+  for (auto& arg : llvm_fn->args()) {
     arg.setName(fn_decl.args().begin()[arg_i].name());
     arg_i++;
   }
 
-  return fn;
+  if (!fn_decl.primitive()) { // Skip primitive definitions
+    m_decl_queue.push(&fn);
+  }
+  return llvm_fn;
 }
 
 void Compiler::define(Fn& fn) {
   m_current_fn = &fn;
+  m_scope.clear();
   BasicBlock* bb = BasicBlock::Create(*m_context, "entry", fn);
   m_builder->SetInsertPoint(bb);
 
@@ -133,7 +143,7 @@ void Compiler::define(Fn& fn) {
     statement(**body);
   }
   // m_builder->CreateRet(m_builder->getInt32(0));
-  verifyFunction(*fn, &llvm::errs());
+  // verifyFunction(*fn, &llvm::errs());
 }
 
 void Compiler::statement(const ast::Compound& stat) {
@@ -146,7 +156,7 @@ void Compiler::statement(const ast::WhileStatement& stat) {}
 
 void Compiler::statement(const ast::IfStatement& stat) {}
 
-void Compiler::statement(const ast::ExprStatement& stat) {}
+void Compiler::statement(const ast::ExprStatement& stat) { body_expression(stat.expr()); }
 
 void Compiler::statement(const ast::ReturnStatement& stat) {
   if (stat.expr().has_value()) {
@@ -165,7 +175,7 @@ void Compiler::statement(const ast::VarDeclStatement& stat) {
 
   auto* alloc = m_builder->CreateAlloca(var_type, nullptr, stat.name());
   auto* val = body_expression(stat.init());
-  m_current_fn->m_scope.insert({stat.name(), alloc});
+  m_scope.insert({stat.name(), alloc});
   m_builder->CreateStore(val, alloc);
 }
 
@@ -191,8 +201,45 @@ auto Compiler::expression(const ast::NumberExpr& expr) -> llvm::Value* {
 }
 
 auto Compiler::expression(const ast::VarExpr& expr) -> llvm::Value* {
-  auto* val = m_current_fn->m_scope.find(expr.name())->second;
+  auto* val = m_scope.find(expr.name())->second;
   return m_builder->CreateLoad(val->getType()->getPointerElementType(), val);
+}
+
+auto Compiler::expression(const ast::CallExpr& expr) -> llvm::Value* {
+  auto overloads = vector<Fn*>();
+  auto name = expr.name();
+  std::cerr << "Searching for call overload of " << name << "\nGot: ";
+  for (auto& fn : m_fns) {
+    if (fn.m_ast_decl.name() == name) {
+      overloads.push_back(&fn);
+    }
+  }
+  for (const auto* overload : overloads) {
+    std::cerr << overload->m_ast_decl.describe() << ", ";
+  }
+  std::cerr << "\n";
+  if (overloads.empty()) {
+    throw std::logic_error("No matching overload for "s + name);
+  }
+  auto* selected = overloads.front();
+  llvm::Function* llvm_fn = nullptr;
+  if (selected->m_ast_decl.primitive()) {
+    auto primitive = get<string>(selected->m_ast_decl.body());
+    if (primitive == "libc") {
+      llvm_fn = selected->declaration(*this, false);
+    } else {
+      return nullptr;
+    }
+  } else {
+    llvm_fn = selected->declaration(*this);
+  }
+
+  vector<llvm::Value*> args{};
+  for (const auto& i : expr.args()) {
+    args.push_back(body_expression(i));
+  }
+
+  return m_builder->CreateCall(llvm_fn, args);
 }
 
 auto Compiler::body_expression(const ast::Expr& expr) -> llvm::Value* {
@@ -201,7 +248,7 @@ auto Compiler::body_expression(const ast::Expr& expr) -> llvm::Value* {
   case ast::Kind::Number:
     return expression(dynamic_cast<const ast::NumberExpr&>(expr));
     //  case ast::Kind::String: break;
-    //  case ast::Kind::Call: break;
+  case ast::Kind::Call: return expression(dynamic_cast<const ast::CallExpr&>(expr));
   case ast::Kind::Var:
     return expression(dynamic_cast<const ast::VarExpr&>(expr));
     //  case ast::Kind::Assign: break;
@@ -237,6 +284,7 @@ auto Compiler::mangle_name(const ast::FnDeclStatement& fn_decl) -> string {
     ss << mangle_name(i.type());
   }
   ss << ")";
+  // TODO: should mangled names even contain the return type...?
   if (fn_decl.ret().has_value()) {
     ss << mangle_name(fn_decl.ret().value());
   }
@@ -257,5 +305,11 @@ auto Compiler::mangle_name(const ast::Type& ast_type) -> string {
   case ast::QualType::Qualifier::Slice: ss << "["; break;
   }
   return ss.str();
+}
+auto Fn::declaration(Compiler& compiler, bool mangle) -> llvm::Function* {
+  if (m_llvm_fn == nullptr) {
+    m_llvm_fn = compiler.declare(*this, mangle);
+  }
+  return m_llvm_fn;
 }
 } // namespace yume
