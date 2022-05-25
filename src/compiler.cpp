@@ -208,8 +208,20 @@ auto Compiler::expression(const ast::NumberExpr& expr) -> Val {
   return m_builder->getInt32(val);
 }
 
-auto Compiler::expression(const ast::VarExpr& expr) -> llvm::Value* {
-  auto* val = m_scope.find(expr.name())->second;
+auto Compiler::expression(const ast::StringExpr& expr) -> Val {
+  auto val = expr.val();
+
+  std::vector<llvm::Constant*> chars(val.length());
+  for (unsigned int i = 0; i < val.size(); i++) {
+    chars[i] = m_builder->getInt8(val[i]);
+  }
+
+  chars.push_back(m_builder->getInt8(0));
+  auto* stringType = llvm::ArrayType::get(m_builder->getInt8Ty(), chars.size());
+  auto* init = llvm::ConstantArray::get(stringType, chars);
+  auto* global = new llvm::GlobalVariable(*m_module, stringType, true, GlobalVariable::PrivateLinkage, init, ".str");
+  return ConstantExpr::getBitCast(global, m_builder->getInt8PtrTy(0));
+}
 
 auto Compiler::expression(const ast::VarExpr& expr) -> Val {
   auto local = m_scope.find(expr.name());
@@ -252,12 +264,11 @@ auto Compiler::expression(const ast::CallExpr& expr) -> Val {
   return m_builder->CreateCall(llvm_fn, args);
 }
 
-auto Compiler::body_expression(const ast::Expr& expr) -> llvm::Value* {
+auto Compiler::body_expression(const ast::Expr& expr) -> Val {
   auto kind = expr.kind();
   switch (kind) {
-  case ast::Kind::Number:
-    return expression(dynamic_cast<const ast::NumberExpr&>(expr));
-    //  case ast::Kind::String: break;
+  case ast::Kind::Number: return expression(dynamic_cast<const ast::NumberExpr&>(expr));
+  case ast::Kind::String: return expression(dynamic_cast<const ast::StringExpr&>(expr));
   case ast::Kind::Call: return expression(dynamic_cast<const ast::CallExpr&>(expr));
   case ast::Kind::Var:
     return expression(dynamic_cast<const ast::VarExpr&>(expr));
