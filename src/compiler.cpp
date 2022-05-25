@@ -136,6 +136,9 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
 void Compiler::define(Fn& fn) {
   m_current_fn = &fn;
   m_scope.clear();
+  for (const auto& arg : fn.m_ast_decl.args()) {
+    const auto& [type, name] = arg;
+  }
   BasicBlock* bb = BasicBlock::Create(*m_context, "entry", fn);
   m_builder->SetInsertPoint(bb);
 

@@ -171,6 +171,30 @@ public:
 
   [[nodiscard]] constexpr auto inline type() const -> const auto& { return *m_type; };
   [[nodiscard]] constexpr auto inline name() const -> string { return m_name; };
+
+  template <size_t I> [[maybe_unused]] auto get() & -> auto& {
+    if constexpr (I == 0) {
+      return *m_type;
+    } else if constexpr (I == 1) {
+      return m_name;
+    }
+  }
+
+  template <size_t I> [[maybe_unused]] auto get() const& -> auto const& {
+    if constexpr (I == 0) {
+      return *m_type;
+    } else if constexpr (I == 1) {
+      return m_name;
+    }
+  }
+
+  template <size_t I> [[maybe_unused]] auto get() && -> auto&& {
+    if constexpr (I == 0) {
+      return std::move(*m_type);
+    } else if constexpr (I == 1) {
+      return std::move(m_name);
+    }
+  }
 };
 
 class NumberExpr : public Expr, public AST {
@@ -378,3 +402,10 @@ public:
   [[nodiscard]] constexpr auto inline body() const { return dereference_view(m_body); };
 };
 } // namespace yume::ast
+
+namespace std {
+template <> struct tuple_size<yume::ast::TypeName> : std::integral_constant<size_t, 2> {};
+
+template <> struct tuple_element<0, yume::ast::TypeName> { using type = yume::ast::Type; };
+template <> struct tuple_element<1, yume::ast::TypeName> { using type = std::string; };
+} // namespace std
