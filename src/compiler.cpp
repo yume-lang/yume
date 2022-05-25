@@ -123,7 +123,7 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
 
   int arg_i = 0;
   for (auto& arg : llvm_fn->args()) {
-    arg.setName(fn_decl.args().begin()[arg_i].name());
+    arg.setName("arg."s + fn_decl.args().begin()[arg_i].name());
     arg_i++;
   }
 
@@ -136,11 +136,16 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
 void Compiler::define(Fn& fn) {
   m_current_fn = &fn;
   m_scope.clear();
-  for (const auto& arg : fn.m_ast_decl.args()) {
-    const auto& [type, name] = arg;
-  }
   BasicBlock* bb = BasicBlock::Create(*m_context, "entry", fn);
   m_builder->SetInsertPoint(bb);
+
+  int i = 0;
+  for (auto& arg : fn.llvm()->args()) {
+    const auto& [type, name] = fn.m_ast_decl.args().begin()[i];
+    auto* alloc = m_builder->CreateAlloca(llvm_type(convert_type(type)), nullptr, name);
+    m_builder->CreateStore(&arg, alloc);
+    m_scope.insert({name, alloc});
+  }
 
   if (const auto* body = get_if<unique_ptr<ast::Compound>>(&fn.body()); body != nullptr) {
     statement(**body);
