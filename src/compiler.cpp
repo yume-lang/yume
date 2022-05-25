@@ -210,23 +210,24 @@ auto Compiler::expression(const ast::NumberExpr& expr) -> Val {
 
 auto Compiler::expression(const ast::VarExpr& expr) -> llvm::Value* {
   auto* val = m_scope.find(expr.name())->second;
+
+auto Compiler::expression(const ast::VarExpr& expr) -> Val {
+  auto local = m_scope.find(expr.name());
+  if (local == end(m_scope)) {
+    throw std::runtime_error("No local variable "s + expr.name());
+  }
+  auto* val = local->second.llvm();
   return m_builder->CreateLoad(val->getType()->getPointerElementType(), val);
-  return m_builder->CreateLoad(val.llvm()->getType()->getPointerElementType(), val);
 }
 
 auto Compiler::expression(const ast::CallExpr& expr) -> Val {
   auto overloads = vector<Fn*>();
   auto name = expr.name();
-  std::cerr << "Searching for call overload of " << name << "\nGot: ";
   for (auto& fn : m_fns) {
     if (fn.m_ast_decl.name() == name) {
       overloads.push_back(&fn);
     }
   }
-  for (const auto* overload : overloads) {
-    std::cerr << overload->m_ast_decl.describe() << ", ";
-  }
-  std::cerr << "\n";
   if (overloads.empty()) {
     throw std::logic_error("No matching overload for "s + name);
   }
