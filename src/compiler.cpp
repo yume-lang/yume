@@ -160,7 +160,7 @@ void Compiler::statement(const ast::ExprStatement& stat) { body_expression(stat.
 
 void Compiler::statement(const ast::ReturnStatement& stat) {
   if (stat.expr().has_value()) {
-    auto* val = body_expression(stat.expr().value());
+    auto val = body_expression(stat.expr().value());
     m_builder->CreateRet(val);
     return;
   }
@@ -174,7 +174,7 @@ void Compiler::statement(const ast::VarDeclStatement& stat) {
   }
 
   auto* alloc = m_builder->CreateAlloca(var_type, nullptr, stat.name());
-  auto* val = body_expression(stat.init());
+  auto val = body_expression(stat.init());
   m_scope.insert({stat.name(), alloc});
   m_builder->CreateStore(val, alloc);
 }
@@ -192,7 +192,7 @@ void Compiler::body_statement(const ast::Statement& stat) {
   }
 }
 
-auto Compiler::expression(const ast::NumberExpr& expr) -> llvm::Value* {
+auto Compiler::expression(const ast::NumberExpr& expr) -> Val {
   auto val = expr.val();
   if (val > std::numeric_limits<int32_t>::max()) {
     return m_builder->getInt64(val);
@@ -203,9 +203,10 @@ auto Compiler::expression(const ast::NumberExpr& expr) -> llvm::Value* {
 auto Compiler::expression(const ast::VarExpr& expr) -> llvm::Value* {
   auto* val = m_scope.find(expr.name())->second;
   return m_builder->CreateLoad(val->getType()->getPointerElementType(), val);
+  return m_builder->CreateLoad(val.llvm()->getType()->getPointerElementType(), val);
 }
 
-auto Compiler::expression(const ast::CallExpr& expr) -> llvm::Value* {
+auto Compiler::expression(const ast::CallExpr& expr) -> Val {
   auto overloads = vector<Fn*>();
   auto name = expr.name();
   std::cerr << "Searching for call overload of " << name << "\nGot: ";

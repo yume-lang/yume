@@ -35,10 +35,29 @@ struct Fn {
 
   [[nodiscard]] auto inline body() const -> const auto& { return m_ast_decl.body(); };
 
+  [[nodiscard]] auto inline llvm() const -> llvm::Function* { return m_llvm_fn; };
+
   [[nodiscard]] auto declaration(Compiler& compiler, bool mangle = true) -> llvm::Function*;
 
   operator llvm::Function*() const { // NOLINT(google-explicit-constructor)
     return m_llvm_fn;
+  }
+};
+
+struct Val {
+  llvm::Value* m_llvm_val{};
+
+  inline Val(llvm::Value* llvm_val) : m_llvm_val(llvm_val) {} // NOLINT(google-explicit-constructor)
+  Val(Val&) noexcept = delete;
+  Val(Val&&) noexcept = default;
+  auto operator=(Val&) noexcept -> Val& = delete;
+  auto operator=(Val&&) noexcept -> Val& = default;
+  virtual ~Val() = default;
+
+  [[nodiscard]] auto inline llvm() const -> llvm::Value* { return m_llvm_val; };
+
+  operator llvm::Value*() const { // NOLINT(google-explicit-constructor)
+    return m_llvm_val;
   }
 };
 
@@ -49,7 +68,7 @@ class Compiler {
   std::queue<Fn*> m_decl_queue{};
 
   Fn* m_current_fn{};
-  std::map<string, llvm::Value*> m_scope{};
+  std::map<string, Val> m_scope{};
 
   unique_ptr<LLVMContext> m_context;
   unique_ptr<IRBuilder<>> m_builder;
@@ -66,7 +85,7 @@ public:
   void define(Fn&);
 
   void body_statement(const ast::Statement&);
-  auto body_expression(const ast::Expr&) -> llvm::Value*;
+  auto body_expression(const ast::Expr&) -> Val;
 
   void write_object(const char* filename, bool binary);
 
@@ -86,9 +105,10 @@ protected:
   void statement(const ast::ExprStatement&);
   void statement(const ast::VarDeclStatement&);
 
-  auto expression(const ast::NumberExpr&) -> llvm::Value*;
-  auto expression(const ast::VarExpr&) -> llvm::Value*;
-  auto expression(const ast::CallExpr&) -> llvm::Value*;
+  auto expression(const ast::NumberExpr&) -> Val;
+  auto expression(const ast::StringExpr&) -> Val;
+  auto expression(const ast::VarExpr&) -> Val;
+  auto expression(const ast::CallExpr&) -> Val;
 };
 } // namespace yume
 
