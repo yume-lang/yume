@@ -3,7 +3,9 @@
 //
 
 #include "compiler.hpp"
+#include "ast.hpp"
 #include <sstream>
+#include <stdexcept>
 
 namespace yume {
 using namespace std::literals::string_literals;
@@ -162,7 +164,19 @@ void Compiler::statement(const ast::Compound& stat) {
   }
 }
 
-void Compiler::statement(const ast::WhileStatement& stat) {}
+void Compiler::statement(const ast::WhileStatement& stat) {
+  auto* test_bb = BasicBlock::Create(*m_context, "while.test", m_current_fn->m_llvm_fn);
+  auto* head_bb = BasicBlock::Create(*m_context, "while.head", m_current_fn->m_llvm_fn);
+  auto* merge_bb = BasicBlock::Create(*m_context, "while.merge", m_current_fn->m_llvm_fn);
+  m_builder->CreateBr(test_bb);
+  m_builder->SetInsertPoint(test_bb);
+  auto cond_value = body_expression(stat.cond());
+  m_builder->CreateCondBr(cond_value, head_bb, merge_bb);
+  m_builder->SetInsertPoint(head_bb);
+  body_statement(stat.body());
+  m_builder->CreateBr(test_bb);
+  m_builder->SetInsertPoint(merge_bb);
+}
 
 void Compiler::statement(const ast::IfStatement& stat) {}
 
@@ -250,23 +264,41 @@ auto Compiler::expression(const ast::CallExpr& expr) -> Val {
   }
   auto* selected = overloads.front();
   llvm::Function* llvm_fn = nullptr;
+
+  vector<Val> args{};
+  vector<llvm::Value*> llvm_args{};
+  for (const auto& i : expr.args()) {
+    auto arg = body_expression(i);
+    args.push_back(arg);
+    llvm_args.push_back(arg.llvm());
+  }
+
   if (selected->m_ast_decl.primitive()) {
     auto primitive = get<string>(selected->m_ast_decl.body());
+    using enum CmpInst::Predicate;
     if (primitive == "libc") {
       llvm_fn = selected->declaration(*this, false);
+    } else if (primitive == "icmp_gt") {
+      return binary_icmp(*m_builder, &IRBuilder<>::CreateICmp, ICMP_SGT, ICMP_UGT, args);
     } else {
-      return nullptr;
+      throw std::runtime_error("Unknown primitive "s + primitive);
     }
   } else {
     llvm_fn = selected->declaration(*this);
   }
 
-  vector<llvm::Value*> args{};
-  for (const auto& i : expr.args()) {
-    args.push_back(body_expression(i));
-  }
+  return m_builder->CreateCall(llvm_fn, llvm_args);
+}
 
-  return m_builder->CreateCall(llvm_fn, args);
+auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
+  if (expr.target().kind() == ast::Kind::Var) {
+    const auto& target_var = dynamic_cast<const ast::VarExpr&>(expr.target());
+    auto expr_val = body_expression(expr.value());
+    auto target_val = m_scope.at(target_var.name());
+    m_builder->CreateStore(expr_val, target_val);
+    return expr_val;
+  }
+  throw std::runtime_error("Can't assign to target "s + ast::kind_name(expr.kind()));
 }
 
 auto Compiler::body_expression(const ast::Expr& expr) -> Val {
@@ -275,9 +307,8 @@ auto Compiler::body_expression(const ast::Expr& expr) -> Val {
   case ast::Kind::Number: return expression(dynamic_cast<const ast::NumberExpr&>(expr));
   case ast::Kind::String: return expression(dynamic_cast<const ast::StringExpr&>(expr));
   case ast::Kind::Call: return expression(dynamic_cast<const ast::CallExpr&>(expr));
-  case ast::Kind::Var:
-    return expression(dynamic_cast<const ast::VarExpr&>(expr));
-    //  case ast::Kind::Assign: break;
+  case ast::Kind::Var: return expression(dynamic_cast<const ast::VarExpr&>(expr));
+  case ast::Kind::Assign: return expression(dynamic_cast<const ast::AssignExpr&>(expr));
   default: throw std::logic_error("Unimplemented body expression "s + kind_name(kind));
   }
 }
