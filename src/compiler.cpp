@@ -249,6 +249,22 @@ auto Compiler::expression(const ast::VarExpr& expr) -> Val {
   const auto& val = local->second;
   return {m_builder->CreateLoad(val.llvm()->getType()->getPointerElementType(), val.llvm()), val.type()};
 }
+
+auto is_signed_type(ty::Type* type) -> bool {
+  if (type == nullptr) {
+    throw std::logic_error("Can't determine signedness of missing type");
+  }
+  if (type->kind() == ty::Kind::Integer) {
+    auto* int_ty = dynamic_cast<ty::IntegerType*>(type);
+    return int_ty->is_signed();
+  }
+  throw std::logic_error("Can't determine signedness of non-integer type");
+}
+
+auto binary_icmp(auto& base, auto&& fn, CmpInst::Predicate s_pred, CmpInst::Predicate u_pred, const auto& args) {
+  const auto& lhs = args.at(0);
+  const auto& rhs = args.at(1);
+  return (base.*fn)(is_signed_type(lhs.type()) ? s_pred : u_pred, lhs, rhs, "");
 }
 
 auto Compiler::expression(const ast::CallExpr& expr) -> Val {
