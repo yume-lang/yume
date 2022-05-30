@@ -296,6 +296,8 @@ auto Compiler::expression(const ast::CallExpr& expr) -> Val {
       llvm_fn = selected->declaration(*this, false);
     } else if (primitive == "icmp_gt") {
       return binary_icmp(*m_builder, &IRBuilder<>::CreateICmp, ICMP_SGT, ICMP_UGT, args);
+    } else if (primitive == "add") {
+      return m_builder->CreateAdd(args.at(0), args.at(1));
     } else {
       throw std::runtime_error("Unknown primitive "s + primitive);
     }
