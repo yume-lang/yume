@@ -358,6 +358,9 @@ public:
   inline IfClause(unique_ptr<Expr> cond, unique_ptr<Compound> body) : m_cond{move(cond)}, m_body{move(body)} {};
   void visit(Visitor& visitor) const override;
   [[nodiscard]] inline auto kind() const -> Kind override { return Kind::IfClause; };
+
+  [[nodiscard]] inline auto cond() const -> const auto& { return *m_cond; }
+  [[nodiscard]] inline auto body() const -> const auto& { return *m_body; }
 };
 
 class IfStatement : public Statement, public AST {
@@ -370,6 +373,9 @@ public:
   void visit(Visitor& visitor) const override;
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<IfStatement>;
   [[nodiscard]] inline auto kind() const -> Kind override { return Kind::IfStatement; };
+
+  [[nodiscard]] inline auto clauses() const { return dereference_view(m_clauses); }
+  [[nodiscard]] inline auto else_clause() const { return try_dereference(m_else_clause); }
 };
 
 class ReturnStatement : public Statement, public AST {
