@@ -46,15 +46,18 @@ struct Fn {
 
 struct Val {
   llvm::Value* m_llvm_val{};
+  ty::Type* m_type{};
 
   inline Val(llvm::Value* llvm_val) : m_llvm_val(llvm_val) {} // NOLINT(google-explicit-constructor)
-  Val(Val&) noexcept = delete;
+  inline Val(llvm::Value* llvm_val, ty::Type* type) : m_llvm_val(llvm_val), m_type(type) {}
+  Val(const Val&) noexcept = default;
   Val(Val&&) noexcept = default;
-  auto operator=(Val&) noexcept -> Val& = delete;
+  auto operator=(const Val&) noexcept -> Val& = default;
   auto operator=(Val&&) noexcept -> Val& = default;
   virtual ~Val() = default;
 
   [[nodiscard]] auto inline llvm() const -> llvm::Value* { return m_llvm_val; };
+  [[nodiscard]] auto inline type() const -> ty::Type* { return m_type; };
 
   operator llvm::Value*() const { // NOLINT(google-explicit-constructor)
     return m_llvm_val;

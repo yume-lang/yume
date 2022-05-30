@@ -142,15 +142,17 @@ void Compiler::define(Fn& fn) {
   int i = 0;
   for (auto& arg : fn.llvm()->args()) {
     const auto& [type, name] = fn.m_ast_decl.args().begin()[i];
-    auto* alloc = m_builder->CreateAlloca(llvm_type(convert_type(type)), nullptr, name);
+    auto& yume_type = convert_type(type);
+    auto* alloc = m_builder->CreateAlloca(llvm_type(yume_type), nullptr, name);
     m_builder->CreateStore(&arg, alloc);
-    m_scope.insert({name, alloc});
+    m_scope.insert({
+        name, {alloc, &yume_type}
+    });
   }
 
   if (const auto* body = get_if<unique_ptr<ast::Compound>>(&fn.body()); body != nullptr) {
     statement(**body);
   }
-  // m_builder->CreateRet(m_builder->getInt32(0));
   // verifyFunction(*fn, &llvm::errs());
 }
 
@@ -182,9 +184,11 @@ void Compiler::statement(const ast::VarDeclStatement& stat) {
   }
 
   auto* alloc = m_builder->CreateAlloca(var_type, nullptr, stat.name());
-  auto val = body_expression(stat.init());
-  m_scope.insert({stat.name(), alloc});
-  m_builder->CreateStore(val, alloc);
+  auto expr_val = body_expression(stat.init());
+  m_builder->CreateStore(expr_val, alloc);
+  m_scope.insert({
+      stat.name(), {alloc, expr_val.type()}
+  });
 }
 
 void Compiler::body_statement(const ast::Statement& stat) {
@@ -203,9 +207,9 @@ void Compiler::body_statement(const ast::Statement& stat) {
 auto Compiler::expression(const ast::NumberExpr& expr) -> Val {
   auto val = expr.val();
   if (val > std::numeric_limits<int32_t>::max()) {
-    return m_builder->getInt64(val);
+    return {m_builder->getInt64(val), &known_type("I64")};
   }
-  return m_builder->getInt32(val);
+  return {m_builder->getInt32(val), &known_type("I32")};
 }
 
 auto Compiler::expression(const ast::StringExpr& expr) -> Val {
@@ -228,8 +232,9 @@ auto Compiler::expression(const ast::VarExpr& expr) -> Val {
   if (local == end(m_scope)) {
     throw std::runtime_error("No local variable "s + expr.name());
   }
-  auto* val = local->second.llvm();
-  return m_builder->CreateLoad(val->getType()->getPointerElementType(), val);
+  const auto& val = local->second;
+  return {m_builder->CreateLoad(val.llvm()->getType()->getPointerElementType(), val.llvm()), val.type()};
+}
 }
 
 auto Compiler::expression(const ast::CallExpr& expr) -> Val {
