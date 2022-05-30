@@ -287,10 +287,10 @@ auto is_signed_type(ty::Type* type) -> bool {
   throw std::logic_error("Can't determine signedness of non-integer type");
 }
 
-auto binary_icmp(auto& base, auto&& fn, CmpInst::Predicate s_pred, CmpInst::Predicate u_pred, const auto& args) {
+auto binary_sign_aware(auto& base, auto&& s_fn, auto&& u_fn, const auto& args, auto&&... extra) {
   const auto& lhs = args.at(0);
   const auto& rhs = args.at(1);
-  return (base.*fn)(is_signed_type(lhs.type()) ? s_pred : u_pred, lhs, rhs, "");
+  return (is_signed_type(lhs.type()) ? (base.*s_fn)(lhs, rhs, "", extra...) : (base.*u_fn)(lhs, rhs, "", extra...));
 }
 
 auto Compiler::expression(const ast::CallExpr& expr) -> Val {
@@ -321,9 +321,17 @@ auto Compiler::expression(const ast::CallExpr& expr) -> Val {
     if (primitive == "libc") {
       llvm_fn = selected->declaration(*this, false);
     } else if (primitive == "icmp_gt") {
-      return binary_icmp(*m_builder, &IRBuilder<>::CreateICmp, ICMP_SGT, ICMP_UGT, args);
+      return binary_sign_aware(*m_builder, &IRBuilder<>::CreateICmpSGT, &IRBuilder<>::CreateICmpUGT, args);
+    } else if (primitive == "icmp_eq") {
+      return m_builder->CreateICmpEQ(args.at(0), args.at(1));
     } else if (primitive == "add") {
       return m_builder->CreateAdd(args.at(0), args.at(1));
+    } else if (primitive == "mul") {
+      return m_builder->CreateMul(args.at(0), args.at(1));
+    } else if (primitive == "mod") {
+      return binary_sign_aware(*m_builder, &IRBuilder<>::CreateSRem, &IRBuilder<>::CreateURem, args);
+    } else if (primitive == "int_div") {
+      return binary_sign_aware(*m_builder, &IRBuilder<>::CreateSDiv, &IRBuilder<>::CreateUDiv, args, false);
     } else {
       throw std::runtime_error("Unknown primitive "s + primitive);
     }

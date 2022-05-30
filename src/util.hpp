@@ -57,6 +57,8 @@ private:
 
     constexpr auto operator*() const -> decltype(auto) { return **m_current; }
 
+    constexpr auto operator->() const -> decltype(auto) { return *m_current; }
+
     constexpr auto operator++() -> Iterator& {
       ++m_current;
       return *this;
