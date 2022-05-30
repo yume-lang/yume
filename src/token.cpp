@@ -90,16 +90,16 @@ struct Tokenizer {
     while (!m_in.eof()) {
       if (!select_characteristic(
               {
-                  {Token::Type::Separator, is_exactly("\n")                    },
-                  {Token::Type::Skip,      is_c(isspace)                       },
-                  {Token::Type::Skip,      is_comment                          },
-                  {Token::Type::Number,    is_c(isdigit)                       },
-                  {Token::Type::Literal,   is_str                              },
-                  {Token::Type::Word,      is_word                             },
-                  {Token::Type::Symbol,    is_exactly("==")                    },
-                  {Token::Type::Symbol,    is_exactly("//")                    },
-                  {Token::Type::Symbol,    is_any_of(R"(()[]<>=:#"%-+.,!?/*\)")},
-      },
+                  {Token::Type::Separator, is_exactly("\n")},
+                  {Token::Type::Skip, is_c(isspace)},
+                  {Token::Type::Skip, is_comment},
+                  {Token::Type::Number, is_c(isdigit)},
+                  {Token::Type::Literal, is_str},
+                  {Token::Type::Word, is_word},
+                  {Token::Type::Symbol, is_exactly("==")},
+                  {Token::Type::Symbol, is_exactly("//")},
+                  {Token::Type::Symbol, is_any_of(R"(()[]<>=:#"%-+.,!?/*\)")},
+              },
               i)) {
         string message = "Tokenizer didn't recognize ";
         message += m_last;

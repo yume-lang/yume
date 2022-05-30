@@ -65,9 +65,9 @@ static const Atom SYM_BANG = "!"_a;
 auto operators() {
   // TODO: why does clang-format do this?
   const static vector<vector<Atom>> OPERATORS = {
-      {SYM_EQ_EQ,   SYM_NEQ,         SYM_GT, SYM_LT},
-      {SYM_PLUS,           SYM_MINUS                  },
-      {SYM_PERCENT, SYM_SLASH_SLASH, SYM_STAR     },
+      {SYM_EQ_EQ, SYM_NEQ, SYM_GT, SYM_LT},
+      {SYM_PLUS, SYM_MINUS},
+      {SYM_PERCENT, SYM_SLASH_SLASH, SYM_STAR},
   };
   return OPERATORS;
 }

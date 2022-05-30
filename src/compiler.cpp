@@ -147,9 +147,7 @@ void Compiler::define(Fn& fn) {
     auto& yume_type = convert_type(type);
     auto* alloc = m_builder->CreateAlloca(llvm_type(yume_type), nullptr, name);
     m_builder->CreateStore(&arg, alloc);
-    m_scope.insert({
-        name, {alloc, &yume_type}
-    });
+    m_scope.insert({name, {alloc, &yume_type}});
   }
 
   if (const auto* body = get_if<unique_ptr<ast::Compound>>(&fn.body()); body != nullptr) {
@@ -226,9 +224,7 @@ void Compiler::statement(const ast::VarDeclStatement& stat) {
   auto* alloc = m_builder->CreateAlloca(var_type, nullptr, stat.name());
   auto expr_val = body_expression(stat.init());
   m_builder->CreateStore(expr_val, alloc);
-  m_scope.insert({
-      stat.name(), {alloc, expr_val.type()}
-  });
+  m_scope.insert({stat.name(), {alloc, expr_val.type()}});
 }
 
 void Compiler::body_statement(const ast::Statement& stat) {
