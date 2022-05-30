@@ -8,8 +8,8 @@
 namespace yume {
 class Visitor;
 namespace ast {
-struct Expr;
-struct ExprStatement;
+class Expr;
+class ExprStatement;
 } // namespace ast
 } // namespace yume
 

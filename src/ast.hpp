@@ -108,7 +108,7 @@ protected:
   Expr() = default;
 
 public:
-  virtual void inline visit(Visitor& visitor) const {};
+  virtual void inline visit(Visitor& visitor) const = 0;
   [[nodiscard]] virtual auto kind() const -> Kind = 0;
   [[nodiscard]] virtual auto inline describe() const -> string { return string{"unknown "} + kind_name(kind()); };
   virtual ~Expr() = default;
@@ -303,8 +303,8 @@ public:
       : m_name{move(name)}, m_args{move(args)}, m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(body)} {};
   inline FnDeclStatement(string name, vector<unique_ptr<TypeName>>& args, vector<string>& type_args,
                          optional<unique_ptr<Type>> ret, bool varargs, string primitive)
-      : m_name{move(name)}, m_args{move(args)},
-        m_type_args{move(type_args)}, m_ret{move(ret)}, m_varargs{varargs}, m_body{move(primitive)} {};
+      : m_name{move(name)}, m_varargs{varargs}, m_args{move(args)}, m_type_args{move(type_args)}, m_ret{move(ret)},
+        m_body{move(primitive)} {};
   void visit(Visitor& visitor) const override;
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement>;
   [[nodiscard]] inline auto kind() const -> Kind override { return Kind::FnDecl; };

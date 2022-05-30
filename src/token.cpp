@@ -84,7 +84,7 @@ struct Tokenizer {
       return [checks = move(chars)](char c, int i) { return i == 0 && checks.find(c) != string::npos; };
     };
     auto is_exactly = [](string str) { return [s = move(str)](char c, int i) { return s[i] == c; }; };
-    auto is_c = [](char_raw_fn fn) { return [=](char c, int i) { return fn(c) != 0; }; };
+    auto is_c = [](char_raw_fn fn) { return [=](char c, [[maybe_unused]] int i) { return fn(c) != 0; }; };
 
     int i = 0;
     while (!m_in.eof()) {

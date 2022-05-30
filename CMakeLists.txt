@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.23)
 project(yume_cpp)
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS_DEBUG "-glldb -fno-omit-frame-pointer -O0")
+set(CMAKE_CXX_FLAGS_DEBUG "-glldb -W -Wall -fno-omit-frame-pointer -O0")
 # set(CMAKE_CXX_FLAGS_DEBUG "-g3 -fno-omit-frame-pointer -O0")
 
 find_package(LLVM REQUIRED CONFIG)

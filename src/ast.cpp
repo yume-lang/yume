@@ -93,7 +93,7 @@ auto to_string(Token token) -> string {
   return ss.str();
 }
 
-void ignore_separator(TokenIterator& tokens, const source_location location = source_location::current()) {
+void ignore_separator(TokenIterator& tokens, [[maybe_unused]] const source_location location = source_location::current()) {
   while (!tokens.end() && tokens->m_type == Separator) {
 #ifdef YUME_SPEW_CONSUMED_TOKENS
     std::cerr << "consumed " << *tokens << " at " << at(location) << "\n";
@@ -132,7 +132,7 @@ void consume(TokenIterator& tokens, Token::Type token_type, Atom payload,
 }
 
 auto try_consume(TokenIterator& tokens, Token::Type tokenType, Atom payload,
-                 const source_location location = source_location::current()) -> bool {
+                 [[maybe_unused]] const source_location location = source_location::current()) -> bool {
   if (tokens->m_type != tokenType || tokens->m_payload != payload) {
     return false;
   }
@@ -146,7 +146,7 @@ auto try_consume(TokenIterator& tokens, Token::Type tokenType, Atom payload,
 }
 
 auto try_peek(TokenIterator& tokens, int ahead, Token::Type token_type, Atom payload,
-              const source_location location = source_location::current()) -> bool {
+              [[maybe_unused]] const source_location location = source_location::current()) -> bool {
   auto token = tokens + ahead;
 
 #ifdef YUME_SPEW_CONSUMED_TOKENS
@@ -168,7 +168,7 @@ void consume_with_separators_until(TokenIterator& tokens, Token::Type token_type
   }
 }
 
-auto next(TokenIterator& tokens, const source_location location = source_location::current()) -> Token {
+auto next(TokenIterator& tokens, [[maybe_unused]] const source_location location = source_location::current()) -> Token {
   auto tok = *tokens++;
 #ifdef YUME_SPEW_CONSUMED_TOKENS
   std::cerr << "next: " << tok << " at " << at(location) << "\n";
@@ -187,7 +187,7 @@ auto consume_word(TokenIterator& tokens, const source_location location = source
 auto Program::parse(TokenIterator& tokens) -> unique_ptr<Program> {
   auto statements = vector<unique_ptr<Statement>>{};
   while (!tokens.end()) {
-    statements.push_back(move(Statement::parse(tokens)));
+    statements.push_back(Statement::parse(tokens));
   }
 
   return std::make_unique<Program>(statements);
@@ -422,7 +422,7 @@ auto parse_unary(TokenIterator& tokens) -> unique_ptr<Expr> {
   return parse_receiver(tokens);
 }
 
-auto parse_operator(TokenIterator& tokens, int n = 0) -> unique_ptr<Expr> {
+auto parse_operator(TokenIterator& tokens, size_t n = 0) -> unique_ptr<Expr> {
   const auto ops = operators();
   if (n == ops.size()) {
     return parse_unary(tokens);
