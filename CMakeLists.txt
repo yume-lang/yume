@@ -14,7 +14,7 @@ include_directories(${LLVM_INCLUDE_DIRS})
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
 add_definitions(${LLVM_DEFINITIONS_LIST})
 
-add_executable(yumec src/main.cpp src/compiler.hpp src/util.hpp src/compiler.cpp src/token.cpp src/token.hpp src/ast.cpp src/ast.hpp src/visitor.hpp src/visitor.cpp src/type.cpp src/type.hpp)
+add_executable(yumec src/main.cpp src/compiler.hpp src/util.hpp src/compiler.cpp src/token.cpp src/token.hpp src/ast.cpp src/ast.hpp src/visitor.hpp src/visitor.cpp src/type.cpp src/type.hpp src/errors.hpp)
 
 execute_process(COMMAND llvm-config --libs all
         OUTPUT_VARIABLE LLVM_LIBS OUTPUT_STRIP_TRAILING_WHITESPACE)

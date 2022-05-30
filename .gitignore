@@ -18,7 +18,8 @@ CMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles
 CMakeScripts
-cmake-build-debug
+cmake-build-*
+build
 Testing
 Makefile
 cmake_install.cmake
@@ -27,11 +28,13 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 
-# IntelliJ project files
+# IDEs
 .idea
+.vscode
 *.iml
 out
 gen
 
 # Other
 bin
+.cache
