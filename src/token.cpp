@@ -6,12 +6,13 @@
 #include <algorithm>
 #include <iostream>
 #include <ranges>
+#include <sstream>
 #include <utility>
 #include <vector>
 
 namespace yume {
 using char_raw_fn = int(int);
-using char_fn = std::function<int(int, int)>;
+using char_fn = std::function<bool(int, int, std::stringstream&)>;
 
 #if __cpp_lib_ranges >= 201911L
 inline constexpr auto any_of = std::ranges::any_of;
@@ -37,14 +38,16 @@ struct Characteristic {
   char_fn m_fn;
   Token::Type m_type;
 
-  Characteristic(Token::Type type, const std::function<int(int)>& fn)
-      : m_fn([fn](int c, int i) { return fn(c); }), m_type(type) {}
+  Characteristic(Token::Type type, const std::function<bool(int, int)>& fn)
+      : m_fn([fn](int c, int i, std::stringstream& stream) {
+          bool b = fn(c, i);
+          if (b) {
+            stream.put((char)c);
+          }
+          return b;
+        }),
+        m_type(type) {}
   Characteristic(Token::Type type, char_fn fn) : m_fn(std::move(fn)), m_type(type) {}
-  Characteristic(Token::Type type, char_raw_fn fn) : m_fn([fn](int c, int i) { return fn(c); }), m_type(type) {}
-  Characteristic(Token::Type type, char c) : m_fn([check = c](char c, int i) { return c == check; }), m_type(type) {}
-  Characteristic(Token::Type type, const char* cs)
-      : m_fn([checks = string(cs)](char c, int i) { return i == 0 && checks.find(c) != string::npos; }), m_type(type) {}
-  Characteristic(Token::Type type, string s) : m_fn([s = move(s)](char c, int i) { return s[i] == c; }), m_type(type) {}
 };
 
 struct Tokenizer {
@@ -54,34 +57,48 @@ struct Tokenizer {
 
   void tokenize() {
     using namespace std::literals::string_literals;
-    auto isword = [](int c, int i) { return (i == 0 && std::isalpha(c) != 0) || std::isalnum(c) != 0 || c == '_'; };
-    auto isstr = [end = false](int c, int i) mutable {
+    auto is_word = [](int c, int i) { return (i == 0 && std::isalpha(c) != 0) || std::isalnum(c) != 0 || c == '_'; };
+    auto is_str = [end = false, escape = false](char c, int i, std::stringstream& stream) mutable {
       if (i == 0) {
         return c == '"';
       }
       if (end) {
         return false;
       }
-      if (c == '"' && !end) {
+      if (c == '\\' && !escape) {
+        escape = true;
+      } else if (c == '"' && !end) {
         end = true;
+      } else {
+        if (escape && c == 'n') {
+          stream.put('\n');
+        } else {
+          stream.put(c);
+        }
+        escape = false;
       }
       return true;
     };
-    auto iscomment = [](int c, int i) { return (i == 0 && c == '#') || (i > 0 && c != '\n'); };
+    auto is_comment = [](char c, int i) { return (i == 0 && c == '#') || (i > 0 && c != '\n'); };
+    auto is_any_of = [](string chars) {
+      return [checks = move(chars)](char c, int i) { return i == 0 && checks.find(c) != string::npos; };
+    };
+    auto is_exactly = [](string str) { return [s = move(str)](char c, int i) { return s[i] == c; }; };
+    auto is_c = [](char_raw_fn fn) { return [=](char c, int i) { return fn(c) != 0; }; };
 
     int i = 0;
     while (!m_in.eof()) {
-      if (!selectCharacteristic(
+      if (!select_characteristic(
               {
-                  {Token::Type::Separator, '\n'                     },
-                  {Token::Type::Skip,      std::isspace             },
-                  {Token::Type::Skip,      iscomment                },
-                  {Token::Type::Number,    std::isdigit             },
-                  {Token::Type::Literal,   isstr                    },
-                  {Token::Type::Word,      isword                   },
-                  {Token::Type::Symbol,    "=="s                    },
-                  {Token::Type::Symbol,    "//"s                    },
-                  {Token::Type::Symbol,    R"(()[]<>=:#"%-+.,!?/*\)"},
+                  {Token::Type::Separator, is_exactly("\n")                    },
+                  {Token::Type::Skip,      is_c(isspace)                       },
+                  {Token::Type::Skip,      is_comment                          },
+                  {Token::Type::Number,    is_c(isdigit)                       },
+                  {Token::Type::Literal,   is_str                              },
+                  {Token::Type::Word,      is_word                             },
+                  {Token::Type::Symbol,    is_exactly("==")                    },
+                  {Token::Type::Symbol,    is_exactly("//")                    },
+                  {Token::Type::Symbol,    is_any_of(R"(()[]<>=:#"%-+.,!?/*\)")},
       },
               i)) {
         string message = "Tokenizer didn't recognize ";
@@ -100,33 +117,30 @@ private:
     return m_last;
   }
 
-  auto swap() -> char {
-    auto c = m_last;
-    next();
-    return c;
+  [[nodiscard]] auto is_characteristic(const char_fn& fun, std::stringstream& stream) const -> bool {
+    return fun(m_last, 0, stream);
   }
 
-  [[nodiscard]] auto isCharacteristic(const char_fn& fun) const -> bool { return fun(m_last, 0) != 0; }
-
-  auto selectCharacteristic(std::initializer_list<Characteristic> list, int i) -> bool {
+  auto select_characteristic(std::initializer_list<Characteristic> list, int i) -> bool {
     return any_of(list, [&](const auto& c) {
-      if (isCharacteristic(c.m_fn)) {
-        m_tokens.emplace_back(c.m_type, consumeCharacteristic(c.m_fn), i);
+      auto stream = std::stringstream{};
+      if (is_characteristic(c.m_fn, stream)) {
+        m_tokens.emplace_back(c.m_type, consume_characteristic(c.m_fn, stream), i);
         return true;
       }
       return false;
     });
   }
 
-  auto consumeCharacteristic(const char_fn& fun) -> Atom {
-    auto out = std::string{};
-    int i = 0;
-    while (fun(m_last, i) != 0 && !m_in.eof()) {
-      out += swap();
+  auto consume_characteristic(const char_fn& fun, std::stringstream& out) -> Atom {
+    int i = 1;
+    next();
+    while (fun(m_last, i, out) && !m_in.eof()) {
       i++;
+      next();
     }
 
-    return make_atom(out);
+    return make_atom(out.str());
   };
 };
 
