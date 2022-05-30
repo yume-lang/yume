@@ -254,8 +254,7 @@ class AssignExpr : public Expr, public AST {
   unique_ptr<Expr> m_value;
 
 public:
-  inline AssignExpr(unique_ptr<Expr>& target, unique_ptr<Expr>& value)
-      : m_target{move(target)}, m_value{move(value)} {}
+  inline AssignExpr(unique_ptr<Expr>& target, unique_ptr<Expr>& value) : m_target{move(target)}, m_value{move(value)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto inline kind() const -> Kind override { return Kind::Assign; }
 
@@ -303,8 +302,8 @@ public:
       : m_name{move(name)}, m_args{move(args)}, m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(body)} {}
   inline FnDeclStatement(string name, vector<unique_ptr<TypeName>>& args, vector<string>& type_args,
                          optional<unique_ptr<Type>> ret, bool varargs, string primitive)
-      : m_name{move(name)}, m_varargs{varargs}, m_args{move(args)}, m_type_args{move(type_args)}, m_ret{move(ret)},
-        m_body{move(primitive)} {}
+      : m_name{move(name)}, m_varargs{varargs}, m_args{move(args)},
+        m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(primitive)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement>;
   [[nodiscard]] inline auto kind() const -> Kind override { return Kind::FnDecl; }

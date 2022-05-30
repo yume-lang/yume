@@ -18,21 +18,11 @@ using namespace std::literals::string_literals;
 using std::experimental::source_location;
 #else
 struct source_location {
-  constexpr auto file_name() const {
-    return "??";
-  }
-  constexpr auto function_name() const {
-    return "??";
-  }
-  constexpr auto line() const {
-    return -1;
-  }
-  constexpr auto column() const {
-    return -1;
-  }
-  static inline constexpr auto current() {
-    return source_location{};
-  }
+  constexpr auto file_name() const { return "??"; }
+  constexpr auto function_name() const { return "??"; }
+  constexpr auto line() const { return -1; }
+  constexpr auto column() const { return -1; }
+  static inline constexpr auto current() { return source_location{}; }
 };
 #endif
 
@@ -93,7 +83,8 @@ auto to_string(Token token) -> string {
   return ss.str();
 }
 
-void ignore_separator(TokenIterator& tokens, [[maybe_unused]] const source_location location = source_location::current()) {
+void ignore_separator(TokenIterator& tokens,
+                      [[maybe_unused]] const source_location location = source_location::current()) {
   while (!tokens.end() && tokens->m_type == Separator) {
 #ifdef YUME_SPEW_CONSUMED_TOKENS
     std::cerr << "consumed " << *tokens << " at " << at(location) << "\n";
@@ -168,7 +159,8 @@ void consume_with_separators_until(TokenIterator& tokens, Token::Type token_type
   }
 }
 
-auto next(TokenIterator& tokens, [[maybe_unused]] const source_location location = source_location::current()) -> Token {
+auto next(TokenIterator& tokens, [[maybe_unused]] const source_location location = source_location::current())
+    -> Token {
   auto tok = *tokens++;
 #ifdef YUME_SPEW_CONSUMED_TOKENS
   std::cerr << "next: " << tok << " at " << at(location) << "\n";

@@ -10,11 +10,11 @@
 #include <llvm/Support/raw_ostream.h>
 #include <memory>
 #include <optional>
+#include <ranges>
 #include <set>
 #include <utility>
 #include <variant>
 #include <vector>
-#include <ranges>
 
 namespace yume {
 
@@ -26,11 +26,11 @@ using std::vector;
 
 template <class T>
 concept pointer_like = requires(T t) {
-                         { *t };
-                       };
+  {*t};
+};
 
 template <std::ranges::input_range T>
-  requires pointer_like<typename std::iterator_traits<std::ranges::iterator_t<T>>::value_type>
+requires pointer_like<typename std::iterator_traits<std::ranges::iterator_t<T>>::value_type>
 class dereference_view {
 private:
   using Base = T;
@@ -49,8 +49,7 @@ private:
   public:
     using difference_type = std::ranges::range_difference_t<Base>;
 
-    Iterator()
-      requires std::default_initializable<Base_iter>
+    Iterator() requires std::default_initializable<Base_iter>
     = default;
 
     constexpr Iterator(Parent* parent, Base_iter current) : m_current(std::move(current)), m_parent(parent) {}
@@ -66,72 +65,57 @@ private:
 
     constexpr void operator++(int) { ++m_current; }
 
-    constexpr auto operator++(int) -> Iterator
-      requires std::ranges::forward_range<Base>
-    {
+    constexpr auto operator++(int) -> Iterator requires std::ranges::forward_range<Base> {
       auto tmp = *this;
       ++*this;
       return tmp;
     }
 
-    constexpr auto operator--() -> Iterator&
-      requires std::ranges::bidirectional_range<Base>
-    {
+    constexpr auto operator--() -> Iterator& requires std::ranges::bidirectional_range<Base> {
       --m_current;
       return *this;
     }
 
-    constexpr auto operator--(int) -> Iterator
-      requires std::ranges::bidirectional_range<Base>
-    {
+    constexpr auto operator--(int) -> Iterator requires std::ranges::bidirectional_range<Base> {
       auto tmp = *this;
       --*this;
       return tmp;
     }
 
-    constexpr auto operator+=(difference_type n) -> Iterator&
-      requires std::ranges::random_access_range<Base>
-    {
+    constexpr auto operator+=(difference_type n) -> Iterator& requires std::ranges::random_access_range<Base> {
       m_current += n;
       return *this;
     }
 
-    constexpr auto operator-=(difference_type n) -> Iterator&
-      requires std::ranges::random_access_range<Base>
-    {
+    constexpr auto operator-=(difference_type n) -> Iterator& requires std::ranges::random_access_range<Base> {
       m_current -= n;
       return *this;
     }
 
-    constexpr auto operator[](difference_type n) const -> decltype(auto)
-      requires std::ranges::random_access_range<Base>
-    {
+    constexpr auto operator[](difference_type n) const
+        -> decltype(auto) requires std::ranges::random_access_range<Base> {
       return *m_current[n];
     }
 
-    friend constexpr auto operator==(const Iterator& x, const Iterator& y) -> bool
-      requires std::equality_comparable<Base_iter>
-    {
+    friend constexpr auto operator==(const Iterator& x, const Iterator& y)
+        -> bool requires std::equality_comparable<Base_iter> {
       return x.m_current == y.m_current;
     }
 
     friend constexpr auto operator<=>(const Iterator& x, const Iterator& y) { return x.m_current <=> y.m_current; }
 
-    friend constexpr auto operator+(Iterator i, difference_type n) -> Iterator
-      requires std::ranges::random_access_range<Base>
-    {
+    friend constexpr auto operator+(Iterator i, difference_type n)
+        -> Iterator requires std::ranges::random_access_range<Base> {
       return {i.m_parent, i.m_current + n};
     }
 
-    friend constexpr auto operator+(difference_type n, Iterator i) -> Iterator
-      requires std::ranges::random_access_range<Base>
-    {
+    friend constexpr auto operator+(difference_type n, Iterator i)
+        -> Iterator requires std::ranges::random_access_range<Base> {
       return {i.m_parent, i.m_current + n};
     }
 
-    friend constexpr auto operator-(Iterator i, difference_type n) -> Iterator
-      requires std::ranges::random_access_range<Base>
-    {
+    friend constexpr auto operator-(Iterator i, difference_type n)
+        -> Iterator requires std::ranges::random_access_range<Base> {
       return {i.m_parent, i.m_current - n};
     }
 
@@ -148,7 +132,8 @@ public:
   constexpr auto end() -> Iterator { return Iterator{this, std::ranges::end(m_base)}; }
 };
 
-template <typename T> requires pointer_like<T>
+template <typename T>
+requires pointer_like<T>
 auto inline constexpr try_dereference(const std::optional<T>& opt) {
   using U = std::reference_wrapper<std::remove_reference_t<decltype(*opt.value())>>;
   if (opt.has_value()) {

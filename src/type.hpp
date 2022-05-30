@@ -27,7 +27,6 @@ public:
 
 protected:
   constexpr Type() = default;
-
 };
 
 class IntegerType : public Type {

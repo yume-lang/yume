@@ -1,7 +1,7 @@
 #include "ast.hpp"
 #include "compiler.hpp"
-#include "token.hpp"
 #include "errors.hpp"
+#include "token.hpp"
 #include <fstream>
 #include <iostream>
 
