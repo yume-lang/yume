@@ -32,11 +32,11 @@ public:
 
   virtual auto visit(const string&, const char*) -> Visitor& = 0;
 
-  inline virtual auto visit(const ast::Expr& expr) -> Visitor& { return visit(expr, (const char*)nullptr); };
+  inline virtual auto visit(const ast::Expr& expr) -> Visitor& { return visit(expr, (const char*)nullptr); }
 
-  inline virtual auto visit(std::nullptr_t) -> Visitor& { return visit(nullptr, (const char*)nullptr); };
+  inline virtual auto visit(std::nullptr_t) -> Visitor& { return visit(nullptr, (const char*)nullptr); }
 
-  inline virtual auto visit(const string& str) -> Visitor& { return visit(str, (const char*)nullptr); };
+  inline virtual auto visit(const string& str) -> Visitor& { return visit(str, (const char*)nullptr); }
 
   template <typename T> inline auto visit(const vector<T>& vector, const char* label = nullptr) -> Visitor& {
     Visitor& vis = *this;
@@ -107,7 +107,7 @@ class DotVisitor : public Visitor {
 public:
   explicit DotVisitor(llvm::raw_ostream& stream_) : m_direct_stream{stream_}, m_buffer_stream{m_buffer} {
     stream() << "digraph \"yume\" {\nnode [shape=box, style=rounded];\n";
-  };
+  }
   ~DotVisitor() override = default;
 
   auto visit(const ast::Expr& expr, const char* label) -> DotVisitor& override;

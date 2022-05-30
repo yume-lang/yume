@@ -33,9 +33,9 @@ struct Fn {
 
   inline explicit Fn(const ast::FnDeclStatement& ast_decl) : m_ast_decl(ast_decl) {}
 
-  [[nodiscard]] auto inline body() const -> const auto& { return m_ast_decl.body(); };
+  [[nodiscard]] auto inline body() const -> const auto& { return m_ast_decl.body(); }
 
-  [[nodiscard]] auto inline llvm() const -> llvm::Function* { return m_llvm_fn; };
+  [[nodiscard]] auto inline llvm() const -> llvm::Function* { return m_llvm_fn; }
 
   [[nodiscard]] auto declaration(Compiler& compiler, bool mangle = true) -> llvm::Function*;
 
@@ -56,8 +56,8 @@ struct Val {
   auto operator=(Val&&) noexcept -> Val& = default;
   virtual ~Val() = default;
 
-  [[nodiscard]] auto inline llvm() const -> llvm::Value* { return m_llvm_val; };
-  [[nodiscard]] auto inline type() const -> ty::Type* { return m_type; };
+  [[nodiscard]] auto inline llvm() const -> llvm::Value* { return m_llvm_val; }
+  [[nodiscard]] auto inline type() const -> ty::Type* { return m_type; }
 
   operator llvm::Value*() const { // NOLINT(google-explicit-constructor)
     return m_llvm_val;
@@ -116,7 +116,7 @@ protected:
 
   inline auto known_type(const string& str) -> ty::Type& {
       return *m_known_types.find(str)->second;
-  };
+  }
 };
 } // namespace yume
 

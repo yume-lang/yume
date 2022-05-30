@@ -141,7 +141,7 @@ private:
     }
 
     return make_atom(out.str());
-  };
+  }
 };
 
 auto tokenize_preserve_skipped(std::istream& in) -> vector<Token> {

@@ -23,7 +23,7 @@ struct Token {
     case Token::Type::Number: return "Number";
     case Token::Type::Separator: return "Separator";
     }
-  };
+  }
 
   using Payload = optional<Atom>;
 
