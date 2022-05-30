@@ -155,7 +155,7 @@ public:
   };
 
   [[nodiscard]] constexpr auto inline qualifier() const -> Qualifier { return m_qualifier; };
-  [[nodiscard]] constexpr auto inline base() const -> const auto& { return *m_base; };
+  [[nodiscard]] auto inline base() const -> const auto& { return *m_base; };
 };
 
 class TypeName : public Expr, public AST {
@@ -169,7 +169,7 @@ public:
   [[nodiscard]] auto inline kind() const -> Kind override { return Kind::TypeName; };
   [[nodiscard]] inline auto describe() const -> string override { return m_name; };
 
-  [[nodiscard]] constexpr auto inline type() const -> const auto& { return *m_type; };
+  [[nodiscard]] auto inline type() const -> const auto& { return *m_type; };
   [[nodiscard]] constexpr auto inline name() const -> string { return m_name; };
 
   template <size_t I> [[maybe_unused]] auto get() & -> auto& {
@@ -258,6 +258,9 @@ public:
       : m_target{move(target)}, m_value{move(value)} {};
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto inline kind() const -> Kind override { return Kind::Assign; };
+
+  [[nodiscard]] auto inline target() const -> const auto& { return *m_target; };
+  [[nodiscard]] auto inline value() const -> const auto& { return *m_value; };
 };
 
 class FieldAccessExpr : public Expr, public AST {
@@ -330,7 +333,7 @@ public:
 
   [[nodiscard]] constexpr auto inline name() const -> string { return m_name; };
   [[nodiscard]] constexpr auto inline type() const { return try_dereference(m_type); };
-  [[nodiscard]] constexpr auto inline init() const -> const auto& { return *m_init; };
+  [[nodiscard]] auto inline init() const -> const auto& { return *m_init; };
 };
 
 class WhileStatement : public Statement, public AST {
@@ -342,6 +345,9 @@ public:
   void visit(Visitor& visitor) const override;
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<WhileStatement>;
   [[nodiscard]] inline auto kind() const -> Kind override { return Kind::WhileStatement; };
+
+  [[nodiscard]] inline auto body() const -> const auto& { return *m_body; };
+  [[nodiscard]] inline auto cond() const -> const auto& { return *m_cond; };
 };
 
 class IfClause : public Expr, public AST {
