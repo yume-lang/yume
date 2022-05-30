@@ -114,7 +114,7 @@ protected:
   auto expression(const ast::CallExpr&) -> Val;
   auto expression(const ast::AssignExpr&) -> Val;
 
-  inline auto known_type(const string& str) -> ty::Type& { return *m_known_types.find(str)->second; }
+  inline auto known_type(const string& str) -> ty::Type& { return *m_known_types.at(str); }
 };
 } // namespace yume
 
