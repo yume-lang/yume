@@ -94,7 +94,7 @@ struct TokenIterator {
     ++m_iterator;
     return *this;
   }
-  auto operator++(int) -> const TokenIterator {
+  auto operator++(int) -> TokenIterator {
     if (end()) {
       throw std::runtime_error("Can't increment past end");
     }
