@@ -18,10 +18,10 @@ using namespace std::literals::string_literals;
 using std::experimental::source_location;
 #else
 struct source_location {
-  constexpr auto file_name() const { return "??"; }
-  constexpr auto function_name() const { return "??"; }
-  constexpr auto line() const { return -1; }
-  constexpr auto column() const { return -1; }
+  constexpr auto file_name() const { return "??"; }     // NOLINT
+  constexpr auto function_name() const { return "??"; } // NOLINT
+  constexpr auto line() const { return -1; }            // NOLINT
+  constexpr auto column() const { return -1; }          // NOLINT
   static inline constexpr auto current() { return source_location{}; }
 };
 #endif
