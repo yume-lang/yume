@@ -42,7 +42,7 @@ Compiler::Compiler(unique_ptr<ast::Program> program) : m_program(move(program)) 
   }
 
   for (const auto& i : m_program->body()) {
-    if (i.kind() == ast::Kind::FnDeclKind) {
+    if (i.kind() == ast::FnDeclKind) {
       const auto& fn_decl = dynamic_cast<const ast::FnDeclStatement&>(i);
       auto& fn = m_fns.emplace_back(fn_decl);
       if (fn_decl.name() == "main") {
@@ -61,7 +61,7 @@ Compiler::Compiler(unique_ptr<ast::Program> program) : m_program(move(program)) 
 auto Compiler::convert_type(const ast::Type& ast_type) -> ty::Type& {
   static unique_ptr<ty::Type> unknown_type = std::make_unique<ty::UnknownType>();
 
-  if (ast_type.kind() == ast::Kind::SimpleTypeKind) {
+  if (ast_type.kind() == ast::SimpleTypeKind) {
     const auto& simple_type = dynamic_cast<const ast::SimpleType&>(ast_type);
     auto name = simple_type.name();
     auto val = m_known_types.find(name);
@@ -230,12 +230,12 @@ void Compiler::statement(const ast::VarDeclStatement& stat) {
 void Compiler::body_statement(const ast::Statement& stat) {
   auto kind = stat.kind();
   switch (kind) {
-  case ast::Kind::CompoundKind: return statement(dynamic_cast<const ast::Compound&>(stat));
-  case ast::Kind::WhileKind: return statement(dynamic_cast<const ast::WhileStatement&>(stat));
-  case ast::Kind::IfKind: return statement(dynamic_cast<const ast::IfStatement&>(stat));
-  case ast::Kind::ExprStatementKind: return statement(dynamic_cast<const ast::ExprStatement&>(stat));
-  case ast::Kind::ReturnKind: return statement(dynamic_cast<const ast::ReturnStatement&>(stat));
-  case ast::Kind::VarDeclKind: return statement(dynamic_cast<const ast::VarDeclStatement&>(stat));
+  case ast::CompoundKind: return statement(dynamic_cast<const ast::Compound&>(stat));
+  case ast::WhileKind: return statement(dynamic_cast<const ast::WhileStatement&>(stat));
+  case ast::IfKind: return statement(dynamic_cast<const ast::IfStatement&>(stat));
+  case ast::ExprStatementKind: return statement(dynamic_cast<const ast::ExprStatement&>(stat));
+  case ast::ReturnKind: return statement(dynamic_cast<const ast::ReturnStatement&>(stat));
+  case ast::VarDeclKind: return statement(dynamic_cast<const ast::VarDeclStatement&>(stat));
   default: throw std::logic_error("Unimplemented body statement "s + kind_name(kind));
   }
 }
@@ -352,11 +352,11 @@ auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
 auto Compiler::body_expression(const ast::Expr& expr) -> Val {
   auto kind = expr.kind();
   switch (kind) {
-  case ast::Kind::NumberKind: return expression(dynamic_cast<const ast::NumberExpr&>(expr));
-  case ast::Kind::StringKind: return expression(dynamic_cast<const ast::StringExpr&>(expr));
-  case ast::Kind::CallKind: return expression(dynamic_cast<const ast::CallExpr&>(expr));
-  case ast::Kind::VarKind: return expression(dynamic_cast<const ast::VarExpr&>(expr));
-  case ast::Kind::AssignKind: return expression(dynamic_cast<const ast::AssignExpr&>(expr));
+  case ast::NumberKind: return expression(dynamic_cast<const ast::NumberExpr&>(expr));
+  case ast::StringKind: return expression(dynamic_cast<const ast::StringExpr&>(expr));
+  case ast::CallKind: return expression(dynamic_cast<const ast::CallExpr&>(expr));
+  case ast::VarKind: return expression(dynamic_cast<const ast::VarExpr&>(expr));
+  case ast::AssignKind: return expression(dynamic_cast<const ast::AssignExpr&>(expr));
   default: throw std::logic_error("Unimplemented body expression "s + kind_name(kind));
   }
 }
