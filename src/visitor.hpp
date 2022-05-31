@@ -8,8 +8,7 @@
 namespace yume {
 class Visitor;
 namespace ast {
-class Expr;
-class ExprStatement;
+class AST;
 } // namespace ast
 } // namespace yume
 
@@ -26,13 +25,13 @@ public:
   auto operator=(Visitor&) -> Visitor& = delete;
   auto operator=(Visitor&&) -> Visitor& = default;
 
-  virtual auto visit(const ast::Expr&, const char*) -> Visitor& = 0;
+  virtual auto visit(const ast::AST&, const char*) -> Visitor& = 0;
 
   virtual auto visit(std::nullptr_t, const char*) -> Visitor& = 0;
 
   virtual auto visit(const string&, const char*) -> Visitor& = 0;
 
-  inline virtual auto visit(const ast::Expr& expr) -> Visitor& { return visit(expr, (const char*)nullptr); }
+  inline virtual auto visit(const ast::AST& expr) -> Visitor& { return visit(expr, (const char*)nullptr); }
 
   inline virtual auto visit(std::nullptr_t) -> Visitor& { return visit(nullptr, (const char*)nullptr); }
 
@@ -102,7 +101,7 @@ class DotVisitor : public Visitor {
   void header(const char* label, bool is_inline);
   void footer(bool is_inline);
   void emit_debug_header();
-  void visit_expr(const ast::Expr& expr, bool is_expr_stat, const char* label);
+  void visit_expr(const ast::AST& expr, const char* label);
 
 public:
   explicit DotVisitor(llvm::raw_ostream& stream_) : m_direct_stream{stream_}, m_buffer_stream{m_buffer} {
@@ -110,7 +109,7 @@ public:
   }
   ~DotVisitor() override = default;
 
-  auto visit(const ast::Expr& expr, const char* label) -> DotVisitor& override;
+  auto visit(const ast::AST& expr, const char* label) -> DotVisitor& override;
 
   auto visit(std::nullptr_t null, const char* label) -> DotVisitor& override;
 

@@ -87,7 +87,7 @@ public:
 
   void define(Fn&);
 
-  void body_statement(const ast::Statement&);
+  void body_statement(const ast::Stmt&);
   auto body_expression(const ast::Expr&) -> Val;
 
   void write_object(const char* filename, bool binary);
@@ -105,7 +105,6 @@ protected:
   void statement(const ast::WhileStatement&);
   void statement(const ast::IfStatement&);
   void statement(const ast::ReturnStatement&);
-  void statement(const ast::ExprStatement&);
   void statement(const ast::VarDeclStatement&);
 
   auto expression(const ast::NumberExpr&) -> Val;

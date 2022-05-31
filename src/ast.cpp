@@ -177,19 +177,14 @@ auto consume_word(TokenIterator& tokens, const source_location location = source
 }
 
 auto Program::parse(TokenIterator& tokens) -> unique_ptr<Program> {
-  auto statements = vector<unique_ptr<Statement>>{};
+  auto statements = vector<unique_ptr<Stmt>>{};
   while (!tokens.end()) {
-    statements.push_back(Statement::parse(tokens));
+    statements.push_back(Stmt::parse(tokens));
   }
 
   return std::make_unique<Program>(statements);
 }
 void Program::visit(Visitor& visitor) const { visitor.visit(m_body); }
-
-auto ExprStatement::parse(TokenIterator& tokens) -> unique_ptr<ExprStatement> {
-  return std::make_unique<ExprStatement>(Expr::parse(tokens));
-}
-void ExprStatement::visit(Visitor& visitor) const { visitor.visit(m_expr); }
 
 auto parse_fn_name(TokenIterator& tokens) -> string {
   string name{};
@@ -238,7 +233,7 @@ auto FnDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement
   consume_with_separators_until(tokens, Symbol, SYM_RPAREN, [&] { args.push_back(TypeName::parse(tokens)); });
 
   auto return_type = SimpleType::try_parse(tokens);
-  auto body = vector<unique_ptr<Statement>>{};
+  auto body = vector<unique_ptr<Stmt>>{};
 
   if (try_consume(tokens, Symbol, SYM_EQ)) {
     if (try_consume(tokens, Word, KWD_PRIMITIVE)) {
@@ -254,7 +249,7 @@ auto FnDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement
     require_separator(tokens);
 
     while (!try_consume(tokens, Word, KWD_END)) {
-      body.push_back(Statement::parse(tokens));
+      body.push_back(Stmt::parse(tokens));
       ignore_separator(tokens);
     }
   }
@@ -292,9 +287,9 @@ auto WhileStatement::parse(TokenIterator& tokens) -> unique_ptr<WhileStatement> 
 
   ignore_separator(tokens);
 
-  auto body = vector<unique_ptr<Statement>>{};
+  auto body = vector<unique_ptr<Stmt>>{};
   while (!try_consume(tokens, Word, KWD_END)) {
-    body.push_back(Statement::parse(tokens));
+    body.push_back(Stmt::parse(tokens));
     ignore_separator(tokens);
   }
 
@@ -318,8 +313,8 @@ auto IfStatement::parse(TokenIterator& tokens) -> unique_ptr<IfStatement> {
   require_separator(tokens); // todo(rymiel): compact `then`
 
   auto clauses = vector<unique_ptr<IfClause>>{};
-  auto current_body = vector<unique_ptr<Statement>>{};
-  auto else_body = vector<unique_ptr<Statement>>{};
+  auto current_body = vector<unique_ptr<Stmt>>{};
+  auto else_body = vector<unique_ptr<Stmt>>{};
   bool in_else = false;
 
   while (true) {
@@ -329,14 +324,14 @@ auto IfStatement::parse(TokenIterator& tokens) -> unique_ptr<IfStatement> {
     if (try_consume(tokens, Word, KWD_ELSE)) {
       if (!in_else && try_consume(tokens, Word, KWD_IF)) {
         clauses.push_back(std::make_unique<IfClause>(move(cond), std::make_unique<Compound>(current_body)));
-        current_body = vector<unique_ptr<Statement>>{};
+        current_body = vector<unique_ptr<Stmt>>{};
         cond = Expr::parse(tokens);
       } else {
         in_else = true;
       }
       require_separator(tokens);
     }
-    auto st = Statement::parse(tokens);
+    auto st = Stmt::parse(tokens);
     if (in_else) {
       else_body.push_back(move(st));
     } else {
@@ -440,8 +435,8 @@ auto parse_operator(TokenIterator& tokens, size_t n = 0) -> unique_ptr<Expr> {
   return left;
 }
 
-auto Statement::parse(TokenIterator& tokens) -> unique_ptr<Statement> {
-  auto stat = unique_ptr<Statement>();
+auto Stmt::parse(TokenIterator& tokens) -> unique_ptr<Stmt> {
+  auto stat = unique_ptr<Stmt>();
 
   if (tokens->is_keyword(KWD_DEF)) {
     stat = FnDeclStatement::parse(tokens);
@@ -454,7 +449,7 @@ auto Statement::parse(TokenIterator& tokens) -> unique_ptr<Statement> {
   } else if (tokens->is_keyword(KWD_RETURN)) {
     stat = ReturnStatement::parse(tokens);
   } else {
-    stat = ExprStatement::parse(tokens);
+    stat = Expr::parse(tokens);
   }
 
   require_separator(tokens);

@@ -93,30 +93,28 @@ struct TokenIterator {
   [[nodiscard]] auto begin() const -> VectorTokenIterator { return m_iterator; }
 };
 
-class Expr {
+class AST {
 private:
   Kind m_kind;
 
 protected:
-  Expr(Kind kind) : m_kind(kind) {}
+  AST(Kind kind) : m_kind(kind) {}
 
 public:
-  Expr(const Expr&) = delete;
-  Expr(Expr&&) = delete;
-  auto operator=(const Expr&) -> Expr& = delete;
-  auto operator=(Expr&&) -> Expr& = delete;
-  virtual ~Expr() = default;
+  AST(const AST&) = delete;
+  AST(AST&&) = delete;
+  auto operator=(const AST&) -> AST& = delete;
+  auto operator=(AST&&) -> AST& = delete;
+  virtual ~AST() = default;
 
   virtual void inline visit(Visitor& visitor) const = 0;
   [[nodiscard]] auto kind() const -> Kind { return m_kind; };
   [[nodiscard]] virtual auto inline describe() const -> string { return string{"unknown "} + kind_name(kind()); }
-
-  [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<Expr>;
 };
 
-class Type : public Expr {
+class Type : public AST {
 protected:
-  Type(Kind kind) : Expr(kind) {}
+  Type(Kind kind) : AST(kind) {}
 
 public:
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<Type>;
@@ -158,12 +156,12 @@ public:
   [[nodiscard]] auto inline base() const -> const auto& { return *m_base; }
 };
 
-class TypeName : public Expr {
+class TypeName : public AST {
   unique_ptr<Type> m_type;
   string m_name;
 
 public:
-  inline TypeName(unique_ptr<Type>& type, string name) : Expr(TypeNameKind), m_type{move(type)}, m_name{move(name)} {}
+  inline TypeName(unique_ptr<Type>& type, string name) : AST(TypeNameKind), m_type{move(type)}, m_name{move(name)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<TypeName>;
   [[nodiscard]] inline auto describe() const -> string override { return m_name; }
@@ -194,6 +192,21 @@ public:
       return std::move(m_name);
     }
   }
+};
+
+class Stmt : public AST {
+protected:
+  Stmt(Kind kind) : AST(kind) {}
+  public:
+  [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<Stmt>;
+};
+
+class Expr : public Stmt {
+protected:
+  Expr(Kind kind) : Stmt(kind) {}
+  public:
+
+  [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<Expr>;
 };
 
 class NumberExpr : public Expr {
@@ -236,8 +249,7 @@ class CallExpr : public Expr {
   vector<unique_ptr<Expr>> m_args;
 
 public:
-  inline CallExpr(string name, vector<unique_ptr<Expr>>& args)
-      : Expr(CallKind), m_name{move(name)}, m_args{move(args)} {}
+  inline CallExpr(string name, vector<unique_ptr<Expr>>& args) : Expr(CallKind), m_name{move(name)}, m_args{move(args)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] inline auto describe() const -> string override { return m_name; }
 
@@ -268,25 +280,18 @@ public:
   void visit(Visitor& visitor) const override;
 };
 
-class Statement : public Expr {
-protected:
-  Statement(Kind kind) : Expr(kind) {}
 
-public:
-  [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<Statement>;
-};
-
-class Compound : public Statement {
-  vector<unique_ptr<Statement>> m_body;
+class Compound : public Stmt {
+  vector<unique_ptr<Stmt>> m_body;
 
 public:
   void visit(Visitor& visitor) const override;
-  explicit inline Compound(vector<unique_ptr<Statement>>& body) : Statement(CompoundKind), m_body{move(body)} {}
+  explicit inline Compound(vector<unique_ptr<Stmt>>& body) : Stmt(CompoundKind), m_body{move(body)} {}
 
   [[nodiscard]] auto inline body() const { return dereference_view(m_body); }
 };
 
-class FnDeclStatement : public Statement {
+class FnDeclStatement : public Stmt {
   string m_name;
   bool m_varargs{};
   vector<unique_ptr<TypeName>> m_args;
@@ -297,13 +302,11 @@ class FnDeclStatement : public Statement {
 public:
   inline FnDeclStatement(string name, vector<unique_ptr<TypeName>>& args, vector<string>& type_args,
                          optional<unique_ptr<Type>> ret, unique_ptr<Compound> body)
-      : Statement(FnDeclKind
-  ), m_name{move(name)}, m_args{move(args)},
+      : Stmt(FnDeclKind), m_name{move(name)}, m_args{move(args)},
         m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(body)} {}
   inline FnDeclStatement(string name, vector<unique_ptr<TypeName>>& args, vector<string>& type_args,
                          optional<unique_ptr<Type>> ret, bool varargs, string primitive)
-      : Statement(FnDeclKind
-  ), m_name{move(name)}, m_varargs{varargs}, m_args{move(args)},
+      : Stmt(FnDeclKind), m_name{move(name)}, m_varargs{varargs}, m_args{move(args)},
         m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(primitive)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement>;
@@ -317,14 +320,14 @@ public:
   [[nodiscard]] constexpr auto inline primitive() const -> bool { return holds_alternative<string>(m_body); }
 };
 
-class VarDeclStatement : public Statement {
+class VarDeclStatement : public Stmt {
   string m_name;
   optional<unique_ptr<Type>> m_type;
   unique_ptr<Expr> m_init;
 
 public:
   inline VarDeclStatement(string name, optional<unique_ptr<Type>> type, unique_ptr<Expr> init)
-      : Statement(VarDeclKind), m_name{move(name)}, m_type{move(type)}, m_init(move(init)) {}
+      : Stmt(VarDeclKind), m_name{move(name)}, m_type{move(type)}, m_init(move(init)) {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<VarDeclStatement>;
   [[nodiscard]] inline auto describe() const -> string override { return m_name; }
@@ -334,12 +337,13 @@ public:
   [[nodiscard]] auto inline init() const -> const auto& { return *m_init; }
 };
 
-class WhileStatement : public Statement {
+class WhileStatement : public Stmt {
   unique_ptr<Expr> m_cond;
   unique_ptr<Compound> m_body;
 
 public:
-  inline WhileStatement(unique_ptr<Expr> cond, unique_ptr<Compound> body) : Statement(WhileKind), m_cond{move(cond)}, m_body{move(body)} {}
+  inline WhileStatement(unique_ptr<Expr> cond, unique_ptr<Compound> body)
+      : Stmt(WhileKind), m_cond{move(cond)}, m_body{move(body)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<WhileStatement>;
 
@@ -347,25 +351,26 @@ public:
   [[nodiscard]] inline auto cond() const -> const auto& { return *m_cond; }
 };
 
-class IfClause : public Expr {
+class IfClause : public AST {
   unique_ptr<Expr> m_cond;
   unique_ptr<Compound> m_body;
 
 public:
-  inline IfClause(unique_ptr<Expr> cond, unique_ptr<Compound> body) : Expr(IfClauseKind), m_cond{move(cond)}, m_body{move(body)} {}
+  inline IfClause(unique_ptr<Expr> cond, unique_ptr<Compound> body)
+      : AST(IfClauseKind), m_cond{move(cond)}, m_body{move(body)} {}
   void visit(Visitor& visitor) const override;
 
   [[nodiscard]] inline auto cond() const -> const auto& { return *m_cond; }
   [[nodiscard]] inline auto body() const -> const auto& { return *m_body; }
 };
 
-class IfStatement : public Statement {
+class IfStatement : public Stmt {
   vector<unique_ptr<IfClause>> m_clauses;
   optional<unique_ptr<Compound>> m_else_clause;
 
 public:
   inline IfStatement(vector<unique_ptr<IfClause>>& clauses, optional<unique_ptr<Compound>> else_clause)
-      : Statement(IfKind), m_clauses{move(clauses)}, m_else_clause{move(else_clause)} {}
+      : Stmt(IfKind), m_clauses{move(clauses)}, m_else_clause{move(else_clause)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<IfStatement>;
 
@@ -373,33 +378,22 @@ public:
   [[nodiscard]] inline auto else_clause() const { return try_dereference(m_else_clause); }
 };
 
-class ReturnStatement : public Statement {
+class ReturnStatement : public Stmt {
   optional<unique_ptr<Expr>> m_expr;
 
 public:
-  explicit inline ReturnStatement(optional<unique_ptr<Expr>> expr) : Statement(ReturnKind), m_expr{move(expr)} {}
+  explicit inline ReturnStatement(optional<unique_ptr<Expr>> expr) : Stmt(ReturnKind), m_expr{move(expr)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<ReturnStatement>;
 
   [[nodiscard]] inline auto expr() const { return try_dereference(m_expr); }
 };
 
-class ExprStatement : public Statement {
-  unique_ptr<Expr> m_expr;
+class Program : public Stmt {
+  vector<unique_ptr<Stmt>> m_body;
 
 public:
-  explicit inline ExprStatement(unique_ptr<Expr> expr) : Statement(ExprStatementKind), m_expr{move(expr)} {}
-  void visit(Visitor& visitor) const override;
-  [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<ExprStatement>;
-
-  [[nodiscard]] inline auto expr() const -> const auto& { return *m_expr; }
-};
-
-class Program : public Statement {
-  vector<unique_ptr<Statement>> m_body;
-
-public:
-  explicit inline Program(vector<unique_ptr<Statement>>& body) : Statement(ProgramKind), m_body{move(body)} {}
+  explicit inline Program(vector<unique_ptr<Stmt>>& body) : Stmt(ProgramKind), m_body{move(body)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<Program>;
 

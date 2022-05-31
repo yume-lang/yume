@@ -76,14 +76,11 @@ void DotVisitor::footer(bool is_inline) {
   m_index++;
 }
 
-void DotVisitor::visit_expr(const ast::Expr& expr, bool is_expr_stat, const char* label) {
+void DotVisitor::visit_expr(const ast::AST& expr, const char* label) {
   header(label, false);
 
   stream() << "<B>";
   xml_escape(stream(), string(ast::kind_name(expr.kind())));
-  if (is_expr_stat) {
-    stream() << "<FONT COLOR=\"LIME\">*</FONT>";
-  }
   stream() << "</B>";
   auto restore_parent = set_parent(m_index);
   auto restore_children = set_children(0);
@@ -93,13 +90,8 @@ void DotVisitor::visit_expr(const ast::Expr& expr, bool is_expr_stat, const char
   m_children = ++restore_children;
 }
 
-auto DotVisitor::visit(const ast::Expr& expr, const char* label) -> DotVisitor& {
-  if (expr.kind() == ast::ExprStatementKind) {
-    const auto& expr_stat = dynamic_cast<const ast::ExprStatement&>(expr);
-    visit_expr(expr_stat.expr(), true, label);
-  } else {
-    visit_expr(expr, false, label);
-  }
+auto DotVisitor::visit(const ast::AST& expr, const char* label) -> DotVisitor& {
+  visit_expr(expr, label);
   return *this;
 }
 

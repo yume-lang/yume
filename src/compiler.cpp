@@ -204,8 +204,6 @@ void Compiler::statement(const ast::IfStatement& stat) {
   m_builder->SetInsertPoint(merge_bb);
 }
 
-void Compiler::statement(const ast::ExprStatement& stat) { body_expression(stat.expr()); }
-
 void Compiler::statement(const ast::ReturnStatement& stat) {
   if (stat.expr().has_value()) {
     auto val = body_expression(stat.expr().value());
@@ -227,16 +225,15 @@ void Compiler::statement(const ast::VarDeclStatement& stat) {
   m_scope.insert({stat.name(), {alloc, expr_val.type()}});
 }
 
-void Compiler::body_statement(const ast::Statement& stat) {
+void Compiler::body_statement(const ast::Stmt& stat) {
   auto kind = stat.kind();
   switch (kind) {
   case ast::CompoundKind: return statement(dynamic_cast<const ast::Compound&>(stat));
   case ast::WhileKind: return statement(dynamic_cast<const ast::WhileStatement&>(stat));
   case ast::IfKind: return statement(dynamic_cast<const ast::IfStatement&>(stat));
-  case ast::ExprStatementKind: return statement(dynamic_cast<const ast::ExprStatement&>(stat));
   case ast::ReturnKind: return statement(dynamic_cast<const ast::ReturnStatement&>(stat));
   case ast::VarDeclKind: return statement(dynamic_cast<const ast::VarDeclStatement&>(stat));
-  default: throw std::logic_error("Unimplemented body statement "s + kind_name(kind));
+  default: body_expression(dynamic_cast<const ast::Expr&>(stat));
   }
 }
 
