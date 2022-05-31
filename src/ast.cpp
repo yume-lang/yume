@@ -220,7 +220,7 @@ auto parse_fn_name(TokenIterator& tokens) -> string {
   return name;
 }
 
-auto FnDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement> {
+auto FnDecl::parse(TokenIterator& tokens) -> unique_ptr<FnDecl> {
   consume(tokens, Word, KWD_DEF);
   const string name = parse_fn_name(tokens);
   auto type_args = vector<string>{};
@@ -241,10 +241,10 @@ auto FnDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement
       auto primitive = consume_word(tokens);
       consume(tokens, Symbol, SYM_RPAREN);
       auto varargs = try_consume(tokens, Word, KWD_VARARGS);
-      return std::make_unique<FnDeclStatement>(name, args, type_args, move(return_type), varargs, primitive);
+      return std::make_unique<FnDecl>(name, args, type_args, move(return_type), varargs, primitive);
     }
     auto expr = Expr::parse(tokens);
-    body.push_back(std::make_unique<ReturnStatement>(move(expr)));
+    body.push_back(std::make_unique<ReturnStmt>(move(expr)));
   } else {
     require_separator(tokens);
 
@@ -254,9 +254,9 @@ auto FnDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<FnDeclStatement
     }
   }
 
-  return std::make_unique<FnDeclStatement>(name, args, type_args, move(return_type), std::make_unique<Compound>(body));
+  return std::make_unique<FnDecl>(name, args, type_args, move(return_type), std::make_unique<Compound>(body));
 }
-void FnDeclStatement::visit(Visitor& visitor) const {
+void FnDecl::visit(Visitor& visitor) const {
   visitor.visit(m_name).visit(m_args, "arg").visit(m_type_args, "type arg").visit(m_ret, "ret");
   if (const auto* s = get_if<string>(&m_body); s) {
     visitor.visit(*s, "primitive");
@@ -268,7 +268,7 @@ void FnDeclStatement::visit(Visitor& visitor) const {
   }
 }
 
-auto VarDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<VarDeclStatement> {
+auto VarDecl::parse(TokenIterator& tokens) -> unique_ptr<VarDecl> {
   consume(tokens, Word, KWD_LET);
   const string name = consume_word(tokens);
   auto type = SimpleType::try_parse(tokens);
@@ -277,11 +277,11 @@ auto VarDeclStatement::parse(TokenIterator& tokens) -> unique_ptr<VarDeclStateme
 
   auto init = Expr::parse(tokens);
 
-  return std::make_unique<VarDeclStatement>(name, move(type), move(init));
+  return std::make_unique<VarDecl>(name, move(type), move(init));
 }
-void VarDeclStatement::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_type).visit(m_init); }
+void VarDecl::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_type).visit(m_init); }
 
-auto WhileStatement::parse(TokenIterator& tokens) -> unique_ptr<WhileStatement> {
+auto WhileStmt::parse(TokenIterator& tokens) -> unique_ptr<WhileStmt> {
   consume(tokens, Word, KWD_WHILE);
   auto cond = Expr::parse(tokens);
 
@@ -295,19 +295,19 @@ auto WhileStatement::parse(TokenIterator& tokens) -> unique_ptr<WhileStatement> 
 
   auto compound = std::make_unique<Compound>(body);
 
-  return std::make_unique<WhileStatement>(move(cond), move(compound));
+  return std::make_unique<WhileStmt>(move(cond), move(compound));
 }
-void WhileStatement::visit(Visitor& visitor) const { visitor.visit(m_cond).visit(m_body); }
+void WhileStmt::visit(Visitor& visitor) const { visitor.visit(m_cond).visit(m_body); }
 
-auto ReturnStatement::parse(TokenIterator& tokens) -> unique_ptr<ReturnStatement> {
+auto ReturnStmt::parse(TokenIterator& tokens) -> unique_ptr<ReturnStmt> {
   consume(tokens, Word, KWD_RETURN);
   auto expr = Expr::parse(tokens);
 
-  return std::make_unique<ReturnStatement>(optional<unique_ptr<Expr>>{move(expr)});
+  return std::make_unique<ReturnStmt>(optional<unique_ptr<Expr>>{move(expr)});
 }
-void ReturnStatement::visit(Visitor& visitor) const { visitor.visit(m_expr); }
+void ReturnStmt::visit(Visitor& visitor) const { visitor.visit(m_expr); }
 
-auto IfStatement::parse(TokenIterator& tokens) -> unique_ptr<IfStatement> {
+auto IfStmt::parse(TokenIterator& tokens) -> unique_ptr<IfStmt> {
   consume(tokens, Word, KWD_IF);
   auto cond = Expr::parse(tokens);
   require_separator(tokens); // todo(rymiel): compact `then`
@@ -348,9 +348,9 @@ auto IfStatement::parse(TokenIterator& tokens) -> unique_ptr<IfStatement> {
 
   // ignore_separator(tokens);
 
-  return std::make_unique<IfStatement>(clauses, move(else_clause));
+  return std::make_unique<IfStmt>(clauses, move(else_clause));
 }
-void IfStatement::visit(Visitor& visitor) const { visitor.visit(m_clauses).visit(m_else_clause, "else"); }
+void IfStmt::visit(Visitor& visitor) const { visitor.visit(m_clauses).visit(m_else_clause, "else"); }
 void IfClause::visit(Visitor& visitor) const { visitor.visit(m_cond).visit(m_body); }
 
 auto parse_primary(TokenIterator& tokens) -> unique_ptr<Expr> {
@@ -439,15 +439,15 @@ auto Stmt::parse(TokenIterator& tokens) -> unique_ptr<Stmt> {
   auto stat = unique_ptr<Stmt>();
 
   if (tokens->is_keyword(KWD_DEF)) {
-    stat = FnDeclStatement::parse(tokens);
+    stat = FnDecl::parse(tokens);
   } else if (tokens->is_keyword(KWD_LET)) {
-    stat = VarDeclStatement::parse(tokens);
+    stat = VarDecl::parse(tokens);
   } else if (tokens->is_keyword(KWD_WHILE)) {
-    stat = WhileStatement::parse(tokens);
+    stat = WhileStmt::parse(tokens);
   } else if (tokens->is_keyword(KWD_IF)) {
-    stat = IfStatement::parse(tokens);
+    stat = IfStmt::parse(tokens);
   } else if (tokens->is_keyword(KWD_RETURN)) {
-    stat = ReturnStatement::parse(tokens);
+    stat = ReturnStmt::parse(tokens);
   } else {
     stat = Expr::parse(tokens);
   }

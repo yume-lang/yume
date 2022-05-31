@@ -27,11 +27,11 @@ using namespace llvm;
 class Compiler;
 
 struct Fn {
-  const ast::FnDeclStatement& m_ast_decl;
+  const ast::FnDecl& m_ast_decl;
   // TODO: multiple instantiations
   llvm::Function* m_llvm_fn{};
 
-  inline explicit Fn(const ast::FnDeclStatement& ast_decl) : m_ast_decl(ast_decl) {}
+  inline explicit Fn(const ast::FnDecl& ast_decl) : m_ast_decl(ast_decl) {}
 
   [[nodiscard]] auto inline body() const -> const auto& { return m_ast_decl.body(); }
 
@@ -96,16 +96,16 @@ public:
 
   auto llvm_type(const ty::Type& type) -> llvm::Type*;
 
-  auto mangle_name(const ast::FnDeclStatement& fn_decl) -> string;
+  auto mangle_name(const ast::FnDecl& fn_decl) -> string;
 
   auto mangle_name(const ast::Type& ast_type) -> string;
 
 protected:
   void statement(const ast::Compound&);
-  void statement(const ast::WhileStatement&);
-  void statement(const ast::IfStatement&);
-  void statement(const ast::ReturnStatement&);
-  void statement(const ast::VarDeclStatement&);
+  void statement(const ast::WhileStmt&);
+  void statement(const ast::IfStmt&);
+  void statement(const ast::ReturnStmt&);
+  void statement(const ast::VarDecl&);
 
   auto expression(const ast::NumberExpr&) -> Val;
   auto expression(const ast::StringExpr&) -> Val;

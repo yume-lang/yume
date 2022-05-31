@@ -43,7 +43,7 @@ Compiler::Compiler(unique_ptr<ast::Program> program) : m_program(move(program)) 
 
   for (const auto& i : m_program->body()) {
     if (i.kind() == ast::FnDeclKind) {
-      const auto& fn_decl = dynamic_cast<const ast::FnDeclStatement&>(i);
+      const auto& fn_decl = dynamic_cast<const ast::FnDecl&>(i);
       auto& fn = m_fns.emplace_back(fn_decl);
       if (fn_decl.name() == "main") {
         fn.m_llvm_fn = declare(fn, false);
@@ -162,7 +162,7 @@ void Compiler::statement(const ast::Compound& stat) {
   }
 }
 
-void Compiler::statement(const ast::WhileStatement& stat) {
+void Compiler::statement(const ast::WhileStmt& stat) {
   auto* test_bb = BasicBlock::Create(*m_context, "while.test", *m_current_fn);
   auto* head_bb = BasicBlock::Create(*m_context, "while.head", *m_current_fn);
   auto* merge_bb = BasicBlock::Create(*m_context, "while.merge", *m_current_fn);
@@ -176,7 +176,7 @@ void Compiler::statement(const ast::WhileStatement& stat) {
   m_builder->SetInsertPoint(merge_bb);
 }
 
-void Compiler::statement(const ast::IfStatement& stat) {
+void Compiler::statement(const ast::IfStmt& stat) {
   auto* merge_bb = BasicBlock::Create(*m_context, "if.cont", *m_current_fn);
   auto* next_test_bb = BasicBlock::Create(*m_context, "if.test", *m_current_fn, merge_bb);
   m_builder->CreateBr(next_test_bb);
@@ -204,7 +204,7 @@ void Compiler::statement(const ast::IfStatement& stat) {
   m_builder->SetInsertPoint(merge_bb);
 }
 
-void Compiler::statement(const ast::ReturnStatement& stat) {
+void Compiler::statement(const ast::ReturnStmt& stat) {
   if (stat.expr().has_value()) {
     auto val = body_expression(stat.expr().value());
     m_builder->CreateRet(val);
@@ -213,7 +213,7 @@ void Compiler::statement(const ast::ReturnStatement& stat) {
   m_builder->CreateRetVoid();
 }
 
-void Compiler::statement(const ast::VarDeclStatement& stat) {
+void Compiler::statement(const ast::VarDecl& stat) {
   llvm::Type* var_type = nullptr;
   if (stat.type().has_value()) {
     var_type = llvm_type(convert_type(stat.type().value()));
@@ -229,10 +229,10 @@ void Compiler::body_statement(const ast::Stmt& stat) {
   auto kind = stat.kind();
   switch (kind) {
   case ast::CompoundKind: return statement(dynamic_cast<const ast::Compound&>(stat));
-  case ast::WhileKind: return statement(dynamic_cast<const ast::WhileStatement&>(stat));
-  case ast::IfKind: return statement(dynamic_cast<const ast::IfStatement&>(stat));
-  case ast::ReturnKind: return statement(dynamic_cast<const ast::ReturnStatement&>(stat));
-  case ast::VarDeclKind: return statement(dynamic_cast<const ast::VarDeclStatement&>(stat));
+  case ast::WhileKind: return statement(dynamic_cast<const ast::WhileStmt&>(stat));
+  case ast::IfKind: return statement(dynamic_cast<const ast::IfStmt&>(stat));
+  case ast::ReturnKind: return statement(dynamic_cast<const ast::ReturnStmt&>(stat));
+  case ast::VarDeclKind: return statement(dynamic_cast<const ast::VarDecl&>(stat));
   default: body_expression(dynamic_cast<const ast::Expr&>(stat));
   }
 }
@@ -373,7 +373,7 @@ void Compiler::write_object(const char* filename, bool binary) {
   dest->flush();
 }
 
-auto Compiler::mangle_name(const ast::FnDeclStatement& fn_decl) -> string {
+auto Compiler::mangle_name(const ast::FnDecl& fn_decl) -> string {
   std::stringstream ss{};
   ss << "_Ym.";
   ss << fn_decl.name();
