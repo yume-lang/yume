@@ -42,7 +42,7 @@ Compiler::Compiler(unique_ptr<ast::Program> program) : m_program(move(program)) 
   }
 
   for (const auto& i : m_program->body()) {
-    if (i.kind() == ast::Kind::FnDecl) {
+    if (i.kind() == ast::Kind::FnDeclKind) {
       const auto& fn_decl = dynamic_cast<const ast::FnDeclStatement&>(i);
       auto& fn = m_fns.emplace_back(fn_decl);
       if (fn_decl.name() == "main") {
@@ -61,7 +61,7 @@ Compiler::Compiler(unique_ptr<ast::Program> program) : m_program(move(program)) 
 auto Compiler::convert_type(const ast::Type& ast_type) -> ty::Type& {
   static unique_ptr<ty::Type> unknown_type = std::make_unique<ty::UnknownType>();
 
-  if (ast_type.kind() == ast::Kind::SimpleType) {
+  if (ast_type.kind() == ast::Kind::SimpleTypeKind) {
     const auto& simple_type = dynamic_cast<const ast::SimpleType&>(ast_type);
     auto name = simple_type.name();
     auto val = m_known_types.find(name);
@@ -230,12 +230,12 @@ void Compiler::statement(const ast::VarDeclStatement& stat) {
 void Compiler::body_statement(const ast::Statement& stat) {
   auto kind = stat.kind();
   switch (kind) {
-  case ast::Kind::Compound: return statement(dynamic_cast<const ast::Compound&>(stat));
-  case ast::Kind::WhileStatement: return statement(dynamic_cast<const ast::WhileStatement&>(stat));
-  case ast::Kind::IfStatement: return statement(dynamic_cast<const ast::IfStatement&>(stat));
-  case ast::Kind::ExprStatement: return statement(dynamic_cast<const ast::ExprStatement&>(stat));
-  case ast::Kind::ReturnStatement: return statement(dynamic_cast<const ast::ReturnStatement&>(stat));
-  case ast::Kind::VarDecl: return statement(dynamic_cast<const ast::VarDeclStatement&>(stat));
+  case ast::Kind::CompoundKind: return statement(dynamic_cast<const ast::Compound&>(stat));
+  case ast::Kind::WhileKind: return statement(dynamic_cast<const ast::WhileStatement&>(stat));
+  case ast::Kind::IfKind: return statement(dynamic_cast<const ast::IfStatement&>(stat));
+  case ast::Kind::ExprStatementKind: return statement(dynamic_cast<const ast::ExprStatement&>(stat));
+  case ast::Kind::ReturnKind: return statement(dynamic_cast<const ast::ReturnStatement&>(stat));
+  case ast::Kind::VarDeclKind: return statement(dynamic_cast<const ast::VarDeclStatement&>(stat));
   default: throw std::logic_error("Unimplemented body statement "s + kind_name(kind));
   }
 }
@@ -339,7 +339,7 @@ auto Compiler::expression(const ast::CallExpr& expr) -> Val {
 }
 
 auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
-  if (expr.target().kind() == ast::Kind::Var) {
+  if (expr.target().kind() == ast::Kind::VarKind) {
     const auto& target_var = dynamic_cast<const ast::VarExpr&>(expr.target());
     auto expr_val = body_expression(expr.value());
     auto target_val = m_scope.at(target_var.name());
@@ -352,11 +352,11 @@ auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
 auto Compiler::body_expression(const ast::Expr& expr) -> Val {
   auto kind = expr.kind();
   switch (kind) {
-  case ast::Kind::Number: return expression(dynamic_cast<const ast::NumberExpr&>(expr));
-  case ast::Kind::String: return expression(dynamic_cast<const ast::StringExpr&>(expr));
-  case ast::Kind::Call: return expression(dynamic_cast<const ast::CallExpr&>(expr));
-  case ast::Kind::Var: return expression(dynamic_cast<const ast::VarExpr&>(expr));
-  case ast::Kind::Assign: return expression(dynamic_cast<const ast::AssignExpr&>(expr));
+  case ast::Kind::NumberKind: return expression(dynamic_cast<const ast::NumberExpr&>(expr));
+  case ast::Kind::StringKind: return expression(dynamic_cast<const ast::StringExpr&>(expr));
+  case ast::Kind::CallKind: return expression(dynamic_cast<const ast::CallExpr&>(expr));
+  case ast::Kind::VarKind: return expression(dynamic_cast<const ast::VarExpr&>(expr));
+  case ast::Kind::AssignKind: return expression(dynamic_cast<const ast::AssignExpr&>(expr));
   default: throw std::logic_error("Unimplemented body expression "s + kind_name(kind));
   }
 }
@@ -397,7 +397,7 @@ auto Compiler::mangle_name(const ast::FnDeclStatement& fn_decl) -> string {
 }
 
 auto Compiler::mangle_name(const ast::Type& ast_type) -> string {
-  if (ast_type.kind() == ast::Kind::SimpleType) {
+  if (ast_type.kind() == ast::Kind::SimpleTypeKind) {
     const auto& simple_type = dynamic_cast<const ast::SimpleType&>(ast_type);
     return simple_type.name();
   }
