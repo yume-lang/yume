@@ -92,7 +92,7 @@ auto to_string(Token token) -> string {
 
 void ignore_separator(TokenIterator& tokens,
                       [[maybe_unused]] const source_location location = source_location::current()) {
-  while (!tokens.end() && tokens->m_type == Separator) {
+  while (!tokens.at_end() && tokens->m_type == Separator) {
 #ifdef YUME_SPEW_CONSUMED_TOKENS
     std::cerr << "consumed " << *tokens << " at " << at(location) << "\n";
 #endif
@@ -190,7 +190,7 @@ static auto try_parse_type(TokenIterator& tokens) -> optional<unique_ptr<Type>>;
 
 auto Program::parse(TokenIterator& tokens) -> unique_ptr<Program> {
   auto statements = vector<unique_ptr<Stmt>>{};
-  while (!tokens.end()) {
+  while (!tokens.at_end()) {
     statements.push_back(parse_stmt(tokens));
   }
 

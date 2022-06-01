@@ -71,21 +71,21 @@ struct TokenIterator {
   inline constexpr TokenIterator(const VectorTokenIterator& iterator, const VectorTokenIterator& end)
       : m_iterator{iterator}, m_end{end} {}
 
-  [[nodiscard]] constexpr auto end() const noexcept -> bool { return m_iterator == m_end; }
+  [[nodiscard]] constexpr auto at_end() const noexcept -> bool { return m_iterator == m_end; }
   [[nodiscard]] auto constexpr operator->() const noexcept -> Token* { return m_iterator.operator->(); }
   [[nodiscard]] constexpr auto operator*() const noexcept -> Token { return m_iterator.operator*(); }
   [[nodiscard]] constexpr auto operator+(int i) const noexcept -> TokenIterator {
     return TokenIterator{m_iterator + i, m_end};
   }
   constexpr auto operator++() -> TokenIterator& {
-    if (end()) {
+    if (at_end()) {
       throw std::runtime_error("Can't increment past end");
     }
     ++m_iterator;
     return *this;
   }
   auto operator++(int) -> TokenIterator {
-    if (end()) {
+    if (at_end()) {
       throw std::runtime_error("Can't increment past end");
     }
     return TokenIterator{m_iterator++, m_end};
