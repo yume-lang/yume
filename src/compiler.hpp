@@ -130,6 +130,7 @@ protected:
 
   auto expression(const ast::NumberExpr&) -> Val;
   auto expression(const ast::StringExpr&) -> Val;
+  auto expression(const ast::CharExpr&) -> Val;
   auto expression(const ast::VarExpr&) -> Val;
   auto expression(const ast::CallExpr&) -> Val;
   auto expression(const ast::AssignExpr&) -> Val;

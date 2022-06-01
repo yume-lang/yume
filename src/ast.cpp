@@ -395,6 +395,14 @@ static auto parse_string_expr(TokenIterator& tokens) -> unique_ptr<StringExpr> {
   return std::make_unique<StringExpr>(span{entry, 1}, value);
 }
 
+static auto parse_char_expr(TokenIterator& tokens) -> unique_ptr<CharExpr> {
+  auto entry = tokens.begin();
+  expect(tokens, Token::Type::Char);
+  auto value = (*next(tokens).m_payload->m_str)[0];
+
+  return std::make_unique<CharExpr>(span{entry, 1}, value);
+}
+
 static auto parse_primary(TokenIterator& tokens) -> unique_ptr<Expr> {
   auto entry = tokens.begin();
   if (tokens->m_type == Number) {
@@ -402,6 +410,9 @@ static auto parse_primary(TokenIterator& tokens) -> unique_ptr<Expr> {
   }
   if (tokens->m_type == Token::Type::Literal) {
     return parse_string_expr(tokens);
+  }
+  if (tokens->m_type == Token::Type::Char) {
+    return parse_char_expr(tokens);
   }
   if (tokens->m_type == Word) {
     auto name = consume_word(tokens);
@@ -564,6 +575,7 @@ void IfStmt::visit(Visitor& visitor) const { visitor.visit(m_clauses).visit(m_el
 void IfClause::visit(Visitor& visitor) const { visitor.visit(m_cond).visit(m_body); }
 void NumberExpr::visit(Visitor& visitor) const { visitor.visit(describe()); }
 void StringExpr::visit(Visitor& visitor) const { visitor.visit(m_val); }
+void CharExpr::visit(Visitor& visitor) const { visitor.visit(string{static_cast<char>(m_val)}); }
 void ReturnStmt::visit(Visitor& visitor) const { visitor.visit(m_expr); }
 void WhileStmt::visit(Visitor& visitor) const { visitor.visit(m_cond).visit(m_body); }
 void VarDecl::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_type).visit(m_init); }

@@ -78,11 +78,29 @@ struct Tokenizer {
         if (escape && c == 'n') {
           stream.put('\n');
         } else {
-          stream.put(c);
+          stream.put((char)c);
         }
         escape = false;
       }
       return true;
+    };
+    auto is_char = [escape = false](char c, int i, std::stringstream& stream) mutable {
+      if (i == 0) {
+        return c == '?';
+      }
+      if (i == 1) {
+        if (c == '\\') {
+          escape = true;
+        } else {
+          stream.put((char)c);
+        }
+        return true;
+      }
+      if (i == 2 && escape) {
+        stream.put((char)c);
+        return true;
+      }
+      return false;
     };
     auto is_comment = [](char c, int i) { return (i == 0 && c == '#') || (i > 0 && c != '\n'); };
     auto is_any_of = [](string chars) {
@@ -98,6 +116,7 @@ struct Tokenizer {
               {Token::Type::Skip, is_comment},
               {Token::Type::Number, is_c(isdigit)},
               {Token::Type::Literal, is_str},
+              {Token::Type::Char, is_char},
               {Token::Type::Word, is_word},
               {Token::Type::Symbol, is_exactly("==")},
               {Token::Type::Symbol, is_exactly("//")},

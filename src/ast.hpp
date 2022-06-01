@@ -18,6 +18,7 @@ enum struct Kind {
   UnknownKind,
   NumberKind,
   StringKind,
+  CharKind,
   FnDeclKind,
   VarDeclKind,
   ProgramKind,
@@ -30,7 +31,6 @@ enum struct Kind {
   IfClauseKind,
   CallKind,
   VarKind,
-  ExprStatementKind,
   ReturnKind,
   AssignKind,
   FieldAccessKind,
@@ -42,6 +42,7 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case UnknownKind: return "unknown";
   case NumberKind: return "number";
   case StringKind: return "string";
+  case CharKind: return "char";
   case FnDeclKind: return "fn decl";
   case VarDeclKind: return "var decl";
   case ProgramKind: return "program";
@@ -54,7 +55,6 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case IfClauseKind: return "if clause";
   case CallKind: return "call";
   case VarKind: return "var";
-  case ExprStatementKind: return "expr statement";
   case ReturnKind: return "return statement";
   case AssignKind: return "assign";
   case FieldAccessKind: return "field access";
@@ -224,6 +224,17 @@ public:
   [[nodiscard]] inline auto describe() const -> string override { return std::to_string(m_val); }
 
   [[nodiscard]] inline auto val() const -> int64_t { return m_val; }
+};
+
+class CharExpr : public Expr {
+  uint8_t m_val;
+
+public:
+  explicit inline CharExpr(span<Token> tok, uint8_t val) : Expr(CharKind, tok), m_val(val) {}
+  void visit(Visitor& visitor) const override;
+  [[nodiscard]] inline auto describe() const -> string override { return std::to_string(m_val); }
+
+  [[nodiscard]] inline auto val() const -> uint8_t { return m_val; }
 };
 
 class StringExpr : public Expr {

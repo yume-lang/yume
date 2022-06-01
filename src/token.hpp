@@ -56,15 +56,17 @@ struct Loc {
 };
 
 struct Token {
-  enum struct Type { Word, Skip, Symbol, Literal, Number, Separator };
+  enum struct Type { Word, Skip, Symbol, Literal, Number, Char, Separator };
   static auto inline constexpr type_name(Type type) -> const char* {
+    using enum Token::Type;
     switch (type) {
-    case Token::Type::Word: return "Word";
-    case Token::Type::Skip: return "Skip";
-    case Token::Type::Symbol: return "Symbol";
-    case Token::Type::Literal: return "Literal";
-    case Token::Type::Number: return "Number";
-    case Token::Type::Separator: return "Separator";
+    case Word: return "Word";
+    case Skip: return "Skip";
+    case Symbol: return "Symbol";
+    case Literal: return "Literal";
+    case Number: return "Number";
+    case Char: return "Char";
+    case Separator: return "Separator";
     }
   }
 

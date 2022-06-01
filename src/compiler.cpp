@@ -143,7 +143,7 @@ void Compiler::define(Fn& fn) {
 
   int i = 0;
   for (auto& arg : fn.llvm()->args()) {
-    const auto& [type, name] = fn.m_ast_decl.args().begin()[i];
+    const auto& [type, name] = fn.m_ast_decl.args().begin()[i++];
     auto& yume_type = convert_type(type);
     auto* alloc = m_builder->CreateAlloca(llvm_type(yume_type), nullptr, name);
     m_builder->CreateStore(&arg, alloc);
@@ -248,6 +248,10 @@ auto Compiler::expression(const ast::NumberExpr& expr) -> Val {
   return {m_builder->getInt32(val), &known_type("I32")};
 }
 
+auto Compiler::expression(const ast::CharExpr& expr) -> Val {
+  return {m_builder->getInt8(expr.val()), &known_type("U8")};
+}
+
 auto Compiler::expression(const ast::StringExpr& expr) -> Val {
   auto val = expr.val();
 
@@ -300,7 +304,7 @@ auto Compiler::expression(const ast::CallExpr& expr) -> Val {
   if (overloads.empty()) {
     throw std::logic_error("No matching overload for "s + name);
   }
-  auto* selected = overloads.front();
+  auto* selected = overloads.front(); // TODO
   llvm::Function* llvm_fn = nullptr;
 
   vector<Val> args{};
@@ -358,6 +362,7 @@ auto Compiler::body_expression(const ast::Expr& expr) -> Val {
   switch (kind) {
   case ast::NumberKind: return expression(dynamic_cast<const ast::NumberExpr&>(expr));
   case ast::StringKind: return expression(dynamic_cast<const ast::StringExpr&>(expr));
+  case ast::CharKind: return expression(dynamic_cast<const ast::CharExpr&>(expr));
   case ast::CallKind: return expression(dynamic_cast<const ast::CallExpr&>(expr));
   case ast::VarKind: return expression(dynamic_cast<const ast::VarExpr&>(expr));
   case ast::AssignKind: return expression(dynamic_cast<const ast::AssignExpr&>(expr));
