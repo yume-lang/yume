@@ -14,6 +14,8 @@ if(YUME_SPEW)
         add_definitions(-DYUME_SPEW_CONSUMED_TOKENS -DYUME_SPEW_DOT_TOKEN_HEADER -DYUME_SPEW_LIST_TOKENS)
 endif()
 
+add_definitions("-DYUME_LIB_DIR=\"${CMAKE_SOURCE_DIR}/lib/\"")
+
 find_package(LLVM REQUIRED CONFIG)
 
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")

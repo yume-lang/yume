@@ -5,13 +5,18 @@
 #include <fstream>
 #include <iostream>
 
+// this should be provided by cmake
+#ifndef YUME_LIB_DIR
+#define YUME_LIB_DIR "./lib/"
+#endif
 
 auto main(int argc, const char* argv[]) -> int {
   auto args = std::span(argv, argc);
-  std::unique_ptr<std::istream> file_stream{};
-  if (argc > 1) {
-    file_stream = std::make_unique<std::ifstream>(args[1]);
-  }
+  std::vector<std::string> src_file_names{};
+  src_file_names.reserve(argc);
+  src_file_names.push_back(std::string(YUME_LIB_DIR) + "std.ym");
+  std::copy(args.begin() + 1, args.end(), std::back_inserter(src_file_names));
+  std::vector<yume::SourceFile> source_files{};
 
   std::set_terminate(yume::stacktrace);
 

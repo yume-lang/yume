@@ -1,22 +1,3 @@
-def printf(format U8 ptr) I32 = __primitive__(libc) __varargs__
-def +(a I32, b I32) I32 = __primitive__(add)
-def +(a I64, b I64) I64 = __primitive__(add)
-def +(a U8, b U8) U8 = __primitive__(add)
-def -(a I32, b I32) I32 = __primitive__(sub)
-def -(a I64, b I64) I64 = __primitive__(sub)
-def -(a I32) I32 = 0 - a
-def -(a U8, b U8) U8 = __primitive__(sub)
-def %(a I32, b I32) I32 = __primitive__(mod)
-def *(a I32, b I32) I32 = __primitive__(mul)
-def //(a I32, b I32) I32 = __primitive__(int_div)
-def ==(a I32, b I32) Bool = __primitive__(icmp_eq)
-def ==(a U8, b U8) Bool = __primitive__(icmp_eq)
-def !=(a U8, b U8) Bool = __primitive__(icmp_ne)
-def >(a I32, b I32) Bool = __primitive__(icmp_gt)
-def >(a I64, b I64) Bool = __primitive__(icmp_gt)
-def <(a I32, b I32) Bool = __primitive__(icmp_lt)
-def <(a I64, b I64) Bool = __primitive__(icmp_lt)
-
 def collatz(int I32) I32
   let k I32 = 0
   while int > 1
