@@ -4,17 +4,24 @@
 
 #include "ast.hpp"
 
-#if __cpp_lib_source_location >= 201907L
-#include <experimental/source_location>
+#if __has_include(<source_location>) && __has_builtin(__builtin_source_location)
+#  include <source_location>
+#  define yume_has_source_location 1
+#elif __has_include(<experimental/source_location>)
+#  include <experimental/source_location>
+#  define yume_has_source_location -1
+#else
+#  define yume_has_source_location 0
 #endif
+
 #include <memory>
 #include <sstream>
 
 namespace yume::ast {
-using namespace yume::atom_literal;
-using namespace std::literals::string_literals;
 
-#if __cpp_lib_source_location >= 201907L
+#if yume_has_source_location == 1
+using std::source_location;
+#elif yume_has_source_location == -1
 using std::experimental::source_location;
 #else
 struct source_location {
