@@ -5,6 +5,7 @@
 #include "token.hpp"
 #include "llvm/Support/raw_os_ostream.h"
 #include <algorithm>
+#include <iomanip>
 #include <iostream>
 #include <ranges>
 #include <sstream>
@@ -134,23 +135,27 @@ private:
     return any_of(list, [&](const auto& c) {
       auto stream = std::stringstream{};
       if (is_characteristic(c.m_fn, stream)) {
-        auto atom = consume_characteristic(c.m_fn, stream);
-        m_tokens.emplace_back(c.m_type, atom, m_count, Loc{begin_line, begin_col, m_line, m_col, m_source_file});
+        auto [atom, end_line, end_col] = consume_characteristic(c.m_fn, stream);
+        m_tokens.emplace_back(c.m_type, atom, m_count, Loc{begin_line, begin_col, end_line, end_col, m_source_file});
         return true;
       }
       return false;
     });
   }
 
-  auto consume_characteristic(const char_fn& fun, std::stringstream& out) -> Atom {
+  auto consume_characteristic(const char_fn& fun, std::stringstream& out) -> std::tuple<Atom, int, int> {
     int i = 1;
+    int end_line = m_line;
+    int end_col = m_col;
     next();
     while (fun(m_last, i, out) && !m_in.eof()) {
       i++;
+      end_line = m_line;
+      end_col = m_col;
       next();
     }
 
-    return make_atom(out.str());
+    return {make_atom(out.str()), end_line, end_col};
   }
 };
 
@@ -171,10 +176,9 @@ auto tokenize(std::istream& in, const string& source_file) -> vector<Token> {
 
 auto operator<<(std::ostream& std_os, const Token& token) -> std::ostream& {
   auto os = llvm::raw_os_ostream(std_os);
-  os << "Token(";
+  std_os << "Token" << std::setfill('0') << std::setw(4) << token.m_i << '(';
   const auto& loc = token.m_loc;
-  os << loc.file << ':' << loc.begin_line << ':' << loc.begin_col << ' ' << loc.end_line << ':' << loc.end_col << '('
-     << token.m_i << "),\t";
+  os << loc.to_string() << ",\t";
   os << Token::type_name(token.m_type);
   if (token.m_payload.has_value()) {
     os << ",\t\"";

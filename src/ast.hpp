@@ -95,10 +95,12 @@ struct TokenIterator {
 
 class AST {
 private:
-  Kind m_kind;
+  const Kind m_kind;
+  const span<Token> m_tok;
 
 protected:
-  AST(Kind kind) : m_kind(kind) {}
+  constexpr AST(Kind kind) : m_kind(kind) {}
+  constexpr AST(Kind kind, span<Token> tok) : m_kind(kind), m_tok(tok) {}
 
 public:
   AST(const AST&) = delete;
@@ -108,13 +110,23 @@ public:
   virtual ~AST() = default;
 
   virtual void inline visit(Visitor& visitor) const = 0;
-  [[nodiscard]] auto kind() const -> Kind { return m_kind; };
+  [[nodiscard]] constexpr auto kind() const -> Kind { return m_kind; };
+  [[nodiscard]] constexpr auto token_range() const -> const span<Token>& { return m_tok; };
+  [[nodiscard]] constexpr auto location() const -> Loc {
+    if (m_tok.empty()) {
+      return Loc{};
+    }
+    if (m_tok.size() == 1) {
+      return m_tok[0].m_loc;
+    }
+    return m_tok[0].m_loc + m_tok[m_tok.size() - 1].m_loc;
+  };
   [[nodiscard]] virtual auto inline describe() const -> string { return string{"unknown "} + kind_name(kind()); }
 };
 
 class Type : public AST {
 protected:
-  Type(Kind kind) : AST(kind) {}
+  using AST::AST;
 
 public:
   [[nodiscard]] static auto try_parse(TokenIterator& tokens) -> optional<unique_ptr<Type>>;
@@ -194,19 +206,19 @@ public:
 
 class Stmt : public AST {
 protected:
-  Stmt(Kind kind) : AST(kind) {}
+  using AST::AST;
 };
 
 class Expr : public Stmt {
 protected:
-  Expr(Kind kind) : Stmt(kind) {}
+  using Stmt::Stmt;
 };
 
 class NumberExpr : public Expr {
   int64_t m_val;
 
 public:
-  explicit inline NumberExpr(int64_t val) : Expr(NumberKind), m_val(val) {}
+  explicit inline NumberExpr(span<Token> tok, int64_t val) : Expr(NumberKind, tok), m_val(val) {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] inline auto describe() const -> string override { return std::to_string(m_val); }
 
@@ -217,7 +229,7 @@ class StringExpr : public Expr {
   string m_val;
 
 public:
-  explicit inline StringExpr(string val) : Expr(StringKind), m_val(move(val)) {}
+  explicit inline StringExpr(span<Token> tok, string val) : Expr(StringKind, tok), m_val(move(val)) {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] inline auto describe() const -> string override { return m_val; }
 
@@ -228,7 +240,7 @@ class VarExpr : public Expr {
   string m_name;
 
 public:
-  explicit inline VarExpr(string name) : Expr(VarKind), m_name(move(name)) {}
+  explicit inline VarExpr(span<Token> tok, string name) : Expr(VarKind, tok), m_name(move(name)) {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] inline auto describe() const -> string override { return m_name; }
 
@@ -240,8 +252,8 @@ class CallExpr : public Expr {
   vector<unique_ptr<Expr>> m_args;
 
 public:
-  inline CallExpr(string name, vector<unique_ptr<Expr>>& args)
-      : Expr(CallKind), m_name{move(name)}, m_args{move(args)} {}
+  inline CallExpr(span<Token> tok, string name, vector<unique_ptr<Expr>>& args)
+      : Expr(CallKind, tok), m_name{move(name)}, m_args{move(args)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] inline auto describe() const -> string override { return m_name; }
 
@@ -291,13 +303,13 @@ class FnDecl : public Stmt {
   variant<unique_ptr<Compound>, string> m_body;
 
 public:
-  inline FnDecl(string name, vector<unique_ptr<TypeName>>& args, vector<string>& type_args,
+  inline FnDecl(span<Token> tok, string name, vector<unique_ptr<TypeName>>& args, vector<string>& type_args,
                 optional<unique_ptr<Type>> ret, unique_ptr<Compound> body)
-      : Stmt(FnDeclKind), m_name{move(name)}, m_args{move(args)},
+      : Stmt(FnDeclKind, tok), m_name{move(name)}, m_args{move(args)},
         m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(body)} {}
-  inline FnDecl(string name, vector<unique_ptr<TypeName>>& args, vector<string>& type_args,
+  inline FnDecl(span<Token> tok, string name, vector<unique_ptr<TypeName>>& args, vector<string>& type_args,
                 optional<unique_ptr<Type>> ret, bool varargs, string primitive)
-      : Stmt(FnDeclKind), m_name{move(name)}, m_varargs{varargs}, m_args{move(args)},
+      : Stmt(FnDeclKind, tok), m_name{move(name)}, m_varargs{varargs}, m_args{move(args)},
         m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(primitive)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] inline auto describe() const -> string override { return m_name; }
@@ -316,8 +328,8 @@ class VarDecl : public Stmt {
   unique_ptr<Expr> m_init;
 
 public:
-  inline VarDecl(string name, optional<unique_ptr<Type>> type, unique_ptr<Expr> init)
-      : Stmt(VarDeclKind), m_name{move(name)}, m_type{move(type)}, m_init(move(init)) {}
+  inline VarDecl(span<Token> tok, string name, optional<unique_ptr<Type>> type, unique_ptr<Expr> init)
+      : Stmt(VarDeclKind, tok), m_name{move(name)}, m_type{move(type)}, m_init(move(init)) {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] inline auto describe() const -> string override { return m_name; }
 

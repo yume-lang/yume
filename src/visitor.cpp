@@ -20,7 +20,7 @@ void xml_escape(llvm::raw_ostream& stream, const string& data) {
 
 void DotVisitor::emit_debug_header() {
 #ifdef YUME_SPEW_DOT_TOKEN_HEADER
-  stream() << "<FONT POINT-SIZE=\"8\">" << m_index << "/" << m_parent;
+  stream() << "<FONT POINT-SIZE=\"7\">" << m_index << "/" << m_parent;
   if (m_open_parent != -1) {
     stream() << "-" << m_open_parent;
   }
@@ -75,6 +75,7 @@ void DotVisitor::footer(bool is_inline) {
 void DotVisitor::visit_expr(const ast::AST& expr, const char* label) {
   header(label, false);
 
+  stream() << "<FONT POINT-SIZE=\"10\">" << expr.location().to_string() << "</FONT><BR/>";
   stream() << "<B>";
   xml_escape(stream(), string(ast::kind_name(expr.kind())));
   stream() << "</B>";

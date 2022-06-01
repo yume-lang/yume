@@ -15,6 +15,7 @@
 #include <utility>
 #include <variant>
 #include <vector>
+#include <span>
 
 namespace yume {
 
@@ -23,6 +24,7 @@ using std::string;
 using std::unique_ptr;
 using std::variant;
 using std::vector;
+using std::span;
 
 template <class T>
 concept pointer_like = requires(T t) {
