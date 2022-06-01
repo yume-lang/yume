@@ -12,19 +12,19 @@
 #include <optional>
 #include <ranges>
 #include <set>
+#include <span>
 #include <utility>
 #include <variant>
 #include <vector>
-#include <span>
 
 namespace yume {
 
 using std::optional;
+using std::span;
 using std::string;
 using std::unique_ptr;
 using std::variant;
 using std::vector;
-using std::span;
 
 template <class T>
 concept pointer_like = requires(T t) {
