@@ -8,9 +8,7 @@
 #include <stdexcept>
 
 namespace yume {
-using namespace std::literals::string_literals;
-
-Compiler::Compiler(unique_ptr<ast::Program> program) : m_program(move(program)) {
+Compiler::Compiler(SourceFile source_file) : m_source(std::move(source_file)) {
   m_context = std::make_unique<LLVMContext>();
   m_module = std::make_unique<Module>("yume", *m_context);
   m_builder = std::make_unique<IRBuilder<>>(*m_context);
@@ -41,7 +39,7 @@ Compiler::Compiler(unique_ptr<ast::Program> program) : m_program(move(program)) 
     m_known_types.insert({"U"s + std::to_string(i), std::make_unique<ty::IntegerType>(i, false)});
   }
 
-  for (const auto& i : m_program->body()) {
+  for (const auto& i : program().body()) {
     if (i.kind() == ast::FnDeclKind) {
       const auto& fn_decl = dynamic_cast<const ast::FnDecl&>(i);
       auto& fn = m_fns.emplace_back(fn_decl);

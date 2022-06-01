@@ -20,6 +20,7 @@
 #include <llvm/Target/TargetOptions.h>
 #include <map>
 #include <queue>
+#include <utility>
 
 namespace yume {
 using namespace llvm;
@@ -64,8 +65,28 @@ struct Val {
   }
 };
 
-class Compiler {
+struct SourceFile {
+  const string m_name;
+  vector<yume::Token> m_tokens;
+  ast::TokenIterator m_iterator;
   unique_ptr<ast::Program> m_program;
+
+  explicit inline SourceFile(std::istream& in, string name)
+      : m_name(std::move(name)), m_tokens(yume::tokenize(in, m_name)), m_iterator{m_tokens.begin(), m_tokens.end()} {
+#ifdef YUME_SPEW_LIST_TOKENS
+    std::cout << "tokens:\n";
+    for (auto& i : m_tokens) {
+      std::cout << "  " << i << "\n";
+    }
+    std::cout << "\n";
+    std::cout.flush();
+#endif
+    m_program = ast::Program::parse(m_iterator);
+  }
+};
+
+class Compiler {
+  SourceFile m_source;
   std::map<string, unique_ptr<ty::Type>> m_known_types{};
   vector<Fn> m_fns{};
   std::queue<Fn*> m_decl_queue{};
@@ -81,7 +102,9 @@ class Compiler {
 public:
   [[nodiscard]] auto module() const -> const auto& { return m_module; }
 
-  explicit Compiler(unique_ptr<ast::Program> program);
+  [[nodiscard]] auto program() const -> const auto& { return *m_source.m_program; }
+
+  explicit Compiler(SourceFile source_file);
 
   [[nodiscard]] auto declare(Fn&, bool mangle = true) -> llvm::Function*;
 

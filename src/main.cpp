@@ -14,23 +14,17 @@ auto main(int argc, const char* argv[]) -> int {
 
   std::set_terminate(yume::stacktrace);
 
-  auto tokens = yume::tokenize(argc > 1 ? *file_stream : std::cin);
-  std::cout << "tokens:\n";
-  for (auto& i : tokens) {
-    std::cout << "  " << i << "\n";
+  auto source = yume::SourceFile(argc > 1 ? *file_stream : std::cin, argc > 1 ? args[1] : "<source>");
+  {
+    auto dot = yume::open_file("output.dot");
+    auto visitor = yume::DotVisitor{*dot};
+    visitor.Visitor::visit(*source.m_program);
   }
-  std::cout << "\n";
-  std::cout.flush();
-  auto token_it = yume::ast::TokenIterator{tokens.begin(), tokens.end()};
-  std::unique_ptr<llvm::raw_ostream> dot = yume::open_file("output.dot");
-  auto visitor = yume::DotVisitor{*dot};
-  auto program = yume::ast::Program::parse(token_it);
-  visitor.Visitor::visit(*program);
-  visitor.finalize();
 
-  if (!token_it.end()) {
+  auto token_it = source.m_iterator;
+  if (!token_it.at_end()) {
     std::cout << "unconsumed tokens:\n";
-    while (!token_it.end()) {
+    while (!token_it.at_end()) {
       std::cout << "  " << *token_it++ << "\n";
     }
     std::cout << "\n";
@@ -39,8 +33,7 @@ auto main(int argc, const char* argv[]) -> int {
     exit(2);
   }
 
-  //   try {
-  auto compiler = yume::Compiler{move(program)};
+  auto compiler = yume::Compiler{std::move(source)};
   compiler.module()->print(llvm::outs(), nullptr);
   compiler.module()->print(*yume::open_file("output.ll"), nullptr);
   compiler.write_object("output.s", false);
