@@ -26,10 +26,9 @@ struct Loc {
 
   constexpr auto operator+(const Loc& other) const noexcept -> Loc {
     assert(other.file == file);
-    auto min_begin_line = std::min(begin_line, other.begin_line);
-    auto min_begin_col = std::min(begin_col, other.begin_col);
-    auto max_end_line = std::max(end_line, other.end_line);
-    auto max_end_col = std::max(end_col, other.end_col);
+    auto [min_begin_line, min_begin_col] =
+        std::min(std::pair{begin_line, begin_col}, std::pair{other.begin_line, other.begin_col});
+    auto [max_end_line, max_end_col] = std::max(std::pair{end_line, end_col}, std::pair{other.end_line, other.end_col});
     return Loc{min_begin_line, min_begin_col, max_end_line, max_end_col, file};
   }
 
