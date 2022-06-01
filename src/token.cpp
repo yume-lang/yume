@@ -3,6 +3,7 @@
 //
 
 #include "token.hpp"
+#include "llvm/Support/raw_os_ostream.h"
 #include <algorithm>
 #include <iostream>
 #include <ranges>
@@ -54,9 +55,12 @@ struct Tokenizer {
   vector<Token> m_tokens{};
   std::istream& m_in;
   char m_last;
+  int m_count{};
+  int m_line = 1;
+  int m_col = 1;
+  const char* m_source_file;
 
   void tokenize() {
-    using namespace std::literals::string_literals;
     auto is_word = [](int c, int i) { return (i == 0 && std::isalpha(c) != 0) || std::isalnum(c) != 0 || c == '_'; };
     auto is_str = [end = false, escape = false](char c, int i, std::stringstream& stream) mutable {
       if (i == 0) {
@@ -86,34 +90,37 @@ struct Tokenizer {
     auto is_exactly = [](string str) { return [s = move(str)](char c, int i) { return s[i] == c; }; };
     auto is_c = [](char_raw_fn fn) { return [=](char c, [[maybe_unused]] int i) { return fn(c) != 0; }; };
 
-    int i = 0;
     while (!m_in.eof()) {
-      if (!select_characteristic(
-              {
-                  {Token::Type::Separator, is_exactly("\n")},
-                  {Token::Type::Skip, is_c(isspace)},
-                  {Token::Type::Skip, is_comment},
-                  {Token::Type::Number, is_c(isdigit)},
-                  {Token::Type::Literal, is_str},
-                  {Token::Type::Word, is_word},
-                  {Token::Type::Symbol, is_exactly("==")},
-                  {Token::Type::Symbol, is_exactly("//")},
-                  {Token::Type::Symbol, is_any_of(R"(()[]<>=:#"%-+.,!?/*\)")},
-              },
-              i)) {
+      if (!select_characteristic({
+              {Token::Type::Separator, is_exactly("\n")},
+              {Token::Type::Skip, is_c(isspace)},
+              {Token::Type::Skip, is_comment},
+              {Token::Type::Number, is_c(isdigit)},
+              {Token::Type::Literal, is_str},
+              {Token::Type::Word, is_word},
+              {Token::Type::Symbol, is_exactly("==")},
+              {Token::Type::Symbol, is_exactly("//")},
+              {Token::Type::Symbol, is_any_of(R"(()[]<>=:#"%-+.,!?/*\)")},
+          })) {
         string message = "Tokenizer didn't recognize ";
         message += m_last;
         throw std::runtime_error(message);
       }
-      i++;
+      m_count++;
     }
   }
 
-  explicit Tokenizer(std::istream& in) : m_in(in), m_last(next()) {}
+  Tokenizer(std::istream& in, const char* source_file) : m_in(in), m_last(next()), m_source_file(source_file) {}
 
 private:
   auto next() -> char {
     m_in.get(m_last);
+    if (m_last == '\n') {
+      m_line++;
+      m_col = 0;
+    } else {
+      m_col++;
+    }
     return m_last;
   }
 
@@ -121,11 +128,14 @@ private:
     return fun(m_last, 0, stream);
   }
 
-  auto select_characteristic(std::initializer_list<Characteristic> list, int i) -> bool {
+  auto select_characteristic(std::initializer_list<Characteristic> list) -> bool {
+    int begin_line = m_line;
+    int begin_col = m_col;
     return any_of(list, [&](const auto& c) {
       auto stream = std::stringstream{};
       if (is_characteristic(c.m_fn, stream)) {
-        m_tokens.emplace_back(c.m_type, consume_characteristic(c.m_fn, stream), i);
+        auto atom = consume_characteristic(c.m_fn, stream);
+        m_tokens.emplace_back(c.m_type, atom, m_count, Loc{begin_line, begin_col, m_line, m_col, m_source_file});
         return true;
       }
       return false;
@@ -144,14 +154,14 @@ private:
   }
 };
 
-auto tokenize_preserve_skipped(std::istream& in) -> vector<Token> {
-  auto tokenizer = Tokenizer(in);
+auto tokenize_preserve_skipped(std::istream& in, const string& source_file) -> vector<Token> {
+  auto tokenizer = Tokenizer(in, source_file.data());
   tokenizer.tokenize();
   return tokenizer.m_tokens;
 }
 
-auto tokenize(std::istream& in) -> vector<Token> {
-  vector<Token> original = tokenize_preserve_skipped(in);
+auto tokenize(std::istream& in, const string& source_file) -> vector<Token> {
+  vector<Token> original = tokenize_preserve_skipped(in, source_file);
   vector<Token> filtered{};
   filtered.reserve(original.size());
   std::copy_if(original.begin(), original.end(), std::back_inserter(filtered),
@@ -159,32 +169,19 @@ auto tokenize(std::istream& in) -> vector<Token> {
   return filtered;
 }
 
-auto operator<<(std::ostream& os, const Token& token) -> std::ostream& {
-  os << "Token(" << Token::type_name(token.m_type);
+auto operator<<(std::ostream& std_os, const Token& token) -> std::ostream& {
+  auto os = llvm::raw_os_ostream(std_os);
+  os << "Token(";
+  const auto& loc = token.m_loc;
+  os << loc.file << ':' << loc.begin_line << ':' << loc.begin_col << ' ' << loc.end_line << ':' << loc.end_col << '('
+     << token.m_i << "),\t";
+  os << Token::type_name(token.m_type);
   if (token.m_payload.has_value()) {
-    os << ", \"";
-    for (const char p : string(*token.m_payload)) {
-      int c = (unsigned char)p;
-
-      switch (c) {
-      case '\\': os << "\\\\"; break;
-      case '\"': os << "\\\""; break;
-      case '\n': os << "\\n"; break;
-      case '\r': os << "\\r"; break;
-      case '\t': os << "\\t"; break;
-      default:
-        if (std::isprint(c) != 0) {
-          os.put(p);
-        } else {
-          os << "\\x" << std::hex << c << std::dec;
-        }
-        break;
-      }
-    }
-    os << "\", " << token.m_i;
-    // os << ", " << static_cast<const void*>(*token.m_payload);
+    os << ",\t\"";
+    os.write_escaped(string(*token.m_payload));
+    os << '\"';
   }
   os << ")";
-  return os;
+  return std_os;
 }
 } // namespace yume
