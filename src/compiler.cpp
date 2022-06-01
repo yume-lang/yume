@@ -8,7 +8,7 @@
 #include <stdexcept>
 
 namespace yume {
-Compiler::Compiler(SourceFile source_file) : m_source(std::move(source_file)) {
+Compiler::Compiler(std::vector<SourceFile> source_files) : m_sources(std::move(source_files)) {
   m_context = std::make_unique<LLVMContext>();
   m_module = std::make_unique<Module>("yume", *m_context);
   m_builder = std::make_unique<IRBuilder<>>(*m_context);
@@ -39,12 +39,14 @@ Compiler::Compiler(SourceFile source_file) : m_source(std::move(source_file)) {
     m_known_types.insert({"U"s + std::to_string(i), std::make_unique<ty::IntegerType>(i, false)});
   }
 
-  for (const auto& i : program().body()) {
-    if (i.kind() == ast::FnDeclKind) {
-      const auto& fn_decl = dynamic_cast<const ast::FnDecl&>(i);
-      auto& fn = m_fns.emplace_back(fn_decl);
-      if (fn_decl.name() == "main") {
-        fn.m_llvm_fn = declare(fn, false);
+  for (const auto& source : m_sources) {
+    for (const auto& i : source.m_program->body()) {
+      if (i.kind() == ast::FnDeclKind) {
+        const auto& fn_decl = dynamic_cast<const ast::FnDecl&>(i);
+        auto& fn = m_fns.emplace_back(fn_decl);
+        if (fn_decl.name() == "main") {
+          fn.m_llvm_fn = declare(fn, false);
+        }
       }
     }
   }

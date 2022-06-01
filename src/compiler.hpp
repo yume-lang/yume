@@ -86,7 +86,7 @@ struct SourceFile {
 };
 
 class Compiler {
-  SourceFile m_source;
+  std::vector<SourceFile> m_sources;
   std::map<string, unique_ptr<ty::Type>> m_known_types{};
   vector<Fn> m_fns{};
   std::queue<Fn*> m_decl_queue{};
@@ -102,9 +102,7 @@ class Compiler {
 public:
   [[nodiscard]] auto module() const -> const auto& { return m_module; }
 
-  [[nodiscard]] auto program() const -> const auto& { return *m_source.m_program; }
-
-  explicit Compiler(SourceFile source_file);
+  explicit Compiler(std::vector<SourceFile> source_files);
 
   [[nodiscard]] auto declare(Fn&, bool mangle = true) -> llvm::Function*;
 
