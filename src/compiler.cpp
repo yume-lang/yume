@@ -153,6 +153,9 @@ void Compiler::define(Fn& fn) {
   if (const auto* body = get_if<unique_ptr<ast::Compound>>(&fn.body()); body != nullptr) {
     statement(**body);
   }
+  if (m_builder->GetInsertBlock()->getTerminator() == nullptr) {
+    m_builder->CreateRetVoid();
+  }
   // verifyFunction(*fn, &llvm::errs());
 }
 
@@ -315,8 +318,12 @@ auto Compiler::expression(const ast::CallExpr& expr) -> Val {
       llvm_fn = selected->declaration(*this, false);
     } else if (primitive == "icmp_gt") {
       return binary_sign_aware(*m_builder, &IRBuilder<>::CreateICmpSGT, &IRBuilder<>::CreateICmpUGT, args);
+    } else if (primitive == "icmp_lt") {
+      return binary_sign_aware(*m_builder, &IRBuilder<>::CreateICmpSLT, &IRBuilder<>::CreateICmpULT, args);
     } else if (primitive == "icmp_eq") {
       return m_builder->CreateICmpEQ(args.at(0), args.at(1));
+    } else if (primitive == "icmp_ne") {
+      return m_builder->CreateICmpNE(args.at(0), args.at(1));
     } else if (primitive == "add") {
       return m_builder->CreateAdd(args.at(0), args.at(1));
     } else if (primitive == "mul") {
