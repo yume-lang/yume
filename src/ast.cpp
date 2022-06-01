@@ -70,7 +70,6 @@ static const Atom SYM_STAR = "*"_a;
 static const Atom SYM_BANG = "!"_a;
 
 auto operators() {
-  // TODO: why does clang-format do this?
   const static vector<vector<Atom>> OPERATORS = {
       {SYM_EQ_EQ, SYM_NEQ, SYM_GT, SYM_LT},
       {SYM_PLUS, SYM_MINUS},

@@ -183,4 +183,7 @@ auto inline operator""_a(const char* value, std::size_t len) noexcept -> Atom { 
 } // namespace atom_literal
 } // namespace yume
 
+using namespace yume::atom_literal;
+using namespace std::literals::string_literals;
+
 #endif // YUME_CPP_UTIL_HPP

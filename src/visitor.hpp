@@ -71,7 +71,6 @@ class DotVisitor : public Visitor {
 
   llvm::raw_ostream& m_direct_stream;
   llvm::raw_string_ostream m_buffer_stream;
-  bool m_finalized = false;
   bool m_open = false;
   bool m_write_to_buffer = false;
   vector<std::tuple<int, int, string>> m_lines{};
@@ -107,15 +106,7 @@ public:
   explicit DotVisitor(llvm::raw_ostream& stream_) : m_direct_stream{stream_}, m_buffer_stream{m_buffer} {
     stream() << "digraph \"yume\" {\nnode [shape=box, style=rounded];\n";
   }
-  ~DotVisitor() override = default;
-
-  auto visit(const ast::AST& expr, const char* label) -> DotVisitor& override;
-
-  auto visit(std::nullptr_t null, const char* label) -> DotVisitor& override;
-
-  auto visit(const string& str, const char* label) -> DotVisitor& override;
-
-  inline void finalize() {
+  ~DotVisitor() override {
     if (m_write_to_buffer) {
       m_write_to_buffer = false;
       if (m_open_parent != -1) {
@@ -133,10 +124,15 @@ public:
       }
       stream() << ";\n";
     }
-    m_finalized = true;
     stream() << "\n}";
     stream().flush();
   }
+
+  auto visit(const ast::AST& expr, const char* label) -> DotVisitor& override;
+
+  auto visit(std::nullptr_t null, const char* label) -> DotVisitor& override;
+
+  auto visit(const string& str, const char* label) -> DotVisitor& override;
 };
 } // namespace yume
 

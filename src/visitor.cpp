@@ -20,19 +20,15 @@ void xml_escape(llvm::raw_ostream& stream, const string& data) {
 
 void DotVisitor::emit_debug_header() {
 #ifdef YUME_SPEW_DOT_TOKEN_HEADER
-  stream() << m_index << "/" << m_parent;
+  stream() << "<FONT POINT-SIZE=\"8\">" << m_index << "/" << m_parent;
   if (m_open_parent != -1) {
     stream() << "-" << m_open_parent;
   }
-  stream() << "/" << m_children << "<BR/>";
+  stream() << "/" << m_children << "</FONT><BR/>";
 #endif
 }
 
 void DotVisitor::header(const char* label, bool is_inline) {
-  if (m_finalized) {
-    throw std::runtime_error("Can't visit with DotVisitor when already finalized");
-  }
-
   if (m_write_to_buffer) {
     m_write_to_buffer = false;
     if ((m_children > 0) && m_parent == m_open_parent) {

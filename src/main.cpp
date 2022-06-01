@@ -38,9 +38,6 @@ auto main(int argc, const char* argv[]) -> int {
   compiler.module()->print(*yume::open_file("output.ll"), nullptr);
   compiler.write_object("output.s", false);
   compiler.write_object("output.o", true);
-  //  } catch (std::exception& exc) {
-  //    std::cerr << exc.what() << "\n";
-  //    exit(1);
-  //  }
+
   return EXIT_SUCCESS;
 }
