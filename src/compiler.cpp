@@ -341,36 +341,40 @@ auto Compiler::expression(const ast::CallExpr& expr) -> Val {
 
   auto* selected = std::ranges::max_element(overloads)->second;
   llvm::Function* llvm_fn = nullptr;
+  auto& ret_type = convert_type(*selected->m_ast_decl.ret());
 
-  if (selected->m_ast_decl.primitive()) {
-    auto primitive = get<string>(selected->m_ast_decl.body());
-    using enum CmpInst::Predicate;
-    if (primitive == "libc") {
-      llvm_fn = selected->declaration(*this, false);
-    } else if (primitive == "icmp_gt") {
-      return binary_sign_aware(*m_builder, &IRBuilder<>::CreateICmpSGT, &IRBuilder<>::CreateICmpUGT, args);
-    } else if (primitive == "icmp_lt") {
-      return binary_sign_aware(*m_builder, &IRBuilder<>::CreateICmpSLT, &IRBuilder<>::CreateICmpULT, args);
-    } else if (primitive == "icmp_eq") {
-      return m_builder->CreateICmpEQ(args.at(0), args.at(1));
-    } else if (primitive == "icmp_ne") {
-      return m_builder->CreateICmpNE(args.at(0), args.at(1));
-    } else if (primitive == "add") {
-      return m_builder->CreateAdd(args.at(0), args.at(1));
-    } else if (primitive == "mul") {
-      return m_builder->CreateMul(args.at(0), args.at(1));
-    } else if (primitive == "mod") {
-      return binary_sign_aware(*m_builder, &IRBuilder<>::CreateSRem, &IRBuilder<>::CreateURem, args);
-    } else if (primitive == "int_div") {
-      return binary_sign_aware(*m_builder, &IRBuilder<>::CreateSDiv, &IRBuilder<>::CreateUDiv, args, false);
+  auto* ret_val = [&]() -> llvm::Value* {
+    if (selected->m_ast_decl.primitive()) {
+      auto primitive = get<string>(selected->m_ast_decl.body());
+      if (primitive == "libc") {
+        llvm_fn = selected->declaration(*this, false);
+      } else if (primitive == "icmp_gt") {
+        return binary_sign_aware(*m_builder, &IRBuilder<>::CreateICmpSGT, &IRBuilder<>::CreateICmpUGT, args);
+      } else if (primitive == "icmp_lt") {
+        return binary_sign_aware(*m_builder, &IRBuilder<>::CreateICmpSLT, &IRBuilder<>::CreateICmpULT, args);
+      } else if (primitive == "icmp_eq") {
+        return m_builder->CreateICmpEQ(args.at(0), args.at(1));
+      } else if (primitive == "icmp_ne") {
+        return m_builder->CreateICmpNE(args.at(0), args.at(1));
+      } else if (primitive == "add") {
+        return m_builder->CreateAdd(args.at(0), args.at(1));
+      } else if (primitive == "mul") {
+        return m_builder->CreateMul(args.at(0), args.at(1));
+      } else if (primitive == "mod") {
+        return binary_sign_aware(*m_builder, &IRBuilder<>::CreateSRem, &IRBuilder<>::CreateURem, args);
+      } else if (primitive == "int_div") {
+        return binary_sign_aware(*m_builder, &IRBuilder<>::CreateSDiv, &IRBuilder<>::CreateUDiv, args, false);
+      } else {
+        throw std::runtime_error("Unknown primitive "s + primitive);
+      }
     } else {
-      throw std::runtime_error("Unknown primitive "s + primitive);
+      llvm_fn = selected->declaration(*this);
     }
-  } else {
-    llvm_fn = selected->declaration(*this);
-  }
 
-  return m_builder->CreateCall(llvm_fn, llvm_args);
+    return m_builder->CreateCall(llvm_fn, llvm_args);
+  }();
+
+  return {ret_val, &ret_type};
 }
 
 auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
