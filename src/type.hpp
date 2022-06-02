@@ -19,12 +19,13 @@ class Type {
 
 public:
   Type(const Type&) noexcept = delete;
-  Type(Type&&) noexcept = default;
+  Type(Type&&) noexcept = delete;
   auto operator=(const Type&) noexcept -> Type& = delete;
   auto operator=(Type&&) noexcept -> Type& = delete;
   virtual ~Type() = default;
   [[nodiscard]] auto kind() const -> Kind { return m_kind; };
   [[nodiscard]] auto known_qual(ast::QualType::Qualifier qual) -> Type&;
+  [[nodiscard]] auto compatibility(const Type& other) const -> int;
 
   using enum Kind;
 

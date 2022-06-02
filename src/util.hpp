@@ -5,6 +5,7 @@
 #ifndef YUME_CPP_UTIL_HPP
 #define YUME_CPP_UTIL_HPP
 
+#include <cstddef>
 #include <iostream>
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/raw_ostream.h>
@@ -130,6 +131,8 @@ public:
   constexpr explicit dereference_view(const T& base) : m_base(base) {}
 
   constexpr auto begin() -> Iterator { return Iterator{this, std::ranges::begin(m_base)}; }
+
+  constexpr auto size() -> size_t { return std::ranges::size(m_base); }
 
   constexpr auto end() -> Iterator { return Iterator{this, std::ranges::end(m_base)}; }
 };

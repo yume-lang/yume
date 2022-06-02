@@ -294,18 +294,18 @@ auto binary_sign_aware(auto& base, auto&& s_fn, auto&& u_fn, const auto& args, a
 }
 
 auto Compiler::expression(const ast::CallExpr& expr) -> Val {
-  auto overloads = vector<Fn*>();
+  auto fns_by_name = vector<Fn*>();
+  auto overloads = vector<std::pair<int, Fn*>>();
   auto name = expr.name();
+
   for (auto& fn : m_fns) {
     if (fn.m_ast_decl.name() == name) {
-      overloads.push_back(&fn);
+      fns_by_name.push_back(&fn);
     }
   }
-  if (overloads.empty()) {
+  if (fns_by_name.empty()) {
     throw std::logic_error("No matching overload for "s + name);
   }
-  auto* selected = overloads.front(); // TODO
-  llvm::Function* llvm_fn = nullptr;
 
   vector<Val> args{};
   vector<llvm::Value*> llvm_args{};
@@ -314,6 +314,27 @@ auto Compiler::expression(const ast::CallExpr& expr) -> Val {
     args.push_back(arg);
     llvm_args.push_back(arg.llvm());
   }
+
+  for (auto* fn : fns_by_name) {
+    int compat = 0;
+    const auto& fn_ast = fn->m_ast_decl;
+    auto fn_arg_size = fn_ast.args().size();
+    if (args.size() == fn_arg_size || (expr.args().size() >= fn_arg_size && fn_ast.varargs())) {
+      int i = 0;
+      for (const auto& arg : args) {
+        auto i_compat = arg.m_type->compatibility(convert_type(fn_ast.args().begin()[i].type()));
+        if (i_compat == 0) {
+          break;
+        }
+        compat += i_compat;
+        i++;
+      }
+      overloads.emplace_back(compat, fn);
+    }
+  }
+
+  auto* selected = std::ranges::max_element(overloads)->second;
+  llvm::Function* llvm_fn = nullptr;
 
   if (selected->m_ast_decl.primitive()) {
     auto primitive = get<string>(selected->m_ast_decl.body());
