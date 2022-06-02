@@ -2,7 +2,7 @@
 
 An experiment in programming language design. Not meant to be used seriously!
 
-Check out the `examples/` directory to see what the language looks like. ~~All examples *should* compile!~~ (Currently undergoing refactoring)
+Check out the `example/` directory to see what the language looks like. ~~All examples *should* compile!~~ (Currently undergoing refactoring)
 
 ## Usage
 
@@ -12,10 +12,9 @@ Only tested with libllvm 13 and Clang 13.
 ```sh
 mkdir build
 cd build
-cmake ..
-make
+cmake .. && make
 # Then try an example!
-./yumec ../examples/collatz.ym
+./yumec ../example/collatz.ym
 ```
 
 Yume compiles to LLVM statically. The compiler outputs an unlinked binary as `output.o`, which must be linked, for example with `clang -static output.o`, then run `a.out`. This will change in the future
