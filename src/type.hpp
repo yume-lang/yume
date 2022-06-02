@@ -15,18 +15,21 @@ class QualType;
 
 class Type {
   std::map<ast::QualType::Qualifier, unique_ptr<Type>> m_known_qual{};
+  const Kind m_kind;
 
 public:
-  Type(Type&) noexcept = delete;
+  Type(const Type&) noexcept = delete;
   Type(Type&&) noexcept = default;
-  auto operator=(Type&) noexcept -> Type& = delete;
-  auto operator=(Type&&) noexcept -> Type& = default;
+  auto operator=(const Type&) noexcept -> Type& = delete;
+  auto operator=(Type&&) noexcept -> Type& = delete;
   virtual ~Type() = default;
-  [[nodiscard]] virtual auto kind() const -> Kind = 0;
+  [[nodiscard]] auto kind() const -> Kind { return m_kind; };
   [[nodiscard]] auto known_qual(ast::QualType::Qualifier qual) -> Type&;
 
+  using enum Kind;
+
 protected:
-  constexpr Type() = default;
+  Type(Kind kind) : m_kind(kind) {}
 };
 
 class IntegerType : public Type {
@@ -34,8 +37,7 @@ class IntegerType : public Type {
   bool m_signed;
 
 public:
-  inline IntegerType(int size, bool signed_) : m_size(size), m_signed(signed_) {}
-  [[nodiscard]] inline auto kind() const -> Kind override { return Kind::Integer; }
+  inline IntegerType(int size, bool signed_) : Type(Integer), m_size(size), m_signed(signed_) {}
   [[nodiscard]] inline auto size() const -> int { return m_size; }
   [[nodiscard]] inline auto is_signed() const -> bool { return m_signed; }
 };
@@ -46,15 +48,14 @@ private:
   ast::QualType::Qualifier m_qualifier;
 
 public:
-  inline QualType(const Type& base, ast::QualType::Qualifier qualifier) : m_base(base), m_qualifier(qualifier) {}
-  [[nodiscard]] inline auto kind() const -> Kind override { return Kind::Qual; }
+  inline QualType(const Type& base, ast::QualType::Qualifier qualifier) : Type(Qual), m_base(base), m_qualifier(qualifier) {}
   [[nodiscard]] inline auto base() const -> const Type& { return m_base; }
   [[nodiscard]] inline auto qualifier() const -> ast::QualType::Qualifier { return m_qualifier; }
 };
 
 class UnknownType : public Type {
 public:
-  [[nodiscard]] inline auto kind() const -> Kind override { return Kind::Unknown; }
+  inline UnknownType() : Type(Unknown) {}
 };
 } // namespace yume::ty
 
