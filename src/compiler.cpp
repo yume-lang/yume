@@ -4,8 +4,10 @@
 
 #include "compiler.hpp"
 #include "ast.hpp"
+#include <climits>
 #include <sstream>
 #include <stdexcept>
+#include <utility>
 
 namespace yume {
 Compiler::Compiler(std::vector<SourceFile> source_files) : m_sources(std::move(source_files)) {
@@ -264,7 +266,7 @@ auto Compiler::expression(const ast::StringExpr& expr) -> Val {
   auto* stringType = llvm::ArrayType::get(m_builder->getInt8Ty(), chars.size());
   auto* init = llvm::ConstantArray::get(stringType, chars);
   auto* global = new llvm::GlobalVariable(*m_module, stringType, true, GlobalVariable::PrivateLinkage, init, ".str");
-  return ConstantExpr::getBitCast(global, m_builder->getInt8PtrTy(0));
+  return {ConstantExpr::getBitCast(global, m_builder->getInt8PtrTy(0)), &known_type("U8").known_ptr()};
 }
 
 auto Compiler::expression(const ast::VarExpr& expr) -> Val {

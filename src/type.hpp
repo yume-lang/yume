@@ -26,6 +26,9 @@ public:
   [[nodiscard]] auto kind() const -> Kind { return m_kind; };
   [[nodiscard]] auto known_qual(ast::QualType::Qualifier qual) -> Type&;
   [[nodiscard]] auto compatibility(const Type& other) const -> int;
+  [[nodiscard]] inline auto known_ptr() -> Type& {
+    return known_qual(ast::QualType::Qualifier::Ptr);
+  }
 
   using enum Kind;
 
