@@ -10,6 +10,18 @@
 #include <utility>
 
 namespace yume {
+
+TypeHolder::TypeHolder() {
+  int j = 0;
+  for (auto i : {8, 16, 32, 64}) {
+    auto i_signed = std::make_unique<ty::IntegerType>(i, true);
+    auto i_unsigned = std::make_unique<ty::IntegerType>(i, false);
+    int_types.at(j++) = {i_signed.get(), i_unsigned.get()};
+    known.insert({"I"s + std::to_string(i), move(i_signed)});
+    known.insert({"U"s + std::to_string(i), move(i_unsigned)});
+  }
+}
+
 Compiler::Compiler(std::vector<SourceFile> source_files) : m_sources(std::move(source_files)) {
   m_context = std::make_unique<LLVMContext>();
   m_module = std::make_unique<Module>("yume", *m_context);
@@ -36,11 +48,6 @@ Compiler::Compiler(std::vector<SourceFile> source_files) : m_sources(std::move(s
   m_module->setDataLayout(m_targetMachine->createDataLayout());
   m_module->setTargetTriple(targetTriple);
 
-  for (auto i : {8, 16, 32, 64}) {
-    m_known_types.insert({"I"s + std::to_string(i), std::make_unique<ty::IntegerType>(i, true)});
-    m_known_types.insert({"U"s + std::to_string(i), std::make_unique<ty::IntegerType>(i, false)});
-  }
-
   for (const auto& source : m_sources) {
     for (const auto& i : source.m_program->body()) {
       if (i.kind() == ast::FnDeclKind) {
@@ -61,13 +68,11 @@ Compiler::Compiler(std::vector<SourceFile> source_files) : m_sources(std::move(s
 }
 
 auto Compiler::convert_type(const ast::Type& ast_type) -> ty::Type& {
-  static unique_ptr<ty::Type> unknown_type = std::make_unique<ty::UnknownType>();
-
   if (ast_type.kind() == ast::SimpleTypeKind) {
     const auto& simple_type = dynamic_cast<const ast::SimpleType&>(ast_type);
     auto name = simple_type.name();
-    auto val = m_known_types.find(name);
-    if (val != m_known_types.end()) {
+    auto val = m_types.known.find(name);
+    if (val != m_types.known.end()) {
       return *val->second;
     }
   } else {
@@ -76,7 +81,7 @@ auto Compiler::convert_type(const ast::Type& ast_type) -> ty::Type& {
     return convert_type(qual_type.base()).known_qual(qualifier);
   }
 
-  return *unknown_type;
+  return m_types.unknown;
 }
 
 auto Compiler::llvm_type(const ty::Type& type) -> llvm::Type* {
@@ -245,13 +250,13 @@ void Compiler::body_statement(const ast::Stmt& stat) {
 auto Compiler::expression(const ast::NumberExpr& expr) -> Val {
   auto val = expr.val();
   if (val > std::numeric_limits<int32_t>::max()) {
-    return {m_builder->getInt64(val), &known_type("I64")};
+    return {m_builder->getInt64(val), m_types.int64().signed_ty};
   }
-  return {m_builder->getInt32(val), &known_type("I32")};
+  return {m_builder->getInt32(val), m_types.int32().signed_ty};
 }
 
 auto Compiler::expression(const ast::CharExpr& expr) -> Val {
-  return {m_builder->getInt8(expr.val()), &known_type("U8")};
+  return {m_builder->getInt8(expr.val()), m_types.int8().unsigned_ty};
 }
 
 auto Compiler::expression(const ast::StringExpr& expr) -> Val {
@@ -266,7 +271,7 @@ auto Compiler::expression(const ast::StringExpr& expr) -> Val {
   auto* stringType = llvm::ArrayType::get(m_builder->getInt8Ty(), chars.size());
   auto* init = llvm::ConstantArray::get(stringType, chars);
   auto* global = new llvm::GlobalVariable(*m_module, stringType, true, GlobalVariable::PrivateLinkage, init, ".str");
-  return {ConstantExpr::getBitCast(global, m_builder->getInt8PtrTy(0)), &known_type("U8").known_ptr()};
+  return {ConstantExpr::getBitCast(global, m_builder->getInt8PtrTy(0)), &m_types.int8().unsigned_ty->known_ptr()};
 }
 
 auto Compiler::expression(const ast::VarExpr& expr) -> Val {

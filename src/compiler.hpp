@@ -85,9 +85,27 @@ struct SourceFile {
   }
 };
 
+struct TypeHolder {
+  struct IntTypePair {
+    ty::IntegerType* signed_ty;
+    ty::IntegerType* unsigned_ty;
+  };
+
+  std::array<IntTypePair, 4> int_types{};
+  ty::UnknownType unknown{};
+  std::map<string, unique_ptr<ty::Type>> known{};
+
+  TypeHolder();
+
+  inline constexpr auto int8() -> IntTypePair { return int_types[0]; }
+  inline constexpr auto int16() -> IntTypePair { return int_types[1]; }
+  inline constexpr auto int32() -> IntTypePair { return int_types[2]; }
+  inline constexpr auto int64() -> IntTypePair { return int_types[3]; }
+};
+
 class Compiler {
   std::vector<SourceFile> m_sources;
-  std::map<string, unique_ptr<ty::Type>> m_known_types{};
+  TypeHolder m_types;
   vector<Fn> m_fns{};
   std::queue<Fn*> m_decl_queue{};
 
@@ -135,7 +153,7 @@ protected:
   auto expression(const ast::CallExpr&) -> Val;
   auto expression(const ast::AssignExpr&) -> Val;
 
-  inline auto known_type(const string& str) -> ty::Type& { return *m_known_types.at(str); }
+  inline auto known_type(const string& str) -> ty::Type& { return *m_types.known.at(str); }
 };
 } // namespace yume
 
