@@ -320,10 +320,14 @@ auto Compiler::expression(const ast::CallExpr& expr) -> Val {
     const auto& fn_ast = fn->m_ast_decl;
     auto fn_arg_size = fn_ast.args().size();
     if (args.size() == fn_arg_size || (expr.args().size() >= fn_arg_size && fn_ast.varargs())) {
-      int i = 0;
+      unsigned i = 0;
       for (const auto& arg : args) {
+        if (i >= fn_arg_size) {
+          break;
+        }
         auto i_compat = arg.m_type->compatibility(convert_type(fn_ast.args().begin()[i].type()));
         if (i_compat == 0) {
+          compat = INT_MIN;
           break;
         }
         compat += i_compat;
