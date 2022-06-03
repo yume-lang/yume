@@ -8,18 +8,22 @@ on:
 
 env:
   BUILD_TYPE: Release
-  CC: clang-13
-  CXX: clang++-13
 
 jobs:
   build:
+    strategy:
+      matrix:
+        clang-version: [13, 14]
     runs-on: ubuntu-22.04
+    env:
+      CC: clang-${{ matrix.clang-version }}
+      CXX: clang++-${{ matrix.clang-version }}
 
     steps:
     - uses: actions/checkout@v3
 
-    - name: Install LLVM
-      run: sudo update-alternatives --install /usr/bin/llvm-config llvm-config /usr/bin/llvm-config-13 200
+    - name: Configure LLVM
+      run: sudo update-alternatives --install /usr/bin/llvm-config llvm-config /usr/bin/llvm-config-${{ matrix.clang-version }} 200
 
     - name: Smoke
       run: ${{env.CXX}} --version
@@ -33,4 +37,4 @@ jobs:
 #     - name: Test
 #       working-directory: ${{github.workspace}}/build
 #       run: ctest -C ${{env.BUILD_TYPE}}
-      
+
