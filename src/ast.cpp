@@ -79,6 +79,13 @@ auto operators() {
   return OPERATORS;
 }
 
+auto unary_operators() {
+  const static vector<Atom> UNARY_OPERATORS = {
+      SYM_MINUS, SYM_PLUS, SYM_BANG,
+  };
+  return UNARY_OPERATORS;
+}
+
 auto at(const source_location location = source_location::current()) -> string {
   return string(location.file_name()) + ":" + std::to_string(location.line()) + ":" +
          std::to_string(location.column()) + " in " + location.function_name();
@@ -496,7 +503,15 @@ static auto parse_receiver(TokenIterator& tokens) -> unique_ptr<Expr> {
 }
 
 static auto parse_unary(TokenIterator& tokens) -> unique_ptr<Expr> {
-  // TODO
+  auto entry = tokens.begin();
+  for (const auto& un_op : unary_operators()) {
+    if (try_consume(tokens, Symbol, un_op)) {
+      auto value = parse_receiver(tokens);
+      auto args = vector<unique_ptr<Expr>>{};
+      args.push_back(move(value));
+      return std::make_unique<CallExpr>(span{entry, tokens.begin()}, un_op, args);
+    }
+  }
   return parse_receiver(tokens);
 }
 
