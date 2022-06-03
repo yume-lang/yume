@@ -49,7 +49,7 @@ struct Val {
   llvm::Value* m_llvm_val{};
   ty::Type* m_type{};
 
-  inline Val(llvm::Value* llvm_val) : m_llvm_val(llvm_val) {} // NOLINT(google-explicit-constructor)
+  explicit inline Val(llvm::Value* llvm_val) : m_llvm_val(llvm_val) {}
   inline Val(llvm::Value* llvm_val, ty::Type* type) : m_llvm_val(llvm_val), m_type(type) {}
   Val(const Val&) noexcept = default;
   Val(Val&&) noexcept = default;
@@ -152,6 +152,7 @@ protected:
   auto expression(const ast::VarExpr&) -> Val;
   auto expression(const ast::CallExpr&) -> Val;
   auto expression(const ast::AssignExpr&) -> Val;
+  auto expression(const ast::CtorExpr&) -> Val;
 
   inline auto known_type(const string& str) -> ty::Type& { return *m_types.known.at(str); }
 };

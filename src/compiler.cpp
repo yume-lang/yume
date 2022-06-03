@@ -396,6 +396,12 @@ auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
   throw std::runtime_error("Can't assign to target "s + ast::kind_name(expr.kind()));
 }
 
+auto Compiler::expression(const ast::CtorExpr& expr) -> Val {
+  auto& type = known_type(expr.name());
+
+  return {llvm::UndefValue::get(llvm_type(type)), &type}; // TODO
+}
+
 auto Compiler::body_expression(const ast::Expr& expr) -> Val {
   auto kind = expr.kind();
   switch (kind) {
@@ -405,6 +411,7 @@ auto Compiler::body_expression(const ast::Expr& expr) -> Val {
   case ast::CallKind: return expression(dynamic_cast<const ast::CallExpr&>(expr));
   case ast::VarKind: return expression(dynamic_cast<const ast::VarExpr&>(expr));
   case ast::AssignKind: return expression(dynamic_cast<const ast::AssignExpr&>(expr));
+  case ast::CtorKind: return expression(dynamic_cast<const ast::CtorExpr&>(expr));
   default: throw std::logic_error("Unimplemented body expression "s + kind_name(kind));
   }
 }

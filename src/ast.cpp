@@ -190,6 +190,8 @@ auto consume_word(TokenIterator& tokens, const source_location location = source
   return *next(tokens, location).m_payload;
 }
 
+auto is_uword(const string& word) -> bool { return isupper(word.front()) != 0; }
+
 static auto parse_stmt(TokenIterator& tokens) -> unique_ptr<Stmt>;
 static auto parse_expr(TokenIterator& tokens) -> unique_ptr<Expr>;
 static auto parse_type_name(TokenIterator& tokens) -> unique_ptr<TypeName>;
@@ -245,7 +247,7 @@ static auto parse_struct_decl(TokenIterator& tokens) -> unique_ptr<StructDecl> {
 
   consume(tokens, Word, KWD_STRUCT);
   const string name = consume_word(tokens);
-  if (isupper(name.front()) == 0) {
+  if (!(is_uword(name))) {
     throw std::runtime_error("Expected capitalized name for struct decl");
   }
   auto type_args = vector<string>{};
@@ -460,12 +462,16 @@ static auto parse_primary(TokenIterator& tokens) -> unique_ptr<Expr> {
     if (try_consume(tokens, Symbol, SYM_LPAREN)) {
       auto call_args = vector<unique_ptr<Expr>>{};
       consume_with_separators_until(tokens, Symbol, SYM_RPAREN, [&] { call_args.push_back(parse_expr(tokens)); });
+      if (is_uword(name)) {
+        return std::make_unique<CtorExpr>(span{entry, tokens.begin()}, name, call_args);
+      }
       return std::make_unique<CallExpr>(span{entry, tokens.begin()}, name, call_args);
     }
-    return std::make_unique<VarExpr>(span{entry, 1}, name);
+    if (!is_uword(name)) {
+      return std::make_unique<VarExpr>(span{entry, 1}, name);
+    }
   }
-  tokens++;
-  return nullptr;
+  throw std::runtime_error("Couldn't make an expression from here");
 }
 
 static auto parse_receiver(TokenIterator& tokens, unique_ptr<Expr> receiver, auto receiver_entry) -> unique_ptr<Expr> {
@@ -568,7 +574,7 @@ static auto parse_stmt(TokenIterator& tokens) -> unique_ptr<Stmt> {
 static auto parse_type(TokenIterator& tokens) -> unique_ptr<Type> {
   auto entry = tokens.begin();
   const string name = consume_word(tokens);
-  if (isupper(name.front()) == 0) {
+  if (!(is_uword(name))) {
     throw std::runtime_error("Expected capitalized payload for simple type");
   }
 
@@ -593,7 +599,7 @@ static auto try_parse_type(TokenIterator& tokens) -> optional<unique_ptr<Type>> 
     return {};
   }
   const string name = consume_word(tokens);
-  if (isupper(name.front()) == 0) {
+  if (!is_uword(name)) {
     return {};
   }
 
@@ -650,6 +656,7 @@ void TypeName::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_typ
 void Compound::visit(Visitor& visitor) const { visitor.visit(m_body); }
 void VarExpr::visit(Visitor& visitor) const { visitor.visit(m_name); }
 void CallExpr::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_args); }
+void CtorExpr::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_args); }
 void AssignExpr::visit(Visitor& visitor) const { visitor.visit(m_target).visit(m_value); }
 void FieldAccessExpr::visit(Visitor& visitor) const { visitor.visit(m_base).visit(m_field); }
 void Program::visit(Visitor& visitor) const { visitor.visit(m_body); }

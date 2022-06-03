@@ -31,6 +31,7 @@ enum struct Kind {
   IfKind,
   IfClauseKind,
   CallKind,
+  CtorKind,
   VarKind,
   ReturnKind,
   AssignKind,
@@ -56,6 +57,7 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case IfKind: return "if statement";
   case IfClauseKind: return "if clause";
   case CallKind: return "call";
+  case CtorKind: return "constructor";
   case VarKind: return "var";
   case ReturnKind: return "return statement";
   case AssignKind: return "assign";
@@ -268,6 +270,20 @@ class CallExpr : public Expr {
 public:
   inline CallExpr(span<Token> tok, string name, vector<unique_ptr<Expr>>& args)
       : Expr(CallKind, tok), m_name{move(name)}, m_args{move(args)} {}
+  void visit(Visitor& visitor) const override;
+  [[nodiscard]] inline auto describe() const -> string override { return m_name; }
+
+  [[nodiscard]] constexpr auto inline name() const -> string { return m_name; }
+  [[nodiscard]] constexpr auto inline args() const { return dereference_view(m_args); }
+};
+
+class CtorExpr : public Expr {
+  string m_name;
+  vector<unique_ptr<Expr>> m_args;
+
+public:
+  inline CtorExpr(span<Token> tok, string name, vector<unique_ptr<Expr>>& args)
+      : Expr(CtorKind, tok), m_name{move(name)}, m_args{move(args)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] inline auto describe() const -> string override { return m_name; }
 
