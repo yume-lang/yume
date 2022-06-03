@@ -45,6 +45,7 @@ static const Atom KWD_LET = "let"_a;
 static const Atom KWD_PTR = "ptr"_a;
 static const Atom KWD_ELSE = "else"_a;
 static const Atom KWD_WHILE = "while"_a;
+static const Atom KWD_STRUCT = "struct"_a;
 static const Atom KWD_RETURN = "return"_a;
 static const Atom KWD_VARARGS = "__varargs__"_a;
 static const Atom KWD_PRIMITIVE = "__primitive__"_a;
@@ -230,6 +231,39 @@ static auto parse_fn_name(TokenIterator& tokens) -> string {
   }
 
   return name;
+}
+
+static auto parse_struct_decl(TokenIterator& tokens) -> unique_ptr<StructDecl> {
+  auto entry = tokens.begin();
+
+  consume(tokens, Word, KWD_STRUCT);
+  const string name = consume_word(tokens);
+  if (isupper(name.front()) == 0) {
+    throw std::runtime_error("Expected capitalized name for struct decl");
+  }
+  auto type_args = vector<string>{};
+  if (try_consume(tokens, Symbol, SYM_LT)) {
+    consume_with_separators_until(tokens, Symbol, SYM_GT, [&] { type_args.push_back(consume_word(tokens)); });
+  }
+
+  consume(tokens, Symbol, SYM_LPAREN);
+  auto fields = vector<TypeName>{};
+  consume_with_separators_until(tokens, Symbol, SYM_RPAREN,
+                                [&] { fields.push_back(std::move(*parse_type_name(tokens))); });
+
+  auto body = vector<unique_ptr<Stmt>>{};
+  auto body_begin = entry;
+
+  require_separator(tokens);
+
+  body_begin = tokens.begin();
+  while (!try_consume(tokens, Word, KWD_END)) {
+    body.push_back(parse_stmt(tokens));
+    ignore_separator(tokens);
+  }
+
+  return std::make_unique<StructDecl>(span{entry, tokens.begin()}, name, fields, type_args,
+                                      Compound(span{body_begin, tokens.begin()}, body));
 }
 
 static auto parse_fn_decl(TokenIterator& tokens) -> unique_ptr<FnDecl> {
@@ -498,6 +532,8 @@ static auto parse_stmt(TokenIterator& tokens) -> unique_ptr<Stmt> {
 
   if (tokens->is_keyword(KWD_DEF)) {
     stat = parse_fn_decl(tokens);
+  } else if (tokens->is_keyword(KWD_STRUCT)) {
+    stat = parse_struct_decl(tokens);
   } else if (tokens->is_keyword(KWD_LET)) {
     stat = parse_var_decl(tokens);
   } else if (tokens->is_keyword(KWD_WHILE)) {
@@ -589,6 +625,9 @@ void FnDecl::visit(Visitor& visitor) const {
   if (m_varargs) {
     visitor.visit("varargs");
   }
+}
+void StructDecl::visit(Visitor& visitor) const {
+  visitor.visit(m_name).visit(m_fields, "field").visit(m_type_args, "type arg").visit(m_body);
 }
 void SimpleType::visit(Visitor& visitor) const { visitor.visit(m_name); }
 void QualType::visit(Visitor& visitor) const { visitor.visit(m_base, describe().c_str()); }

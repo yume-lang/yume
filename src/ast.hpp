@@ -21,6 +21,7 @@ enum struct Kind {
   CharKind,
   FnDeclKind,
   VarDeclKind,
+  StructDeclKind,
   ProgramKind,
   SimpleTypeKind,
   QualTypeKind,
@@ -45,6 +46,7 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case CharKind: return "char";
   case FnDeclKind: return "fn decl";
   case VarDeclKind: return "var decl";
+  case StructDeclKind: return "struct decl";
   case ProgramKind: return "program";
   case SimpleTypeKind: return "simple type";
   case QualTypeKind: return "qual type";
@@ -104,7 +106,7 @@ protected:
 
 public:
   AST(const AST&) = delete;
-  AST(AST&&) = delete;
+  AST(AST&&) = default;
   auto operator=(const AST&) -> AST& = delete;
   auto operator=(AST&&) -> AST& = delete;
   virtual ~AST() = default;
@@ -333,6 +335,24 @@ public:
   [[nodiscard]] constexpr auto inline body() const -> const auto& { return m_body; }
   [[nodiscard]] constexpr auto inline varargs() const -> bool { return m_varargs; }
   [[nodiscard]] constexpr auto inline primitive() const -> bool { return holds_alternative<string>(m_body); }
+};
+
+class StructDecl : public Stmt {
+  string m_name;
+  vector<TypeName> m_fields;
+  vector<string> m_type_args;
+  Compound m_body;
+
+public:
+  inline StructDecl(span<Token> tok, string name, vector<TypeName>& fields, vector<string>& type_args, Compound body)
+      : Stmt(StructDeclKind, tok), m_name{move(name)}, m_fields{move(fields)}, m_type_args{move(type_args)},
+        m_body(std::move(body)) {}
+  void visit(Visitor& visitor) const override;
+  [[nodiscard]] inline auto describe() const -> string override { return m_name; }
+
+  [[nodiscard]] constexpr auto inline name() const -> string { return m_name; }
+  [[nodiscard]] constexpr auto inline fields() const -> const auto& { return m_fields; }
+  [[nodiscard]] constexpr auto inline body() const -> const auto& { return m_body; }
 };
 
 class VarDecl : public Stmt {
