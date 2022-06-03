@@ -346,7 +346,10 @@ auto Compiler::expression(const ast::CallExpr& expr) -> Val {
 
   auto* selected = std::ranges::max_element(overloads)->second;
   llvm::Function* llvm_fn = nullptr;
-  auto& ret_type = convert_type(*selected->m_ast_decl.ret());
+  ty::Type* ret_type = &m_types.unknown;
+  if (selected->m_ast_decl.ret().has_value()) {
+    ret_type = &convert_type(*selected->m_ast_decl.ret());
+  }
 
   auto* ret_val = [&]() -> llvm::Value* {
     if (selected->m_ast_decl.primitive()) {
@@ -379,7 +382,7 @@ auto Compiler::expression(const ast::CallExpr& expr) -> Val {
     return m_builder->CreateCall(llvm_fn, llvm_args);
   }();
 
-  return {ret_val, &ret_type};
+  return {ret_val, ret_type};
 }
 
 auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
