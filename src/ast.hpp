@@ -144,7 +144,7 @@ public:
   void visit(Visitor& visitor) const override;
   [[nodiscard]] inline auto describe() const -> string override { return m_name; }
 
-  [[nodiscard]] constexpr auto inline name() const -> string { return m_name; }
+  [[nodiscard]] auto inline name() const -> string { return m_name; }
 };
 
 class QualType : public Type {
@@ -182,7 +182,7 @@ public:
   [[nodiscard]] inline auto describe() const -> string override { return m_name; }
 
   [[nodiscard]] auto inline type() const -> const auto& { return *m_type; }
-  [[nodiscard]] constexpr auto inline name() const -> string { return m_name; }
+  [[nodiscard]] auto inline name() const -> string { return m_name; }
 
   template <size_t I> [[maybe_unused]] auto get() & -> auto& {
     if constexpr (I == 0) {
@@ -249,7 +249,7 @@ public:
   void visit(Visitor& visitor) const override;
   [[nodiscard]] inline auto describe() const -> string override { return m_val; }
 
-  [[nodiscard]] constexpr auto inline val() const -> string { return m_val; }
+  [[nodiscard]] auto inline val() const -> string { return m_val; }
 };
 
 class VarExpr : public Expr {
@@ -260,7 +260,7 @@ public:
   void visit(Visitor& visitor) const override;
   [[nodiscard]] inline auto describe() const -> string override { return m_name; }
 
-  [[nodiscard]] constexpr auto inline name() const -> string { return m_name; }
+  [[nodiscard]] auto inline name() const -> string { return m_name; }
 };
 
 class CallExpr : public Expr {
@@ -273,7 +273,7 @@ public:
   void visit(Visitor& visitor) const override;
   [[nodiscard]] inline auto describe() const -> string override { return m_name; }
 
-  [[nodiscard]] constexpr auto inline name() const -> string { return m_name; }
+  [[nodiscard]] auto inline name() const -> string { return m_name; }
   [[nodiscard]] constexpr auto inline args() const { return dereference_view(m_args); }
 };
 
@@ -287,7 +287,7 @@ public:
   void visit(Visitor& visitor) const override;
   [[nodiscard]] inline auto describe() const -> string override { return m_name; }
 
-  [[nodiscard]] constexpr auto inline name() const -> string { return m_name; }
+  [[nodiscard]] auto inline name() const -> string { return m_name; }
   [[nodiscard]] constexpr auto inline args() const { return dereference_view(m_args); }
 };
 
@@ -345,7 +345,7 @@ public:
   void visit(Visitor& visitor) const override;
   [[nodiscard]] inline auto describe() const -> string override { return m_name; }
 
-  [[nodiscard]] constexpr auto inline name() const -> string { return m_name; }
+  [[nodiscard]] auto inline name() const -> string { return m_name; }
   [[nodiscard]] constexpr auto inline args() const { return dereference_view(m_args); }
   [[nodiscard]] constexpr auto inline ret() const { return try_dereference(m_ret); }
   [[nodiscard]] constexpr auto inline body() const -> const auto& { return m_body; }
@@ -366,7 +366,7 @@ public:
   void visit(Visitor& visitor) const override;
   [[nodiscard]] inline auto describe() const -> string override { return m_name; }
 
-  [[nodiscard]] constexpr auto inline name() const -> string { return m_name; }
+  [[nodiscard]] auto inline name() const -> string { return m_name; }
   [[nodiscard]] constexpr auto inline fields() const -> const auto& { return m_fields; }
   [[nodiscard]] constexpr auto inline body() const -> const auto& { return m_body; }
 };
@@ -382,7 +382,7 @@ public:
   void visit(Visitor& visitor) const override;
   [[nodiscard]] inline auto describe() const -> string override { return m_name; }
 
-  [[nodiscard]] constexpr auto inline name() const -> string { return m_name; }
+  [[nodiscard]] auto inline name() const -> string { return m_name; }
   [[nodiscard]] constexpr auto inline type() const { return try_dereference(m_type); }
   [[nodiscard]] auto inline init() const -> const auto& { return *m_init; }
 };
