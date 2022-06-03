@@ -7,10 +7,14 @@
 
 #include "ast.hpp"
 #include "util.hpp"
+#include <llvm/IR/DerivedTypes.h>
 #include <map>
 
+namespace yume {
+class Compiler;
+}
 namespace yume::ty {
-enum struct Kind { Integer, Qual, Unknown };
+enum struct Kind { Integer, Qual, Struct, Unknown };
 class QualType;
 
 class Type {
@@ -55,6 +59,21 @@ public:
   inline QualType(const Type& base, ast::QualType::Qualifier qualifier) : Type(Qual), m_base(base), m_qualifier(qualifier) {}
   [[nodiscard]] inline auto base() const -> const Type& { return m_base; }
   [[nodiscard]] inline auto qualifier() const -> ast::QualType::Qualifier { return m_qualifier; }
+};
+
+class StructType : public Type {
+  string m_name;
+  vector<const ast::TypeName*> m_fields;
+  mutable llvm::StructType* m_memo{};
+  inline void memo(llvm::StructType* memo) const { m_memo = memo; }
+
+  friend Compiler;
+
+public:
+  inline StructType(string name, vector<const ast::TypeName*> fields) : Type(Struct), m_name(move(name)), m_fields(move(fields)) {}
+  [[nodiscard]] inline auto name() const -> const auto& { return m_name; }
+  [[nodiscard]] inline auto fields() const { return dereference_view(m_fields); }
+  [[nodiscard]] inline auto memo() const -> auto* { return m_memo; }
 };
 
 class UnknownType : public Type {

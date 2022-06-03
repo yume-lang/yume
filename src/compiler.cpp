@@ -4,7 +4,11 @@
 
 #include "compiler.hpp"
 #include "ast.hpp"
+#include "type.hpp"
+#include <bits/ranges_algo.h>
 #include <climits>
+#include <llvm/IR/Constants.h>
+#include <llvm/IR/DerivedTypes.h>
 #include <sstream>
 #include <stdexcept>
 #include <utility>
@@ -56,6 +60,15 @@ Compiler::Compiler(std::vector<SourceFile> source_files) : m_sources(std::move(s
         if (fn_decl.name() == "main") {
           fn.m_llvm_fn = declare(fn, false);
         }
+      } else if (i.kind() == ast::StructDeclKind) {
+        const auto& struct_decl = dynamic_cast<const ast::StructDecl&>(i);
+        auto fields = vector<const ast::TypeName*>();
+        fields.reserve(struct_decl.fields().size());
+        for (const auto& f : struct_decl.fields()) {
+          fields.push_back(&f);
+        };
+        auto struct_ty = std::make_unique<ty::StructType>(struct_decl.name(), fields);
+        m_types.known.insert({struct_decl.name(), move(struct_ty)});
       }
     }
   }
@@ -95,13 +108,27 @@ auto Compiler::llvm_type(const ty::Type& type) -> llvm::Type* {
     switch (qualifier) {
     case ast::QualType::Qualifier::Ptr: return llvm::PointerType::getUnqual(llvm_type(qual_type.base()));
     case ast::QualType::Qualifier::Slice: {
-      auto args = vector<Type*>{};
+      auto args = vector<llvm::Type*>{};
       args.push_back(llvm::PointerType::getUnqual(llvm_type(qual_type.base())));
       args.push_back(llvm::Type::getInt64PtrTy(*m_context));
       return llvm::StructType::get(*m_context, args);
     }
     default: return llvm_type(qual_type.base());
     }
+  }
+  if (type.kind() == ty::Kind::Struct) {
+    const auto& struct_type = dynamic_cast<const ty::StructType&>(type);
+    auto* memo = struct_type.memo();
+    if (memo == nullptr) {
+      auto fields = vector<llvm::Type*>{};
+      for (const auto& i : struct_type.fields()) {
+        fields.push_back(llvm_type(convert_type(i.type())));
+      }
+      memo = llvm::StructType::create(*m_context, fields, "_"s + struct_type.name());
+      struct_type.memo(memo);
+    }
+
+    return memo;
   }
 
   return Type::getVoidTy(*m_context);
