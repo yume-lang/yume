@@ -16,7 +16,7 @@ endif()
 
 add_definitions("-DYUME_LIB_DIR=\"${CMAKE_SOURCE_DIR}/lib/\"")
 
-find_package(LLVM REQUIRED CONFIG)
+find_package(LLVM ${YUME_FORCE_LLVM_VERSION} REQUIRED CONFIG)
 
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
