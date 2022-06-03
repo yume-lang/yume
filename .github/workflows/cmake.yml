@@ -24,12 +24,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Configure LLVM
-      run: sudo update-alternatives --install /usr/bin/llvm-config llvm-config /usr/bin/llvm-config-${{ matrix.llvm }} 200
-
-    - name: Smoke
-      run: ${{env.CXX}} --version
-
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DYUME_FORCE_LLVM_VERSION=${{ matrix.llvm }}
 

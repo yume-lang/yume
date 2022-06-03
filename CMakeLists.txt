@@ -22,12 +22,17 @@ message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 
 include_directories(${LLVM_INCLUDE_DIRS})
+link_directories(${LLVM_LIBRARY_DIRS})
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
 add_definitions(${LLVM_DEFINITIONS_LIST})
 
+message(STATUS "Using LLVM include: ${LLVM_INCLUDE_DIRS}")
+message(STATUS "Using LLVM library: ${LLVM_LIBRARY_DIRS}")
+message(STATUS "Using LLVM tool dir: ${LLVM_TOOLS_BINARY_DIR}")
+
 add_executable(yumec src/main.cpp src/compiler.hpp src/util.hpp src/compiler.cpp src/token.cpp src/token.hpp src/ast.cpp src/ast.hpp src/visitor.hpp src/visitor.cpp src/type.cpp src/type.hpp src/errors.hpp)
 
-execute_process(COMMAND llvm-config --libs all
+execute_process(COMMAND ${LLVM_TOOLS_BINARY_DIR}/llvm-config --libs all
         OUTPUT_VARIABLE LLVM_LIBS OUTPUT_STRIP_TRAILING_WHITESPACE)
 message(STATUS "LLVM libs: ${LLVM_LIBS}")
 
