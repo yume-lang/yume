@@ -274,7 +274,14 @@ void Compiler::body_statement(const ast::Stmt& stat) {
   }
 }
 
+static void not_mut(const string& message, bool mut) {
+  if (mut) {
+    throw std::runtime_error(message + " cannot be mutable!");
+  }
+}
+
 auto Compiler::expression(const ast::NumberExpr& expr, bool mut) -> Val {
+  not_mut("number constant", mut);
   auto val = expr.val();
   if (val > std::numeric_limits<int32_t>::max()) {
     return {m_builder->getInt64(val), m_types.int64().signed_ty};
@@ -283,10 +290,12 @@ auto Compiler::expression(const ast::NumberExpr& expr, bool mut) -> Val {
 }
 
 auto Compiler::expression(const ast::CharExpr& expr, bool mut) -> Val {
+  not_mut("character constant", mut);
   return {m_builder->getInt8(expr.val()), m_types.int8().unsigned_ty};
 }
 
 auto Compiler::expression(const ast::StringExpr& expr, bool mut) -> Val {
+  not_mut("string constant", mut);
   auto val = expr.val();
 
   std::vector<llvm::Constant*> chars(val.length());
@@ -328,6 +337,8 @@ auto binary_sign_aware(auto& base, auto&& s_fn, auto&& u_fn, const auto& args, a
 }
 
 auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Val {
+  // TODO: calls can only return by value right now, but later this needs a condition
+  not_mut("call returning by value", mut);
   auto fns_by_name = vector<Fn*>();
   auto overloads = vector<std::pair<int, Fn*>>();
   auto name = expr.name();
@@ -415,14 +426,14 @@ auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Val {
 auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> Val {
   if (expr.target().kind() == ast::VarKind) {
     const auto& target_var = dynamic_cast<const ast::VarExpr&>(expr.target());
-    auto expr_val = body_expression(expr.value());
+    auto expr_val = body_expression(expr.value(), mut);
     auto target_val = m_scope.at(target_var.name());
     m_builder->CreateStore(expr_val, target_val);
     return expr_val;
   }
   if (expr.target().kind() == ast::FieldAccessKind) {
     const auto& field_access = dynamic_cast<const ast::FieldAccessExpr&>(expr.target());
-    auto expr_val = body_expression(expr.value());
+    auto expr_val = body_expression(expr.value(), mut);
     auto target = body_expression(field_access.base(), true);
     if (target.type()->kind() != ty::Kind::Struct) {
       throw std::runtime_error("Can't access field of expression with non-struct type");
@@ -436,13 +447,15 @@ auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> Val {
       }
       i++;
     }
-    m_builder->CreateStore(expr_val, m_builder->CreateStructGEP(llvm_type(struct_type), target, i, "s.sf."s + target_name));
+    m_builder->CreateStore(expr_val,
+                           m_builder->CreateStructGEP(llvm_type(struct_type), target, i, "s.sf."s + target_name));
     return expr_val;
   }
   throw std::runtime_error("Can't assign to target "s + ast::kind_name(expr.target().kind()));
 }
 
 auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Val {
+  not_mut("constructor", mut);
   auto& type = known_type(expr.name());
 
   if (type.kind() == ty::Kind::Struct) {
@@ -483,6 +496,8 @@ auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Val {
 }
 
 auto Compiler::expression(const ast::FieldAccessExpr& expr, bool mut) -> Val {
+  // TODO: struct can only contain things by value, later this needs a condition
+  not_mut("immutable field", mut);
   auto base = body_expression(expr.base());
   auto& type = *base.type();
 
