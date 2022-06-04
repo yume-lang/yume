@@ -44,6 +44,7 @@ static const Atom KWD_END = "end"_a;
 static const Atom KWD_LET = "let"_a;
 static const Atom KWD_PTR = "ptr"_a;
 static const Atom KWD_ELSE = "else"_a;
+static const Atom KWD_SELF = "self"_a;
 static const Atom KWD_WHILE = "while"_a;
 static const Atom KWD_STRUCT = "struct"_a;
 static const Atom KWD_RETURN = "return"_a;
@@ -463,7 +464,7 @@ static auto parse_primary(TokenIterator& tokens) -> unique_ptr<Expr> {
     if (try_consume(tokens, Symbol, SYM_LPAREN)) {
       auto call_args = vector<unique_ptr<Expr>>{};
       consume_with_separators_until(tokens, Symbol, SYM_RPAREN, [&] { call_args.push_back(parse_expr(tokens)); });
-      if (is_uword(name)) {
+      if (make_atom(name) == KWD_SELF || is_uword(name)) {
         return std::make_unique<CtorExpr>(span{entry, tokens.begin()}, name, call_args);
       }
       return std::make_unique<CallExpr>(span{entry, tokens.begin()}, name, call_args);
@@ -582,15 +583,22 @@ static auto parse_stmt(TokenIterator& tokens) -> unique_ptr<Stmt> {
 
 static auto parse_type(TokenIterator& tokens) -> unique_ptr<Type> {
   auto entry = tokens.begin();
-  const string name = consume_word(tokens);
-  if (!(is_uword(name))) {
-    throw std::runtime_error("Expected capitalized payload for simple type");
-  }
+  auto base = [&]() -> unique_ptr<Type> {
+    if (try_consume(tokens, Word, KWD_SELF)) {
+      return std::make_unique<SelfType>(span{entry, tokens.begin()});
+    }
+    const string name = consume_word(tokens);
+    if (!(is_uword(name))) {
+      throw std::runtime_error("Expected capitalized payload for simple type");
+    }
 
-  unique_ptr<Type> base = std::make_unique<SimpleType>(span{entry, tokens.begin()}, name);
+    return std::make_unique<SimpleType>(span{entry, tokens.begin()}, name);
+  }();
   while (true) {
     if (try_consume(tokens, Word, KWD_PTR)) {
       base = std::make_unique<QualType>(span{entry, tokens.begin()}, move(base), QualType::Qualifier::Ptr);
+    } else if (try_consume(tokens, Word, KWD_MUT)) {
+      base = std::make_unique<QualType>(span{entry, tokens.begin()}, move(base), QualType::Qualifier::Mut);
     } else if (try_consume(tokens, Symbol, SYM_LBRACKET)) {
       consume(tokens, Symbol, SYM_RBRACKET);
       base = std::make_unique<QualType>(span{entry, tokens.begin()}, move(base), QualType::Qualifier::Slice);
@@ -607,12 +615,19 @@ static auto try_parse_type(TokenIterator& tokens) -> optional<unique_ptr<Type>> 
   if (tokens->m_type != Word || !tokens->m_payload.has_value()) {
     return {};
   }
+
   const string name = consume_word(tokens);
-  if (!is_uword(name)) {
+  if (make_atom(name) != KWD_SELF && !is_uword(name)) {
     return {};
   }
+  auto base = [&]() -> unique_ptr<Type> {
+    if (make_atom(name) == KWD_SELF) {
+      return std::make_unique<SelfType>(span{entry, tokens.begin()});
+    }
 
-  unique_ptr<Type> base = std::make_unique<SimpleType>(span{entry, tokens.begin()}, name);
+    return std::make_unique<SimpleType>(span{entry, tokens.begin()}, name);
+  }();
+
   while (true) {
     if (try_consume(tokens, Word, KWD_PTR)) {
       base = std::make_unique<QualType>(span{entry, tokens.begin()}, move(base), QualType::Qualifier::Ptr);
@@ -630,6 +645,10 @@ static auto try_parse_type(TokenIterator& tokens) -> optional<unique_ptr<Type>> 
 
 static auto parse_type_name(TokenIterator& tokens) -> unique_ptr<TypeName> {
   auto entry = tokens.begin();
+  if (try_peek(tokens, 0, Word, KWD_SELF)) {
+    unique_ptr<Type> type = parse_type(tokens);
+    return std::make_unique<TypeName>(span{entry, tokens.begin()}, type, "self");
+  }
   const string name = consume_word(tokens);
   unique_ptr<Type> type = parse_type(tokens);
   return std::make_unique<TypeName>(span{entry, tokens.begin()}, type, name);

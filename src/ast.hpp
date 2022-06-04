@@ -25,6 +25,7 @@ enum struct Kind {
   ProgramKind,
   SimpleTypeKind,
   QualTypeKind,
+  SelfTypeKind,
   TypeNameKind,
   CompoundKind,
   WhileKind,
@@ -51,6 +52,7 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case ProgramKind: return "program";
   case SimpleTypeKind: return "simple type";
   case QualTypeKind: return "qual type";
+  case SelfTypeKind: return "self type";
   case TypeNameKind: return "type name";
   case CompoundKind: return "compound";
   case WhileKind: return "while statement";
@@ -169,6 +171,13 @@ public:
 
   [[nodiscard]] constexpr auto inline qualifier() const -> Qualifier { return m_qualifier; }
   [[nodiscard]] auto inline base() const -> const auto& { return *m_base; }
+};
+
+class SelfType : public Type {
+public:
+  explicit inline SelfType(span<Token> tok) : Type(SelfTypeKind, tok) {}
+  inline void visit([[maybe_unused]] Visitor& visitor) const override {}
+  [[nodiscard]] inline auto describe() const -> string override { return "self"; }
 };
 
 class TypeName : public AST {

@@ -52,12 +52,12 @@ public:
 
 class QualType : public Type {
 private:
-  const Type& m_base;
+  Type& m_base;
   ast::QualType::Qualifier m_qualifier;
 
 public:
-  inline QualType(const Type& base, ast::QualType::Qualifier qualifier) : Type(Qual), m_base(base), m_qualifier(qualifier) {}
-  [[nodiscard]] inline auto base() const -> const Type& { return m_base; }
+  inline QualType(Type& base, ast::QualType::Qualifier qualifier) : Type(Qual), m_base(base), m_qualifier(qualifier) {}
+  [[nodiscard]] inline auto base() const -> Type& { return m_base; }
   [[nodiscard]] inline auto qualifier() const -> ast::QualType::Qualifier { return m_qualifier; }
 };
 

@@ -54,22 +54,7 @@ Compiler::Compiler(std::vector<SourceFile> source_files) : m_sources(std::move(s
 
   for (const auto& source : m_sources) {
     for (const auto& i : source.m_program->body()) {
-      if (i.kind() == ast::FnDeclKind) {
-        const auto& fn_decl = dynamic_cast<const ast::FnDecl&>(i);
-        auto& fn = m_fns.emplace_back(fn_decl);
-        if (fn_decl.name() == "main") {
-          fn.m_llvm_fn = declare(fn, false);
-        }
-      } else if (i.kind() == ast::StructDeclKind) {
-        const auto& struct_decl = dynamic_cast<const ast::StructDecl&>(i);
-        auto fields = vector<const ast::TypeName*>();
-        fields.reserve(struct_decl.fields().size());
-        for (const auto& f : struct_decl.fields()) {
-          fields.push_back(&f);
-        };
-        auto struct_ty = std::make_unique<ty::StructType>(struct_decl.name(), fields);
-        m_types.known.insert({struct_decl.name(), move(struct_ty)});
-      }
+      decl_statement(i);
     }
   }
 
@@ -80,7 +65,30 @@ Compiler::Compiler(std::vector<SourceFile> source_files) : m_sources(std::move(s
   }
 }
 
-auto Compiler::convert_type(const ast::Type& ast_type) -> ty::Type& {
+void Compiler::decl_statement(const ast::Stmt& stmt, ty::Type* parent) {
+  if (stmt.kind() == ast::FnDeclKind) {
+    const auto& fn_decl = dynamic_cast<const ast::FnDecl&>(stmt);
+    auto& fn = m_fns.emplace_back(Fn{fn_decl, parent});
+    if (fn_decl.name() == "main") {
+      fn.m_llvm_fn = declare(fn, false);
+    }
+  } else if (stmt.kind() == ast::StructDeclKind) {
+    const auto& struct_decl = dynamic_cast<const ast::StructDecl&>(stmt);
+    auto fields = vector<const ast::TypeName*>();
+    fields.reserve(struct_decl.fields().size());
+    for (const auto& f : struct_decl.fields()) {
+      fields.push_back(&f);
+    };
+    auto i_ty =
+        m_types.known.insert({struct_decl.name(), std::make_unique<ty::StructType>(struct_decl.name(), fields)});
+
+    for (const auto& f : struct_decl.body().body()) {
+      decl_statement(f, i_ty.first->second.get());
+    }
+  }
+}
+
+auto Compiler::convert_type(const ast::Type& ast_type, ty::Type* parent) -> ty::Type& {
   if (ast_type.kind() == ast::SimpleTypeKind) {
     const auto& simple_type = dynamic_cast<const ast::SimpleType&>(ast_type);
     auto name = simple_type.name();
@@ -88,10 +96,14 @@ auto Compiler::convert_type(const ast::Type& ast_type) -> ty::Type& {
     if (val != m_types.known.end()) {
       return *val->second;
     }
-  } else {
+  } else if (ast_type.kind() == ast::QualTypeKind) {
     const auto& qual_type = dynamic_cast<const ast::QualType&>(ast_type);
     auto qualifier = qual_type.qualifier();
-    return convert_type(qual_type.base()).known_qual(qualifier);
+    return convert_type(qual_type.base(), parent).known_qual(qualifier);
+  } else if (ast_type.kind() == ast::SelfTypeKind) {
+    if (parent != nullptr) {
+      return *parent;
+    }
   }
 
   return m_types.unknown;
@@ -139,19 +151,31 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
     return fn.m_llvm_fn;
   }
   const auto& fn_decl = fn.m_ast_decl;
-  auto* ret_type = llvm::Type::getVoidTy(*m_context);
-  auto args = vector<llvm::Type*>{};
+  auto* llvm_ret_type = llvm::Type::getVoidTy(*m_context);
+  auto llvm_args = vector<llvm::Type*>{};
   if (fn_decl.ret()) {
-    ret_type = llvm_type(convert_type(fn_decl.ret().value()));
+    auto& ret_type = convert_type(fn_decl.ret().value(), fn.parent());
+    fn.m_ret_type = &ret_type;
+    llvm_ret_type = llvm_type(ret_type);
+  } else {
+    fn.m_ret_type = &m_types.unknown;
   }
   for (const auto& i : fn_decl.args()) {
-    args.push_back(llvm_type(convert_type(i.type())));
+    auto& arg_type = convert_type(i.type(), fn.parent());
+    fn.m_arg_types.push_back(&arg_type);
+    llvm_args.push_back(llvm_type(arg_type));
   }
-  llvm::FunctionType* fn_t = llvm::FunctionType::get(ret_type, args, fn_decl.varargs());
+  llvm::FunctionType* fn_t = llvm::FunctionType::get(llvm_ret_type, llvm_args, fn_decl.varargs());
 
   string name = fn_decl.name();
   if (mangle) {
-    name = mangle_name(fn_decl);
+    const string* parent = nullptr;
+    if (fn.parent() != nullptr) {
+      if (auto* parent_struct = dynamic_cast<ty::StructType*>(fn.parent()); parent_struct != nullptr) {
+        parent = &parent_struct->name();
+      }
+    }
+    name = mangle_name(fn_decl, parent);
   }
 
   auto linkage = mangle ? Function::InternalLinkage : Function::ExternalLinkage;
@@ -159,7 +183,7 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
 
   int arg_i = 0;
   for (auto& arg : llvm_fn->args()) {
-    arg.setName("arg."s + fn_decl.args().begin()[arg_i].name());
+    arg.setName("arg."s + fn_decl.args()[arg_i].name());
     arg_i++;
   }
 
@@ -344,7 +368,7 @@ auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Val {
   auto name = expr.name();
 
   for (auto& fn : m_fns) {
-    if (fn.m_ast_decl.name() == name) {
+    if (fn.name() == name) {
       fns_by_name.push_back(&fn);
     }
   }
@@ -352,25 +376,23 @@ auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Val {
     throw std::logic_error("No matching overload for "s + name);
   }
 
-  vector<Val> args{};
-  vector<llvm::Value*> llvm_args{};
+  vector<ty::Type*> arg_types{};
   for (const auto& i : expr.args()) {
     auto arg = body_expression(i);
-    args.push_back(arg);
-    llvm_args.push_back(arg.llvm());
+    arg_types.push_back(arg.type());
   }
 
   for (auto* fn : fns_by_name) {
     int compat = 0;
     const auto& fn_ast = fn->m_ast_decl;
     auto fn_arg_size = fn_ast.args().size();
-    if (args.size() == fn_arg_size || (expr.args().size() >= fn_arg_size && fn_ast.varargs())) {
+    if (arg_types.size() == fn_arg_size || (expr.args().size() >= fn_arg_size && fn_ast.varargs())) {
       unsigned i = 0;
-      for (const auto& arg : args) {
+      for (const auto& arg_type : arg_types) {
         if (i >= fn_arg_size) {
           break;
         }
-        auto i_compat = arg.m_type->compatibility(convert_type(fn_ast.args().begin()[i].type()));
+        auto i_compat = arg_type->compatibility(convert_type(fn_ast.args()[i].type(), fn->parent()));
         if (i_compat == 0) {
           compat = INT_MIN;
           break;
@@ -455,7 +477,7 @@ auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> Val {
 }
 
 auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Val {
-  auto& type = known_type(expr.name());
+  auto& type = expr.name() == "self" ? *m_current_fn->parent() : known_type(expr.name());
 
   if (type.kind() == ty::Kind::Struct) {
     auto& struct_type = dynamic_cast<ty::StructType&>(type);
@@ -558,7 +580,7 @@ void Compiler::write_object(const char* filename, bool binary) {
   dest->flush();
 }
 
-auto Compiler::mangle_name(const ast::FnDecl& fn_decl) -> string {
+auto Compiler::mangle_name(const ast::FnDecl& fn_decl, const string* parent) -> string {
   std::stringstream ss{};
   ss << "_Ym.";
   ss << fn_decl.name();
@@ -568,25 +590,28 @@ auto Compiler::mangle_name(const ast::FnDecl& fn_decl) -> string {
     if (idx++ > 0) {
       ss << ",";
     }
-    ss << mangle_name(i.type());
+    ss << mangle_name(i.type(), parent);
   }
   ss << ")";
   // TODO: should mangled names even contain the return type...?
   if (fn_decl.ret().has_value()) {
-    ss << mangle_name(fn_decl.ret().value());
+    ss << mangle_name(fn_decl.ret().value(), parent);
   }
   return ss.str();
 }
 
-auto Compiler::mangle_name(const ast::Type& ast_type) -> string {
-  if (ast_type.kind() == ast::Kind::SimpleTypeKind) {
+auto Compiler::mangle_name(const ast::Type& ast_type, const string* parent) -> string {
+  if (ast_type.kind() == ast::SimpleTypeKind) {
     const auto& simple_type = dynamic_cast<const ast::SimpleType&>(ast_type);
     return simple_type.name();
+  }
+  if (ast_type.kind() == ast::SelfTypeKind) {
+    return *parent;
   }
   std::stringstream ss{};
   const auto& qual_type = dynamic_cast<const ast::QualType&>(ast_type);
   auto qualifier = qual_type.qualifier();
-  ss << mangle_name(qual_type.base());
+  ss << mangle_name(qual_type.base(), parent);
   switch (qualifier) {
   case ast::QualType::Qualifier::Ptr: ss << "*"; break;
   case ast::QualType::Qualifier::Slice: ss << "["; break;

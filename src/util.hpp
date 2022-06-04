@@ -41,6 +41,8 @@ private:
   const T& m_base;
 
   struct Iterator {
+    friend dereference_view;
+
   private:
     using Parent = dereference_view;
     using Base = dereference_view::Base;
@@ -133,6 +135,11 @@ public:
   constexpr auto begin() -> Iterator { return Iterator{this, std::ranges::begin(m_base)}; }
 
   constexpr auto size() -> size_t { return std::ranges::size(m_base); }
+
+  constexpr auto operator[](typename Iterator::difference_type n)
+      -> decltype(auto) requires std::ranges::random_access_range<typename Iterator::Base> {
+    return begin()[n];
+  }
 
   constexpr auto end() -> Iterator { return Iterator{this, std::ranges::end(m_base)}; }
 };

@@ -33,14 +33,25 @@ class Compiler;
 
 struct Fn {
   const ast::FnDecl& m_ast_decl;
+  ty::Type* m_parent;
   // TODO: multiple instantiations
   llvm::Function* m_llvm_fn{};
-
-  inline explicit Fn(const ast::FnDecl& ast_decl) : m_ast_decl(ast_decl) {}
+  vector<ty::Type*> m_arg_types{};
+  ty::Type* m_ret_type{};
 
   [[nodiscard]] auto inline body() const -> const auto& { return m_ast_decl.body(); }
 
+  [[nodiscard]] auto inline name() const { return m_ast_decl.name(); }
+
+  [[nodiscard]] auto inline ast() const -> const auto& { return m_ast_decl; }
+
   [[nodiscard]] auto inline llvm() const -> llvm::Function* { return m_llvm_fn; }
+
+  [[nodiscard]] auto inline parent() const -> ty::Type* { return m_parent; }
+
+  [[nodiscard]] auto inline arg_types() const { return dereference_view(m_arg_types); }
+
+  [[nodiscard]] auto inline ret_type() const { return m_ret_type; }
 
   [[nodiscard]] auto declaration(Compiler& compiler, bool mangle = true) -> llvm::Function*;
 
@@ -131,17 +142,18 @@ public:
   void define(Fn&);
 
   void body_statement(const ast::Stmt&);
+  void decl_statement(const ast::Stmt&, ty::Type* parent = nullptr);
   auto body_expression(const ast::Expr&, bool mut = false) -> Val;
 
   void write_object(const char* filename, bool binary);
 
-  auto convert_type(const ast::Type& ast_type) -> ty::Type&;
+  auto convert_type(const ast::Type& ast_type, ty::Type* parent = nullptr) -> ty::Type&;
 
   auto llvm_type(const ty::Type& type) -> llvm::Type*;
 
-  auto mangle_name(const ast::FnDecl& fn_decl) -> string;
+  auto mangle_name(const ast::FnDecl& fn_decl, const string* parent = nullptr) -> string;
 
-  auto mangle_name(const ast::Type& ast_type) -> string;
+  auto mangle_name(const ast::Type& ast_type, const string* parent = nullptr) -> string;
 
 protected:
   void statement(const ast::Compound&);
