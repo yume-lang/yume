@@ -413,14 +413,33 @@ auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Val {
 }
 
 auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> Val {
-  if (expr.target().kind() == ast::Kind::VarKind) {
+  if (expr.target().kind() == ast::VarKind) {
     const auto& target_var = dynamic_cast<const ast::VarExpr&>(expr.target());
     auto expr_val = body_expression(expr.value());
     auto target_val = m_scope.at(target_var.name());
     m_builder->CreateStore(expr_val, target_val);
     return expr_val;
   }
-  throw std::runtime_error("Can't assign to target "s + ast::kind_name(expr.kind()));
+  if (expr.target().kind() == ast::FieldAccessKind) {
+    const auto& field_access = dynamic_cast<const ast::FieldAccessExpr&>(expr.target());
+    auto expr_val = body_expression(expr.value());
+    auto target = body_expression(field_access.base(), true);
+    if (target.type()->kind() != ty::Kind::Struct) {
+      throw std::runtime_error("Can't access field of expression with non-struct type");
+    }
+    auto& struct_type = dynamic_cast<ty::StructType&>(*target.type());
+    auto target_name = field_access.field();
+    unsigned int i = 0;
+    for (const auto& field : struct_type.fields()) {
+      if (field.name() == target_name) {
+        break;
+      }
+      i++;
+    }
+    m_builder->CreateStore(expr_val, m_builder->CreateStructGEP(llvm_type(struct_type), target, i, "s.sf."s + target_name));
+    return expr_val;
+  }
+  throw std::runtime_error("Can't assign to target "s + ast::kind_name(expr.target().kind()));
 }
 
 auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Val {
