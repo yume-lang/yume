@@ -426,6 +426,40 @@ auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> Val {
 auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Val {
   auto& type = known_type(expr.name());
 
+  if (type.kind() == ty::Kind::Struct) {
+    auto& struct_type = dynamic_cast<ty::StructType&>(type);
+    auto* llvm_struct_type = llvm_type(struct_type);
+
+    //// Heap allocation
+    // auto* alloc_size = ConstantExpr::getSizeOf(llvm_struct_type);
+    // alloc_size = ConstantExpr::getTruncOrBitCast(alloc_size, m_builder->getInt32Ty());
+    // auto* alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), m_builder->getInt32Ty(),
+    // llvm_struct_type,
+    //                                            alloc_size, nullptr, nullptr, "s.ctor.malloc");
+    // alloc = m_builder->Insert(alloc);
+
+    //// Stack allocation
+    // auto* alloc = m_builder->CreateAlloca(llvm_struct_type, 0, nullptr, "s.ctor.alloca");
+
+    // TODO: determine which one must be done. It'll probably require a complicated semantic step to determine object
+    // lifetime, which would probably be evaluated before compilation of these expressions.
+
+    // Currently not even doing any allocation...
+
+    auto i = 0;
+    llvm::Value* base_value = UndefValue::get(llvm_struct_type);
+    for (const auto& arg : expr.args()) {
+      const auto& [target_type, target_name] = struct_type.fields().begin()[i];
+      auto field_value = body_expression(arg);
+      base_value = m_builder->CreateInsertValue(base_value, field_value, i, "s.ctor.wf." + target_name);
+      i++;
+    }
+
+    // m_builder->CreateStore(base_value, alloc);
+
+    return {base_value, &type};
+  }
+
   return {llvm::UndefValue::get(llvm_type(type)), &type}; // TODO
 }
 
