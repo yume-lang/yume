@@ -190,7 +190,7 @@ void Compiler::define(Fn& fn) {
   if (m_builder->GetInsertBlock()->getTerminator() == nullptr) {
     m_builder->CreateRetVoid();
   }
-  // verifyFunction(*fn, &llvm::errs());
+  verifyFunction(*fn, &llvm::errs());
 }
 
 void Compiler::statement(const ast::Compound& stat) {
@@ -429,7 +429,33 @@ auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Val {
   return {llvm::UndefValue::get(llvm_type(type)), &type}; // TODO
 }
 
-auto Compiler::body_expression(const ast::Expr& expr) -> Val {
+auto Compiler::expression(const ast::FieldAccessExpr& expr, bool mut) -> Val {
+  auto base = body_expression(expr.base());
+  auto& type = *base.type();
+
+  if (type.kind() == ty::Kind::Struct) {
+    auto& struct_type = dynamic_cast<ty::StructType&>(type);
+    // auto* llvm_struct_type = llvm_type(struct_type, true);
+    auto target_name = expr.field();
+    ty::Type* target_type{};
+    unsigned int i = 0;
+    for (const auto& field : struct_type.fields()) {
+      if (field.name() == target_name) {
+        target_type = &convert_type(field.type());
+        break;
+      }
+      i++;
+    }
+
+    // auto* base_struct = m_builder->CreateLoad(llvm_struct_type, base);
+    auto* field = m_builder->CreateExtractValue(base, i, "s.field."s + target_name);
+
+    return {field, target_type};
+  }
+
+  throw std::runtime_error("Can't access field of expression with non-struct type");
+}
+
 auto Compiler::body_expression(const ast::Expr& expr, bool mut) -> Val {
   auto kind = expr.kind();
   switch (kind) {
@@ -440,6 +466,7 @@ auto Compiler::body_expression(const ast::Expr& expr, bool mut) -> Val {
   case ast::VarKind: return expression(dynamic_cast<const ast::VarExpr&>(expr), mut);
   case ast::AssignKind: return expression(dynamic_cast<const ast::AssignExpr&>(expr), mut);
   case ast::CtorKind: return expression(dynamic_cast<const ast::CtorExpr&>(expr), mut);
+  case ast::FieldAccessKind: return expression(dynamic_cast<const ast::FieldAccessExpr&>(expr), mut);
   default: throw std::logic_error("Unimplemented body expression "s + kind_name(kind));
   }
 }

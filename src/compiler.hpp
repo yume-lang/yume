@@ -157,6 +157,7 @@ protected:
   auto expression(const ast::CallExpr&, bool mut = false) -> Val;
   auto expression(const ast::AssignExpr&, bool mut = false) -> Val;
   auto expression(const ast::CtorExpr&, bool mut = false) -> Val;
+  auto expression(const ast::FieldAccessExpr&, bool mut = false) -> Val;
 
   inline auto known_type(const string& str) -> ty::Type& { return *m_types.known.at(str); }
 };
