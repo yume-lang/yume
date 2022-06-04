@@ -202,11 +202,20 @@ void Compiler::define(Fn& fn) {
 
   int i = 0;
   for (auto& arg : fn.llvm()->args()) {
-    const auto& [type, name] = fn.m_ast_decl.args().begin()[i++];
-    auto& yume_type = convert_type(type);
-    auto* alloc = m_builder->CreateAlloca(llvm_type(yume_type), nullptr, name);
+    auto& type = fn.arg_types()[i];
+    auto name = fn.ast().args()[i++].name();
+    llvm::Value* alloc = nullptr;
+    if (type.kind() == ty::Kind::Qual) {
+      auto& qual_type = dynamic_cast<ty::QualType&>(type);
+      if (qual_type.is_mut()) {
+        alloc = &arg;
+        m_scope.insert({name, {&arg, &qual_type.base()}});
+        continue;
+      }
+    }
+    alloc = m_builder->CreateAlloca(llvm_type(type), nullptr, name);
     m_builder->CreateStore(&arg, alloc);
-    m_scope.insert({name, {alloc, &yume_type}});
+    m_scope.insert({name, {alloc, &type}});
   }
 
   if (const auto* body = get_if<unique_ptr<ast::Compound>>(&fn.body()); body != nullptr) {
@@ -409,12 +418,24 @@ auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Val {
   llvm::Function* llvm_fn = nullptr;
   ty::Type* ret_type = &m_types.unknown;
   if (selected->m_ast_decl.ret().has_value()) {
-    ret_type = &convert_type(*selected->m_ast_decl.ret());
+    ret_type = &convert_type(*selected->ast().ret(), selected->parent());
+  }
+
+  vector<Val> args{};
+  vector<llvm::Value*> llvm_args{};
+  unsigned j = 0;
+  auto selected_args = selected->ast().args();
+  // TODO: GET RID OF ALL OF THIS PLEASE
+  for (const auto& i : expr.args()) {
+    auto arg = body_expression(
+        i, j >= selected_args.size() ? false : convert_type(selected_args[j++].type(), selected->parent()).is_mut());
+    args.push_back(arg);
+    llvm_args.push_back(arg.llvm());
   }
 
   auto* ret_val = [&]() -> llvm::Value* {
-    if (selected->m_ast_decl.primitive()) {
-      auto primitive = get<string>(selected->m_ast_decl.body());
+    if (selected->ast().primitive()) {
+      auto primitive = get<string>(selected->body());
       if (primitive == "libc") {
         llvm_fn = selected->declaration(*this, false);
       } else if (primitive == "icmp_gt") {

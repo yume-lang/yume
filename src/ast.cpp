@@ -84,7 +84,9 @@ auto operators() {
 
 auto unary_operators() {
   const static vector<Atom> UNARY_OPERATORS = {
-      SYM_MINUS, SYM_PLUS, SYM_BANG,
+      SYM_MINUS,
+      SYM_PLUS,
+      SYM_BANG,
   };
   return UNARY_OPERATORS;
 }
