@@ -11,14 +11,16 @@ struct Vector(x I32, y I32)
 #  def +(a self, b self) self = self(a::x + b::x, a::y + b::y)
 end
 
+def +(a Vector, b Vector) Vector = Vector(a::x + b::x, a::y + b::y)
+
 def main() I32
-  let a = Vector(2, 3)
-  let b = Vector(5, 1)
-  printf("a %p x: %d, y: %d\n", a, a.x, a.y)
-  printf("b %p x: %d, y: %d\n", b, b.x, b.y)
-  let c = a + b
-  printf("c %p x: %d, y: %d\n", c, c.x, c.y)
-  c.x = 9
-  printf("c %p x: %d, y: %d\n", c, c.x, c.y)
+  let a Vector = Vector(2, 3)
+  let b Vector = Vector(5, 1)
+  printf("a %p x: %d, y: %d\n", a, a::x, a::y)
+  printf("b %p x: %d, y: %d\n", b, b::x, b::y)
+  let c Vector = a + b
+  printf("c %p x: %d, y: %d\n", c, c::x, c::y)
+  c::x = 9
+  printf("c %p x: %d, y: %d\n", c, c::x, c::y)
   return 0
 end

@@ -69,6 +69,7 @@ static const Atom SYM_PERCENT = "%"_a;
 static const Atom SYM_SLASH_SLASH = "//"_a;
 static const Atom SYM_STAR = "*"_a;
 static const Atom SYM_BANG = "!"_a;
+static const Atom SYM_COLON = ":"_a;
 
 auto operators() {
   const static vector<vector<Atom>> OPERATORS = {
@@ -484,8 +485,10 @@ static auto parse_receiver(TokenIterator& tokens, unique_ptr<Expr> receiver, aut
       auto call = std::make_unique<CallExpr>(span{entry + 1, tokens.begin()}, name, call_args);
       return parse_receiver(tokens, move(call), receiver_entry);
     }
-    auto access = std::make_unique<FieldAccessExpr>(span{receiver_entry, tokens.begin()}, receiver, name);
-    return parse_receiver(tokens, move(access), receiver_entry);
+    auto call_args = vector<unique_ptr<Expr>>{};
+    call_args.push_back(move(receiver));
+    auto noarg_call = std::make_unique<CallExpr>(span{receiver_entry, tokens.begin()}, name, call_args);
+    return parse_receiver(tokens, move(noarg_call), receiver_entry);
   }
   if (try_consume(tokens, Symbol, SYM_EQ)) {
     auto value = parse_expr(tokens);
@@ -499,6 +502,12 @@ static auto parse_receiver(TokenIterator& tokens, unique_ptr<Expr> receiver, aut
     consume(tokens, Symbol, SYM_RBRACKET);
     auto call = std::make_unique<CallExpr>(span{entry, tokens.begin()}, "[]", args);
     return parse_receiver(tokens, move(call), receiver_entry);
+  }
+  if (try_consume(tokens, Symbol, SYM_COLON)) {
+    consume(tokens, Symbol, SYM_COLON);
+    auto field = consume_word(tokens);
+    auto access = std::make_unique<FieldAccessExpr>(span{receiver_entry, tokens.begin()}, receiver, field);
+    return parse_receiver(tokens, move(access), receiver_entry);
   }
   return receiver;
 }

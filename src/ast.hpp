@@ -312,6 +312,9 @@ public:
   inline FieldAccessExpr(span<Token> tok, unique_ptr<Expr>& base, string field)
       : Expr(FieldAccessKind, tok), m_base{move(base)}, m_field{move(field)} {}
   void visit(Visitor& visitor) const override;
+
+  [[nodiscard]] auto inline base() const -> const auto& { return *m_base; }
+  [[nodiscard]] auto inline field() const -> string { return m_field; }
 };
 
 class Compound : public Stmt {
