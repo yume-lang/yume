@@ -43,6 +43,7 @@ static const Atom KWD_DEF = "def"_a;
 static const Atom KWD_END = "end"_a;
 static const Atom KWD_LET = "let"_a;
 static const Atom KWD_PTR = "ptr"_a;
+static const Atom KWD_MUT = "mut"_a;
 static const Atom KWD_ELSE = "else"_a;
 static const Atom KWD_SELF = "self"_a;
 static const Atom KWD_WHILE = "while"_a;
@@ -636,6 +637,8 @@ static auto try_parse_type(TokenIterator& tokens) -> optional<unique_ptr<Type>> 
   while (true) {
     if (try_consume(tokens, Word, KWD_PTR)) {
       base = std::make_unique<QualType>(span{entry, tokens.begin()}, move(base), QualType::Qualifier::Ptr);
+    } else if (try_consume(tokens, Word, KWD_MUT)) {
+      base = std::make_unique<QualType>(span{entry, tokens.begin()}, move(base), QualType::Qualifier::Mut);
     } else if (try_peek(tokens, 0, Symbol, SYM_LBRACKET) && try_peek(tokens, 1, Symbol, SYM_RBRACKET)) {
       consume(tokens, Symbol, SYM_LBRACKET);
       consume(tokens, Symbol, SYM_RBRACKET);

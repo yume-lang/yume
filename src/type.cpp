@@ -30,4 +30,8 @@ auto Type::compatibility(const Type& other) const -> int {
   // TODO
   return 0;
 }
+
+auto Type::is_mut() const -> bool {
+  return kind() == ty::Kind::Qual && dynamic_cast<const ty::QualType&>(*this).qualifier() == ast::QualType::Qualifier::Mut;
+}
 } // namespace yume::ty

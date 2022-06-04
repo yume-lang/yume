@@ -125,6 +125,7 @@ auto Compiler::llvm_type(const ty::Type& type) -> llvm::Type* {
       args.push_back(llvm::Type::getInt64PtrTy(*m_context));
       return llvm::StructType::get(*m_context, args);
     }
+    case ast::QualType::Qualifier::Mut: return llvm_type(qual_type.base())->getPointerTo();
     default: return llvm_type(qual_type.base());
     }
   }
@@ -615,6 +616,7 @@ auto Compiler::mangle_name(const ast::Type& ast_type, const string* parent) -> s
   switch (qualifier) {
   case ast::QualType::Qualifier::Ptr: ss << "*"; break;
   case ast::QualType::Qualifier::Slice: ss << "["; break;
+  case ast::QualType::Qualifier::Mut: ss << "&"; break;
   }
   return ss.str();
 }

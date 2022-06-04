@@ -151,7 +151,7 @@ public:
 
 class QualType : public Type {
 public:
-  enum struct Qualifier { Ptr, Slice };
+  enum struct Qualifier { Ptr, Slice, Mut };
 
 private:
   unique_ptr<Type> m_base;
@@ -165,6 +165,7 @@ public:
     switch (m_qualifier) {
     case Qualifier::Ptr: return "ptr";
     case Qualifier::Slice: return "slice";
+    case Qualifier::Mut: return "mut";
     default: return "";
     }
   }

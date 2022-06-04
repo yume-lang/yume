@@ -33,6 +33,7 @@ public:
   [[nodiscard]] inline auto known_ptr() -> Type& {
     return known_qual(ast::QualType::Qualifier::Ptr);
   }
+  [[nodiscard]] auto is_mut() const -> bool;
 
   using enum Kind;
 
