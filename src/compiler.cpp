@@ -274,7 +274,7 @@ void Compiler::body_statement(const ast::Stmt& stat) {
   }
 }
 
-auto Compiler::expression(const ast::NumberExpr& expr) -> Val {
+auto Compiler::expression(const ast::NumberExpr& expr, bool mut) -> Val {
   auto val = expr.val();
   if (val > std::numeric_limits<int32_t>::max()) {
     return {m_builder->getInt64(val), m_types.int64().signed_ty};
@@ -282,11 +282,11 @@ auto Compiler::expression(const ast::NumberExpr& expr) -> Val {
   return {m_builder->getInt32(val), m_types.int32().signed_ty};
 }
 
-auto Compiler::expression(const ast::CharExpr& expr) -> Val {
+auto Compiler::expression(const ast::CharExpr& expr, bool mut) -> Val {
   return {m_builder->getInt8(expr.val()), m_types.int8().unsigned_ty};
 }
 
-auto Compiler::expression(const ast::StringExpr& expr) -> Val {
+auto Compiler::expression(const ast::StringExpr& expr, bool mut) -> Val {
   auto val = expr.val();
 
   std::vector<llvm::Constant*> chars(val.length());
@@ -301,13 +301,13 @@ auto Compiler::expression(const ast::StringExpr& expr) -> Val {
   return {ConstantExpr::getBitCast(global, m_builder->getInt8PtrTy(0)), &m_types.int8().unsigned_ty->known_ptr()};
 }
 
-auto Compiler::expression(const ast::VarExpr& expr) -> Val {
-  auto local = m_scope.find(expr.name());
-  if (local == end(m_scope)) {
-    throw std::runtime_error("No local variable "s + expr.name());
+auto Compiler::expression(const ast::VarExpr& expr, bool mut) -> Val {
+  auto local = m_scope.at(expr.name());
+  auto* val = local.llvm();
+  if (!mut) {
+    val = m_builder->CreateLoad(val->getType()->getPointerElementType(), val);
   }
-  const auto& val = local->second;
-  return {m_builder->CreateLoad(val.llvm()->getType()->getPointerElementType(), val.llvm()), val.type()};
+  return {val, local.type()};
 }
 
 auto is_signed_type(ty::Type* type) -> bool {
@@ -327,7 +327,7 @@ auto binary_sign_aware(auto& base, auto&& s_fn, auto&& u_fn, const auto& args, a
   return (is_signed_type(lhs.type()) ? (base.*s_fn)(lhs, rhs, "", extra...) : (base.*u_fn)(lhs, rhs, "", extra...));
 }
 
-auto Compiler::expression(const ast::CallExpr& expr) -> Val {
+auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Val {
   auto fns_by_name = vector<Fn*>();
   auto overloads = vector<std::pair<int, Fn*>>();
   auto name = expr.name();
@@ -412,7 +412,7 @@ auto Compiler::expression(const ast::CallExpr& expr) -> Val {
   return {ret_val, ret_type};
 }
 
-auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
+auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> Val {
   if (expr.target().kind() == ast::Kind::VarKind) {
     const auto& target_var = dynamic_cast<const ast::VarExpr&>(expr.target());
     auto expr_val = body_expression(expr.value());
@@ -423,22 +423,23 @@ auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
   throw std::runtime_error("Can't assign to target "s + ast::kind_name(expr.kind()));
 }
 
-auto Compiler::expression(const ast::CtorExpr& expr) -> Val {
+auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Val {
   auto& type = known_type(expr.name());
 
   return {llvm::UndefValue::get(llvm_type(type)), &type}; // TODO
 }
 
 auto Compiler::body_expression(const ast::Expr& expr) -> Val {
+auto Compiler::body_expression(const ast::Expr& expr, bool mut) -> Val {
   auto kind = expr.kind();
   switch (kind) {
-  case ast::NumberKind: return expression(dynamic_cast<const ast::NumberExpr&>(expr));
-  case ast::StringKind: return expression(dynamic_cast<const ast::StringExpr&>(expr));
-  case ast::CharKind: return expression(dynamic_cast<const ast::CharExpr&>(expr));
-  case ast::CallKind: return expression(dynamic_cast<const ast::CallExpr&>(expr));
-  case ast::VarKind: return expression(dynamic_cast<const ast::VarExpr&>(expr));
-  case ast::AssignKind: return expression(dynamic_cast<const ast::AssignExpr&>(expr));
-  case ast::CtorKind: return expression(dynamic_cast<const ast::CtorExpr&>(expr));
+  case ast::NumberKind: return expression(dynamic_cast<const ast::NumberExpr&>(expr), mut);
+  case ast::StringKind: return expression(dynamic_cast<const ast::StringExpr&>(expr), mut);
+  case ast::CharKind: return expression(dynamic_cast<const ast::CharExpr&>(expr), mut);
+  case ast::CallKind: return expression(dynamic_cast<const ast::CallExpr&>(expr), mut);
+  case ast::VarKind: return expression(dynamic_cast<const ast::VarExpr&>(expr), mut);
+  case ast::AssignKind: return expression(dynamic_cast<const ast::AssignExpr&>(expr), mut);
+  case ast::CtorKind: return expression(dynamic_cast<const ast::CtorExpr&>(expr), mut);
   default: throw std::logic_error("Unimplemented body expression "s + kind_name(kind));
   }
 }

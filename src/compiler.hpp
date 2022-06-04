@@ -131,7 +131,7 @@ public:
   void define(Fn&);
 
   void body_statement(const ast::Stmt&);
-  auto body_expression(const ast::Expr&) -> Val;
+  auto body_expression(const ast::Expr&, bool mut = false) -> Val;
 
   void write_object(const char* filename, bool binary);
 
@@ -150,13 +150,13 @@ protected:
   void statement(const ast::ReturnStmt&);
   void statement(const ast::VarDecl&);
 
-  auto expression(const ast::NumberExpr&) -> Val;
-  auto expression(const ast::StringExpr&) -> Val;
-  auto expression(const ast::CharExpr&) -> Val;
-  auto expression(const ast::VarExpr&) -> Val;
-  auto expression(const ast::CallExpr&) -> Val;
-  auto expression(const ast::AssignExpr&) -> Val;
-  auto expression(const ast::CtorExpr&) -> Val;
+  auto expression(const ast::NumberExpr&, bool mut = false) -> Val;
+  auto expression(const ast::StringExpr&, bool mut = false) -> Val;
+  auto expression(const ast::CharExpr&, bool mut = false) -> Val;
+  auto expression(const ast::VarExpr&, bool mut = false) -> Val;
+  auto expression(const ast::CallExpr&, bool mut = false) -> Val;
+  auto expression(const ast::AssignExpr&, bool mut = false) -> Val;
+  auto expression(const ast::CtorExpr&, bool mut = false) -> Val;
 
   inline auto known_type(const string& str) -> ty::Type& { return *m_types.known.at(str); }
 };
