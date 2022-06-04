@@ -480,14 +480,19 @@ static auto parse_receiver(TokenIterator& tokens, unique_ptr<Expr> receiver, aut
   auto entry = tokens.begin();
   if (try_consume(tokens, Symbol, SYM_DOT)) {
     auto name = consume_word(tokens);
+    auto call_args = vector<unique_ptr<Expr>>{};
+    call_args.push_back(move(receiver));
     if (try_consume(tokens, Symbol, SYM_LPAREN)) {
-      auto call_args = vector<unique_ptr<Expr>>{};
       consume_with_separators_until(tokens, Symbol, SYM_RPAREN, [&] { call_args.push_back(parse_expr(tokens)); });
       auto call = std::make_unique<CallExpr>(span{entry + 1, tokens.begin()}, name, call_args);
       return parse_receiver(tokens, move(call), receiver_entry);
     }
-    auto call_args = vector<unique_ptr<Expr>>{};
-    call_args.push_back(move(receiver));
+    if (try_consume(tokens, Symbol, SYM_EQ)) {
+      auto value = parse_expr(tokens);
+      call_args.push_back(move(value));
+      auto call = std::make_unique<CallExpr>(span{entry + 1, tokens.begin()}, name + '=', call_args);
+      return parse_receiver(tokens, move(call), receiver_entry);
+    }
     auto noarg_call = std::make_unique<CallExpr>(span{receiver_entry, tokens.begin()}, name, call_args);
     return parse_receiver(tokens, move(noarg_call), receiver_entry);
   }
