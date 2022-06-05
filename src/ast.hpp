@@ -330,8 +330,8 @@ public:
       : Expr(AssignKind, tok), m_target{move(target)}, m_value{move(value)} {}
   void visit(Visitor& visitor) override;
 
-  [[nodiscard]] auto inline target() const -> const auto& { return *m_target; }
-  [[nodiscard]] auto inline value() const -> const auto& { return *m_value; }
+  [[nodiscard]] auto inline target() const -> auto& { return *m_target; }
+  [[nodiscard]] auto inline value() const -> auto& { return *m_value; }
 };
 
 class FieldAccessExpr : public Expr {

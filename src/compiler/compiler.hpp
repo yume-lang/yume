@@ -26,6 +26,7 @@ class Type;
 } // namespace llvm
 
 namespace yume {
+struct TypeWalkVisitor;
 using namespace llvm;
 
 class Compiler {
@@ -41,6 +42,8 @@ class Compiler {
   unique_ptr<IRBuilder<>> m_builder;
   unique_ptr<Module> m_module;
   unique_ptr<TargetMachine> m_targetMachine;
+
+  friend TypeWalkVisitor;
 
 public:
   [[nodiscard]] auto module() const -> const auto& { return m_module; }

@@ -100,6 +100,15 @@ Compiler::Compiler(std::vector<SourceFile> source_files) : m_sources(std::move(s
 void Compiler::walk_types() {
   auto walker = TypeWalkVisitor(*this);
 
+  // First pass: only convert function parameters
+  for (auto& fn : m_fns) {
+    walker.m_current_fn = &fn;
+    walker.visit(fn.ast(), nullptr);
+  }
+
+  walker.m_in_depth = true;
+
+  // Second pass: convert everything else
   for (auto& fn : m_fns) {
     walker.m_current_fn = &fn;
     walker.visit(fn.ast(), nullptr);

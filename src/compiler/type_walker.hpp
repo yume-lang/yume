@@ -1,7 +1,7 @@
 #pragma once
 
-#include <string>
 #include "../visitor.hpp"
+#include <string>
 
 namespace yume {
 class Compiler;
@@ -13,6 +13,9 @@ class AST;
 struct TypeWalkVisitor : public Visitor {
   Compiler& m_compiler;
   Fn* m_current_fn{};
+  // Whether or not to compile the bodies of methods.  Initially, on the parameter types of methods are traversed and
+  // converted, then everything else in a second pass.
+  bool m_in_depth = false;
 
 public:
   explicit TypeWalkVisitor(Compiler& compiler) : m_compiler(compiler) {}
