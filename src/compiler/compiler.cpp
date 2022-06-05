@@ -330,18 +330,6 @@ template <> void Compiler::statement(const ast::VarDecl& stat) {
   m_scope.insert({stat.name(), {alloc, expr_val.type()}});
 }
 
-void Compiler::body_statement(const ast::Stmt& stat) {
-  auto kind = stat.kind();
-  switch (kind) {
-  case ast::CompoundKind: return conv_statement<ast::Compound>(stat);
-  case ast::WhileKind: return conv_statement<ast::WhileStmt>(stat);
-  case ast::IfKind: return conv_statement<ast::IfStmt>(stat);
-  case ast::ReturnKind: return conv_statement<ast::ReturnStmt>(stat);
-  case ast::VarDeclKind: return conv_statement<ast::VarDecl>(stat);
-  default: body_expression(dynamic_cast<const ast::Expr&>(stat));
-  }
-}
-
 static inline void not_mut(const string& message, bool mut) {
   if (mut) {
     throw std::runtime_error(message + " cannot be mutable!");
@@ -607,19 +595,9 @@ template <> auto Compiler::expression(const ast::FieldAccessExpr& expr, bool mut
   throw std::runtime_error("Can't access field of expression with non-struct type");
 }
 
-auto Compiler::body_expression(const ast::Expr& expr, bool mut) -> Val {
-  auto kind = expr.kind();
-  switch (kind) {
-  case ast::NumberKind: return conv_expression<ast::NumberExpr>(expr, mut);
-  case ast::StringKind: return conv_expression<ast::StringExpr>(expr, mut);
-  case ast::CharKind: return conv_expression<ast::CharExpr>(expr, mut);
-  case ast::CallKind: return conv_expression<ast::CallExpr>(expr, mut);
-  case ast::VarKind: return conv_expression<ast::VarExpr>(expr, mut);
-  case ast::AssignKind: return conv_expression<ast::AssignExpr>(expr, mut);
-  case ast::CtorKind: return conv_expression<ast::CtorExpr>(expr, mut);
-  case ast::FieldAccessKind: return conv_expression<ast::FieldAccessExpr>(expr, mut);
-  default: throw std::logic_error("Unimplemented body expression "s + kind_name(kind));
-  }
+// base case
+template <> auto Compiler::expression(const ast::Expr& expr, [[maybe_unused]] bool mut) -> Val {
+  throw std::runtime_error("Unknown expression "s + ast::kind_name(expr.kind()));
 }
 
 void Compiler::write_object(const char* filename, bool binary) {
@@ -678,4 +656,11 @@ auto Compiler::mangle_name(const ast::Type& ast_type, ty::Type* parent) -> strin
 }
 
 auto Compiler::known_type(const string& str) -> ty::Type& { return *m_types.known.at(str); }
+
+void Compiler::body_statement(const ast::Stmt& stat) {
+  return CRTPWalker::body_statement(stat);
+};
+auto Compiler::body_expression(const ast::Expr& expr, bool mut) -> Val {
+  return CRTPWalker::body_expression(expr, mut);
+};
 } // namespace yume

@@ -8,6 +8,7 @@
 #include "../ast.hpp"
 #include "../type.hpp"
 #include "../util.hpp"
+#include "crtp_walker.hpp"
 #include "type_holder.hpp"
 #include "vals.hpp"
 #include <llvm/ADT/iterator_range.h>
@@ -29,7 +30,7 @@ namespace yume {
 struct TypeWalkVisitor;
 using namespace llvm;
 
-class Compiler {
+class Compiler : public CRTPWalker<Compiler> {
   std::vector<SourceFile> m_sources;
   TypeHolder m_types;
   vector<Fn> m_fns{};
@@ -44,6 +45,7 @@ class Compiler {
   unique_ptr<TargetMachine> m_targetMachine;
 
   friend TypeWalkVisitor;
+  friend CRTPWalker;
 
 public:
   [[nodiscard]] auto module() const -> const auto& { return m_module; }
@@ -56,7 +58,7 @@ public:
 
   void body_statement(const ast::Stmt&);
   void decl_statement(ast::Stmt&, ty::Type* parent = nullptr);
-  auto body_expression(const ast::Expr&, bool mut = false) -> Val;
+  auto body_expression(const ast::Expr& expr, bool mut = false) -> Val;
 
   void write_object(const char* filename, bool binary);
 
@@ -71,25 +73,11 @@ public:
   [[nodiscard]] inline auto source_files() -> const auto& { return m_sources; }
 
 private:
-  template <typename T>
-  requires std::conjunction_v<std::is_base_of<ast::Stmt, T>, std::negation<std::is_base_of<ast::Expr, T>>>
-  void conv_statement(const ast::Stmt& stat) {
-    return statement<T>(dynamic_cast<const T&>(stat));
-  }
-
-  template <typename T>
-  requires std::conjunction_v<std::is_base_of<ast::Stmt, T>, std::negation<std::is_base_of<ast::Expr, T>>>
+  template<typename T>
   void statement(const T& stat);
 
-  template <typename T>
-  requires std::is_base_of_v<ast::Expr, T>
-  auto conv_expression(const ast::Expr& expr, bool mut = false) -> Val {
-    return expression<T>(dynamic_cast<const T&>(expr), mut);
-  }
-
-  template <typename T>
-  requires std::is_base_of_v<ast::Expr, T>
-  auto expression(const T&, bool mut = false) -> Val;
+  template<typename T>
+  auto expression(const T& expr, bool mut = false) -> Val;
 
   auto known_type(const string& str) -> ty::Type&;
 
