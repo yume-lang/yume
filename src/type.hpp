@@ -5,20 +5,23 @@
 #ifndef YUME_CPP_TYPE_HPP
 #define YUME_CPP_TYPE_HPP
 
-#include "ast.hpp"
 #include "util.hpp"
 #include <llvm/IR/DerivedTypes.h>
 #include <map>
 
 namespace yume {
 class Compiler;
+namespace ast {
+class TypeName;
 }
+} // namespace yume
 namespace yume::ty {
 enum struct Kind { Integer, Qual, Struct, Unknown };
+enum struct Qualifier { Ptr, Slice, Mut };
 class QualType;
 
 class Type {
-  std::map<ast::QualType::Qualifier, unique_ptr<Type>> m_known_qual{};
+  std::map<Qualifier, unique_ptr<Type>> m_known_qual{};
   const Kind m_kind;
 
 public:
@@ -28,11 +31,9 @@ public:
   auto operator=(Type&&) noexcept -> Type& = delete;
   virtual ~Type() = default;
   [[nodiscard]] auto kind() const -> Kind { return m_kind; };
-  [[nodiscard]] auto known_qual(ast::QualType::Qualifier qual) -> Type&;
+  [[nodiscard]] auto known_qual(Qualifier qual) -> Type&;
   [[nodiscard]] auto compatibility(const Type& other) const -> int;
-  [[nodiscard]] inline auto known_ptr() -> Type& {
-    return known_qual(ast::QualType::Qualifier::Ptr);
-  }
+  [[nodiscard]] inline auto known_ptr() -> Type& { return known_qual(Qualifier::Ptr); }
   [[nodiscard]] auto is_mut() const -> bool;
 
   using enum Kind;
@@ -54,12 +55,12 @@ public:
 class QualType : public Type {
 private:
   Type& m_base;
-  ast::QualType::Qualifier m_qualifier;
+  Qualifier m_qualifier;
 
 public:
-  inline QualType(Type& base, ast::QualType::Qualifier qualifier) : Type(Qual), m_base(base), m_qualifier(qualifier) {}
+  inline QualType(Type& base, Qualifier qualifier) : Type(Qual), m_base(base), m_qualifier(qualifier) {}
   [[nodiscard]] inline auto base() const -> Type& { return m_base; }
-  [[nodiscard]] inline auto qualifier() const -> ast::QualType::Qualifier { return m_qualifier; }
+  [[nodiscard]] inline auto qualifier() const -> Qualifier { return m_qualifier; }
 };
 
 class StructType : public Type {
@@ -71,7 +72,8 @@ class StructType : public Type {
   friend Compiler;
 
 public:
-  inline StructType(string name, vector<const ast::TypeName*> fields) : Type(Struct), m_name(move(name)), m_fields(move(fields)) {}
+  inline StructType(string name, vector<const ast::TypeName*> fields)
+      : Type(Struct), m_name(move(name)), m_fields(move(fields)) {}
   [[nodiscard]] inline auto name() const -> const auto& { return m_name; }
   [[nodiscard]] inline auto fields() const { return dereference_view(m_fields); }
   [[nodiscard]] inline auto memo() const -> auto* { return m_memo; }

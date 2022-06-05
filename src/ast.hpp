@@ -6,6 +6,7 @@
 
 #include "token.hpp"
 #include "visitor.hpp"
+#include "type.hpp"
 #include <cstdint>
 #include <ranges>
 #include <span>
@@ -150,27 +151,24 @@ public:
 };
 
 class QualType : public Type {
-public:
-  enum struct Qualifier { Ptr, Slice, Mut };
-
 private:
   unique_ptr<Type> m_base;
-  Qualifier m_qualifier;
+  ty::Qualifier m_qualifier;
 
 public:
-  explicit inline QualType(span<Token> tok, unique_ptr<Type> base, Qualifier qualifier)
+  explicit inline QualType(span<Token> tok, unique_ptr<Type> base, ty::Qualifier qualifier)
       : Type(QualTypeKind, tok), m_base{move(base)}, m_qualifier{qualifier} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] inline auto describe() const -> string override {
     switch (m_qualifier) {
-    case Qualifier::Ptr: return "ptr";
-    case Qualifier::Slice: return "slice";
-    case Qualifier::Mut: return "mut";
+    case ty::Qualifier::Ptr: return "ptr";
+    case ty::Qualifier::Slice: return "slice";
+    case ty::Qualifier::Mut: return "mut";
     default: return "";
     }
   }
 
-  [[nodiscard]] constexpr auto inline qualifier() const -> Qualifier { return m_qualifier; }
+  [[nodiscard]] constexpr auto inline qualifier() const -> ty::Qualifier { return m_qualifier; }
   [[nodiscard]] auto inline base() const -> const auto& { return *m_base; }
 };
 

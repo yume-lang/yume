@@ -118,14 +118,14 @@ auto Compiler::llvm_type(const ty::Type& type) -> llvm::Type* {
     const auto& qual_type = dynamic_cast<const ty::QualType&>(type);
     auto qualifier = qual_type.qualifier();
     switch (qualifier) {
-    case ast::QualType::Qualifier::Ptr: return llvm::PointerType::getUnqual(llvm_type(qual_type.base()));
-    case ast::QualType::Qualifier::Slice: {
+    case ty::Qualifier::Ptr: return llvm::PointerType::getUnqual(llvm_type(qual_type.base()));
+    case ty::Qualifier::Slice: {
       auto args = vector<llvm::Type*>{};
       args.push_back(llvm::PointerType::getUnqual(llvm_type(qual_type.base())));
       args.push_back(llvm::Type::getInt64PtrTy(*m_context));
       return llvm::StructType::get(*m_context, args);
     }
-    case ast::QualType::Qualifier::Mut: return llvm_type(qual_type.base())->getPointerTo();
+    case ty::Qualifier::Mut: return llvm_type(qual_type.base())->getPointerTo();
     default: return llvm_type(qual_type.base());
     }
   }
@@ -635,9 +635,9 @@ auto Compiler::mangle_name(const ast::Type& ast_type, const string* parent) -> s
   auto qualifier = qual_type.qualifier();
   ss << mangle_name(qual_type.base(), parent);
   switch (qualifier) {
-  case ast::QualType::Qualifier::Ptr: ss << "*"; break;
-  case ast::QualType::Qualifier::Slice: ss << "["; break;
-  case ast::QualType::Qualifier::Mut: ss << "&"; break;
+  case ty::Qualifier::Ptr: ss << "*"; break;
+  case ty::Qualifier::Slice: ss << "["; break;
+  case ty::Qualifier::Mut: ss << "&"; break;
   }
   return ss.str();
 }
