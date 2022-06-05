@@ -5,13 +5,21 @@
 #include "type.hpp"
 
 namespace yume::ty {
-auto Type::known_qual(ast::QualType::Qualifier qual) -> Type& {
+static auto qual_suffix(Qualifier qual) -> string {
+  switch (qual) {
+    case Qualifier::Mut: return " mut";
+    case Qualifier::Ptr: return " ptr";
+    case Qualifier::Slice: return "[]";
+    default: return "";
+  }
+}
+auto Type::known_qual(Qualifier qual) -> Type& {
   auto existing = m_known_qual.find(qual);
   if (existing != m_known_qual.end()) {
     return *existing->second;
   }
 
-  auto new_qual_type = std::make_unique<QualType>(*this, qual);
+  auto new_qual_type = std::make_unique<QualType>(name() + qual_suffix(qual), *this, qual);
   auto r = m_known_qual.insert({qual, move(new_qual_type)});
   return *r.first->second;
 }
@@ -32,6 +40,6 @@ auto Type::compatibility(const Type& other) const -> int {
 }
 
 auto Type::is_mut() const -> bool {
-  return kind() == ty::Kind::Qual && dynamic_cast<const ty::QualType&>(*this).qualifier() == ast::QualType::Qualifier::Mut;
+  return kind() == ty::Kind::Qual && dynamic_cast<const ty::QualType&>(*this).qualifier() == Qualifier::Mut;
 }
 } // namespace yume::ty

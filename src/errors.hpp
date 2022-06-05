@@ -3,6 +3,8 @@
 #include <llvm/Support/Signals.h>
 #include <llvm/Support/raw_ostream.h>
 
+#pragma once
+
 namespace yume {
 inline auto what(const std::exception_ptr& eptr = std::current_exception()) -> std::string_view {
   if (!eptr) {

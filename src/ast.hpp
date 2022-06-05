@@ -5,8 +5,8 @@
 #pragma once
 
 #include "token.hpp"
-#include "visitor.hpp"
 #include "type.hpp"
+#include "visitor.hpp"
 #include <cstdint>
 #include <ranges>
 #include <span>

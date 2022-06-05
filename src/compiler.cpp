@@ -17,12 +17,15 @@ namespace yume {
 
 TypeHolder::TypeHolder() {
   int j = 0;
-  for (auto i : {8, 16, 32, 64}) {
-    auto i_signed = std::make_unique<ty::IntegerType>(i, true);
-    auto i_unsigned = std::make_unique<ty::IntegerType>(i, false);
-    int_types.at(j++) = {i_signed.get(), i_unsigned.get()};
-    known.insert({"I"s + std::to_string(i), move(i_signed)});
-    known.insert({"U"s + std::to_string(i), move(i_unsigned)});
+  for (int i : {8, 16, 32, 64}) {
+    IntTypePair ints{};
+    for (bool is_signed : {true, false}) {
+      string type_name = (is_signed ? "I"s : "U"s) + std::to_string(i);
+      auto i_ty = std::make_unique<ty::IntegerType>(type_name, i, is_signed);
+      (is_signed ? ints.signed_ty : ints.unsigned_ty) = i_ty.get();
+      known.insert({"I"s + std::to_string(i), move(i_ty)});
+    }
+    int_types.at(j++) = ints;
   }
 }
 
@@ -170,13 +173,7 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
 
   string name = fn_decl.name();
   if (mangle) {
-    const string* parent = nullptr;
-    if (fn.parent() != nullptr) {
-      if (auto* parent_struct = dynamic_cast<ty::StructType*>(fn.parent()); parent_struct != nullptr) {
-        parent = &parent_struct->name();
-      }
-    }
-    name = mangle_name(fn_decl, parent);
+    name = mangle_name(fn_decl, fn.parent());
   }
 
   auto linkage = mangle ? Function::InternalLinkage : Function::ExternalLinkage;
@@ -602,7 +599,7 @@ void Compiler::write_object(const char* filename, bool binary) {
   dest->flush();
 }
 
-auto Compiler::mangle_name(const ast::FnDecl& fn_decl, const string* parent) -> string {
+auto Compiler::mangle_name(const ast::FnDecl& fn_decl, ty::Type* parent) -> string {
   std::stringstream ss{};
   ss << "_Ym.";
   ss << fn_decl.name();
@@ -622,13 +619,13 @@ auto Compiler::mangle_name(const ast::FnDecl& fn_decl, const string* parent) -> 
   return ss.str();
 }
 
-auto Compiler::mangle_name(const ast::Type& ast_type, const string* parent) -> string {
+auto Compiler::mangle_name(const ast::Type& ast_type, ty::Type* parent) -> string {
   if (ast_type.kind() == ast::SimpleTypeKind) {
     const auto& simple_type = dynamic_cast<const ast::SimpleType&>(ast_type);
     return simple_type.name();
   }
   if (ast_type.kind() == ast::SelfTypeKind) {
-    return *parent;
+    return parent->name();
   }
   std::stringstream ss{};
   const auto& qual_type = dynamic_cast<const ast::QualType&>(ast_type);

@@ -151,9 +151,9 @@ public:
 
   auto llvm_type(const ty::Type& type) -> llvm::Type*;
 
-  auto mangle_name(const ast::FnDecl& fn_decl, const string* parent = nullptr) -> string;
+  auto mangle_name(const ast::FnDecl& fn_decl, ty::Type* parent = nullptr) -> string;
 
-  auto mangle_name(const ast::Type& ast_type, const string* parent = nullptr) -> string;
+  auto mangle_name(const ast::Type& ast_type, ty::Type* parent = nullptr) -> string;
 
 protected:
   void statement(const ast::Compound&);

@@ -8,6 +8,7 @@
 #include "util.hpp"
 #include <llvm/IR/DerivedTypes.h>
 #include <map>
+#include <utility>
 
 namespace yume {
 class Compiler;
@@ -23,6 +24,7 @@ class QualType;
 class Type {
   std::map<Qualifier, unique_ptr<Type>> m_known_qual{};
   const Kind m_kind;
+  string m_name;
 
 public:
   Type(const Type&) noexcept = delete;
@@ -31,6 +33,7 @@ public:
   auto operator=(Type&&) noexcept -> Type& = delete;
   virtual ~Type() = default;
   [[nodiscard]] auto kind() const -> Kind { return m_kind; };
+  [[nodiscard]] auto name() const -> string { return m_name; };
   [[nodiscard]] auto known_qual(Qualifier qual) -> Type&;
   [[nodiscard]] auto compatibility(const Type& other) const -> int;
   [[nodiscard]] inline auto known_ptr() -> Type& { return known_qual(Qualifier::Ptr); }
@@ -39,7 +42,7 @@ public:
   using enum Kind;
 
 protected:
-  Type(Kind kind) : m_kind(kind) {}
+  Type(Kind kind, string name) : m_kind(kind), m_name(move(name)) {}
 };
 
 class IntegerType : public Type {
@@ -47,7 +50,7 @@ class IntegerType : public Type {
   bool m_signed;
 
 public:
-  inline IntegerType(int size, bool signed_) : Type(Integer), m_size(size), m_signed(signed_) {}
+  inline IntegerType(string name, int size, bool signed_) : Type(Integer, move(name)), m_size(size), m_signed(signed_) {}
   [[nodiscard]] inline auto size() const -> int { return m_size; }
   [[nodiscard]] inline auto is_signed() const -> bool { return m_signed; }
 };
@@ -58,13 +61,12 @@ private:
   Qualifier m_qualifier;
 
 public:
-  inline QualType(Type& base, Qualifier qualifier) : Type(Qual), m_base(base), m_qualifier(qualifier) {}
+  inline QualType(string name, Type& base, Qualifier qualifier) : Type(Qual, move(name)), m_base(base), m_qualifier(qualifier) {}
   [[nodiscard]] inline auto base() const -> Type& { return m_base; }
   [[nodiscard]] inline auto qualifier() const -> Qualifier { return m_qualifier; }
 };
 
 class StructType : public Type {
-  string m_name;
   vector<const ast::TypeName*> m_fields;
   mutable llvm::StructType* m_memo{};
   inline void memo(llvm::StructType* memo) const { m_memo = memo; }
@@ -73,15 +75,14 @@ class StructType : public Type {
 
 public:
   inline StructType(string name, vector<const ast::TypeName*> fields)
-      : Type(Struct), m_name(move(name)), m_fields(move(fields)) {}
-  [[nodiscard]] inline auto name() const -> const auto& { return m_name; }
+      : Type(Struct, move(name)), m_fields(move(fields)) {}
   [[nodiscard]] inline auto fields() const { return dereference_view(m_fields); }
   [[nodiscard]] inline auto memo() const -> auto* { return m_memo; }
 };
 
 class UnknownType : public Type {
 public:
-  inline UnknownType() : Type(Unknown) {}
+  inline UnknownType() : Type(Unknown, "?") {}
 };
 } // namespace yume::ty
 
