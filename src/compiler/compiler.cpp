@@ -373,7 +373,7 @@ auto Compiler::expression(const ast::VarExpr& expr, bool mut) -> Val {
   auto local = m_scope.at(expr.name());
   auto* val = local.llvm();
   if (!mut) {
-    val = m_builder->CreateLoad(val->getType()->getPointerElementType(), val);
+    val = m_builder->CreateLoad(llvm_type(*local.type()), val);
   }
   return {val, local.type()};
 }
