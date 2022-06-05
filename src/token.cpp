@@ -66,53 +66,60 @@ struct Tokenizer {
   int m_col = 1;
   const char* m_source_file;
 
-  void tokenize() {
-    auto is_word = [](int c, int i) { return (i == 0 && std::isalpha(c) != 0) || std::isalnum(c) != 0 || c == '_'; };
-    auto is_str = [end = false, escape = false](char c, int i, std::stringstream& stream) mutable {
-      if (i == 0) {
-        return c == '"';
-      }
-      if (end) {
-        return false;
-      }
-      if (c == '\\' && !escape) {
-        escape = true;
-      } else if (c == '"' && !end) {
-        end = true;
+  constexpr static const auto is_word = [](int c, int i) {
+    return (i == 0 && std::isalpha(c) != 0) || std::isalnum(c) != 0 || c == '_';
+  };
+  constexpr static const auto is_str = [end = false, escape = false](char c, int i, std::stringstream& stream) mutable {
+    if (i == 0) {
+      return c == '"';
+    }
+    if (end) {
+      return false;
+    }
+    if (c == '\\' && !escape) {
+      escape = true;
+    } else if (c == '"' && !end) {
+      end = true;
+    } else {
+      if (escape && c == 'n') {
+        stream.put('\n');
       } else {
-        if (escape && c == 'n') {
-          stream.put('\n');
-        } else {
-          stream.put((char)c);
-        }
-        escape = false;
+        stream.put((char)c);
+      }
+      escape = false;
+    }
+    return true;
+  };
+  constexpr static const auto is_char = [escape = false](char c, int i, std::stringstream& stream) mutable {
+    if (i == 0) {
+      return c == '?';
+    }
+    if (i == 1) {
+      if (c == '\\') {
+        escape = true;
+      } else {
+        stream.put((char)c);
       }
       return true;
-    };
-    auto is_char = [escape = false](char c, int i, std::stringstream& stream) mutable {
-      if (i == 0) {
-        return c == '?';
-      }
-      if (i == 1) {
-        if (c == '\\') {
-          escape = true;
-        } else {
-          stream.put((char)c);
-        }
-        return true;
-      }
-      if (i == 2 && escape) {
-        stream.put((char)c);
-        return true;
-      }
-      return false;
-    };
-    auto is_comment = [](char c, int i) { return (i == 0 && c == '#') || (i > 0 && c != '\n'); };
-    auto is_any_of = [](string chars) {
-      return [checks = move(chars)](char c, int i) { return i == 0 && checks.find(c) != string::npos; };
-    };
-    auto is_exactly = [](string str) { return [s = move(str)](char c, int i) { return s[i] == c; }; };
-    auto is_c = [](char_raw_fn fn) { return [=](char c, [[maybe_unused]] int i) { return fn(c) != 0; }; };
+    }
+    if (i == 2 && escape) {
+      stream.put((char)c);
+      return true;
+    }
+    return false;
+  };
+  constexpr static const auto is_comment = [](char c, int i) { return (i == 0 && c == '#') || (i > 0 && c != '\n'); };
+  constexpr static const auto is_any_of = [](string chars) {
+    return [checks = move(chars)](char c, int i) { return i == 0 && checks.find(c) != string::npos; };
+  };
+  constexpr static const auto is_exactly = [](string str) {
+    return [s = move(str)](char c, int i) { return s[i] == c; };
+  };
+  constexpr static const auto is_c = [](char_raw_fn fn) {
+    return [=](char c, [[maybe_unused]] int i) { return fn(c) != 0; };
+  };
+
+  void tokenize() {
 
     while (!m_in.eof()) {
       if (!select_characteristic({
