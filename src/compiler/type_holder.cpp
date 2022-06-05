@@ -13,7 +13,7 @@ TypeHolder::TypeHolder() {
       string type_name = (is_signed ? "I"s : "U"s) + std::to_string(i);
       auto i_ty = std::make_unique<ty::IntegerType>(type_name, i, is_signed);
       (is_signed ? ints.signed_ty : ints.unsigned_ty) = i_ty.get();
-      known.insert({"I"s + std::to_string(i), move(i_ty)});
+      known.insert({type_name, move(i_ty)});
     }
     int_types.at(j++) = ints;
   }
