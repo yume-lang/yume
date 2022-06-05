@@ -127,7 +127,7 @@ public:
   auto operator=(AST&&) -> AST& = delete;
   virtual ~AST() = default;
 
-  virtual void inline visit(Visitor& visitor) const = 0;
+  virtual void inline visit(Visitor& visitor) = 0;
   [[nodiscard]] virtual auto expr_type() const -> ty::Type* { return nullptr; }
   [[nodiscard]] constexpr auto kind() const -> Kind { return m_kind; };
   [[nodiscard]] constexpr auto token_range() const -> const span<Token>& { return m_tok; };
@@ -156,7 +156,7 @@ class SimpleType : public Type {
 
 public:
   explicit inline SimpleType(span<Token> tok, string name) : Type(SimpleTypeKind, tok), m_name{move(name)} {}
-  void visit(Visitor& visitor) const override;
+  void visit(Visitor& visitor) override;
   [[nodiscard]] inline auto describe() const -> string override { return m_name; }
 
   [[nodiscard]] auto inline name() const -> string { return m_name; }
@@ -170,7 +170,7 @@ private:
 public:
   explicit inline QualType(span<Token> tok, unique_ptr<Type> base, ty::Qualifier qualifier)
       : Type(QualTypeKind, tok), m_base{move(base)}, m_qualifier{qualifier} {}
-  void visit(Visitor& visitor) const override;
+  void visit(Visitor& visitor) override;
   [[nodiscard]] inline auto describe() const -> string override {
     switch (m_qualifier) {
     case ty::Qualifier::Ptr: return "ptr";
@@ -187,7 +187,7 @@ public:
 class SelfType : public Type {
 public:
   explicit inline SelfType(span<Token> tok) : Type(SelfTypeKind, tok) {}
-  inline void visit([[maybe_unused]] Visitor& visitor) const override {}
+  inline void visit([[maybe_unused]] Visitor& visitor) override {}
   [[nodiscard]] inline auto describe() const -> string override { return "self"; }
 };
 
@@ -198,7 +198,7 @@ class TypeName : public AST {
 public:
   inline TypeName(span<Token> tok, unique_ptr<Type>& type, string name)
       : AST(TypeNameKind, tok), m_type{move(type)}, m_name{move(name)} {}
-  void visit(Visitor& visitor) const override;
+  void visit(Visitor& visitor) override;
   [[nodiscard]] inline auto describe() const -> string override { return m_name; }
 
   [[nodiscard]] auto inline type() const -> const auto& { return *m_type; }
@@ -262,7 +262,7 @@ class NumberExpr : public Expr {
 
 public:
   explicit inline NumberExpr(span<Token> tok, int64_t val) : Expr(NumberKind, tok), m_val(val) {}
-  void visit(Visitor& visitor) const override;
+  void visit(Visitor& visitor) override;
   [[nodiscard]] inline auto describe() const -> string override { return std::to_string(m_val); }
 
   [[nodiscard]] inline auto val() const -> int64_t { return m_val; }
@@ -273,7 +273,7 @@ class CharExpr : public Expr {
 
 public:
   explicit inline CharExpr(span<Token> tok, uint8_t val) : Expr(CharKind, tok), m_val(val) {}
-  void visit(Visitor& visitor) const override;
+  void visit(Visitor& visitor) override;
   [[nodiscard]] inline auto describe() const -> string override { return std::to_string(m_val); }
 
   [[nodiscard]] inline auto val() const -> uint8_t { return m_val; }
@@ -284,7 +284,7 @@ class StringExpr : public Expr {
 
 public:
   explicit inline StringExpr(span<Token> tok, string val) : Expr(StringKind, tok), m_val(move(val)) {}
-  void visit(Visitor& visitor) const override;
+  void visit(Visitor& visitor) override;
   [[nodiscard]] inline auto describe() const -> string override { return m_val; }
 
   [[nodiscard]] auto inline val() const -> string { return m_val; }
@@ -295,7 +295,7 @@ class VarExpr : public Expr {
 
 public:
   explicit inline VarExpr(span<Token> tok, string name) : Expr(VarKind, tok), m_name(move(name)) {}
-  void visit(Visitor& visitor) const override;
+  void visit(Visitor& visitor) override;
   [[nodiscard]] inline auto describe() const -> string override { return m_name; }
 
   [[nodiscard]] auto inline name() const -> string { return m_name; }
@@ -308,7 +308,7 @@ class CallExpr : public Expr {
 public:
   inline CallExpr(span<Token> tok, string name, vector<unique_ptr<Expr>>& args)
       : Expr(CallKind, tok), m_name{move(name)}, m_args{move(args)} {}
-  void visit(Visitor& visitor) const override;
+  void visit(Visitor& visitor) override;
   [[nodiscard]] inline auto describe() const -> string override { return m_name; }
 
   [[nodiscard]] auto inline name() const -> string { return m_name; }
@@ -322,7 +322,7 @@ class CtorExpr : public Expr {
 public:
   inline CtorExpr(span<Token> tok, string name, vector<unique_ptr<Expr>>& args)
       : Expr(CtorKind, tok), m_name{move(name)}, m_args{move(args)} {}
-  void visit(Visitor& visitor) const override;
+  void visit(Visitor& visitor) override;
   [[nodiscard]] inline auto describe() const -> string override { return m_name; }
 
   [[nodiscard]] auto inline name() const -> string { return m_name; }
@@ -336,7 +336,7 @@ class AssignExpr : public Expr {
 public:
   inline AssignExpr(span<Token> tok, unique_ptr<Expr>& target, unique_ptr<Expr>& value)
       : Expr(AssignKind, tok), m_target{move(target)}, m_value{move(value)} {}
-  void visit(Visitor& visitor) const override;
+  void visit(Visitor& visitor) override;
 
   [[nodiscard]] auto inline target() const -> const auto& { return *m_target; }
   [[nodiscard]] auto inline value() const -> const auto& { return *m_value; }
@@ -349,7 +349,7 @@ class FieldAccessExpr : public Expr {
 public:
   inline FieldAccessExpr(span<Token> tok, unique_ptr<Expr>& base, string field)
       : Expr(FieldAccessKind, tok), m_base{move(base)}, m_field{move(field)} {}
-  void visit(Visitor& visitor) const override;
+  void visit(Visitor& visitor) override;
 
   [[nodiscard]] auto inline base() const -> const auto& { return *m_base; }
   [[nodiscard]] auto inline field() const -> string { return m_field; }
@@ -359,7 +359,7 @@ class Compound : public Stmt {
   vector<unique_ptr<Stmt>> m_body;
 
 public:
-  void visit(Visitor& visitor) const override;
+  void visit(Visitor& visitor) override;
   explicit inline Compound(span<Token> tok, vector<unique_ptr<Stmt>>& body)
       : Stmt(CompoundKind, tok), m_body{move(body)} {}
 
@@ -383,7 +383,7 @@ public:
                 optional<unique_ptr<Type>> ret, bool varargs, string primitive)
       : Stmt(FnDeclKind, tok), m_name{move(name)}, m_varargs{varargs}, m_args{move(args)},
         m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(primitive)} {}
-  void visit(Visitor& visitor) const override;
+  void visit(Visitor& visitor) override;
   [[nodiscard]] inline auto describe() const -> string override { return m_name; }
 
   [[nodiscard]] auto inline name() const -> string { return m_name; }
@@ -404,7 +404,7 @@ public:
   inline StructDecl(span<Token> tok, string name, vector<TypeName>& fields, vector<string>& type_args, Compound body)
       : Stmt(StructDeclKind, tok), m_name{move(name)}, m_fields{move(fields)}, m_type_args{move(type_args)},
         m_body(std::move(body)) {}
-  void visit(Visitor& visitor) const override;
+  void visit(Visitor& visitor) override;
   [[nodiscard]] inline auto describe() const -> string override { return m_name; }
 
   [[nodiscard]] auto inline name() const -> string { return m_name; }
@@ -420,7 +420,7 @@ class VarDecl : public Stmt {
 public:
   inline VarDecl(span<Token> tok, string name, optional<unique_ptr<Type>> type, unique_ptr<Expr> init)
       : Stmt(VarDeclKind, tok), m_name{move(name)}, m_type{move(type)}, m_init(move(init)) {}
-  void visit(Visitor& visitor) const override;
+  void visit(Visitor& visitor) override;
   [[nodiscard]] inline auto describe() const -> string override { return m_name; }
 
   [[nodiscard]] auto inline name() const -> string { return m_name; }
@@ -435,7 +435,7 @@ class WhileStmt : public Stmt {
 public:
   inline WhileStmt(span<Token> tok, unique_ptr<Expr> cond, unique_ptr<Compound> body)
       : Stmt(WhileKind, tok), m_cond{move(cond)}, m_body{move(body)} {}
-  void visit(Visitor& visitor) const override;
+  void visit(Visitor& visitor) override;
 
   [[nodiscard]] inline auto body() const -> const auto& { return *m_body; }
   [[nodiscard]] inline auto cond() const -> const auto& { return *m_cond; }
@@ -448,7 +448,7 @@ class IfClause : public AST {
 public:
   inline IfClause(span<Token> tok, unique_ptr<Expr> cond, unique_ptr<Compound> body)
       : AST(IfClauseKind, tok), m_cond{move(cond)}, m_body{move(body)} {}
-  void visit(Visitor& visitor) const override;
+  void visit(Visitor& visitor) override;
 
   [[nodiscard]] inline auto cond() const -> const auto& { return *m_cond; }
   [[nodiscard]] inline auto body() const -> const auto& { return *m_body; }
@@ -461,7 +461,7 @@ class IfStmt : public Stmt {
 public:
   inline IfStmt(span<Token> tok, vector<unique_ptr<IfClause>>& clauses, optional<unique_ptr<Compound>> else_clause)
       : Stmt(IfKind, tok), m_clauses{move(clauses)}, m_else_clause{move(else_clause)} {}
-  void visit(Visitor& visitor) const override;
+  void visit(Visitor& visitor) override;
 
   [[nodiscard]] inline auto clauses() const { return dereference_view(m_clauses); }
   [[nodiscard]] inline auto else_clause() const { return try_dereference(m_else_clause); }
@@ -473,7 +473,7 @@ class ReturnStmt : public Stmt {
 public:
   explicit inline ReturnStmt(span<Token> tok, optional<unique_ptr<Expr>> expr)
       : Stmt(ReturnKind, tok), m_expr{move(expr)} {}
-  void visit(Visitor& visitor) const override;
+  void visit(Visitor& visitor) override;
 
   [[nodiscard]] inline auto expr() const { return try_dereference(m_expr); }
 };
@@ -484,7 +484,7 @@ class Program : public Stmt {
 public:
   explicit inline Program(span<Token> tok, vector<unique_ptr<Stmt>>& body)
       : Stmt(ProgramKind, tok), m_body{move(body)} {}
-  void visit(Visitor& visitor) const override;
+  void visit(Visitor& visitor) override;
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<Program>;
 
   [[nodiscard]] constexpr auto inline body() const { return dereference_view(m_body); }

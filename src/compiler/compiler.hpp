@@ -52,7 +52,7 @@ public:
   void define(Fn&);
 
   void body_statement(const ast::Stmt&);
-  void decl_statement(const ast::Stmt&, ty::Type* parent = nullptr);
+  void decl_statement(ast::Stmt&, ty::Type* parent = nullptr);
   auto body_expression(const ast::Expr&, bool mut = false) -> Val;
 
   void write_object(const char* filename, bool binary);
@@ -65,7 +65,7 @@ public:
 
   auto mangle_name(const ast::Type& ast_type, ty::Type* parent = nullptr) -> string;
 
-protected:
+private:
   void statement(const ast::Compound&);
   void statement(const ast::WhileStmt&);
   void statement(const ast::IfStmt&);

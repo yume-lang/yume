@@ -74,7 +74,7 @@ void DotVisitor::footer(bool is_inline) {
   m_index++;
 }
 
-void DotVisitor::visit_expr(const ast::AST& expr, const char* label) {
+void DotVisitor::visit_expr(ast::AST& expr, const char* label) {
   header(label, false);
 
   stream() << "<FONT POINT-SIZE=\"10\">" << expr.location().to_string() << "</FONT><BR/>";
@@ -92,7 +92,7 @@ void DotVisitor::visit_expr(const ast::AST& expr, const char* label) {
   m_children = ++restore_children;
 }
 
-auto DotVisitor::visit(const ast::AST& expr, const char* label) -> DotVisitor& {
+auto DotVisitor::visit(ast::AST& expr, const char* label) -> DotVisitor& {
   visit_expr(expr, label);
   return *this;
 }

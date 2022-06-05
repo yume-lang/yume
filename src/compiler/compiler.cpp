@@ -89,23 +89,20 @@ Compiler::Compiler(std::vector<SourceFile> source_files) : m_sources(std::move(s
 }
 
 void Compiler::decl_statement(const ast::Stmt& stmt, ty::Type* parent) {
+void Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent) {
   if (stmt.kind() == ast::FnDeclKind) {
-    const auto& fn_decl = dynamic_cast<const ast::FnDecl&>(stmt);
-    auto& fn = m_fns.emplace_back(Fn{fn_decl, parent});
-    if (fn_decl.name() == "main") {
-      fn.m_llvm_fn = declare(fn, false);
-    }
+    auto& fn_decl = dynamic_cast<ast::FnDecl&>(stmt);
+    m_fns.emplace_back(Fn{fn_decl, parent});
   } else if (stmt.kind() == ast::StructDeclKind) {
-    const auto& struct_decl = dynamic_cast<const ast::StructDecl&>(stmt);
+    const auto& s_decl = dynamic_cast<const ast::StructDecl&>(stmt);
     auto fields = vector<const ast::TypeName*>();
-    fields.reserve(struct_decl.fields().size());
-    for (const auto& f : struct_decl.fields()) {
+    fields.reserve(s_decl.fields().size());
+    for (const auto& f : s_decl.fields()) {
       fields.push_back(&f);
     };
-    auto i_ty =
-        m_types.known.insert({struct_decl.name(), std::make_unique<ty::StructType>(struct_decl.name(), fields)});
+    auto i_ty = m_types.known.insert({s_decl.name(), std::make_unique<ty::StructType>(s_decl.name(), fields)});
 
-    for (const auto& f : struct_decl.body().body()) {
+    for (auto& f : s_decl.body().body()) {
       decl_statement(f, i_ty.first->second.get());
     }
   }

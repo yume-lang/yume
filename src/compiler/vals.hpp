@@ -21,7 +21,7 @@ class Type;
 }
 
 struct Fn {
-  const ast::FnDecl& m_ast_decl;
+  ast::FnDecl& m_ast_decl;
   ty::Type* m_parent;
   // TODO: multiple instantiations
   llvm::Function* m_llvm_fn{};
@@ -32,7 +32,7 @@ struct Fn {
 
   [[nodiscard]] auto inline name() const { return m_ast_decl.name(); }
 
-  [[nodiscard]] auto inline ast() const -> const auto& { return m_ast_decl; }
+  [[nodiscard]] auto inline ast() const -> auto& { return m_ast_decl; }
 
   [[nodiscard]] auto inline llvm() const -> llvm::Function* { return m_llvm_fn; }
 

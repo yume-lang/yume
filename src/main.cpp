@@ -5,7 +5,6 @@
 #include "errors.hpp"
 #include "token.hpp"
 #include "util.hpp"
-#include "visitor.hpp"
 #include <algorithm>
 #include <cstdlib>
 #include <exception>
@@ -52,7 +51,7 @@ auto main(int argc, const char* argv[]) -> int {
 
     for (auto& [src_stream, src_name] : inputs) {
       auto& source = source_files.emplace_back(*src_stream, src_name);
-      visitor.Visitor::visit(*source.m_program);
+      visitor.visit(*source.m_program, nullptr);
 
       auto token_it = source.m_iterator;
       if (!token_it.at_end()) {

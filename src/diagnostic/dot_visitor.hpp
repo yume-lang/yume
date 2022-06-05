@@ -47,7 +47,7 @@ class DotVisitor : public Visitor {
   void header(const char* label, bool is_inline);
   void footer(bool is_inline);
   void emit_debug_header();
-  void visit_expr(const ast::AST& expr, const char* label);
+  void visit_expr(ast::AST& expr, const char* label);
 
 public:
   explicit DotVisitor(llvm::raw_ostream& stream_) : m_direct_stream{stream_}, m_buffer_stream{m_buffer} {
@@ -79,7 +79,7 @@ public:
   auto operator=(const DotVisitor&) -> DotVisitor& = delete;
   auto operator=(DotVisitor&&) -> DotVisitor& = delete;
 
-  auto visit(const ast::AST& expr, const char* label) -> DotVisitor& override;
+  auto visit(ast::AST& expr, const char* label) -> DotVisitor& override;
 
   auto visit(std::nullptr_t null, const char* label) -> DotVisitor& override;
 
