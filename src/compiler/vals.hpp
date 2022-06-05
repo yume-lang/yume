@@ -25,8 +25,6 @@ struct Fn {
   ty::Type* m_parent;
   // TODO: multiple instantiations
   llvm::Function* m_llvm_fn{};
-  vector<ty::Type*> m_arg_types{};
-  ty::Type* m_ret_type{};
 
   [[nodiscard]] auto inline body() const -> const auto& { return m_ast_decl.body(); }
 
@@ -37,10 +35,6 @@ struct Fn {
   [[nodiscard]] auto inline llvm() const -> llvm::Function* { return m_llvm_fn; }
 
   [[nodiscard]] auto inline parent() const -> ty::Type* { return m_parent; }
-
-  [[nodiscard]] auto inline arg_types() const { return dereference_view(m_arg_types); }
-
-  [[nodiscard]] auto inline ret_type() const { return m_ret_type; }
 
   [[nodiscard]] auto declaration(Compiler& compiler, bool mangle = true) -> llvm::Function*;
 

@@ -82,13 +82,13 @@ Compiler::Compiler(std::vector<SourceFile> source_files) : m_sources(std::move(s
     }
   }
 
+  walk_types();
+
   for (auto& fn : m_fns) {
     if (fn.name() == "main") {
       fn.m_llvm_fn = declare(fn, false);
     }
   }
-
-  walk_types();
 
   while (!m_decl_queue.empty()) {
     auto* next = m_decl_queue.front();
@@ -192,16 +192,10 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
   auto* llvm_ret_type = llvm::Type::getVoidTy(*m_context);
   auto llvm_args = vector<llvm::Type*>{};
   if (fn_decl.ret()) {
-    auto& ret_type = convert_type(fn_decl.ret().value(), fn.parent());
-    fn.m_ret_type = &ret_type;
-    llvm_ret_type = llvm_type(ret_type);
-  } else {
-    fn.m_ret_type = &m_types.unknown;
+    llvm_ret_type = llvm_type(*fn_decl.ret()->get().val_ty());
   }
   for (const auto& i : fn_decl.args()) {
-    auto& arg_type = convert_type(i.type(), fn.parent());
-    fn.m_arg_types.push_back(&arg_type);
-    llvm_args.push_back(llvm_type(arg_type));
+    llvm_args.push_back(llvm_type(*i.val_ty()));
   }
   llvm::FunctionType* fn_t = llvm::FunctionType::get(llvm_ret_type, llvm_args, fn_decl.varargs());
 
@@ -233,7 +227,7 @@ void Compiler::define(Fn& fn) {
 
   int i = 0;
   for (auto& arg : fn.llvm()->args()) {
-    auto& type = fn.arg_types()[i];
+    auto& type = *fn.ast().args()[i].val_ty();
     auto name = fn.ast().args()[i++].name();
     llvm::Value* alloc = nullptr;
     if (type.kind() == ty::Kind::Qual) {
@@ -433,7 +427,7 @@ auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Val {
         if (i >= fn_arg_size) {
           break;
         }
-        auto i_compat = arg_type->compatibility(convert_type(fn_ast.args()[i].type(), fn->parent()));
+        auto i_compat = arg_type->compatibility(*fn_ast.args()[i].val_ty());
         if (i_compat == 0) {
           compat = INT_MIN;
           break;
@@ -449,7 +443,7 @@ auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Val {
   llvm::Function* llvm_fn = nullptr;
   ty::Type* ret_type = &m_types.unknown;
   if (selected->m_ast_decl.ret().has_value()) {
-    ret_type = &convert_type(*selected->ast().ret(), selected->parent());
+    ret_type = selected->ast().ret()->get().val_ty();
   }
 
   vector<Val> args{};
@@ -458,8 +452,7 @@ auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Val {
   auto selected_args = selected->ast().args();
   // TODO: GET RID OF ALL OF THIS PLEASE
   for (const auto& i : expr.args()) {
-    auto arg = body_expression(
-        i, j >= selected_args.size() ? false : convert_type(selected_args[j++].type(), selected->parent()).is_mut());
+    auto arg = body_expression(i, j >= selected_args.size() ? false : selected_args[j++].val_ty()->is_mut());
     args.push_back(arg);
     llvm_args.push_back(arg.llvm());
   }
