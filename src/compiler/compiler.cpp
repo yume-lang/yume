@@ -439,7 +439,7 @@ auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Val {
     }
   }
 
-  auto* selected = std::ranges::max_element(overloads)->second;
+  auto* selected = std::max_element(overloads.begin(), overloads.end())->second;
   llvm::Function* llvm_fn = nullptr;
   ty::Type* ret_type = &m_types.unknown;
   if (selected->m_ast_decl.ret().has_value()) {

@@ -6,12 +6,21 @@ set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -W -Wall")
 
 if(YUME_SANITIZE)
-        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -glldb -fno-omit-frame-pointer -O0 -fsanitize=undefined,vptr")
-        # set(CMAKE_CXX_FLAGS_DEBUG "-g3 -fno-omit-frame-pointer -O0")
+	if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -glldb")
+	else()
+		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g3")
+	endif()
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer -O0 -fsanitize=undefined,vptr")
 endif()
 
 if(YUME_SPEW)
         add_definitions(-DYUME_SPEW_CONSUMED_TOKENS -DYUME_SPEW_DOT_TOKEN_HEADER -DYUME_SPEW_LIST_TOKENS)
+endif()
+
+if(YUME_FORCE_LIBCXX)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+	set(CMAKE_EXE_LINKER_FLAGS "-lc++abi")
 endif()
 
 add_definitions("-DYUME_LIB_DIR=\"${CMAKE_SOURCE_DIR}/lib/\"")
