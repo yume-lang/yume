@@ -17,6 +17,7 @@ jobs:
         clang: [13, 14]
         llvm: [13, 14]
     runs-on: ubuntu-22.04
+    name: "Build clang ${{ matrix.clang }}, libllvm ${{ matrix.llvm }}"
     env:
       CC: clang-${{ matrix.clang }}
       CXX: clang++-${{ matrix.clang }}
