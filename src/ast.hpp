@@ -120,7 +120,7 @@ private:
 
 protected:
   // constexpr AST(Kind kind) : m_kind(kind) {}
-  constexpr AST(Kind kind, span<Token> tok) : m_kind(kind), m_tok(tok) {}
+  AST(Kind kind, span<Token> tok) : m_kind(kind), m_tok(tok) {}
 
 public:
   AST(const AST&) = delete;
@@ -142,9 +142,9 @@ public:
     m_observers.push_back(expr);
     expr->val_ty(m_val_ty);
   }
-  [[nodiscard]] constexpr auto kind() const -> Kind { return m_kind; };
-  [[nodiscard]] constexpr auto token_range() const -> const span<Token>& { return m_tok; };
-  [[nodiscard]] constexpr auto location() const -> Loc {
+  [[nodiscard]] auto kind() const -> Kind { return m_kind; };
+  [[nodiscard]] auto token_range() const -> const span<Token>& { return m_tok; };
+  [[nodiscard]] auto location() const -> Loc {
     if (m_tok.empty()) {
       return Loc{};
     }
