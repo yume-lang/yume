@@ -5,9 +5,9 @@
 #ifndef YUME_CPP_COMPILER_HPP
 #define YUME_CPP_COMPILER_HPP
 
-#include "ast.hpp"
-#include "type.hpp"
-#include "util.hpp"
+#include "../ast.hpp"
+#include "../type.hpp"
+#include "../util.hpp"
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/LegacyPassManager.h>

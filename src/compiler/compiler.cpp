@@ -3,8 +3,8 @@
 //
 
 #include "compiler.hpp"
-#include "ast.hpp"
-#include "type.hpp"
+#include "../ast.hpp"
+#include "../type.hpp"
 #include <bits/ranges_algo.h>
 #include <climits>
 #include <llvm/IR/Constants.h>

@@ -1,5 +1,6 @@
 #include "ast.hpp"
-#include "compiler.hpp"
+#include "compiler/compiler.hpp"
+#include "diagnostic/dot_visitor.hpp"
 #include "errors.hpp"
 #include "token.hpp"
 #include <fstream>
@@ -24,7 +25,7 @@ auto main(int argc, const char* argv[]) -> int {
     std::vector<std::pair<std::istream*, std::string>> inputs{};
     std::vector<std::unique_ptr<std::istream>> file_streams{};
     auto dot = yume::open_file("output.dot");
-    auto visitor = yume::DotVisitor{*dot};
+    auto visitor = yume::diagnostic::DotVisitor{*dot};
 
     for (auto& i : src_file_names) {
       if (i == "-") {

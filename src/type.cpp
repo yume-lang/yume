@@ -7,10 +7,10 @@
 namespace yume::ty {
 static auto qual_suffix(Qualifier qual) -> string {
   switch (qual) {
-    case Qualifier::Mut: return " mut";
-    case Qualifier::Ptr: return " ptr";
-    case Qualifier::Slice: return "[]";
-    default: return "";
+  case Qualifier::Mut: return " mut";
+  case Qualifier::Ptr: return " ptr";
+  case Qualifier::Slice: return "[]";
+  default: return "";
   }
 }
 auto Type::known_qual(Qualifier qual) -> Type& {

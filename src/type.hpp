@@ -50,7 +50,8 @@ class IntegerType : public Type {
   bool m_signed;
 
 public:
-  inline IntegerType(string name, int size, bool signed_) : Type(Integer, move(name)), m_size(size), m_signed(signed_) {}
+  inline IntegerType(string name, int size, bool signed_)
+      : Type(Integer, move(name)), m_size(size), m_signed(signed_) {}
   [[nodiscard]] inline auto size() const -> int { return m_size; }
   [[nodiscard]] inline auto is_signed() const -> bool { return m_signed; }
 };
@@ -61,7 +62,8 @@ private:
   Qualifier m_qualifier;
 
 public:
-  inline QualType(string name, Type& base, Qualifier qualifier) : Type(Qual, move(name)), m_base(base), m_qualifier(qualifier) {}
+  inline QualType(string name, Type& base, Qualifier qualifier)
+      : Type(Qual, move(name)), m_base(base), m_qualifier(qualifier) {}
   [[nodiscard]] inline auto base() const -> Type& { return m_base; }
   [[nodiscard]] inline auto qualifier() const -> Qualifier { return m_qualifier; }
 };

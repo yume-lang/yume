@@ -1,11 +1,8 @@
-//
-// Created by rymiel on 5/12/22.
-//
-#include "visitor.hpp"
+#include "dot_visitor.hpp"
 #include "llvm/Support/raw_ostream.h"
 
-namespace yume {
-void xml_escape(llvm::raw_ostream& stream, const string& data) {
+namespace yume::diagnostic {
+static void xml_escape(llvm::raw_ostream& stream, const string& data) {
   for (char i : data) {
     switch (i) {
     case '&': stream << "&amp;"; break;
@@ -79,6 +76,9 @@ void DotVisitor::visit_expr(const ast::AST& expr, const char* label) {
   stream() << "<B>";
   xml_escape(stream(), string(ast::kind_name(expr.kind())));
   stream() << "</B>";
+  if (auto* expr_type = expr.expr_type(); expr_type != nullptr) {
+    stream() << "<BR/><U>" << expr_type->name() << "</U>";
+  }
   auto restore_parent = set_parent(m_index);
   auto restore_children = set_children(0);
   footer(false);
@@ -110,4 +110,4 @@ auto DotVisitor::visit(std::nullptr_t, const char* label) -> DotVisitor& {
   footer(label == nullptr);
   return *this;
 }
-} // namespace yume
+} // namespace yume::diagnostic
