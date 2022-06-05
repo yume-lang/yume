@@ -22,7 +22,7 @@ class Type;
 
 struct Fn {
   ast::FnDecl& m_ast_decl;
-  ty::Type* m_parent;
+  ty::Type* m_parent{};
   // TODO: multiple instantiations
   llvm::Function* m_llvm_fn{};
 

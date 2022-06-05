@@ -115,6 +115,8 @@ class AST {
 private:
   const Kind m_kind;
   const span<Token> m_tok;
+  ty::Type* m_val_ty{};
+  vector<AST*> m_observers{};
 
 protected:
   // constexpr AST(Kind kind) : m_kind(kind) {}
@@ -128,7 +130,18 @@ public:
   virtual ~AST() = default;
 
   virtual void inline visit(Visitor& visitor) = 0;
-  [[nodiscard]] virtual auto val_ty() const -> ty::Type* { return nullptr; }
+  [[nodiscard]] inline auto val_ty() const -> ty::Type* { return m_val_ty; }
+  inline void val_ty(ty::Type* type) {
+    m_val_ty = type;
+    for (auto* i : m_observers) {
+      i->val_ty(type);
+    }
+  }
+
+  inline void add_observer(AST* expr) {
+    m_observers.push_back(expr);
+    expr->val_ty(m_val_ty);
+  }
   [[nodiscard]] constexpr auto kind() const -> Kind { return m_kind; };
   [[nodiscard]] constexpr auto token_range() const -> const span<Token>& { return m_tok; };
   [[nodiscard]] constexpr auto location() const -> Loc {
@@ -143,40 +156,14 @@ public:
   [[nodiscard]] virtual auto inline describe() const -> string { return string{"unknown "} + kind_name(kind()); }
 };
 
-class ValueLike : public AST {
-private:
-  ty::Type* m_val_ty{};
-  vector<ValueLike*> m_observers{};
-
+class Stmt : public AST {
 protected:
   using AST::AST;
-
-public:
-  [[nodiscard]] inline auto val_ty() const -> ty::Type* override { return m_val_ty; }
-  inline void val_ty(ty::Type* type) {
-    m_val_ty = type;
-    for (auto* i : m_observers) {
-      i->val_ty(type);
-    }
-  }
-
-  inline void add_observer(ValueLike* expr) {
-    m_observers.push_back(expr);
-    expr->val_ty(m_val_ty);
-  }
 };
 
-class Stmt : public ValueLike {
+class Type : public AST {
 protected:
-  using ValueLike::ValueLike;
-};
-
-class Type : public ValueLike {
-protected:
-  using ValueLike::ValueLike;
-
-public:
-  [[nodiscard]] static auto try_parse(TokenIterator& tokens) -> optional<unique_ptr<Type>>;
+  using AST::AST;
 };
 
 class SimpleType : public Type {
@@ -219,13 +206,13 @@ public:
   [[nodiscard]] inline auto describe() const -> string override { return "self"; }
 };
 
-class TypeName : public ValueLike {
+class TypeName : public AST {
   unique_ptr<Type> m_type;
   string m_name;
 
 public:
   inline TypeName(span<Token> tok, unique_ptr<Type>& type, string name)
-      : ValueLike(TypeNameKind, tok), m_type{move(type)}, m_name{move(name)} {}
+      : AST(TypeNameKind, tok), m_type{move(type)}, m_name{move(name)} {}
   void visit(Visitor& visitor) override;
   [[nodiscard]] inline auto describe() const -> string override { return m_name; }
 
