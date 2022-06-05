@@ -462,6 +462,8 @@ auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Val {
       auto primitive = get<string>(selected->body());
       if (primitive == "libc") {
         llvm_fn = selected->declaration(*this, false);
+      } else if (primitive == "ptrto") {
+        return args.at(0);
       } else if (primitive == "icmp_gt") {
         return binary_sign_aware(*m_builder, &IRBuilder<>::CreateICmpSGT, &IRBuilder<>::CreateICmpUGT, args);
       } else if (primitive == "icmp_lt") {
