@@ -1,6 +1,16 @@
 #pragma once
 
+#include "../util.hpp"
 #include "../visitor.hpp"
+#include <iosfwd>
+#include <llvm/Support/raw_ostream.h>
+#include <string>
+#include <tuple>
+#include <vector>
+
+namespace yume::ast {
+class AST;
+}
 
 namespace yume::diagnostic {
 class DotVisitor : public Visitor {

@@ -3,12 +3,17 @@
 //
 
 #include "token.hpp"
-#include "llvm/Support/raw_os_ostream.h"
 #include <algorithm>
+#include <cctype>
+#include <functional>
+#include <initializer_list>
 #include <iomanip>
-#include <iostream>
-#include <ranges>
+#include <iterator>
+#include <llvm/Support/raw_os_ostream.h>
+#include <llvm/Support/raw_ostream.h>
 #include <sstream>
+#include <stdexcept>
+#include <tuple>
 #include <utility>
 #include <vector>
 

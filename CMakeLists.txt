@@ -34,6 +34,8 @@ add_executable(yumec
         src/main.cpp
         src/util.hpp
         src/compiler/compiler.hpp src/compiler/compiler.cpp
+        src/compiler/type_holder.hpp src/compiler/type_holder.cpp
+        src/compiler/vals.hpp src/compiler/vals.cpp
         src/diagnostic/dot_visitor.hpp src/diagnostic/dot_visitor.cpp
         src/token.hpp src/token.cpp
         src/ast.hpp src/ast.cpp

@@ -6,12 +6,23 @@
 
 #include "token.hpp"
 #include "type.hpp"
-#include "visitor.hpp"
+#include "util.hpp"
+#include <algorithm>
+#include <cstddef>
 #include <cstdint>
-#include <ranges>
+#include <memory>
+#include <optional>
 #include <span>
+#include <stdexcept>
+#include <string>
+#include <tuple>
 #include <utility>
+#include <variant>
 #include <vector>
+
+namespace yume {
+class Visitor;
+}
 
 namespace yume::ast {
 

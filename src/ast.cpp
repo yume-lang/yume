@@ -2,8 +2,6 @@
 // Created by rymiel on 5/8/22.
 //
 
-#include "ast.hpp"
-
 #if __has_include(<source_location>) && __has_builtin(__builtin_source_location)
 #include <source_location>
 #define yume_has_source_location 1
@@ -14,6 +12,10 @@
 #define yume_has_source_location 0
 #endif
 
+#include "ast.hpp"
+#include "visitor.hpp"
+#include <cctype>
+#include <cstddef>
 #include <memory>
 #include <sstream>
 

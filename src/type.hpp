@@ -6,20 +6,25 @@
 #define YUME_CPP_TYPE_HPP
 
 #include "util.hpp"
-#include <llvm/IR/DerivedTypes.h>
 #include <map>
+#include <memory>
+#include <string>
 #include <utility>
+#include <vector>
 
+namespace llvm {
+class StructType;
+}
 namespace yume {
 class Compiler;
 namespace ast {
 class TypeName;
 }
 } // namespace yume
+
 namespace yume::ty {
 enum struct Kind { Integer, Qual, Struct, Unknown };
 enum struct Qualifier { Ptr, Slice, Mut };
-class QualType;
 
 class Type {
   std::map<Qualifier, unique_ptr<Type>> m_known_qual{};

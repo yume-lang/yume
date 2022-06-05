@@ -1,10 +1,24 @@
 #include "ast.hpp"
 #include "compiler/compiler.hpp"
+#include "compiler/vals.hpp"
 #include "diagnostic/dot_visitor.hpp"
 #include "errors.hpp"
 #include "token.hpp"
+#include "util.hpp"
+#include "visitor.hpp"
+#include <algorithm>
+#include <cstdlib>
+#include <exception>
 #include <fstream>
 #include <iostream>
+#include <iterator>
+#include <llvm/IR/Module.h>
+#include <llvm/Support/raw_ostream.h>
+#include <memory>
+#include <span>
+#include <string>
+#include <utility>
+#include <vector>
 
 // this should be provided by cmake
 #ifndef YUME_LIB_DIR

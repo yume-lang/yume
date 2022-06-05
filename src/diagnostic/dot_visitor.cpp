@@ -1,5 +1,10 @@
 #include "dot_visitor.hpp"
+#include "../ast.hpp"
+#include "../token.hpp"
+#include "../type.hpp"
+#include "../util.hpp"
 #include "llvm/Support/raw_ostream.h"
+#include <algorithm>
 
 namespace yume::diagnostic {
 static void xml_escape(llvm::raw_ostream& stream, const string& data) {

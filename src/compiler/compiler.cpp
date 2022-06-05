@@ -5,29 +5,49 @@
 #include "compiler.hpp"
 #include "../ast.hpp"
 #include "../type.hpp"
-#include <bits/ranges_algo.h>
+#include "../util.hpp"
+#include <algorithm>
 #include <climits>
+#include <cstdint>
+#include <exception>
+#include <functional>
+#include <initializer_list>
+#include <limits>
+#include <llvm/ADT/Optional.h>
+#include <llvm/ADT/Twine.h>
+#include <llvm/IR/Argument.h>
+#include <llvm/IR/BasicBlock.h>
+#include <llvm/IR/Constant.h>
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/DerivedTypes.h>
+#include <llvm/IR/Function.h>
+#include <llvm/IR/GlobalValue.h>
+#include <llvm/IR/GlobalVariable.h>
+#include <llvm/IR/Instruction.h>
+#include <llvm/IR/Instructions.h>
+#include <llvm/IR/LegacyPassManager.h>
+#include <llvm/IR/Type.h>
+#include <llvm/IR/Value.h>
+#include <llvm/IR/Verifier.h>
+#include <llvm/Support/CodeGen.h>
+#include <llvm/Support/Host.h>
+#include <llvm/Support/TargetSelect.h>
+#include <llvm/Support/raw_ostream.h>
+#include <llvm/Target/TargetOptions.h>
+#if __has_include(<llvm/MC/TargetRegistry.h>)
+#include <llvm/MC/TargetRegistry.h>
+#else
+#include <llvm/Support/TargetRegistry.h>
+#endif
+#include <optional>
 #include <sstream>
 #include <stdexcept>
+#include <tuple>
+#include <type_traits>
 #include <utility>
+#include <variant>
 
 namespace yume {
-
-TypeHolder::TypeHolder() {
-  int j = 0;
-  for (int i : {8, 16, 32, 64}) {
-    IntTypePair ints{};
-    for (bool is_signed : {true, false}) {
-      string type_name = (is_signed ? "I"s : "U"s) + std::to_string(i);
-      auto i_ty = std::make_unique<ty::IntegerType>(type_name, i, is_signed);
-      (is_signed ? ints.signed_ty : ints.unsigned_ty) = i_ty.get();
-      known.insert({"I"s + std::to_string(i), move(i_ty)});
-    }
-    int_types.at(j++) = ints;
-  }
-}
 
 Compiler::Compiler(std::vector<SourceFile> source_files) : m_sources(std::move(source_files)) {
   m_context = std::make_unique<LLVMContext>();
@@ -350,7 +370,7 @@ auto Compiler::expression(const ast::VarExpr& expr, bool mut) -> Val {
   return {val, local.type()};
 }
 
-auto is_signed_type(ty::Type* type) -> bool {
+static auto is_signed_type(ty::Type* type) -> bool {
   if (type == nullptr) {
     throw std::logic_error("Can't determine signedness of missing type");
   }
@@ -361,7 +381,7 @@ auto is_signed_type(ty::Type* type) -> bool {
   throw std::logic_error("Can't determine signedness of non-integer type");
 }
 
-auto binary_sign_aware(auto& base, auto&& s_fn, auto&& u_fn, const auto& args, auto&&... extra) {
+static auto binary_sign_aware(auto& base, auto&& s_fn, auto&& u_fn, const auto& args, auto&&... extra) {
   const auto& lhs = args.at(0);
   const auto& rhs = args.at(1);
   return (is_signed_type(lhs.type()) ? (base.*s_fn)(lhs, rhs, "", extra...) : (base.*u_fn)(lhs, rhs, "", extra...));
@@ -638,10 +658,6 @@ auto Compiler::mangle_name(const ast::Type& ast_type, ty::Type* parent) -> strin
   }
   return ss.str();
 }
-auto Fn::declaration(Compiler& compiler, bool mangle) -> llvm::Function* {
-  if (m_llvm_fn == nullptr) {
-    m_llvm_fn = compiler.declare(*this, mangle);
-  }
-  return m_llvm_fn;
-}
+
+auto Compiler::known_type(const string& str) -> ty::Type& { return *m_types.known.at(str); }
 } // namespace yume
