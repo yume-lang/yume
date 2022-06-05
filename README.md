@@ -23,9 +23,9 @@ Yume compiles to LLVM statically. The compiler outputs an unlinked binary as `ou
 
 To apply these switches, add them to the cmake command when building
 
-Debug:  
-`-DYUME_SANITIZE=1`: add `-fsanitize` clang flags  
-`-DYUME_SPEW=1`: very verbose output
+Debug:
+`-DYUME_SANITIZE=1`: add `-fsanitize` flags
+`-DYUME_SPEW=1`: very verbose output (higher numbers mean more output)
 `-DYUME_FORCE_LLVM_VERSION=13`: if the system has multiple versions of LLVM, specify which one to use
 
 ## Contributors

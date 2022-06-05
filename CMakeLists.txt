@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.23)
 project(yume_cpp)
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -W -Wall")
 
 if(YUME_SANITIZE)
@@ -14,8 +13,11 @@ if(YUME_SANITIZE)
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer -O0 -fsanitize=undefined,vptr")
 endif()
 
-if(YUME_SPEW)
-        add_definitions(-DYUME_SPEW_CONSUMED_TOKENS -DYUME_SPEW_DOT_TOKEN_HEADER -DYUME_SPEW_LIST_TOKENS)
+if(YUME_SPEW GREATER 1)
+        add_definitions(-DYUME_SPEW_DOT_TOKEN_HEADER)
+endif()
+if(YUME_SPEW GREATER 0)
+        add_definitions(-DYUME_SPEW_CONSUMED_TOKENS -DYUME_SPEW_LIST_TOKENS)
 endif()
 
 if(YUME_FORCE_LIBCXX)
