@@ -117,6 +117,7 @@ public:
   virtual ~AST() = default;
 
   virtual void inline visit(Visitor& visitor) const = 0;
+  [[nodiscard]] virtual auto expr_type() const -> ty::Type* { return nullptr; }
   [[nodiscard]] constexpr auto kind() const -> Kind { return m_kind; };
   [[nodiscard]] constexpr auto token_range() const -> const span<Token>& { return m_tok; };
   [[nodiscard]] constexpr auto location() const -> Loc {
@@ -223,8 +224,26 @@ protected:
 };
 
 class Expr : public Stmt {
+private:
+  ty::Type* m_type{};
+  vector<Expr*> m_observers{};
+
 protected:
   using Stmt::Stmt;
+
+public:
+  [[nodiscard]] inline auto expr_type() const -> ty::Type* override { return m_type; }
+  inline void expr_type(ty::Type* type) {
+    m_type = type;
+    for (auto* i : m_observers) {
+      i->expr_type(type);
+    }
+  }
+
+  inline void add_observer(Expr* expr) {
+    m_observers.push_back(expr);
+    expr->expr_type(m_type);
+  }
 };
 
 class NumberExpr : public Expr {
