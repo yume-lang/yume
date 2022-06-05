@@ -128,7 +128,7 @@ public:
   virtual ~AST() = default;
 
   virtual void inline visit(Visitor& visitor) = 0;
-  [[nodiscard]] virtual auto expr_type() const -> ty::Type* { return nullptr; }
+  [[nodiscard]] virtual auto val_ty() const -> ty::Type* { return nullptr; }
   [[nodiscard]] constexpr auto kind() const -> Kind { return m_kind; };
   [[nodiscard]] constexpr auto token_range() const -> const span<Token>& { return m_tok; };
   [[nodiscard]] constexpr auto location() const -> Loc {
@@ -143,9 +143,37 @@ public:
   [[nodiscard]] virtual auto inline describe() const -> string { return string{"unknown "} + kind_name(kind()); }
 };
 
-class Type : public AST {
+class ValueLike : public AST {
+private:
+  ty::Type* m_val_ty{};
+  vector<ValueLike*> m_observers{};
+
 protected:
   using AST::AST;
+
+public:
+  [[nodiscard]] inline auto val_ty() const -> ty::Type* override { return m_val_ty; }
+  inline void val_ty(ty::Type* type) {
+    m_val_ty = type;
+    for (auto* i : m_observers) {
+      i->val_ty(type);
+    }
+  }
+
+  inline void add_observer(ValueLike* expr) {
+    m_observers.push_back(expr);
+    expr->val_ty(m_val_ty);
+  }
+};
+
+class Stmt : public ValueLike {
+protected:
+  using ValueLike::ValueLike;
+};
+
+class Type : public ValueLike {
+protected:
+  using ValueLike::ValueLike;
 
 public:
   [[nodiscard]] static auto try_parse(TokenIterator& tokens) -> optional<unique_ptr<Type>>;
@@ -181,7 +209,7 @@ public:
   }
 
   [[nodiscard]] constexpr auto inline qualifier() const -> ty::Qualifier { return m_qualifier; }
-  [[nodiscard]] auto inline base() const -> const auto& { return *m_base; }
+  [[nodiscard]] auto inline base() const -> auto& { return *m_base; }
 };
 
 class SelfType : public Type {
@@ -191,17 +219,17 @@ public:
   [[nodiscard]] inline auto describe() const -> string override { return "self"; }
 };
 
-class TypeName : public AST {
+class TypeName : public ValueLike {
   unique_ptr<Type> m_type;
   string m_name;
 
 public:
   inline TypeName(span<Token> tok, unique_ptr<Type>& type, string name)
-      : AST(TypeNameKind, tok), m_type{move(type)}, m_name{move(name)} {}
+      : ValueLike(TypeNameKind, tok), m_type{move(type)}, m_name{move(name)} {}
   void visit(Visitor& visitor) override;
   [[nodiscard]] inline auto describe() const -> string override { return m_name; }
 
-  [[nodiscard]] auto inline type() const -> const auto& { return *m_type; }
+  [[nodiscard]] auto inline type() const -> auto& { return *m_type; }
   [[nodiscard]] auto inline name() const -> string { return m_name; }
 
   template <size_t I> [[maybe_unused]] auto get() & -> auto& {
@@ -229,32 +257,9 @@ public:
   }
 };
 
-class Stmt : public AST {
-protected:
-  using AST::AST;
-};
-
 class Expr : public Stmt {
-private:
-  ty::Type* m_type{};
-  vector<Expr*> m_observers{};
-
 protected:
   using Stmt::Stmt;
-
-public:
-  [[nodiscard]] inline auto expr_type() const -> ty::Type* override { return m_type; }
-  inline void expr_type(ty::Type* type) {
-    m_type = type;
-    for (auto* i : m_observers) {
-      i->expr_type(type);
-    }
-  }
-
-  inline void add_observer(Expr* expr) {
-    m_observers.push_back(expr);
-    expr->expr_type(m_type);
-  }
 };
 
 class NumberExpr : public Expr {
