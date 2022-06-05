@@ -219,6 +219,12 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
   return llvm_fn;
 }
 
+template <> void Compiler::statement(const ast::Compound& stat) {
+  for (const auto& i : stat.body()) {
+    body_statement(i);
+  }
+}
+
 void Compiler::define(Fn& fn) {
   m_current_fn = &fn;
   m_scope.clear();
@@ -252,13 +258,7 @@ void Compiler::define(Fn& fn) {
   verifyFunction(*fn, &llvm::errs());
 }
 
-void Compiler::statement(const ast::Compound& stat) {
-  for (const auto& i : stat.body()) {
-    body_statement(i);
-  }
-}
-
-void Compiler::statement(const ast::WhileStmt& stat) {
+template <> void Compiler::statement(const ast::WhileStmt& stat) {
   auto* test_bb = BasicBlock::Create(*m_context, "while.test", *m_current_fn);
   auto* head_bb = BasicBlock::Create(*m_context, "while.head", *m_current_fn);
   auto* merge_bb = BasicBlock::Create(*m_context, "while.merge", *m_current_fn);
@@ -272,7 +272,7 @@ void Compiler::statement(const ast::WhileStmt& stat) {
   m_builder->SetInsertPoint(merge_bb);
 }
 
-void Compiler::statement(const ast::IfStmt& stat) {
+template <> void Compiler::statement(const ast::IfStmt& stat) {
   auto* merge_bb = BasicBlock::Create(*m_context, "if.cont", *m_current_fn);
   auto* next_test_bb = BasicBlock::Create(*m_context, "if.test", *m_current_fn, merge_bb);
   m_builder->CreateBr(next_test_bb);
@@ -300,7 +300,7 @@ void Compiler::statement(const ast::IfStmt& stat) {
   m_builder->SetInsertPoint(merge_bb);
 }
 
-void Compiler::statement(const ast::ReturnStmt& stat) {
+template <> void Compiler::statement(const ast::ReturnStmt& stat) {
   if (stat.expr().has_value()) {
     auto val = body_expression(stat.expr().value());
     m_builder->CreateRet(val);
@@ -309,7 +309,7 @@ void Compiler::statement(const ast::ReturnStmt& stat) {
   m_builder->CreateRetVoid();
 }
 
-void Compiler::statement(const ast::VarDecl& stat) {
+template <> void Compiler::statement(const ast::VarDecl& stat) {
   llvm::Type* var_type = nullptr;
   if (stat.type().has_value()) {
     var_type = llvm_type(convert_type(stat.type().value()));
@@ -324,36 +324,36 @@ void Compiler::statement(const ast::VarDecl& stat) {
 void Compiler::body_statement(const ast::Stmt& stat) {
   auto kind = stat.kind();
   switch (kind) {
-  case ast::CompoundKind: return statement(dynamic_cast<const ast::Compound&>(stat));
-  case ast::WhileKind: return statement(dynamic_cast<const ast::WhileStmt&>(stat));
-  case ast::IfKind: return statement(dynamic_cast<const ast::IfStmt&>(stat));
-  case ast::ReturnKind: return statement(dynamic_cast<const ast::ReturnStmt&>(stat));
-  case ast::VarDeclKind: return statement(dynamic_cast<const ast::VarDecl&>(stat));
+  case ast::CompoundKind: return conv_statement<ast::Compound>(stat);
+  case ast::WhileKind: return conv_statement<ast::WhileStmt>(stat);
+  case ast::IfKind: return conv_statement<ast::IfStmt>(stat);
+  case ast::ReturnKind: return conv_statement<ast::ReturnStmt>(stat);
+  case ast::VarDeclKind: return conv_statement<ast::VarDecl>(stat);
   default: body_expression(dynamic_cast<const ast::Expr&>(stat));
   }
 }
 
-static void not_mut(const string& message, bool mut) {
+static inline void not_mut(const string& message, bool mut) {
   if (mut) {
     throw std::runtime_error(message + " cannot be mutable!");
   }
 }
 
-auto Compiler::expression(const ast::NumberExpr& expr, bool mut) -> Val {
+template <> auto Compiler::expression(const ast::NumberExpr& expr, bool mut) -> Val {
   not_mut("number constant", mut);
   auto val = expr.val();
   if (val > std::numeric_limits<int32_t>::max()) {
-    return {m_builder->getInt64(val), m_types.int64().signed_ty};
+    return {m_builder->getInt64(val), m_types.int64().s_ty};
   }
-  return {m_builder->getInt32(val), m_types.int32().signed_ty};
+  return {m_builder->getInt32(val), m_types.int32().s_ty};
 }
 
-auto Compiler::expression(const ast::CharExpr& expr, bool mut) -> Val {
+template <> auto Compiler::expression(const ast::CharExpr& expr, bool mut) -> Val {
   not_mut("character constant", mut);
-  return {m_builder->getInt8(expr.val()), m_types.int8().unsigned_ty};
+  return {m_builder->getInt8(expr.val()), m_types.int8().u_ty};
 }
 
-auto Compiler::expression(const ast::StringExpr& expr, bool mut) -> Val {
+template <> auto Compiler::expression(const ast::StringExpr& expr, bool mut) -> Val {
   not_mut("string constant", mut);
   auto val = expr.val();
 
@@ -366,10 +366,10 @@ auto Compiler::expression(const ast::StringExpr& expr, bool mut) -> Val {
   auto* stringType = llvm::ArrayType::get(m_builder->getInt8Ty(), chars.size());
   auto* init = llvm::ConstantArray::get(stringType, chars);
   auto* global = new llvm::GlobalVariable(*m_module, stringType, true, GlobalVariable::PrivateLinkage, init, ".str");
-  return {ConstantExpr::getBitCast(global, m_builder->getInt8PtrTy(0)), &m_types.int8().unsigned_ty->known_ptr()};
+  return {ConstantExpr::getBitCast(global, m_builder->getInt8PtrTy(0)), &m_types.int8().u_ty->known_ptr()};
 }
 
-auto Compiler::expression(const ast::VarExpr& expr, bool mut) -> Val {
+template <> auto Compiler::expression(const ast::VarExpr& expr, bool mut) -> Val {
   auto local = m_scope.at(expr.name());
   auto* val = local.llvm();
   if (!mut) {
@@ -395,7 +395,7 @@ static auto binary_sign_aware(auto& base, auto&& s_fn, auto&& u_fn, const auto& 
   return (is_signed_type(lhs.type()) ? (base.*s_fn)(lhs, rhs, "", extra...) : (base.*u_fn)(lhs, rhs, "", extra...));
 }
 
-auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Val {
+template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Val {
   // TODO: calls can only return by value right now, but later this needs a condition
   not_mut("call returning by value", mut);
   auto fns_by_name = vector<Fn*>();
@@ -493,7 +493,7 @@ auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Val {
   return {ret_val, ret_type};
 }
 
-auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> Val {
+template <> auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> Val {
   if (expr.target().kind() == ast::VarKind) {
     const auto& target_var = dynamic_cast<const ast::VarExpr&>(expr.target());
     auto expr_val = body_expression(expr.value(), mut);
@@ -524,7 +524,7 @@ auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> Val {
   throw std::runtime_error("Can't assign to target "s + ast::kind_name(expr.target().kind()));
 }
 
-auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Val {
+template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Val {
   auto& type = expr.name() == "self" ? *m_current_fn->parent() : known_type(expr.name());
 
   if (type.kind() == ty::Kind::Struct) {
@@ -569,7 +569,7 @@ auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Val {
   return {llvm::UndefValue::get(llvm_type(type)), &type}; // TODO
 }
 
-auto Compiler::expression(const ast::FieldAccessExpr& expr, bool mut) -> Val {
+template <> auto Compiler::expression(const ast::FieldAccessExpr& expr, bool mut) -> Val {
   // TODO: struct can only contain things by value, later this needs a condition
   not_mut("immutable field", mut);
   auto base = body_expression(expr.base());
@@ -601,14 +601,14 @@ auto Compiler::expression(const ast::FieldAccessExpr& expr, bool mut) -> Val {
 auto Compiler::body_expression(const ast::Expr& expr, bool mut) -> Val {
   auto kind = expr.kind();
   switch (kind) {
-  case ast::NumberKind: return expression(dynamic_cast<const ast::NumberExpr&>(expr), mut);
-  case ast::StringKind: return expression(dynamic_cast<const ast::StringExpr&>(expr), mut);
-  case ast::CharKind: return expression(dynamic_cast<const ast::CharExpr&>(expr), mut);
-  case ast::CallKind: return expression(dynamic_cast<const ast::CallExpr&>(expr), mut);
-  case ast::VarKind: return expression(dynamic_cast<const ast::VarExpr&>(expr), mut);
-  case ast::AssignKind: return expression(dynamic_cast<const ast::AssignExpr&>(expr), mut);
-  case ast::CtorKind: return expression(dynamic_cast<const ast::CtorExpr&>(expr), mut);
-  case ast::FieldAccessKind: return expression(dynamic_cast<const ast::FieldAccessExpr&>(expr), mut);
+  case ast::NumberKind: return conv_expression<ast::NumberExpr>(expr, mut);
+  case ast::StringKind: return conv_expression<ast::StringExpr>(expr, mut);
+  case ast::CharKind: return conv_expression<ast::CharExpr>(expr, mut);
+  case ast::CallKind: return conv_expression<ast::CallExpr>(expr, mut);
+  case ast::VarKind: return conv_expression<ast::VarExpr>(expr, mut);
+  case ast::AssignKind: return conv_expression<ast::AssignExpr>(expr, mut);
+  case ast::CtorKind: return conv_expression<ast::CtorExpr>(expr, mut);
+  case ast::FieldAccessKind: return conv_expression<ast::FieldAccessExpr>(expr, mut);
   default: throw std::logic_error("Unimplemented body expression "s + kind_name(kind));
   }
 }

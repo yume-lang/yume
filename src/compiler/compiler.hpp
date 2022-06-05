@@ -68,20 +68,25 @@ public:
   [[nodiscard]] inline auto source_files() -> const auto& { return m_sources; }
 
 private:
-  void statement(const ast::Compound&);
-  void statement(const ast::WhileStmt&);
-  void statement(const ast::IfStmt&);
-  void statement(const ast::ReturnStmt&);
-  void statement(const ast::VarDecl&);
+  template <typename T>
+  requires std::conjunction_v<std::is_base_of<ast::Stmt, T>, std::negation<std::is_base_of<ast::Expr, T>>>
+  void conv_statement(const ast::Stmt& stat) {
+    return statement<T>(dynamic_cast<const T&>(stat));
+  }
 
-  auto expression(const ast::NumberExpr&, bool mut = false) -> Val;
-  auto expression(const ast::StringExpr&, bool mut = false) -> Val;
-  auto expression(const ast::CharExpr&, bool mut = false) -> Val;
-  auto expression(const ast::VarExpr&, bool mut = false) -> Val;
-  auto expression(const ast::CallExpr&, bool mut = false) -> Val;
-  auto expression(const ast::AssignExpr&, bool mut = false) -> Val;
-  auto expression(const ast::CtorExpr&, bool mut = false) -> Val;
-  auto expression(const ast::FieldAccessExpr&, bool mut = false) -> Val;
+  template <typename T>
+  requires std::conjunction_v<std::is_base_of<ast::Stmt, T>, std::negation<std::is_base_of<ast::Expr, T>>>
+  void statement(const T& stat);
+
+  template <typename T>
+  requires std::is_base_of_v<ast::Expr, T>
+  auto conv_expression(const ast::Expr& expr, bool mut = false) -> Val {
+    return expression<T>(dynamic_cast<const T&>(expr), mut);
+  }
+
+  template <typename T>
+  requires std::is_base_of_v<ast::Expr, T>
+  auto expression(const T&, bool mut = false) -> Val;
 
   auto known_type(const string& str) -> ty::Type&;
 
