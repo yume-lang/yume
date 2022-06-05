@@ -6,6 +6,7 @@
 #include "../ast.hpp"
 #include "../type.hpp"
 #include "../util.hpp"
+#include "type_walker.hpp"
 #include <algorithm>
 #include <climits>
 #include <cstdint>
@@ -76,10 +77,18 @@ Compiler::Compiler(std::vector<SourceFile> source_files) : m_sources(std::move(s
   m_module->setTargetTriple(targetTriple);
 
   for (const auto& source : m_sources) {
-    for (const auto& i : source.m_program->body()) {
+    for (auto& i : source.m_program->body()) {
       decl_statement(i);
     }
   }
+
+  for (auto& fn : m_fns) {
+    if (fn.name() == "main") {
+      fn.m_llvm_fn = declare(fn, false);
+    }
+  }
+
+  walk_types();
 
   while (!m_decl_queue.empty()) {
     auto* next = m_decl_queue.front();
@@ -88,7 +97,15 @@ Compiler::Compiler(std::vector<SourceFile> source_files) : m_sources(std::move(s
   }
 }
 
-void Compiler::decl_statement(const ast::Stmt& stmt, ty::Type* parent) {
+void Compiler::walk_types() {
+  auto walker = TypeWalkVisitor(*this);
+
+  for (auto& fn : m_fns) {
+    walker.m_current_fn = &fn;
+    walker.visit(fn.ast(), nullptr);
+  }
+}
+
 void Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent) {
   if (stmt.kind() == ast::FnDeclKind) {
     auto& fn_decl = dynamic_cast<ast::FnDecl&>(stmt);

@@ -65,6 +65,8 @@ public:
 
   auto mangle_name(const ast::Type& ast_type, ty::Type* parent = nullptr) -> string;
 
+  [[nodiscard]] inline auto source_files() -> const auto& { return m_sources; }
+
 private:
   void statement(const ast::Compound&);
   void statement(const ast::WhileStmt&);
@@ -82,6 +84,8 @@ private:
   auto expression(const ast::FieldAccessExpr&, bool mut = false) -> Val;
 
   auto known_type(const string& str) -> ty::Type&;
+
+  void walk_types();
 };
 } // namespace yume
 

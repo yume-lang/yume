@@ -37,17 +37,19 @@ auto main(int argc, const char* argv[]) -> int {
   {
     std::vector<std::pair<std::istream*, std::string>> inputs{};
     std::vector<std::unique_ptr<std::istream>> file_streams{};
-    auto dot = yume::open_file("output.dot");
+    auto dot = yume::open_file("output_untyped.dot");
     auto visitor = yume::diagnostic::DotVisitor{*dot};
 
-    for (auto& i : src_file_names) {
+    for (const auto& i : src_file_names) {
       if (i == "-") {
         inputs.emplace_back(&std::cin, "<source>");
         continue;
       }
       auto& f = file_streams.emplace_back(std::make_unique<std::ifstream>(i));
-      inputs.emplace_back(f.get(), std::string(i));
+      inputs.emplace_back(f.get(), i);
     }
+
+    source_files.reserve(inputs.size());
 
     for (auto& [src_stream, src_name] : inputs) {
       auto& source = source_files.emplace_back(*src_stream, src_name);
@@ -72,6 +74,11 @@ auto main(int argc, const char* argv[]) -> int {
   compiler.module()->print(*yume::open_file("output.ll"), nullptr);
   compiler.write_object("output.s", false);
   compiler.write_object("output.o", true);
+  auto dot = yume::open_file("output.dot");
+  auto visitor = yume::diagnostic::DotVisitor{*dot};
+  for (const auto& i : compiler.source_files()) {
+    visitor.visit(*i.m_program, nullptr);
+  }
 
   return EXIT_SUCCESS;
 }
