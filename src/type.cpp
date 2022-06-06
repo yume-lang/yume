@@ -24,15 +24,21 @@ auto Type::known_qual(Qualifier qual) -> Type& {
   return *r.first->second;
 }
 
+static constinit const int PERFECT_MATCH = 100;
+static constinit const int SAFE_CONVERSION = 100;
+
 auto Type::compatibility(const Type& other) const -> int {
   if (this == &other) {
-    return 2;
+    return PERFECT_MATCH;
+  }
+  if (is_mut() && !other.is_mut() && qual_base() == &other) {
+    return SAFE_CONVERSION;
   }
   if (m_kind == Kind::Integer && m_kind == other.m_kind) {
     const auto& this_integer = dynamic_cast<const IntegerType&>(*this);
     const auto& other_integer = dynamic_cast<const IntegerType&>(other);
     if (this_integer.is_signed() == other_integer.is_signed() && this_integer.size() <= other_integer.size()) {
-      return 1;
+      return SAFE_CONVERSION;
     }
   }
   // TODO
