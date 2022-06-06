@@ -17,6 +17,7 @@ class StructType;
 }
 namespace yume {
 class Compiler;
+enum struct Qualifier { Ptr, Slice, Mut };
 namespace ast {
 class TypeName;
 }

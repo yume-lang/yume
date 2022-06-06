@@ -220,22 +220,22 @@ public:
 class QualType : public Type {
 private:
   unique_ptr<Type> m_base;
-  ty::Qualifier m_qualifier;
+  Qualifier m_qualifier;
 
 public:
-  explicit inline QualType(span<Token> tok, unique_ptr<Type> base, ty::Qualifier qualifier)
+  explicit inline QualType(span<Token> tok, unique_ptr<Type> base, Qualifier qualifier)
       : Type(K_QualType, tok), m_base{move(base)}, m_qualifier{qualifier} {}
   void visit(Visitor& visitor) override;
   [[nodiscard]] inline auto describe() const -> string override {
     switch (m_qualifier) {
-    case ty::Qualifier::Ptr: return "ptr";
-    case ty::Qualifier::Slice: return "slice";
-    case ty::Qualifier::Mut: return "mut";
+    case Qualifier::Ptr: return "ptr";
+    case Qualifier::Slice: return "slice";
+    case Qualifier::Mut: return "mut";
     default: return "";
     }
   }
 
-  [[nodiscard]] constexpr auto inline qualifier() const -> ty::Qualifier { return m_qualifier; }
+  [[nodiscard]] constexpr auto inline qualifier() const -> Qualifier { return m_qualifier; }
   [[nodiscard]] auto inline base() const -> auto& { return *m_base; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_QualType; }
 };

@@ -614,12 +614,12 @@ static auto parse_type(TokenIterator& tokens) -> unique_ptr<Type> {
   }();
   while (true) {
     if (try_consume(tokens, Word, KWD_PTR)) {
-      base = std::make_unique<QualType>(ts(entry, tokens.begin()), move(base), ty::Qualifier::Ptr);
+      base = std::make_unique<QualType>(ts(entry, tokens.begin()), move(base), Qualifier::Ptr);
     } else if (try_consume(tokens, Word, KWD_MUT)) {
-      base = std::make_unique<QualType>(ts(entry, tokens.begin()), move(base), ty::Qualifier::Mut);
+      base = std::make_unique<QualType>(ts(entry, tokens.begin()), move(base), Qualifier::Mut);
     } else if (try_consume(tokens, Symbol, SYM_LBRACKET)) {
       consume(tokens, Symbol, SYM_RBRACKET);
-      base = std::make_unique<QualType>(ts(entry, tokens.begin()), move(base), ty::Qualifier::Slice);
+      base = std::make_unique<QualType>(ts(entry, tokens.begin()), move(base), Qualifier::Slice);
     } else {
       break;
     }
@@ -648,13 +648,13 @@ static auto try_parse_type(TokenIterator& tokens) -> optional<unique_ptr<Type>> 
 
   while (true) {
     if (try_consume(tokens, Word, KWD_PTR)) {
-      base = std::make_unique<QualType>(ts(entry, tokens.begin()), move(base), ty::Qualifier::Ptr);
+      base = std::make_unique<QualType>(ts(entry, tokens.begin()), move(base), Qualifier::Ptr);
     } else if (try_consume(tokens, Word, KWD_MUT)) {
-      base = std::make_unique<QualType>(ts(entry, tokens.begin()), move(base), ty::Qualifier::Mut);
+      base = std::make_unique<QualType>(ts(entry, tokens.begin()), move(base), Qualifier::Mut);
     } else if (try_peek(tokens, 0, Symbol, SYM_LBRACKET) && try_peek(tokens, 1, Symbol, SYM_RBRACKET)) {
       consume(tokens, Symbol, SYM_LBRACKET);
       consume(tokens, Symbol, SYM_RBRACKET);
-      base = std::make_unique<QualType>(ts(entry, tokens.begin()), move(base), ty::Qualifier::Slice);
+      base = std::make_unique<QualType>(ts(entry, tokens.begin()), move(base), Qualifier::Slice);
     } else {
       break;
     }
