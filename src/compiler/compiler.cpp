@@ -70,7 +70,8 @@ Compiler::Compiler(std::vector<SourceFile> source_files) : m_sources(std::move(s
   const char* feat = "";
 
   TargetOptions opt;
-  m_targetMachine = unique_ptr<TargetMachine>(target->createTargetMachine(targetTriple, cpu, feat, opt, Reloc::Model::PIC_));
+  m_targetMachine =
+      unique_ptr<TargetMachine>(target->createTargetMachine(targetTriple, cpu, feat, opt, Reloc::Model::PIC_));
 
   m_module->setDataLayout(m_targetMachine->createDataLayout());
   m_module->setTargetTriple(targetTriple);
@@ -594,11 +595,6 @@ template <> auto Compiler::expression(const ast::FieldAccessExpr& expr, bool mut
   throw std::runtime_error("Can't access field of expression with non-struct type");
 }
 
-// base case
-template <> auto Compiler::expression(const ast::Expr& expr, [[maybe_unused]] bool mut) -> Val {
-  throw std::runtime_error("Unknown expression "s + ast::kind_name(expr.kind()));
-}
-
 void Compiler::write_object(const char* filename, bool binary) {
   auto dest = open_file(filename);
 
@@ -656,9 +652,7 @@ auto Compiler::mangle_name(const ast::Type& ast_type, ty::Type* parent) -> strin
 
 auto Compiler::known_type(const string& str) -> ty::Type& { return *m_types.known.at(str); }
 
-void Compiler::body_statement(const ast::Stmt& stat) {
-  return CRTPWalker::body_statement(stat);
-};
+void Compiler::body_statement(const ast::Stmt& stat) { return CRTPWalker::body_statement(stat); };
 auto Compiler::body_expression(const ast::Expr& expr, bool mut) -> Val {
   return CRTPWalker::body_expression(expr, mut);
 };

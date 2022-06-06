@@ -73,11 +73,13 @@ public:
   [[nodiscard]] inline auto source_files() -> const auto& { return m_sources; }
 
 private:
-  template<typename T>
-  void statement(const T& stat);
+  template <typename T> inline void statement(const T& stat) {
+    throw std::runtime_error("Unknown statement "s + ast::kind_name(stat.kind()));
+  }
 
-  template<typename T>
-  auto expression(const T& expr, bool mut = false) -> Val;
+  template <typename T> inline auto expression(const T& expr, [[maybe_unused]] bool mut = false) -> Val {
+    throw std::runtime_error("Unknown expression "s + ast::kind_name(expr.kind()));
+  }
 
   auto known_type(const string& str) -> ty::Type&;
 
