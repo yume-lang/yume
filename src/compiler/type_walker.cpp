@@ -30,7 +30,7 @@ template <> void TypeWalker::expression(ast::Type& expr) {
 
 template <> void TypeWalker::expression(ast::TypeName& expr) {
   auto& type = expr.type();
-  type.add_observer(&expr);
+  expr.attach_to(&type);
   expression(type);
 }
 
@@ -55,7 +55,7 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
 }
 
 // TODO: temporary? This is a pretty nasty RTTI dependence on something that should be called "often"?
-auto TypeWalker::visit(ast::AST& expr, const char* label) -> TypeWalker& {
+auto TypeWalker::visit(ast::AST& expr, [[maybe_unused]] const char* label) -> TypeWalker& {
   if (auto* stmt = dynamic_cast<ast::Stmt*>(&expr); stmt != nullptr) {
     body_statement(*stmt);
   }

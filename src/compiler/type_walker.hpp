@@ -25,11 +25,11 @@ public:
 
   auto visit(ast::AST& expr, const char* label) -> TypeWalker& override;
 
-  inline auto visit(std::nullptr_t null, const char* label) -> TypeWalker& override {
+  inline auto visit([[maybe_unused]] std::nullptr_t null, [[maybe_unused]] const char* label) -> TypeWalker& override {
     return *this;
   }
 
-  inline auto visit(const string& str, const char* label) -> TypeWalker& override {
+  inline auto visit([[maybe_unused]] const string& str, [[maybe_unused]] const char* label) -> TypeWalker& override {
     return *this;
   }
 

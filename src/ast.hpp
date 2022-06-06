@@ -116,7 +116,21 @@ private:
   const Kind m_kind;
   const span<Token> m_tok;
   mutable ty::Type* m_val_ty{};
-  mutable vector<const AST*> m_observers{};
+  mutable std::set<const AST*> m_attached{};
+
+  inline void unify_val_ty(const AST* other) const {
+    if (m_val_ty == other->m_val_ty) {
+      return;
+    }
+    if (m_val_ty == nullptr) {
+      m_val_ty = other->m_val_ty;
+    } else if (other->m_val_ty == nullptr) {
+      other->m_val_ty = m_val_ty;
+    } else {
+      throw std::logic_error("Conflicting types between AST nodes that are attached: `"s + m_val_ty->name() +
+                             "` vs `" + other->m_val_ty->name() + "`!");
+    }
+  }
 
 protected:
   // constexpr AST(Kind kind) : m_kind(kind) {}
@@ -130,18 +144,20 @@ public:
   virtual ~AST() = default;
 
   virtual void inline visit(Visitor& visitor) = 0;
-  [[nodiscard]] inline auto val_ty() const -> ty::Type* { return m_val_ty; }
+  [[nodiscard]] inline auto val_ty() const noexcept -> ty::Type* { return m_val_ty; }
   inline void val_ty(ty::Type* type) const {
     m_val_ty = type;
-    for (const auto* i : m_observers) {
-      i->val_ty(type);
+    for (const auto* i : m_attached) {
+      unify_val_ty(i);
     }
   }
 
-  inline void add_observer(const AST* expr) const {
-    m_observers.push_back(expr);
-    expr->val_ty(m_val_ty);
+  inline void attach_to(const AST* other) const {
+    other->m_attached.insert(this);
+    m_attached.insert(other);
+    unify_val_ty(other);
   }
+
   [[nodiscard]] auto kind() const -> Kind { return m_kind; };
   [[nodiscard]] auto token_range() const -> const span<Token>& { return m_tok; };
   [[nodiscard]] auto location() const -> Loc {
