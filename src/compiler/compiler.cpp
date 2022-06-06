@@ -98,7 +98,7 @@ Compiler::Compiler(std::vector<SourceFile> source_files) : m_sources(std::move(s
 }
 
 void Compiler::walk_types() {
-  auto walker = TypeWalkVisitor(*this);
+  auto walker = TypeWalker(*this);
 
   // First pass: only convert function parameters
   for (auto& fn : m_fns) {

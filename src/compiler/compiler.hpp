@@ -27,7 +27,7 @@ class Type;
 } // namespace llvm
 
 namespace yume {
-struct TypeWalkVisitor;
+struct TypeWalker;
 using namespace llvm;
 
 class Compiler : public CRTPWalker<Compiler> {
@@ -44,7 +44,7 @@ class Compiler : public CRTPWalker<Compiler> {
   unique_ptr<Module> m_module;
   unique_ptr<TargetMachine> m_targetMachine;
 
-  friend TypeWalkVisitor;
+  friend TypeWalker;
   friend CRTPWalker;
 
 public:

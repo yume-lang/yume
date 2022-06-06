@@ -11,7 +11,7 @@ namespace ast {
 class AST;
 }
 
-struct TypeWalkVisitor : public CRTPWalker<TypeWalkVisitor> {
+struct TypeWalker : public CRTPWalker<TypeWalker, false>, public Visitor {
   friend CRTPWalker;
 
 public:
@@ -21,15 +21,31 @@ public:
   // converted, then everything else in a second pass.
   bool m_in_depth = false;
 
-  explicit TypeWalkVisitor(Compiler& compiler) : m_compiler(compiler) {}
+  explicit TypeWalker(Compiler& compiler) : m_compiler(compiler) {}
+
+  auto visit(ast::AST& expr, const char* label) -> TypeWalker& override;
+
+  inline auto visit(std::nullptr_t null, const char* label) -> TypeWalker& override {
+    return *this;
+  }
+
+  inline auto visit(const string& str, const char* label) -> TypeWalker& override {
+    return *this;
+  }
 
 private:
   template <typename T> inline void statement([[maybe_unused]] T& stat) {
-    // ignore
+#ifdef YUME_SPEW_TYPE_WALKER_STUB
+    std::cerr << "Type walked stubbed on statement " << ast::kind_name(stat.kind()) << "\n";
+#endif
+    stat.visit(*this);
   }
 
   template <typename T> inline void expression([[maybe_unused]] T& expr) {
-    // ignore
+#ifdef YUME_SPEW_TYPE_WALKER_STUB
+    std::cerr << "Type walked stubbed on expression " << ast::kind_name(expr.kind()) << "\n";
+#endif
+    expr.visit(*this);
   }
 };
 } // namespace yume

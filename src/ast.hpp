@@ -116,7 +116,7 @@ private:
   const Kind m_kind;
   const span<Token> m_tok;
   mutable ty::Type* m_val_ty{};
-  mutable vector<AST*> m_observers{};
+  mutable vector<const AST*> m_observers{};
 
 protected:
   // constexpr AST(Kind kind) : m_kind(kind) {}
@@ -133,12 +133,12 @@ public:
   [[nodiscard]] inline auto val_ty() const -> ty::Type* { return m_val_ty; }
   inline void val_ty(ty::Type* type) const {
     m_val_ty = type;
-    for (auto* i : m_observers) {
+    for (const auto* i : m_observers) {
       i->val_ty(type);
     }
   }
 
-  inline void add_observer(AST* expr) const {
+  inline void add_observer(const AST* expr) const {
     m_observers.push_back(expr);
     expr->val_ty(m_val_ty);
   }
