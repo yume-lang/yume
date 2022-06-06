@@ -58,11 +58,7 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
   body_expression(expr.base());
   auto& type = *expr.base().val_ty();
 
-  ty::StructType* struct_type = nullptr;
-
-  if (type.mut_base_or_this_kind() == ty::Kind::Struct) {
-    struct_type = &dynamic_cast<ty::StructType&>(type.mut_base_or_this());
-  }
+  auto* struct_type = dyn_cast<ty::Struct>(&type.mut_base_or_this());
 
   if (struct_type == nullptr) {
     throw std::runtime_error("Can't access field of expression with non-struct type");

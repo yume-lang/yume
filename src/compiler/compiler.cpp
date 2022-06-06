@@ -118,7 +118,7 @@ void Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent) {
     for (const auto& f : s_decl->fields()) {
       fields.push_back(&f);
     };
-    auto i_ty = m_types.known.insert({s_decl->name(), std::make_unique<ty::StructType>(s_decl->name(), fields)});
+    auto i_ty = m_types.known.insert({s_decl->name(), std::make_unique<ty::Struct>(s_decl->name(), fields)});
 
     for (auto& f : s_decl->body().body()) {
       decl_statement(f, i_ty.first->second.get());
@@ -146,35 +146,32 @@ auto Compiler::convert_type(const ast::Type& ast_type, ty::Type* parent) -> ty::
 }
 
 auto Compiler::llvm_type(const ty::Type& type) -> llvm::Type* {
-  if (type.kind() == ty::Kind::Integer) {
-    const auto& int_type = dynamic_cast<const ty::IntegerType&>(type);
-    return llvm::Type::getIntNTy(*m_context, int_type.size());
+  if (const auto* int_type = dyn_cast<ty::Int>(&type)) {
+    return llvm::Type::getIntNTy(*m_context, int_type->size());
   }
-  if (type.kind() == ty::Kind::Qual) {
-    const auto& qual_type = dynamic_cast<const ty::QualType&>(type);
-    auto qualifier = qual_type.qualifier();
+  if (const auto* qual_type = dyn_cast<ty::Qual>(&type)) {
+    auto qualifier = qual_type->qualifier();
     switch (qualifier) {
-    case ty::Qualifier::Ptr: return llvm::PointerType::getUnqual(llvm_type(qual_type.base()));
-    case ty::Qualifier::Slice: {
+    case Qualifier::Ptr: return llvm::PointerType::getUnqual(llvm_type(qual_type->base()));
+    case Qualifier::Slice: {
       auto args = vector<llvm::Type*>{};
-      args.push_back(llvm::PointerType::getUnqual(llvm_type(qual_type.base())));
+      args.push_back(llvm::PointerType::getUnqual(llvm_type(qual_type->base())));
       args.push_back(llvm::Type::getInt64PtrTy(*m_context));
       return llvm::StructType::get(*m_context, args);
     }
-    case ty::Qualifier::Mut: return llvm_type(qual_type.base())->getPointerTo();
-    default: return llvm_type(qual_type.base());
+    case Qualifier::Mut: return llvm_type(qual_type->base())->getPointerTo();
+    default: return llvm_type(qual_type->base());
     }
   }
-  if (type.kind() == ty::Kind::Struct) {
-    const auto& struct_type = dynamic_cast<const ty::StructType&>(type);
-    auto* memo = struct_type.memo();
+  if (const auto* struct_type = dyn_cast<ty::Struct>(&type)) {
+    auto* memo = struct_type->memo();
     if (memo == nullptr) {
       auto fields = vector<llvm::Type*>{};
-      for (const auto& i : struct_type.fields()) {
+      for (const auto& i : struct_type->fields()) {
         fields.push_back(llvm_type(convert_type(i.type())));
       }
-      memo = llvm::StructType::create(*m_context, fields, "_"s + struct_type.name());
-      struct_type.memo(memo);
+      memo = llvm::StructType::create(*m_context, fields, "_"s + struct_type->name());
+      struct_type->memo(memo);
     }
 
     return memo;
@@ -237,9 +234,8 @@ void Compiler::define(Fn& fn) {
     auto& type = *fn.ast().args()[i].val_ty();
     auto name = fn.ast().args()[i++].name();
     llvm::Value* alloc = nullptr;
-    if (type.kind() == ty::Kind::Qual) {
-      auto& qual_type = dynamic_cast<ty::QualType&>(type);
-      if (qual_type.is_mut()) {
+    if (auto* qual_type = dyn_cast<ty::Qual>(&type)) {
+      if (qual_type->is_mut()) {
         alloc = &arg;
         m_scope.insert({name, &arg});
         continue;
@@ -370,8 +366,7 @@ static auto is_signed_type(ty::Type* type) -> bool {
   if (type == nullptr) {
     throw std::logic_error("Can't determine signedness of missing type");
   }
-  if (type->kind() == ty::Kind::Integer) {
-    auto* int_ty = dynamic_cast<ty::IntegerType*>(type);
+  if (auto* int_ty = dyn_cast<ty::Int>(type)) {
     return int_ty->is_signed();
   }
   throw std::logic_error("Can't determine signedness of non-integer type "s + type->name());
@@ -454,20 +449,19 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> 
     int base_offset = field_access->offset();
 
     auto expr_val = body_expression(expr.value(), mut);
-    auto* struct_type = llvm_type(dynamic_cast<ty::StructType&>(field_access->base().val_ty()->mut_base_or_this()));
+    auto* struct_type = llvm_type(cast<ty::Struct>(field_access->base().val_ty()->mut_base_or_this()));
 
     auto* gep = m_builder->CreateStructGEP(struct_type, base, base_offset, "s.sf."s + base_name);
     m_builder->CreateStore(expr_val, gep);
     return expr_val;
   }
-  throw std::runtime_error("Can't assign to target "s + ast::kind_name(expr.target().kind()));
+  throw std::runtime_error("Can't assign to target "s + expr.target().kind_name());
 }
 
 template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Val {
   auto& type = *expr.val_ty();
-  if (type.mut_base_or_this_kind() == ty::Kind::Struct) {
-    auto& struct_type = dynamic_cast<ty::StructType&>(type.mut_base_or_this());
-    auto* llvm_struct_type = llvm_type(struct_type);
+  if (auto* struct_type = dyn_cast<ty::Struct>(&type.mut_base_or_this())) {
+    auto* llvm_struct_type = llvm_type(*struct_type);
 
     llvm::Value* alloc = nullptr;
     // TODO: determine what kind of allocation must be done, and if at all. It'll probably require a complicated
@@ -490,7 +484,7 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
     auto i = 0;
     llvm::Value* base_value = UndefValue::get(llvm_struct_type);
     for (const auto& arg : expr.args()) {
-      const auto& [target_type, target_name] = struct_type.fields().begin()[i];
+      const auto& [target_type, target_name] = struct_type->fields().begin()[i];
       auto field_value = body_expression(arg);
       base_value = m_builder->CreateInsertValue(base_value, field_value, i, "s.ctor.wf." + target_name);
       i++;
@@ -565,9 +559,9 @@ auto Compiler::mangle_name(const ast::Type& ast_type, ty::Type* parent) -> strin
   auto qualifier = qual_type.qualifier();
   ss << mangle_name(qual_type.base(), parent);
   switch (qualifier) {
-  case ty::Qualifier::Ptr: ss << "*"; break;
-  case ty::Qualifier::Slice: ss << "["; break;
-  case ty::Qualifier::Mut: ss << "&"; break;
+  case Qualifier::Ptr: ss << "*"; break;
+  case Qualifier::Slice: ss << "["; break;
+  case Qualifier::Mut: ss << "&"; break;
   }
   return ss.str();
 }

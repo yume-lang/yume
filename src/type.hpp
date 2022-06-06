@@ -6,6 +6,7 @@
 #define YUME_CPP_TYPE_HPP
 
 #include "util.hpp"
+#include "llvm/Support/Casting.h"
 #include <map>
 #include <memory>
 #include <string>
@@ -24,8 +25,16 @@ class TypeName;
 } // namespace yume
 
 namespace yume::ty {
-enum struct Kind { Integer, Qual, Struct, Unknown };
-enum struct Qualifier { Ptr, Slice, Mut };
+  using llvm::isa;
+  using llvm::dyn_cast;
+  using llvm::cast;
+
+enum Kind {
+  K_Unknown,
+  K_Int,
+  K_Qual,
+  K_Struct,
+};
 
 class Type {
   std::map<Qualifier, unique_ptr<Type>> m_known_qual{};
@@ -54,36 +63,36 @@ public:
   [[nodiscard]] auto mut_base_or_this() -> Type&;
   [[nodiscard]] auto mut_base_or_this_kind() const -> Kind;
 
-  using enum Kind;
-
 protected:
   Type(Kind kind, string name) : m_kind(kind), m_name(move(name)) {}
 };
 
-class IntegerType : public Type {
+class Int : public Type {
   int m_size;
   bool m_signed;
 
 public:
-  inline IntegerType(string name, int size, bool signed_)
-      : Type(Integer, move(name)), m_size(size), m_signed(signed_) {}
+  inline Int(string name, int size, bool signed_)
+      : Type(K_Int, move(name)), m_size(size), m_signed(signed_) {}
   [[nodiscard]] inline auto size() const -> int { return m_size; }
   [[nodiscard]] inline auto is_signed() const -> bool { return m_signed; }
+  static auto classof(const Type* a) -> bool { return a->kind() == K_Int; }
 };
 
-class QualType : public Type {
+class Qual : public Type {
 private:
   Type& m_base;
   Qualifier m_qualifier;
 
 public:
-  inline QualType(string name, Type& base, Qualifier qualifier)
-      : Type(Qual, move(name)), m_base(base), m_qualifier(qualifier) {}
+  inline Qual(string name, Type& base, Qualifier qualifier)
+      : Type(K_Qual, move(name)), m_base(base), m_qualifier(qualifier) {}
   [[nodiscard]] inline auto base() const -> Type& { return m_base; }
   [[nodiscard]] inline auto qualifier() const -> Qualifier { return m_qualifier; }
+  static auto classof(const Type* a) -> bool { return a->kind() == K_Qual; }
 };
 
-class StructType : public Type {
+class Struct : public Type {
   vector<const ast::TypeName*> m_fields;
   mutable llvm::StructType* m_memo{};
   inline void memo(llvm::StructType* memo) const { m_memo = memo; }
@@ -91,15 +100,17 @@ class StructType : public Type {
   friend Compiler;
 
 public:
-  inline StructType(string name, vector<const ast::TypeName*> fields)
-      : Type(Struct, move(name)), m_fields(move(fields)) {}
+  inline Struct(string name, vector<const ast::TypeName*> fields)
+      : Type(K_Struct, move(name)), m_fields(move(fields)) {}
   [[nodiscard]] inline auto fields() const { return dereference_view(m_fields); }
   [[nodiscard]] inline auto memo() const -> auto* { return m_memo; }
+  static auto classof(const Type* a) -> bool { return a->kind() == K_Struct; }
 };
 
 class UnknownType : public Type {
 public:
-  inline UnknownType() : Type(Unknown, "?") {}
+  inline UnknownType() : Type(K_Unknown, "?") {}
+  static auto classof(const Type* a) -> bool { return a->kind() == K_Unknown; }
 };
 } // namespace yume::ty
 

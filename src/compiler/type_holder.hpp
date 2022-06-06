@@ -10,8 +10,8 @@
 namespace yume {
 struct TypeHolder {
   struct IntTypePair {
-    ty::IntegerType* s_ty;
-    ty::IntegerType* u_ty;
+    ty::Int* s_ty;
+    ty::Int* u_ty;
   };
 
   std::array<IntTypePair, 4> int_types{};
