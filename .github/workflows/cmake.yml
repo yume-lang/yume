@@ -33,6 +33,12 @@ jobs:
 
     - name: Test collatz.ym
       run: build/yumec example/collatz.ym && ./yume.out
+    - name: Test fizzbuzz.ym
+      run: build/yumec example/fizzbuzz.ym && ./yume.out
+    - name: Test overloads.ym
+      run: build/yumec example/overloads.ym && ./yume.out
+    - name: Test struct.ym
+      run: build/yumec example/struct.ym && ./yume.out
 
 #     - name: Test
 #       working-directory: ${{github.workspace}}/build
