@@ -314,12 +314,9 @@ template <> void Compiler::statement(const ast::ReturnStmt& stat) {
 }
 
 template <> void Compiler::statement(const ast::VarDecl& stat) {
-  llvm::Type* var_type = nullptr;
-  if (stat.type().has_value()) {
-    // Locals are currently always mut, get the base type instead
-    // TODO: revisit, probably extract logic
-    var_type = llvm_type(*stat.val_ty()->qual_base());
-  }
+  // Locals are currently always mut, get the base type instead
+  // TODO: revisit, probably extract logic
+  auto* var_type = llvm_type(*stat.val_ty()->qual_base());
 
   auto* alloc = m_builder->CreateAlloca(var_type, nullptr, stat.name());
   auto expr_val = body_expression(stat.init());

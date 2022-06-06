@@ -178,10 +178,10 @@ template <> void TypeWalker::statement(ast::VarDecl& stat) {
   body_expression(stat.init());
   if (stat.type().has_value()) {
     expression(stat.type()->get());
-    stat.val_ty(&stat.type()->get().val_ty()->known_mut());
+    stat.init().attach_to(&stat.type()->get());
   }
 
-  stat.init().attach_to(&stat);
+  stat.val_ty(&stat.init().val_ty()->known_mut());
   m_scope.insert({stat.name(), &stat});
 }
 
