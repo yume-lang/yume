@@ -75,11 +75,11 @@ public:
 
 private:
   template <typename T> inline void statement(const T& stat) {
-    throw std::runtime_error("Unknown statement "s + ast::kind_name(stat.kind()));
+    throw std::runtime_error("Unknown statement "s + stat.kind_name());
   }
 
   template <typename T> inline auto expression(const T& expr, [[maybe_unused]] bool mut = false) -> Val {
-    throw std::runtime_error("Unknown expression "s + ast::kind_name(expr.kind()));
+    throw std::runtime_error("Unknown expression "s + expr.kind_name());
   }
 
   auto known_type(const string& str) -> ty::Type&;

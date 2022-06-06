@@ -175,6 +175,7 @@ public:
   }
 
   [[nodiscard]] auto kind() const -> Kind { return m_kind; };
+  [[nodiscard]] auto kind_name() const -> string { return ast::kind_name(kind()); };
   [[nodiscard]] auto token_range() const -> const span<Token>& { return m_tok; };
   [[nodiscard]] auto location() const -> Loc {
     if (m_tok.empty()) {
@@ -185,7 +186,7 @@ public:
     }
     return m_tok[0].m_loc + m_tok[m_tok.size() - 1].m_loc;
   };
-  [[nodiscard]] virtual auto inline describe() const -> string { return string{"unknown "} + kind_name(kind()); }
+  [[nodiscard]] virtual auto inline describe() const -> string { return string{"unknown "} + kind_name(); }
 };
 
 class Stmt : public AST {

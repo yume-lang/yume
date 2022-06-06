@@ -82,7 +82,7 @@ void DotVisitor::visit_expr(ast::AST& expr, const char* label) {
     stream() << "<U>" << val_ty->name() << "</U><BR/>";
   }
   stream() << "<B>";
-  xml_escape(stream(), string(ast::kind_name(expr.kind())));
+  xml_escape(stream(), expr.kind_name());
   stream() << "</B>";
   auto restore_parent = set_parent(m_index);
   auto restore_children = set_children(0);
