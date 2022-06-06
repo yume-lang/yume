@@ -26,8 +26,6 @@ struct Fn {
   // TODO: multiple instantiations
   llvm::Function* m_llvm_fn{};
 
-  std::map<const ast::CallExpr*, Fn*> selected_overload{};
-
   [[nodiscard]] auto inline body() const -> const auto& { return m_ast_decl.body(); }
 
   [[nodiscard]] auto inline name() const { return m_ast_decl.name(); }
@@ -40,8 +38,6 @@ struct Fn {
 
   [[nodiscard]] auto declaration(Compiler& compiler, bool mangle = true) -> llvm::Function*;
 
-  [[nodiscard]] auto inline selected_overload_for(const ast::CallExpr& call) -> Fn& { return *selected_overload.at(&call); }
-
   operator llvm::Function*() const { // NOLINT(google-explicit-constructor)
     return m_llvm_fn;
   }
@@ -49,10 +45,10 @@ struct Fn {
 
 struct Val {
   llvm::Value* m_llvm_val{};
-  ty::Type* m_type{};
+  [[deprecated]] ty::Type* m_type{};
 
   /* implicit */ inline Val(llvm::Value* llvm_val) : m_llvm_val(llvm_val) {}
-  inline Val(llvm::Value* llvm_val, ty::Type* type) : m_llvm_val(llvm_val), m_type(type) {}
+  [[deprecated]] inline Val(llvm::Value* llvm_val, ty::Type* type) : m_llvm_val(llvm_val), m_type(type) {}
   Val(const Val&) noexcept = default;
   Val(Val&&) noexcept = default;
   auto operator=(const Val&) noexcept -> Val& = default;

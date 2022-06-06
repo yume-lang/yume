@@ -22,6 +22,7 @@
 
 namespace yume {
 class Visitor;
+struct Fn;
 }
 
 namespace yume::ast {
@@ -316,6 +317,7 @@ public:
 class CallExpr : public Expr {
   string m_name;
   vector<unique_ptr<Expr>> m_args;
+  mutable Fn* m_selected_overload{};
 
 public:
   inline CallExpr(span<Token> tok, string name, vector<unique_ptr<Expr>>& args)
@@ -325,6 +327,9 @@ public:
 
   [[nodiscard]] auto inline name() const -> string { return m_name; }
   [[nodiscard]] constexpr auto inline args() const { return dereference_view(m_args); }
+
+  void inline selected_overload(Fn* fn) const { m_selected_overload = fn; }
+  [[nodiscard]] auto inline selected_overload() const -> Fn* { return m_selected_overload; }
 };
 
 class CtorExpr : public Expr {
@@ -357,6 +362,7 @@ public:
 class FieldAccessExpr : public Expr {
   unique_ptr<Expr> m_base;
   string m_field;
+  mutable int m_offset = -1;
 
 public:
   inline FieldAccessExpr(span<Token> tok, unique_ptr<Expr>& base, string field)
@@ -366,6 +372,8 @@ public:
   [[nodiscard]] auto inline base() const -> const auto& { return *m_base; }
   [[nodiscard]] auto inline base() -> auto& { return *m_base; }
   [[nodiscard]] auto inline field() const -> string { return m_field; }
+  void inline offset(int offset) const { m_offset = offset; }
+  [[nodiscard]] auto inline offset() const -> int { return m_offset; }
 };
 
 class Compound : public Stmt {

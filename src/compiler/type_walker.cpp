@@ -74,14 +74,17 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
 
   auto target_name = expr.field();
   ty::Type* target_type{};
+  int j = 0;
   for (const auto& field : struct_type->fields()) {
     if (field.name() == target_name) {
       // TODO: struct fields should also go through the type walker so they have attached types
       target_type = &m_compiler.convert_type(field.type(), struct_type);
       break;
     }
+    j++;
   }
 
+  expr.offset(j);
   expr.val_ty(target_type);
 }
 
@@ -136,7 +139,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
     expr.val_ty(selected->ast().ret()->get().val_ty());
   }
 
-  m_current_fn->selected_overload.insert({&expr, selected});
+  expr.selected_overload(selected);
 }
 
 template <> void TypeWalker::statement(ast::Compound& stat) {
