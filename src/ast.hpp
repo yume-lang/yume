@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
+#include <llvm/ADT/SmallPtrSet.h>
 #include <memory>
 #include <optional>
 #include <span>
@@ -128,7 +129,7 @@ private:
   const Kind m_kind;
   const span<Token> m_tok;
   mutable ty::Type* m_val_ty{};
-  mutable std::set<const AST*> m_attached{};
+  mutable llvm::SmallPtrSet<const AST*, 2> m_attached{};
 
   inline void unify_val_ty(const AST* other) const {
     if (m_val_ty == other->m_val_ty) {

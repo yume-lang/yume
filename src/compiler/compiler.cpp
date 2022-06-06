@@ -566,7 +566,7 @@ auto Compiler::mangle_name(const ast::Type& ast_type, ty::Type* parent) -> strin
   return ss.str();
 }
 
-auto Compiler::known_type(const string& str) -> ty::Type& { return *m_types.known.at(str); }
+auto Compiler::known_type(const string& str) -> ty::Type& { return *m_types.known.find(str)->getValue(); }
 
 void Compiler::body_statement(const ast::Stmt& stat) { return CRTPWalker::body_statement(stat); };
 auto Compiler::body_expression(const ast::Expr& expr, bool mut) -> Val {

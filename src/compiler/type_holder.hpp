@@ -3,6 +3,7 @@
 #include "../type.hpp"
 #include "../util.hpp"
 #include <array>
+#include <llvm/ADT/StringMap.h>
 #include <map>
 #include <memory>
 #include <string>
@@ -16,7 +17,7 @@ struct TypeHolder {
 
   std::array<IntTypePair, 4> int_types{};
   ty::UnknownType unknown{};
-  std::map<string, unique_ptr<ty::Type>> known{};
+  llvm::StringMap<unique_ptr<ty::Type>> known{};
 
   TypeHolder();
 
