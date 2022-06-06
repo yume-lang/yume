@@ -10,6 +10,7 @@
 #include "../util.hpp"
 #include "crtp_walker.hpp"
 #include "type_holder.hpp"
+#include "type_walker.hpp"
 #include "vals.hpp"
 #include <llvm/ADT/iterator_range.h>
 #include <llvm/IR/IRBuilder.h>
@@ -27,7 +28,6 @@ class Type;
 } // namespace llvm
 
 namespace yume {
-struct TypeWalker;
 using namespace llvm;
 
 class Compiler : public CRTPWalker<Compiler> {
@@ -52,8 +52,6 @@ public:
   [[nodiscard]] auto module() const -> const auto& { return m_module; }
 
   explicit Compiler(std::vector<SourceFile> source_files);
-
-  ~Compiler();
 
   [[nodiscard]] auto declare(Fn&, bool mangle = true) -> llvm::Function*;
 

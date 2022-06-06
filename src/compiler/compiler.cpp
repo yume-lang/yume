@@ -49,8 +49,6 @@
 #include <variant>
 
 namespace yume {
-Compiler::~Compiler() = default;
-
 Compiler::Compiler(std::vector<SourceFile> source_files)
     : m_sources(std::move(source_files)), m_walker(std::make_unique<TypeWalker>(*this)) {
   m_context = std::make_unique<LLVMContext>();
@@ -246,13 +244,13 @@ void Compiler::define(Fn& fn) {
       auto& qual_type = dynamic_cast<ty::QualType&>(type);
       if (qual_type.is_mut()) {
         alloc = &arg;
-        m_scope.insert({name, {&arg, &qual_type.base()}});
+        m_scope.insert({name, &arg});
         continue;
       }
     }
     alloc = m_builder->CreateAlloca(llvm_type(type), nullptr, name);
     m_builder->CreateStore(&arg, alloc);
-    m_scope.insert({name, {alloc, &type}});
+    m_scope.insert({name, alloc});
   }
 
   if (const auto* body = get_if<unique_ptr<ast::Compound>>(&fn.body()); body != nullptr) {
@@ -318,13 +316,15 @@ template <> void Compiler::statement(const ast::ReturnStmt& stat) {
 template <> void Compiler::statement(const ast::VarDecl& stat) {
   llvm::Type* var_type = nullptr;
   if (stat.type().has_value()) {
-    var_type = llvm_type(convert_type(stat.type().value()));
+    // Locals are currently always mut, get the base type instead
+    // TODO: revisit, probably extract logic
+    var_type = llvm_type(*stat.val_ty()->qual_base());
   }
 
   auto* alloc = m_builder->CreateAlloca(var_type, nullptr, stat.name());
   auto expr_val = body_expression(stat.init());
   m_builder->CreateStore(expr_val, alloc);
-  m_scope.insert({stat.name(), {alloc, expr_val.type()}});
+  m_scope.insert({stat.name(), alloc});
 }
 
 static inline void not_mut(const string& message, bool mut) {
@@ -336,15 +336,15 @@ static inline void not_mut(const string& message, bool mut) {
 template <> auto Compiler::expression(const ast::NumberExpr& expr, bool mut) -> Val {
   not_mut("number constant", mut);
   auto val = expr.val();
-  if (val > std::numeric_limits<int32_t>::max()) {
-    return {m_builder->getInt64(val), m_types.int64().s_ty};
+  if (expr.val_ty() == m_types.int64().s_ty) {
+    return m_builder->getInt64(val);
   }
-  return {m_builder->getInt32(val), m_types.int32().s_ty};
+  return m_builder->getInt32(val);
 }
 
 template <> auto Compiler::expression(const ast::CharExpr& expr, bool mut) -> Val {
   not_mut("character constant", mut);
-  return {m_builder->getInt8(expr.val()), m_types.int8().u_ty};
+  return m_builder->getInt8(expr.val());
 }
 
 template <> auto Compiler::expression(const ast::StringExpr& expr, bool mut) -> Val {
@@ -360,16 +360,16 @@ template <> auto Compiler::expression(const ast::StringExpr& expr, bool mut) -> 
   auto* stringType = llvm::ArrayType::get(m_builder->getInt8Ty(), chars.size());
   auto* init = llvm::ConstantArray::get(stringType, chars);
   auto* global = new llvm::GlobalVariable(*m_module, stringType, true, GlobalVariable::PrivateLinkage, init, ".str");
-  return {ConstantExpr::getBitCast(global, m_builder->getInt8PtrTy(0)), &m_types.int8().u_ty->known_ptr()};
+  return ConstantExpr::getBitCast(global, m_builder->getInt8PtrTy(0));
 }
 
 template <> auto Compiler::expression(const ast::VarExpr& expr, bool mut) -> Val {
-  auto local = m_scope.at(expr.name());
-  auto* val = local.llvm();
+  auto* val = m_scope.at(expr.name()).llvm();
   if (!mut) {
-    val = m_builder->CreateLoad(llvm_type(*local.type()), val);
+    // Function arguments can act as locals, but they can be immutable, but still behind a reference (alloca)
+    val = m_builder->CreateLoad(llvm_type(expr.val_ty()->mut_base_or_this()), val);
   }
-  return {val, local.type()};
+  return val;
 }
 
 static auto is_signed_type(ty::Type* type) -> bool {
@@ -383,24 +383,25 @@ static auto is_signed_type(ty::Type* type) -> bool {
   throw std::logic_error("Can't determine signedness of non-integer type");
 }
 
-static auto binary_sign_aware(auto& base, auto&& s_fn, auto&& u_fn, const auto& args, auto&&... extra) {
+static auto binary_sign_aware(IRBuilder<>& base, auto&& s_fn, auto&& u_fn, const vector<Val>& args, ty::Type* ret,
+                              const auto&&... extra) {
   const auto& lhs = args.at(0);
   const auto& rhs = args.at(1);
-  return (is_signed_type(lhs.type()) ? (base.*s_fn)(lhs, rhs, "", extra...) : (base.*u_fn)(lhs, rhs, "", extra...));
+  return (is_signed_type(ret) ? (base.*s_fn)(lhs, rhs, "", extra...) : (base.*u_fn)(lhs, rhs, "", extra...));
 }
 
 template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Val {
   // TODO: calls can only return by value right now, but later this needs a condition
   not_mut("call returning by value", mut);
 
-  auto& selected = m_current_fn->selected_overload_for(expr);
+  auto* selected = expr.selected_overload();
   llvm::Function* llvm_fn = nullptr;
-  ty::Type* ret_type = selected.ast().val_ty();
+  ty::Type* ret_type = selected->ast().val_ty();
 
   vector<Val> args{};
   vector<llvm::Value*> llvm_args{};
   unsigned j = 0;
-  auto selected_args = selected.ast().args();
+  auto selected_args = selected->ast().args();
   for (const auto& i : expr.args()) {
     auto should_pass_by_mut = [&](unsigned index) {
       if (index >= selected_args.size()) {
@@ -414,40 +415,36 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
     llvm_args.push_back(arg.llvm());
   }
 
-  auto* ret_val = [&]() -> llvm::Value* {
-    if (selected.ast().primitive()) {
-      auto primitive = get<string>(selected.body());
-      if (primitive == "libc") {
-        llvm_fn = selected.declaration(*this, false);
-      } else if (primitive == "ptrto") {
-        return args.at(0);
-      } else if (primitive == "icmp_gt") {
-        return binary_sign_aware(*m_builder, &IRBuilder<>::CreateICmpSGT, &IRBuilder<>::CreateICmpUGT, args);
-      } else if (primitive == "icmp_lt") {
-        return binary_sign_aware(*m_builder, &IRBuilder<>::CreateICmpSLT, &IRBuilder<>::CreateICmpULT, args);
-      } else if (primitive == "icmp_eq") {
-        return m_builder->CreateICmpEQ(args.at(0), args.at(1));
-      } else if (primitive == "icmp_ne") {
-        return m_builder->CreateICmpNE(args.at(0), args.at(1));
-      } else if (primitive == "add") {
-        return m_builder->CreateAdd(args.at(0), args.at(1));
-      } else if (primitive == "mul") {
-        return m_builder->CreateMul(args.at(0), args.at(1));
-      } else if (primitive == "mod") {
-        return binary_sign_aware(*m_builder, &IRBuilder<>::CreateSRem, &IRBuilder<>::CreateURem, args);
-      } else if (primitive == "int_div") {
-        return binary_sign_aware(*m_builder, &IRBuilder<>::CreateSDiv, &IRBuilder<>::CreateUDiv, args, false);
-      } else {
-        throw std::runtime_error("Unknown primitive "s + primitive);
-      }
+  if (selected->ast().primitive()) {
+    auto primitive = get<string>(selected->body());
+    if (primitive == "libc") {
+      llvm_fn = selected->declaration(*this, false);
+    } else if (primitive == "ptrto") {
+      return args.at(0);
+    } else if (primitive == "icmp_gt") {
+      return binary_sign_aware(*m_builder, &IRBuilder<>::CreateICmpSGT, &IRBuilder<>::CreateICmpUGT, args, ret_type);
+    } else if (primitive == "icmp_lt") {
+      return binary_sign_aware(*m_builder, &IRBuilder<>::CreateICmpSLT, &IRBuilder<>::CreateICmpULT, args, ret_type);
+    } else if (primitive == "icmp_eq") {
+      return m_builder->CreateICmpEQ(args.at(0), args.at(1));
+    } else if (primitive == "icmp_ne") {
+      return m_builder->CreateICmpNE(args.at(0), args.at(1));
+    } else if (primitive == "add") {
+      return m_builder->CreateAdd(args.at(0), args.at(1));
+    } else if (primitive == "mul") {
+      return m_builder->CreateMul(args.at(0), args.at(1));
+    } else if (primitive == "mod") {
+      return binary_sign_aware(*m_builder, &IRBuilder<>::CreateSRem, &IRBuilder<>::CreateURem, args, ret_type);
+    } else if (primitive == "int_div") {
+      return binary_sign_aware(*m_builder, &IRBuilder<>::CreateSDiv, &IRBuilder<>::CreateUDiv, args, ret_type, false);
     } else {
-      llvm_fn = selected.declaration(*this);
+      throw std::runtime_error("Unknown primitive "s + primitive);
     }
+  } else {
+    llvm_fn = selected->declaration(*this);
+  }
 
-    return m_builder->CreateCall(llvm_fn, llvm_args);
-  }();
-
-  return {ret_val, ret_type};
+  return m_builder->CreateCall(llvm_fn, llvm_args);
 }
 
 template <> auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> Val {
@@ -460,32 +457,24 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> 
   }
   if (expr.target().kind() == ast::FieldAccessKind) {
     const auto& field_access = dynamic_cast<const ast::FieldAccessExpr&>(expr.target());
+    auto base = body_expression(field_access.base(), true);
+    auto base_name = field_access.field();
+    int base_offset = field_access.offset();
+
     auto expr_val = body_expression(expr.value(), mut);
-    auto target = body_expression(field_access.base(), true);
-    if (target.type()->kind() != ty::Kind::Struct) {
-      throw std::runtime_error("Can't access field of expression with non-struct type");
-    }
-    auto& struct_type = dynamic_cast<ty::StructType&>(*target.type());
-    auto target_name = field_access.field();
-    unsigned int i = 0;
-    for (const auto& field : struct_type.fields()) {
-      if (field.name() == target_name) {
-        break;
-      }
-      i++;
-    }
-    m_builder->CreateStore(expr_val,
-                           m_builder->CreateStructGEP(llvm_type(struct_type), target, i, "s.sf."s + target_name));
+    auto* struct_type = llvm_type(dynamic_cast<ty::StructType&>(field_access.base().val_ty()->mut_base_or_this()));
+
+    auto* gep = m_builder->CreateStructGEP(struct_type, base, base_offset, "s.sf."s + base_name);
+    m_builder->CreateStore(expr_val, gep);
     return expr_val;
   }
   throw std::runtime_error("Can't assign to target "s + ast::kind_name(expr.target().kind()));
 }
 
 template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Val {
-  auto& type = expr.name() == "self" ? *m_current_fn->parent() : known_type(expr.name());
-
-  if (type.kind() == ty::Kind::Struct) {
-    auto& struct_type = dynamic_cast<ty::StructType&>(type);
+  auto& type = *expr.val_ty();
+  if (type.mut_base_or_this_kind() == ty::Kind::Struct) {
+    auto& struct_type = dynamic_cast<ty::StructType&>(type.mut_base_or_this());
     auto* llvm_struct_type = llvm_type(struct_type);
 
     llvm::Value* alloc = nullptr;
@@ -520,39 +509,21 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
       base_value = alloc;
     }
 
-    return {base_value, &type};
+    return base_value;
   }
 
-  return {llvm::UndefValue::get(llvm_type(type)), &type}; // TODO
+  throw std::runtime_error("Can't construct non-struct type");
 }
 
 template <> auto Compiler::expression(const ast::FieldAccessExpr& expr, bool mut) -> Val {
   // TODO: struct can only contain things by value, later this needs a condition
   not_mut("immutable field", mut);
+
   auto base = body_expression(expr.base());
-  auto& type = *base.type();
+  auto base_name = expr.field();
+  int base_offset = expr.offset();
 
-  if (type.kind() == ty::Kind::Struct) {
-    auto& struct_type = dynamic_cast<ty::StructType&>(type);
-    // auto* llvm_struct_type = llvm_type(struct_type, true);
-    auto target_name = expr.field();
-    ty::Type* target_type{};
-    unsigned int i = 0;
-    for (const auto& field : struct_type.fields()) {
-      if (field.name() == target_name) {
-        target_type = &convert_type(field.type());
-        break;
-      }
-      i++;
-    }
-
-    // auto* base_struct = m_builder->CreateLoad(llvm_struct_type, base);
-    auto* field = m_builder->CreateExtractValue(base, i, "s.field."s + target_name);
-
-    return {field, target_type};
-  }
-
-  throw std::runtime_error("Can't access field of expression with non-struct type");
+  return m_builder->CreateExtractValue(base, base_offset, "s.field."s + base_name);
 }
 
 void Compiler::write_object(const char* filename, bool binary) {

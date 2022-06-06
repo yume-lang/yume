@@ -65,4 +65,10 @@ auto Type::coalesce(Type& other) -> Type* {
   }
   return nullptr;
 }
+
+auto Type::mut_base_or_this() const -> const Type& { return *(is_mut() ? qual_base() : this); }
+
+auto Type::mut_base_or_this() -> Type& { return *(is_mut() ? qual_base() : this); }
+
+auto Type::mut_base_or_this_kind() const -> Kind { return (is_mut() ? qual_base() : this)->kind(); }
 } // namespace yume::ty

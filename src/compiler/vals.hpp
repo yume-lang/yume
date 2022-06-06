@@ -38,27 +38,19 @@ struct Fn {
 
   [[nodiscard]] auto declaration(Compiler& compiler, bool mangle = true) -> llvm::Function*;
 
-  operator llvm::Function*() const { // NOLINT(google-explicit-constructor)
+  operator llvm::Function*() const {
     return m_llvm_fn;
   }
 };
 
 struct Val {
   llvm::Value* m_llvm_val{};
-  [[deprecated]] ty::Type* m_type{};
 
   /* implicit */ inline Val(llvm::Value* llvm_val) : m_llvm_val(llvm_val) {}
-  [[deprecated]] inline Val(llvm::Value* llvm_val, ty::Type* type) : m_llvm_val(llvm_val), m_type(type) {}
-  Val(const Val&) noexcept = default;
-  Val(Val&&) noexcept = default;
-  auto operator=(const Val&) noexcept -> Val& = default;
-  auto operator=(Val&&) noexcept -> Val& = default;
-  virtual ~Val() = default;
 
   [[nodiscard]] auto inline llvm() const -> llvm::Value* { return m_llvm_val; }
-  [[deprecated]] [[nodiscard]] auto inline type() const -> ty::Type* { return m_type; }
 
-  operator llvm::Value*() const { // NOLINT(google-explicit-constructor)
+  operator llvm::Value*() const {
     return m_llvm_val;
   }
 };

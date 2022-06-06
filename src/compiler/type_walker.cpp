@@ -60,12 +60,8 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
 
   ty::StructType* struct_type = nullptr;
 
-  if (type.kind() == ty::Kind::Struct) {
-    struct_type = &dynamic_cast<ty::StructType&>(type);
-  } else if (type.is_mut()) {
-    if (auto* base = type.qual_base(); base->kind() == ty::Kind::Struct) {
-      struct_type = &dynamic_cast<ty::StructType&>(*base);
-    }
+  if (type.mut_base_or_this_kind() == ty::Kind::Struct) {
+    struct_type = &dynamic_cast<ty::StructType&>(type.mut_base_or_this());
   }
 
   if (struct_type == nullptr) {

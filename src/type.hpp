@@ -49,6 +49,9 @@ public:
 
   [[nodiscard]] auto is_mut() const -> bool;
   [[nodiscard]] auto qual_base() const -> Type*;
+  [[nodiscard]] auto mut_base_or_this() const -> const Type&;
+  [[nodiscard]] auto mut_base_or_this() -> Type&;
+  [[nodiscard]] auto mut_base_or_this_kind() const -> Kind;
 
   using enum Kind;
 
