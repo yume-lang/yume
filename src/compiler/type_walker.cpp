@@ -72,6 +72,12 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
     stat.ret()->get().attach_to(&stat);
   }
 
+  // Completely skip fn decls with incomplete types (generics)
+  // TODO: properly handle
+  if (!stat.type_args().empty()) {
+    return;
+  }
+
   if (m_in_depth && stat.body().index() == 0) {
     statement(*get<0>(stat.body()));
   }

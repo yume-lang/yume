@@ -49,8 +49,10 @@
 #include <variant>
 
 namespace yume {
+Compiler::~Compiler() = default;
 
-Compiler::Compiler(std::vector<SourceFile> source_files) : m_sources(std::move(source_files)) {
+Compiler::Compiler(std::vector<SourceFile> source_files)
+    : m_sources(std::move(source_files)), m_walker(std::make_unique<TypeWalker>(*this)) {
   m_context = std::make_unique<LLVMContext>();
   m_module = std::make_unique<Module>("yume", *m_context);
   m_builder = std::make_unique<IRBuilder<>>(*m_context);
@@ -98,21 +100,14 @@ Compiler::Compiler(std::vector<SourceFile> source_files) : m_sources(std::move(s
 }
 
 void Compiler::walk_types() {
-  auto walker = TypeWalker(*this);
-
   // First pass: only convert function parameters
   for (auto& fn : m_fns) {
-    walker.m_current_fn = &fn;
-    walker.body_statement(fn.ast());
+    m_walker->m_current_fn = &fn;
+    m_walker->body_statement(fn.ast());
   }
 
-  walker.m_in_depth = true;
-
-  // Second pass: convert everything else
-  for (auto& fn : m_fns) {
-    walker.m_current_fn = &fn;
-    walker.body_statement(fn.ast());
-  }
+  // Second pass: convert everything else, but only when instantiated
+  m_walker->m_in_depth = true;
 }
 
 void Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent) {
@@ -224,6 +219,8 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
 
   if (!fn_decl.primitive()) { // Skip primitive definitions
     m_decl_queue.push(&fn);
+    m_walker->m_current_fn = &fn;
+    m_walker->body_statement(fn.ast());
   }
   return llvm_fn;
 }

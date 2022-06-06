@@ -35,6 +35,7 @@ class Compiler : public CRTPWalker<Compiler> {
   TypeHolder m_types;
   vector<Fn> m_fns{};
   std::queue<Fn*> m_decl_queue{};
+  unique_ptr<TypeWalker> m_walker;
 
   Fn* m_current_fn{};
   std::map<string, Val> m_scope{};
@@ -51,6 +52,8 @@ public:
   [[nodiscard]] auto module() const -> const auto& { return m_module; }
 
   explicit Compiler(std::vector<SourceFile> source_files);
+
+  ~Compiler();
 
   [[nodiscard]] auto declare(Fn&, bool mangle = true) -> llvm::Function*;
 
