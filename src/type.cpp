@@ -14,14 +14,15 @@ static auto qual_suffix(Qualifier qual) -> string {
   }
 }
 auto Type::known_qual(Qualifier qual) -> Type& {
-  auto existing = m_known_qual.find(qual);
-  if (existing != m_known_qual.end()) {
-    return *existing->second;
+  int qual_idx = static_cast<int>(qual);
+  auto& existing = m_known_qual.at(qual_idx);
+  if (existing != nullptr) {
+    return *existing;
   }
 
   auto new_qual_type = std::make_unique<Qual>(name() + qual_suffix(qual), *this, qual);
-  auto r = m_known_qual.insert({qual, move(new_qual_type)});
-  return *r.first->second;
+  m_known_qual.at(qual_idx) = move(new_qual_type);
+  return *m_known_qual.at(qual_idx);
 }
 
 static constinit const int PERFECT_MATCH = 100;

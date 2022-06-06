@@ -27,15 +27,18 @@
 auto main(int argc, const char* argv[]) -> int {
   auto args = std::span(argv, argc);
   std::vector<std::string> src_file_names{};
-  src_file_names.reserve(argc);
+  src_file_names.reserve(argc + 1);
   src_file_names.push_back(std::string(YUME_LIB_DIR) + "std.ym");
   std::copy(args.begin() + 1, args.end(), std::back_inserter(src_file_names));
+
   std::vector<yume::SourceFile> source_files{};
+  source_files.reserve(src_file_names.size());
 
   std::set_terminate(yume::stacktrace);
 
   {
     std::vector<std::pair<std::istream*, std::string>> inputs{};
+    inputs.reserve(src_file_names.size());
     std::vector<std::unique_ptr<std::istream>> file_streams{};
 #ifdef YUME_EMIT_DOT
     auto dot = yume::open_file("output_untyped.dot");
@@ -45,13 +48,11 @@ auto main(int argc, const char* argv[]) -> int {
     for (const auto& i : src_file_names) {
       if (i == "-") {
         inputs.emplace_back(&std::cin, "<source>");
-        continue;
+      } else {
+        auto& f = file_streams.emplace_back(std::make_unique<std::ifstream>(i));
+        inputs.emplace_back(f.get(), i);
       }
-      auto& f = file_streams.emplace_back(std::make_unique<std::ifstream>(i));
-      inputs.emplace_back(f.get(), i);
     }
-
-    source_files.reserve(inputs.size());
 
     for (auto& [src_stream, src_name] : inputs) {
       auto& source = source_files.emplace_back(*src_stream, src_name);

@@ -37,7 +37,7 @@ enum Kind {
 };
 
 class Type {
-  std::map<Qualifier, unique_ptr<Type>> m_known_qual{};
+  std::array<unique_ptr<Type>, 3> m_known_qual{};
   const Kind m_kind;
   string m_name;
 
