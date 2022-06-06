@@ -433,6 +433,7 @@ public:
 
   [[nodiscard]] auto inline name() const -> string { return m_name; }
   [[nodiscard]] constexpr auto inline type() const { return try_dereference(m_type); }
+  [[nodiscard]] auto inline init() -> auto& { return *m_init; }
   [[nodiscard]] auto inline init() const -> const auto& { return *m_init; }
 };
 

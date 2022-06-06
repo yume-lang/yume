@@ -17,6 +17,8 @@ struct TypeWalker : public CRTPWalker<TypeWalker, false>, public Visitor {
 public:
   Compiler& m_compiler;
   Fn* m_current_fn{};
+  std::map<string, ast::AST*> m_scope{};
+
   // Whether or not to compile the bodies of methods.  Initially, on the parameter types of methods are traversed and
   // converted, then everything else in a second pass.
   bool m_in_depth = false;
@@ -33,7 +35,10 @@ public:
     return *this;
   }
 
+  void body_statement(ast::Stmt&);
+  void body_expression(ast::Expr&);
 private:
+
   template <typename T> inline void statement([[maybe_unused]] T& stat) {
 #ifdef YUME_SPEW_TYPE_WALKER_STUB
     std::cerr << "Type walked stubbed on statement " << ast::kind_name(stat.kind()) << "\n";
