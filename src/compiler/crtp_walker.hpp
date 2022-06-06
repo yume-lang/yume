@@ -4,9 +4,13 @@
 #include <type_traits>
 
 namespace yume {
-template <typename Derived> struct CRTPWalker {
+
+template <bool Bool, typename Base> using maybe_const_t = std::conditional_t<Bool, std::add_const_t<Base>, Base>;
+
+template <typename Derived, bool Const = true> struct CRTPWalker {
+
 public:
-  auto body_statement(const ast::Stmt& stat, auto&&... args) {
+  auto body_statement(maybe_const_t<Const, ast::Stmt>& stat, auto&&... args) {
     auto kind = stat.kind();
     switch (kind) {
     case ast::CompoundKind: return conv_statement<ast::Compound>(stat, args...);
@@ -14,11 +18,13 @@ public:
     case ast::IfKind: return conv_statement<ast::IfStmt>(stat, args...);
     case ast::ReturnKind: return conv_statement<ast::ReturnStmt>(stat, args...);
     case ast::VarDeclKind: return conv_statement<ast::VarDecl>(stat, args...);
-    default: body_expression(dynamic_cast<const ast::Expr&>(stat), args...);
+    case ast::FnDeclKind: return conv_statement<ast::FnDecl>(stat, args...);
+    case ast::StructDeclKind: return conv_statement<ast::StructDecl>(stat, args...);
+    default: body_expression(dynamic_cast<maybe_const_t<Const, ast::Expr>&>(stat), args...);
     }
   }
 
-  auto body_expression(const ast::Expr& expr, auto&&... args) {
+  auto body_expression(maybe_const_t<Const, ast::Expr>& expr, auto&&... args) {
     auto kind = expr.kind();
     switch (kind) {
     case ast::NumberKind: return conv_expression<ast::NumberExpr>(expr, args...);
@@ -36,14 +42,14 @@ public:
 private:
   template <typename T>
   requires std::is_base_of_v<ast::Expr, T>
-  auto conv_expression(const ast::Expr& expr, auto... args) {
-    return (static_cast<Derived*>(this))->expression(dynamic_cast<const T&>(expr), args...);
+  auto conv_expression(maybe_const_t<Const, ast::Expr>& expr, auto... args) {
+    return (static_cast<Derived*>(this))->expression(dynamic_cast<maybe_const_t<Const, T>&>(expr), args...);
   }
 
   template <typename T>
   requires std::conjunction_v<std::is_base_of<ast::Stmt, T>, std::negation<std::is_base_of<ast::Expr, T>>>
-  void conv_statement(const ast::Stmt& stat, auto... args) {
-    return (static_cast<Derived*>(this))->statement(dynamic_cast<const T&>(stat), args...);
+  void conv_statement(maybe_const_t<Const, ast::Stmt>& stat, auto... args) {
+    return (static_cast<Derived*>(this))->statement(dynamic_cast<maybe_const_t<Const, T>&>(stat), args...);
   }
 };
 } // namespace yume
