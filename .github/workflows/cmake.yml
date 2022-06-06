@@ -31,6 +31,9 @@ jobs:
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
+    - name: Test collatz.ym
+      run: build/yumec example/collatz.ym && ./yume.out
+
 #     - name: Test
 #       working-directory: ${{github.workspace}}/build
 #       run: ctest -C ${{env.BUILD_TYPE}}
