@@ -30,6 +30,7 @@
 #include <llvm/IR/Type.h>
 #include <llvm/IR/Value.h>
 #include <llvm/IR/Verifier.h>
+#include <llvm/Support/Casting.h>
 #include <llvm/Support/CodeGen.h>
 #include <llvm/Support/Host.h>
 #include <llvm/Support/TargetSelect.h>
@@ -109,37 +110,33 @@ void Compiler::walk_types() {
 }
 
 void Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent) {
-  if (stmt.kind() == ast::FnDeclKind) {
-    auto& fn_decl = dynamic_cast<ast::FnDecl&>(stmt);
-    m_fns.emplace_back(Fn{fn_decl, parent});
-  } else if (stmt.kind() == ast::StructDeclKind) {
-    const auto& s_decl = dynamic_cast<const ast::StructDecl&>(stmt);
+  if (auto* fn_decl = dyn_cast<ast::FnDecl>(&stmt)) {
+    m_fns.emplace_back(Fn{*fn_decl, parent});
+  } else if (auto* s_decl = dyn_cast<ast::StructDecl>(&stmt)) {
     auto fields = vector<const ast::TypeName*>();
-    fields.reserve(s_decl.fields().size());
-    for (const auto& f : s_decl.fields()) {
+    fields.reserve(s_decl->fields().size());
+    for (const auto& f : s_decl->fields()) {
       fields.push_back(&f);
     };
-    auto i_ty = m_types.known.insert({s_decl.name(), std::make_unique<ty::StructType>(s_decl.name(), fields)});
+    auto i_ty = m_types.known.insert({s_decl->name(), std::make_unique<ty::StructType>(s_decl->name(), fields)});
 
-    for (auto& f : s_decl.body().body()) {
+    for (auto& f : s_decl->body().body()) {
       decl_statement(f, i_ty.first->second.get());
     }
   }
 }
 
 auto Compiler::convert_type(const ast::Type& ast_type, ty::Type* parent) -> ty::Type& {
-  if (ast_type.kind() == ast::SimpleTypeKind) {
-    const auto& simple_type = dynamic_cast<const ast::SimpleType&>(ast_type);
-    auto name = simple_type.name();
+  if (const auto* simple_type = dyn_cast<ast::SimpleType>(&ast_type)) {
+    auto name = simple_type->name();
     auto val = m_types.known.find(name);
     if (val != m_types.known.end()) {
       return *val->second;
     }
-  } else if (ast_type.kind() == ast::QualTypeKind) {
-    const auto& qual_type = dynamic_cast<const ast::QualType&>(ast_type);
-    auto qualifier = qual_type.qualifier();
-    return convert_type(qual_type.base(), parent).known_qual(qualifier);
-  } else if (ast_type.kind() == ast::SelfTypeKind) {
+  } else if (const auto* qual_type = dyn_cast<ast::QualType>(&ast_type)) {
+    auto qualifier = qual_type->qualifier();
+    return convert_type(qual_type->base(), parent).known_qual(qualifier);
+  } else if (isa<ast::SelfType>(ast_type)) {
     if (parent != nullptr) {
       return *parent;
     }
@@ -445,21 +442,19 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
 }
 
 template <> auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> Val {
-  if (expr.target().kind() == ast::VarKind) {
-    const auto& target_var = dynamic_cast<const ast::VarExpr&>(expr.target());
+  if (const auto* target_var = dyn_cast<ast::VarExpr>(&expr.target())) {
     auto expr_val = body_expression(expr.value(), mut);
-    auto target_val = m_scope.at(target_var.name());
+    auto target_val = m_scope.at(target_var->name());
     m_builder->CreateStore(expr_val, target_val);
     return expr_val;
   }
-  if (expr.target().kind() == ast::FieldAccessKind) {
-    const auto& field_access = dynamic_cast<const ast::FieldAccessExpr&>(expr.target());
-    auto base = body_expression(field_access.base(), true);
-    auto base_name = field_access.field();
-    int base_offset = field_access.offset();
+  if (const auto* field_access = dyn_cast<ast::FieldAccessExpr>(&expr.target())) {
+    auto base = body_expression(field_access->base(), true);
+    auto base_name = field_access->field();
+    int base_offset = field_access->offset();
 
     auto expr_val = body_expression(expr.value(), mut);
-    auto* struct_type = llvm_type(dynamic_cast<ty::StructType&>(field_access.base().val_ty()->mut_base_or_this()));
+    auto* struct_type = llvm_type(dynamic_cast<ty::StructType&>(field_access->base().val_ty()->mut_base_or_this()));
 
     auto* gep = m_builder->CreateStructGEP(struct_type, base, base_offset, "s.sf."s + base_name);
     m_builder->CreateStore(expr_val, gep);
@@ -559,15 +554,14 @@ auto Compiler::mangle_name(const ast::FnDecl& fn_decl, ty::Type* parent) -> stri
 }
 
 auto Compiler::mangle_name(const ast::Type& ast_type, ty::Type* parent) -> string {
-  if (ast_type.kind() == ast::SimpleTypeKind) {
-    const auto& simple_type = dynamic_cast<const ast::SimpleType&>(ast_type);
-    return simple_type.name();
+  if (const auto* simple_type = dyn_cast<ast::SimpleType>(&ast_type)) {
+    return simple_type->name();
   }
-  if (ast_type.kind() == ast::SelfTypeKind) {
+  if (isa<ast::SelfType>(ast_type)) {
     return parent->name();
   }
   std::stringstream ss{};
-  const auto& qual_type = dynamic_cast<const ast::QualType&>(ast_type);
+  const auto& qual_type = cast<ast::QualType>(ast_type);
   auto qualifier = qual_type.qualifier();
   ss << mangle_name(qual_type.base(), parent);
   switch (qualifier) {

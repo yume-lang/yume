@@ -23,8 +23,8 @@ template <> void TypeWalker::expression(ast::CharExpr& expr) { expr.val_ty(m_com
 template <> void TypeWalker::expression(ast::Type& expr) {
   auto* resolved_type = &m_compiler.convert_type(expr, m_current_fn->parent());
   expr.val_ty(resolved_type);
-  if (expr.kind() == ast::QualTypeKind) {
-    expression(dynamic_cast<ast::QualType&>(expr).base());
+  if (auto* qual_type = dyn_cast<ast::QualType>(&expr)) {
+    expression(qual_type->base());
   }
 }
 
@@ -187,8 +187,7 @@ template <> void TypeWalker::statement(ast::VarDecl& stat) {
 
 auto TypeWalker::visit(ast::AST& expr, [[maybe_unused]] const char* label) -> TypeWalker& {
 #ifdef YUME_TYPE_WALKER_FALLBACK_VISITOR
-  // nasty RTTI
-  if (auto* stmt = dynamic_cast<ast::Stmt*>(&expr); stmt != nullptr) {
+  if (auto* stmt = dyn_cast<ast::Stmt>(&expr)) {
     body_statement(*stmt);
   } else {
     expr.visit(*this);
