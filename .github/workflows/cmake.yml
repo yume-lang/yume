@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        clang: [13, 14, 15]
+        clang: [13, 14] #, 15]
         llvm: [13, 14, 15]
     runs-on: ubuntu-22.04
     name: "Build clang ${{ matrix.clang }}, libllvm ${{ matrix.llvm }}"
@@ -27,14 +27,18 @@ jobs:
 
     - if: matrix.clang == 15 || matrix.llvm == 15
       name: Add LLVM Repo
-      run: sudo add-apt-repository 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy main'
-
-    - if: matrix.clang == 15 || matrix.llvm == 15
-      name: Install LLVM
       run: |
+        sudo add-apt-repository 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy main'
         wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
         sudo apt update
-        sudo apt install clang-15 llvm-15
+
+    - if: matrix.llvm == 15
+      name: Install LLVM
+      run: sudo apt install llvm-15
+
+    - if: matrix.clang == 15
+      name: Install Clang
+      run: sudo apt install clang-15
 
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DYUME_FORCE_LLVM_VERSION=${{ matrix.llvm }}
