@@ -401,7 +401,7 @@ public:
 
   [[nodiscard]] auto inline name() const -> string { return m_name; }
   [[nodiscard]] constexpr auto inline args() const { return dereference_view(m_args); }
-  [[nodiscard]] constexpr auto inline type_args() const { return m_type_args; }
+  [[nodiscard]] auto inline type_args() const { return m_type_args; }
   [[nodiscard]] constexpr auto inline ret() const { return try_dereference(m_ret); }
   [[nodiscard]] constexpr auto inline body() const -> const auto& { return m_body; }
   [[nodiscard]] constexpr auto inline varargs() const -> bool { return m_varargs; }

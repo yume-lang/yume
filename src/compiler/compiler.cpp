@@ -392,70 +392,33 @@ static auto binary_sign_aware(auto& base, auto&& s_fn, auto&& u_fn, const auto& 
 template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Val {
   // TODO: calls can only return by value right now, but later this needs a condition
   not_mut("call returning by value", mut);
-  auto fns_by_name = vector<Fn*>();
-  auto overloads = vector<std::pair<int, Fn*>>();
-  auto name = expr.name();
 
-  for (auto& fn : m_fns) {
-    if (fn.name() == name) {
-      fns_by_name.push_back(&fn);
-    }
-  }
-  if (fns_by_name.empty()) {
-    throw std::logic_error("No matching overload for "s + name);
-  }
-
-  vector<ty::Type*> arg_types{};
-  for (const auto& i : expr.args()) {
-    auto arg = body_expression(i);
-    arg_types.push_back(arg.type());
-  }
-
-  for (auto* fn : fns_by_name) {
-    int compat = 0;
-    const auto& fn_ast = fn->m_ast_decl;
-    auto fn_arg_size = fn_ast.args().size();
-    if (arg_types.size() == fn_arg_size || (expr.args().size() >= fn_arg_size && fn_ast.varargs())) {
-      unsigned i = 0;
-      for (const auto& arg_type : arg_types) {
-        if (i >= fn_arg_size) {
-          break;
-        }
-        auto i_compat = arg_type->compatibility(*fn_ast.args()[i].val_ty());
-        if (i_compat == 0) {
-          compat = INT_MIN;
-          break;
-        }
-        compat += i_compat;
-        i++;
-      }
-      overloads.emplace_back(compat, fn);
-    }
-  }
-
-  auto* selected = std::max_element(overloads.begin(), overloads.end())->second;
+  auto& selected = m_current_fn->selected_overload_for(expr);
   llvm::Function* llvm_fn = nullptr;
-  ty::Type* ret_type = &m_types.unknown;
-  if (selected->m_ast_decl.ret().has_value()) {
-    ret_type = selected->ast().ret()->get().val_ty();
-  }
+  ty::Type* ret_type = selected.ast().val_ty();
 
   vector<Val> args{};
   vector<llvm::Value*> llvm_args{};
   unsigned j = 0;
-  auto selected_args = selected->ast().args();
-  // TODO: GET RID OF ALL OF THIS PLEASE
+  auto selected_args = selected.ast().args();
   for (const auto& i : expr.args()) {
-    auto arg = body_expression(i, j >= selected_args.size() ? false : selected_args[j++].val_ty()->is_mut());
+    auto should_pass_by_mut = [&](unsigned index) {
+      if (index >= selected_args.size()) {
+        return false; // varargs function, logic will probably change later but for now, always pass by value
+      }
+      return selected_args[index].val_ty()->is_mut();
+    };
+
+    auto arg = body_expression(i, should_pass_by_mut(j++));
     args.push_back(arg);
     llvm_args.push_back(arg.llvm());
   }
 
   auto* ret_val = [&]() -> llvm::Value* {
-    if (selected->ast().primitive()) {
-      auto primitive = get<string>(selected->body());
+    if (selected.ast().primitive()) {
+      auto primitive = get<string>(selected.body());
       if (primitive == "libc") {
-        llvm_fn = selected->declaration(*this, false);
+        llvm_fn = selected.declaration(*this, false);
       } else if (primitive == "ptrto") {
         return args.at(0);
       } else if (primitive == "icmp_gt") {
@@ -478,7 +441,7 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
         throw std::runtime_error("Unknown primitive "s + primitive);
       }
     } else {
-      llvm_fn = selected->declaration(*this);
+      llvm_fn = selected.declaration(*this);
     }
 
     return m_builder->CreateCall(llvm_fn, llvm_args);

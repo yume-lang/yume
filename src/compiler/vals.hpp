@@ -51,7 +51,7 @@ struct Val {
   llvm::Value* m_llvm_val{};
   ty::Type* m_type{};
 
-  explicit inline Val(llvm::Value* llvm_val) : m_llvm_val(llvm_val) {}
+  /* implicit */ inline Val(llvm::Value* llvm_val) : m_llvm_val(llvm_val) {}
   inline Val(llvm::Value* llvm_val, ty::Type* type) : m_llvm_val(llvm_val), m_type(type) {}
   Val(const Val&) noexcept = default;
   Val(Val&&) noexcept = default;
@@ -60,7 +60,7 @@ struct Val {
   virtual ~Val() = default;
 
   [[nodiscard]] auto inline llvm() const -> llvm::Value* { return m_llvm_val; }
-  [[nodiscard]] auto inline type() const -> ty::Type* { return m_type; }
+  [[deprecated]] [[nodiscard]] auto inline type() const -> ty::Type* { return m_type; }
 
   operator llvm::Value*() const { // NOLINT(google-explicit-constructor)
     return m_llvm_val;
