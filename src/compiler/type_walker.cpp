@@ -3,7 +3,18 @@
 #include "compiler.hpp"
 
 namespace yume {
-auto TypeWalkVisitor::visit(ast::AST& expr, [[maybe_unused]] const char* label) -> TypeWalkVisitor& {
+
+template <> void TypeWalkVisitor::expression(const ast::NumberExpr& expr) {
+    auto val = expr.val();
+    if (val > std::numeric_limits<int32_t>::max()) {
+      expr.val_ty(m_compiler.m_types.int64().s_ty);
+    } else {
+      expr.val_ty(m_compiler.m_types.int32().s_ty);
+    }
+}
+
+/*
+void TypeWalkVisitor::expression(ast::AST& expr, [[maybe_unused]] const char* label) {
   if (!m_in_depth && expr.kind() == ast::CompoundKind) {
     return *this; // Skip (first pass)
   }
@@ -18,16 +29,6 @@ auto TypeWalkVisitor::visit(ast::AST& expr, [[maybe_unused]] const char* label) 
     auto& type = dynamic_cast<ast::Type&>(expr);
     auto* resolved_type = &m_compiler.convert_type(type, m_current_fn->parent());
     type.val_ty(resolved_type);
-  }
-  if (expr.kind() == ast::NumberKind) {
-    auto& number = dynamic_cast<ast::NumberExpr&>(expr);
-    auto val = number.val();
-    if (val > std::numeric_limits<int32_t>::max()) {
-      number.val_ty(m_compiler.m_types.int64().s_ty);
-    } else {
-      number.val_ty(m_compiler.m_types.int32().s_ty);
-    }
-    return *this;
   }
   if (expr.kind() == ast::StringKind) {
     // TODO: String type
@@ -49,14 +50,6 @@ auto TypeWalkVisitor::visit(ast::AST& expr, [[maybe_unused]] const char* label) 
   expr.visit(*this);
   return *this;
 }
+*/
 
-auto TypeWalkVisitor::visit([[maybe_unused]] std::nullptr_t null, [[maybe_unused]] const char* label)
-    -> TypeWalkVisitor& {
-  return *this;
-}
-
-auto TypeWalkVisitor::visit([[maybe_unused]] const string& str, [[maybe_unused]] const char* label)
-    -> TypeWalkVisitor& {
-  return *this;
-}
 } // namespace yume

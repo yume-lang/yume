@@ -103,7 +103,7 @@ void Compiler::walk_types() {
   // First pass: only convert function parameters
   for (auto& fn : m_fns) {
     walker.m_current_fn = &fn;
-    walker.visit(fn.ast(), nullptr);
+    walker.body_statement(fn.ast());
   }
 
   walker.m_in_depth = true;
@@ -111,7 +111,7 @@ void Compiler::walk_types() {
   // Second pass: convert everything else
   for (auto& fn : m_fns) {
     walker.m_current_fn = &fn;
-    walker.visit(fn.ast(), nullptr);
+    walker.body_statement(fn.ast());
   }
 }
 
