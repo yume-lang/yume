@@ -13,9 +13,12 @@ TypeHolder::TypeHolder() {
       string type_name = (is_signed ? "I"s : "U"s) + std::to_string(i);
       auto i_ty = std::make_unique<ty::IntegerType>(type_name, i, is_signed);
       (is_signed ? ints.s_ty : ints.u_ty) = i_ty.get();
-      known.insert({type_name, move(i_ty)});
+      known.insert({i_ty->name(), move(i_ty)});
     }
     int_types.at(j++) = ints;
   }
+
+  auto bool_ty = std::make_unique<ty::IntegerType>("Bool", 1, false);
+  known.insert({bool_ty->name(), move(bool_ty)});
 }
 } // namespace yume

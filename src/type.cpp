@@ -25,7 +25,7 @@ auto Type::known_qual(Qualifier qual) -> Type& {
 }
 
 static constinit const int PERFECT_MATCH = 100;
-static constinit const int SAFE_CONVERSION = 100;
+static constinit const int SAFE_CONVERSION = 10;
 
 auto Type::compatibility(const Type& other) const -> int {
   if (this == &other) {
