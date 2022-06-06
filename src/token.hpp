@@ -25,7 +25,7 @@ struct Loc {
   constexpr auto operator<=>(const Loc& other) const noexcept = default;
 
   constexpr auto operator+(const Loc& other) const noexcept -> Loc {
-    assert(other.file == file);
+    assert(other.file == file); // NOLINT
     auto [min_begin_line, min_begin_col] =
         std::min(std::pair{begin_line, begin_col}, std::pair{other.begin_line, other.begin_col});
     auto [max_end_line, max_end_col] = std::max(std::pair{end_line, end_col}, std::pair{other.end_line, other.end_col});
