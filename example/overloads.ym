@@ -11,4 +11,5 @@ def main() I32
   foo(4, 5)
   foo(?a, 4)
   foo(5, ?b)
+  return 0
 end

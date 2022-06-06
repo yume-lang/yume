@@ -190,6 +190,8 @@ auto TypeWalker::visit(ast::AST& expr, [[maybe_unused]] const char* label) -> Ty
   // nasty RTTI
   if (auto* stmt = dynamic_cast<ast::Stmt*>(&expr); stmt != nullptr) {
     body_statement(*stmt);
+  } else {
+    expr.visit(*this);
   }
 #endif
   return *this;

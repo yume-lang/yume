@@ -377,7 +377,7 @@ static auto is_signed_type(ty::Type* type) -> bool {
     auto* int_ty = dynamic_cast<ty::IntegerType*>(type);
     return int_ty->is_signed();
   }
-  throw std::logic_error("Can't determine signedness of non-integer type");
+  throw std::logic_error("Can't determine signedness of non-integer type "s + type->name());
 }
 
 static auto binary_sign_aware(IRBuilder<>& base, auto&& s_fn, auto&& u_fn, const vector<Val>& args, ty::Type* ret,
