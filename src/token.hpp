@@ -35,10 +35,7 @@ struct Loc {
   [[nodiscard]] auto to_string() const -> string {
     std::stringstream ss{};
     if (file != nullptr) {
-      const auto file_s = string(file);
-
-      auto delim = file_s.rfind('/');
-      ss << file_s.substr(delim == string::npos ? 0 : delim + 1);
+      ss << stem(file);
     }
 
     if (begin_line == 0 || end_line == 0) {

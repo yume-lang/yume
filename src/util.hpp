@@ -156,7 +156,8 @@ auto inline constexpr try_dereference(const std::optional<T>& opt) {
 
 auto inline open_file(const char* filename) -> unique_ptr<llvm::raw_pwrite_stream> {
   std::error_code errorCode;
-  auto dest = std::make_unique<llvm::raw_fd_ostream>(filename, errorCode, llvm::sys::fs::OF_None);
+  auto dest =
+      std::make_unique<llvm::raw_fd_ostream>(filename, errorCode, llvm::sys::fs::CreationDisposition::CD_CreateAlways);
 
   if (errorCode) {
     llvm::errs() << "Could not open file: " << errorCode.message() << "\n";
@@ -164,6 +165,11 @@ auto inline open_file(const char* filename) -> unique_ptr<llvm::raw_pwrite_strea
   }
 
   return dest;
+}
+
+[[nodiscard]] auto inline stem(std::string_view sv) -> std::string_view {
+  auto delim = sv.rfind('/');
+  return sv.substr(delim == string::npos ? 0 : delim + 1);
 }
 
 struct Atom {

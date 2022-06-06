@@ -37,8 +37,10 @@ auto main(int argc, const char* argv[]) -> int {
   {
     std::vector<std::pair<std::istream*, std::string>> inputs{};
     std::vector<std::unique_ptr<std::istream>> file_streams{};
+#ifdef YUME_EMIT_DOT
     auto dot = yume::open_file("output_untyped.dot");
     auto visitor = yume::diagnostic::DotVisitor{*dot};
+#endif
 
     for (const auto& i : src_file_names) {
       if (i == "-") {
@@ -53,7 +55,9 @@ auto main(int argc, const char* argv[]) -> int {
 
     for (auto& [src_stream, src_name] : inputs) {
       auto& source = source_files.emplace_back(*src_stream, src_name);
+#ifdef YUME_EMIT_DOT
       visitor.visit(*source.m_program, nullptr);
+#endif
 
       auto token_it = source.m_iterator;
       if (!token_it.at_end()) {
@@ -76,11 +80,15 @@ auto main(int argc, const char* argv[]) -> int {
   compiler.write_object("output.o", true);
   std::cout.flush();
   std::system("cc output.o -o yume.out");
-  auto dot = yume::open_file("output.dot");
-  auto visitor = yume::diagnostic::DotVisitor{*dot};
+
+#ifdef YUME_EMIT_DOT
   for (const auto& i : compiler.source_files()) {
+    std::string full_name = "output_"s + std::string(yume::stem(i.m_name)) + ".dot";
+    auto dot = yume::open_file(full_name.c_str());
+    auto visitor = yume::diagnostic::DotVisitor{*dot};
     visitor.visit(*i.m_program, nullptr);
   }
+#endif
 
   return EXIT_SUCCESS;
 }
