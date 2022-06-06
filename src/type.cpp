@@ -42,4 +42,21 @@ auto Type::compatibility(const Type& other) const -> int {
 auto Type::is_mut() const -> bool {
   return kind() == ty::Kind::Qual && dynamic_cast<const ty::QualType&>(*this).qualifier() == Qualifier::Mut;
 }
+
+auto Type::qual_base() const -> Type* {
+  if (kind() != ty::Kind::Qual) {
+    return nullptr;
+  }
+  return &dynamic_cast<const ty::QualType&>(*this).base();
+}
+
+auto Type::coalesce(Type& other) -> Type* {
+  if (is_mut() && qual_base() == &other) {
+    return this;
+  }
+  if (other.is_mut() && other.qual_base() == this) {
+    return &other;
+  }
+  return nullptr;
+}
 } // namespace yume::ty

@@ -39,10 +39,16 @@ public:
   virtual ~Type() = default;
   [[nodiscard]] auto kind() const -> Kind { return m_kind; };
   [[nodiscard]] auto name() const -> string { return m_name; };
+
   [[nodiscard]] auto known_qual(Qualifier qual) -> Type&;
-  [[nodiscard]] auto compatibility(const Type& other) const -> int;
   [[nodiscard]] inline auto known_ptr() -> Type& { return known_qual(Qualifier::Ptr); }
+  [[nodiscard]] inline auto known_mut() -> Type& { return known_qual(Qualifier::Mut); }
+
+  [[nodiscard]] auto compatibility(const Type& other) const -> int;
+  [[nodiscard]] auto coalesce(Type& other) -> Type*;
+
   [[nodiscard]] auto is_mut() const -> bool;
+  [[nodiscard]] auto qual_base() const -> Type*;
 
   using enum Kind;
 

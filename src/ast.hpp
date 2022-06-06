@@ -127,8 +127,12 @@ private:
     } else if (other->m_val_ty == nullptr) {
       other->m_val_ty = m_val_ty;
     } else {
-      throw std::logic_error("Conflicting types between AST nodes that are attached: `"s + m_val_ty->name() +
-                             "` vs `" + other->m_val_ty->name() + "`!");
+      auto* merged = m_val_ty->coalesce(*other->m_val_ty);
+      if (merged == nullptr) {
+        throw std::logic_error("Conflicting types between AST nodes that are attached: `"s + m_val_ty->name() +
+                               "` vs `" + other->m_val_ty->name() + "`!");
+      }
+      m_val_ty = other->m_val_ty = merged;
     }
   }
 
@@ -360,6 +364,7 @@ public:
   void visit(Visitor& visitor) override;
 
   [[nodiscard]] auto inline base() const -> const auto& { return *m_base; }
+  [[nodiscard]] auto inline base() -> auto& { return *m_base; }
   [[nodiscard]] auto inline field() const -> string { return m_field; }
 };
 
@@ -396,6 +401,7 @@ public:
 
   [[nodiscard]] auto inline name() const -> string { return m_name; }
   [[nodiscard]] constexpr auto inline args() const { return dereference_view(m_args); }
+  [[nodiscard]] constexpr auto inline type_args() const { return m_type_args; }
   [[nodiscard]] constexpr auto inline ret() const { return try_dereference(m_ret); }
   [[nodiscard]] constexpr auto inline body() const -> const auto& { return m_body; }
   [[nodiscard]] constexpr auto inline varargs() const -> bool { return m_varargs; }
