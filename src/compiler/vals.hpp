@@ -26,6 +26,8 @@ struct Fn {
   // TODO: multiple instantiations
   llvm::Function* m_llvm_fn{};
 
+  std::map<const ast::CallExpr*, Fn*> selected_overload{};
+
   [[nodiscard]] auto inline body() const -> const auto& { return m_ast_decl.body(); }
 
   [[nodiscard]] auto inline name() const { return m_ast_decl.name(); }
@@ -37,6 +39,8 @@ struct Fn {
   [[nodiscard]] auto inline parent() const -> ty::Type* { return m_parent; }
 
   [[nodiscard]] auto declaration(Compiler& compiler, bool mangle = true) -> llvm::Function*;
+
+  [[nodiscard]] auto inline selected_overload_for(const ast::CallExpr& call) -> Fn& { return *selected_overload.at(&call); }
 
   operator llvm::Function*() const { // NOLINT(google-explicit-constructor)
     return m_llvm_fn;
