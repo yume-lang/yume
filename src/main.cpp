@@ -74,6 +74,8 @@ auto main(int argc, const char* argv[]) -> int {
   compiler.module()->print(*yume::open_file("output.ll"), nullptr);
   compiler.write_object("output.s", false);
   compiler.write_object("output.o", true);
+  std::cout.flush();
+  std::system("cc output.o -o yume.out");
   auto dot = yume::open_file("output.dot");
   auto visitor = yume::diagnostic::DotVisitor{*dot};
   for (const auto& i : compiler.source_files()) {

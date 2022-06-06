@@ -17,7 +17,7 @@ cmake .. && make
 ./yumec ../example/collatz.ym
 ```
 
-Yume compiles to LLVM statically. The compiler outputs an unlinked binary as `output.o`, which must be linked, for example with `cc -static output.o`, then run `a.out`. This will change in the future
+Yume compiles to LLVM statically. The compiler outputs the resulting linked binary as `yume.out`.
 
 ## Compiler switches
 

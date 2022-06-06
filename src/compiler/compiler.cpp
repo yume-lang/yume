@@ -70,8 +70,7 @@ Compiler::Compiler(std::vector<SourceFile> source_files) : m_sources(std::move(s
   const char* feat = "";
 
   TargetOptions opt;
-  auto relocModel = Optional<Reloc::Model>();
-  m_targetMachine = unique_ptr<TargetMachine>(target->createTargetMachine(targetTriple, cpu, feat, opt, relocModel));
+  m_targetMachine = unique_ptr<TargetMachine>(target->createTargetMachine(targetTriple, cpu, feat, opt, Reloc::Model::PIC_));
 
   m_module->setDataLayout(m_targetMachine->createDataLayout());
   m_module->setTargetTriple(targetTriple);
