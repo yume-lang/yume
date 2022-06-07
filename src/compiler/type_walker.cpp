@@ -38,7 +38,9 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
   for (auto& i : expr.args()) {
     body_expression(i);
   }
-  expr.val_ty(expr.name() == "self" ? m_current_fn->parent() : &m_compiler.known_type(expr.name()));
+  auto* base_type = expr.name() == "self" ? m_current_fn->parent() : &m_compiler.known_type(expr.name());
+  // Directly constructed values always have local scope!
+  expr.val_ty(&base_type->known_scope());
 }
 
 template <> void TypeWalker::expression(ast::AssignExpr& expr) {
@@ -58,7 +60,7 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
   body_expression(expr.base());
   auto& type = *expr.base().val_ty();
 
-  auto* struct_type = dyn_cast<ty::Struct>(&type.mut_base_or_this());
+  auto* struct_type = dyn_cast<ty::Struct>(&type.without_qual());
 
   if (struct_type == nullptr) {
     throw std::runtime_error("Can't access field of expression with non-struct type");
@@ -110,7 +112,11 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
         if (i >= fn_arg_size) {
           break;
         }
-        auto i_compat = arg_type->compatibility(*fn_ast.args()[i].val_ty());
+        auto* ast_arg = fn_ast.args()[i].val_ty();
+        if (ast_arg == nullptr) {
+          break;
+        }
+        auto i_compat = arg_type->compatibility(*ast_arg);
         if (i_compat == 0) {
           compat = INT_MIN;
           break;
@@ -166,7 +172,7 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
 template <> void TypeWalker::statement(ast::ReturnStmt& stat) {
   if (stat.expr().has_value()) {
     body_expression(stat.expr()->get());
-    stat.expr()->get().attach_to(&m_current_fn->m_ast_decl);
+    m_current_fn->m_ast_decl.attach_to(&stat.expr()->get());
   }
 }
 
@@ -177,7 +183,7 @@ template <> void TypeWalker::statement(ast::VarDecl& stat) {
     stat.init().attach_to(&stat.type()->get());
   }
 
-  stat.val_ty(&stat.init().val_ty()->known_mut());
+  stat.val_ty(&stat.init().val_ty()->known_scope());
   m_scope.insert({stat.name(), &stat});
 }
 

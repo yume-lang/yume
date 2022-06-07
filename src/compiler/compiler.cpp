@@ -76,7 +76,9 @@ Compiler::Compiler(std::vector<SourceFile> source_files)
 
   m_module->setDataLayout(m_targetMachine->createDataLayout());
   m_module->setTargetTriple(targetTriple);
+}
 
+void Compiler::run() {
   for (const auto& source : m_sources) {
     for (auto& i : source.m_program->body()) {
       decl_statement(i);
@@ -150,17 +152,18 @@ auto Compiler::llvm_type(const ty::Type& type) -> llvm::Type* {
     return llvm::Type::getIntNTy(*m_context, int_type->size());
   }
   if (const auto* qual_type = dyn_cast<ty::Qual>(&type)) {
-    auto qualifier = qual_type->qualifier();
-    switch (qualifier) {
-    case Qualifier::Ptr: return llvm::PointerType::getUnqual(llvm_type(qual_type->base()));
+    return llvm_type(qual_type->base())->getPointerTo();
+  }
+  if (const auto* ptr_type = dyn_cast<ty::Ptr>(&type)) {
+    switch (ptr_type->qualifier()) {
+    case Qualifier::Ptr: return llvm::PointerType::getUnqual(llvm_type(ptr_type->base()));
     case Qualifier::Slice: {
       auto args = vector<llvm::Type*>{};
-      args.push_back(llvm::PointerType::getUnqual(llvm_type(qual_type->base())));
+      args.push_back(llvm::PointerType::getUnqual(llvm_type(ptr_type->base())));
       args.push_back(llvm::Type::getInt64PtrTy(*m_context));
       return llvm::StructType::get(*m_context, args);
     }
-    case Qualifier::Mut: return llvm_type(qual_type->base())->getPointerTo();
-    default: return llvm_type(qual_type->base());
+    default: return llvm_type(ptr_type->base());
     }
   }
   if (const auto* struct_type = dyn_cast<ty::Struct>(&type)) {
@@ -357,26 +360,9 @@ template <> auto Compiler::expression(const ast::VarExpr& expr, bool mut) -> Val
   auto* val = m_scope.at(expr.name()).llvm();
   if (!mut) {
     // Function arguments can act as locals, but they can be immutable, but still behind a reference (alloca)
-    val = m_builder->CreateLoad(llvm_type(expr.val_ty()->without_mut()), val);
+    val = m_builder->CreateLoad(llvm_type(expr.val_ty()->without_qual()), val);
   }
   return val;
-}
-
-static auto is_signed_type(ty::Type* type) -> bool {
-  if (type == nullptr) {
-    throw std::logic_error("Can't determine signedness of missing type");
-  }
-  if (auto* int_ty = dyn_cast<ty::Int>(type)) {
-    return int_ty->is_signed();
-  }
-  throw std::logic_error("Can't determine signedness of non-integer type "s + type->name());
-}
-
-static auto binary_sign_aware(IRBuilder<>& base, auto&& s_fn, auto&& u_fn, const vector<Val>& args, ty::Type* ret,
-                              const auto&&... extra) {
-  const auto& lhs = args.at(0);
-  const auto& rhs = args.at(1);
-  return (is_signed_type(ret) ? (base.*s_fn)(lhs, rhs, "", extra...) : (base.*u_fn)(lhs, rhs, "", extra...));
 }
 
 template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Val {
@@ -385,7 +371,6 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
 
   auto* selected = expr.selected_overload();
   llvm::Function* llvm_fn = nullptr;
-  ty::Type* ret_type = selected->ast().val_ty();
 
   vector<Val> args{};
   vector<llvm::Value*> llvm_args{};
@@ -457,7 +442,7 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> 
     int base_offset = field_access->offset();
 
     auto expr_val = body_expression(expr.value(), mut);
-    auto* struct_type = llvm_type(cast<ty::Struct>(field_access->base().val_ty()->without_mut()));
+    auto* struct_type = llvm_type(cast<ty::Struct>(field_access->base().val_ty()->without_qual()));
 
     auto* gep = m_builder->CreateStructGEP(struct_type, base, base_offset, "s.sf."s + base_name);
     m_builder->CreateStore(expr_val, gep);
@@ -468,7 +453,7 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> 
 
 template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Val {
   auto& type = *expr.val_ty();
-  if (auto* struct_type = dyn_cast<ty::Struct>(&type.without_scope().without_mut())) {
+  if (auto* struct_type = dyn_cast<ty::Struct>(&type.without_qual())) {
     auto* llvm_struct_type = llvm_type(*struct_type);
 
     llvm::Value* alloc = nullptr;

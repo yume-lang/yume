@@ -6,6 +6,7 @@
 #define YUME_CPP_TYPE_HPP
 
 #include "util.hpp"
+#include "llvm/ADT/SmallBitVector.h"
 #include "llvm/Support/Casting.h"
 #include <map>
 #include <memory>
@@ -25,14 +26,15 @@ class TypeName;
 } // namespace yume
 
 namespace yume::ty {
-  using llvm::isa;
-  using llvm::dyn_cast;
-  using llvm::cast;
+using llvm::cast;
+using llvm::dyn_cast;
+using llvm::isa;
 
 enum Kind {
   K_Unknown,
   K_Int,
   K_Qual,
+  K_Ptr,
   K_Struct,
 };
 
@@ -63,13 +65,9 @@ public:
 
   [[nodiscard]] auto qual_base() const -> Type*;
 
-  [[nodiscard]] auto without_mut() const -> const Type&;
-  [[nodiscard]] auto without_mut() -> Type&;
-  [[nodiscard]] auto without_mut_kind() const -> Kind;
-
-  [[nodiscard]] auto without_scope() const -> const Type&;
-  [[nodiscard]] auto without_scope() -> Type&;
-  [[nodiscard]] auto without_scope_kind() const -> Kind;
+  [[nodiscard]] auto without_qual() const -> const Type&;
+  [[nodiscard]] auto without_qual() -> Type&;
+  [[nodiscard]] auto without_qual_kind() const -> Kind;
 
 protected:
   Type(Kind kind, string name) : m_kind(kind), m_name(move(name)) {}
@@ -80,24 +78,43 @@ class Int : public Type {
   bool m_signed;
 
 public:
-  inline Int(string name, int size, bool signed_)
-      : Type(K_Int, move(name)), m_size(size), m_signed(signed_) {}
+  inline Int(string name, int size, bool signed_) : Type(K_Int, move(name)), m_size(size), m_signed(signed_) {}
   [[nodiscard]] inline auto size() const -> int { return m_size; }
   [[nodiscard]] inline auto is_signed() const -> bool { return m_signed; }
   static auto classof(const Type* a) -> bool { return a->kind() == K_Int; }
 };
 
 class Qual : public Type {
+  friend Type;
+
 private:
   Type& m_base;
-  Qualifier m_qualifier;
+  bool m_mut{};
+  bool m_scope{};
 
 public:
-  inline Qual(string name, Type& base, Qualifier qualifier)
-      : Type(K_Qual, move(name)), m_base(base), m_qualifier(qualifier) {}
+  Qual(string name, Type& base, bool mut, bool scope)
+      : Type(K_Qual, move(name)), m_base(base), m_mut(mut), m_scope(scope) {}
   [[nodiscard]] inline auto base() const -> Type& { return m_base; }
-  [[nodiscard]] inline auto qualifier() const -> Qualifier { return m_qualifier; }
+  [[nodiscard]] inline auto has_qualifier(Qualifier qual) const -> bool {
+    return (qual == Qualifier::Mut && m_mut) || (qual == Qualifier::Scope && m_scope);
+  }
   static auto classof(const Type* a) -> bool { return a->kind() == K_Qual; }
+};
+
+class Ptr : public Type {
+  friend Type;
+
+private:
+  Type& m_base;
+  Qualifier m_qual;
+
+public:
+  Ptr(string name, Type& base, Qualifier qual) : Type(K_Ptr, move(name)), m_base(base), m_qual(qual) {}
+  [[nodiscard]] inline auto base() const -> Type& { return m_base; }
+  [[nodiscard]] inline auto qualifier() const -> Qualifier { return m_qual; }
+  [[nodiscard]] inline auto has_qualifier(Qualifier qual) const -> bool { return m_qual == qual; }
+  static auto classof(const Type* a) -> bool { return a->kind() == K_Ptr; }
 };
 
 class Struct : public Type {

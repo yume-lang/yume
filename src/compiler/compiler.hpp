@@ -52,6 +52,7 @@ public:
   [[nodiscard]] auto module() const -> const auto& { return m_module; }
 
   explicit Compiler(std::vector<SourceFile> source_files);
+  void run();
 
   [[nodiscard]] auto declare(Fn&, bool mangle = true) -> llvm::Function*;
 

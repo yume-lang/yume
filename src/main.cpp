@@ -75,6 +75,7 @@ auto main(int argc, const char* argv[]) -> int {
   }
 
   auto compiler = yume::Compiler{std::move(source_files)};
+  compiler.run();
   compiler.module()->print(*yume::open_file("output.ll"), nullptr);
   compiler.write_object("output.s", false);
   compiler.write_object("output.o", true);
