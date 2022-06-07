@@ -34,6 +34,7 @@ public:
     case ast::K_Var: return conv_expression<ast::VarExpr>(expr, args...);
     case ast::K_Assign: return conv_expression<ast::AssignExpr>(expr, args...);
     case ast::K_Ctor: return conv_expression<ast::CtorExpr>(expr, args...);
+    case ast::K_Slice: return conv_expression<ast::SliceExpr>(expr, args...);
     case ast::K_FieldAccess: return conv_expression<ast::FieldAccessExpr>(expr, args...);
     default: return (static_cast<Derived*>(this))->template expression(expr, args...);
     }

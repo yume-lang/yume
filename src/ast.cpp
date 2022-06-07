@@ -35,13 +35,9 @@ struct source_location {
 };
 #endif
 
-inline auto ts(auto&& begin, int end) {
-  return span<Token>(begin.base(), end);
-}
+inline auto ts(auto&& begin, int end) { return span<Token>(begin.base(), end); }
 
-inline auto ts(auto&& begin, auto&& end) {
-  return span<Token>(begin.base(), end.base());
-}
+inline auto ts(auto&& begin, auto&& end) { return span<Token>(begin.base(), end.base()); }
 
 constexpr static auto Symbol = Token::Type::Symbol;
 constexpr static auto Word = Token::Type::Word;
@@ -112,14 +108,17 @@ auto to_string(Token token) -> string {
   return ss.str();
 }
 
-void ignore_separator(TokenIterator& tokens,
-                      [[maybe_unused]] const source_location location = source_location::current()) {
+auto ignore_separator(TokenIterator& tokens,
+                      [[maybe_unused]] const source_location location = source_location::current()) -> bool {
+  bool found_separator = false;
   while (!tokens.at_end() && tokens->m_type == Separator) {
 #ifdef YUME_SPEW_CONSUMED_TOKENS
     std::cerr << "consumed " << *tokens << " at " << at(location) << "\n";
 #endif
     ++tokens;
+    found_separator = true;
   }
+  return found_separator;
 }
 
 void expect(TokenIterator& tokens, Token::Type token_type,
@@ -175,6 +174,18 @@ auto try_peek(TokenIterator& tokens, int ahead, Token::Type token_type, Atom pay
 #endif
 
   return !(token->m_type != token_type || token->m_payload != payload);
+}
+
+auto try_peek(TokenIterator& tokens, int ahead, Token::Type token_type,
+              [[maybe_unused]] const source_location location = source_location::current()) -> bool {
+  auto token = tokens + ahead;
+
+#ifdef YUME_SPEW_CONSUMED_TOKENS
+  std::cerr << "try_peek ahead by " << ahead << ": expected " << Token::type_name(token_type)
+            << ", got " << *token << " at " << at(location) << "\n";
+#endif
+
+  return token->m_type == token_type;
 }
 
 void consume_with_separators_until(TokenIterator& tokens, Token::Type token_type, Atom payload, auto action,
@@ -372,6 +383,9 @@ static auto parse_return_stmt(TokenIterator& tokens) -> unique_ptr<ReturnStmt> {
   auto entry = tokens.begin();
 
   consume(tokens, Word, KWD_RETURN);
+  if (!tokens.at_end() && try_peek(tokens, 0, Separator)) {
+    return std::make_unique<ReturnStmt>(ts(entry, tokens.begin()), optional<unique_ptr<Expr>>{});
+  }
   auto expr = parse_expr(tokens);
 
   return std::make_unique<ReturnStmt>(ts(entry, tokens.begin()), optional<unique_ptr<Expr>>{move(expr)});
@@ -481,6 +495,11 @@ static auto parse_primary(TokenIterator& tokens) -> unique_ptr<Expr> {
         return std::make_unique<CtorExpr>(ts(entry, tokens.begin()), name, call_args);
       }
       return std::make_unique<CallExpr>(ts(entry, tokens.begin()), name, call_args);
+    }
+    if (is_uword(name) && try_consume(tokens, Symbol, SYM_LBRACKET)) {
+      auto slice_members = vector<unique_ptr<Expr>>{};
+      consume_with_separators_until(tokens, Symbol, SYM_RBRACKET, [&] { slice_members.push_back(parse_expr(tokens)); });
+      return std::make_unique<SliceExpr>(ts(entry, tokens.begin()), name, slice_members);
     }
     if (!is_uword(name)) {
       return std::make_unique<VarExpr>(ts(entry, 1), name);
@@ -705,6 +724,7 @@ void Compound::visit(Visitor& visitor) { visitor.visit(m_body); }
 void VarExpr::visit(Visitor& visitor) { visitor.visit(m_name); }
 void CallExpr::visit(Visitor& visitor) { visitor.visit(m_name).visit(m_args); }
 void CtorExpr::visit(Visitor& visitor) { visitor.visit(m_name).visit(m_args); }
+void SliceExpr::visit(Visitor& visitor) { visitor.visit(m_name).visit(m_args); }
 void AssignExpr::visit(Visitor& visitor) { visitor.visit(m_target).visit(m_value); }
 void FieldAccessExpr::visit(Visitor& visitor) { visitor.visit(m_base).visit(m_field); }
 void Program::visit(Visitor& visitor) { visitor.visit(m_body); }

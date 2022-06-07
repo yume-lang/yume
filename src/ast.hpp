@@ -52,6 +52,7 @@ enum Kind {
   /**/ /**/ K_Assign,
   /**/ /**/ K_Call,
   /**/ /**/ K_Ctor,
+  /**/ /**/ K_Slice,
   /**/ /**/ K_Var,
   /**/ /**/ K_FieldAccess,
   /**/ /**/ K_END_Expr,
@@ -85,6 +86,7 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case K_IfClause: return "if clause";
   case K_Call: return "call";
   case K_Ctor: return "constructor";
+  case K_Slice: return "slice";
   case K_Var: return "var";
   case K_Return: return "return statement";
   case K_Assign: return "assign";
@@ -383,6 +385,21 @@ public:
   [[nodiscard]] auto inline name() const -> string { return m_name; }
   [[nodiscard]] constexpr auto inline args() const { return dereference_view(m_args); }
   static auto classof(const AST* a) -> bool { return a->kind() == K_Ctor; }
+};
+
+class SliceExpr : public Expr {
+  string m_name;
+  vector<unique_ptr<Expr>> m_args;
+
+public:
+  inline SliceExpr(span<Token> tok, string name, vector<unique_ptr<Expr>>& args)
+      : Expr(K_Slice, tok), m_name{move(name)}, m_args{move(args)} {}
+  void visit(Visitor& visitor) override;
+  [[nodiscard]] inline auto describe() const -> string override { return m_name; }
+
+  [[nodiscard]] auto inline name() const -> string { return m_name; }
+  [[nodiscard]] constexpr auto inline args() const { return dereference_view(m_args); }
+  static auto classof(const AST* a) -> bool { return a->kind() == K_Slice; }
 };
 
 class AssignExpr : public Expr {

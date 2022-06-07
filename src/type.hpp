@@ -56,6 +56,7 @@ public:
   [[nodiscard]] inline auto known_ptr() -> Type& { return known_qual(Qualifier::Ptr); }
   [[nodiscard]] inline auto known_mut() -> Type& { return known_qual(Qualifier::Mut); }
   [[nodiscard]] inline auto known_scope() -> Type& { return known_qual(Qualifier::Scope); }
+  [[nodiscard]] inline auto known_slice() -> Type& { return known_qual(Qualifier::Slice); }
 
   [[nodiscard]] auto compatibility(const Type& other) const -> int;
   [[nodiscard]] auto coalesce(Type& other) -> Type*;
