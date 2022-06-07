@@ -18,7 +18,7 @@ class StructType;
 }
 namespace yume {
 class Compiler;
-enum struct Qualifier { Ptr, Slice, Mut };
+enum struct Qualifier { Ptr, Slice, Mut, Scope, Q_END };
 namespace ast {
 class TypeName;
 }
@@ -37,7 +37,7 @@ enum Kind {
 };
 
 class Type {
-  std::array<unique_ptr<Type>, 3> m_known_qual{};
+  std::array<unique_ptr<Type>, static_cast<int>(Qualifier::Q_END)> m_known_qual{};
   const Kind m_kind;
   string m_name;
 
@@ -53,15 +53,23 @@ public:
   [[nodiscard]] auto known_qual(Qualifier qual) -> Type&;
   [[nodiscard]] inline auto known_ptr() -> Type& { return known_qual(Qualifier::Ptr); }
   [[nodiscard]] inline auto known_mut() -> Type& { return known_qual(Qualifier::Mut); }
+  [[nodiscard]] inline auto known_scope() -> Type& { return known_qual(Qualifier::Scope); }
 
   [[nodiscard]] auto compatibility(const Type& other) const -> int;
   [[nodiscard]] auto coalesce(Type& other) -> Type*;
 
   [[nodiscard]] auto is_mut() const -> bool;
+  [[nodiscard]] auto is_scope() const -> bool;
+
   [[nodiscard]] auto qual_base() const -> Type*;
-  [[nodiscard]] auto mut_base_or_this() const -> const Type&;
-  [[nodiscard]] auto mut_base_or_this() -> Type&;
-  [[nodiscard]] auto mut_base_or_this_kind() const -> Kind;
+
+  [[nodiscard]] auto without_mut() const -> const Type&;
+  [[nodiscard]] auto without_mut() -> Type&;
+  [[nodiscard]] auto without_mut_kind() const -> Kind;
+
+  [[nodiscard]] auto without_scope() const -> const Type&;
+  [[nodiscard]] auto without_scope() -> Type&;
+  [[nodiscard]] auto without_scope_kind() const -> Kind;
 
 protected:
   Type(Kind kind, string name) : m_kind(kind), m_name(move(name)) {}

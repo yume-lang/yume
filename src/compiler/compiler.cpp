@@ -357,7 +357,7 @@ template <> auto Compiler::expression(const ast::VarExpr& expr, bool mut) -> Val
   auto* val = m_scope.at(expr.name()).llvm();
   if (!mut) {
     // Function arguments can act as locals, but they can be immutable, but still behind a reference (alloca)
-    val = m_builder->CreateLoad(llvm_type(expr.val_ty()->mut_base_or_this()), val);
+    val = m_builder->CreateLoad(llvm_type(expr.val_ty()->without_mut()), val);
   }
   return val;
 }
@@ -457,7 +457,7 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> 
     int base_offset = field_access->offset();
 
     auto expr_val = body_expression(expr.value(), mut);
-    auto* struct_type = llvm_type(cast<ty::Struct>(field_access->base().val_ty()->mut_base_or_this()));
+    auto* struct_type = llvm_type(cast<ty::Struct>(field_access->base().val_ty()->without_mut()));
 
     auto* gep = m_builder->CreateStructGEP(struct_type, base, base_offset, "s.sf."s + base_name);
     m_builder->CreateStore(expr_val, gep);
@@ -468,7 +468,7 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> 
 
 template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Val {
   auto& type = *expr.val_ty();
-  if (auto* struct_type = dyn_cast<ty::Struct>(&type.mut_base_or_this())) {
+  if (auto* struct_type = dyn_cast<ty::Struct>(&type.without_scope().without_mut())) {
     auto* llvm_struct_type = llvm_type(*struct_type);
 
     llvm::Value* alloc = nullptr;
@@ -570,6 +570,8 @@ auto Compiler::mangle_name(const ast::Type& ast_type, ty::Type* parent) -> strin
   case Qualifier::Ptr: ss << "*"; break;
   case Qualifier::Slice: ss << "["; break;
   case Qualifier::Mut: ss << "&"; break;
+  case Qualifier::Scope: ss << "@"; break;
+  default: assert("Should never happen"); // NOLINT
   }
   return ss.str();
 }

@@ -9,6 +9,7 @@ static auto qual_suffix(Qualifier qual) -> string {
   switch (qual) {
   case Qualifier::Mut: return " mut";
   case Qualifier::Ptr: return " ptr";
+  case Qualifier::Scope: return " scope";
   case Qualifier::Slice: return "[]";
   default: return "";
   }
@@ -18,6 +19,15 @@ auto Type::known_qual(Qualifier qual) -> Type& {
   auto& existing = m_known_qual.at(qual_idx);
   if (existing != nullptr) {
     return *existing;
+  }
+
+  // Qualifiers like Mut and Scope don't stack, so attempting to get mut of a mut type should return itself
+  if (qual == Qualifier::Mut || qual == Qualifier::Scope) {
+    if (auto* base = qual_base()) {
+      if (base->m_known_qual.at(qual_idx).get() == this) {
+        return *this;
+      }
+    }
   }
 
   auto new_qual_type = std::make_unique<Qual>(name() + qual_suffix(qual), *this, qual);
@@ -35,6 +45,12 @@ auto Type::compatibility(const Type& other) const -> int {
   if (is_mut() && !other.is_mut() && qual_base() == &other) {
     return SAFE_CONVERSION;
   }
+  if (is_scope() && !other.is_scope() && qual_base() == &other) {
+    return SAFE_CONVERSION;
+  }
+  if (is_scope() && other.is_mut() && qual_base() == other.qual_base()) {
+    return SAFE_CONVERSION;
+  }
   if (const auto this_int = dyn_cast<Int>(this), other_int = dyn_cast<Int>(&other);
       (this_int != nullptr) && (other_int != nullptr)) {
     if (this_int->is_signed() == other_int->is_signed() && this_int->size() <= other_int->size()) {
@@ -45,9 +61,9 @@ auto Type::compatibility(const Type& other) const -> int {
   return 0;
 }
 
-auto Type::is_mut() const -> bool {
-  return isa<Qual>(*this) && cast<Qual>(this)->qualifier() == Qualifier::Mut;
-}
+auto Type::is_mut() const -> bool { return isa<Qual>(*this) && cast<Qual>(this)->qualifier() == Qualifier::Mut; }
+
+auto Type::is_scope() const -> bool { return isa<Qual>(*this) && cast<Qual>(this)->qualifier() == Qualifier::Scope; }
 
 auto Type::qual_base() const -> Type* {
   if (const auto* qual = dyn_cast<Qual>(this)) {
@@ -57,18 +73,24 @@ auto Type::qual_base() const -> Type* {
 }
 
 auto Type::coalesce(Type& other) -> Type* {
-  if (is_mut() && qual_base() == &other) {
+  if ((is_mut() || is_scope()) && qual_base() == &other) {
     return this;
   }
-  if (other.is_mut() && other.qual_base() == this) {
+  if ((other.is_mut() || other.is_scope()) && other.qual_base() == this) {
     return &other;
   }
   return nullptr;
 }
 
-auto Type::mut_base_or_this() const -> const Type& { return *(is_mut() ? qual_base() : this); }
+auto Type::without_mut() const -> const Type& { return *(is_mut() ? qual_base() : this); }
 
-auto Type::mut_base_or_this() -> Type& { return *(is_mut() ? qual_base() : this); }
+auto Type::without_mut() -> Type& { return *(is_mut() ? qual_base() : this); }
 
-auto Type::mut_base_or_this_kind() const -> Kind { return (is_mut() ? qual_base() : this)->kind(); }
+auto Type::without_mut_kind() const -> Kind { return (is_mut() ? qual_base() : this)->kind(); }
+
+auto Type::without_scope() const -> const Type& { return *(is_scope() ? qual_base() : this); }
+
+auto Type::without_scope() -> Type& { return *(is_scope() ? qual_base() : this); }
+
+auto Type::without_scope_kind() const -> Kind { return (is_scope() ? qual_base() : this)->kind(); }
 } // namespace yume::ty
