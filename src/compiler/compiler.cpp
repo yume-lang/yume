@@ -410,10 +410,14 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
       llvm_fn = selected->declaration(*this, false);
     } else if (primitive == "ptrto") {
       return args.at(0);
-    } else if (primitive == "icmp_gt") {
-      return binary_sign_aware(*m_builder, &IRBuilder<>::CreateICmpSGT, &IRBuilder<>::CreateICmpUGT, args, ret_type);
-    } else if (primitive == "icmp_lt") {
-      return binary_sign_aware(*m_builder, &IRBuilder<>::CreateICmpSLT, &IRBuilder<>::CreateICmpULT, args, ret_type);
+    } else if (primitive == "icmp_sgt") {
+      return m_builder->CreateICmpSGT(args.at(0), args.at(1));
+    } else if (primitive == "icmp_ugt") {
+      return m_builder->CreateICmpUGT(args.at(0), args.at(1));
+    } else if (primitive == "icmp_slt") {
+      return m_builder->CreateICmpSLT(args.at(0), args.at(1));
+    } else if (primitive == "icmp_ult") {
+      return m_builder->CreateICmpULT(args.at(0), args.at(1));
     } else if (primitive == "icmp_eq") {
       return m_builder->CreateICmpEQ(args.at(0), args.at(1));
     } else if (primitive == "icmp_ne") {
@@ -422,10 +426,14 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
       return m_builder->CreateAdd(args.at(0), args.at(1));
     } else if (primitive == "mul") {
       return m_builder->CreateMul(args.at(0), args.at(1));
-    } else if (primitive == "mod") {
-      return binary_sign_aware(*m_builder, &IRBuilder<>::CreateSRem, &IRBuilder<>::CreateURem, args, ret_type);
-    } else if (primitive == "int_div") {
-      return binary_sign_aware(*m_builder, &IRBuilder<>::CreateSDiv, &IRBuilder<>::CreateUDiv, args, ret_type, false);
+    } else if (primitive == "srem") {
+      return m_builder->CreateSRem(args.at(0), args.at(1));
+    } else if (primitive == "urem") {
+      return m_builder->CreateURem(args.at(0), args.at(1));
+    } else if (primitive == "sdiv") {
+      return m_builder->CreateSDiv(args.at(0), args.at(1));
+    } else if (primitive == "udiv") {
+      return m_builder->CreateUDiv(args.at(0), args.at(1));
     } else {
       throw std::runtime_error("Unknown primitive "s + primitive);
     }
