@@ -15,6 +15,7 @@ static void xml_escape(llvm::raw_ostream& stream, const string& data) {
     case '\"': stream << "&quot;"; break;
     case '<': stream << "&lt;"; break;
     case '>': stream << "&gt;"; break;
+    case '\x00': stream << "\\\\x00"; break;
     default: stream << i; break;
     }
   }

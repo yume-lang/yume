@@ -103,7 +103,11 @@ struct Tokenizer {
       return true;
     }
     if (i == 2 && escape) {
-      stream.put((char)c);
+      if (c == '0') {
+        stream.put('\x00');
+      } else {
+        stream.put((char)c);
+      }
       return true;
     }
     return false;
