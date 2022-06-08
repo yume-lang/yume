@@ -15,6 +15,7 @@
 #include <functional>
 #include <initializer_list>
 #include <limits>
+#include <llvm/ADT/ArrayRef.h>
 #include <llvm/ADT/Optional.h>
 #include <llvm/ADT/Twine.h>
 #include <llvm/IR/Argument.h>
@@ -150,7 +151,7 @@ auto Compiler::convert_type(const ast::Type& ast_type, const ty::Type* parent, F
     }
   } else if (const auto* qual_type = dyn_cast<ast::QualType>(&ast_type)) {
     auto qualifier = qual_type->qualifier();
-    return convert_type(qual_type->base(), parent).known_qual(qualifier);
+    return convert_type(qual_type->base(), parent, context).known_qual(qualifier);
   } else if (isa<ast::SelfType>(ast_type)) {
     if (parent != nullptr) {
       return *parent;
@@ -173,7 +174,7 @@ auto Compiler::llvm_type(const ty::Type& type) -> llvm::Type* {
     case Qualifier::Slice: {
       auto args = vector<llvm::Type*>{};
       args.push_back(llvm::PointerType::getUnqual(llvm_type(ptr_type->base())));
-      args.push_back(llvm::Type::getInt64PtrTy(*m_context));
+      args.push_back(llvm::Type::getInt64Ty(*m_context));
       return llvm::StructType::get(*m_context, args);
     }
     default: return llvm_type(ptr_type->base());
@@ -515,6 +516,31 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
   }
 
   throw std::runtime_error("Can't construct non-struct type");
+}
+
+template <> auto Compiler::expression(const ast::SliceExpr& expr, bool mut) -> Val {
+  not_mut("slice literal", mut);
+  auto values = vector<Val>();
+  auto slice_size = expr.args().size();
+  values.reserve(slice_size);
+  for (const auto& i : expr.args()) {
+    values.push_back(body_expression(i));
+  }
+
+  auto* slice_type = llvm_type(*expr.val_ty()->qual_base());
+  auto* base_type = llvm_type(*expr.val_ty()->qual_base()->ptr_base()); // ???
+  auto* array_type = ArrayType::get(base_type, slice_size);
+  auto* array_alloc = m_builder->CreateAlloca(array_type);
+  unsigned j = 0;
+  for (const auto& i : values) {
+    m_builder->CreateStore(i, m_builder->CreateConstInBoundsGEP2_32(array_type, array_alloc, 0, j++));
+  }
+  auto* data_ptr = m_builder->CreateBitCast(m_builder->CreateLoad(array_type, array_alloc), base_type->getPointerTo());
+  llvm::Value* slice_alloc = m_builder->CreateAlloca(slice_type);
+  slice_alloc = m_builder->CreateInsertValue(slice_alloc, data_ptr, 0);
+  slice_alloc = m_builder->CreateInsertValue(slice_alloc, m_builder->getInt64(slice_size), 1);
+
+  return slice_alloc;
 }
 
 template <> auto Compiler::expression(const ast::FieldAccessExpr& expr, bool mut) -> Val {
