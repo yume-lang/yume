@@ -181,8 +181,8 @@ auto try_peek(TokenIterator& tokens, int ahead, Token::Type token_type,
   auto token = tokens + ahead;
 
 #ifdef YUME_SPEW_CONSUMED_TOKENS
-  std::cerr << "try_peek ahead by " << ahead << ": expected " << Token::type_name(token_type)
-            << ", got " << *token << " at " << at(location) << "\n";
+  std::cerr << "try_peek ahead by " << ahead << ": expected " << Token::type_name(token_type) << ", got " << *token
+            << " at " << at(location) << "\n";
 #endif
 
   return token->m_type == token_type;
@@ -231,7 +231,7 @@ auto Program::parse(TokenIterator& tokens) -> unique_ptr<Program> {
     statements.push_back(parse_stmt(tokens));
   }
 
-  return std::make_unique<Program>(ts(entry, tokens.begin()), statements);
+  return std::make_unique<Program>(ts(entry, tokens.begin()), move(statements));
 }
 
 static auto parse_fn_name(TokenIterator& tokens) -> string {
@@ -297,8 +297,8 @@ static auto parse_struct_decl(TokenIterator& tokens) -> unique_ptr<StructDecl> {
     ignore_separator(tokens);
   }
 
-  return std::make_unique<StructDecl>(ts(entry, tokens.begin()), name, fields, type_args,
-                                      Compound(ts(body_begin, tokens.begin()), body));
+  return std::make_unique<StructDecl>(ts(entry, tokens.begin()), name, move(fields), type_args,
+                                      Compound(ts(body_begin, tokens.begin()), move(body)));
 }
 
 static auto parse_fn_decl(TokenIterator& tokens) -> unique_ptr<FnDecl> {
@@ -325,8 +325,8 @@ static auto parse_fn_decl(TokenIterator& tokens) -> unique_ptr<FnDecl> {
       auto primitive = consume_word(tokens);
       consume(tokens, Symbol, SYM_RPAREN);
       auto varargs = try_consume(tokens, Word, KWD_VARARGS);
-      return std::make_unique<FnDecl>(ts(entry, tokens.begin()), name, args, type_args, move(return_type), varargs,
-                                      primitive);
+      return std::make_unique<FnDecl>(ts(entry, tokens.begin()), name, move(args), type_args, move(return_type),
+                                      varargs, primitive);
     }
     body_begin = tokens.begin();
     auto expr = parse_expr(tokens);
@@ -341,8 +341,8 @@ static auto parse_fn_decl(TokenIterator& tokens) -> unique_ptr<FnDecl> {
     }
   }
 
-  return std::make_unique<FnDecl>(ts(entry, tokens.begin()), name, args, type_args, move(return_type),
-                                  std::make_unique<Compound>(ts(body_begin, tokens.begin()), body));
+  return std::make_unique<FnDecl>(ts(entry, tokens.begin()), name, move(args), type_args, move(return_type),
+                                  std::make_unique<Compound>(ts(body_begin, tokens.begin()), move(body)));
 }
 
 static auto parse_var_decl(TokenIterator& tokens) -> unique_ptr<VarDecl> {
@@ -374,7 +374,7 @@ static auto parse_while_stmt(TokenIterator& tokens) -> unique_ptr<WhileStmt> {
     ignore_separator(tokens);
   }
 
-  auto compound = std::make_unique<Compound>(ts(body_begin, tokens.begin()), body);
+  auto compound = std::make_unique<Compound>(ts(body_begin, tokens.begin()), move(body));
 
   return std::make_unique<WhileStmt>(ts(entry, tokens.begin()), move(cond), move(compound));
 }
@@ -412,9 +412,9 @@ static auto parse_if_stmt(TokenIterator& tokens) -> unique_ptr<IfStmt> {
     }
     if (try_consume(tokens, Word, KWD_ELSE)) {
       if (!in_else && try_consume(tokens, Word, KWD_IF)) {
-        clauses.push_back(
-            std::make_unique<IfClause>(ts(clause_begin, tokens.begin()), move(cond),
-                                       std::make_unique<Compound>(ts(current_entry, tokens.begin()), current_body)));
+        clauses.push_back(std::make_unique<IfClause>(
+            ts(clause_begin, tokens.begin()), move(cond),
+            std::make_unique<Compound>(ts(current_entry, tokens.begin()), move(current_body))));
         current_body = vector<unique_ptr<Stmt>>{};
         cond = parse_expr(tokens);
         current_entry = tokens.begin();
@@ -439,16 +439,16 @@ static auto parse_if_stmt(TokenIterator& tokens) -> unique_ptr<IfStmt> {
 
   clauses.push_back(
       std::make_unique<IfClause>(ts(clause_begin, else_entry - 1), move(cond),
-                                 std::make_unique<Compound>(ts(current_entry, else_entry - 1), current_body)));
+                                 std::make_unique<Compound>(ts(current_entry, else_entry - 1), move(current_body))));
 
   auto else_clause = optional<unique_ptr<Compound>>{};
   if (!else_body.empty()) {
-    else_clause = std::make_unique<Compound>(ts(else_entry, tokens.begin()), else_body);
+    else_clause = std::make_unique<Compound>(ts(else_entry, tokens.begin()), move(else_body));
   }
 
   // ignore_separator(tokens);
 
-  return std::make_unique<IfStmt>(ts(entry, tokens.begin()), clauses, move(else_clause));
+  return std::make_unique<IfStmt>(ts(entry, tokens.begin()), move(clauses), move(else_clause));
 }
 
 static auto parse_number_expr(TokenIterator& tokens) -> unique_ptr<NumberExpr> {
@@ -492,14 +492,14 @@ static auto parse_primary(TokenIterator& tokens) -> unique_ptr<Expr> {
       auto call_args = vector<unique_ptr<Expr>>{};
       consume_with_separators_until(tokens, Symbol, SYM_RPAREN, [&] { call_args.push_back(parse_expr(tokens)); });
       if (make_atom(name) == KWD_SELF || is_uword(name)) {
-        return std::make_unique<CtorExpr>(ts(entry, tokens.begin()), name, call_args);
+        return std::make_unique<CtorExpr>(ts(entry, tokens.begin()), name, move(call_args));
       }
-      return std::make_unique<CallExpr>(ts(entry, tokens.begin()), name, call_args);
+      return std::make_unique<CallExpr>(ts(entry, tokens.begin()), name, move(call_args));
     }
     if (is_uword(name) && try_consume(tokens, Symbol, SYM_LBRACKET)) {
       auto slice_members = vector<unique_ptr<Expr>>{};
       consume_with_separators_until(tokens, Symbol, SYM_RBRACKET, [&] { slice_members.push_back(parse_expr(tokens)); });
-      return std::make_unique<SliceExpr>(ts(entry, tokens.begin()), name, slice_members);
+      return std::make_unique<SliceExpr>(ts(entry, tokens.begin()), name, move(slice_members));
     }
     if (!is_uword(name)) {
       return std::make_unique<VarExpr>(ts(entry, 1), name);
@@ -516,21 +516,21 @@ static auto parse_receiver(TokenIterator& tokens, unique_ptr<Expr> receiver, aut
     call_args.push_back(move(receiver));
     if (try_consume(tokens, Symbol, SYM_LPAREN)) {
       consume_with_separators_until(tokens, Symbol, SYM_RPAREN, [&] { call_args.push_back(parse_expr(tokens)); });
-      auto call = std::make_unique<CallExpr>(ts(entry + 1, tokens.begin()), name, call_args);
+      auto call = std::make_unique<CallExpr>(ts(entry + 1, tokens.begin()), name, move(call_args));
       return parse_receiver(tokens, move(call), receiver_entry);
     }
     if (try_consume(tokens, Symbol, SYM_EQ)) {
       auto value = parse_expr(tokens);
       call_args.push_back(move(value));
-      auto call = std::make_unique<CallExpr>(ts(entry + 1, tokens.begin()), name + '=', call_args);
+      auto call = std::make_unique<CallExpr>(ts(entry + 1, tokens.begin()), name + '=', move(call_args));
       return parse_receiver(tokens, move(call), receiver_entry);
     }
-    auto noarg_call = std::make_unique<CallExpr>(ts(receiver_entry, tokens.begin()), name, call_args);
+    auto noarg_call = std::make_unique<CallExpr>(ts(receiver_entry, tokens.begin()), name, move(call_args));
     return parse_receiver(tokens, move(noarg_call), receiver_entry);
   }
   if (try_consume(tokens, Symbol, SYM_EQ)) {
     auto value = parse_expr(tokens);
-    auto assign = std::make_unique<AssignExpr>(ts(receiver_entry, tokens.begin()), receiver, value);
+    auto assign = std::make_unique<AssignExpr>(ts(receiver_entry, tokens.begin()), move(receiver), move(value));
     return parse_receiver(tokens, move(assign), receiver_entry);
   }
   if (try_consume(tokens, Symbol, SYM_LBRACKET)) {
@@ -538,13 +538,13 @@ static auto parse_receiver(TokenIterator& tokens, unique_ptr<Expr> receiver, aut
     args.push_back(move(receiver));
     args.push_back(parse_expr(tokens));
     consume(tokens, Symbol, SYM_RBRACKET);
-    auto call = std::make_unique<CallExpr>(ts(entry, tokens.begin()), "[]", args);
+    auto call = std::make_unique<CallExpr>(ts(entry, tokens.begin()), "[]", move(args));
     return parse_receiver(tokens, move(call), receiver_entry);
   }
   if (try_consume(tokens, Symbol, SYM_COLON)) {
     consume(tokens, Symbol, SYM_COLON);
     auto field = consume_word(tokens);
-    auto access = std::make_unique<FieldAccessExpr>(ts(receiver_entry, tokens.begin()), receiver, field);
+    auto access = std::make_unique<FieldAccessExpr>(ts(receiver_entry, tokens.begin()), move(receiver), field);
     return parse_receiver(tokens, move(access), receiver_entry);
   }
   return receiver;
@@ -562,7 +562,7 @@ static auto parse_unary(TokenIterator& tokens) -> unique_ptr<Expr> {
       auto value = parse_receiver(tokens);
       auto args = vector<unique_ptr<Expr>>{};
       args.push_back(move(value));
-      return std::make_unique<CallExpr>(ts(entry, tokens.begin()), un_op, args);
+      return std::make_unique<CallExpr>(ts(entry, tokens.begin()), un_op, move(args));
     }
   }
   return parse_receiver(tokens);
@@ -583,7 +583,7 @@ static auto parse_operator(TokenIterator& tokens, size_t n = 0) -> unique_ptr<Ex
         auto args = vector<unique_ptr<Expr>>{};
         args.push_back(move(left));
         args.push_back(move(right));
-        left = std::make_unique<CallExpr>(ts(entry, tokens.begin()), op, args);
+        left = std::make_unique<CallExpr>(ts(entry, tokens.begin()), op, move(args));
         found_operator = true;
         break;
       }
@@ -686,14 +686,70 @@ static auto parse_type_name(TokenIterator& tokens) -> unique_ptr<TypeName> {
   auto entry = tokens.begin();
   if (try_peek(tokens, 0, Word, KWD_SELF)) {
     unique_ptr<Type> type = parse_type(tokens);
-    return std::make_unique<TypeName>(ts(entry, tokens.begin()), type, "self");
+    return std::make_unique<TypeName>(ts(entry, tokens.begin()), move(type), "self");
   }
   const string name = consume_word(tokens);
   unique_ptr<Type> type = parse_type(tokens);
-  return std::make_unique<TypeName>(ts(entry, tokens.begin()), type, name);
+  return std::make_unique<TypeName>(ts(entry, tokens.begin()), move(type), name);
 }
 
 static auto parse_expr(TokenIterator& tokens) -> unique_ptr<Expr> { return parse_operator(tokens, 0); }
+
+template <typename T> static auto dup(const vector<unique_ptr<T>>& items) {
+  auto dup = vector<unique_ptr<T>>();
+  dup.reserve(items.size());
+  for (auto& i : items) {
+    dup.push_back(unique_ptr<T>(i->clone()));
+  }
+  return dup;
+}
+
+template <typename T> static auto dup(const vector<T>& items) {
+  auto dup = vector<T>();
+  dup.reserve(items.size());
+  for (auto& i : items) {
+    dup.push_back(std::move(*i.clone()));
+  }
+  return dup;
+}
+
+template <typename T> static auto dup(const unique_ptr<T>& ptr) { return unique_ptr<T>(ptr->clone()); }
+
+template <typename T> static auto dup(const optional<T>& opt) {
+  return opt.has_value() ? optional<T>{dup(opt.value())} : optional<T>{};
+}
+
+template <typename T> static auto dup(const T& ast) -> decltype(auto) { return std::move(*ast.clone()); }
+
+auto IfStmt::clone() const -> IfStmt* { return new IfStmt(m_tok, dup(m_clauses), dup(m_else_clause)); }
+auto IfClause::clone() const -> IfClause* { return new IfClause(m_tok, dup(m_cond), dup(m_body)); }
+auto NumberExpr::clone() const -> NumberExpr* { return new NumberExpr(m_tok, m_val); }
+auto StringExpr::clone() const -> StringExpr* { return new StringExpr(m_tok, m_val); }
+auto CharExpr::clone() const -> CharExpr* { return new CharExpr(m_tok, m_val); }
+auto ReturnStmt::clone() const -> ReturnStmt* { return new ReturnStmt(m_tok, dup(m_expr)); }
+auto WhileStmt::clone() const -> WhileStmt* { return new WhileStmt(m_tok, dup(m_cond), dup(m_body)); }
+auto VarDecl::clone() const -> VarDecl* { return new VarDecl(m_tok, m_name, dup(m_type), dup(m_init)); }
+auto FnDecl::clone() const -> FnDecl* {
+  if (const auto* s = get_if<string>(&m_body); s) {
+    return new FnDecl(m_tok, m_name, dup(m_args), m_type_args, dup(m_ret), m_varargs, *s);
+  }
+  return new FnDecl(m_tok, m_name, dup(m_args), m_type_args, dup(m_ret), dup(get<unique_ptr<Compound>>(m_body)));
+}
+auto StructDecl::clone() const -> StructDecl* {
+  return new StructDecl(m_tok, m_name, dup(m_fields), m_type_args, dup(m_body));
+}
+auto SimpleType::clone() const -> SimpleType* { return new SimpleType(m_tok, m_name); }
+auto QualType::clone() const -> QualType* { return new QualType(m_tok, dup(m_base), m_qualifier); }
+auto SelfType::clone() const -> SelfType* { return new SelfType(m_tok); }
+auto TypeName::clone() const -> TypeName* { return new TypeName(m_tok, dup(m_type), m_name); }
+auto Compound::clone() const -> Compound* { return new Compound(m_tok, dup(m_body)); }
+auto VarExpr::clone() const -> VarExpr* { return new VarExpr(m_tok, m_name); }
+auto CallExpr::clone() const -> CallExpr* { return new CallExpr(m_tok, m_name, dup(m_args)); }
+auto CtorExpr::clone() const -> CtorExpr* { return new CtorExpr(m_tok, m_name, dup(m_args)); }
+auto SliceExpr::clone() const -> SliceExpr* { return new SliceExpr(m_tok, m_name, dup(m_args)); }
+auto AssignExpr::clone() const -> AssignExpr* { return new AssignExpr(m_tok, dup(m_target), dup(m_value)); }
+auto FieldAccessExpr::clone() const -> FieldAccessExpr* { return new FieldAccessExpr(m_tok, dup(m_base), m_field); }
+auto Program::clone() const -> Program* { return new Program(m_tok, dup(m_body)); }
 
 void IfStmt::visit(Visitor& visitor) { visitor.visit(m_clauses).visit(m_else_clause, "else"); }
 void IfClause::visit(Visitor& visitor) { visitor.visit(m_cond).visit(m_body); }
