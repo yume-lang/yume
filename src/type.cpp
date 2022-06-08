@@ -61,8 +61,10 @@ auto Type::compatibility(const Type& other) const -> Compatiblity {
   if (!is_mut() && !is_scope() && isa<Generic>(other)) {
     return {GENERIC_SUBSTITUTION, &cast<Generic>(other), this};
   }
-  if (auto this_ptr_base = without_qual().ptr_base(), other_ptr_base = other.ptr_base();
-      (is_scope() || is_mut()) && this_ptr_base != nullptr && other_ptr_base != nullptr) {
+  if (auto this_ptr_base = without_qual().ptr_base(), other_ptr_base = other.without_qual().ptr_base();
+      (((is_scope() || is_mut()) && !other.is_scope() && !other.is_mut()) || (is_scope() && other.is_mut())) &&
+      this_ptr_base != nullptr && other_ptr_base != nullptr &&
+      cast<Ptr>(without_qual()).qualifier() == cast<Ptr>(other.without_qual()).qualifier()) {
     if (isa<Generic>(other_ptr_base)) {
       return {GENERIC_SUBSTITUTION, cast<Generic>(other_ptr_base), this_ptr_base};
     }
