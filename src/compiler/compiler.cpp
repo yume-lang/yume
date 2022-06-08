@@ -201,6 +201,10 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
   if (fn.m_llvm_fn != nullptr) {
     return fn.m_llvm_fn;
   }
+  // Skip primitive definitions, unless they are actually external functions (i.e. printf)
+  if (fn.ast().primitive() && mangle) {
+    return nullptr;
+  }
   const auto& fn_decl = fn.m_ast_decl;
   auto* llvm_ret_type = llvm::Type::getVoidTy(*m_context);
   auto llvm_args = vector<llvm::Type*>{};
@@ -226,7 +230,8 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
     arg_i++;
   }
 
-  if (!fn_decl.primitive()) { // Skip primitive definitions
+  // Primitive definitions that got this far are actually external functions; declare its prototype but not its body
+  if (!fn_decl.primitive()) {
     m_decl_queue.push(&fn);
     m_walker->m_current_fn = &fn;
     m_walker->body_statement(fn.ast());
