@@ -78,7 +78,7 @@ auto Type::compatibility(const Type& other) const -> Compatiblity {
   if (is_mut() && !other.is_mut() && qual_base() == &other) {
     return {SAFE_CONVERSION};
   }
-  if (is_scope() && !other.is_scope()) {
+  if (is_scope() && !other.is_scope() && (qual_base() == other.qual_base() || qual_base() == &other)) {
     return {SAFE_CONVERSION};
   }
   if (is_scope() && other.is_mut() && qual_base() == other.qual_base()) {
