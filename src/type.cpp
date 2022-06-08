@@ -58,10 +58,27 @@ auto Type::compatibility(const Type& other) const -> Compatiblity {
   if (this == &other) {
     return {PERFECT_MATCH};
   }
+  if (!is_mut() && !is_scope() && isa<Generic>(other)) {
+    return {GENERIC_SUBSTITUTION, &cast<Generic>(other), this};
+  }
+  if (auto this_ptr_base = ptr_base(), other_ptr_base = other.ptr_base();
+      this_ptr_base != nullptr && other_ptr_base != nullptr) {
+    if (isa<Generic>(other_ptr_base)) {
+      return {GENERIC_SUBSTITUTION, cast<Generic>(other_ptr_base), this_ptr_base};
+    }
+    return {0};
+  }
+  if (auto this_ptr_base = qual_base()->ptr_base(), other_ptr_base = other.ptr_base();
+      is_scope() && this_ptr_base != nullptr && other_ptr_base != nullptr) {
+    if (isa<Generic>(other_ptr_base)) {
+      return {GENERIC_SUBSTITUTION, cast<Generic>(other_ptr_base), this_ptr_base};
+    }
+    return {0};
+  }
   if (is_mut() && !other.is_mut() && qual_base() == &other) {
     return {SAFE_CONVERSION};
   }
-  if (is_scope() && !other.is_scope() && qual_base() == &other) {
+  if (is_scope() && !other.is_scope()) {
     return {SAFE_CONVERSION};
   }
   if (is_scope() && other.is_mut() && qual_base() == other.qual_base()) {
@@ -72,9 +89,6 @@ auto Type::compatibility(const Type& other) const -> Compatiblity {
     if (this_int->is_signed() == other_int->is_signed() && this_int->size() <= other_int->size()) {
       return {SAFE_CONVERSION};
     }
-  }
-  if (!is_mut() && !is_scope() && isa<Generic>(other)) {
-    return {GENERIC_SUBSTITUTION, &cast<Generic>(other), this};
   }
   // TODO
   return {0};
@@ -87,6 +101,13 @@ auto Type::is_scope() const -> bool { return isa<Qual>(*this) && cast<Qual>(this
 auto Type::qual_base() const -> const Type* {
   if (const auto* qual = dyn_cast<Qual>(this)) {
     return &qual->base();
+  }
+  return nullptr;
+}
+
+auto Type::ptr_base() const -> const Type* {
+  if (const auto* ptr = dyn_cast<Ptr>(this)) {
+    return &ptr->base();
   }
   return nullptr;
 }

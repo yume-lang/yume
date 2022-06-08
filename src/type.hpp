@@ -76,6 +76,7 @@ public:
   [[nodiscard]] auto is_scope() const -> bool;
 
   [[nodiscard]] auto qual_base() const -> const Type*;
+  [[nodiscard]] auto ptr_base() const -> const Type*;
 
   [[nodiscard]] auto without_qual() const -> const Type&;
   [[nodiscard]] auto without_qual_kind() const -> Kind;
