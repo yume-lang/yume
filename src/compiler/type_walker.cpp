@@ -154,6 +154,19 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
     }
   }
 
+  if (overloads.empty()) {
+    std::stringstream ss{};
+    ss << "No matching overload for " << name << " with argument types ";
+    int j = 0;
+    for (const auto* i : arg_types) {
+      if (j++ != 0) {
+        ss << ", ";
+      }
+      ss << i->name();
+    }
+    throw std::logic_error(ss.str());
+  }
+
   auto [selected_weight, selected, instantiate] =
       *std::max_element(overloads.begin(), overloads.end(),
                         [&](const auto& a, const auto& b) { return get<uint64_t>(a) < get<uint64_t>(b); });
