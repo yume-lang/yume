@@ -543,6 +543,12 @@ static auto parse_receiver(TokenIterator& tokens, unique_ptr<Expr> receiver, aut
     args.push_back(move(receiver));
     args.push_back(parse_expr(tokens));
     consume(tokens, Symbol, SYM_RBRACKET);
+    if (try_consume(tokens, Symbol, SYM_EQ)) {
+      auto value = parse_expr(tokens);
+      args.push_back(move(value));
+      auto call = std::make_unique<CallExpr>(ts(entry, tokens.begin()), "[]=", move(args));
+      return parse_receiver(tokens, move(call), receiver_entry);
+    }
     auto call = std::make_unique<CallExpr>(ts(entry, tokens.begin()), "[]", move(args));
     return parse_receiver(tokens, move(call), receiver_entry);
   }
