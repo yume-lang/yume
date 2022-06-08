@@ -54,6 +54,10 @@ jobs:
       run: build/yumec example/overloads.ym && ./yume.out
     - name: Test struct.ym
       run: build/yumec example/struct.ym && ./yume.out
+    - name: Test generic.ym
+      run: build/yumec example/generic.ym && ./yume.out
+    - name: Test slice.ym
+      run: build/yumec example/slice.ym && ./yume.out
 
 #     - name: Test
 #       working-directory: ${{github.workspace}}/build
