@@ -190,21 +190,21 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
       auto saved_scope = m_scope;
       auto* saved_current = m_current_fn;
 
-      // Temporarily create a new scope
+      // Temporarily create a new context
       m_in_depth = false;
       m_scope.clear();
       m_current_fn = &new_fn;
 
       body_statement(*decl_clone);
-
-      // Restore
-      m_scope = saved_scope;
-      m_current_fn = saved_current;
       m_in_depth = true;
 
       auto* llvm_fn = m_compiler.declare(new_fn);
       new_fn.m_llvm_fn = llvm_fn;
       selected = &new_fn;
+
+      // Restore again
+      m_scope = saved_scope;
+      m_current_fn = saved_current;
     } else {
       selected = existing_instantiation->second.get();
     }
