@@ -569,6 +569,7 @@ auto Compiler::mangle_name(const ast::Type& ast_type, const Fn& parent) -> strin
     if (auto match = parent.m_subs.find(name); match != parent.m_subs.end()) {
       return match->second->name();
     }
+    return simple_type->name();
   }
   if (isa<ast::SelfType>(ast_type)) {
     return parent.parent()->name();
