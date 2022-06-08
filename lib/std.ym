@@ -28,9 +28,9 @@ def <(a I32, b I32) Bool = __primitive__(icmp_slt)
 def <(a I64, b I64) Bool = __primitive__(icmp_slt)
 def !(a Bool) Bool
   if a
-    return false
+    return Bool(0)
   else
-    return true
+    return Bool(1)
   end
 end
 
