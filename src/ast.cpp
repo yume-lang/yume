@@ -477,6 +477,11 @@ static auto parse_char_expr(TokenIterator& tokens) -> unique_ptr<CharExpr> {
 
 static auto parse_primary(TokenIterator& tokens) -> unique_ptr<Expr> {
   auto entry = tokens.begin();
+  if (try_consume(tokens, Symbol, SYM_LPAREN)) {
+    auto val = parse_expr(tokens);
+    consume(tokens, Symbol, SYM_RPAREN);
+    return val;
+  }
   if (tokens->m_type == Number) {
     return parse_number_expr(tokens);
   }
