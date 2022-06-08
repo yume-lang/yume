@@ -35,7 +35,7 @@ def !(a Bool) Bool
 end
 
 def []<T>(slice T[], offset I64) T = slice.ptr[offset]
-def []=<T>(slice T[], offset I64, val T) T
+def []=<T>(slice T[] mut, offset I64, val T) T
   slice.ptr[offset] = val
   return val
 end

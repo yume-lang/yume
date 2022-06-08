@@ -7,5 +7,5 @@ def larger<T>(a T, b T) T
 end
 
 def main() I32
-  return larger(3, 7)
+  return I32(!(larger(3, 7) == 7))
 end
