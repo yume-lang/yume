@@ -433,10 +433,12 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
           args.at(0), m_builder->CreateAdd(m_builder->CreateExtractValue(args.at(0), 1), args.at(1)), 1);
     } else if (primitive == "set_at") {
       auto* result_type = llvm_type(*expr.args()[0].val_ty()->ptr_base());
-      return m_builder->CreateStore(args.at(2), m_builder->CreateGEP(result_type, args.at(0), args.at(1)));
+      return m_builder->CreateStore(args.at(2),
+                                    m_builder->CreateGEP(result_type, args.at(0), makeArrayRef(args.at(1).llvm())));
     } else if (primitive == "get_at") {
       auto* result_type = llvm_type(*expr.args()[0].val_ty()->ptr_base());
-      return m_builder->CreateLoad(result_type, m_builder->CreateGEP(result_type, args.at(0), args.at(1)));
+      return m_builder->CreateLoad(result_type,
+                                   m_builder->CreateGEP(result_type, args.at(0), makeArrayRef(args.at(1).llvm())));
     } else if (primitive == "icmp_sgt") {
       return m_builder->CreateICmpSGT(args.at(0), args.at(1));
     } else if (primitive == "icmp_ugt") {
