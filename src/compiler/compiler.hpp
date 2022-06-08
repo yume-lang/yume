@@ -59,18 +59,18 @@ public:
   void define(Fn&);
 
   void body_statement(const ast::Stmt&);
-  void decl_statement(ast::Stmt&, ty::Type* parent = nullptr);
+  void decl_statement(ast::Stmt&, ty::Type* parent = nullptr, ast::Program* member = nullptr);
   auto body_expression(const ast::Expr& expr, bool mut = false) -> Val;
 
   void write_object(const char* filename, bool binary);
 
-  auto convert_type(const ast::Type& ast_type, ty::Type* parent = nullptr) -> ty::Type&;
+  auto convert_type(const ast::Type& ast_type, const ty::Type* parent = nullptr, Fn* context = nullptr) -> const ty::Type&;
 
   auto llvm_type(const ty::Type& type) -> llvm::Type*;
 
-  auto mangle_name(const ast::FnDecl& fn_decl, ty::Type* parent = nullptr) -> string;
+  auto mangle_name(const Fn& fn_decl) -> string;
 
-  auto mangle_name(const ast::Type& ast_type, ty::Type* parent = nullptr) -> string;
+  auto mangle_name(const ast::Type& ast_type, const Fn& parent) -> string;
 
   [[nodiscard]] inline auto source_files() -> const auto& { return m_sources; }
 

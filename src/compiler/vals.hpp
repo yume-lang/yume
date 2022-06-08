@@ -2,8 +2,10 @@
 
 #include "../ast.hpp"
 #include "../token.hpp"
+#include "../type.hpp"
 #include "../util.hpp"
 #include <iosfwd>
+#include <llvm/ADT/DenseMap.h>
 #include <memory>
 #include <string>
 #include <utility>
@@ -16,15 +18,25 @@ class Value;
 
 namespace yume {
 class Compiler;
-namespace ty {
-class Type;
-}
+
+struct Instantiation {
+  std::map<const ty::Generic*, const ty::Type*> m_sub{};
+
+  auto operator<=>(const Instantiation& other) const = default;
+};
 
 struct Fn {
   ast::FnDecl& m_ast_decl;
   ty::Type* m_parent{};
-  // TODO: multiple instantiations
+  ast::Program* m_member{};
+  vector<unique_ptr<ty::Generic>> m_type_args{};
+  std::map<string, const ty::Type*> m_subs{};
+  std::map<Instantiation, unique_ptr<Fn>> m_instantiations{};
   llvm::Function* m_llvm_fn{};
+
+  Fn(ast::FnDecl& ast_decl, ty::Type* parent = nullptr, ast::Program* member = nullptr,
+     std::map<string, const ty::Type*> subs = {}, vector<unique_ptr<ty::Generic>> type_args = {})
+      : m_ast_decl(ast_decl), m_parent(parent), m_member(member), m_type_args(move(type_args)), m_subs(move(subs)) {}
 
   [[nodiscard]] auto inline body() const -> const auto& { return m_ast_decl.body(); }
 
@@ -38,9 +50,7 @@ struct Fn {
 
   [[nodiscard]] auto declaration(Compiler& compiler, bool mangle = true) -> llvm::Function*;
 
-  operator llvm::Function*() const {
-    return m_llvm_fn;
-  }
+  operator llvm::Function*() const { return m_llvm_fn; }
 };
 
 struct Val {
@@ -50,9 +60,7 @@ struct Val {
 
   [[nodiscard]] auto inline llvm() const -> llvm::Value* { return m_llvm_val; }
 
-  operator llvm::Value*() const {
-    return m_llvm_val;
-  }
+  operator llvm::Value*() const { return m_llvm_val; }
 };
 
 struct SourceFile {

@@ -1,6 +1,9 @@
 #include "type_walker.hpp"
 #include "../ast.hpp"
 #include "compiler.hpp"
+#include "vals.hpp"
+#include <algorithm>
+#include <stdexcept>
 
 namespace yume {
 
@@ -154,6 +157,44 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
   auto [selected_weight, selected, instantiate] =
       *std::max_element(overloads.begin(), overloads.end(),
                         [&](const auto& a, const auto& b) { return get<uint64_t>(a) < get<uint64_t>(b); });
+
+  if (!instantiate.m_sub.empty()) {
+    // TODO: move most of this logic directly into Fn
+    auto existing_instantiation = m_current_fn->m_instantiations.find(instantiate);
+    if (existing_instantiation == m_current_fn->m_instantiations.end()) {
+      auto* decl_clone = selected->m_ast_decl.clone();
+      m_current_fn->m_member->direct_body().emplace_back(decl_clone);
+      std::map<string, const ty::Type*> subs{};
+      for (const auto& [k, v] : instantiate.m_sub) {
+        subs.try_emplace(k->name(), v);
+      }
+
+      auto fn_ptr = std::make_unique<Fn>(*decl_clone, selected->m_parent, selected->m_member, move(subs));
+      auto new_emplace = m_current_fn->m_instantiations.emplace(instantiate, move(fn_ptr));
+      auto& new_fn = *new_emplace.first->second;
+
+      // Save everything pertaining to the old context
+      auto saved_scope = m_scope;
+      auto* saved_current = m_current_fn;
+
+      // Temporarily create a new scope
+      m_in_depth = false;
+      m_scope.clear();
+      m_current_fn = &new_fn;
+
+      body_statement(*decl_clone);
+
+      // Restore
+      m_scope = saved_scope;
+      m_current_fn = saved_current;
+      m_in_depth = true;
+
+      auto* llvm_fn = m_compiler.declare(new_fn);
+      new_fn.m_llvm_fn = llvm_fn;
+      selected = &new_fn;
+    } else {
+      selected = existing_instantiation->second.get();
+    }
   }
 
   if (selected->m_ast_decl.ret().has_value()) {
@@ -181,9 +222,9 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
     stat.ret()->get().attach_to(&stat);
   }
 
-  // Completely skip fn decls with incomplete types (generics)
-  // TODO: properly handle
-  if (!stat.type_args().empty()) {
+  // This decl still has unsubstituted generics, can't instantiate its body
+  if (std::any_of(m_current_fn->m_subs.begin(), m_current_fn->m_subs.end(),
+                  [&](const auto& sub) { return isa<ty::Generic>(sub.second); })) {
     return;
   }
 

@@ -7,6 +7,7 @@
 #include "../type.hpp"
 #include "../util.hpp"
 #include "type_walker.hpp"
+#include "vals.hpp"
 #include <algorithm>
 #include <climits>
 #include <cstdint>
@@ -81,7 +82,7 @@ Compiler::Compiler(std::vector<SourceFile> source_files)
 void Compiler::run() {
   for (const auto& source : m_sources) {
     for (auto& i : source.m_program->body()) {
-      decl_statement(i);
+      decl_statement(i, nullptr, source.m_program.get());
     }
   }
 
@@ -111,9 +112,15 @@ void Compiler::walk_types() {
   m_walker->m_in_depth = true;
 }
 
-void Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent) {
+void Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* member) {
   if (auto* fn_decl = dyn_cast<ast::FnDecl>(&stmt)) {
-    m_fns.emplace_back(Fn{*fn_decl, parent});
+    vector<unique_ptr<ty::Generic>> type_args{};
+    std::map<string, const ty::Type*> subs{};
+    for (auto& i : fn_decl->type_args()) {
+      auto& gen = type_args.emplace_back(std::make_unique<ty::Generic>(i));
+      subs.try_emplace(i, gen.get());
+    }
+    m_fns.emplace_back(*fn_decl, parent, member, std::move(subs), std::move(type_args));
   } else if (auto* s_decl = dyn_cast<ast::StructDecl>(&stmt)) {
     auto fields = vector<const ast::TypeName*>();
     fields.reserve(s_decl->fields().size());
@@ -128,9 +135,15 @@ void Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent) {
   }
 }
 
-auto Compiler::convert_type(const ast::Type& ast_type, ty::Type* parent) -> ty::Type& {
+auto Compiler::convert_type(const ast::Type& ast_type, const ty::Type* parent, Fn* context) -> const ty::Type& {
   if (const auto* simple_type = dyn_cast<ast::SimpleType>(&ast_type)) {
     auto name = simple_type->name();
+    if (context != nullptr) {
+      auto generic = context->m_subs.find(name);
+      if (generic != context->m_subs.end()) {
+        return *generic->second;
+      }
+    }
     auto val = m_types.known.find(name);
     if (val != m_types.known.end()) {
       return *val->second;
@@ -200,7 +213,7 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
 
   string name = fn_decl.name();
   if (mangle) {
-    name = mangle_name(fn_decl, fn.parent());
+    name = mangle_name(fn);
   }
 
   auto linkage = mangle ? Function::InternalLinkage : Function::ExternalLinkage;
@@ -275,6 +288,7 @@ template <> void Compiler::statement(const ast::WhileStmt& stat) {
 template <> void Compiler::statement(const ast::IfStmt& stat) {
   auto* merge_bb = BasicBlock::Create(*m_context, "if.cont", *m_current_fn);
   auto* next_test_bb = BasicBlock::Create(*m_context, "if.test", *m_current_fn, merge_bb);
+  bool all_terminated = true;
   m_builder->CreateBr(next_test_bb);
 
   auto clauses = stat.clauses();
@@ -287,6 +301,7 @@ template <> void Compiler::statement(const ast::IfStmt& stat) {
     m_builder->SetInsertPoint(body_bb);
     statement(b->body());
     if (m_builder->GetInsertBlock()->getTerminator() == nullptr) {
+      all_terminated = false;
       m_builder->CreateBr(merge_bb);
     }
   }
@@ -295,9 +310,17 @@ template <> void Compiler::statement(const ast::IfStmt& stat) {
     next_test_bb->setName("if.else");
     m_builder->SetInsertPoint(next_test_bb);
     statement(stat.else_clause()->get());
-    m_builder->CreateBr(merge_bb);
+    if (m_builder->GetInsertBlock()->getTerminator() == nullptr) {
+      all_terminated = false;
+      m_builder->CreateBr(merge_bb);
+    }
   }
-  m_builder->SetInsertPoint(merge_bb);
+
+  if (all_terminated) {
+    merge_bb->eraseFromParent();
+  } else {
+    m_builder->SetInsertPoint(merge_bb);
+  }
 }
 
 template <> void Compiler::statement(const ast::ReturnStmt& stat) {
@@ -520,32 +543,35 @@ void Compiler::write_object(const char* filename, bool binary) {
   dest->flush();
 }
 
-auto Compiler::mangle_name(const ast::FnDecl& fn_decl, ty::Type* parent) -> string {
+auto Compiler::mangle_name(const Fn& fn) -> string {
   std::stringstream ss{};
   ss << "_Ym.";
-  ss << fn_decl.name();
+  ss << fn.ast().name();
   ss << "(";
   int idx = 0;
-  for (const auto& i : fn_decl.args()) {
+  for (const auto& i : fn.ast().args()) {
     if (idx++ > 0) {
       ss << ",";
     }
-    ss << mangle_name(i.type(), parent);
+    ss << mangle_name(i.type(), fn);
   }
   ss << ")";
   // TODO: should mangled names even contain the return type...?
-  if (fn_decl.ret().has_value()) {
-    ss << mangle_name(fn_decl.ret().value(), parent);
+  if (fn.ast().ret().has_value()) {
+    ss << mangle_name(fn.ast().ret().value(), fn);
   }
   return ss.str();
 }
 
-auto Compiler::mangle_name(const ast::Type& ast_type, ty::Type* parent) -> string {
+auto Compiler::mangle_name(const ast::Type& ast_type, const Fn& parent) -> string {
   if (const auto* simple_type = dyn_cast<ast::SimpleType>(&ast_type)) {
-    return simple_type->name();
+    auto name = simple_type->name();
+    if (auto match = parent.m_subs.find(name); match != parent.m_subs.end()) {
+      return match->second->name();
+    }
   }
   if (isa<ast::SelfType>(ast_type)) {
-    return parent->name();
+    return parent.parent()->name();
   }
   std::stringstream ss{};
   const auto& qual_type = cast<ast::QualType>(ast_type);
