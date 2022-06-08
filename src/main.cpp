@@ -75,12 +75,14 @@ auto main(int argc, const char* argv[]) -> int {
   }
 
   auto compiler = yume::Compiler{std::move(source_files)};
+  // try {
   compiler.run();
   compiler.module()->print(*yume::open_file("output.ll"), nullptr);
   compiler.write_object("output.s", false);
   compiler.write_object("output.o", true);
   std::cout.flush();
   std::system("cc output.o -o yume.out");
+  // } catch (...) {
 
 #ifdef YUME_EMIT_DOT
   for (const auto& i : compiler.source_files()) {
@@ -90,6 +92,8 @@ auto main(int argc, const char* argv[]) -> int {
     visitor.visit(*i.m_program, nullptr);
   }
 #endif
+//throw;
+  //}
 
   return EXIT_SUCCESS;
 }

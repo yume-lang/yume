@@ -61,15 +61,15 @@ auto Type::compatibility(const Type& other) const -> Compatiblity {
   if (!is_mut() && !is_scope() && isa<Generic>(other)) {
     return {GENERIC_SUBSTITUTION, &cast<Generic>(other), this};
   }
-  if (auto this_ptr_base = ptr_base(), other_ptr_base = other.ptr_base();
-      this_ptr_base != nullptr && other_ptr_base != nullptr) {
+  if (auto this_ptr_base = without_qual().ptr_base(), other_ptr_base = other.ptr_base();
+      (is_scope() || is_mut()) && this_ptr_base != nullptr && other_ptr_base != nullptr) {
     if (isa<Generic>(other_ptr_base)) {
       return {GENERIC_SUBSTITUTION, cast<Generic>(other_ptr_base), this_ptr_base};
     }
     return {0};
   }
-  if (auto this_ptr_base = qual_base()->ptr_base(), other_ptr_base = other.ptr_base();
-      is_scope() && this_ptr_base != nullptr && other_ptr_base != nullptr) {
+  if (auto this_ptr_base = ptr_base(), other_ptr_base = other.ptr_base();
+      this_ptr_base != nullptr && other_ptr_base != nullptr) {
     if (isa<Generic>(other_ptr_base)) {
       return {GENERIC_SUBSTITUTION, cast<Generic>(other_ptr_base), this_ptr_base};
     }
@@ -91,7 +91,7 @@ auto Type::compatibility(const Type& other) const -> Compatiblity {
     }
   }
   // TODO
-  return {0};
+  return {Compatiblity::INVALID};
 }
 
 auto Type::is_mut() const -> bool { return isa<Qual>(*this) && cast<Qual>(this)->has_qualifier(Qualifier::Mut); }

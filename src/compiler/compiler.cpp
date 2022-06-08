@@ -535,8 +535,18 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
 
     return base_value;
   }
+  if (const auto* int_type = dyn_cast<ty::Int>(&type.without_qual())) {
+    assert(expr.args().size() == 1); // NOLINT
+    auto& cast_from = expr.args()[0];
+    assert(isa<ty::Int>(cast_from.val_ty())); // NOLINT
+    auto base = body_expression(cast_from);
+    if (cast<ty::Int>(cast_from.val_ty())->is_signed()) {
+      return m_builder->CreateSExtOrTrunc(base, llvm_type(*int_type));
+    }
+    return m_builder->CreateZExtOrTrunc(base, llvm_type(*int_type));
+  }
 
-  throw std::runtime_error("Can't construct non-struct type");
+  throw std::runtime_error("Can't construct non-struct, non-integer type");
 }
 
 template <> auto Compiler::expression(const ast::SliceExpr& expr, bool mut) -> Val {
@@ -556,12 +566,12 @@ template <> auto Compiler::expression(const ast::SliceExpr& expr, bool mut) -> V
   for (const auto& i : values) {
     m_builder->CreateStore(i, m_builder->CreateConstInBoundsGEP2_32(array_type, array_alloc, 0, j++));
   }
-  auto* data_ptr = m_builder->CreateBitCast(m_builder->CreateLoad(array_type, array_alloc), base_type->getPointerTo());
-  llvm::Value* slice_alloc = m_builder->CreateAlloca(slice_type);
-  slice_alloc = m_builder->CreateInsertValue(slice_alloc, data_ptr, 0);
-  slice_alloc = m_builder->CreateInsertValue(slice_alloc, m_builder->getInt64(slice_size), 1);
+  auto* data_ptr = m_builder->CreateBitCast(array_alloc, base_type->getPointerTo());
+  llvm::Value* slice_inst = llvm::UndefValue::get(slice_type);
+  slice_inst = m_builder->CreateInsertValue(slice_inst, data_ptr, 0);
+  slice_inst = m_builder->CreateInsertValue(slice_inst, m_builder->getInt64(slice_size), 1);
 
-  return slice_alloc;
+  return slice_inst;
 }
 
 template <> auto Compiler::expression(const ast::FieldAccessExpr& expr, bool mut) -> Val {
