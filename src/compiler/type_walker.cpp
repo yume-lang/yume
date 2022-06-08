@@ -21,7 +21,7 @@ template <> void TypeWalker::expression(ast::StringExpr& expr) {
 template <> void TypeWalker::expression(ast::CharExpr& expr) { expr.val_ty(m_compiler.m_types.int8().u_ty); }
 
 template <> void TypeWalker::expression(ast::Type& expr) {
-  auto* resolved_type = &m_compiler.convert_type(expr, m_current_fn->parent());
+  const auto* resolved_type = &m_compiler.convert_type(expr, m_current_fn->parent(), m_current_fn);
   expr.val_ty(resolved_type);
   if (auto* qual_type = dyn_cast<ast::QualType>(&expr)) {
     expression(qual_type->base());
@@ -67,16 +67,16 @@ template <> void TypeWalker::expression(ast::VarExpr& expr) {
 
 template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
   body_expression(expr.base());
-  auto& type = *expr.base().val_ty();
+  const auto& type = *expr.base().val_ty();
 
-  auto* struct_type = dyn_cast<ty::Struct>(&type.without_qual());
+  const auto* struct_type = dyn_cast<ty::Struct>(&type.without_qual());
 
   if (struct_type == nullptr) {
     throw std::runtime_error("Can't access field of expression with non-struct type");
   }
 
   auto target_name = expr.field();
-  ty::Type* target_type{};
+  const ty::Type* target_type{};
   int j = 0;
   for (const auto& field : struct_type->fields()) {
     if (field.name() == target_name) {
@@ -93,7 +93,7 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
 
 template <> void TypeWalker::expression(ast::CallExpr& expr) {
   auto fns_by_name = vector<Fn*>();
-  auto overloads = vector<std::pair<int, Fn*>>();
+  auto overloads = vector<std::tuple<uint64_t, Fn*, Instantiation>>();
   auto name = expr.name();
 
   for (auto& fn : m_compiler.m_fns) {
@@ -105,14 +105,15 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
     throw std::logic_error("No function overload named "s + name);
   }
 
-  vector<ty::Type*> arg_types{};
+  vector<const ty::Type*> arg_types{};
   for (auto& i : expr.args()) {
     body_expression(i);
     arg_types.push_back(i.val_ty());
   }
 
   for (auto* fn : fns_by_name) {
-    int compat = 0;
+    uint64_t compat = 0;
+    Instantiation instantiation{};
     const auto& fn_ast = fn->m_ast_decl;
     auto fn_arg_size = fn_ast.args().size();
     if (arg_types.size() == fn_arg_size || (expr.args().size() >= fn_arg_size && fn_ast.varargs())) {
@@ -121,25 +122,38 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
         if (i >= fn_arg_size) {
           break;
         }
-        auto* ast_arg = fn_ast.args()[i].val_ty();
+        const auto* ast_arg = fn_ast.args()[i].val_ty();
         if (ast_arg == nullptr) { // TODO: should be removed
           break;
         }
-        auto i_compat = arg_type->compatibility(*ast_arg);
-        if (i_compat == 0) {
-          compat = INT_MIN;
+        auto [i_compat, gen, gen_sub] = arg_type->compatibility(*ast_arg);
+        if (i_compat == ty::Type::Compatiblity::INVALID) {
+          compat = i_compat;
           break;
+        }
+        if (gen != nullptr && gen_sub != nullptr) {
+          auto existing = instantiation.m_sub.find(gen);
+          if (existing != instantiation.m_sub.end()) {
+            if (existing->second != gen_sub) {
+              compat = ty::Type::Compatiblity::INVALID;
+              break;
+            }
+          } else {
+            instantiation.m_sub.try_emplace(gen, gen_sub);
+          }
         }
         compat += i_compat;
         i++;
       }
-      overloads.emplace_back(compat, fn);
+      if (compat != ty::Type::Compatiblity::INVALID) {
+        overloads.emplace_back(compat, fn, instantiation);
+      }
     }
   }
 
-  auto [selected_weight, selected] = *std::max_element(overloads.begin(), overloads.end());
-  if (selected_weight < 0) {
-    throw std::logic_error("No viable overload for "s + name);
+  auto [selected_weight, selected, instantiate] =
+      *std::max_element(overloads.begin(), overloads.end(),
+                        [&](const auto& a, const auto& b) { return get<uint64_t>(a) < get<uint64_t>(b); });
   }
 
   if (selected->m_ast_decl.ret().has_value()) {

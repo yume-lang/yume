@@ -234,10 +234,10 @@ void Compiler::define(Fn& fn) {
 
   int i = 0;
   for (auto& arg : fn.llvm()->args()) {
-    auto& type = *fn.ast().args()[i].val_ty();
+    const auto& type = *fn.ast().args()[i].val_ty();
     auto name = fn.ast().args()[i++].name();
     llvm::Value* alloc = nullptr;
-    if (auto* qual_type = dyn_cast<ty::Qual>(&type)) {
+    if (const auto* qual_type = dyn_cast<ty::Qual>(&type)) {
       if (qual_type->is_mut()) {
         alloc = &arg;
         m_scope.insert({name, &arg});
@@ -452,8 +452,8 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> 
 }
 
 template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Val {
-  auto& type = *expr.val_ty();
-  if (auto* struct_type = dyn_cast<ty::Struct>(&type.without_qual())) {
+  const auto& type = *expr.val_ty();
+  if (const auto* struct_type = dyn_cast<ty::Struct>(&type.without_qual())) {
     auto* llvm_struct_type = llvm_type(*struct_type);
 
     llvm::Value* alloc = nullptr;

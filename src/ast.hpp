@@ -137,7 +137,7 @@ class AST {
 protected:
   const Kind m_kind;
   const span<Token> m_tok;
-  mutable ty::Type* m_val_ty{};
+  mutable const ty::Type* m_val_ty{};
   unique_ptr<Attachment> m_attach{std::make_unique<Attachment>()};
 
   inline void unify_val_ty() const {
@@ -148,7 +148,7 @@ protected:
       if (m_val_ty == nullptr) {
         m_val_ty = other->m_val_ty;
       } else {
-        auto* merged = m_val_ty->coalesce(*other->m_val_ty);
+        const auto* merged = m_val_ty->coalesce(*other->m_val_ty);
         if (merged == nullptr) {
           throw std::logic_error("Conflicting types between AST nodes that are attached: `"s + m_val_ty->name() +
                                  "` vs `" + other->m_val_ty->name() + "`!");
@@ -168,8 +168,8 @@ public:
   virtual ~AST() = default;
 
   virtual void inline visit(Visitor& visitor) = 0;
-  [[nodiscard]] inline auto val_ty() const noexcept -> ty::Type* { return m_val_ty; }
-  inline void val_ty(ty::Type* type) const {
+  [[nodiscard]] inline auto val_ty() const noexcept -> const ty::Type* { return m_val_ty; }
+  inline void val_ty(const ty::Type* type) const {
     m_val_ty = type;
     for (const auto* i : m_attach->observers) {
       i->unify_val_ty();

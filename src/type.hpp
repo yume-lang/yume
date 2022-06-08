@@ -26,6 +26,8 @@ class TypeName;
 } // namespace yume
 
 namespace yume::ty {
+class Generic;
+
 using llvm::cast;
 using llvm::dyn_cast;
 using llvm::isa;
@@ -36,14 +38,23 @@ enum Kind {
   K_Qual,
   K_Ptr,
   K_Struct,
+  K_Generic,
 };
 
 class Type {
-  std::array<unique_ptr<Type>, static_cast<int>(Qualifier::Q_END)> m_known_qual{};
+  mutable std::array<unique_ptr<Type>, static_cast<int>(Qualifier::Q_END)> m_known_qual{};
   const Kind m_kind;
   string m_name;
 
 public:
+  struct Compatiblity {
+    static constexpr const uint64_t INVALID = -1;
+
+    uint64_t rating{};
+    const Generic* substituted_generic{};
+    const Type* substituted_with{};
+  };
+
   Type(const Type&) noexcept = delete;
   Type(Type&&) noexcept = delete;
   auto operator=(const Type&) noexcept -> Type& = delete;
@@ -52,22 +63,21 @@ public:
   [[nodiscard]] auto kind() const -> Kind { return m_kind; };
   [[nodiscard]] auto name() const -> string { return m_name; };
 
-  [[nodiscard]] auto known_qual(Qualifier qual) -> Type&;
-  [[nodiscard]] inline auto known_ptr() -> Type& { return known_qual(Qualifier::Ptr); }
-  [[nodiscard]] inline auto known_mut() -> Type& { return known_qual(Qualifier::Mut); }
-  [[nodiscard]] inline auto known_scope() -> Type& { return known_qual(Qualifier::Scope); }
-  [[nodiscard]] inline auto known_slice() -> Type& { return known_qual(Qualifier::Slice); }
+  [[nodiscard]] auto known_qual(Qualifier qual) const -> const Type&;
+  [[nodiscard]] inline auto known_ptr() const -> const Type& { return known_qual(Qualifier::Ptr); }
+  [[nodiscard]] inline auto known_mut() const -> const Type& { return known_qual(Qualifier::Mut); }
+  [[nodiscard]] inline auto known_scope() const -> const Type& { return known_qual(Qualifier::Scope); }
+  [[nodiscard]] inline auto known_slice() const -> const Type& { return known_qual(Qualifier::Slice); }
 
-  [[nodiscard]] auto compatibility(const Type& other) const -> int;
-  [[nodiscard]] auto coalesce(Type& other) -> Type*;
+  [[nodiscard]] auto compatibility(const Type& other) const -> Compatiblity;
+  [[nodiscard]] auto coalesce(const Type& other) const -> const Type*;
 
   [[nodiscard]] auto is_mut() const -> bool;
   [[nodiscard]] auto is_scope() const -> bool;
 
-  [[nodiscard]] auto qual_base() const -> Type*;
+  [[nodiscard]] auto qual_base() const -> const Type*;
 
   [[nodiscard]] auto without_qual() const -> const Type&;
-  [[nodiscard]] auto without_qual() -> Type&;
   [[nodiscard]] auto without_qual_kind() const -> Kind;
 
 protected:
@@ -89,14 +99,14 @@ class Qual : public Type {
   friend Type;
 
 private:
-  Type& m_base;
+  const Type& m_base;
   bool m_mut{};
   bool m_scope{};
 
 public:
-  Qual(string name, Type& base, bool mut, bool scope)
+  Qual(string name, const Type& base, bool mut, bool scope)
       : Type(K_Qual, move(name)), m_base(base), m_mut(mut), m_scope(scope) {}
-  [[nodiscard]] inline auto base() const -> Type& { return m_base; }
+  [[nodiscard]] inline auto base() const -> const Type& { return m_base; }
   [[nodiscard]] inline auto has_qualifier(Qualifier qual) const -> bool {
     return (qual == Qualifier::Mut && m_mut) || (qual == Qualifier::Scope && m_scope);
   }
@@ -107,12 +117,12 @@ class Ptr : public Type {
   friend Type;
 
 private:
-  Type& m_base;
+  const Type& m_base;
   Qualifier m_qual;
 
 public:
-  Ptr(string name, Type& base, Qualifier qual) : Type(K_Ptr, move(name)), m_base(base), m_qual(qual) {}
-  [[nodiscard]] inline auto base() const -> Type& { return m_base; }
+  Ptr(string name, const Type& base, Qualifier qual) : Type(K_Ptr, move(name)), m_base(base), m_qual(qual) {}
+  [[nodiscard]] inline auto base() const -> const Type& { return m_base; }
   [[nodiscard]] inline auto qualifier() const -> Qualifier { return m_qual; }
   [[nodiscard]] inline auto has_qualifier(Qualifier qual) const -> bool { return m_qual == qual; }
   static auto classof(const Type* a) -> bool { return a->kind() == K_Ptr; }
@@ -131,6 +141,12 @@ public:
   [[nodiscard]] inline auto fields() const { return dereference_view(m_fields); }
   [[nodiscard]] inline auto memo() const -> auto* { return m_memo; }
   static auto classof(const Type* a) -> bool { return a->kind() == K_Struct; }
+};
+
+class Generic : public Type {
+public:
+  inline Generic(string name) : Type(K_Generic, move(name)) {}
+  static auto classof(const Type* a) -> bool { return a->kind() == K_Generic; }
 };
 
 class UnknownType : public Type {
