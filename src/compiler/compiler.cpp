@@ -394,6 +394,32 @@ template <> auto Compiler::expression(const ast::VarExpr& expr, bool mut) -> Val
   return val;
 }
 
+static auto constexpr const_hash(char const* input) -> unsigned {
+  return *input != 0 ? static_cast<unsigned int>(*input) + 33 * const_hash(input + 1) : 5381;
+}
+
+auto Compiler::int_bin_primitive(const string& primitive, const vector<Val>& args) -> Val {
+  const auto& a = args.at(0);
+  const auto& b = args.at(1);
+  auto hash = const_hash(primitive.data());
+  switch (hash) {
+  case const_hash("ib_icmp_sgt"): return m_builder->CreateICmpSGT(a, b);
+  case const_hash("ib_icmp_ugt"): return m_builder->CreateICmpUGT(a, b);
+  case const_hash("ib_icmp_slt"): return m_builder->CreateICmpSLT(a, b);
+  case const_hash("ib_icmp_ult"): return m_builder->CreateICmpULT(a, b);
+  case const_hash("ib_icmp_eq"): return m_builder->CreateICmpEQ(a, b);
+  case const_hash("ib_icmp_ne"): return m_builder->CreateICmpNE(a, b);
+  case const_hash("ib_add"): return m_builder->CreateAdd(a, b);
+  case const_hash("ib_sub"): return m_builder->CreateSub(a, b);
+  case const_hash("ib_mul"): return m_builder->CreateMul(a, b);
+  case const_hash("ib_srem"): return m_builder->CreateSRem(a, b);
+  case const_hash("ib_urem"): return m_builder->CreateURem(a, b);
+  case const_hash("ib_sdiv"): return m_builder->CreateSDiv(a, b);
+  case const_hash("ib_udiv"): return m_builder->CreateUDiv(a, b);
+  default: throw std::runtime_error("Unknown binary integer primitive ib_"s + primitive);
+  }
+}
+
 template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Val {
   // TODO: calls can only return by value right now, but later this needs a condition
   not_mut("call returning by value", mut);
@@ -439,32 +465,8 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
       auto* result_type = llvm_type(*expr.args()[0].val_ty()->ptr_base());
       return m_builder->CreateLoad(result_type,
                                    m_builder->CreateGEP(result_type, args.at(0), makeArrayRef(args.at(1).llvm())));
-    } else if (primitive == "icmp_sgt") {
-      return m_builder->CreateICmpSGT(args.at(0), args.at(1));
-    } else if (primitive == "icmp_ugt") {
-      return m_builder->CreateICmpUGT(args.at(0), args.at(1));
-    } else if (primitive == "icmp_slt") {
-      return m_builder->CreateICmpSLT(args.at(0), args.at(1));
-    } else if (primitive == "icmp_ult") {
-      return m_builder->CreateICmpULT(args.at(0), args.at(1));
-    } else if (primitive == "icmp_eq") {
-      return m_builder->CreateICmpEQ(args.at(0), args.at(1));
-    } else if (primitive == "icmp_ne") {
-      return m_builder->CreateICmpNE(args.at(0), args.at(1));
-    } else if (primitive == "add") {
-      return m_builder->CreateAdd(args.at(0), args.at(1));
-    } else if (primitive == "sub") {
-      return m_builder->CreateSub(args.at(0), args.at(1));
-    } else if (primitive == "mul") {
-      return m_builder->CreateMul(args.at(0), args.at(1));
-    } else if (primitive == "srem") {
-      return m_builder->CreateSRem(args.at(0), args.at(1));
-    } else if (primitive == "urem") {
-      return m_builder->CreateURem(args.at(0), args.at(1));
-    } else if (primitive == "sdiv") {
-      return m_builder->CreateSDiv(args.at(0), args.at(1));
-    } else if (primitive == "udiv") {
-      return m_builder->CreateUDiv(args.at(0), args.at(1));
+    } else if (primitive.starts_with("ib_")) {
+      return int_bin_primitive(primitive, args);
     } else {
       throw std::runtime_error("Unknown primitive "s + primitive);
     }

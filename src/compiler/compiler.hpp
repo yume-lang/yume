@@ -85,6 +85,8 @@ private:
 
   auto known_type(const string& str) -> ty::Type&;
 
+  auto int_bin_primitive(const string& primitive, const vector<Val>& args) -> Val;
+
   void walk_types();
 };
 } // namespace yume
