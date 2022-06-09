@@ -561,13 +561,29 @@ template <> auto Compiler::expression(const ast::SliceExpr& expr, bool mut) -> V
     values.push_back(body_expression(i));
   }
 
+  auto const_values = vector<llvm::Constant*>();
+  const_values.reserve(slice_size);
+  bool all_const = std::all_of(values.begin(), values.end(), [&](const Val& i) {
+    if (auto* const_value = dyn_cast<llvm::Constant>(i.llvm())) {
+      const_values.push_back(const_value);
+      return true;
+    }
+    return false;
+  });
+
   auto* slice_type = llvm_type(*expr.val_ty()->qual_base());
   auto* base_type = llvm_type(*expr.val_ty()->qual_base()->ptr_base()); // ???
   auto* array_type = ArrayType::get(base_type, slice_size);
   auto* array_alloc = m_builder->CreateAlloca(array_type);
-  unsigned j = 0;
-  for (const auto& i : values) {
-    m_builder->CreateStore(i, m_builder->CreateConstInBoundsGEP2_32(array_type, array_alloc, 0, j++));
+
+  if (all_const) {
+    auto* array_value = llvm::ConstantArray::get(array_type, const_values);
+    m_builder->CreateStore(array_value, array_alloc);
+  } else {
+    unsigned j = 0;
+    for (const auto& i : values) {
+      m_builder->CreateStore(i, m_builder->CreateConstInBoundsGEP2_32(array_type, array_alloc, 0, j++));
+    }
   }
   auto* data_ptr = m_builder->CreateBitCast(array_alloc, base_type->getPointerTo());
   llvm::Value* slice_inst = llvm::UndefValue::get(slice_type);
