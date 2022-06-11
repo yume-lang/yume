@@ -186,6 +186,11 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
       auto new_emplace = m_current_fn->m_instantiations.emplace(instantiate, move(fn_ptr));
       auto& new_fn = *new_emplace.first->second;
 
+      // TODO: Push this in a queue to not cause a huge stack trace when an instantiation causes another instantiation
+      // TODO: This really needs to go into a queue because an instantiation can loop back to requiring to instantiate
+      // itself while the first instantiation hasn't finished existing this scope yet, leading to god knows what
+      // outcome.
+
       // Save everything pertaining to the old context
       auto saved_scope = m_scope;
       auto* saved_current = m_current_fn;

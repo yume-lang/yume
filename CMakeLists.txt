@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.23)
 project(yume_cpp)
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -W -Wall")
 
 if(YUME_SANITIZE)
 	if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -26,11 +25,6 @@ if(YUME_EMIT_DOT)
         add_definitions(-DYUME_EMIT_DOT)
 endif()
 
-if(YUME_FORCE_LIBCXX)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-	set(CMAKE_EXE_LINKER_FLAGS "-lc++abi")
-endif()
-
 add_definitions("-DYUME_LIB_DIR=\"${CMAKE_SOURCE_DIR}/lib/\"")
 
 find_package(LLVM ${YUME_FORCE_LLVM_VERSION} REQUIRED CONFIG)
@@ -47,21 +41,14 @@ message(STATUS "Using LLVM include: ${LLVM_INCLUDE_DIRS}")
 message(STATUS "Using LLVM library: ${LLVM_LIBRARY_DIRS}")
 message(STATUS "Using LLVM tool dir: ${LLVM_TOOLS_BINARY_DIR}")
 
-add_executable(yumec
-        src/main.cpp
-        src/util.hpp
-        src/compiler/compiler.hpp src/compiler/compiler.cpp
-        src/compiler/type_holder.hpp src/compiler/type_holder.cpp
-        src/compiler/type_walker.hpp src/compiler/type_walker.cpp
-        src/compiler/vals.hpp src/compiler/vals.cpp
-        src/compiler/crtp_walker.hpp
-        src/diagnostic/dot_visitor.hpp src/diagnostic/dot_visitor.cpp
-        src/token.hpp src/token.cpp
-        src/ast.hpp src/ast.cpp
-        src/visitor.hpp
-        src/type.hpp src/type.cpp
-        src/errors.hpp
-)
+file(GLOB_RECURSE YUME_SRC CONFIGURE_DEPENDS src/*.cpp src/*.hpp)
+add_executable(yumec ${YUME_SRC})
+
+target_compile_options(yumec PRIVATE -W -Wall)
+if(YUME_FORCE_LIBCXX)
+	target_compile_options(yumec INTERFACE -stdlib=libc++)
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lc++abi")
+endif()
 
 execute_process(COMMAND ${LLVM_TOOLS_BINARY_DIR}/llvm-config --libs all
         OUTPUT_VARIABLE LLVM_LIBS OUTPUT_STRIP_TRAILING_WHITESPACE)
