@@ -23,7 +23,7 @@ Yume compiles to LLVM statically. The compiler outputs the resulting linked bina
 
 To apply these switches, add them to the cmake command when building
 
-Debug:
+Debug:  
 `-DYUME_SANITIZE=1`: add `-fsanitize` flags  
 `-DYUME_EMIT_DOT=1`: emit pretty GraphViz .dot files for AST output  
 `-DYUME_SPEW=1`: very verbose output (higher numbers mean more output)  
