@@ -488,7 +488,6 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
       return val;
     };
 
-    bool did_pass_by_mut = should_pass_by_mut(j);
     auto arg = do_cast(j, body_expression(i, should_pass_by_mut(j)));
     args.push_back(arg);
     llvm_args.push_back(arg.llvm());
