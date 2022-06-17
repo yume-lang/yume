@@ -24,6 +24,8 @@ template <> void TypeWalker::expression(ast::StringExpr& expr) {
 
 template <> void TypeWalker::expression(ast::CharExpr& expr) { expr.val_ty(m_compiler.m_types.int8().u_ty); }
 
+template <> void TypeWalker::expression(ast::BoolExpr& expr) { expr.val_ty(m_compiler.m_types.bool_type); }
+
 template <> void TypeWalker::expression(ast::Type& expr) {
   const auto* resolved_type = &m_compiler.convert_type(expr, m_current_fn->parent(), m_current_fn);
   expr.val_ty(resolved_type);

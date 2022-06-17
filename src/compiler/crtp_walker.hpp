@@ -30,6 +30,7 @@ public:
     case ast::K_Number: return conv_expression<ast::NumberExpr>(expr, args...);
     case ast::K_String: return conv_expression<ast::StringExpr>(expr, args...);
     case ast::K_Char: return conv_expression<ast::CharExpr>(expr, args...);
+    case ast::K_Bool: return conv_expression<ast::BoolExpr>(expr, args...);
     case ast::K_Call: return conv_expression<ast::CallExpr>(expr, args...);
     case ast::K_Var: return conv_expression<ast::VarExpr>(expr, args...);
     case ast::K_Assign: return conv_expression<ast::AssignExpr>(expr, args...);

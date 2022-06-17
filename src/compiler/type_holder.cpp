@@ -19,6 +19,7 @@ TypeHolder::TypeHolder() {
   }
 
   auto bool_ty = std::make_unique<ty::Int>("Bool", 1, false);
+  bool_type = bool_ty.get();
   known.insert({bool_ty->name(), move(bool_ty)});
 }
 } // namespace yume

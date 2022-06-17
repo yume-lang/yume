@@ -30,6 +30,8 @@ static const Atom KWD_MUT = "mut"_a;
 static const Atom KWD_ELSE = "else"_a;
 static const Atom KWD_SELF = "self"_a;
 static const Atom KWD_THEN = "then"_a;
+static const Atom KWD_TRUE = "true"_a;
+static const Atom KWD_FALSE = "false"_a;
 static const Atom KWD_WHILE = "while"_a;
 static const Atom KWD_STRUCT = "struct"_a;
 static const Atom KWD_RETURN = "return"_a;
@@ -209,6 +211,7 @@ static auto parse_type_name(TokenIterator& tokens) -> unique_ptr<TypeName>;
 static auto try_parse_type(TokenIterator& tokens) -> optional<unique_ptr<Type>>;
 
 auto Program::parse(TokenIterator& tokens) -> unique_ptr<Program> {
+  ignore_separator(tokens);
   auto entry = tokens.begin();
 
   auto statements = vector<unique_ptr<Stmt>>{};
@@ -480,6 +483,12 @@ static auto parse_primary(TokenIterator& tokens) -> unique_ptr<Expr> {
   if (tokens->m_type == Token::Type::Char) {
     return parse_char_expr(tokens);
   }
+  if (try_consume(tokens, Word, KWD_TRUE)) {
+    return std::make_unique<BoolExpr>(ts(entry, tokens.begin()), true);
+  }
+  if (try_consume(tokens, Word, KWD_FALSE)) {
+    return std::make_unique<BoolExpr>(ts(entry, tokens.begin()), false);
+  }
   if (tokens->m_type == Word) {
     bool use_self = false;
     if (try_peek_uword(tokens, 0) || try_peek(tokens, 0, Word, KWD_SELF)) {
@@ -737,6 +746,7 @@ auto IfClause::clone() const -> IfClause* { return new IfClause(m_tok, dup(m_con
 auto NumberExpr::clone() const -> NumberExpr* { return new NumberExpr(m_tok, m_val); }
 auto StringExpr::clone() const -> StringExpr* { return new StringExpr(m_tok, m_val); }
 auto CharExpr::clone() const -> CharExpr* { return new CharExpr(m_tok, m_val); }
+auto BoolExpr::clone() const -> BoolExpr* { return new BoolExpr(m_tok, m_val); }
 auto ReturnStmt::clone() const -> ReturnStmt* { return new ReturnStmt(m_tok, dup(m_expr)); }
 auto WhileStmt::clone() const -> WhileStmt* { return new WhileStmt(m_tok, dup(m_cond), dup(m_body)); }
 auto VarDecl::clone() const -> VarDecl* { return new VarDecl(m_tok, m_name, dup(m_type), dup(m_init)); }
@@ -767,6 +777,7 @@ void IfClause::visit(Visitor& visitor) { visitor.visit(m_cond).visit(m_body); }
 void NumberExpr::visit(Visitor& visitor) { visitor.visit(describe()); }
 void StringExpr::visit(Visitor& visitor) { visitor.visit(m_val); }
 void CharExpr::visit(Visitor& visitor) { visitor.visit(string{static_cast<char>(m_val)}); }
+void BoolExpr::visit(Visitor& visitor) { visitor.visit(describe()); }
 void ReturnStmt::visit(Visitor& visitor) { visitor.visit(m_expr); }
 void WhileStmt::visit(Visitor& visitor) { visitor.visit(m_cond).visit(m_body); }
 void VarDecl::visit(Visitor& visitor) { visitor.visit(m_name).visit(m_type).visit(m_init); }

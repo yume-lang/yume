@@ -49,6 +49,7 @@ enum Kind {
   /**/ /**/ K_Number,
   /**/ /**/ K_String,
   /**/ /**/ K_Char,
+  /**/ /**/ K_Bool,
   /**/ /**/ K_Assign,
   /**/ /**/ K_Call,
   /**/ /**/ K_Ctor,
@@ -72,6 +73,7 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case K_Number: return "number";
   case K_String: return "string";
   case K_Char: return "char";
+  case K_Bool: return "bool";
   case K_FnDecl: return "fn decl";
   case K_VarDecl: return "var decl";
   case K_StructDecl: return "struct decl";
@@ -334,6 +336,19 @@ public:
   [[nodiscard]] inline auto val() const -> uint8_t { return m_val; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_Char; }
   [[nodiscard]] auto clone() const -> CharExpr* override;
+};
+
+class BoolExpr : public Expr {
+  bool m_val;
+
+public:
+  explicit inline BoolExpr(span<Token> tok, bool val) : Expr(K_Bool, tok), m_val(val) {}
+  void visit(Visitor& visitor) override;
+  [[nodiscard]] inline auto describe() const -> string override { return m_val ? "true" : "false"; }
+
+  [[nodiscard]] inline auto val() const -> bool { return m_val; }
+  static auto classof(const AST* a) -> bool { return a->kind() == K_Bool; }
+  [[nodiscard]] auto clone() const -> BoolExpr* override;
 };
 
 class StringExpr : public Expr {

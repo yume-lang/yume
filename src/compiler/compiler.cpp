@@ -382,6 +382,12 @@ template <> auto Compiler::expression(const ast::CharExpr& expr, bool mut) -> Va
   return m_builder->getInt8(expr.val());
 }
 
+template <> auto Compiler::expression(const ast::BoolExpr& expr, bool mut) -> Val {
+  not_mut("boolean constant", mut);
+
+  return m_builder->getInt1(expr.val());
+}
+
 template <> auto Compiler::expression(const ast::StringExpr& expr, bool mut) -> Val {
   not_mut("string constant", mut);
 
