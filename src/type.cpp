@@ -71,7 +71,8 @@ auto Type::compatibility(const Type& other) const -> Compatiblity {
     return {0};
   }
   if (auto this_ptr_base = ptr_base(), other_ptr_base = other.ptr_base();
-      this_ptr_base != nullptr && other_ptr_base != nullptr) {
+      this_ptr_base != nullptr && other_ptr_base != nullptr &&
+      cast<Ptr>(this)->qualifier() == cast<Ptr>(other).qualifier()) {
     if (isa<Generic>(other_ptr_base)) {
       return {GENERIC_SUBSTITUTION, cast<Generic>(other_ptr_base), this_ptr_base};
     }
