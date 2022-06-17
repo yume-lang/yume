@@ -1,8 +1,6 @@
 # TODO
 # This would be a lot clearer if i had enums
-struct Instruction
-  type I32
-  payload I32
+struct Instruction(type I32, payload I32)
 end
 
 def parse(input U8[]) Instruction[]
@@ -41,9 +39,9 @@ def parse(input U8[]) Instruction[]
   return instructions
 end
 
-def main(argc I32, argv U8**) I32
+def main(argc I32, argv U8 ptr ptr) I32
   # Hello world example function
-  let word_ptr U8* = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++."
+  let word_ptr U8 ptr = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++."
   if argc > 1
     word_ptr = argv[1]
   end
