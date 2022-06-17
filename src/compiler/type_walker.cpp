@@ -1,5 +1,6 @@
 #include "type_walker.hpp"
 #include "../ast.hpp"
+#include "../diagnostic/errors.hpp"
 #include "compiler.hpp"
 #include "vals.hpp"
 #include <algorithm>
@@ -280,7 +281,13 @@ auto TypeWalker::visit(ast::AST& expr, [[maybe_unused]] const char* label) -> Ty
   return *this;
 }
 
-void TypeWalker::body_statement(ast::Stmt& stat) { return CRTPWalker::body_statement(stat); };
-void TypeWalker::body_expression(ast::Expr& expr) { return CRTPWalker::body_expression(expr); };
+void TypeWalker::body_statement(ast::Stmt& stat) {
+  const ASTStackTrace guard("Semantic: "s + stat.kind_name() + " statement", stat);
+  return CRTPWalker::body_statement(stat);
+};
+void TypeWalker::body_expression(ast::Expr& expr) {
+  const ASTStackTrace guard("Semantic: "s + expr.kind_name() + " expression", expr);
+  return CRTPWalker::body_expression(expr);
+};
 
 } // namespace yume

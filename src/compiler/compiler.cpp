@@ -4,9 +4,9 @@
 
 #include "compiler.hpp"
 #include "../ast.hpp"
+#include "../diagnostic/errors.hpp"
 #include "../type.hpp"
 #include "../util.hpp"
-#include "../diagnostic/errors.hpp"
 #include "type_walker.hpp"
 #include "vals.hpp"
 #include <algorithm>
@@ -359,6 +359,7 @@ static inline void not_mut(const string& message, bool mut) {
 
 template <> auto Compiler::expression(const ast::NumberExpr& expr, bool mut) -> Val {
   not_mut("number constant", mut);
+
   auto val = expr.val();
   if (expr.val_ty() == m_types.int64().s_ty) {
     return m_builder->getInt64(val);
@@ -368,11 +369,13 @@ template <> auto Compiler::expression(const ast::NumberExpr& expr, bool mut) -> 
 
 template <> auto Compiler::expression(const ast::CharExpr& expr, bool mut) -> Val {
   not_mut("character constant", mut);
+
   return m_builder->getInt8(expr.val());
 }
 
 template <> auto Compiler::expression(const ast::StringExpr& expr, bool mut) -> Val {
   not_mut("string constant", mut);
+
   auto val = expr.val();
 
   std::vector<llvm::Constant*> chars(val.length());
@@ -556,6 +559,7 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
 
 template <> auto Compiler::expression(const ast::SliceExpr& expr, bool mut) -> Val {
   not_mut("slice literal", mut);
+
   auto values = vector<Val>();
   auto slice_size = expr.args().size();
   values.reserve(slice_size);
@@ -668,8 +672,12 @@ auto Compiler::mangle_name(const ast::Type& ast_type, const Fn& parent) -> strin
 
 auto Compiler::known_type(const string& str) -> ty::Type& { return *m_types.known.find(str)->getValue(); }
 
-void Compiler::body_statement(const ast::Stmt& stat) { return CRTPWalker::body_statement(stat); };
+void Compiler::body_statement(const ast::Stmt& stat) {
+  const ASTStackTrace guard("Codegen: "s + stat.kind_name() + " statement", stat);
+  return CRTPWalker::body_statement(stat);
+};
 auto Compiler::body_expression(const ast::Expr& expr, bool mut) -> Val {
+  const ASTStackTrace guard("Codegen: "s + expr.kind_name() + " expression", expr);
   return CRTPWalker::body_expression(expr, mut);
 };
 } // namespace yume
