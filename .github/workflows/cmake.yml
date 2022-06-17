@@ -58,6 +58,10 @@ jobs:
       run: build/yumec example/generic.ym && ./yume.out
     - name: Test slice.ym
       run: build/yumec example/slice.ym && ./yume.out
+    - name: Test bf.ym
+      run: build/yumec example/bf.ym && ./yume.out
+    - name: Test bf.ym (alt)
+      run: build/yumec example/bf.ym && ./yume.out '>++[<+++++++++++++>-]<[[>+>+<<-]>[<+>-]++++++++[>++++++++<-]>.[-]<<>++++++++++[>++++++++++[>++++++++++[>++++++++++[>++++++++++[>++++++++++[>++++++++++[-]<-]<-]<-]<-]<-]<-]<-]++++++++++.'
 
 #     - name: Test
 #       working-directory: ${{github.workspace}}/build
