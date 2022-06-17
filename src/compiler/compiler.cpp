@@ -250,8 +250,10 @@ template <> void Compiler::statement(const ast::Compound& stat) {
 void Compiler::define(Fn& fn) {
   m_current_fn = &fn;
   m_scope.clear();
+  BasicBlock* decl_bb = BasicBlock::Create(*m_context, "decl", fn);
   BasicBlock* bb = BasicBlock::Create(*m_context, "entry", fn);
   m_builder->SetInsertPoint(bb);
+  m_current_fn->m_decl_bb = decl_bb;
 
   int i = 0;
   for (auto& arg : fn.llvm()->args()) {
@@ -276,6 +278,8 @@ void Compiler::define(Fn& fn) {
   if (m_builder->GetInsertBlock()->getTerminator() == nullptr) {
     m_builder->CreateRetVoid();
   }
+  m_builder->SetInsertPoint(decl_bb);
+  m_builder->CreateBr(bb);
   verifyFunction(*fn, &llvm::errs());
 }
 
@@ -345,7 +349,12 @@ template <> void Compiler::statement(const ast::VarDecl& stat) {
   // TODO: revisit, probably extract logic
   auto* var_type = llvm_type(*stat.val_ty()->qual_base());
 
+  auto* current_block = m_builder->GetInsertBlock();
+
+  m_builder->SetInsertPoint(m_current_fn->m_decl_bb);
   auto* alloc = m_builder->CreateAlloca(var_type, nullptr, stat.name());
+  m_builder->SetInsertPoint(current_block);
+
   auto expr_val = body_expression(stat.init());
   m_builder->CreateStore(expr_val, alloc);
   m_scope.insert({stat.name(), alloc});

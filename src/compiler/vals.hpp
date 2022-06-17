@@ -6,6 +6,7 @@
 #include "../util.hpp"
 #include <iosfwd>
 #include <llvm/ADT/DenseMap.h>
+#include <llvm/IR/BasicBlock.h>
 #include <memory>
 #include <string>
 #include <utility>
@@ -33,6 +34,7 @@ struct Fn {
   std::map<string, const ty::Type*> m_subs{};
   std::map<Instantiation, unique_ptr<Fn>> m_instantiations{};
   llvm::Function* m_llvm_fn{};
+  llvm::BasicBlock* m_decl_bb{};
 
   Fn(ast::FnDecl& ast_decl, ty::Type* parent = nullptr, ast::Program* member = nullptr,
      std::map<string, const ty::Type*> subs = {}, vector<unique_ptr<ty::Generic>> type_args = {})
