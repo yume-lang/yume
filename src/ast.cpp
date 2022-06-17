@@ -29,6 +29,7 @@ static const Atom KWD_PTR = "ptr"_a;
 static const Atom KWD_MUT = "mut"_a;
 static const Atom KWD_ELSE = "else"_a;
 static const Atom KWD_SELF = "self"_a;
+static const Atom KWD_THEN = "then"_a;
 static const Atom KWD_WHILE = "while"_a;
 static const Atom KWD_STRUCT = "struct"_a;
 static const Atom KWD_RETURN = "return"_a;
@@ -380,7 +381,9 @@ static auto parse_if_stmt(TokenIterator& tokens) -> unique_ptr<IfStmt> {
   auto clause_begin = entry;
   consume(tokens, Word, KWD_IF);
   auto cond = parse_expr(tokens);
-  require_separator(tokens); // todo(rymiel): compact `then`
+  if (!try_consume(tokens, Word, KWD_THEN)) {
+    require_separator(tokens);
+  }
 
   auto current_entry = tokens.begin();
   auto else_entry = tokens.begin();
@@ -407,7 +410,9 @@ static auto parse_if_stmt(TokenIterator& tokens) -> unique_ptr<IfStmt> {
         in_else = true;
         else_entry = tokens.begin();
       }
-      require_separator(tokens);
+      if (!try_consume(tokens, Word, KWD_THEN)) {
+        require_separator(tokens);
+      }
     }
     auto st = parse_stmt(tokens);
     if (in_else) {
