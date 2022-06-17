@@ -31,7 +31,7 @@ namespace yume {
 using namespace llvm;
 
 class Compiler : public CRTPWalker<Compiler> {
-  std::vector<SourceFile> m_sources;
+  vector<SourceFile> m_sources;
   TypeHolder m_types;
   vector<Fn> m_fns{};
   std::queue<Fn*> m_decl_queue{};
@@ -64,12 +64,12 @@ public:
 
   void write_object(const char* filename, bool binary);
 
-  auto convert_type(const ast::Type& ast_type, const ty::Type* parent = nullptr, Fn* context = nullptr) -> const ty::Type&;
+  auto convert_type(const ast::Type& ast_type, const ty::Type* parent = nullptr, Fn* context = nullptr)
+      -> const ty::Type&;
 
   auto llvm_type(const ty::Type& type) -> llvm::Type*;
 
   auto mangle_name(const Fn& fn_decl) -> string;
-
   auto mangle_name(const ast::Type& ast_type, const Fn& parent) -> string;
 
   [[nodiscard]] inline auto source_files() -> const auto& { return m_sources; }

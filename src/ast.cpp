@@ -2,38 +2,15 @@
 // Created by rymiel on 5/8/22.
 //
 
-#if __has_include(<source_location>) && __has_builtin(__builtin_source_location)
-#include <source_location>
-#define yume_has_source_location 1
-#elif __has_include(<experimental/source_location>)
-#include <experimental/source_location>
-#define yume_has_source_location -1
-#else
-#define yume_has_source_location 0
-#endif
-
 #include "ast.hpp"
 #include "visitor.hpp"
+#include "diagnostic/source_location.hpp"
 #include <cctype>
 #include <cstddef>
 #include <memory>
 #include <sstream>
 
 namespace yume::ast {
-
-#if yume_has_source_location == 1
-using std::source_location;
-#elif yume_has_source_location == -1
-using std::experimental::source_location;
-#else
-struct source_location {
-  constexpr auto file_name() const { return "??"; }     // NOLINT
-  constexpr auto function_name() const { return "??"; } // NOLINT
-  constexpr auto line() const { return -1; }            // NOLINT
-  constexpr auto column() const { return -1; }          // NOLINT
-  static inline constexpr auto current() { return source_location{}; }
-};
-#endif
 
 inline auto ts(auto&& begin, int end) { return span<Token>(begin.base(), end); }
 
@@ -95,11 +72,6 @@ auto unary_operators() {
       SYM_BANG,
   };
   return UNARY_OPERATORS;
-}
-
-auto at(const source_location location = source_location::current()) -> string {
-  return string(location.file_name()) + ":" + std::to_string(location.line()) + ":" +
-         std::to_string(location.column()) + " in " + location.function_name();
 }
 
 auto to_string(Token token) -> string {
