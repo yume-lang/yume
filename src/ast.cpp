@@ -476,6 +476,7 @@ static auto parse_primary(TokenIterator& tokens) -> unique_ptr<Expr> {
     return parse_char_expr(tokens);
   }
   if (tokens->m_type == Word) {
+    bool use_self = false;
     if (try_peek_uword(tokens, 0) || try_peek(tokens, 0, Word, KWD_SELF)) {
       auto type = parse_type(tokens);
       if (try_consume(tokens, Symbol, SYM_LPAREN)) {
@@ -489,9 +490,13 @@ static auto parse_primary(TokenIterator& tokens) -> unique_ptr<Expr> {
                                       [&] { slice_members.push_back(parse_expr(tokens)); });
         return std::make_unique<SliceExpr>(ts(entry, tokens.begin()), move(type), move(slice_members));
       }
-      throw std::runtime_error("Couldn't make an expression from here with an uword");
+      if (llvm::isa<SelfType>(*type)) {
+        use_self = true;
+      } else {
+        throw std::runtime_error("Couldn't make an expression from here with an uword");
+      }
     }
-    auto name = consume_word(tokens);
+    auto name = use_self ? "self" : consume_word(tokens);
     if (try_consume(tokens, Symbol, SYM_LPAREN)) {
       auto call_args = vector<unique_ptr<Expr>>{};
       consume_with_separators_until(tokens, Symbol, SYM_RPAREN, [&] { call_args.push_back(parse_expr(tokens)); });
