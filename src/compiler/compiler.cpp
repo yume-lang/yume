@@ -600,15 +600,52 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
   if (const auto* int_type = dyn_cast<ty::Int>(&type.without_qual())) {
     assert(expr.args().size() == 1); // NOLINT
     auto& cast_from = expr.args()[0];
-    assert(isa<ty::Int>(cast_from.val_ty())); // NOLINT
+    assert(isa<ty::Int>(cast_from.val_ty()->without_qual())); // NOLINT
     auto base = body_expression(cast_from);
-    if (cast<ty::Int>(cast_from.val_ty())->is_signed()) {
+    if (cast<ty::Int>(cast_from.val_ty()->without_qual()).is_signed()) {
       return m_builder->CreateSExtOrTrunc(base, llvm_type(*int_type));
     }
     return m_builder->CreateZExtOrTrunc(base, llvm_type(*int_type));
   }
+  if (const auto* slice_type = dyn_cast<ty::Ptr>(&type.without_qual());
+      slice_type != nullptr && slice_type->has_qualifier(Qualifier::Slice)) {
+    assert(expr.args().size() == 1); // NOLINT
+    auto& slice_size_expr = expr.args()[0];
+    assert(isa<ty::Int>(slice_size_expr.val_ty()->without_qual())); // NOLINT
+    auto slice_size = body_expression(slice_size_expr);
 
-  throw std::runtime_error("Can't construct non-struct, non-integer type");
+    auto* llvm_slice_type = llvm_type(*slice_type);
+    auto* base_type = llvm_type(*slice_type->ptr_base()); // ???
+    if (auto* const_value = dyn_cast<llvm::ConstantInt>(slice_size.llvm())) {
+      auto slice_size_val = const_value->getLimitedValue();
+      auto* array_type = ArrayType::get(base_type, slice_size_val);
+      auto* array_alloc = m_builder->CreateAlloca(array_type, nullptr, "sl.ctor.alloc");
+
+      auto* data_ptr = m_builder->CreateBitCast(array_alloc, base_type->getPointerTo(), "sl.ctor.ptr");
+      llvm::Value* slice_inst = llvm::UndefValue::get(llvm_slice_type);
+      slice_inst = m_builder->CreateInsertValue(slice_inst, data_ptr, 0);
+      slice_inst = m_builder->CreateInsertValue(slice_inst, m_builder->getInt64(slice_size_val), 1);
+      slice_inst->setName("sl.ctor.inst");
+
+      return slice_inst;
+    }
+    auto* alloc_size = ConstantExpr::getSizeOf(base_type);
+    alloc_size = ConstantExpr::getTruncOrBitCast(alloc_size, m_builder->getInt32Ty());
+    auto* array_size = m_builder->CreateTruncOrBitCast(slice_size, m_builder->getInt32Ty(), "sl.ctor.size");
+    auto* array_alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), m_builder->getInt32Ty(), base_type,
+                                                     alloc_size, array_size, nullptr, "sl.ctor.malloc");
+
+    auto* data_ptr = m_builder->Insert(array_alloc);
+    llvm::Value* slice_inst = llvm::UndefValue::get(llvm_slice_type);
+    slice_inst = m_builder->CreateInsertValue(slice_inst, data_ptr, 0);
+    slice_inst = m_builder->CreateInsertValue(slice_inst,
+                                              m_builder->CreateSExtOrBitCast(slice_size, m_builder->getInt64Ty()), 1);
+    slice_inst->setName("sl.ctor.inst");
+
+    return slice_inst;
+  }
+
+  throw std::runtime_error("Can't construct non-struct, non-integer, non-slice type");
 }
 
 template <> auto Compiler::expression(const ast::SliceExpr& expr, bool mut) -> Val {
