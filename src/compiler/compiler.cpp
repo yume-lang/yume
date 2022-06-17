@@ -339,8 +339,12 @@ template <> void Compiler::statement(const ast::IfStmt& stat) {
 }
 
 template <> void Compiler::statement(const ast::ReturnStmt& stat) {
+  bool returns_mut = false;
+  if (const auto* ret_ty = m_current_fn->ast().val_ty()) {
+    returns_mut = ret_ty->is_mut();
+  }
   if (stat.expr().has_value()) {
-    auto val = body_expression(stat.expr().value());
+    auto val = body_expression(stat.expr().value(), returns_mut);
     m_builder->CreateRet(val);
     return;
   }
@@ -444,11 +448,17 @@ auto Compiler::int_bin_primitive(const string& primitive, const vector<Val>& arg
 }
 
 template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Val {
-  // TODO: calls can only return by value right now, but later this needs a condition
-  not_mut("call returning by value", mut);
-
   auto* selected = expr.selected_overload();
   llvm::Function* llvm_fn = nullptr;
+  const auto* ret_ty = selected->ast().val_ty();
+  bool returns_mut = false;
+  if (ret_ty != nullptr) {
+    returns_mut = ret_ty->is_mut();
+  }
+
+  if (!returns_mut) {
+    not_mut("call returning by value", mut);
+  }
 
   vector<Val> args{};
   vector<llvm::Value*> llvm_args{};
@@ -462,42 +472,68 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
       return selected_args[index].val_ty()->is_mut();
     };
 
-    auto arg = body_expression(i, should_pass_by_mut(j++));
+    auto do_cast = [&](unsigned index, yume::Val val) -> yume::Val {
+      if (index >= selected_args.size()) {
+        return val; // varargs function, logic will probably change later but for now, always pass by value
+      }
+      const auto* target_ty = selected_args[index].val_ty();
+      const auto* current_ty = i.val_ty();
+      if (isa<ty::Int>(target_ty) && isa<ty::Int>(current_ty->without_qual())) {
+        if (cast<ty::Int>(current_ty->without_qual()).is_signed()) {
+          return m_builder->CreateSExtOrTrunc(val, llvm_type(*target_ty));
+        }
+        return m_builder->CreateZExtOrTrunc(val, llvm_type(*target_ty));
+      }
+
+      return val;
+    };
+
+    bool did_pass_by_mut = should_pass_by_mut(j);
+    auto arg = do_cast(j, body_expression(i, should_pass_by_mut(j)));
     args.push_back(arg);
     llvm_args.push_back(arg.llvm());
+    j++;
   }
 
-  if (selected->ast().primitive()) {
-    auto primitive = get<string>(selected->body());
-    if (primitive == "libc") {
-      llvm_fn = selected->declaration(*this, false);
-    } else if (primitive == "ptrto") {
-      return args.at(0);
-    } else if (primitive == "slice_size") {
-      return m_builder->CreateExtractValue(args.at(0), 1);
-    } else if (primitive == "slice_ptr") {
-      return m_builder->CreateExtractValue(args.at(0), 0);
-    } else if (primitive == "slice_dup") {
-      return m_builder->CreateInsertValue(
-          args.at(0), m_builder->CreateAdd(m_builder->CreateExtractValue(args.at(0), 1), args.at(1)), 1);
-    } else if (primitive == "set_at") {
-      auto* result_type = llvm_type(*expr.args()[0].val_ty()->ptr_base());
-      return m_builder->CreateStore(args.at(2),
-                                    m_builder->CreateGEP(result_type, args.at(0), makeArrayRef(args.at(1).llvm())));
-    } else if (primitive == "get_at") {
-      auto* result_type = llvm_type(*expr.args()[0].val_ty()->ptr_base());
-      return m_builder->CreateLoad(result_type,
-                                   m_builder->CreateGEP(result_type, args.at(0), makeArrayRef(args.at(1).llvm())));
-    } else if (primitive.starts_with("ib_")) {
-      return int_bin_primitive(primitive, args);
+  auto val = [&]() -> yume::Val {
+    if (selected->ast().primitive()) {
+      auto primitive = get<string>(selected->body());
+      if (primitive == "libc") {
+        llvm_fn = selected->declaration(*this, false);
+      } else if (primitive == "ptrto") {
+        return args.at(0);
+      } else if (primitive == "slice_size") {
+        return m_builder->CreateExtractValue(args.at(0), 1);
+      } else if (primitive == "slice_ptr") {
+        return m_builder->CreateExtractValue(args.at(0), 0);
+      } else if (primitive == "slice_dup") {
+        return m_builder->CreateInsertValue(
+            args.at(0), m_builder->CreateAdd(m_builder->CreateExtractValue(args.at(0), 1), args.at(1)), 1);
+      } else if (primitive == "set_at") {
+        auto* result_type = llvm_type(*expr.args()[0].val_ty()->without_qual().ptr_base());
+        llvm::Value* base = args.at(0);
+        return m_builder->CreateStore(args.at(2),
+                                      m_builder->CreateGEP(result_type, base, makeArrayRef(args.at(1).llvm())));
+      } else if (primitive == "get_at") {
+        auto* result_type = llvm_type(*expr.args()[0].val_ty()->without_qual().ptr_base());
+        llvm::Value* base = args.at(0);
+        return m_builder->CreateGEP(result_type, base, makeArrayRef(args.at(1).llvm()));
+      } else if (primitive.starts_with("ib_")) {
+        return int_bin_primitive(primitive, args);
+      } else {
+        throw std::runtime_error("Unknown primitive "s + primitive);
+      }
     } else {
-      throw std::runtime_error("Unknown primitive "s + primitive);
+      llvm_fn = selected->declaration(*this);
     }
-  } else {
-    llvm_fn = selected->declaration(*this);
-  }
 
-  return m_builder->CreateCall(llvm_fn, llvm_args);
+    return m_builder->CreateCall(llvm_fn, llvm_args);
+  }();
+
+  if (returns_mut && !mut) {
+    return m_builder->CreateLoad(llvm_type(*ret_ty->qual_base()), val);
+  }
+  return val;
 }
 
 template <> auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> Val {
