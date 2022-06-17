@@ -135,6 +135,7 @@ struct Tokenizer {
               {Token::Type::Char, is_char},
               {Token::Type::Word, is_word},
               {Token::Type::Symbol, is_exactly("==")},
+              {Token::Type::Symbol, is_exactly("!=")},
               {Token::Type::Symbol, is_exactly("//")},
               {Token::Type::Symbol, is_any_of(R"(()[]<>=:#"%-+.,!?/*\)")},
           })) {
