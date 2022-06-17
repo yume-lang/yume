@@ -2,7 +2,7 @@
 #include "compiler/compiler.hpp"
 #include "compiler/vals.hpp"
 #include "diagnostic/dot_visitor.hpp"
-#include "errors.hpp"
+#include "diagnostic/errors.hpp"
 #include "token.hpp"
 #include "util.hpp"
 #include <algorithm>
@@ -35,6 +35,9 @@ auto main(int argc, const char* argv[]) -> int {
   source_files.reserve(src_file_names.size());
 
   std::set_terminate(yume::stacktrace);
+  llvm::EnablePrettyStackTrace();
+  llvm::setBugReportMsg("");
+  llvm::sys::PrintStackTraceOnErrorSignal(args[0]);
 
   {
     std::vector<std::pair<std::istream*, std::string>> inputs{};
@@ -75,14 +78,12 @@ auto main(int argc, const char* argv[]) -> int {
   }
 
   auto compiler = yume::Compiler{std::move(source_files)};
-  // try {
   compiler.run();
   compiler.module()->print(*yume::open_file("output.ll"), nullptr);
   compiler.write_object("output.s", false);
   compiler.write_object("output.o", true);
   std::cout.flush();
   std::system("cc output.o -o yume.out");
-  // } catch (...) {
 
 #ifdef YUME_EMIT_DOT
   for (const auto& i : compiler.source_files()) {
@@ -92,8 +93,6 @@ auto main(int argc, const char* argv[]) -> int {
     visitor.visit(*i.m_program, nullptr);
   }
 #endif
-//throw;
-  //}
 
   return EXIT_SUCCESS;
 }

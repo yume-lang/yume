@@ -1,11 +1,16 @@
+#pragma once
+
 #include <cxxabi.h>
 #include <exception>
+#include <llvm/Support/PrettyStackTrace.h>
 #include <llvm/Support/Signals.h>
 #include <llvm/Support/raw_ostream.h>
 
-#pragma once
-
 namespace yume {
+namespace ast {
+class AST;
+}
+
 inline auto what(const std::exception_ptr& eptr = std::current_exception()) -> std::string_view {
   if (!eptr) {
     throw std::bad_exception();
@@ -42,6 +47,14 @@ inline void stacktrace() {
     llvm::errs().changeColor(YELLOW) << what(exception) << "\n\n";
     llvm::errs().resetColor();
   }
-  llvm::sys::PrintStackTrace(llvm::errs());
 }
+
+struct ASTStackTrace : public llvm::PrettyStackTraceEntry {
+  std::string m_message;
+
+  ASTStackTrace(std::string message);
+  ASTStackTrace(std::string message, const ast::AST& ast);
+
+  inline void print(llvm::raw_ostream& OS) const override { OS << m_message << "\n"; };
+};
 } // namespace yume

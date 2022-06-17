@@ -6,6 +6,7 @@
 #include "../ast.hpp"
 #include "../type.hpp"
 #include "../util.hpp"
+#include "../diagnostic/errors.hpp"
 #include "type_walker.hpp"
 #include "vals.hpp"
 #include <algorithm>
@@ -35,6 +36,7 @@
 #include <llvm/Support/Casting.h>
 #include <llvm/Support/CodeGen.h>
 #include <llvm/Support/Host.h>
+#include <llvm/Support/PrettyStackTrace.h>
 #include <llvm/Support/TargetSelect.h>
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/Target/TargetOptions.h>
