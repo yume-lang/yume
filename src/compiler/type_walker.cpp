@@ -242,7 +242,7 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
 
   if (stat.ret().has_value()) {
     expression(stat.ret()->get());
-    stat.ret()->get().attach_to(&stat);
+    stat.attach_to(&stat.ret()->get());
   }
 
   // This decl still has unsubstituted generics, can't instantiate its body
