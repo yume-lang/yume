@@ -3,8 +3,8 @@
 //
 
 #include "ast.hpp"
-#include "visitor.hpp"
 #include "diagnostic/source_location.hpp"
+#include "visitor.hpp"
 #include <cctype>
 #include <cstddef>
 #include <memory>
@@ -190,8 +190,20 @@ auto consume_word(TokenIterator& tokens, const source_location location = source
 
 auto is_uword(const string& word) -> bool { return isupper(word.front()) != 0; }
 
+auto try_peek_uword(TokenIterator& tokens, int ahead,
+                    [[maybe_unused]] const source_location location = source_location::current()) -> bool {
+  auto token = tokens + ahead;
+
+#ifdef YUME_SPEW_CONSUMED_TOKENS
+  std::cerr << "try_peek ahead by " << ahead << ": expected uword, got " << *token << " at " << at(location) << "\n";
+#endif
+
+  return token->m_type == Word && is_uword(token->m_payload.value());
+}
+
 static auto parse_stmt(TokenIterator& tokens) -> unique_ptr<Stmt>;
 static auto parse_expr(TokenIterator& tokens) -> unique_ptr<Expr>;
+static auto parse_type(TokenIterator& tokens) -> unique_ptr<Type>;
 static auto parse_type_name(TokenIterator& tokens) -> unique_ptr<TypeName>;
 static auto try_parse_type(TokenIterator& tokens) -> optional<unique_ptr<Type>>;
 
@@ -464,23 +476,28 @@ static auto parse_primary(TokenIterator& tokens) -> unique_ptr<Expr> {
     return parse_char_expr(tokens);
   }
   if (tokens->m_type == Word) {
+    if (try_peek_uword(tokens, 0) || try_peek(tokens, 0, Word, KWD_SELF)) {
+      auto type = parse_type(tokens);
+      if (try_consume(tokens, Symbol, SYM_LPAREN)) {
+        auto call_args = vector<unique_ptr<Expr>>{};
+        consume_with_separators_until(tokens, Symbol, SYM_RPAREN, [&] { call_args.push_back(parse_expr(tokens)); });
+        return std::make_unique<CtorExpr>(ts(entry, tokens.begin()), move(type), move(call_args));
+      }
+      if (try_consume(tokens, Symbol, SYM_LPAREN)) {
+        auto slice_members = vector<unique_ptr<Expr>>{};
+        consume_with_separators_until(tokens, Symbol, SYM_RBRACKET,
+                                      [&] { slice_members.push_back(parse_expr(tokens)); });
+        return std::make_unique<SliceExpr>(ts(entry, tokens.begin()), move(type), move(slice_members));
+      }
+      throw std::runtime_error("Couldn't make an expression from here with an uword");
+    }
     auto name = consume_word(tokens);
     if (try_consume(tokens, Symbol, SYM_LPAREN)) {
       auto call_args = vector<unique_ptr<Expr>>{};
       consume_with_separators_until(tokens, Symbol, SYM_RPAREN, [&] { call_args.push_back(parse_expr(tokens)); });
-      if (make_atom(name) == KWD_SELF || is_uword(name)) {
-        return std::make_unique<CtorExpr>(ts(entry, tokens.begin()), name, move(call_args));
-      }
       return std::make_unique<CallExpr>(ts(entry, tokens.begin()), name, move(call_args));
     }
-    if (is_uword(name) && try_consume(tokens, Symbol, SYM_LBRACKET)) {
-      auto slice_members = vector<unique_ptr<Expr>>{};
-      consume_with_separators_until(tokens, Symbol, SYM_RBRACKET, [&] { slice_members.push_back(parse_expr(tokens)); });
-      return std::make_unique<SliceExpr>(ts(entry, tokens.begin()), name, move(slice_members));
-    }
-    if (!is_uword(name)) {
-      return std::make_unique<VarExpr>(ts(entry, 1), name);
-    }
+    return std::make_unique<VarExpr>(ts(entry, 1), name);
   }
   throw std::runtime_error("Couldn't make an expression from here");
 }
@@ -728,8 +745,8 @@ auto TypeName::clone() const -> TypeName* { return new TypeName(m_tok, dup(m_typ
 auto Compound::clone() const -> Compound* { return new Compound(m_tok, dup(m_body)); }
 auto VarExpr::clone() const -> VarExpr* { return new VarExpr(m_tok, m_name); }
 auto CallExpr::clone() const -> CallExpr* { return new CallExpr(m_tok, m_name, dup(m_args)); }
-auto CtorExpr::clone() const -> CtorExpr* { return new CtorExpr(m_tok, m_name, dup(m_args)); }
-auto SliceExpr::clone() const -> SliceExpr* { return new SliceExpr(m_tok, m_name, dup(m_args)); }
+auto CtorExpr::clone() const -> CtorExpr* { return new CtorExpr(m_tok, dup(m_type), dup(m_args)); }
+auto SliceExpr::clone() const -> SliceExpr* { return new SliceExpr(m_tok, dup(m_type), dup(m_args)); }
 auto AssignExpr::clone() const -> AssignExpr* { return new AssignExpr(m_tok, dup(m_target), dup(m_value)); }
 auto FieldAccessExpr::clone() const -> FieldAccessExpr* { return new FieldAccessExpr(m_tok, dup(m_base), m_field); }
 auto Program::clone() const -> Program* { return new Program(m_tok, dup(m_body)); }
@@ -762,8 +779,8 @@ void TypeName::visit(Visitor& visitor) { visitor.visit(m_name).visit(m_type); }
 void Compound::visit(Visitor& visitor) { visitor.visit(m_body); }
 void VarExpr::visit(Visitor& visitor) { visitor.visit(m_name); }
 void CallExpr::visit(Visitor& visitor) { visitor.visit(m_name).visit(m_args); }
-void CtorExpr::visit(Visitor& visitor) { visitor.visit(m_name).visit(m_args); }
-void SliceExpr::visit(Visitor& visitor) { visitor.visit(m_name).visit(m_args); }
+void CtorExpr::visit(Visitor& visitor) { visitor.visit(m_type).visit(m_args); }
+void SliceExpr::visit(Visitor& visitor) { visitor.visit(m_type).visit(m_args); }
 void AssignExpr::visit(Visitor& visitor) { visitor.visit(m_target).visit(m_value); }
 void FieldAccessExpr::visit(Visitor& visitor) { visitor.visit(m_base).visit(m_field); }
 void Program::visit(Visitor& visitor) { visitor.visit(m_body); }

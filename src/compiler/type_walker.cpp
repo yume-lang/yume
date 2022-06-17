@@ -42,18 +42,20 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
   for (auto& i : expr.args()) {
     body_expression(i);
   }
-  auto* base_type = expr.name() == "self" ? m_current_fn->parent() : &m_compiler.known_type(expr.name());
+  expression(expr.type());
+  const auto& base_type = m_compiler.convert_type(expr.type(), m_current_fn->parent(), m_current_fn);
   // Directly constructed values always have local scope!
-  expr.val_ty(&base_type->known_scope());
+  expr.val_ty(&base_type.known_scope());
 }
 
 template <> void TypeWalker::expression(ast::SliceExpr& expr) {
   for (auto& i : expr.args()) {
     body_expression(i);
   }
-  auto* base_type = expr.name() == "self" ? m_current_fn->parent() : &m_compiler.known_type(expr.name());
+  expression(expr.type());
+  const auto& base_type = m_compiler.convert_type(expr.type(), m_current_fn->parent(), m_current_fn);
   // Directly constructed values always have local scope!
-  expr.val_ty(&base_type->known_slice().known_scope());
+  expr.val_ty(&base_type.known_slice().known_scope());
 }
 
 template <> void TypeWalker::expression(ast::AssignExpr& expr) {

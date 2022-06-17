@@ -383,32 +383,34 @@ public:
 };
 
 class CtorExpr : public Expr {
-  string m_name;
+  unique_ptr<Type> m_type;
   vector<unique_ptr<Expr>> m_args;
 
 public:
-  inline CtorExpr(span<Token> tok, string name, vector<unique_ptr<Expr>> args)
-      : Expr(K_Ctor, tok), m_name{move(name)}, m_args{move(args)} {}
+  inline CtorExpr(span<Token> tok, unique_ptr<Type> type, vector<unique_ptr<Expr>> args)
+      : Expr(K_Ctor, tok), m_type{move(type)}, m_args{move(args)} {}
   void visit(Visitor& visitor) override;
-  [[nodiscard]] inline auto describe() const -> string override { return m_name; }
+  [[nodiscard]] inline auto describe() const -> string override { return m_type->describe(); }
 
-  [[nodiscard]] auto inline name() const -> string { return m_name; }
+  [[nodiscard]] auto inline type() const -> const auto& { return *m_type; }
+  [[nodiscard]] auto inline type() -> auto& { return *m_type; }
   [[nodiscard]] constexpr auto inline args() const { return dereference_view(m_args); }
   static auto classof(const AST* a) -> bool { return a->kind() == K_Ctor; }
   [[nodiscard]] auto clone() const -> CtorExpr* override;
 };
 
 class SliceExpr : public Expr {
-  string m_name;
+  unique_ptr<Type> m_type;
   vector<unique_ptr<Expr>> m_args;
 
 public:
-  inline SliceExpr(span<Token> tok, string name, vector<unique_ptr<Expr>> args)
-      : Expr(K_Slice, tok), m_name{move(name)}, m_args{move(args)} {}
+  inline SliceExpr(span<Token> tok, unique_ptr<Type> type, vector<unique_ptr<Expr>> args)
+      : Expr(K_Slice, tok), m_type{move(type)}, m_args{move(args)} {}
   void visit(Visitor& visitor) override;
-  [[nodiscard]] inline auto describe() const -> string override { return m_name; }
+  [[nodiscard]] inline auto describe() const -> string override { return m_type->describe(); }
 
-  [[nodiscard]] auto inline name() const -> string { return m_name; }
+  [[nodiscard]] auto inline type() const -> const auto& { return *m_type; }
+  [[nodiscard]] auto inline type() -> auto& { return *m_type; }
   [[nodiscard]] constexpr auto inline args() const { return dereference_view(m_args); }
   static auto classof(const AST* a) -> bool { return a->kind() == K_Slice; }
   [[nodiscard]] auto clone() const -> SliceExpr* override;
