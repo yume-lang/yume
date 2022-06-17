@@ -489,7 +489,7 @@ static auto parse_primary(TokenIterator& tokens) -> unique_ptr<Expr> {
         consume_with_separators_until(tokens, Symbol, SYM_RPAREN, [&] { call_args.push_back(parse_expr(tokens)); });
         return std::make_unique<CtorExpr>(ts(entry, tokens.begin()), move(type), move(call_args));
       }
-      if (try_consume(tokens, Symbol, SYM_LPAREN)) {
+      if (try_consume(tokens, Symbol, SYM_LBRACKET)) {
         auto slice_members = vector<unique_ptr<Expr>>{};
         consume_with_separators_until(tokens, Symbol, SYM_RBRACKET,
                                       [&] { slice_members.push_back(parse_expr(tokens)); });
@@ -646,7 +646,8 @@ static auto parse_type(TokenIterator& tokens) -> unique_ptr<Type> {
       base = std::make_unique<QualType>(ts(entry, tokens.begin()), move(base), Qualifier::Ptr);
     } else if (try_consume(tokens, Word, KWD_MUT)) {
       base = std::make_unique<QualType>(ts(entry, tokens.begin()), move(base), Qualifier::Mut);
-    } else if (try_consume(tokens, Symbol, SYM_LBRACKET)) {
+    } else if (try_peek(tokens, 0, Symbol, SYM_LBRACKET) && try_peek(tokens, 1, Symbol, SYM_RBRACKET)) {
+      consume(tokens, Symbol, SYM_LBRACKET);
       consume(tokens, Symbol, SYM_RBRACKET);
       base = std::make_unique<QualType>(ts(entry, tokens.begin()), move(base), Qualifier::Slice);
     } else {
