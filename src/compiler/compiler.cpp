@@ -326,6 +326,9 @@ template <> void Compiler::statement(const ast::IfStmt& stat) {
       all_terminated = false;
       m_builder->CreateBr(merge_bb);
     }
+  } else {
+    m_builder->SetInsertPoint(next_test_bb);
+    m_builder->CreateBr(merge_bb);
   }
 
   if (all_terminated) {
