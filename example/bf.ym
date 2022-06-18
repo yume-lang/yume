@@ -3,9 +3,9 @@
 struct Instruction(type I32, payload I32)
 end
 
-def parse(input U8[]) Instruction[]
+def parse(input U8[]) Instruction mut[]
   let i = 0
-  let instructions = Instruction[](input.size)
+  let instructions = Instruction mut[](input.size)
   # TODO
   # This should be dynamically sized...
   let stack = I32[](512)
