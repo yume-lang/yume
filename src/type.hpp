@@ -19,7 +19,7 @@ class StructType;
 }
 namespace yume {
 class Compiler;
-enum struct Qualifier { Ptr, Slice, Mut, Scope, Q_END };
+enum struct Qualifier { Ptr, Slice, Mut, Q_END };
 namespace ast {
 class TypeName;
 }
@@ -66,14 +66,13 @@ public:
   [[nodiscard]] auto known_qual(Qualifier qual) const -> const Type&;
   [[nodiscard]] inline auto known_ptr() const -> const Type& { return known_qual(Qualifier::Ptr); }
   [[nodiscard]] inline auto known_mut() const -> const Type& { return known_qual(Qualifier::Mut); }
-  [[nodiscard]] inline auto known_scope() const -> const Type& { return known_qual(Qualifier::Scope); }
   [[nodiscard]] inline auto known_slice() const -> const Type& { return known_qual(Qualifier::Slice); }
 
   [[nodiscard]] auto compatibility(const Type& other) const -> Compatiblity;
   [[nodiscard]] auto coalesce(const Type& other) const -> const Type*;
+  [[nodiscard]] auto intersect(const Type& other) const -> const Type*;
 
   [[nodiscard]] auto is_mut() const -> bool;
-  [[nodiscard]] auto is_scope() const -> bool;
 
   [[nodiscard]] auto qual_base() const -> const Type*;
   [[nodiscard]] auto ptr_base() const -> const Type*;
@@ -102,15 +101,11 @@ class Qual : public Type {
 private:
   const Type& m_base;
   bool m_mut{};
-  bool m_scope{};
 
 public:
-  Qual(string name, const Type& base, bool mut, bool scope)
-      : Type(K_Qual, move(name)), m_base(base), m_mut(mut), m_scope(scope) {}
+  Qual(string name, const Type& base, bool mut) : Type(K_Qual, move(name)), m_base(base), m_mut(mut) {}
   [[nodiscard]] inline auto base() const -> const Type& { return m_base; }
-  [[nodiscard]] inline auto has_qualifier(Qualifier qual) const -> bool {
-    return (qual == Qualifier::Mut && m_mut) || (qual == Qualifier::Scope && m_scope);
-  }
+  [[nodiscard]] inline auto has_qualifier(Qualifier qual) const -> bool { return (qual == Qualifier::Mut && m_mut); }
   static auto classof(const Type* a) -> bool { return a->kind() == K_Qual; }
 };
 

@@ -46,8 +46,7 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
   }
   expression(expr.type());
   const auto& base_type = m_compiler.convert_type(expr.type(), m_current_fn->parent(), m_current_fn);
-  // Directly constructed values always have local scope!
-  expr.val_ty(&base_type.known_scope());
+  expr.val_ty(&base_type);
 }
 
 template <> void TypeWalker::expression(ast::SliceExpr& expr) {
@@ -56,8 +55,7 @@ template <> void TypeWalker::expression(ast::SliceExpr& expr) {
   }
   expression(expr.type());
   const auto& base_type = m_compiler.convert_type(expr.type(), m_current_fn->parent(), m_current_fn);
-  // Directly constructed values always have local scope!
-  expr.val_ty(&base_type.known_slice().known_scope());
+  expr.val_ty(&base_type.known_slice());
 }
 
 template <> void TypeWalker::expression(ast::AssignExpr& expr) {
@@ -142,10 +140,12 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
         if (gen != nullptr && gen_sub != nullptr) {
           auto existing = instantiation.m_sub.find(gen);
           if (existing != instantiation.m_sub.end()) {
-            if (existing->second != gen_sub) {
+            const auto* intersection = gen_sub->intersect(*existing->second);
+            if (intersection == nullptr) {
               compat = ty::Type::Compatiblity::INVALID;
               break;
             }
+            instantiation.m_sub[gen] = intersection;
           } else {
             instantiation.m_sub.try_emplace(gen, gen_sub);
           }
@@ -270,7 +270,7 @@ template <> void TypeWalker::statement(ast::VarDecl& stat) {
     stat.init().attach_to(&stat.type()->get());
   }
 
-  stat.val_ty(&stat.init().val_ty()->known_scope());
+  stat.val_ty(&stat.init().val_ty()->known_mut());
   m_scope.insert({stat.name(), &stat});
 }
 

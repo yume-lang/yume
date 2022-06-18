@@ -11,7 +11,6 @@ static auto qual_suffix(Qualifier qual) -> string {
   switch (qual) {
   case Qualifier::Mut: return " mut";
   case Qualifier::Ptr: return " ptr";
-  case Qualifier::Scope: return " scope";
   case Qualifier::Slice: return "[]";
   default: return "";
   }
@@ -25,10 +24,9 @@ auto Type::known_qual(Qualifier qual) const -> const Type& {
   }
 
   const auto* base = qual_base();
-  // Qualifiers like Mut and Scope can't repeat, so attempting to get mut of a mut type should return itself
-  if (qual == Qualifier::Mut || qual == Qualifier::Scope) {
+  // Qualifiers like Mut can't repeat, so attempting to get mut of a mut type should return itself
+  if (qual == Qualifier::Mut) {
     bool existing_mut = false;
-    bool existing_scope = false;
     const auto* existing_base = this;
     if (base != nullptr) {
       if (base->m_known_qual.at(qual_idx).get() == this) {
@@ -36,12 +34,10 @@ auto Type::known_qual(Qualifier qual) const -> const Type& {
       }
       const auto* existing_qual = cast<Qual>(this);
       existing_mut = existing_qual->m_mut;
-      existing_scope = existing_qual->m_scope;
       existing_base = &existing_qual->m_base;
     }
     auto new_qual_type =
-        std::make_unique<Qual>(name() + qual_suffix(qual), *existing_base, (existing_mut || qual == Qualifier::Mut),
-                               (existing_scope || qual == Qualifier::Scope));
+        std::make_unique<Qual>(name() + qual_suffix(qual), *existing_base, (existing_mut || qual == Qualifier::Mut));
     m_known_qual.at(qual_idx) = move(new_qual_type);
   } else {
     auto new_qual_type = std::make_unique<Ptr>(name() + qual_suffix(qual), *this, qual);
@@ -58,12 +54,8 @@ auto Type::compatibility(const Type& other) const -> Compatiblity {
   if (this == &other) {
     return {PERFECT_MATCH};
   }
-  if (!is_mut() && !is_scope() && isa<Generic>(other)) {
-    return {GENERIC_SUBSTITUTION, &cast<Generic>(other), this};
-  }
   if (auto this_ptr_base = without_qual().ptr_base(), other_ptr_base = other.without_qual().ptr_base();
-      (((is_scope() || is_mut()) && !other.is_scope() && !other.is_mut()) || (is_scope() && other.is_mut())) &&
-      this_ptr_base != nullptr && other_ptr_base != nullptr &&
+      (is_mut() && !other.is_mut()) && this_ptr_base != nullptr && other_ptr_base != nullptr &&
       cast<Ptr>(without_qual()).qualifier() == cast<Ptr>(other.without_qual()).qualifier()) {
     if (isa<Generic>(other_ptr_base)) {
       return {GENERIC_SUBSTITUTION, cast<Generic>(other_ptr_base), this_ptr_base};
@@ -78,8 +70,17 @@ auto Type::compatibility(const Type& other) const -> Compatiblity {
     }
     return {0};
   }
-  if ((is_scope() && !other.is_scope()) || (is_mut() && !other.is_mut()) || (is_scope() && other.is_mut())) {
+  if (is_mut() && other.is_mut()) {
     auto base_compatibility = qual_base()->compatibility(other.without_qual());
+    if (base_compatibility.rating != Compatiblity::INVALID) {
+      return base_compatibility;
+    }
+  }
+  if (isa<Generic>(other)) {
+    return {GENERIC_SUBSTITUTION, &cast<Generic>(other), this};
+  }
+  if (is_mut() && !other.is_mut()) {
+    auto base_compatibility = qual_base()->compatibility(other);
     if (base_compatibility.rating != Compatiblity::INVALID) {
       return base_compatibility;
     }
@@ -113,11 +114,27 @@ auto Type::ptr_base() const -> const Type* {
 }
 
 auto Type::coalesce(const Type& other) const -> const Type* {
-  if ((is_mut() || is_scope()) && qual_base() == &other) {
+  if (this == &other) {
     return this;
   }
-  if ((other.is_mut() || other.is_scope()) && other.qual_base() == this) {
+  if (is_mut() && qual_base() == &other) {
+    return this;
+  }
+  if (other.is_mut() && other.qual_base() == this) {
     return &other;
+  }
+  return nullptr;
+}
+
+auto Type::intersect(const Type& other) const -> const Type* {
+  if (this == &other) {
+    return this;
+  }
+  if (is_mut() && qual_base() == &other) {
+    return &other;
+  }
+  if (other.is_mut() && other.qual_base() == this) {
+    return this;
   }
   return nullptr;
 }
