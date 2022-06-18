@@ -511,12 +511,13 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
       } else if (primitive == "set_at") {
         auto* result_type = llvm_type(*expr.args()[0].val_ty()->without_qual().ptr_base());
         llvm::Value* base = args.at(0);
-        return m_builder->CreateStore(args.at(2),
-                                      m_builder->CreateGEP(result_type, base, makeArrayRef(args.at(1).llvm())));
+        m_builder->CreateStore(args.at(2), m_builder->CreateGEP(result_type, base, makeArrayRef(args.at(1).llvm())));
+        return args.at(2);
       } else if (primitive == "get_at") {
         auto* result_type = llvm_type(*expr.args()[0].val_ty()->without_qual().ptr_base());
         llvm::Value* base = args.at(0);
-        return m_builder->CreateGEP(result_type, base, makeArrayRef(args.at(1).llvm()));
+        return m_builder->CreateLoad(result_type,
+                                     m_builder->CreateGEP(result_type, base, makeArrayRef(args.at(1).llvm())));
       } else if (primitive.starts_with("ib_")) {
         return int_bin_primitive(primitive, args);
       } else {
