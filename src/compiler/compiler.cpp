@@ -672,8 +672,8 @@ template <> auto Compiler::expression(const ast::SliceExpr& expr, bool mut) -> V
     return false;
   });
 
-  auto* slice_type = llvm_type(*expr.val_ty()->qual_base());
-  auto* base_type = llvm_type(*expr.val_ty()->qual_base()->ptr_base()); // ???
+  auto* slice_type = llvm_type(*expr.val_ty());
+  auto* base_type = llvm_type(*expr.val_ty()->ptr_base()); // ???
   auto* array_type = ArrayType::get(base_type, slice_size);
   auto* array_alloc = m_builder->CreateAlloca(array_type);
 
