@@ -725,39 +725,41 @@ auto Compiler::mangle_name(const Fn& fn) -> string {
     if (idx++ > 0) {
       ss << ",";
     }
-    ss << mangle_name(i.type(), fn);
+    ss << mangle_name(*i.type().val_ty(), fn);
   }
   ss << ")";
   // TODO: should mangled names even contain the return type...?
   if (fn.ast().ret().has_value()) {
-    ss << mangle_name(fn.ast().ret().value(), fn);
+    ss << mangle_name(*fn.ast().ret().value().get().val_ty(), fn);
   }
   return ss.str();
 }
 
-auto Compiler::mangle_name(const ast::Type& ast_type, const Fn& parent) -> string {
-  if (const auto* simple_type = dyn_cast<ast::SimpleType>(&ast_type)) {
-    auto name = simple_type->name();
-    if (auto match = parent.m_subs.find(name); match != parent.m_subs.end()) {
-      return match->second->name();
-    }
-    return simple_type->name();
-  }
-  if (isa<ast::SelfType>(ast_type)) {
-    return parent.parent()->name();
-  }
+auto Compiler::mangle_name(const ty::Type& ast_type, const Fn& parent) -> string {
   std::stringstream ss{};
-  const auto& qual_type = cast<ast::QualType>(ast_type);
-  auto qualifier = qual_type.qualifier();
-  ss << mangle_name(qual_type.base(), parent);
-  switch (qualifier) {
-  case Qualifier::Ptr: ss << "*"; break;
-  case Qualifier::Slice: ss << "["; break;
-  case Qualifier::Mut: ss << "&"; break;
-  case Qualifier::Scope: ss << "@"; break;
-  default: assert("Should never happen"); // NOLINT
+  if (const auto* qual_type = dyn_cast<ty::Qual>(&ast_type)) {
+    ss << mangle_name(qual_type->base(), parent);
+    if (qual_type->has_qualifier(Qualifier::Mut)) {
+      ss << "&";
+    }
+    return ss.str();
   }
-  return ss.str();
+  if (const auto* ptr_type = dyn_cast<ty::Ptr>(&ast_type)) {
+    ss << mangle_name(ptr_type->base(), parent);
+    if (ptr_type->has_qualifier(Qualifier::Ptr)) {
+      ss << "*";
+    }
+    if (ptr_type->has_qualifier(Qualifier::Slice)) {
+      ss << "[";
+    }
+    return ss.str();
+  }
+  if (const auto* generic_type = dyn_cast<ty::Generic>(&ast_type)) {
+    auto match = parent.m_subs.find(generic_type->name());
+    assert(match != parent.m_subs.end()); // NOLINT
+    return match->second->name();
+  }
+  return ast_type.name();
 }
 
 auto Compiler::known_type(const string& str) -> ty::Type& { return *m_types.known.find(str)->getValue(); }

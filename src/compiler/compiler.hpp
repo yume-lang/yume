@@ -70,7 +70,7 @@ public:
   auto llvm_type(const ty::Type& type) -> llvm::Type*;
 
   auto mangle_name(const Fn& fn_decl) -> string;
-  auto mangle_name(const ast::Type& ast_type, const Fn& parent) -> string;
+  auto mangle_name(const ty::Type& ast_type, const Fn& parent) -> string;
 
   [[nodiscard]] inline auto source_files() -> const auto& { return m_sources; }
 
