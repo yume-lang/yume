@@ -97,8 +97,6 @@ auto Type::compatibility(const Type& other) const -> Compatiblity {
 
 auto Type::is_mut() const -> bool { return isa<Qual>(*this) && cast<Qual>(this)->has_qualifier(Qualifier::Mut); }
 
-auto Type::is_scope() const -> bool { return isa<Qual>(*this) && cast<Qual>(this)->has_qualifier(Qualifier::Scope); }
-
 auto Type::qual_base() const -> const Type* {
   if (const auto* qual = dyn_cast<Qual>(this)) {
     return &qual->base();
