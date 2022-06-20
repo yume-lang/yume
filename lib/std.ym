@@ -43,8 +43,8 @@ end
 
 def copy<T>(source T ptr, dest T ptr, amount I64)
   let count I64 = amount
-  while count > I64(0)
-    count = count - I64(1)
+  while count > 0
+    count = count - 1
     dest[count] = source[count]
   end
 end
@@ -56,7 +56,7 @@ def dup<T>(arr T[], extra I64) T[]
 end
 
 def dup_append<T>(arr T[], last T) T[]
-  let dup_t T[] = arr.dup_internal(I64(1))
+  let dup_t T[] = arr.dup_internal(1)
   copy(arr.unsafe_ptr, dup_t.unsafe_ptr, arr.size)
   dup_t[arr.size] = last
   return dup_t
@@ -67,13 +67,14 @@ def c_str(str U8[]) U8[] = str.dup_append(?\0)
 
 def c_len(ptr U8 ptr) I64
   let terminated Bool = false
+  # TODO: the left and right sides of this declaration are attached, but should be able to merge into the bigger int type, investigate why this isn't happening
   let idx I64 = I64(0)
   while !terminated
     let chr U8 = ptr[idx]
     if chr == ?\0
       terminated = true
     else
-      idx = idx + I64(1)
+      idx = idx + 1
     end
   end
   return idx
