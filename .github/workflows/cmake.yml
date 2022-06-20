@@ -17,7 +17,7 @@ jobs:
         clang: [13, 14] #, 15]
         llvm: [13, 14, 15]
     runs-on: ubuntu-22.04
-    name: "Build clang ${{ matrix.clang }}, libllvm ${{ matrix.llvm }}"
+    name: "Build clang ${{ matrix.clang }}, llvm ${{ matrix.llvm }}"
     env:
       CC: clang-${{ matrix.clang }}
       CXX: clang++-${{ matrix.clang }}
@@ -65,7 +65,7 @@ jobs:
 
     - uses: actions/upload-artifact@v3
       with:
-        name: ir-output
+        name: ir-output-llvm${{ matrix.llvm }}
         path: ./result-*.ll
 
 #     - name: Test
