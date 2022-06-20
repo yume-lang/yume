@@ -517,20 +517,13 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
       } else if (primitive == "set_at") {
         auto* result_type = llvm_type(*arg_types[0]->without_qual().ptr_base());
         llvm::Value* value = args.at(2);
-        llvm::Value* base = m_builder->CreateLoad(result_type->getPointerTo(), args.at(0));
-        base = m_builder->CreateGEP(result_type, base, args.at(1), "p.set_at.gep");
+        llvm::Value* base = m_builder->CreateGEP(result_type, args.at(0), args.at(1), "p.set_at.gep");
         m_builder->CreateStore(value, base);
         return args.at(2);
       } else if (primitive == "get_at") {
         auto* result_type = llvm_type(*arg_types[0]->without_qual().ptr_base());
         llvm::Value* base = args.at(0);
-        if (returns_mut) {
-          base = m_builder->CreateLoad(result_type->getPointerTo(), args.at(0));
-        }
         base = m_builder->CreateGEP(result_type, base, args.at(1).llvm(), "p.get_at.gep");
-        if (!returns_mut) {
-          base = m_builder->CreateLoad(result_type, base, "p.get_at.adjust");
-        }
         return base;
       } else if (primitive.starts_with("ib_")) {
         return int_bin_primitive(primitive, args);

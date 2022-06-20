@@ -50,7 +50,7 @@ def main(argc I32, argv U8 ptr ptr) I32
   # allocating a new one and copying it. It would probably require constructors
   # to be a real feature, but slice constructors are a special case anyway
   let word = U8[](word_ptr.c_len)
-  copy(word_ptr, word.ptr, word.size)
+  copy(word_ptr, word.unsafe_ptr, word.size)
 
   let instructions = parse(word)
 
