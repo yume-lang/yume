@@ -53,6 +53,10 @@ public:
     uint64_t rating{};
     const Generic* substituted_generic{};
     const Type* substituted_with{};
+
+    inline auto operator+(uint64_t other) const -> Compatiblity {
+      return {rating + other, substituted_generic, substituted_with};
+    }
   };
 
   Type(const Type&) noexcept = delete;

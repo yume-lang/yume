@@ -461,6 +461,7 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
   }
 
   vector<Val> args{};
+  vector<const ty::Type*> arg_types{};
   vector<llvm::Value*> llvm_args{};
   unsigned j = 0;
   auto selected_args = selected->ast().args();
@@ -491,6 +492,7 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
     auto arg = do_cast(j, body_expression(i, should_pass_by_mut(j)));
     args.push_back(arg);
     llvm_args.push_back(arg.llvm());
+    arg_types.push_back(i.val_ty());
     j++;
   }
 
@@ -504,23 +506,31 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
       } else if (primitive == "slice_size") {
         return m_builder->CreateExtractValue(args.at(0), 1);
       } else if (primitive == "slice_ptr") {
-        return m_builder->CreateExtractValue(args.at(0), 0);
+        if (returns_mut) {
+          llvm::Type* result_type = llvm_type(arg_types[0]->without_qual());
+          return m_builder->CreateStructGEP(result_type, args.at(0), 0, "sl.ptr.mut");
+        }
+        return m_builder->CreateExtractValue(args.at(0), 0, "sl.ptr.x");
       } else if (primitive == "slice_dup") {
         return m_builder->CreateInsertValue(
             args.at(0), m_builder->CreateAdd(m_builder->CreateExtractValue(args.at(0), 1), args.at(1)), 1);
       } else if (primitive == "set_at") {
-        const auto* operand_type = expr.args()[0].val_ty();
-        auto* result_type = llvm_type(*operand_type->without_qual().ptr_base());
+        auto* result_type = llvm_type(*arg_types[0]->without_qual().ptr_base());
         llvm::Value* value = args.at(2);
-        llvm::Value* base =
-            m_builder->CreateGEP(result_type, args.at(0), makeArrayRef(args.at(1).llvm()), "p.set_at.gep");
+        llvm::Value* base = m_builder->CreateLoad(result_type->getPointerTo(), args.at(0));
+        base = m_builder->CreateGEP(result_type, base, args.at(1), "p.set_at.gep");
         m_builder->CreateStore(value, base);
         return args.at(2);
       } else if (primitive == "get_at") {
-        const auto* operand_type = expr.args()[0].val_ty();
-        auto* result_type = llvm_type(*operand_type->without_qual().ptr_base());
+        auto* result_type = llvm_type(*arg_types[0]->without_qual().ptr_base());
         llvm::Value* base = args.at(0);
-        base = m_builder->CreateGEP(result_type, base, makeArrayRef(args.at(1).llvm()), "p.get_at.gep");
+        if (returns_mut) {
+          base = m_builder->CreateLoad(result_type->getPointerTo(), args.at(0));
+        }
+        base = m_builder->CreateGEP(result_type, base, args.at(1).llvm(), "p.get_at.gep");
+        if (!returns_mut) {
+          base = m_builder->CreateLoad(result_type, base, "p.get_at.adjust");
+        }
         return base;
       } else if (primitive.starts_with("ib_")) {
         return int_bin_primitive(primitive, args);
@@ -535,7 +545,7 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
   }();
 
   if (returns_mut && !mut) {
-    return m_builder->CreateLoad(llvm_type(*ret_ty->qual_base()), val);
+    return m_builder->CreateLoad(llvm_type(*ret_ty->qual_base()), val, "c.nmut.deref");
   }
   return val;
 }

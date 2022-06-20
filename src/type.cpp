@@ -71,18 +71,18 @@ auto Type::compatibility(const Type& other) const -> Compatiblity {
     return {0};
   }
   if (is_mut() && other.is_mut()) {
-    auto base_compatibility = qual_base()->compatibility(other.without_qual());
-    if (base_compatibility.rating != Compatiblity::INVALID) {
-      return base_compatibility;
+    auto base_compat = qual_base()->compatibility(other.without_qual());
+    if (base_compat.rating != Compatiblity::INVALID) {
+      return base_compat + 1;
     }
   }
   if (isa<Generic>(other)) {
     return {GENERIC_SUBSTITUTION, &cast<Generic>(other), this};
   }
   if (is_mut() && !other.is_mut()) {
-    auto base_compatibility = qual_base()->compatibility(other);
-    if (base_compatibility.rating != Compatiblity::INVALID) {
-      return base_compatibility;
+    auto base_compat = qual_base()->compatibility(other);
+    if (base_compat.rating != Compatiblity::INVALID) {
+      return base_compat + 1;
     }
   }
   if (const auto this_int = dyn_cast<Int>(this), other_int = dyn_cast<Int>(&other);

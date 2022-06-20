@@ -4,8 +4,10 @@ def putchar(char I32) I32 = __primitive__(libc)
 
 def size<T>(arr T[]) I64 = __primitive__(slice_size)
 def ptr<T>(arr T[]) T ptr = __primitive__(slice_ptr)
-def []<T>(ptr T ptr, offset I64) T mut = __primitive__(get_at)
-def []=<T>(ptr T ptr, offset I64, val T) T = __primitive__(set_at)
+def ptr<T>(arr T[] mut) T ptr mut = __primitive__(slice_ptr)
+def []<T>(ptr T ptr, offset I64) T = __primitive__(get_at)
+def []<T>(ptr T ptr mut, offset I64) T mut = __primitive__(get_at)
+def []=<T>(ptr T ptr mut, offset I64, val T) T = __primitive__(set_at)
 def dup_internal<T>(arr T[], extra I64) T[] = __primitive__(slice_dup)
 
 # TODO: most of these should be templated
@@ -34,13 +36,14 @@ def !(a Bool) Bool
   end
 end
 
-def []<T>(slice T[], offset I64) T mut = slice.ptr[offset]
+def []<T>(slice T[] mut, offset I64) T mut = slice.ptr[offset]
+def []<T>(slice T[], offset I64) T = slice.ptr[offset]
 def []=<T>(slice T[] mut, offset I64, val T) T
   slice.ptr[offset] = val
   return val
 end
 
-def copy<T>(source T ptr, dest T ptr, amount I64)
+def copy<T>(source T ptr, dest T ptr mut, amount I64)
   let count I64 = amount
   while count > I64(0)
     count = count - I64(1)
