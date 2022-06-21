@@ -74,7 +74,7 @@ INCLUDE_PATH           =
 SKIP_FUNCTION_MACROS   = YES
 
 HAVE_DOT               = YES
-DOT_FONTNAME           = Helvetica
+DOT_FONTNAME           = FreeSans
 DOT_FONTSIZE           = 10
 
 CLASS_GRAPH            = YES
