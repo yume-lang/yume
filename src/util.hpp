@@ -32,6 +32,10 @@ concept pointer_like = requires(T t) {
   {*t};
 };
 
+/// \brief A view over a range of pointer-like types, where every element is dereferenced
+///
+/// Creating a dereference view from a type such as `vector<unique_ptr<T>>` will give a range-like view, where each
+/// element is a const T&
 template <std::ranges::input_range T>
 requires pointer_like<typename std::iterator_traits<std::ranges::iterator_t<T>>::value_type>
 class dereference_view {
@@ -148,6 +152,9 @@ public:
   constexpr auto end() -> Iterator { return Iterator{this, std::ranges::end(m_base)}; }
 };
 
+/// \brief Dereference an `optional` holding a pointer-like value, if it is holding a value
+/// Because C++20 doesn't have monadic operations for optionals yet, which should be a basic, fundamental feature of an
+/// "Optional" type
 template <typename T>
 requires pointer_like<T>
 auto inline constexpr try_dereference(const std::optional<T>& opt) {
@@ -158,6 +165,7 @@ auto inline constexpr try_dereference(const std::optional<T>& opt) {
   return std::optional<U>{};
 }
 
+/// Opens a writeable stream to a file with the given filename relative to the current working directory.
 auto inline open_file(const char* filename) -> unique_ptr<llvm::raw_pwrite_stream> {
   std::error_code errorCode;
   auto dest =
@@ -171,11 +179,16 @@ auto inline open_file(const char* filename) -> unique_ptr<llvm::raw_pwrite_strea
   return dest;
 }
 
+/// The stem of a path-like string, which is the component after the last slash.
+/// \example "foo/bar/file.txt" -> "file.txt"
 [[nodiscard]] auto inline stem(std::string_view sv) -> std::string_view {
   auto delim = sv.rfind('/');
   return sv.substr(delim == string::npos ? 0 : delim + 1);
 }
 
+/// `Atom`s represent strings in a string pool. This means two atoms created with the same string value will contain
+/// identical pointers to that string. Thus, comparing `Atom`s is extremely cheap, as it only consists of a pointer
+/// equality check.
 struct Atom {
   const string* m_str;
 
@@ -198,6 +211,8 @@ private:
 
 // using Atom = const char*;
 
+/// Create an `Atom` with the given string content.
+/// \sa atom_literal::operator""_a
 auto inline make_atom(const string& value) noexcept -> Atom { return Atom::make_atom(value); }
 
 namespace atom_literal {
