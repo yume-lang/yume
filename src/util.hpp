@@ -179,16 +179,19 @@ auto inline open_file(const char* filename) -> unique_ptr<llvm::raw_pwrite_strea
   return dest;
 }
 
-/// The stem of a path-like string, which is the component after the last slash.
-/// \example "foo/bar/file.txt" -> "file.txt"
+/// \brief The stem of a path-like string, which is the component after the last slash.
+///
+/// "foo/bar/file.txt" -> "file.txt"
 [[nodiscard]] auto inline stem(std::string_view sv) -> std::string_view {
   auto delim = sv.rfind('/');
   return sv.substr(delim == string::npos ? 0 : delim + 1);
 }
 
-/// `Atom`s represent strings in a string pool. This means two atoms created with the same string value will contain
-/// identical pointers to that string. Thus, comparing `Atom`s is extremely cheap, as it only consists of a pointer
-/// equality check.
+/// `Atom`s represent strings in a string pool.
+/** This means two atoms created with the same string value will contain
+ * identical pointers to that string. Thus, comparing `Atom`s is extremely cheap, as it only consists of a pointer
+ * equality check.
+ */
 struct Atom {
   const string* m_str;
 
