@@ -1,7 +1,8 @@
 var searchData=
 [
-  ['name_0',['name',['../classyume_1_1ast_1_1SimpleType.html#a4535ebd1a009ac4878f8962bd8990122',1,'yume::ast::SimpleType::name()'],['../classyume_1_1ast_1_1TypeName.html#a402b543708c8674c230928f5c437525b',1,'yume::ast::TypeName::name()'],['../classyume_1_1ast_1_1VarExpr.html#ab3ebbfc25304c6d938ca88566ed53236',1,'yume::ast::VarExpr::name()'],['../classyume_1_1ast_1_1CallExpr.html#aef3fad39696e66f904cb8078a6595ab7',1,'yume::ast::CallExpr::name()'],['../classyume_1_1ast_1_1FnDecl.html#a197bbd8f42ad8270856d1f8747fe711a',1,'yume::ast::FnDecl::name()'],['../classyume_1_1ast_1_1StructDecl.html#a10f785ca3fea4e7174de6f5cae2575db',1,'yume::ast::StructDecl::name()'],['../classyume_1_1ast_1_1VarDecl.html#a3964db90840344bee89d83391cf125e6',1,'yume::ast::VarDecl::name()'],['../structyume_1_1Fn.html#ac25b738b2613071b6951b7f149f7e02d',1,'yume::Fn::name()'],['../classyume_1_1ty_1_1Type.html#ae38fa8998004a15c0e70e6122ddf7685',1,'yume::ty::Type::name()']]],
-  ['next_1',['next',['../namespaceyume_1_1ast.html#ac0b2f58f8749c21dda76ce2f471adb3d',1,'yume::ast']]],
-  ['not_5fmut_2',['not_mut',['../namespaceyume.html#af154d75481867fbdec142c3e5171ea18',1,'yume']]],
-  ['numberexpr_3',['NumberExpr',['../classyume_1_1ast_1_1NumberExpr.html#a0ceefdb88f8c9befd853db7c13bd8bd7',1,'yume::ast::NumberExpr']]]
+  ['main_0',['main',['../main_8cpp.html#a9d6b8cae4881c54db1d2df3da92c712f',1,'main.cpp']]],
+  ['make_5fatom_1',['make_atom',['../structyume_1_1Atom.html#a5c5f82cdeef5e63a5e005331c7014325',1,'yume::Atom::make_atom()'],['../namespaceyume.html#a673b026b70abd8c22b87fcf7f94236a9',1,'yume::make_atom()']]],
+  ['mangle_5fname_2',['mangle_name',['../classyume_1_1Compiler.html#afcd1f55798eac5d3e7d6551fae8cb827',1,'yume::Compiler::mangle_name(const Fn &amp;fn_decl) -&gt; string'],['../classyume_1_1Compiler.html#a4b62b57eda222acba72d877196b643c2',1,'yume::Compiler::mangle_name(const ty::Type &amp;ast_type, const Fn &amp;parent) -&gt; string']]],
+  ['memo_3',['memo',['../classyume_1_1ty_1_1Struct.html#a277cb85876533e746f4ff3e8f1b3409e',1,'yume::ty::Struct']]],
+  ['module_4',['module',['../classyume_1_1Compiler.html#acebe062c6f524b71429058a98442e747',1,'yume::Compiler']]]
 ];

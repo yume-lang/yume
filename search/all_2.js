@@ -16,7 +16,7 @@ var searchData=
   ['cond_13',['cond',['../classyume_1_1ast_1_1IfClause.html#a023e82089c2280fccadbe85612e28cc0',1,'yume::ast::IfClause::cond()'],['../classyume_1_1ast_1_1WhileStmt.html#ac3dff0f731e7d0111b2296152effcaf6',1,'yume::ast::WhileStmt::cond()']]],
   ['const_5fhash_14',['const_hash',['../namespaceyume.html#a4d0b3ac909119ef64ef8a54f014993d9',1,'yume']]],
   ['consume_15',['consume',['../namespaceyume_1_1ast.html#ac00ca8f7772a320231076f22a96b8e9a',1,'yume::ast']]],
-  ['consume_5fwith_5fseparators_5funtil_16',['consume_with_separators_until',['../namespaceyume_1_1ast.html#a3233d2c49105bcfc2ecca480c0920131',1,'yume::ast']]],
+  ['consume_5fwith_5fcommas_5funtil_16',['consume_with_commas_until',['../namespaceyume_1_1ast.html#a76f29351245721c7bca62893588c3033',1,'yume::ast']]],
   ['consume_5fword_17',['consume_word',['../namespaceyume_1_1ast.html#a676f56651aebcf3aae439c998bf27bd3',1,'yume::ast']]],
   ['convert_5ftype_18',['convert_type',['../classyume_1_1Compiler.html#ab83b116f3e7c628e6cdc1e54460a71fe',1,'yume::Compiler']]],
   ['crtp_5fwalker_2ehpp_19',['crtp_walker.hpp',['../crtp__walker_8hpp.html',1,'']]],

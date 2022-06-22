@@ -1,5 +1,5 @@
 <map id="yume::ast::FnDecl" name="yume::ast::FnDecl">
 <area shape="rect" id="node1" title="A declaration of a function (def)." alt="" coords="5,155,129,181"/>
 <area shape="rect" id="node2" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="12,80,123,107"/>
-<area shape="rect" id="node3" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program will inherit from this class." alt="" coords="13,5,122,32"/>
+<area shape="rect" id="node3" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="13,5,122,32"/>
 </map>

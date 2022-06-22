@@ -1,5 +1,5 @@
 <map id="yume::ast::ReturnStmt" name="yume::ast::ReturnStmt">
 <area shape="rect" id="node1" title="Return from a function body." alt="" coords="5,155,155,181"/>
 <area shape="rect" id="node2" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="25,80,135,107"/>
-<area shape="rect" id="node3" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program will inherit from this class." alt="" coords="25,5,135,32"/>
+<area shape="rect" id="node3" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="25,5,135,32"/>
 </map>

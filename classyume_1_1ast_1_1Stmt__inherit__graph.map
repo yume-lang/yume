@@ -9,7 +9,7 @@
 <area shape="rect" id="node19" href="$classyume_1_1ast_1_1StructDecl.html" title="A declaration of a struct (struct)." alt="" coords="324,487,468,513"/>
 <area shape="rect" id="node20" href="$classyume_1_1ast_1_1VarDecl.html" title="A declaration of a local variable (let)." alt="" coords="331,537,461,564"/>
 <area shape="rect" id="node21" href="$classyume_1_1ast_1_1WhileStmt.html" title="A while loop (while)." alt="" coords="325,588,467,615"/>
-<area shape="rect" id="node2" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program will inherit from this class." alt="" coords="5,385,115,412"/>
+<area shape="rect" id="node2" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,385,115,412"/>
 <area shape="rect" id="node5" href="$classyume_1_1ast_1_1AssignExpr.html" title="An assignment (=)." alt="" coords="535,5,683,32"/>
 <area shape="rect" id="node6" href="$classyume_1_1ast_1_1BoolExpr.html" title="Bool literals (true or false)." alt="" coords="541,56,676,83"/>
 <area shape="rect" id="node7" href="$classyume_1_1ast_1_1CallExpr.html" title="A function call or operator." alt="" coords="543,107,674,133"/>

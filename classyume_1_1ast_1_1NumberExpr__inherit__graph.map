@@ -2,5 +2,5 @@
 <area shape="rect" id="node1" title="Number literals." alt="" coords="5,229,160,256"/>
 <area shape="rect" id="node2" href="$classyume_1_1ast_1_1Expr.html" title="Expressions have an associated value and type." alt="" coords="29,155,137,181"/>
 <area shape="rect" id="node3" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="27,80,138,107"/>
-<area shape="rect" id="node4" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program will inherit from this class." alt="" coords="28,5,137,32"/>
+<area shape="rect" id="node4" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="28,5,137,32"/>
 </map>

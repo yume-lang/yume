@@ -1,5 +1,5 @@
 <map id="yume::SourceFile" name="yume::SourceFile">
-<area shape="rect" id="node1" title=" " alt="" coords="2123,193,2244,220"/>
+<area shape="rect" id="node1" title="A source file with its associated Syntax Tree." alt="" coords="2123,193,2244,220"/>
 <area shape="rect" id="node2" title=" " alt="" coords="1892,112,1971,139"/>
 <area shape="rect" id="node3" title=" " alt="" coords="1663,101,1787,142"/>
 <area shape="rect" id="node4" title=" " alt="" coords="865,119,995,161"/>
@@ -21,9 +21,9 @@
 <area shape="rect" id="node17" title=" " alt="" coords="1857,345,2005,386"/>
 <area shape="rect" id="node18" href="$classyume_1_1ast_1_1Program.html" title="The top level structure of a file of source code." alt="" coords="1659,405,1791,432"/>
 <area shape="rect" id="node19" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="1439,411,1549,437"/>
-<area shape="rect" id="node20" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program will inherit from this class." alt="" coords="1121,432,1231,459"/>
+<area shape="rect" id="node20" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="1121,432,1231,459"/>
 <area shape="rect" id="node21" title=" " alt="" coords="889,427,971,453"/>
-<area shape="rect" id="node24" href="$classyume_1_1ty_1_1Type.html" title=" " alt="" coords="879,477,981,504"/>
+<area shape="rect" id="node24" href="$classyume_1_1ty_1_1Type.html" title="Represents a type in the type system. All types inherit from this class." alt="" coords="879,477,981,504"/>
 <area shape="rect" id="node25" title=" " alt="" coords="856,529,1004,570"/>
 <area shape="rect" id="node26" href="$structyume_1_1ast_1_1Attachment.html" title="Represents the relationship between multiple AST nodes." alt="" coords="493,536,644,563"/>
 <area shape="rect" id="node27" title=" " alt="" coords="235,529,380,570"/>

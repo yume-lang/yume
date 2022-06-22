@@ -1,5 +1,5 @@
 <map id="yume::ast::VarDecl" name="yume::ast::VarDecl">
 <area shape="rect" id="node1" title="A declaration of a local variable (let)." alt="" coords="5,155,135,181"/>
 <area shape="rect" id="node2" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="15,80,125,107"/>
-<area shape="rect" id="node3" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program will inherit from this class." alt="" coords="15,5,125,32"/>
+<area shape="rect" id="node3" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="15,5,125,32"/>
 </map>

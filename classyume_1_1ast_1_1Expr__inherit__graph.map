@@ -11,5 +11,5 @@
 <area shape="rect" id="node12" href="$classyume_1_1ast_1_1StringExpr.html" title="String literals." alt="" coords="496,411,639,437"/>
 <area shape="rect" id="node13" href="$classyume_1_1ast_1_1VarExpr.html" title="A variable, i.e. just an identifier." alt="" coords="503,461,631,488"/>
 <area shape="rect" id="node2" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="163,233,273,260"/>
-<area shape="rect" id="node3" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program will inherit from this class." alt="" coords="5,233,115,260"/>
+<area shape="rect" id="node3" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,233,115,260"/>
 </map>

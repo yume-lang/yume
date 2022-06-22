@@ -74,18 +74,21 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>A function declaration in the compiler.  
+ <a href="structyume_1_1Fn.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="vals_8hpp_source.html">vals.hpp</a>&gt;</code></p>
 <div class="dynheader">
 Collaboration diagram for yume::Fn:</div>
 <div class="dyncontent">
 <div class="center"><img src="structyume_1_1Fn__coll__graph.png" border="0" usemap="#ayume_1_1Fn_coll__map" alt="Collaboration graph"/></div>
 <map name="ayume_1_1Fn_coll__map" id="ayume_1_1Fn_coll__map">
-<area shape="rect" title=" " alt="" coords="2136,505,2211,532"/>
+<area shape="rect" title="A function declaration in the compiler." alt="" coords="2136,505,2211,532"/>
 <area shape="rect" title=" " alt="" coords="2289,498,2437,539"/>
 <area shape="rect" href="classyume_1_1ast_1_1FnDecl.html" title="A declaration of a function (def)." alt="" coords="1789,611,1913,637"/>
 <area shape="rect" href="classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="1527,588,1637,615"/>
 <area shape="rect" href="classyume_1_1ast_1_1Program.html" title="The top level structure of a file of source code." alt="" coords="1785,560,1917,587"/>
-<area shape="rect" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program will inherit from this class." alt="" coords="1192,588,1301,615"/>
+<area shape="rect" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="1192,588,1301,615"/>
 <area shape="rect" title=" " alt="" coords="889,544,971,571"/>
 <area shape="rect" title=" " alt="" coords="845,595,1015,621"/>
 <area shape="rect" href="structyume_1_1Token.html" title="A categorized token in source code, created by the tokenizer. These tokens are consumed by the lexer." alt="" coords="521,108,616,135"/>
@@ -101,8 +104,8 @@ Collaboration diagram for yume::Fn:</div>
 <area shape="rect" title=" " alt="" coords="501,743,637,769"/>
 <area shape="rect" title=" " alt="" coords="689,645,801,672"/>
 <area shape="rect" title=" " alt="" coords="1188,232,1305,259"/>
-<area shape="rect" href="classyume_1_1ty_1_1Type.html" title=" " alt="" coords="879,431,981,457"/>
-<area shape="rect" href="classyume_1_1ty_1_1Generic.html" title=" " alt="" coords="1187,459,1307,485"/>
+<area shape="rect" href="classyume_1_1ty_1_1Type.html" title="Represents a type in the type system. All types inherit from this class." alt="" coords="879,431,981,457"/>
+<area shape="rect" href="classyume_1_1ty_1_1Generic.html" title="An unsubstituted generic type variable, usually something like T." alt="" coords="1187,459,1307,485"/>
 <area shape="rect" title=" " alt="" coords="1505,279,1659,321"/>
 <area shape="rect" title=" " alt="" coords="1508,385,1656,441"/>
 <area shape="rect" title=" " alt="" coords="856,782,1004,823"/>
@@ -114,7 +117,7 @@ Collaboration diagram for yume::Fn:</div>
 <area shape="rect" title=" " alt="" coords="868,302,992,343"/>
 <area shape="rect" title=" " alt="" coords="2543,393,2737,434"/>
 <area shape="rect" title=" " alt="" coords="911,251,949,277"/>
-<area shape="rect" href="structyume_1_1Instantiation.html" title=" " alt="" coords="1972,365,2103,392"/>
+<area shape="rect" href="structyume_1_1Instantiation.html" title="A mapping between type variables and substitutions for them." alt="" coords="1972,365,2103,392"/>
 <area shape="rect" title=" " alt="" coords="1811,408,1891,435"/>
 <area shape="rect" title=" " alt="" coords="1803,459,1899,485"/>
 </map>
@@ -144,23 +147,29 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:aafbc4724b8f4e2e765ddd25206f17284"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classyume_1_1ast_1_1FnDecl.html">ast::FnDecl</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#aafbc4724b8f4e2e765ddd25206f17284">m_ast_decl</a></td></tr>
 <tr class="separator:aafbc4724b8f4e2e765ddd25206f17284"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:accd25498e2bf79636f686e214682ba3b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#accd25498e2bf79636f686e214682ba3b">m_parent</a> {}</td></tr>
+<tr class="memdesc:accd25498e2bf79636f686e214682ba3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">If this function is in the body of a struct, this points to its type. Used for the <code>self</code> type.  <a href="structyume_1_1Fn.html#accd25498e2bf79636f686e214682ba3b">More...</a><br /></td></tr>
 <tr class="separator:accd25498e2bf79636f686e214682ba3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a173f2d16814d552fd117b50bca987dd8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classyume_1_1ast_1_1Program.html">ast::Program</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a173f2d16814d552fd117b50bca987dd8">m_member</a> {}</td></tr>
+<tr class="memdesc:a173f2d16814d552fd117b50bca987dd8"><td class="mdescLeft">&#160;</td><td class="mdescRight">The program this declaration is a member of.  <a href="structyume_1_1Fn.html#a173f2d16814d552fd117b50bca987dd8">More...</a><br /></td></tr>
 <tr class="separator:a173f2d16814d552fd117b50bca987dd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a46c4be1d0588e5af2374b66e7d509660"><td class="memItemLeft" align="right" valign="top">vector&lt; unique_ptr&lt; <a class="el" href="classyume_1_1ty_1_1Generic.html">ty::Generic</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a46c4be1d0588e5af2374b66e7d509660">m_type_args</a> {}</td></tr>
 <tr class="separator:a46c4be1d0588e5af2374b66e7d509660"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3c1f2a3a52374600f51a23f5cc418add"><td class="memItemLeft" align="right" valign="top">std::map&lt; string, const <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a3c1f2a3a52374600f51a23f5cc418add">m_subs</a> {}</td></tr>
+<tr class="memdesc:a3c1f2a3a52374600f51a23f5cc418add"><td class="mdescLeft">&#160;</td><td class="mdescRight">If this is an instantiation of a template, a mapping between type variables and their substitutions.  <a href="structyume_1_1Fn.html#a3c1f2a3a52374600f51a23f5cc418add">More...</a><br /></td></tr>
 <tr class="separator:a3c1f2a3a52374600f51a23f5cc418add"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7419f3df49c080ddad2eb90b11976bfd"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="structyume_1_1Instantiation.html">Instantiation</a>, unique_ptr&lt; <a class="el" href="structyume_1_1Fn.html">Fn</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a7419f3df49c080ddad2eb90b11976bfd">m_instantiations</a> {}</td></tr>
 <tr class="separator:a7419f3df49c080ddad2eb90b11976bfd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1ab111d5f30e460a9d334a0d522182cb"><td class="memItemLeft" align="right" valign="top">llvm::Function *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a1ab111d5f30e460a9d334a0d522182cb">m_llvm_fn</a> {}</td></tr>
 <tr class="separator:a1ab111d5f30e460a9d334a0d522182cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adc2d12b04ece5447f184beb2a8d28c72"><td class="memItemLeft" align="right" valign="top">llvm::BasicBlock *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#adc2d12b04ece5447f184beb2a8d28c72">m_decl_bb</a> {}</td></tr>
+<tr class="memdesc:adc2d12b04ece5447f184beb2a8d28c72"><td class="mdescLeft">&#160;</td><td class="mdescRight">A basic block where are allocations for local variables should go. It is placed <em>before</em> the "entrypoint".  <a href="structyume_1_1Fn.html#adc2d12b04ece5447f184beb2a8d28c72">More...</a><br /></td></tr>
 <tr class="separator:adc2d12b04ece5447f184beb2a8d28c72"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00029">29</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<div class="textblock"><p >A function declaration in the compiler. </p>
+<p >The primary use of this struct is to bind together the AST declaration of a function (<code><a class="el" href="classyume_1_1ast_1_1FnDecl.html" title="A declaration of a function (def).">ast::FnDecl</a></code>) and the bytecode body of a function (<code>llvm::Function</code>). A function template may also be a <code><a class="el" href="structyume_1_1Fn.html" title="A function declaration in the compiler.">Fn</a></code>. Since a template doesn't actually have a body, its <code>m_llvm_fn</code> is <code>nullptr</code>. All the instantiations of a template are stored in <code>m_instantiations</code>. </p>
+
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00050">50</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a591bbd337f82c624df4f0707c91ba5b8" name="a591bbd337f82c624df4f0707c91ba5b8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a591bbd337f82c624df4f0707c91ba5b8">&#9670;&nbsp;</a></span>Fn()</h2>
@@ -214,7 +223,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00039">39</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00064">64</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
 </div>
 </div>
@@ -242,11 +251,11 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00047">47</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00072">72</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00030">m_ast_decl</a>.</p>
+<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00051">m_ast_decl</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00250">yume::Compiler::define()</a>, and <a class="el" href="compiler_8cpp_source.html#l00341">yume::Compiler::statement()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00250">yume::Compiler::define()</a>, and <a class="el" href="compiler_8cpp_source.html#l00344">yume::Compiler::statement()</a>.</p>
 
 </div>
 </div>
@@ -273,9 +282,9 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00043">43</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00068">68</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00576">yume::ast::FnDecl::body()</a>, and <a class="el" href="vals_8hpp_source.html#l00030">m_ast_decl</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00576">yume::ast::FnDecl::body()</a>, and <a class="el" href="vals_8hpp_source.html#l00051">m_ast_decl</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00250">yume::Compiler::define()</a>.</p>
 
@@ -334,9 +343,9 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00049">49</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00074">74</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00036">m_llvm_fn</a>.</p>
+<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00060">m_llvm_fn</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00250">yume::Compiler::define()</a>.</p>
 
@@ -365,9 +374,9 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00045">45</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00070">70</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00030">m_ast_decl</a>, and <a class="el" href="ast_8hpp_source.html#l00572">yume::ast::FnDecl::name()</a>.</p>
+<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00051">m_ast_decl</a>, and <a class="el" href="ast_8hpp_source.html#l00572">yume::ast::FnDecl::name()</a>.</p>
 
 </div>
 </div>
@@ -394,9 +403,9 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00055">55</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00080">80</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00036">m_llvm_fn</a>.</p>
+<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00060">m_llvm_fn</a>.</p>
 
 </div>
 </div>
@@ -423,11 +432,11 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00051">51</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00076">76</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00031">m_parent</a>.</p>
+<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00053">m_parent</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00029">yume::TypeWalker::expression()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00030">yume::TypeWalker::expression()</a>.</p>
 
 </div>
 </div>
@@ -444,9 +453,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00030">30</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00051">51</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="vals_8hpp_source.html#l00047">ast()</a>, <a class="el" href="vals_8hpp_source.html#l00043">body()</a>, <a class="el" href="vals_8hpp_source.html#l00045">name()</a>, and <a class="el" href="type__walker_8cpp_source.html#l00259">yume::TypeWalker::statement()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="vals_8hpp_source.html#l00072">ast()</a>, <a class="el" href="vals_8hpp_source.html#l00068">body()</a>, <a class="el" href="vals_8hpp_source.html#l00070">name()</a>, and <a class="el" href="type__walker_8cpp_source.html#l00306">yume::TypeWalker::statement()</a>.</p>
 
 </div>
 </div>
@@ -462,9 +471,11 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00037">37</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p>A basic block where are allocations for local variables should go. It is placed <em>before</em> the "entrypoint". </p>
 
-<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00250">yume::Compiler::define()</a>, and <a class="el" href="compiler_8cpp_source.html#l00354">yume::Compiler::statement()</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00062">62</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00250">yume::Compiler::define()</a>, and <a class="el" href="compiler_8cpp_source.html#l00357">yume::Compiler::statement()</a>.</p>
 
 </div>
 </div>
@@ -480,9 +491,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00035">35</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00059">59</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00100">yume::TypeWalker::expression()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00111">yume::TypeWalker::expression()</a>.</p>
 
 </div>
 </div>
@@ -498,9 +509,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00036">36</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00060">60</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="vals_8hpp_source.html#l00049">llvm()</a>, and <a class="el" href="vals_8hpp_source.html#l00055">operator llvm::Function *()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="vals_8hpp_source.html#l00074">llvm()</a>, and <a class="el" href="vals_8hpp_source.html#l00080">operator llvm::Function *()</a>.</p>
 
 </div>
 </div>
@@ -516,9 +527,11 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00032">32</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p>The program this declaration is a member of. </p>
 
-<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00100">yume::TypeWalker::expression()</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00055">55</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00111">yume::TypeWalker::expression()</a>.</p>
 
 </div>
 </div>
@@ -534,9 +547,11 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00031">31</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p>If this function is in the body of a struct, this points to its type. Used for the <code>self</code> type. </p>
 
-<p class="reference">Referenced by <a class="el" href="vals_8hpp_source.html#l00051">parent()</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00053">53</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="vals_8hpp_source.html#l00076">parent()</a>.</p>
 
 </div>
 </div>
@@ -552,9 +567,11 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00034">34</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p>If this is an instantiation of a template, a mapping between type variables and their substitutions. </p>
 
-<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00236">yume::TypeWalker::statement()</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00058">58</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00283">yume::TypeWalker::statement()</a>.</p>
 
 </div>
 </div>
@@ -570,7 +587,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00033">33</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00056">56</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
 </div>
 </div>
