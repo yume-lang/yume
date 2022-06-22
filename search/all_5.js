@@ -7,6 +7,5 @@ var searchData=
   ['file_5fname_4',['file_name',['../structyume_1_1source__location.html#a1a52ad6d2dd9b359e4aa625e6668ad61',1,'yume::source_location']]],
   ['fn_5',['Fn',['../structyume_1_1Fn.html#a591bbd337f82c624df4f0707c91ba5b8',1,'yume::Fn::Fn()'],['../structyume_1_1Fn.html',1,'yume::Fn']]],
   ['fndecl_6',['FnDecl',['../classyume_1_1ast_1_1FnDecl.html#a3ef52f492611a18329ebeb3d805c1f5b',1,'yume::ast::FnDecl::FnDecl(span&lt; Token &gt; tok, string name, vector&lt; unique_ptr&lt; TypeName &gt; &gt; args, vector&lt; string &gt; type_args, optional&lt; unique_ptr&lt; Type &gt; &gt; ret, unique_ptr&lt; Compound &gt; body)'],['../classyume_1_1ast_1_1FnDecl.html#a079a9cb4e1c37dff08796d3ae1d5c612',1,'yume::ast::FnDecl::FnDecl(span&lt; Token &gt; tok, string name, vector&lt; unique_ptr&lt; TypeName &gt; &gt; args, vector&lt; string &gt; type_args, optional&lt; unique_ptr&lt; Type &gt; &gt; ret, bool varargs, string primitive)'],['../classyume_1_1ast_1_1FnDecl.html',1,'yume::ast::FnDecl']]],
-  ['footer_7',['footer',['../classyume_1_1diagnostic_1_1DotVisitor.html#a20e5afce92a53401800e5b5cde1922ab',1,'yume::diagnostic::DotVisitor']]],
-  ['function_5fname_8',['function_name',['../structyume_1_1source__location.html#ae2393b03eecf578c9a1f64b6e2c3c703',1,'yume::source_location']]]
+  ['function_5fname_7',['function_name',['../structyume_1_1source__location.html#ae2393b03eecf578c9a1f64b6e2c3c703',1,'yume::source_location']]]
 ];

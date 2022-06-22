@@ -73,18 +73,34 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Represents the relationship between multiple <code><a class="el" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program will inherit from this class.">AST</a></code> nodes.  
+ <a href="structyume_1_1ast_1_1Attachment.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="ast_8hpp_source.html">ast.hpp</a>&gt;</code></p>
+<div class="dynheader">
+Collaboration diagram for yume::ast::Attachment:</div>
+<div class="dyncontent">
+<div class="center"><img src="structyume_1_1ast_1_1Attachment__coll__graph.png" border="0" usemap="#ayume_1_1ast_1_1Attachment_coll__map" alt="Collaboration graph"/></div>
+<map name="ayume_1_1ast_1_1Attachment_coll__map" id="ayume_1_1ast_1_1Attachment_coll__map">
+<area shape="rect" title="Represents the relationship between multiple AST nodes." alt="" coords="5,124,156,151"/>
+<area shape="rect" title=" " alt="" coords="8,5,153,47"/>
+</map>
+<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a12b61e92d716210910bba79b519a578c"><td class="memItemLeft" align="right" valign="top">llvm::SmallPtrSet&lt; const <a class="el" href="classyume_1_1ast_1_1AST.html">AST</a> *, 2 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1Attachment.html#a12b61e92d716210910bba79b519a578c">observers</a> {}</td></tr>
+<tr class="memdesc:a12b61e92d716210910bba79b519a578c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Observers are the "children" and should have their type updated when this node's type changes.  <a href="structyume_1_1ast_1_1Attachment.html#a12b61e92d716210910bba79b519a578c">More...</a><br /></td></tr>
 <tr class="separator:a12b61e92d716210910bba79b519a578c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acdae10046300c5f156588b73b15272d6"><td class="memItemLeft" align="right" valign="top">llvm::SmallPtrSet&lt; const <a class="el" href="classyume_1_1ast_1_1AST.html">AST</a> *, 2 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1Attachment.html#acdae10046300c5f156588b73b15272d6">depends</a> {}</td></tr>
+<tr class="memdesc:acdae10046300c5f156588b73b15272d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Depends are the "parents" and should be verified for type compatibility when this node's type changes.  <a href="structyume_1_1ast_1_1Attachment.html#acdae10046300c5f156588b73b15272d6">More...</a><br /></td></tr>
 <tr class="separator:acdae10046300c5f156588b73b15272d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00133">133</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<div class="textblock"><p >Represents the relationship between multiple <code><a class="el" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program will inherit from this class.">AST</a></code> nodes. </p>
+<p ><code><a class="el" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program will inherit from this class.">AST</a></code> nodes can be attached to propagate type information between them. TODO: describe type propagation more </p>
+
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00147">147</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
 <a id="acdae10046300c5f156588b73b15272d6" name="acdae10046300c5f156588b73b15272d6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acdae10046300c5f156588b73b15272d6">&#9670;&nbsp;</a></span>depends</h2>
@@ -106,7 +122,9 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00135">135</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p>Depends are the "parents" and should be verified for type compatibility when this node's type changes. </p>
+
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00151">151</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -130,7 +148,9 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00134">134</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p>Observers are the "children" and should have their type updated when this node's type changes. </p>
+
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00149">149</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>

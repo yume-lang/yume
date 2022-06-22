@@ -1,8 +1,4 @@
 <map id="yume::ty::Generic" name="yume::ty::Generic">
-<area shape="rect" id="node1" title=" " alt="" coords="542,5,662,32"/>
-<area shape="rect" id="node2" href="$classyume_1_1ty_1_1Type.html" title=" " alt="" coords="359,64,461,91"/>
-<area shape="rect" id="node4" title=" " alt="" coords="528,57,676,98"/>
-<area shape="rect" id="node3" title=" " alt="" coords="781,81,928,151"/>
-<area shape="rect" id="node5" title=" " alt="" coords="179,64,257,91"/>
-<area shape="rect" id="node6" title=" " alt="" coords="5,57,129,98"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,80,125,107"/>
+<area shape="rect" id="node2" href="$classyume_1_1ty_1_1Type.html" title=" " alt="" coords="14,5,117,32"/>
 </map>

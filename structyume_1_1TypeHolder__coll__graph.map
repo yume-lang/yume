@@ -1,12 +1,11 @@
 <map id="yume::TypeHolder" name="yume::TypeHolder">
-<area shape="rect" id="node1" title=" " alt="" coords="1479,71,1604,98"/>
-<area shape="rect" id="node2" title=" " alt="" coords="1187,5,1375,47"/>
-<area shape="rect" id="node3" href="$structyume_1_1TypeHolder_1_1IntTypePair.html" title=" " alt="" coords="883,17,1080,43"/>
-<area shape="rect" id="node4" href="$classyume_1_1ty_1_1Int.html" title=" " alt="" coords="557,53,647,79"/>
-<area shape="rect" id="node5" href="$classyume_1_1ty_1_1Type.html" title=" " alt="" coords="359,122,461,149"/>
-<area shape="rect" id="node7" title=" " alt="" coords="528,167,676,208"/>
-<area shape="rect" id="node10" href="$classyume_1_1ty_1_1UnknownType.html" title=" " alt="" coords="700,223,859,250"/>
-<area shape="rect" id="node6" title=" " alt="" coords="908,124,1055,195"/>
-<area shape="rect" id="node8" title=" " alt="" coords="179,122,257,149"/>
-<area shape="rect" id="node9" title=" " alt="" coords="5,115,129,156"/>
+<area shape="rect" id="node1" title=" " alt="" coords="1109,109,1235,136"/>
+<area shape="rect" id="node2" title=" " alt="" coords="817,73,1005,114"/>
+<area shape="rect" id="node3" href="$structyume_1_1TypeHolder_1_1IntTypePair.html" title=" " alt="" coords="455,37,652,64"/>
+<area shape="rect" id="node4" href="$classyume_1_1ty_1_1Int.html" title=" " alt="" coords="157,37,248,64"/>
+<area shape="rect" id="node5" href="$classyume_1_1ty_1_1Type.html" title=" " alt="" coords="5,123,108,149"/>
+<area shape="rect" id="node8" href="$classyume_1_1ty_1_1UnknownType.html" title=" " alt="" coords="272,139,431,165"/>
+<area shape="rect" id="node6" title=" " alt="" coords="501,88,605,115"/>
+<area shape="rect" id="node7" title=" " alt="" coords="183,88,222,115"/>
+<area shape="rect" id="node9" title=" " alt="" coords="835,190,987,231"/>
 </map>

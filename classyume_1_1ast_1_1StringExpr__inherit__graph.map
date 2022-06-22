@@ -1,6 +1,6 @@
 <map id="yume::ast::StringExpr" name="yume::ast::StringExpr">
-<area shape="rect" id="node1" title=" " alt="" coords="5,229,148,256"/>
-<area shape="rect" id="node2" href="$classyume_1_1ast_1_1Expr.html" title=" " alt="" coords="23,155,131,181"/>
-<area shape="rect" id="node3" href="$classyume_1_1ast_1_1Stmt.html" title=" " alt="" coords="21,80,132,107"/>
-<area shape="rect" id="node4" href="$classyume_1_1ast_1_1AST.html" title=" " alt="" coords="22,5,131,32"/>
+<area shape="rect" id="node1" title="String literals." alt="" coords="5,229,148,256"/>
+<area shape="rect" id="node2" href="$classyume_1_1ast_1_1Expr.html" title="Expressions have an associated value and type." alt="" coords="23,155,131,181"/>
+<area shape="rect" id="node3" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="21,80,132,107"/>
+<area shape="rect" id="node4" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program will inherit from this class." alt="" coords="22,5,131,32"/>
 </map>

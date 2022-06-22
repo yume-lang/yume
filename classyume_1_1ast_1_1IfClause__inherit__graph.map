@@ -1,4 +1,4 @@
 <map id="yume::ast::IfClause" name="yume::ast::IfClause">
-<area shape="rect" id="node1" title=" " alt="" coords="5,80,136,107"/>
-<area shape="rect" id="node2" href="$classyume_1_1ast_1_1AST.html" title=" " alt="" coords="16,5,125,32"/>
+<area shape="rect" id="node1" title="Clauses of an if statement IfStmt." alt="" coords="5,80,136,107"/>
+<area shape="rect" id="node2" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program will inherit from this class." alt="" coords="16,5,125,32"/>
 </map>

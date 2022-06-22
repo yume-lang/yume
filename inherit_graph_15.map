@@ -1,3 +1,9 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$structyume_1_1Loc.html" title="Represents a location in source code, as a range starting at a line and column and ending at some oth..." alt="" coords="5,5,87,32"/>
+<area shape="rect" id="node1" href="$classyume_1_1ty_1_1Type.html" title=" " alt="" coords="5,132,108,159"/>
+<area shape="rect" id="node2" href="$classyume_1_1ty_1_1Generic.html" title=" " alt="" coords="175,5,295,32"/>
+<area shape="rect" id="node3" href="$classyume_1_1ty_1_1Int.html" title=" " alt="" coords="190,56,281,83"/>
+<area shape="rect" id="node4" href="$classyume_1_1ty_1_1Ptr.html" title=" " alt="" coords="189,107,281,133"/>
+<area shape="rect" id="node5" href="$classyume_1_1ty_1_1Qual.html" title=" " alt="" coords="184,157,287,184"/>
+<area shape="rect" id="node6" href="$classyume_1_1ty_1_1Struct.html" title=" " alt="" coords="180,208,291,235"/>
+<area shape="rect" id="node7" href="$classyume_1_1ty_1_1UnknownType.html" title=" " alt="" coords="156,259,315,285"/>
 </map>

@@ -9,11 +9,9 @@ var searchData=
   ['int32_6',['int32',['../structyume_1_1TypeHolder.html#af3e1ad467d027b60a716e98c598c5104',1,'yume::TypeHolder']]],
   ['int64_7',['int64',['../structyume_1_1TypeHolder.html#a0ca37f69476c54ccaae1acbcd87bd8de',1,'yume::TypeHolder']]],
   ['int8_8',['int8',['../structyume_1_1TypeHolder.html#a0c1aefada325245bd55668b2ab3542a6',1,'yume::TypeHolder']]],
-  ['int_5fbin_5fprimitive_9',['int_bin_primitive',['../classyume_1_1Compiler.html#a37795a76ea433f63094919aad9865e07',1,'yume::Compiler']]],
-  ['intersect_10',['intersect',['../classyume_1_1ty_1_1Type.html#a948f65ace0dbe9392cfb13601aad0a62',1,'yume::ty::Type']]],
-  ['is_5fkeyword_11',['is_keyword',['../structyume_1_1Token.html#a9320386dea9c3c42c824fe945507bac0',1,'yume::Token']]],
-  ['is_5fmut_12',['is_mut',['../classyume_1_1ty_1_1Type.html#a14e89718449e055ee8f9f192fda8b4fc',1,'yume::ty::Type']]],
-  ['is_5fsigned_13',['is_signed',['../classyume_1_1ty_1_1Int.html#acb504b970d97dd2ebbd28de842b9f527',1,'yume::ty::Int']]],
-  ['is_5fuword_14',['is_uword',['../namespaceyume_1_1ast.html#acba492dd2497794f46153b88909b4e81',1,'yume::ast']]],
-  ['iterator_15',['Iterator',['../structyume_1_1dereference__view_1_1Iterator.html#a5406c75be83b28eb8ea83a75263dadcb',1,'yume::dereference_view::Iterator::Iterator()=default'],['../structyume_1_1dereference__view_1_1Iterator.html#ac69e8bbf4248efd80fe9725e9fc5bf68',1,'yume::dereference_view::Iterator::Iterator(Parent *parent, Base_iter current)']]]
+  ['intersect_9',['intersect',['../classyume_1_1ty_1_1Type.html#a948f65ace0dbe9392cfb13601aad0a62',1,'yume::ty::Type']]],
+  ['is_5fkeyword_10',['is_keyword',['../structyume_1_1Token.html#a9320386dea9c3c42c824fe945507bac0',1,'yume::Token']]],
+  ['is_5fmut_11',['is_mut',['../classyume_1_1ty_1_1Type.html#a14e89718449e055ee8f9f192fda8b4fc',1,'yume::ty::Type']]],
+  ['is_5fsigned_12',['is_signed',['../classyume_1_1ty_1_1Int.html#acb504b970d97dd2ebbd28de842b9f527',1,'yume::ty::Int']]],
+  ['is_5fuword_13',['is_uword',['../namespaceyume_1_1ast.html#acba492dd2497794f46153b88909b4e81',1,'yume::ast']]]
 ];

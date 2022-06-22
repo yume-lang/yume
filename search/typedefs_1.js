@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['difference_5ftype_0',['difference_type',['../structyume_1_1dereference__view_1_1Iterator.html#aefaf88d4bd2d558a4fdf9baff16d35be',1,'yume::dereference_view::Iterator']]]
+  ['payload_0',['Payload',['../structyume_1_1Token.html#a45fbde9023f1f51b4d48b9b14470685e',1,'yume::Token']]]
 ];

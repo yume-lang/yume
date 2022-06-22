@@ -1,7 +1,14 @@
 <map id="yume::ast::TokenIterator" name="yume::ast::TokenIterator">
-<area shape="rect" id="node1" title=" " alt="" coords="48,288,208,315"/>
-<area shape="rect" id="node2" title=" " alt="" coords="58,184,198,211"/>
-<area shape="rect" id="node3" href="$structyume_1_1Token.html" title="A categorized token in source code, created by the tokenizer. These tokens are consumed by the lexer." alt="" coords="81,95,175,121"/>
-<area shape="rect" id="node4" title=" " alt="" coords="5,5,125,32"/>
-<area shape="rect" id="node5" href="$structyume_1_1Loc.html" title="Represents a location in source code, as a range starting at a line and column and ending at some oth..." alt="" coords="150,5,231,32"/>
+<area shape="rect" id="node1" title="An iterator&#45;like holding Tokens, used when parsing." alt="" coords="228,421,388,448"/>
+<area shape="rect" id="node2" title=" " alt="" coords="238,317,378,344"/>
+<area shape="rect" id="node3" href="$structyume_1_1Token.html" title="A categorized token in source code, created by the tokenizer. These tokens are consumed by the lexer." alt="" coords="197,228,291,255"/>
+<area shape="rect" id="node4" title=" " alt="" coords="5,139,56,165"/>
+<area shape="rect" id="node5" title=" " alt="" coords="80,139,200,165"/>
+<area shape="rect" id="node6" title=" " alt="" coords="107,5,173,32"/>
+<area shape="rect" id="node7" title=" " alt="" coords="225,139,263,165"/>
+<area shape="rect" id="node8" href="$structyume_1_1Loc.html" title="Represents a location in source code, as a range starting at a line and column and ending at some oth..." alt="" coords="287,139,369,165"/>
+<area shape="rect" id="node9" title=" " alt="" coords="245,5,315,32"/>
+<area shape="rect" id="node10" title=" " alt="" coords="340,5,463,32"/>
+<area shape="rect" id="node11" title=" " alt="" coords="336,228,448,255"/>
+<area shape="rect" id="node12" title=" " alt="" coords="393,139,431,165"/>
 </map>

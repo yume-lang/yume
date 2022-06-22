@@ -68,13 +68,24 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="structyume_1_1CRTPWalker-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">yume::CRTPWalker&lt; Derived, Const &gt; Struct Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
 <p><code>#include &lt;<a class="el" href="crtp__walker_8hpp_source.html">crtp_walker.hpp</a>&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for yume::CRTPWalker&lt; Derived, Const &gt;:</div>
+<div class="dyncontent">
+<div class="center"><img src="structyume_1_1CRTPWalker__inherit__graph.png" border="0" usemap="#ayume_1_1CRTPWalker_3_01Derived_00_01Const_01_4_inherit__map" alt="Inheritance graph"/></div>
+<map name="ayume_1_1CRTPWalker_3_01Derived_00_01Const_01_4_inherit__map" id="ayume_1_1CRTPWalker_3_01Derived_00_01Const_01_4_inherit__map">
+<area shape="rect" title=" " alt="" coords="129,5,323,47"/>
+<area shape="rect" href="structyume_1_1CRTPWalker.html" title=" " alt="" coords="5,117,212,143"/>
+<area shape="rect" href="structyume_1_1CRTPWalker.html" title=" " alt="" coords="236,109,453,151"/>
+<area shape="rect" href="classyume_1_1Compiler.html" title=" " alt="" coords="53,200,164,227"/>
+<area shape="rect" href="structyume_1_1TypeWalker.html" title=" " alt="" coords="281,200,408,227"/>
+</map>
+<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -82,17 +93,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a037030a6c092206efef3dac8a8d4c787"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa3a33385519c11d0947d39f3edb22974"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1CRTPWalker.html#aa3a33385519c11d0947d39f3edb22974">body_expression</a> (<a class="el" href="namespaceyume.html#a0b0665f6fd5ded9b92b0734a4985d947">maybe_const_t</a>&lt; Const, <a class="el" href="classyume_1_1ast_1_1Expr.html">ast::Expr</a> &gt; &amp;expr, auto &amp;&amp;... args)</td></tr>
 <tr class="separator:aa3a33385519c11d0947d39f3edb22974"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
-Private Member Functions</h2></td></tr>
-<tr class="memitem:add3b2235c2f8b4ffda77c35340dee9fe"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; <br />
-requires std::is_base_of_v&lt;<a class="el" href="classyume_1_1ast_1_1Expr.html">ast::Expr</a>, T&gt;</td></tr>
-<tr class="memitem:add3b2235c2f8b4ffda77c35340dee9fe"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structyume_1_1CRTPWalker.html#add3b2235c2f8b4ffda77c35340dee9fe">conv_expression</a> (<a class="el" href="namespaceyume.html#a0b0665f6fd5ded9b92b0734a4985d947">maybe_const_t</a>&lt; Const, <a class="el" href="classyume_1_1ast_1_1Expr.html">ast::Expr</a> &gt; &amp;expr, auto... args)</td></tr>
-<tr class="separator:add3b2235c2f8b4ffda77c35340dee9fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad4e3a808d783b279810651071cafc6fe"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; <br />
-requires std::conjunction_v&lt;std::is_base_of&lt;<a class="el" href="classyume_1_1ast_1_1Stmt.html">ast::Stmt</a>, T&gt;, std::negation&lt;std::is_base_of&lt;<a class="el" href="classyume_1_1ast_1_1Expr.html">ast::Expr</a>, T&gt;&gt;&gt;</td></tr>
-<tr class="memitem:ad4e3a808d783b279810651071cafc6fe"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structyume_1_1CRTPWalker.html#ad4e3a808d783b279810651071cafc6fe">conv_statement</a> (<a class="el" href="namespaceyume.html#a0b0665f6fd5ded9b92b0734a4985d947">maybe_const_t</a>&lt; Const, <a class="el" href="classyume_1_1ast_1_1Stmt.html">ast::Stmt</a> &gt; &amp;stat, auto... args)</td></tr>
-<tr class="separator:ad4e3a808d783b279810651071cafc6fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename Derived, bool Const = true&gt;<br />
@@ -137,6 +137,10 @@ template&lt;typename Derived , bool Const = true&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="crtp__walker_8hpp_source.html#l00027">27</a> of file <a class="el" href="crtp__walker_8hpp_source.html">crtp_walker.hpp</a>.</p>
 
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00058">yume::ast::K_Assign</a>, <a class="el" href="ast_8hpp_source.html#l00052">yume::ast::K_Bool</a>, <a class="el" href="ast_8hpp_source.html#l00055">yume::ast::K_Call</a>, <a class="el" href="ast_8hpp_source.html#l00051">yume::ast::K_Char</a>, <a class="el" href="ast_8hpp_source.html#l00056">yume::ast::K_Ctor</a>, <a class="el" href="ast_8hpp_source.html#l00059">yume::ast::K_FieldAccess</a>, <a class="el" href="ast_8hpp_source.html#l00050">yume::ast::K_Number</a>, <a class="el" href="ast_8hpp_source.html#l00057">yume::ast::K_Slice</a>, <a class="el" href="ast_8hpp_source.html#l00053">yume::ast::K_String</a>, and <a class="el" href="ast_8hpp_source.html#l00054">yume::ast::K_Var</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00292">yume::TypeWalker::body_expression()</a>, and <a class="el" href="crtp__walker_8hpp_source.html#l00013">yume::CRTPWalker&lt; Derived, Const &gt;::body_statement()</a>.</p>
+
 </div>
 </div>
 <a id="a037030a6c092206efef3dac8a8d4c787" name="a037030a6c092206efef3dac8a8d4c787"></a>
@@ -177,91 +181,9 @@ template&lt;typename Derived , bool Const = true&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="crtp__walker_8hpp_source.html#l00013">13</a> of file <a class="el" href="crtp__walker_8hpp_source.html">crtp_walker.hpp</a>.</p>
 
-</div>
-</div>
-<a id="add3b2235c2f8b4ffda77c35340dee9fe" name="add3b2235c2f8b4ffda77c35340dee9fe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#add3b2235c2f8b4ffda77c35340dee9fe">&#9670;&nbsp;</a></span>conv_expression()</h2>
+<p class="reference">References <a class="el" href="crtp__walker_8hpp_source.html#l00027">yume::CRTPWalker&lt; Derived, Const &gt;::body_expression()</a>, <a class="el" href="ast_8hpp_source.html#l00039">yume::ast::K_Compound</a>, <a class="el" href="ast_8hpp_source.html#l00040">yume::ast::K_FnDecl</a>, <a class="el" href="ast_8hpp_source.html#l00044">yume::ast::K_If</a>, <a class="el" href="ast_8hpp_source.html#l00045">yume::ast::K_Return</a>, <a class="el" href="ast_8hpp_source.html#l00041">yume::ast::K_StructDecl</a>, <a class="el" href="ast_8hpp_source.html#l00042">yume::ast::K_VarDecl</a>, and <a class="el" href="ast_8hpp_source.html#l00043">yume::ast::K_While</a>.</p>
 
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Derived , bool Const = true&gt; </div>
-<div class="memtemplate">
-template&lt;typename T &gt; <br />
-requires std::is_base_of_v&lt;<a class="el" href="classyume_1_1ast_1_1Expr.html">ast::Expr</a>, T&gt;</div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">auto <a class="el" href="structyume_1_1CRTPWalker.html">yume::CRTPWalker</a>&lt; Derived, Const &gt;::conv_expression </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="namespaceyume.html#a0b0665f6fd5ded9b92b0734a4985d947">maybe_const_t</a>&lt; Const, <a class="el" href="classyume_1_1ast_1_1Expr.html">ast::Expr</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>expr</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">auto...&#160;</td>
-          <td class="paramname"><em>args</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="crtp__walker_8hpp_source.html#l00047">47</a> of file <a class="el" href="crtp__walker_8hpp_source.html">crtp_walker.hpp</a>.</p>
-
-</div>
-</div>
-<a id="ad4e3a808d783b279810651071cafc6fe" name="ad4e3a808d783b279810651071cafc6fe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad4e3a808d783b279810651071cafc6fe">&#9670;&nbsp;</a></span>conv_statement()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Derived , bool Const = true&gt; </div>
-<div class="memtemplate">
-template&lt;typename T &gt; <br />
-requires std::conjunction_v&lt;std::is_base_of&lt;<a class="el" href="classyume_1_1ast_1_1Stmt.html">ast::Stmt</a>, T&gt;, std::negation&lt;std::is_base_of&lt;<a class="el" href="classyume_1_1ast_1_1Expr.html">ast::Expr</a>, T&gt;&gt;&gt;</div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="structyume_1_1CRTPWalker.html">yume::CRTPWalker</a>&lt; Derived, Const &gt;::conv_statement </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="namespaceyume.html#a0b0665f6fd5ded9b92b0734a4985d947">maybe_const_t</a>&lt; Const, <a class="el" href="classyume_1_1ast_1_1Stmt.html">ast::Stmt</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>stat</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">auto...&#160;</td>
-          <td class="paramname"><em>args</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="crtp__walker_8hpp_source.html#l00053">53</a> of file <a class="el" href="crtp__walker_8hpp_source.html">crtp_walker.hpp</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00288">yume::TypeWalker::body_statement()</a>.</p>
 
 </div>
 </div>

@@ -1,6 +1,6 @@
 <map id="yume::ast::CtorExpr" name="yume::ast::CtorExpr">
-<area shape="rect" id="node1" title=" " alt="" coords="5,229,137,256"/>
-<area shape="rect" id="node2" href="$classyume_1_1ast_1_1Expr.html" title=" " alt="" coords="17,155,125,181"/>
-<area shape="rect" id="node3" href="$classyume_1_1ast_1_1Stmt.html" title=" " alt="" coords="16,80,127,107"/>
-<area shape="rect" id="node4" href="$classyume_1_1ast_1_1AST.html" title=" " alt="" coords="17,5,126,32"/>
+<area shape="rect" id="node1" title="A construction of a struct or cast of a primitive." alt="" coords="5,229,137,256"/>
+<area shape="rect" id="node2" href="$classyume_1_1ast_1_1Expr.html" title="Expressions have an associated value and type." alt="" coords="17,155,125,181"/>
+<area shape="rect" id="node3" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="16,80,127,107"/>
+<area shape="rect" id="node4" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program will inherit from this class." alt="" coords="17,5,126,32"/>
 </map>

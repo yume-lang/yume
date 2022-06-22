@@ -70,7 +70,6 @@ $(function() {
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
-<a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classyume_1_1ty_1_1Type-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">yume::ty::Type Class Reference</div></div>
 </div><!--header-->
@@ -89,18 +88,6 @@ Inheritance diagram for yume::ty::Type:</div>
 <area shape="rect" href="classyume_1_1ty_1_1Qual.html" title=" " alt="" coords="184,157,287,184"/>
 <area shape="rect" href="classyume_1_1ty_1_1Struct.html" title=" " alt="" coords="180,208,291,235"/>
 <area shape="rect" href="classyume_1_1ty_1_1UnknownType.html" title=" " alt="" coords="156,259,315,285"/>
-</map>
-<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
-<div class="dynheader">
-Collaboration diagram for yume::ty::Type:</div>
-<div class="dyncontent">
-<div class="center"><img src="classyume_1_1ty_1_1Type__coll__graph.png" border="0" usemap="#ayume_1_1ty_1_1Type_coll__map" alt="Collaboration graph"/></div>
-<map name="ayume_1_1ty_1_1Type_coll__map" id="ayume_1_1ty_1_1Type_coll__map">
-<area shape="rect" title=" " alt="" coords="359,51,461,78"/>
-<area shape="rect" title=" " alt="" coords="528,5,676,47"/>
-<area shape="rect" title=" " alt="" coords="781,29,928,100"/>
-<area shape="rect" title=" " alt="" coords="179,51,257,78"/>
-<area shape="rect" title=" " alt="" coords="5,44,129,85"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -154,15 +141,6 @@ Public Member Functions</h2></td></tr>
 Protected Member Functions</h2></td></tr>
 <tr class="memitem:a79a46656c603b72b928271b7a0f443fc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Type.html#a79a46656c603b72b928271b7a0f443fc">Type</a> (<a class="el" href="namespaceyume_1_1ty.html#a4c255b641f0b91ee4ff8bc878e7bd04e">Kind</a> <a class="el" href="classyume_1_1ty_1_1Type.html#a584eb23337c353a1be4907cd6a28b23b">kind</a>, string <a class="el" href="classyume_1_1ty_1_1Type.html#ae38fa8998004a15c0e70e6122ddf7685">name</a>)</td></tr>
 <tr class="separator:a79a46656c603b72b928271b7a0f443fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
-Private Attributes</h2></td></tr>
-<tr class="memitem:a08e1ddf6056730c04c2a21e003a280d6"><td class="memItemLeft" align="right" valign="top">std::array&lt; unique_ptr&lt; <a class="el" href="classyume_1_1ty_1_1Type.html">Type</a> &gt;, static_cast&lt; int &gt;(<a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a72090ac6686018ce581e9f3911b73e73">Qualifier::Q_END</a>)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Type.html#a08e1ddf6056730c04c2a21e003a280d6">m_known_qual</a> {}</td></tr>
-<tr class="separator:a08e1ddf6056730c04c2a21e003a280d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a43f7aa4672fa4801ecaf624370c0aede"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="namespaceyume_1_1ty.html#a4c255b641f0b91ee4ff8bc878e7bd04e">Kind</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Type.html#a43f7aa4672fa4801ecaf624370c0aede">m_kind</a></td></tr>
-<tr class="separator:a43f7aa4672fa4801ecaf624370c0aede"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41614b21da8a2ef404769d22f84c712c"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Type.html#a41614b21da8a2ef404769d22f84c712c">m_name</a></td></tr>
-<tr class="separator:a41614b21da8a2ef404769d22f84c712c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
@@ -302,6 +280,8 @@ Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00114">114</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
+<p class="reference">Referenced by <a class="el" href="ast_8hpp_source.html#l00175">yume::ast::AST::unify_val_ty()</a>.</p>
+
 </div>
 </div>
 <a id="a719cce49f89522258ac23b7ef5986122" name="a719cce49f89522258ac23b7ef5986122"></a>
@@ -321,6 +301,8 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00053">53</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+
+<p class="reference">References <a class="el" href="type_8cpp_source.html#l00051">yume::ty::GENERIC_SUBSTITUTION</a>, <a class="el" href="type_8cpp_source.html#l00049">yume::ty::PERFECT_MATCH</a>, and <a class="el" href="type_8cpp_source.html#l00050">yume::ty::SAFE_CONVERSION</a>.</p>
 
 </div>
 </div>
@@ -360,6 +342,8 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00098">98</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+
+<p class="reference">References <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>.</p>
 
 </div>
 </div>
@@ -415,6 +399,8 @@ Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00072">72</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
 
+<p class="reference">References <a class="el" href="type_8cpp_source.html#l00019">known_qual()</a>, and <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>.</p>
+
 </div>
 </div>
 <a id="ac05e4651971b2cc446dbb4f8648d0eaa" name="ac05e4651971b2cc446dbb4f8648d0eaa"></a>
@@ -442,6 +428,8 @@ Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00071">71</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
 
+<p class="reference">References <a class="el" href="type_8cpp_source.html#l00019">known_qual()</a>, and <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a165d3d525f6d0cbd55e42cc3058cafcc">yume::Ptr</a>.</p>
+
 </div>
 </div>
 <a id="ab615a912b86bd8e5ed881235ff757388" name="ab615a912b86bd8e5ed881235ff757388"></a>
@@ -461,6 +449,10 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00019">19</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+
+<p class="reference">References <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>, and <a class="el" href="type_8cpp_source.html#l00010">yume::ty::qual_suffix()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="type_8hpp_source.html#l00072">known_mut()</a>, <a class="el" href="type_8hpp_source.html#l00071">known_ptr()</a>, and <a class="el" href="type_8hpp_source.html#l00073">known_slice()</a>.</p>
 
 </div>
 </div>
@@ -489,6 +481,8 @@ Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00073">73</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
 
+<p class="reference">References <a class="el" href="type_8cpp_source.html#l00019">known_qual()</a>, and <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706ad140d37ad98c12ccd8e1c432f548bcdb">yume::Slice</a>.</p>
+
 </div>
 </div>
 <a id="ae38fa8998004a15c0e70e6122ddf7685" name="ae38fa8998004a15c0e70e6122ddf7685"></a>
@@ -515,6 +509,8 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00068">68</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00141">yume::Compiler::convert_type()</a>, and <a class="el" href="ast_8hpp_source.html#l00175">yume::ast::AST::unify_val_ty()</a>.</p>
 
 </div>
 </div>
@@ -606,6 +602,8 @@ Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00100">100</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
+<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00140">without_qual()</a>, and <a class="el" href="type_8cpp_source.html#l00142">without_qual_kind()</a>.</p>
+
 </div>
 </div>
 <a id="a1cdecd7eecc20522978c125a35267368" name="a1cdecd7eecc20522978c125a35267368"></a>
@@ -624,6 +622,8 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00140">140</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+
+<p class="reference">References <a class="el" href="type_8cpp_source.html#l00100">qual_base()</a>.</p>
 
 </div>
 </div>
@@ -644,78 +644,7 @@ Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00142">142</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="a43f7aa4672fa4801ecaf624370c0aede" name="a43f7aa4672fa4801ecaf624370c0aede"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a43f7aa4672fa4801ecaf624370c0aede">&#9670;&nbsp;</a></span>m_kind</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const <a class="el" href="namespaceyume_1_1ty.html#a4c255b641f0b91ee4ff8bc878e7bd04e">Kind</a> yume::ty::Type::m_kind</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00046">46</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
-
-</div>
-</div>
-<a id="a08e1ddf6056730c04c2a21e003a280d6" name="a08e1ddf6056730c04c2a21e003a280d6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a08e1ddf6056730c04c2a21e003a280d6">&#9670;&nbsp;</a></span>m_known_qual</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::array&lt;unique_ptr&lt;<a class="el" href="classyume_1_1ty_1_1Type.html">Type</a>&gt;, static_cast&lt;int&gt;(<a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a72090ac6686018ce581e9f3911b73e73">Qualifier::Q_END</a>)&gt; yume::ty::Type::m_known_qual {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">mutable</span><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00045">45</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
-
-</div>
-</div>
-<a id="a41614b21da8a2ef404769d22f84c712c" name="a41614b21da8a2ef404769d22f84c712c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a41614b21da8a2ef404769d22f84c712c">&#9670;&nbsp;</a></span>m_name</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">string yume::ty::Type::m_name</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00047">47</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
+<p class="reference">References <a class="el" href="type_8cpp_source.html#l00100">qual_base()</a>.</p>
 
 </div>
 </div>

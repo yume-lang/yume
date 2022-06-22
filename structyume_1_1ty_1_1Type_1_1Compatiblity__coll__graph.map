@@ -1,9 +1,7 @@
 <map id="yume::ty::Type::Compatiblity" name="yume::ty::Type::Compatiblity">
-<area shape="rect" id="node1" title=" " alt="" coords="841,27,1021,53"/>
-<area shape="rect" id="node2" href="$classyume_1_1ty_1_1Generic.html" title=" " alt="" coords="542,48,662,75"/>
-<area shape="rect" id="node3" href="$classyume_1_1ty_1_1Type.html" title=" " alt="" coords="359,72,461,99"/>
-<area shape="rect" id="node5" title=" " alt="" coords="528,99,676,141"/>
-<area shape="rect" id="node4" title=" " alt="" coords="858,101,1005,171"/>
-<area shape="rect" id="node6" title=" " alt="" coords="179,72,257,99"/>
-<area shape="rect" id="node7" title=" " alt="" coords="5,65,129,106"/>
+<area shape="rect" id="node1" title=" " alt="" coords="163,185,343,212"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,81,153,123"/>
+<area shape="rect" id="node3" title=" " alt="" coords="177,89,245,115"/>
+<area shape="rect" id="node4" href="$classyume_1_1ty_1_1Generic.html" title=" " alt="" coords="417,89,537,115"/>
+<area shape="rect" id="node5" href="$classyume_1_1ty_1_1Type.html" title=" " alt="" coords="259,5,361,32"/>
 </map>

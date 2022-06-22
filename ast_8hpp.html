@@ -153,68 +153,91 @@ This graph shows which files directly or indirectly include this file:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1TokenIterator.html">yume::ast::TokenIterator</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An iterator-like holding <code><a class="el" href="structyume_1_1Token.html" title="A categorized token in source code, created by the tokenizer. These tokens are consumed by the lexer.">Token</a></code>s, used when parsing.  <a href="structyume_1_1ast_1_1TokenIterator.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1Attachment.html">yume::ast::Attachment</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents the relationship between multiple <code><a class="el" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program will inherit from this class.">AST</a></code> nodes.  <a href="structyume_1_1ast_1_1Attachment.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AST.html">yume::ast::AST</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">All nodes in the <code><a class="el" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program will inherit from this class.">AST</a></code> tree of the program will inherit from this class.  <a href="classyume_1_1ast_1_1AST.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1Stmt.html">yume::ast::Stmt</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Statements make up most things in source code.  <a href="classyume_1_1ast_1_1Stmt.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1Type.html">yume::ast::Type</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A type <b>annotation</b>. This (<code><a class="el" href="classyume_1_1ast_1_1Type.html" title="A type annotation. This (ast::Type) is distinct from the actual type of a value (ty::Type).">ast::Type</a></code>) is distinct from the actual type of a value (<code><a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a></code>).  <a href="classyume_1_1ast_1_1Type.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1SimpleType.html">yume::ast::SimpleType</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Just the name of a type, always capitalized.  <a href="classyume_1_1ast_1_1SimpleType.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1QualType.html">yume::ast::QualType</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A type with a <code>Qualifier</code> like <code>mut</code> or <code>[]</code> following.  <a href="classyume_1_1ast_1_1QualType.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1SelfType.html">yume::ast::SelfType</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <code>self</code> type.  <a href="classyume_1_1ast_1_1SelfType.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1TypeName.html">yume::ast::TypeName</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A pair of a <code><a class="el" href="classyume_1_1ast_1_1Type.html" title="A type annotation. This (ast::Type) is distinct from the actual type of a value (ty::Type).">Type</a></code> and an identifier, <em>i.e</em>. a parameter name.  <a href="classyume_1_1ast_1_1TypeName.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1Expr.html">yume::ast::Expr</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Expressions have an associated value and type.  <a href="classyume_1_1ast_1_1Expr.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1NumberExpr.html">yume::ast::NumberExpr</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number literals.  <a href="classyume_1_1ast_1_1NumberExpr.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1CharExpr.html">yume::ast::CharExpr</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Char literals.  <a href="classyume_1_1ast_1_1CharExpr.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1BoolExpr.html">yume::ast::BoolExpr</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bool literals (<code>true</code> or <code>false</code>).  <a href="classyume_1_1ast_1_1BoolExpr.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1StringExpr.html">yume::ast::StringExpr</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">String literals.  <a href="classyume_1_1ast_1_1StringExpr.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1VarExpr.html">yume::ast::VarExpr</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A variable, <em>i.e</em>. just an identifier.  <a href="classyume_1_1ast_1_1VarExpr.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1CallExpr.html">yume::ast::CallExpr</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A function call or operator.  <a href="classyume_1_1ast_1_1CallExpr.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1CtorExpr.html">yume::ast::CtorExpr</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A construction of a struct or cast of a primitive.  <a href="classyume_1_1ast_1_1CtorExpr.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1SliceExpr.html">yume::ast::SliceExpr</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A slice literal, i.e. an array.  <a href="classyume_1_1ast_1_1SliceExpr.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AssignExpr.html">yume::ast::AssignExpr</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An assignment (<code>=</code>).  <a href="classyume_1_1ast_1_1AssignExpr.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1FieldAccessExpr.html">yume::ast::FieldAccessExpr</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Direct access of a field of a struct (<code>::</code>).  <a href="classyume_1_1ast_1_1FieldAccessExpr.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1Compound.html">yume::ast::Compound</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A statement consisting of multiple other statements, i.e. the body of a function.  <a href="classyume_1_1ast_1_1Compound.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1FnDecl.html">yume::ast::FnDecl</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A declaration of a function (<code>def</code>).  <a href="classyume_1_1ast_1_1FnDecl.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1StructDecl.html">yume::ast::StructDecl</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A declaration of a struct (<code>struct</code>).  <a href="classyume_1_1ast_1_1StructDecl.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1VarDecl.html">yume::ast::VarDecl</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A declaration of a local variable (<code>let</code>).  <a href="classyume_1_1ast_1_1VarDecl.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1WhileStmt.html">yume::ast::WhileStmt</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A while loop (<code>while</code>).  <a href="classyume_1_1ast_1_1WhileStmt.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1IfClause.html">yume::ast::IfClause</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clauses of an if statement <code><a class="el" href="classyume_1_1ast_1_1IfStmt.html" title="An if statement (if), with one or more IfClauses, and optionally an else clause.">IfStmt</a></code>.  <a href="classyume_1_1ast_1_1IfClause.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1IfStmt.html">yume::ast::IfStmt</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An if statement (<code>if</code>), with one or more <code><a class="el" href="classyume_1_1ast_1_1IfClause.html" title="Clauses of an if statement IfStmt.">IfClause</a></code>s, and optionally an else clause.  <a href="classyume_1_1ast_1_1IfStmt.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1ReturnStmt.html">yume::ast::ReturnStmt</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return from a function body.  <a href="classyume_1_1ast_1_1ReturnStmt.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1Program.html">yume::ast::Program</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstd_1_1tuple__size_3_01yume_1_1ast_1_1TypeName_01_4.html">std::tuple_size&lt; yume::ast::TypeName &gt;</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstd_1_1tuple__element_3_010_00_01yume_1_1ast_1_1TypeName_01_4.html">std::tuple_element&lt; 0, yume::ast::TypeName &gt;</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstd_1_1tuple__element_3_011_00_01yume_1_1ast_1_1TypeName_01_4.html">std::tuple_element&lt; 1, yume::ast::TypeName &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The top level structure of a file of source code.  <a href="classyume_1_1ast_1_1Program.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
@@ -222,9 +245,6 @@ Namespaces</h2></td></tr>
 <tr class="memitem:namespaceyume"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html">yume</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:namespaceyume_1_1ast"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html">yume::ast</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:namespacestd"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestd.html">std</a></td></tr>
-<tr class="memdesc:namespacestd"><td class="mdescLeft">&#160;</td><td class="mdescRight">STL namespace. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
@@ -240,28 +260,28 @@ Enumerations</h2></td></tr>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406af1e9f2140cf76d67d255de25fcd3088b">yume::ast::K_TypeName</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406ae38d19e8971288ddf2a42f6e4103f1fe">yume::ast::K_Stmt</a>
 , <br />
-&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a878eecc09bda24ff7909d7a166662ac6">yume::ast::K_Program</a>
-, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406ac933ad0429b446af9ba62e8822a54379">yume::ast::K_FnDecl</a>
-, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a946bdf8ff3e75cdaf555ca2e32bcb2aa">yume::ast::K_VarDecl</a>
-, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406af369edc2068d114686cf488435a34ffb">yume::ast::K_StructDecl</a>
-, <br />
 &#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a78a2b8d19c590b942b3cd61d523e68c5">yume::ast::K_Compound</a>
-, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406adbc49daadf28bb31b8a248d249196015">yume::ast::K_While</a>
+, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406ac933ad0429b446af9ba62e8822a54379">yume::ast::K_FnDecl</a>
+, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406af369edc2068d114686cf488435a34ffb">yume::ast::K_StructDecl</a>
+, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a946bdf8ff3e75cdaf555ca2e32bcb2aa">yume::ast::K_VarDecl</a>
+, <br />
+&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406adbc49daadf28bb31b8a248d249196015">yume::ast::K_While</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a08c0eff289a386052629c4bb4d7fa2eb">yume::ast::K_If</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406aae08564531ad67aa7fc1359d891f2937">yume::ast::K_Return</a>
+, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a878eecc09bda24ff7909d7a166662ac6">yume::ast::K_Program</a>
 , <br />
 &#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a4c09262bfdea3066b7ec37889f7a4377">yume::ast::K_Expr</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a3163923250c16d41300da2e0ba00da9d">yume::ast::K_Number</a>
-, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a04140bbad212603506fc382a2d3d81a5">yume::ast::K_String</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a9f5bdd2df82c5de3eb02926ad86fa44c">yume::ast::K_Char</a>
+, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a020ee52d01f56aecf0b4be3cadea3bc7">yume::ast::K_Bool</a>
 , <br />
-&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a020ee52d01f56aecf0b4be3cadea3bc7">yume::ast::K_Bool</a>
-, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a1026a7cd3d739e73716b6a5e19fe06b5">yume::ast::K_Assign</a>
+&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a04140bbad212603506fc382a2d3d81a5">yume::ast::K_String</a>
+, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a5bd1845d5247253184d0fc9ec0627611">yume::ast::K_Var</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a725d5805359046b94634996276d35b29">yume::ast::K_Call</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406affbe8ac10c90f57aeefdf6b190308d56">yume::ast::K_Ctor</a>
 , <br />
 &#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a50d806f5bf631e958002cc257d257d70">yume::ast::K_Slice</a>
-, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a5bd1845d5247253184d0fc9ec0627611">yume::ast::K_Var</a>
+, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a1026a7cd3d739e73716b6a5e19fe06b5">yume::ast::K_Assign</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a57e69957d24d6a173fa460b59e03cee6">yume::ast::K_FieldAccess</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a2307bd6b4d1a28171ee71c082ff26068">yume::ast::K_END_Expr</a>
 , <br />

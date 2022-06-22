@@ -1,23 +1,23 @@
 <map id="yume::ast::Stmt" name="yume::ast::Stmt">
-<area shape="rect" id="node1" title=" " alt="" coords="163,385,273,412"/>
-<area shape="rect" id="node3" href="$classyume_1_1ast_1_1Compound.html" title=" " alt="" coords="323,183,469,209"/>
-<area shape="rect" id="node4" href="$classyume_1_1ast_1_1Expr.html" title=" " alt="" coords="342,233,450,260"/>
-<area shape="rect" id="node15" href="$classyume_1_1ast_1_1FnDecl.html" title=" " alt="" coords="334,284,458,311"/>
-<area shape="rect" id="node16" href="$classyume_1_1ast_1_1IfStmt.html" title=" " alt="" coords="337,335,455,361"/>
-<area shape="rect" id="node17" href="$classyume_1_1ast_1_1Program.html" title=" " alt="" coords="330,385,462,412"/>
-<area shape="rect" id="node18" href="$classyume_1_1ast_1_1ReturnStmt.html" title=" " alt="" coords="321,436,471,463"/>
-<area shape="rect" id="node19" href="$classyume_1_1ast_1_1StructDecl.html" title=" " alt="" coords="324,487,468,513"/>
-<area shape="rect" id="node20" href="$classyume_1_1ast_1_1VarDecl.html" title=" " alt="" coords="331,537,461,564"/>
-<area shape="rect" id="node21" href="$classyume_1_1ast_1_1WhileStmt.html" title=" " alt="" coords="325,588,467,615"/>
-<area shape="rect" id="node2" href="$classyume_1_1ast_1_1AST.html" title=" " alt="" coords="5,385,115,412"/>
-<area shape="rect" id="node5" href="$classyume_1_1ast_1_1AssignExpr.html" title=" " alt="" coords="535,5,683,32"/>
-<area shape="rect" id="node6" href="$classyume_1_1ast_1_1BoolExpr.html" title=" " alt="" coords="541,56,676,83"/>
-<area shape="rect" id="node7" href="$classyume_1_1ast_1_1CallExpr.html" title=" " alt="" coords="543,107,674,133"/>
-<area shape="rect" id="node8" href="$classyume_1_1ast_1_1CharExpr.html" title=" " alt="" coords="541,157,676,184"/>
-<area shape="rect" id="node9" href="$classyume_1_1ast_1_1CtorExpr.html" title=" " alt="" coords="543,208,675,235"/>
-<area shape="rect" id="node10" href="$classyume_1_1ast_1_1FieldAccessExpr.html" title=" " alt="" coords="519,259,699,285"/>
-<area shape="rect" id="node11" href="$classyume_1_1ast_1_1NumberExpr.html" title=" " alt="" coords="531,309,686,336"/>
-<area shape="rect" id="node12" href="$classyume_1_1ast_1_1SliceExpr.html" title=" " alt="" coords="540,360,677,387"/>
-<area shape="rect" id="node13" href="$classyume_1_1ast_1_1StringExpr.html" title=" " alt="" coords="537,411,680,437"/>
-<area shape="rect" id="node14" href="$classyume_1_1ast_1_1VarExpr.html" title=" " alt="" coords="545,461,673,488"/>
+<area shape="rect" id="node1" title="Statements make up most things in source code." alt="" coords="163,385,273,412"/>
+<area shape="rect" id="node3" href="$classyume_1_1ast_1_1Compound.html" title="A statement consisting of multiple other statements, i.e. the body of a function." alt="" coords="323,183,469,209"/>
+<area shape="rect" id="node4" href="$classyume_1_1ast_1_1Expr.html" title="Expressions have an associated value and type." alt="" coords="342,233,450,260"/>
+<area shape="rect" id="node15" href="$classyume_1_1ast_1_1FnDecl.html" title="A declaration of a function (def)." alt="" coords="334,284,458,311"/>
+<area shape="rect" id="node16" href="$classyume_1_1ast_1_1IfStmt.html" title="An if statement (if), with one or more IfClauses, and optionally an else clause." alt="" coords="337,335,455,361"/>
+<area shape="rect" id="node17" href="$classyume_1_1ast_1_1Program.html" title="The top level structure of a file of source code." alt="" coords="330,385,462,412"/>
+<area shape="rect" id="node18" href="$classyume_1_1ast_1_1ReturnStmt.html" title="Return from a function body." alt="" coords="321,436,471,463"/>
+<area shape="rect" id="node19" href="$classyume_1_1ast_1_1StructDecl.html" title="A declaration of a struct (struct)." alt="" coords="324,487,468,513"/>
+<area shape="rect" id="node20" href="$classyume_1_1ast_1_1VarDecl.html" title="A declaration of a local variable (let)." alt="" coords="331,537,461,564"/>
+<area shape="rect" id="node21" href="$classyume_1_1ast_1_1WhileStmt.html" title="A while loop (while)." alt="" coords="325,588,467,615"/>
+<area shape="rect" id="node2" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program will inherit from this class." alt="" coords="5,385,115,412"/>
+<area shape="rect" id="node5" href="$classyume_1_1ast_1_1AssignExpr.html" title="An assignment (=)." alt="" coords="535,5,683,32"/>
+<area shape="rect" id="node6" href="$classyume_1_1ast_1_1BoolExpr.html" title="Bool literals (true or false)." alt="" coords="541,56,676,83"/>
+<area shape="rect" id="node7" href="$classyume_1_1ast_1_1CallExpr.html" title="A function call or operator." alt="" coords="543,107,674,133"/>
+<area shape="rect" id="node8" href="$classyume_1_1ast_1_1CharExpr.html" title="Char literals." alt="" coords="541,157,676,184"/>
+<area shape="rect" id="node9" href="$classyume_1_1ast_1_1CtorExpr.html" title="A construction of a struct or cast of a primitive." alt="" coords="543,208,675,235"/>
+<area shape="rect" id="node10" href="$classyume_1_1ast_1_1FieldAccessExpr.html" title="Direct access of a field of a struct (::)." alt="" coords="519,259,699,285"/>
+<area shape="rect" id="node11" href="$classyume_1_1ast_1_1NumberExpr.html" title="Number literals." alt="" coords="531,309,686,336"/>
+<area shape="rect" id="node12" href="$classyume_1_1ast_1_1SliceExpr.html" title="A slice literal, i.e. an array." alt="" coords="540,360,677,387"/>
+<area shape="rect" id="node13" href="$classyume_1_1ast_1_1StringExpr.html" title="String literals." alt="" coords="537,411,680,437"/>
+<area shape="rect" id="node14" href="$classyume_1_1ast_1_1VarExpr.html" title="A variable, i.e. just an identifier." alt="" coords="545,461,673,488"/>
 </map>

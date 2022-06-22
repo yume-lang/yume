@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['ast_5fkey_0',['AST_KEY',['../classyume_1_1diagnostic_1_1DotVisitor.html#aa6217df691698f3b90feceba5c3ad713',1,'yume::diagnostic::DotVisitor']]]
+  ['begin_5fcol_0',['begin_col',['../structyume_1_1Loc.html#a2768f8fed61ddd9851e1825c762f76f3',1,'yume::Loc']]],
+  ['begin_5fline_1',['begin_line',['../structyume_1_1Loc.html#a672cd3e8c59cb4a887c7f122db96bb2b',1,'yume::Loc']]],
+  ['bool_5ftype_2',['bool_type',['../structyume_1_1TypeHolder.html#a4dee7d7520cf8565a4c3c94f892d7102',1,'yume::TypeHolder']]]
 ];

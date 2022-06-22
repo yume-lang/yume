@@ -1,6 +1,5 @@
 <map id="yume::Atom" name="yume::Atom">
-<area shape="rect" id="node1" title="Atoms represent strings in a string pool." alt="" coords="22,275,113,301"/>
+<area shape="rect" id="node1" title="Atoms represent strings in a string pool." alt="" coords="22,185,113,212"/>
 <area shape="rect" id="node2" title=" " alt="" coords="28,96,107,123"/>
-<area shape="rect" id="node4" title=" " alt="" coords="108,185,227,212"/>
 <area shape="rect" id="node3" title=" " alt="" coords="5,5,129,47"/>
 </map>
