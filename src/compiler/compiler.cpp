@@ -1,7 +1,3 @@
-//
-// Created by rymiel on 5/8/22.
-//
-
 #include "compiler.hpp"
 #include "../ast.hpp"
 #include "../diagnostic/errors.hpp"

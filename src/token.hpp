@@ -1,9 +1,4 @@
-//
-// Created by rymiel on 5/8/22.
-//
-
-#ifndef YUME_CPP_TOKEN_HPP
-#define YUME_CPP_TOKEN_HPP
+#pragma once
 
 #include "util.hpp"
 #include <algorithm>
@@ -115,5 +110,3 @@ auto tokenize_preserve_skipped(std::istream& in, const string& source_file) -> v
 /// Consume the contents of the input stream and create corresponding tokens, ignoring insignificant whitespace
 auto tokenize(std::istream& in, const string& source_file) -> vector<Token>;
 } // namespace yume
-
-#endif // YUME_CPP_TOKEN_HPP

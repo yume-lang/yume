@@ -1,9 +1,4 @@
-//
-// Created by rymiel on 5/8/22.
-//
-
-#ifndef YUME_CPP_UTIL_HPP
-#define YUME_CPP_UTIL_HPP
+#pragma once
 
 #include <cstddef>
 #include <llvm/Support/FileSystem.h>
@@ -218,12 +213,7 @@ private:
 /// \sa atom_literal::operator""_a
 auto inline make_atom(const string& value) noexcept -> Atom { return Atom::make_atom(value); }
 
-namespace atom_literal {
 auto inline operator""_a(const char* value, std::size_t len) noexcept -> Atom { return make_atom(string(value, len)); }
-} // namespace atom_literal
 } // namespace yume
 
-using namespace yume::atom_literal;
 using namespace std::literals::string_literals;
-
-#endif // YUME_CPP_UTIL_HPP

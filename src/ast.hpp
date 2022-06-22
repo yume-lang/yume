@@ -1,7 +1,3 @@
-//
-// Created by rymiel on 5/8/22.
-//
-
 #pragma once
 
 #include "token.hpp"

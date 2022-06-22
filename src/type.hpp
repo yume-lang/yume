@@ -1,9 +1,4 @@
-//
-// Created by rymiel on 5/22/22.
-//
-
-#ifndef YUME_CPP_TYPE_HPP
-#define YUME_CPP_TYPE_HPP
+#pragma once
 
 #include "util.hpp"
 #include "llvm/Support/Casting.h"
@@ -195,5 +190,3 @@ public:
   static auto classof(const Type* a) -> bool { return a->kind() == K_Unknown; }
 };
 } // namespace yume::ty
-
-#endif // YUME_CPP_TYPE_HPP

@@ -1,7 +1,3 @@
-//
-// Created by rymiel on 5/22/22.
-//
-
 #include "type.hpp"
 #include <llvm/Support/Casting.h>
 #include <utility>

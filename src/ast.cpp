@@ -1,7 +1,3 @@
-//
-// Created by rymiel on 5/8/22.
-//
-
 #include "ast.hpp"
 #include "diagnostic/source_location.hpp"
 #include "visitor.hpp"

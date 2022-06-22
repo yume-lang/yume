@@ -1,15 +1,10 @@
-//
-// Created by rymiel on 5/12/22.
-//
-
-#ifndef YUME_CPP_VISITOR_HPP
-#define YUME_CPP_VISITOR_HPP
+#pragma once
 
 namespace yume {
 class Visitor;
 namespace ast {
 class AST;
-} // namespace ast
+}
 } // namespace yume
 
 #include "ast.hpp"
@@ -64,5 +59,3 @@ public:
   void visit() {}
 };
 } // namespace yume
-
-#endif // YUME_CPP_VISITOR_HPP

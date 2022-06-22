@@ -1,9 +1,4 @@
-//
-// Created by rymiel on 5/8/22.
-//
-
-#ifndef YUME_CPP_COMPILER_HPP
-#define YUME_CPP_COMPILER_HPP
+#pragma once
 
 #include "../util.hpp"
 #include "crtp_walker.hpp"
@@ -104,5 +99,3 @@ private:
   void walk_types();
 };
 } // namespace yume
-
-#endif // YUME_CPP_COMPILER_HPP

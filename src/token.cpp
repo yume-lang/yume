@@ -1,7 +1,3 @@
-//
-// Created by rymiel on 5/8/22.
-//
-
 #include "token.hpp"
 #include <algorithm>
 #include <cctype>
