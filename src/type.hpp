@@ -172,8 +172,7 @@ class Struct : public Type {
   friend Compiler;
 
 public:
-  Struct(string name, vector<const ast::TypeName*> fields)
-      : Type(K_Struct, move(name)), m_fields(move(fields)) {}
+  Struct(string name, vector<const ast::TypeName*> fields) : Type(K_Struct, move(name)), m_fields(move(fields)) {}
   [[nodiscard]] auto fields() const { return dereference_view(m_fields); }
   [[nodiscard]] auto memo() const -> auto* { return m_memo; }
   static auto classof(const Type* a) -> bool { return a->kind() == K_Struct; }

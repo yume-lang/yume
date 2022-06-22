@@ -121,16 +121,16 @@ struct TokenIterator {
     return TokenIterator{m_iterator + i, m_end};
   }
   constexpr auto operator++() -> TokenIterator& {
-    if (at_end()) {
+    if (at_end())
       throw std::runtime_error("Can't increment past end");
-    }
+
     ++m_iterator;
     return *this;
   }
   auto operator++(int) -> TokenIterator {
-    if (at_end()) {
+    if (at_end())
       throw std::runtime_error("Can't increment past end");
-    }
+
     return TokenIterator{m_iterator++, m_end};
   }
   /// Returns the underlying iterator. This shouldn't really be needed but I'm too lazy to properly model an iterator.
@@ -174,9 +174,9 @@ protected:
   /// This is called every time the node's type is updated.
   void unify_val_ty() const {
     for (const auto* other : m_attach->depends) {
-      if (m_val_ty == other->m_val_ty || other->m_val_ty == nullptr) {
+      if (m_val_ty == other->m_val_ty || other->m_val_ty == nullptr)
         return;
-      }
+
       if (m_val_ty == nullptr) {
         m_val_ty = other->m_val_ty;
       } else {
@@ -224,12 +224,11 @@ public:
 
   /// The union of the locations of the `Token`s making up this node.
   [[nodiscard]] auto location() const -> Loc {
-    if (m_tok.empty()) {
+    if (m_tok.empty())
       return Loc{};
-    }
-    if (m_tok.size() == 1) {
+    if (m_tok.size() == 1)
       return m_tok[0].m_loc;
-    }
+
     return m_tok[0].m_loc + m_tok[m_tok.size() - 1].m_loc;
   };
 

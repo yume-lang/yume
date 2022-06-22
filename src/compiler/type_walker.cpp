@@ -31,9 +31,8 @@ template <> void TypeWalker::expression(ast::BoolExpr& expr) { expr.val_ty(m_com
 template <> void TypeWalker::expression(ast::Type& expr) {
   const auto* resolved_type = &m_compiler.convert_type(expr, m_current_fn->parent(), m_current_fn);
   expr.val_ty(resolved_type);
-  if (auto* qual_type = dyn_cast<ast::QualType>(&expr)) {
+  if (auto* qual_type = dyn_cast<ast::QualType>(&expr))
     expression(qual_type->base());
-  }
 }
 
 template <> void TypeWalker::expression(ast::TypeName& expr) {
@@ -67,9 +66,8 @@ template <> void TypeWalker::expression(ast::AssignExpr& expr) {
 }
 
 template <> void TypeWalker::expression(ast::VarExpr& expr) {
-  if (!m_scope.contains(expr.name())) {
+  if (!m_scope.contains(expr.name()))
     return; // TODO: this should be an error
-  }
   expr.attach_to(m_scope.at(expr.name()));
 }
 
@@ -79,9 +77,8 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
 
   const auto* struct_type = dyn_cast<ty::Struct>(&type.without_qual());
 
-  if (struct_type == nullptr) {
+  if (struct_type == nullptr)
     throw std::runtime_error("Can't access field of expression with non-struct type");
-  }
 
   auto target_name = expr.field();
   const ty::Type* target_type{};
@@ -103,9 +100,8 @@ template <typename Fn = std::identity>
 static auto join_args(auto iter, Fn fn = {}, llvm::raw_ostream& stream = errs()) {
   int j = 0;
   for (auto& i : iter) {
-    if (j++ != 0) {
+    if (j++ != 0)
       stream << ", ";
-    }
     stream << fn(i)->name();
   }
 }
@@ -115,14 +111,12 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
   auto overloads = vector<std::tuple<uint64_t, Fn*, Instantiation>>();
   auto name = expr.name();
 
-  for (auto& fn : m_compiler.m_fns) {
-    if (fn.name() == name) {
+  for (auto& fn : m_compiler.m_fns)
+    if (fn.name() == name)
       fns_by_name.push_back(&fn);
-    }
-  }
-  if (fns_by_name.empty()) {
+
+  if (fns_by_name.empty())
     throw std::logic_error("No function overload named "s + name);
-  }
 
   vector<const ty::Type*> arg_types{};
   for (auto& i : expr.args()) {
@@ -156,9 +150,8 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
         // Don't try to determine type compatibility of the "var" part of varargs functions.
         // Currently, varargs methods can only be primitives and carry no type information for their variadic part. This
         // will change in the future.
-        if (i >= fn_arg_size) {
+        if (i >= fn_arg_size)
           break;
-        }
 
         const auto* ast_arg = fn_ast.args()[i].val_ty();
         auto [i_compat, gen, gen_sub] = arg_type->compatibility(*ast_arg);
@@ -187,9 +180,8 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
         compat += i_compat;
         i++;
       }
-      if (compat != ty::Type::Compatiblity::INVALID) {
+      if (compat != ty::Type::Compatiblity::INVALID)
         overloads.emplace_back(compat, fn, instantiation);
-      }
     }
   }
 
@@ -231,10 +223,10 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
       // An existing one wasn't found. Duplicate the template's AST with the substituted types.
       auto* decl_clone = selected->m_ast_decl.clone();
       m_current_fn->m_member->direct_body().emplace_back(decl_clone);
+
       std::map<string, const ty::Type*> subs{};
-      for (const auto& [k, v] : instantiate.m_sub) {
+      for (const auto& [k, v] : instantiate.m_sub)
         subs.try_emplace(k->name(), v);
-      }
 
       auto fn_ptr = std::make_unique<Fn>(*decl_clone, selected->m_parent, selected->m_member, move(subs));
       auto new_emplace = m_current_fn->m_instantiations.emplace(instantiate, move(fn_ptr));
@@ -270,17 +262,15 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
     }
   }
 
-  if (selected->m_ast_decl.ret().has_value()) {
+  if (selected->m_ast_decl.ret().has_value())
     expr.val_ty(selected->ast().ret()->get().val_ty());
-  }
 
   expr.selected_overload(selected);
 }
 
 template <> void TypeWalker::statement(ast::Compound& stat) {
-  for (auto& i : stat.body()) {
+  for (auto& i : stat.body())
     body_statement(i);
-  }
 }
 
 template <> void TypeWalker::statement(ast::FnDecl& stat) {
@@ -301,9 +291,8 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
     return;
   }
 
-  if (m_in_depth && stat.body().index() == 0) {
+  if (m_in_depth && stat.body().index() == 0)
     statement(*get<0>(stat.body()));
-  }
 }
 
 template <> void TypeWalker::statement(ast::ReturnStmt& stat) {

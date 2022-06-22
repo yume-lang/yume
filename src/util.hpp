@@ -160,9 +160,8 @@ template <typename T>
 requires pointer_like<T>
 auto inline constexpr try_dereference(const std::optional<T>& opt) {
   using U = std::reference_wrapper<std::remove_reference_t<decltype(*opt.value())>>;
-  if (opt.has_value()) {
+  if (opt.has_value())
     return std::optional<U>(*opt.value());
-  }
   return std::optional<U>{};
 }
 

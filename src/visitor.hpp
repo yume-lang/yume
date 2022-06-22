@@ -46,16 +46,14 @@ public:
   }
 
   template <typename T> auto visit(unique_ptr<T>& ptr, const char* label = nullptr) -> Visitor& {
-    if (ptr) {
+    if (ptr)
       return visit(*ptr, label);
-    }
     return visit(nullptr, label);
   }
 
   template <typename T> auto visit(optional<T>& opt, const char* label = nullptr) -> Visitor& {
-    if (opt.has_value()) {
+    if (opt.has_value())
       return visit(*opt, label);
-    }
     return *this;
   }
 

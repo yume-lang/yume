@@ -60,9 +60,8 @@ struct Characteristic {
   Characteristic(Token::Type type, const std::function<bool(int, int)>& fn)
       : m_fn([fn](int c, int i, std::stringstream& stream) {
           bool b = fn(c, i);
-          if (b) {
+          if (b)
             stream.put((char)c);
-          }
           return b;
         }),
         m_type(type) {}
@@ -86,22 +85,21 @@ struct Tokenizer {
 
   /// Strings are delimited by double quotes `"` and may contain escapes.
   constexpr static const auto is_str = [end = false, escape = false](char c, int i, std::stringstream& stream) mutable {
-    if (i == 0) {
+    if (i == 0)
       return c == '"';
-    }
-    if (end) {
+    if (end)
       return false;
-    }
+
     if (c == '\\' && !escape) {
       escape = true;
     } else if (c == '"' && !end) {
       end = true;
     } else {
-      if (escape && c == 'n') {
+      if (escape && c == 'n')
         stream.put('\n');
-      } else {
+      else
         stream.put((char)c);
-      }
+
       escape = false;
     }
     return true;
@@ -109,23 +107,20 @@ struct Tokenizer {
 
   /// Chars begin with a question mark `?` and may contain escapes.
   constexpr static const auto is_char = [escape = false](char c, int i, std::stringstream& stream) mutable {
-    if (i == 0) {
+    if (i == 0)
       return c == '?';
-    }
     if (i == 1) {
-      if (c == '\\') {
+      if (c == '\\')
         escape = true;
-      } else {
+      else
         stream.put((char)c);
-      }
       return true;
     }
     if (i == 2 && escape) {
-      if (c == '0') {
+      if (c == '0')
         stream.put('\x00');
-      } else {
+      else
         stream.put((char)c);
-      }
       return true;
     }
     return false;

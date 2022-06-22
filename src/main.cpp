@@ -11,8 +11,8 @@
 #include <fstream>
 #include <iterator>
 #include <llvm/IR/Module.h>
-#include <llvm/Support/raw_ostream.h>
 #include <llvm/Support/MemoryBuffer.h>
+#include <llvm/Support/raw_ostream.h>
 #include <memory>
 #include <span>
 #include <string>
@@ -47,9 +47,8 @@ auto main(int argc, const char* argv[]) -> int {
     auto visitor = yume::diagnostic::DotVisitor{*dot};
 #endif
 
-    for (const auto& i : src_file_names) {
+    for (const auto& i : src_file_names)
       inputs.emplace_back(std::move(llvm::MemoryBuffer::getFileOrSTDIN(i).get()));
-    }
 
     for (auto& src_input : inputs) {
       auto src_name = src_input->getBufferIdentifier().str();

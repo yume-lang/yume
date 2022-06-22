@@ -12,9 +12,8 @@ class AST;
 }
 
 inline auto what(const std::exception_ptr& eptr = std::current_exception()) -> std::string_view {
-  if (!eptr) {
+  if (!eptr)
     throw std::bad_exception();
-  }
 
   try {
     std::rethrow_exception(eptr);

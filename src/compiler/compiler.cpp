@@ -83,19 +83,15 @@ Compiler::Compiler(std::vector<SourceFile> source_files)
 }
 
 void Compiler::run() {
-  for (const auto& source : m_sources) {
-    for (auto& i : source.m_program->body()) {
+  for (const auto& source : m_sources)
+    for (auto& i : source.m_program->body())
       decl_statement(i, nullptr, source.m_program.get());
-    }
-  }
 
   walk_types();
 
-  for (auto& fn : m_fns) {
-    if (fn.name() == "main") {
+  for (auto& fn : m_fns)
+    if (fn.name() == "main")
       fn.m_llvm_fn = declare(fn, false);
-    }
-  }
 
   while (!m_decl_queue.empty()) {
     auto* next = m_decl_queue.front();
@@ -127,14 +123,13 @@ void Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* m
   } else if (auto* s_decl = dyn_cast<ast::StructDecl>(&stmt)) {
     auto fields = vector<const ast::TypeName*>();
     fields.reserve(s_decl->fields().size());
-    for (const auto& f : s_decl->fields()) {
+    for (const auto& f : s_decl->fields())
       fields.push_back(&f);
-    };
+
     auto i_ty = m_types.known.insert({s_decl->name(), std::make_unique<ty::Struct>(s_decl->name(), fields)});
 
-    for (auto& f : s_decl->body().body()) {
+    for (auto& f : s_decl->body().body())
       decl_statement(f, i_ty.first->second.get());
-    }
   }
 }
 
@@ -143,33 +138,28 @@ auto Compiler::convert_type(const ast::Type& ast_type, const ty::Type* parent, F
     auto name = simple_type->name();
     if (context != nullptr) {
       auto generic = context->m_subs.find(name);
-      if (generic != context->m_subs.end()) {
+      if (generic != context->m_subs.end())
         return *generic->second;
-      }
     }
     auto val = m_types.known.find(name);
-    if (val != m_types.known.end()) {
+    if (val != m_types.known.end())
       return *val->second;
-    }
   } else if (const auto* qual_type = dyn_cast<ast::QualType>(&ast_type)) {
     auto qualifier = qual_type->qualifier();
     return convert_type(qual_type->base(), parent, context).known_qual(qualifier);
   } else if (isa<ast::SelfType>(ast_type)) {
-    if (parent != nullptr) {
+    if (parent != nullptr)
       return *parent;
-    }
   }
 
   return m_types.unknown;
 }
 
 auto Compiler::llvm_type(const ty::Type& type) -> llvm::Type* {
-  if (const auto* int_type = dyn_cast<ty::Int>(&type)) {
+  if (const auto* int_type = dyn_cast<ty::Int>(&type))
     return llvm::Type::getIntNTy(*m_context, int_type->size());
-  }
-  if (const auto* qual_type = dyn_cast<ty::Qual>(&type)) {
+  if (const auto* qual_type = dyn_cast<ty::Qual>(&type))
     return llvm_type(qual_type->base())->getPointerTo();
-  }
   if (const auto* ptr_type = dyn_cast<ty::Ptr>(&type)) {
     switch (ptr_type->qualifier()) {
     case Qualifier::Ptr: return llvm::PointerType::getUnqual(llvm_type(ptr_type->base()));
@@ -186,9 +176,9 @@ auto Compiler::llvm_type(const ty::Type& type) -> llvm::Type* {
     auto* memo = struct_type->memo();
     if (memo == nullptr) {
       auto fields = vector<llvm::Type*>{};
-      for (const auto& i : struct_type->fields()) {
+      for (const auto& i : struct_type->fields())
         fields.push_back(llvm_type(convert_type(i.type())));
-      }
+
       memo = llvm::StructType::create(*m_context, fields, "_"s + struct_type->name());
       struct_type->memo(memo);
     }
@@ -200,28 +190,25 @@ auto Compiler::llvm_type(const ty::Type& type) -> llvm::Type* {
 }
 
 auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
-  if (fn.m_llvm_fn != nullptr) {
+  if (fn.m_llvm_fn != nullptr)
     return fn.m_llvm_fn;
-  }
   // Skip primitive definitions, unless they are actually external functions (i.e. printf)
-  if (fn.ast().primitive() && mangle) {
+  if (fn.ast().primitive() && mangle)
     return nullptr;
-  }
   const auto& fn_decl = fn.m_ast_decl;
   auto* llvm_ret_type = llvm::Type::getVoidTy(*m_context);
   auto llvm_args = vector<llvm::Type*>{};
-  if (fn_decl.ret()) {
+  if (fn_decl.ret())
     llvm_ret_type = llvm_type(*fn_decl.ret()->get().val_ty());
-  }
-  for (const auto& i : fn_decl.args()) {
+
+  for (const auto& i : fn_decl.args())
     llvm_args.push_back(llvm_type(*i.val_ty()));
-  }
+
   llvm::FunctionType* fn_t = llvm::FunctionType::get(llvm_ret_type, llvm_args, fn_decl.varargs());
 
   string name = fn_decl.name();
-  if (mangle) {
+  if (mangle)
     name = mangle_name(fn);
-  }
 
   auto linkage = mangle ? Function::InternalLinkage : Function::ExternalLinkage;
   Function* llvm_fn = Function::Create(fn_t, linkage, name, m_module.get());
@@ -232,7 +219,8 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
     arg_i++;
   }
 
-  // Primitive definitions that got this far are actually external functions; declare its prototype but not its body
+  // Primitive definitions that got this far are actually external functions; declare its prototype but not its
+  // body
   if (!fn_decl.primitive()) {
     m_decl_queue.push(&fn);
     m_walker->m_current_fn = &fn;
@@ -242,9 +230,8 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
 }
 
 template <> void Compiler::statement(const ast::Compound& stat) {
-  for (const auto& i : stat.body()) {
+  for (const auto& i : stat.body())
     body_statement(i);
-  }
 }
 
 void Compiler::define(Fn& fn) {
@@ -276,9 +263,8 @@ void Compiler::define(Fn& fn) {
   if (const auto* body = get_if<unique_ptr<ast::Compound>>(&fn.body()); body != nullptr) {
     statement(**body);
   }
-  if (m_builder->GetInsertBlock()->getTerminator() == nullptr) {
+  if (m_builder->GetInsertBlock()->getTerminator() == nullptr)
     m_builder->CreateRetVoid();
-  }
   m_builder->SetInsertPoint(decl_bb);
   m_builder->CreateBr(bb);
   verifyFunction(*fn, &llvm::errs());
@@ -334,18 +320,16 @@ template <> void Compiler::statement(const ast::IfStmt& stat) {
     m_builder->CreateBr(merge_bb);
   }
 
-  if (all_terminated) {
+  if (all_terminated)
     merge_bb->eraseFromParent();
-  } else {
+  else
     m_builder->SetInsertPoint(merge_bb);
-  }
 }
 
 template <> void Compiler::statement(const ast::ReturnStmt& stat) {
-  bool returns_mut = false;
-  if (const auto* ret_ty = m_current_fn->ast().val_ty()) {
-    returns_mut = ret_ty->is_mut();
-  }
+  const auto* ret_ty = m_current_fn->ast().val_ty();
+  bool returns_mut = ret_ty != nullptr && ret_ty->is_mut();
+
   if (stat.expr().has_value()) {
     auto val = body_expression(stat.expr().value(), returns_mut);
     m_builder->CreateRet(val);
@@ -372,18 +356,16 @@ template <> void Compiler::statement(const ast::VarDecl& stat) {
 
 /// Assert that this expression isn't asked to be mutable.
 static void not_mut(const string& message, bool mut) {
-  if (mut) {
+  if (mut)
     throw std::runtime_error(message + " cannot be mutable!");
-  }
 }
 
 template <> auto Compiler::expression(const ast::NumberExpr& expr, bool mut) -> Val {
   not_mut("number constant", mut);
 
   auto val = expr.val();
-  if (expr.val_ty() == m_types.int64().s_ty) {
+  if (expr.val_ty() == m_types.int64().s_ty)
     return m_builder->getInt64(val);
-  }
   return m_builder->getInt32(val);
 }
 
@@ -405,9 +387,8 @@ template <> auto Compiler::expression(const ast::StringExpr& expr, bool mut) -> 
   auto val = expr.val();
 
   std::vector<llvm::Constant*> chars(val.length());
-  for (unsigned int i = 0; i < val.size(); i++) {
+  for (unsigned int i = 0; i < val.size(); i++)
     chars[i] = m_builder->getInt8(val[i]);
-  }
 
   chars.push_back(m_builder->getInt8(0));
   auto* stringType = llvm::ArrayType::get(m_builder->getInt8Ty(), chars.size());
@@ -418,10 +399,10 @@ template <> auto Compiler::expression(const ast::StringExpr& expr, bool mut) -> 
 
 template <> auto Compiler::expression(const ast::VarExpr& expr, bool mut) -> Val {
   auto* val = m_scope.at(expr.name()).llvm();
-  if (!mut) {
-    // Function arguments can act as locals, but they can be immutable, but still behind a reference (alloca)
-    val = m_builder->CreateLoad(llvm_type(expr.val_ty()->without_qual()), val);
-  }
+  // Function arguments can act as locals, but they can be immutable, but still behind a reference (alloca)
+  if (!mut)
+    return m_builder->CreateLoad(llvm_type(expr.val_ty()->without_qual()), val);
+
   return val;
 }
 
@@ -458,9 +439,8 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
   const auto* ret_ty = selected->ast().val_ty();
   bool returns_mut = ret_ty != nullptr && ret_ty->is_mut();
 
-  if (!returns_mut) {
+  if (!returns_mut)
     not_mut("call returning by value", mut);
-  }
 
   vector<Val> args{};
   vector<const ty::Type*> arg_types{};
@@ -470,23 +450,20 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
   auto selected_args = selected->ast().args();
   for (const auto& i : expr.args()) {
     auto should_pass_by_mut = [&](unsigned index) {
-      if (index >= selected_args.size()) {
+      if (index >= selected_args.size())
         return false; // varargs function, logic will probably change later but for now, always pass by value
-      }
       return selected_args[index].val_ty()->is_mut();
     };
 
     // TODO: a lot of this logic is copied from `Type.compatibility`; deduplicate please
     auto do_cast = [&](unsigned index, yume::Val val) -> yume::Val {
-      if (index >= selected_args.size()) {
+      if (index >= selected_args.size())
         return val; // varargs function, logic will probably change later but for now, always pass by value
-      }
       const auto* target_ty = selected_args[index].val_ty();
       const auto* current_ty = i.val_ty();
       if (isa<ty::Int>(target_ty) && isa<ty::Int>(current_ty->without_qual())) {
-        if (cast<ty::Int>(current_ty->without_qual()).is_signed()) {
+        if (cast<ty::Int>(current_ty->without_qual()).is_signed())
           return m_builder->CreateSExtOrTrunc(val, llvm_type(*target_ty));
-        }
         return m_builder->CreateZExtOrTrunc(val, llvm_type(*target_ty));
       }
 
@@ -541,9 +518,8 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
     return m_builder->CreateCall(llvm_fn, llvm_args);
   }();
 
-  if (returns_mut && !mut) {
+  if (returns_mut && !mut)
     return m_builder->CreateLoad(llvm_type(*ret_ty->qual_base()), val, "c.nmut.deref");
-  }
   return val;
 }
 
@@ -577,8 +553,8 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
     llvm::Value* alloc = nullptr;
     // TODO: determine what kind of allocation must be done, and if at all. It'll probably require a complicated
     // semantic step to determine object lifetime, which would probably be evaluated before compilation of these
-    // expressions. currently just using "mut" constraint, which probably won't be permanent and is probably faulty,
-    // but, oh well
+    // expressions. currently just using "mut" constraint, which probably won't be permanent and is probably
+    // faulty, but, oh well
 
     //// Heap allocation
     if (mut) {
@@ -643,16 +619,17 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
     //   return slice_inst;
     // }
 
-    // TODO: the commented-out block above stack-allocates a slice constructor if its size can be determined trivially.
-    // However, since it references stack memory, a slice allocated this way could never be feasibly returned or passed
-    // into a function which stores a reference to it, etc. The compiler currently does nothing resembling "escape
-    // analysis", however something like that might be needed to perform an optimization like shown above.
-    // TODO: Note that also a slice could be stack-allocated even if its size *wasn't* known at compile time, however, I
-    // simply didn't know how to do that when i wrote the above snipped. But, since its problematic anyway, it remains
-    // unfixed (and commented out); revisit later.
-    // TODO: A large slice may be unfeasible to be stack-allocated anyway, so in addition to the above points, slice
-    // size could also be a consideration. Perhaps we don't *want* to stack-allocate unknown-sized slices as they may be
-    // absurdly huge in size and cause stack overflow.
+    // TODO: the commented-out block above stack-allocates a slice constructor if its size can be determined
+    // trivially. However, since it references stack memory, a slice allocated this way could never be feasibly
+    // returned or passed into a function which stores a reference to it, etc. The compiler currently does nothing
+    // resembling "escape analysis", however something like that might be needed to perform an optimization like
+    // shown above.
+    // TODO: Note that also a slice could be stack-allocated even if its size *wasn't* known at compile time,
+    // however, I simply didn't know how to do that when i wrote the above snipped. But, since its problematic
+    // anyway, it remains unfixed (and commented out); revisit later.
+    // TODO: A large slice may be unfeasible to be stack-allocated anyway, so in addition to the above points,
+    // slice size could also be a consideration. Perhaps we don't *want* to stack-allocate unknown-sized slices as
+    // they may be absurdly huge in size and cause stack overflow.
 
     auto* alloc_size = ConstantExpr::getSizeOf(base_type);
     alloc_size = ConstantExpr::getTruncOrBitCast(alloc_size, m_builder->getInt32Ty());
@@ -706,9 +683,8 @@ template <> auto Compiler::expression(const ast::SliceExpr& expr, bool mut) -> V
     m_builder->CreateStore(array_value, array_alloc);
   } else {
     unsigned j = 0;
-    for (const auto& i : values) {
+    for (const auto& i : values)
       m_builder->CreateStore(i, m_builder->CreateConstInBoundsGEP2_32(array_type, array_alloc, 0, j++));
-    }
   }
   auto* data_ptr = m_builder->CreateBitCast(array_alloc, base_type->getPointerTo());
   llvm::Value* slice_inst = llvm::UndefValue::get(slice_type);
@@ -751,16 +727,15 @@ auto Compiler::mangle_name(const Fn& fn) -> string {
   ss << "(";
   int idx = 0;
   for (const auto& i : fn.ast().args()) {
-    if (idx++ > 0) {
+    if (idx++ > 0)
       ss << ",";
-    }
     ss << mangle_name(*i.type().val_ty(), fn);
   }
   ss << ")";
   // TODO: should mangled names even contain the return type...?
-  if (fn.ast().ret().has_value()) {
+  if (fn.ast().ret().has_value())
     ss << mangle_name(*fn.ast().ret().value().get().val_ty(), fn); // wtf
-  }
+
   return ss.str();
 }
 
@@ -768,19 +743,16 @@ auto Compiler::mangle_name(const ty::Type& ast_type, const Fn& parent) -> string
   std::stringstream ss{};
   if (const auto* qual_type = dyn_cast<ty::Qual>(&ast_type)) {
     ss << mangle_name(qual_type->base(), parent);
-    if (qual_type->has_qualifier(Qualifier::Mut)) {
+    if (qual_type->has_qualifier(Qualifier::Mut))
       ss << "&";
-    }
     return ss.str();
   }
   if (const auto* ptr_type = dyn_cast<ty::Ptr>(&ast_type)) {
     ss << mangle_name(ptr_type->base(), parent);
-    if (ptr_type->has_qualifier(Qualifier::Ptr)) {
+    if (ptr_type->has_qualifier(Qualifier::Ptr))
       ss << "*";
-    }
-    if (ptr_type->has_qualifier(Qualifier::Slice)) {
+    if (ptr_type->has_qualifier(Qualifier::Slice))
       ss << "[";
-    }
     return ss.str();
   }
   if (const auto* generic_type = dyn_cast<ty::Generic>(&ast_type)) {

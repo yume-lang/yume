@@ -24,9 +24,9 @@ static void xml_escape(llvm::raw_ostream& stream, const string& data) {
 void DotVisitor::emit_debug_header() {
 #ifdef YUME_SPEW_DOT_TOKEN_HEADER
   stream() << "<FONT POINT-SIZE=\"6\">" << m_index << "/" << m_parent;
-  if (m_open_parent != -1) {
+  if (m_open_parent != -1)
     stream() << "-" << m_open_parent;
-  }
+
   stream() << "/" << m_children << "</FONT><BR/>";
 #endif
 }
@@ -54,9 +54,8 @@ void DotVisitor::header(const char* label, bool is_inline) {
       stream() << ">];\n";
       m_open = false;
     }
-    if (m_index != 0) {
+    if (m_index != 0)
       m_lines.emplace_back(m_parent, m_index, label == nullptr ? "" : label);
-    }
 
     stream() << AST_KEY << m_index << " [label=<";
     emit_debug_header();
@@ -79,7 +78,7 @@ void DotVisitor::visit_expr(ast::AST& expr, const char* label) {
   header(label, false);
 
   stream() << "<FONT POINT-SIZE=\"9\">" << expr.location().to_string() << "</FONT><BR/>";
-  if (auto* val_ty = expr.val_ty(); val_ty != nullptr) {
+  if (const auto* val_ty = expr.val_ty(); val_ty != nullptr) {
     stream() << "<U>" << val_ty->name() << "</U><BR/>";
   }
   stream() << "<B>";

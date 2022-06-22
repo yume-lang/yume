@@ -30,12 +30,10 @@ struct Instantiation {
   auto operator<=>(const Instantiation& other) const = default;
 #else
   auto operator<=>(const Instantiation& other) const -> std::weak_ordering {
-    if (m_sub == other.m_sub) {
+    if (m_sub == other.m_sub)
       return std::weak_ordering::equivalent;
-    }
-    if (m_sub < other.m_sub) {
+    if (m_sub < other.m_sub)
       return std::weak_ordering::less;
-    }
     return std::weak_ordering::greater;
   }
 #endif

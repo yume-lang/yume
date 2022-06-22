@@ -1,2 +1,2 @@
-Checks:          'clang-diagnostic-*,clang-analyzer-*,modernize-*,cppcoreguidelines-*,readability-*,performance-*,bugprone-*,-cppcoreguidelines-macro-usage,-readability-identifier-length,-misc-no-recursion,-cppcoreguidelines-owning-memory'
+Checks:          'clang-diagnostic-*,clang-analyzer-*,modernize-*,cppcoreguidelines-*,readability-*,performance-*,bugprone-*,-cppcoreguidelines-macro-usage,-readability-identifier-length,-misc-no-recursion,-cppcoreguidelines-owning-memory,-readability-braces-around-statements'
 FormatStyle:     file
