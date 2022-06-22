@@ -10,14 +10,8 @@
 #include "type_walker.hpp"
 #include "vals.hpp"
 #include <algorithm>
-#include <climits>
-#include <cstdint>
 #include <exception>
 #include <functional>
-#include <initializer_list>
-#include <limits>
-#include <llvm/ADT/ArrayRef.h>
-#include <llvm/ADT/Optional.h>
 #include <llvm/ADT/Twine.h>
 #include <llvm/IR/Argument.h>
 #include <llvm/IR/BasicBlock.h>
@@ -36,7 +30,6 @@
 #include <llvm/Support/Casting.h>
 #include <llvm/Support/CodeGen.h>
 #include <llvm/Support/Host.h>
-#include <llvm/Support/PrettyStackTrace.h>
 #include <llvm/Support/TargetSelect.h>
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/Target/TargetOptions.h>

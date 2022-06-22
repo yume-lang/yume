@@ -6,9 +6,9 @@
 #define YUME_CPP_TYPE_HPP
 
 #include "util.hpp"
-#include "llvm/ADT/SmallBitVector.h"
 #include "llvm/Support/Casting.h"
-#include <map>
+#include <array>
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <utility>

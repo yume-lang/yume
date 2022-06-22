@@ -7,9 +7,8 @@
 #include <cctype>
 #include <functional>
 #include <initializer_list>
-#include <iomanip>
 #include <iterator>
-#include <llvm/Support/raw_os_ostream.h>
+#include <llvm/Support/Format.h>
 #include <llvm/Support/raw_ostream.h>
 #include <sstream>
 #include <stdexcept>

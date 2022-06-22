@@ -1,12 +1,9 @@
 #pragma once
 
 #include "../type.hpp"
-#include "../util.hpp"
 #include <array>
 #include <llvm/ADT/StringMap.h>
-#include <map>
 #include <memory>
-#include <string>
 
 namespace yume {
 struct TypeHolder {

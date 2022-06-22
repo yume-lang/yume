@@ -5,11 +5,11 @@
 #include "ast.hpp"
 #include "diagnostic/source_location.hpp"
 #include "visitor.hpp"
+#include <algorithm>
 #include <cctype>
 #include <cstddef>
 #include <llvm/Support/raw_ostream.h>
 #include <memory>
-#include <sstream>
 
 namespace yume::ast {
 

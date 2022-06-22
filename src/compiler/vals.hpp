@@ -6,9 +6,7 @@
 #include "../util.hpp"
 #include <compare>
 #include <iosfwd>
-#include <llvm/ADT/DenseMap.h>
-#include <llvm/IR/BasicBlock.h>
-#include <llvm/Support/raw_ostream.h>
+#include <map>
 #include <memory>
 #include <string>
 #include <utility>
@@ -17,6 +15,7 @@
 namespace llvm {
 class Function;
 class Value;
+class BasicBlock;
 } // namespace llvm
 
 namespace yume {

@@ -1,12 +1,22 @@
 #include "type_walker.hpp"
 #include "../ast.hpp"
 #include "../diagnostic/errors.hpp"
+#include "../type.hpp"
 #include "compiler.hpp"
+#include "type_holder.hpp"
 #include "vals.hpp"
 #include <algorithm>
+#include <cstdint>
 #include <functional>
+#include <limits>
 #include <llvm/Support/raw_ostream.h>
+#include <memory>
+#include <optional>
 #include <stdexcept>
+#include <tuple>
+#include <utility>
+#include <variant>
+#include <vector>
 
 namespace yume {
 

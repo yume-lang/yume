@@ -2,6 +2,8 @@
 #include "../type.hpp"
 #include "../util.hpp"
 #include <initializer_list>
+#include <llvm/ADT/StringRef.h>
+#include <string>
 #include <utility>
 
 namespace yume {

@@ -3,7 +3,7 @@
 //
 
 #include "type.hpp"
-
+#include <llvm/Support/Casting.h>
 #include <utility>
 
 namespace yume::ty {

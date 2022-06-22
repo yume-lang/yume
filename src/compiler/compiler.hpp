@@ -5,8 +5,6 @@
 #ifndef YUME_CPP_COMPILER_HPP
 #define YUME_CPP_COMPILER_HPP
 
-#include "../ast.hpp"
-#include "../type.hpp"
 #include "../util.hpp"
 #include "crtp_walker.hpp"
 #include "type_holder.hpp"
@@ -28,6 +26,15 @@ class Type;
 } // namespace llvm
 
 namespace yume {
+namespace ast {
+class Expr;
+class Program;
+class Stmt;
+class Type;
+} // namespace ast
+namespace ty {
+class Type;
+}
 using namespace llvm;
 
 /// The `Compiler` the the primary top-level type during compilation. A single instance is created during the

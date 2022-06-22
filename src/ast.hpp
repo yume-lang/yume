@@ -7,8 +7,6 @@
 #include "token.hpp"
 #include "type.hpp"
 #include "util.hpp"
-#include "llvm/Support/Casting.h"
-#include <algorithm>
 #include <cstddef>
 #include <cstdint>
 #include <llvm/ADT/SmallPtrSet.h>
@@ -18,6 +16,7 @@
 #include <stdexcept>
 #include <string>
 #include <tuple>
+#include <type_traits>
 #include <utility>
 #include <variant>
 #include <vector>

@@ -2,8 +2,10 @@
 
 #define YUME_TYPE_WALKER_FALLBACK_VISITOR
 
+#include "../util.hpp"
 #include "../visitor.hpp"
 #include "crtp_walker.hpp"
+#include <map>
 #include <string>
 
 namespace yume {
@@ -11,7 +13,9 @@ class Compiler;
 struct Fn;
 namespace ast {
 class AST;
-}
+class Expr;
+class Stmt;
+} // namespace ast
 
 /// Determine the type information of AST nodes.
 /// This makes up most of the "semantic" phase of the compiler.
