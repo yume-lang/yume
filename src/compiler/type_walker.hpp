@@ -51,7 +51,7 @@ public:
 private:
   template <typename T> inline void statement([[maybe_unused]] T& stat) {
 #ifdef YUME_SPEW_TYPE_WALKER_STUB
-    std::cerr << "Type walker stubbed on statement " << stat.kind_name() << "\n";
+    llvm::errs() << "Type walker stubbed on statement " << stat.kind_name() << "\n";
 #endif
 #ifdef YUME_TYPE_WALKER_FALLBACK_VISITOR
     stat.visit(*this);
@@ -60,7 +60,7 @@ private:
 
   template <typename T> inline void expression([[maybe_unused]] T& expr) {
 #ifdef YUME_SPEW_TYPE_WALKER_STUB
-    std::cerr << "Type walker stubbed on expression " << expr.kind_name() << "\n";
+    llvm::errs() << "Type walker stubbed on expression " << expr.kind_name() << "\n";
 #endif
 #ifdef YUME_TYPE_WALKER_FALLBACK_VISITOR
     expr.visit(*this);

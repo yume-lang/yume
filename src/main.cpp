@@ -9,10 +9,10 @@
 #include <cstdlib>
 #include <exception>
 #include <fstream>
-#include <iostream>
 #include <iterator>
 #include <llvm/IR/Module.h>
 #include <llvm/Support/raw_ostream.h>
+#include <llvm/Support/MemoryBuffer.h>
 #include <memory>
 #include <span>
 #include <string>
@@ -40,37 +40,33 @@ auto main(int argc, const char* argv[]) -> int {
   llvm::sys::PrintStackTraceOnErrorSignal(args[0]);
 
   {
-    std::vector<std::pair<std::istream*, std::string>> inputs{};
+    std::vector<std::unique_ptr<llvm::MemoryBuffer>> inputs{};
     inputs.reserve(src_file_names.size());
-    std::vector<std::unique_ptr<std::istream>> file_streams{};
 #ifdef YUME_EMIT_DOT
     auto dot = yume::open_file("output_untyped.dot");
     auto visitor = yume::diagnostic::DotVisitor{*dot};
 #endif
 
     for (const auto& i : src_file_names) {
-      if (i == "-") {
-        inputs.emplace_back(&std::cin, "<source>");
-      } else {
-        auto& f = file_streams.emplace_back(std::make_unique<std::ifstream>(i));
-        inputs.emplace_back(f.get(), i);
-      }
+      inputs.emplace_back(std::move(llvm::MemoryBuffer::getFileOrSTDIN(i).get()));
     }
 
-    for (auto& [src_stream, src_name] : inputs) {
-      auto& source = source_files.emplace_back(*src_stream, src_name);
+    for (auto& src_input : inputs) {
+      auto src_name = src_input->getBufferIdentifier().str();
+      auto src_stream = std::stringstream(std::string(src_input->getBufferStart(), src_input->getBufferSize()));
+      auto& source = source_files.emplace_back(src_stream, src_name);
 #ifdef YUME_EMIT_DOT
       visitor.visit(*source.m_program, nullptr);
 #endif
 
       auto token_it = source.m_iterator;
       if (!token_it.at_end()) {
-        std::cout << "unconsumed tokens:\n";
+        llvm::outs() << "unconsumed tokens:\n";
         while (!token_it.at_end()) {
-          std::cout << "  " << *token_it++ << "\n";
+          llvm::outs() << "  " << *token_it++ << "\n";
         }
-        std::cout << "\n";
-        std::cout.flush();
+        llvm::outs() << "\n";
+        llvm::outs().flush();
 
         exit(2);
       }
@@ -82,7 +78,7 @@ auto main(int argc, const char* argv[]) -> int {
   compiler.module()->print(*yume::open_file("output.ll"), nullptr);
   compiler.write_object("output.s", false);
   compiler.write_object("output.o", true);
-  std::cout.flush();
+  llvm::outs().flush();
   std::system("cc output.o -o yume.out");
 
 #ifdef YUME_EMIT_DOT

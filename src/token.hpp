@@ -107,7 +107,7 @@ struct Token {
   inline constexpr Token(Type type, Payload payload, int i, Loc loc)
       : m_type(type), m_payload(payload), m_i{i}, m_loc{loc} {}
 
-  friend auto operator<<(std::ostream& os, const Token& token) -> std::ostream&;
+  friend auto operator<<(llvm::raw_ostream& os, const Token& token) -> llvm::raw_ostream&;
 };
 
 /// Consume the contents of the input stream and create corresponding tokens, preserving every token, including

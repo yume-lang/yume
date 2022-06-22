@@ -248,18 +248,17 @@ auto tokenize(std::istream& in, const string& source_file) -> vector<Token> {
   return filtered;
 }
 
-auto operator<<(std::ostream& std_os, const Token& token) -> std::ostream& {
-  auto os = llvm::raw_os_ostream(std_os);
-  std_os << "Token" << std::setfill('0') << std::setw(4) << token.m_i << '(';
+auto operator<<(llvm::raw_ostream& os, const Token& token) -> llvm::raw_ostream& {
+  os << "Token" << llvm::format_decimal(token.m_i, 4) << '(';
   const auto& loc = token.m_loc;
-  os << loc.to_string() << ",\t";
+  os << loc.to_string() << ",";
   os << Token::type_name(token.m_type);
   if (token.m_payload.has_value()) {
-    os << ",\t\"";
+    os << ",\"";
     os.write_escaped(string(*token.m_payload));
     os << '\"';
   }
   os << ")";
-  return std_os;
+  return os;
 }
 } // namespace yume

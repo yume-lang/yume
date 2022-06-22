@@ -5,6 +5,7 @@
 #include "vals.hpp"
 #include <algorithm>
 #include <functional>
+#include <llvm/Support/raw_ostream.h>
 #include <stdexcept>
 
 namespace yume {
@@ -98,7 +99,7 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
   expr.val_ty(target_type);
 }
 
-template <typename Fn = std::identity> static auto join_args(auto iter, Fn fn = {}, std::ostream& stream = std::cerr) {
+template <typename Fn = std::identity> static auto join_args(auto iter, Fn fn = {}, llvm::raw_ostream& stream = errs()) {
   int j = 0;
   for (auto& i : iter) {
     if (j++ != 0) {
@@ -129,14 +130,14 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
   }
 
 #ifdef YUME_SPEW_OVERLOAD_SELECTION
-  std::cerr << "\n*** BEGIN OVERLOAD EVALUATION ***\n";
-  std::cerr << "Functions with matching names for call " << name << " with types ";
+  errs() << "\n*** BEGIN OVERLOAD EVALUATION ***\n";
+  errs() << "Functions with matching names for call " << name << " with types ";
   join_args(arg_types);
-  std::cerr << "\n";
+  errs() << "\n";
   for (const auto& i_s : fns_by_name) {
-    std::cerr << "  " << i_s->name() << ":" << i_s->ast().location().begin_line << " with types ";
+    errs() << "  " << i_s->name() << ":" << i_s->ast().location().begin_line << " with types ";
     join_args(i_s->ast().args(), [](const auto& ast) { return ast.val_ty(); });
-    std::cerr << "\n";
+    errs() << "\n";
   }
 #endif
 
@@ -192,27 +193,28 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
   }
 
 #ifdef YUME_SPEW_OVERLOAD_SELECTION
-  std::cerr << "Available overloads for call " << name << " with types ";
+  errs() << "Available overloads for call " << name << " with types ";
   join_args(arg_types);
-  std::cerr << "\n";
+  errs() << "\n";
   for (const auto& [i_w, i_s, i_i] : overloads) {
-    std::cerr << "  Weight " << i_w << " " << i_s->name() << ":" << i_s->ast().location().begin_line << " with types ";
+    errs() << "  Weight " << i_w << " " << i_s->name() << ":" << i_s->ast().location().begin_line << " with types ";
 
     join_args(i_s->ast().args(), [](const auto& ast) { return ast.val_ty(); });
-    std::cerr << " where";
+    errs() << " where";
     for (const auto& [sub_k, sub_v] : i_i.m_sub) {
-      std::cerr << " " << sub_k->name() << " = " << sub_v->name();
+      errs() << " " << sub_k->name() << " = " << sub_v->name();
     }
-    std::cerr << "\n";
+    errs() << "\n";
   }
-  std::cerr << "\n*** END OVERLOAD EVALUATION ***\n\n";
+  errs() << "\n*** END OVERLOAD EVALUATION ***\n\n";
 #endif
 
   if (overloads.empty()) {
-    std::stringstream ss{};
+    string str{};
+    raw_string_ostream ss{str};
     ss << "No matching overload for " << name << " with argument types ";
     join_args(arg_types, {}, ss);
-    throw std::logic_error(ss.str());
+    throw std::logic_error(str);
   }
 
   auto [selected_weight, selected, instantiate] =

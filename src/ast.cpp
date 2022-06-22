@@ -7,6 +7,7 @@
 #include "visitor.hpp"
 #include <cctype>
 #include <cstddef>
+#include <llvm/Support/raw_ostream.h>
 #include <memory>
 #include <sstream>
 
@@ -78,9 +79,9 @@ auto unary_operators() {
 }
 
 auto to_string(Token token) -> string {
-  std::stringstream ss{};
-  ss << token;
-  return ss.str();
+  string str{};
+  llvm::raw_string_ostream(str) << token;
+  return str;
 }
 
 /// Ignore any `Separator` tokens if any are present.
@@ -90,7 +91,7 @@ auto ignore_separator(TokenIterator& tokens,
   bool found_separator = false;
   while (!tokens.at_end() && tokens->m_type == Separator) {
 #ifdef YUME_SPEW_CONSUMED_TOKENS
-    std::cerr << "consumed " << *tokens << " at " << at(location) << "\n";
+    llvm::errs() << "consumed " << *tokens << " at " << at(location) << "\n";
 #endif
     ++tokens;
     found_separator = true;
@@ -124,7 +125,7 @@ void consume(TokenIterator& tokens, Token::Type token_type, Atom payload,
   }
 
 #ifdef YUME_SPEW_CONSUMED_TOKENS
-  std::cerr << "consume: " << *tokens << " at " << at(location) << "\n";
+  llvm::errs() << "consume: " << *tokens << " at " << at(location) << "\n";
 #endif
 
   tokens++;
@@ -138,7 +139,7 @@ auto try_consume(TokenIterator& tokens, Token::Type tokenType, Atom payload,
   }
 
 #ifdef YUME_SPEW_CONSUMED_TOKENS
-  std::cerr << "try_consume: " << *tokens << " at " << at(location) << "\n";
+  llvm::errs() << "try_consume: " << *tokens << " at " << at(location) << "\n";
 #endif
 
   tokens++;
@@ -151,8 +152,8 @@ auto try_peek(TokenIterator& tokens, int ahead, Token::Type token_type, Atom pay
   auto token = tokens + ahead;
 
 #ifdef YUME_SPEW_CONSUMED_TOKENS
-  std::cerr << "try_peek ahead by " << ahead << ": expected " << Token::type_name(token_type) << " " << string(payload)
-            << ", got " << *token << " at " << at(location) << "\n";
+  llvm::errs() << "try_peek ahead by " << ahead << ": expected " << Token::type_name(token_type) << " "
+               << string(payload) << ", got " << *token << " at " << at(location) << "\n";
 #endif
 
   return !(token->m_type != token_type || token->m_payload != payload);
@@ -164,8 +165,8 @@ auto try_peek(TokenIterator& tokens, int ahead, Token::Type token_type,
   auto token = tokens + ahead;
 
 #ifdef YUME_SPEW_CONSUMED_TOKENS
-  std::cerr << "try_peek ahead by " << ahead << ": expected " << Token::type_name(token_type) << ", got " << *token
-            << " at " << at(location) << "\n";
+  llvm::errs() << "try_peek ahead by " << ahead << ": expected " << Token::type_name(token_type) << ", got " << *token
+               << " at " << at(location) << "\n";
 #endif
 
   return token->m_type == token_type;
@@ -189,7 +190,7 @@ auto next(TokenIterator& tokens, [[maybe_unused]] const source_location location
     -> Token {
   auto tok = *tokens++;
 #ifdef YUME_SPEW_CONSUMED_TOKENS
-  std::cerr << "next: " << tok << " at " << at(location) << "\n";
+  llvm::errs() << "next: " << tok << " at " << at(location) << "\n";
 #endif
   return tok;
 }
@@ -212,7 +213,7 @@ auto try_peek_uword(TokenIterator& tokens, int ahead,
   auto token = tokens + ahead;
 
 #ifdef YUME_SPEW_CONSUMED_TOKENS
-  std::cerr << "try_peek ahead by " << ahead << ": expected uword, got " << *token << " at " << at(location) << "\n";
+  llvm::errs() << "try_peek ahead by " << ahead << ": expected uword, got " << *token << " at " << at(location) << "\n";
 #endif
 
   return token->m_type == Word && is_uword(token->m_payload.value());

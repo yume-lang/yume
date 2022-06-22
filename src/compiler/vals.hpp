@@ -8,6 +8,7 @@
 #include <iosfwd>
 #include <llvm/ADT/DenseMap.h>
 #include <llvm/IR/BasicBlock.h>
+#include <llvm/Support/raw_ostream.h>
 #include <memory>
 #include <string>
 #include <utility>
@@ -105,12 +106,12 @@ struct SourceFile {
   explicit inline SourceFile(std::istream& in, string name)
       : m_name(std::move(name)), m_tokens(yume::tokenize(in, m_name)), m_iterator{m_tokens.begin(), m_tokens.end()} {
 #ifdef YUME_SPEW_LIST_TOKENS
-    std::cout << "tokens:\n";
+    llvm::outs() << "tokens:\n";
     for (auto& i : m_tokens) {
-      std::cout << "  " << i << "\n";
+      llvm::outs() << "  " << i << "\n";
     }
-    std::cout << "\n";
-    std::cout.flush();
+    llvm::outs() << "\n";
+    llvm::outs().flush();
 #endif
     m_program = ast::Program::parse(m_iterator);
   }
