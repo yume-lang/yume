@@ -151,7 +151,7 @@ struct Attachment {
   mutable llvm::SmallPtrSet<const AST*, 2> depends{};
 };
 
-/// All nodes in the `AST` tree of the program will inherit from this class.
+/// All nodes in the `AST` tree of the program inherit from this class.
 /**
  * AST nodes cannot be copied or moved as all special member functions (aside from the destructor) are `delete`d. There
  * will always be one instance for a specific node during the lifetype of the compiler.

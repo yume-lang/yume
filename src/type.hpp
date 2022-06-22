@@ -19,10 +19,16 @@ class StructType;
 }
 namespace yume {
 class Compiler;
-enum struct Qualifier { Ptr, Slice, Mut, Q_END };
 namespace ast {
 class TypeName;
 }
+
+enum struct Qualifier {
+  Ptr,   ///< `ptr`
+  Slice, ///< `[]`
+  Mut,   ///< `mut`
+  Q_END  /// Used for the amount of qualifiers.
+};
 } // namespace yume
 
 namespace yume::ty {
@@ -33,20 +39,31 @@ using llvm::dyn_cast;
 using llvm::isa;
 
 enum Kind {
-  K_Unknown,
-  K_Int,
-  K_Qual,
-  K_Ptr,
-  K_Struct,
-  K_Generic,
+  K_Unknown, ///< `UnknownType`, default, zero value. Hopefully never encountered!
+  K_Int,     ///< `Int`
+  K_Qual,    ///< `Qual`
+  K_Ptr,     ///< `Ptr`
+  K_Struct,  ///< `Struct`
+  K_Generic, ///< `Generic`
 };
 
+/// Represents a type in the type system. All types inherit from this class.
+/**
+ * Similar to `AST` nodes, `Type`s cannot be copied or moved as all special member functions (aside from the destructor)
+ * are `delete`d. There will always be one instance of a `Type` object for a specific type. This means that comparing if
+ * two types are the same type is simply a pointer equality check. The single instance of most types is located in
+ * `TypeHolder`, except for "qualified" types, which are located in their base type.
+ *
+ * This means that a type such as `I32 ptr`, which is a `Ptr`, is stored in the `m_known_qual` array of the `I32` type,
+ * at the index `Qualifier::Ptr`.
+ */
 class Type {
   mutable std::array<unique_ptr<Type>, static_cast<int>(Qualifier::Q_END)> m_known_qual{};
   const Kind m_kind;
   string m_name;
 
 public:
+  /// The compatibility between two types, for overload selection.
   struct Compatiblity {
     static constexpr const uint64_t INVALID = -1;
 
@@ -67,20 +84,35 @@ public:
   [[nodiscard]] auto kind() const -> Kind { return m_kind; };
   [[nodiscard]] auto name() const -> string { return m_name; };
 
+  /// Get this type with a given qualifier applied.
+  /**
+   * This may construct a new `Qual` or `Ptr` type, or use a cached instance from `m_known_qual`. Note that since some
+   * qualifiers, such as `mut` don't stack. Getting the `mut`-qualified type of `T mut` returns itself.
+   */
   [[nodiscard]] auto known_qual(Qualifier qual) const -> const Type&;
   [[nodiscard]] inline auto known_ptr() const -> const Type& { return known_qual(Qualifier::Ptr); }
   [[nodiscard]] inline auto known_mut() const -> const Type& { return known_qual(Qualifier::Mut); }
   [[nodiscard]] inline auto known_slice() const -> const Type& { return known_qual(Qualifier::Slice); }
 
   [[nodiscard]] auto compatibility(const Type& other) const -> Compatiblity;
+  /// The union of this and `other`. For example, the union of `T` and `T mut` is `T mut`.
+  /// \returns `nullptr` if an union cannot be created.
   [[nodiscard]] auto coalesce(const Type& other) const -> const Type*;
+  /// Return the intersection of this and `other`. For example, the intersection of `T and `T mut` is `T`.
+  /// \returns `nullptr` is there's not intersection between the types.
   [[nodiscard]] auto intersect(const Type& other) const -> const Type*;
 
   [[nodiscard]] auto is_mut() const -> bool;
 
+  /// If this type is a `Qual`, return the base of it (`T mut` -> `T`)
+  /// \returns `nullptr` if this type isn't `Qual`.
   [[nodiscard]] auto qual_base() const -> const Type*;
+
+  /// If this type is a `Ptr`, return the base of it (`T ptr` -> `T`)
+  /// \returns `nullptr` if this type isn't `Ptr`.
   [[nodiscard]] auto ptr_base() const -> const Type*;
 
+  /// If this type is a `Qual`, return the base of it, otherwise return itself.
   [[nodiscard]] auto without_qual() const -> const Type&;
   [[nodiscard]] auto without_qual_kind() const -> Kind;
 
@@ -88,6 +120,7 @@ protected:
   Type(Kind kind, string name) : m_kind(kind), m_name(move(name)) {}
 };
 
+/// A built-in integral type, such as I32 or Bool.
 class Int : public Type {
   int m_size;
   bool m_signed;
@@ -99,6 +132,7 @@ public:
   static auto classof(const Type* a) -> bool { return a->kind() == K_Int; }
 };
 
+/// A "qualified" type, with a non-stackable qualifier, \e .i.e. `mut`.
 class Qual : public Type {
   friend Type;
 
@@ -113,6 +147,7 @@ public:
   static auto classof(const Type* a) -> bool { return a->kind() == K_Qual; }
 };
 
+/// A "qualified" type, with a stackable qualifier, \e i.e. `ptr`.
 class Ptr : public Type {
   friend Type;
 
@@ -128,6 +163,7 @@ public:
   static auto classof(const Type* a) -> bool { return a->kind() == K_Ptr; }
 };
 
+/// An user-defined struct type with associated fields.
 class Struct : public Type {
   vector<const ast::TypeName*> m_fields;
   mutable llvm::StructType* m_memo{};
@@ -143,12 +179,17 @@ public:
   static auto classof(const Type* a) -> bool { return a->kind() == K_Struct; }
 };
 
+/// An unsubstituted generic type variable, usually something like `T`.
+/**
+ * Note that two different functions with the same name for a type variable use two different instances of `Generic`.
+ */
 class Generic : public Type {
 public:
   inline Generic(string name) : Type(K_Generic, move(name)) {}
   static auto classof(const Type* a) -> bool { return a->kind() == K_Generic; }
 };
 
+/// TODO: remove
 class UnknownType : public Type {
 public:
   inline UnknownType() : Type(K_Unknown, "?") {}

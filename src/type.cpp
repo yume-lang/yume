@@ -54,6 +54,7 @@ auto Type::compatibility(const Type& other) const -> Compatiblity {
   if (this == &other) {
     return {PERFECT_MATCH};
   }
+  // `Foo[] mut` -> `T[]`, with `T = Foo`.
   if (auto this_ptr_base = without_qual().ptr_base(), other_ptr_base = other.without_qual().ptr_base();
       (is_mut() && !other.is_mut()) && this_ptr_base != nullptr && other_ptr_base != nullptr &&
       cast<Ptr>(without_qual()).qualifier() == cast<Ptr>(other.without_qual()).qualifier()) {
@@ -62,6 +63,7 @@ auto Type::compatibility(const Type& other) const -> Compatiblity {
     }
     return {0};
   }
+  // `Foo ptr` -> `T ptr`, with `T = Foo`.
   if (auto this_ptr_base = ptr_base(), other_ptr_base = other.ptr_base();
       this_ptr_base != nullptr && other_ptr_base != nullptr &&
       cast<Ptr>(this)->qualifier() == cast<Ptr>(other).qualifier()) {
@@ -70,28 +72,36 @@ auto Type::compatibility(const Type& other) const -> Compatiblity {
     }
     return {0};
   }
+  // `Foo mut` -> `Foo mut`.
+  // Note that the base types are also compared, so `I32 mut` -> `I64 mut`.
   if (is_mut() && other.is_mut()) {
     auto base_compat = qual_base()->compatibility(other.without_qual());
     if (base_compat.rating != Compatiblity::INVALID) {
       return base_compat + 1;
     }
   }
+  // Any other generic that didn't match above.
+  // `Foo ptr` -> `T`, with `T = Foo ptr`.
   if (isa<Generic>(other)) {
     return {GENERIC_SUBSTITUTION, &cast<Generic>(other), this};
   }
+  // `Foo mut` -> `Foo`.
+  // Note that the base types are also compared, so `I32 mut` -> `I64`.
   if (is_mut() && !other.is_mut()) {
     auto base_compat = qual_base()->compatibility(other);
     if (base_compat.rating != Compatiblity::INVALID) {
       return base_compat + 1;
     }
   }
+  // `I32` -> `I64`. An implicit integer cast with no loss of information.
+  // Note that the signs need to be the same, even when converting `U8` -> `I32`.
+  // TODO: change this
   if (const auto this_int = dyn_cast<Int>(this), other_int = dyn_cast<Int>(&other);
       (this_int != nullptr) && (other_int != nullptr)) {
     if (this_int->is_signed() == other_int->is_signed() && this_int->size() <= other_int->size()) {
       return {SAFE_CONVERSION};
     }
   }
-  // TODO
   return {Compatiblity::INVALID};
 }
 
