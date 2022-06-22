@@ -83,6 +83,8 @@ auto to_string(Token token) -> string {
   return ss.str();
 }
 
+/// Ignore any `Separator` tokens if any are present.
+/// \returns true if a separator was encountered (and consumed)
 auto ignore_separator(TokenIterator& tokens,
                       [[maybe_unused]] const source_location location = source_location::current()) -> bool {
   bool found_separator = false;
@@ -96,6 +98,7 @@ auto ignore_separator(TokenIterator& tokens,
   return found_separator;
 }
 
+/// If the next token doesn't have the type, `token_type`, throw a runtime exception.
 void expect(TokenIterator& tokens, Token::Type token_type,
             const source_location location = source_location::current()) {
   if (tokens->m_type != token_type) {
@@ -104,11 +107,13 @@ void expect(TokenIterator& tokens, Token::Type token_type,
   }
 }
 
+/// Consume all subsequent `Separator` tokens. Throws if none were found.
 void require_separator(TokenIterator& tokens, const source_location location = source_location::current()) {
   expect(tokens, Separator, location);
   ignore_separator(tokens, location);
 }
 
+/// Consume a token of type `token_type` with the given `payload`. Throws if it wasn't encountered.
 void consume(TokenIterator& tokens, Token::Type token_type, Atom payload,
              const source_location location = source_location::current()) {
   ignore_separator(tokens);
@@ -125,6 +130,7 @@ void consume(TokenIterator& tokens, Token::Type token_type, Atom payload,
   tokens++;
 }
 
+/// Attempt to consume a token of type `token_type` with the given `payload`. Does nothing if it wasn't encountered.
 auto try_consume(TokenIterator& tokens, Token::Type tokenType, Atom payload,
                  [[maybe_unused]] const source_location location = source_location::current()) -> bool {
   if (tokens->m_type != tokenType || tokens->m_payload != payload) {
@@ -139,6 +145,7 @@ auto try_consume(TokenIterator& tokens, Token::Type tokenType, Atom payload,
   return true;
 }
 
+/// Check if the token ahead by `ahead` is of type `token_type` with the given `payload`.
 auto try_peek(TokenIterator& tokens, int ahead, Token::Type token_type, Atom payload,
               [[maybe_unused]] const source_location location = source_location::current()) -> bool {
   auto token = tokens + ahead;
@@ -151,6 +158,7 @@ auto try_peek(TokenIterator& tokens, int ahead, Token::Type token_type, Atom pay
   return !(token->m_type != token_type || token->m_payload != payload);
 }
 
+/// Check if the token ahead by `ahead` is of type `token_type`.
 auto try_peek(TokenIterator& tokens, int ahead, Token::Type token_type,
               [[maybe_unused]] const source_location location = source_location::current()) -> bool {
   auto token = tokens + ahead;
@@ -163,8 +171,10 @@ auto try_peek(TokenIterator& tokens, int ahead, Token::Type token_type,
   return token->m_type == token_type;
 }
 
-void consume_with_separators_until(TokenIterator& tokens, Token::Type token_type, Atom payload, auto action,
-                                   const source_location location = source_location::current()) {
+/// Consume tokens until a token of type `token_type` with the given `payload` is encountered.
+/// `action` (a no-arg function) is called every time. Between each call, a comma is expected.
+void consume_with_commas_until(TokenIterator& tokens, Token::Type token_type, Atom payload, auto action,
+                               const source_location location = source_location::current()) {
   int i = 0;
   while (!try_consume(tokens, token_type, payload, location)) {
     if (i++ > 0) {
@@ -174,6 +184,7 @@ void consume_with_separators_until(TokenIterator& tokens, Token::Type token_type
   }
 }
 
+/// Return the next token and increment the iterator.
 auto next(TokenIterator& tokens, [[maybe_unused]] const source_location location = source_location::current())
     -> Token {
   auto tok = *tokens++;
@@ -183,6 +194,7 @@ auto next(TokenIterator& tokens, [[maybe_unused]] const source_location location
   return tok;
 }
 
+/// Return the payload of the next token. Throws if the next token isn't a `Word`.
 auto consume_word(TokenIterator& tokens, const source_location location = source_location::current()) -> string {
   ignore_separator(tokens);
   if (tokens->m_type != Word) {
@@ -191,8 +203,10 @@ auto consume_word(TokenIterator& tokens, const source_location location = source
   return *next(tokens, location).m_payload;
 }
 
+/// Check if the string begins with a capital letter. Used for types, as all types must be capitalized.
 auto is_uword(const string& word) -> bool { return isupper(word.front()) != 0; }
 
+/// Check if the ahead by `ahead` is a capitalized word.
 auto try_peek_uword(TokenIterator& tokens, int ahead,
                     [[maybe_unused]] const source_location location = source_location::current()) -> bool {
   auto token = tokens + ahead;
@@ -227,6 +241,7 @@ static auto parse_fn_name(TokenIterator& tokens) -> string {
   if (tokens->m_type == Word) {
     name = consume_word(tokens);
   } else if (tokens->m_type == Symbol) {
+    // Try to parse an operator name, as in `def +()`
     bool found_op = false;
     for (const auto& op_row : operators()) {
       for (const auto& op : op_row) {
@@ -241,14 +256,16 @@ static auto parse_fn_name(TokenIterator& tokens) -> string {
       }
     }
 
+    // If an operator wasn't found, try parse the operator []
     if (try_consume(tokens, Symbol, SYM_LBRACKET)) {
       consume(tokens, Symbol, SYM_RBRACKET);
       name = "[]";
     } else if (try_consume(tokens, Symbol, SYM_BANG)) {
-      name = "!";
+      name = "!"; // ! is unary, but the above operator check only checked binary ones
     }
   }
 
+  // Check if an equal sign follows, for fused assignement operators such as `+=` or `[]=`
   if (try_consume(tokens, Symbol, SYM_EQ)) {
     name += "=";
   }
@@ -266,13 +283,12 @@ static auto parse_struct_decl(TokenIterator& tokens) -> unique_ptr<StructDecl> {
   }
   auto type_args = vector<string>{};
   if (try_consume(tokens, Symbol, SYM_LT)) {
-    consume_with_separators_until(tokens, Symbol, SYM_GT, [&] { type_args.push_back(consume_word(tokens)); });
+    consume_with_commas_until(tokens, Symbol, SYM_GT, [&] { type_args.push_back(consume_word(tokens)); });
   }
 
   consume(tokens, Symbol, SYM_LPAREN);
   auto fields = vector<TypeName>{};
-  consume_with_separators_until(tokens, Symbol, SYM_RPAREN,
-                                [&] { fields.push_back(std::move(*parse_type_name(tokens))); });
+  consume_with_commas_until(tokens, Symbol, SYM_RPAREN, [&] { fields.push_back(std::move(*parse_type_name(tokens))); });
 
   auto body = vector<unique_ptr<Stmt>>{};
   auto body_begin = entry;
@@ -296,18 +312,18 @@ static auto parse_fn_decl(TokenIterator& tokens) -> unique_ptr<FnDecl> {
   const string name = parse_fn_name(tokens);
   auto type_args = vector<string>{};
   if (try_consume(tokens, Symbol, SYM_LT)) {
-    consume_with_separators_until(tokens, Symbol, SYM_GT, [&] { type_args.push_back(consume_word(tokens)); });
+    consume_with_commas_until(tokens, Symbol, SYM_GT, [&] { type_args.push_back(consume_word(tokens)); });
   }
   consume(tokens, Symbol, SYM_LPAREN);
 
   auto args = vector<unique_ptr<TypeName>>{};
-  consume_with_separators_until(tokens, Symbol, SYM_RPAREN, [&] { args.push_back(parse_type_name(tokens)); });
+  consume_with_commas_until(tokens, Symbol, SYM_RPAREN, [&] { args.push_back(parse_type_name(tokens)); });
 
   auto return_type = try_parse_type(tokens);
   auto body = vector<unique_ptr<Stmt>>{};
   auto body_begin = entry;
 
-  if (try_consume(tokens, Symbol, SYM_EQ)) {
+  if (try_consume(tokens, Symbol, SYM_EQ)) { // A "short" function definition, consists of a single expression
     if (try_consume(tokens, Word, KWD_PRIMITIVE)) {
       consume(tokens, Symbol, SYM_LPAREN);
       auto primitive = consume_word(tokens);
@@ -401,6 +417,7 @@ static auto parse_if_stmt(TokenIterator& tokens) -> unique_ptr<IfStmt> {
       break;
     }
     if (try_consume(tokens, Word, KWD_ELSE)) {
+      // An `else` followed by an `if` begins a new clause of the same if statement.
       if (!in_else && try_consume(tokens, Word, KWD_IF)) {
         clauses.push_back(std::make_unique<IfClause>(
             ts(clause_begin, tokens.begin()), move(cond),
@@ -437,8 +454,6 @@ static auto parse_if_stmt(TokenIterator& tokens) -> unique_ptr<IfStmt> {
   if (!else_body.empty()) {
     else_clause = std::make_unique<Compound>(ts(else_entry, tokens.begin()), move(else_body));
   }
-
-  // ignore_separator(tokens);
 
   return std::make_unique<IfStmt>(ts(entry, tokens.begin()), move(clauses), move(else_clause));
 }
@@ -495,15 +510,15 @@ static auto parse_primary(TokenIterator& tokens) -> unique_ptr<Expr> {
       auto type = parse_type(tokens);
       if (try_consume(tokens, Symbol, SYM_LPAREN)) {
         auto call_args = vector<unique_ptr<Expr>>{};
-        consume_with_separators_until(tokens, Symbol, SYM_RPAREN, [&] { call_args.push_back(parse_expr(tokens)); });
+        consume_with_commas_until(tokens, Symbol, SYM_RPAREN, [&] { call_args.push_back(parse_expr(tokens)); });
         return std::make_unique<CtorExpr>(ts(entry, tokens.begin()), move(type), move(call_args));
       }
       if (try_consume(tokens, Symbol, SYM_LBRACKET)) {
         auto slice_members = vector<unique_ptr<Expr>>{};
-        consume_with_separators_until(tokens, Symbol, SYM_RBRACKET,
-                                      [&] { slice_members.push_back(parse_expr(tokens)); });
+        consume_with_commas_until(tokens, Symbol, SYM_RBRACKET, [&] { slice_members.push_back(parse_expr(tokens)); });
         return std::make_unique<SliceExpr>(ts(entry, tokens.begin()), move(type), move(slice_members));
       }
+      // `self` may be used as a type in a constructor `self()`, but also by itself as a variable.
       if (llvm::isa<SelfType>(*type)) {
         use_self = true;
       } else {
@@ -513,7 +528,7 @@ static auto parse_primary(TokenIterator& tokens) -> unique_ptr<Expr> {
     auto name = use_self ? "self" : consume_word(tokens);
     if (try_consume(tokens, Symbol, SYM_LPAREN)) {
       auto call_args = vector<unique_ptr<Expr>>{};
-      consume_with_separators_until(tokens, Symbol, SYM_RPAREN, [&] { call_args.push_back(parse_expr(tokens)); });
+      consume_with_commas_until(tokens, Symbol, SYM_RPAREN, [&] { call_args.push_back(parse_expr(tokens)); });
       return std::make_unique<CallExpr>(ts(entry, tokens.begin()), name, move(call_args));
     }
     return std::make_unique<VarExpr>(ts(entry, 1), name);
@@ -527,12 +542,12 @@ static auto parse_receiver(TokenIterator& tokens, unique_ptr<Expr> receiver, aut
     auto name = consume_word(tokens);
     auto call_args = vector<unique_ptr<Expr>>{};
     call_args.push_back(move(receiver));
-    if (try_consume(tokens, Symbol, SYM_LPAREN)) {
-      consume_with_separators_until(tokens, Symbol, SYM_RPAREN, [&] { call_args.push_back(parse_expr(tokens)); });
+    if (try_consume(tokens, Symbol, SYM_LPAREN)) { // A call with a dot `a.b(...)`
+      consume_with_commas_until(tokens, Symbol, SYM_RPAREN, [&] { call_args.push_back(parse_expr(tokens)); });
       auto call = std::make_unique<CallExpr>(ts(entry + 1, tokens.begin()), name, move(call_args));
       return parse_receiver(tokens, move(call), receiver_entry);
     }
-    if (try_consume(tokens, Symbol, SYM_EQ)) {
+    if (try_consume(tokens, Symbol, SYM_EQ)) { // A setter `a.b = ...`
       auto value = parse_expr(tokens);
       call_args.push_back(move(value));
       auto call = std::make_unique<CallExpr>(ts(entry + 1, tokens.begin()), name + '=', move(call_args));
@@ -656,6 +671,7 @@ static auto parse_type(TokenIterator& tokens) -> unique_ptr<Type> {
     } else if (try_consume(tokens, Word, KWD_MUT)) {
       base = std::make_unique<QualType>(ts(entry, tokens.begin()), move(base), Qualifier::Mut);
     } else if (try_peek(tokens, 0, Symbol, SYM_LBRACKET) && try_peek(tokens, 1, Symbol, SYM_RBRACKET)) {
+      // Don't consume the `[` unless the `]` is directly after; it might be a slice literal.
       consume(tokens, Symbol, SYM_LBRACKET);
       consume(tokens, Symbol, SYM_RBRACKET);
       base = std::make_unique<QualType>(ts(entry, tokens.begin()), move(base), Qualifier::Slice);
@@ -691,6 +707,7 @@ static auto try_parse_type(TokenIterator& tokens) -> optional<unique_ptr<Type>> 
     } else if (try_consume(tokens, Word, KWD_MUT)) {
       base = std::make_unique<QualType>(ts(entry, tokens.begin()), move(base), Qualifier::Mut);
     } else if (try_peek(tokens, 0, Symbol, SYM_LBRACKET) && try_peek(tokens, 1, Symbol, SYM_RBRACKET)) {
+      // Don't consume the `[` unless the `]` is directly after; it might be a slice literal.
       consume(tokens, Symbol, SYM_LBRACKET);
       consume(tokens, Symbol, SYM_RBRACKET);
       base = std::make_unique<QualType>(ts(entry, tokens.begin()), move(base), Qualifier::Slice);
