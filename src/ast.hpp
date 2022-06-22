@@ -30,40 +30,41 @@ struct Fn;
 namespace yume::ast {
 
 enum Kind {
-  K_Unknown,
-  K_IfClause,
-  K_TypeName,
+  K_Unknown,  ///< Unknown, default, zero value. Hopefully never encountered!
+  K_IfClause, ///< `IfClause`
+  K_TypeName, ///< `TypeName`
 
   /* subclasses of Stmt */
-  /**/ K_Stmt,
-  /**/ K_Program,
-  /**/ K_FnDecl,
-  /**/ K_VarDecl,
-  /**/ K_StructDecl,
-  /**/ K_Compound,
-  /**/ K_While,
-  /**/ K_If,
-  /**/ K_Return,
-  /**/ /* subclasses of Expr */
-  /**/ /**/ K_Expr,
-  /**/ /**/ K_Number,
-  /**/ /**/ K_String,
-  /**/ /**/ K_Char,
-  /**/ /**/ K_Bool,
-  /**/ /**/ K_Assign,
-  /**/ /**/ K_Call,
-  /**/ /**/ K_Ctor,
-  /**/ /**/ K_Slice,
-  /**/ /**/ K_Var,
-  /**/ /**/ K_FieldAccess,
-  /**/ /**/ K_END_Expr,
+  /**/ K_Stmt,       ///< `Stmt`
+  /**/ K_Compound,   ///< `Compound`
+  /**/ K_FnDecl,     ///< `FnDecl`
+  /**/ K_StructDecl, ///< `StructDecl`
+  /**/ K_VarDecl,    ///< `VarDecl`
+  /**/ K_While,      ///< `WhileStmt`
+  /**/ K_If,         ///< `IfStmt`
+  /**/ K_Return,     ///< `ReturnStmt`
+  /**/ K_Program,    ///< `Program`
+
+  /**** subclasses of Expr */
+  /****/ K_Expr,        ///< `Expr`
+  /****/ K_Number,      ///< `NumberExpr`
+  /****/ K_Char,        ///< `CharExpr`
+  /****/ K_Bool,        ///< `BoolExpr`
+  /****/ K_String,      ///< `StringExpr`
+  /****/ K_Var,         ///< `VarExpr`
+  /****/ K_Call,        ///< `CallExpr`
+  /****/ K_Ctor,        ///< `CtorExpr`
+  /****/ K_Slice,       ///< `SliceExpr`
+  /****/ K_Assign,      ///< `AssignExpr`
+  /****/ K_FieldAccess, ///< `FieldAccessExpr`
+  /****/ K_END_Expr,
   /**/ K_END_Stmt,
 
   /* subclasses of Type */
-  /**/ K_Type,
-  /**/ K_SimpleType,
-  /**/ K_QualType,
-  /**/ K_SelfType,
+  /**/ K_Type,       ///< `Type`
+  /**/ K_SimpleType, ///< `SimpleType`
+  /**/ K_QualType,   ///< `QualType`
+  /**/ K_SelfType,   ///< `SelfType`
   /**/ K_END_Type,
 };
 
@@ -99,6 +100,12 @@ auto inline constexpr kind_name(Kind type) -> const char* {
 
 using VectorTokenIterator = vector<Token>::iterator;
 
+/// An iterator-like holding `Token`s, used when parsing.
+/**
+ * Every parse method usually takes this as the first parameter. This is its own struct as it actually holds two
+ * iterators, where one is the end. This is to provide safe indexing (avoiding going past the end) without having to
+ * pass the end iterator around as a separate parameter.
+ */
 struct TokenIterator {
   VectorTokenIterator m_iterator;
   VectorTokenIterator m_end;
@@ -106,6 +113,7 @@ struct TokenIterator {
   inline constexpr TokenIterator(const VectorTokenIterator& iterator, const VectorTokenIterator& end)
       : m_iterator{iterator}, m_end{end} {}
 
+  /// Check if the iterator is at the end and no more `Token`s could possibly be read.
   [[nodiscard]] constexpr auto at_end() const noexcept -> bool { return m_iterator == m_end; }
   [[nodiscard]] auto constexpr operator->() const noexcept -> Token* { return m_iterator.operator->(); }
   [[nodiscard]] constexpr auto operator*() const noexcept -> Token { return m_iterator.operator*(); }
@@ -125,23 +133,45 @@ struct TokenIterator {
     }
     return TokenIterator{m_iterator++, m_end};
   }
+  /// Returns the underlying iterator. This shouldn't really be needed but I'm too lazy to properly model an iterator.
   [[nodiscard]] auto begin() const -> VectorTokenIterator { return m_iterator; }
 };
 
 class AST;
 
+/// Represents the relationship between multiple `AST` nodes.
+/**
+ * `AST` nodes can be attached to propagate type information between them.
+ * TODO: describe type propagation more
+ */
 struct Attachment {
+  /// Observers are the "children" and should have their type updated when this node's type changes
   mutable llvm::SmallPtrSet<const AST*, 2> observers{};
+  /// Depends are the "parents" and should be verified for type compatibility when this node's type changes
   mutable llvm::SmallPtrSet<const AST*, 2> depends{};
 };
 
+/// All nodes in the `AST` tree of the program will inherit from this class.
+/**
+ * AST nodes cannot be copied or moved as all special member functions (aside from the destructor) are `delete`d. There
+ * will always be one instance for a specific node during the lifetype of the compiler.
+ * However note that AST nodes can be cloned with the `clone()` method, which will produce a deep copy. This is used
+ * when instantiating a template. The clone will have the exact same structure and locations but distinct types,
+ * depending on what the types the template is instantiated with.
+ */
 class AST {
 protected:
+  /// Every subclass of `AST` has a distinct `Kind`.
   const Kind m_kind;
+  /// The range of tokenizer `Token`s that this node was parsed from.
   const span<Token> m_tok;
+  /// The value type of this node. Determined in the semantic phase; always `nullptr` after parsing.
   mutable const ty::Type* m_val_ty{};
+  /// \see Attachment
   unique_ptr<Attachment> m_attach{std::make_unique<Attachment>()};
 
+  /// Verify the type compatibility of the depends of this node, and merge the types if possible.
+  /// This is called every time the node's type is updated.
   inline void unify_val_ty() const {
     for (const auto* other : m_attach->depends) {
       if (m_val_ty == other->m_val_ty || other->m_val_ty == nullptr) {
@@ -170,6 +200,7 @@ public:
   virtual ~AST() = default;
 
   virtual void inline visit(Visitor& visitor) = 0;
+
   [[nodiscard]] inline auto val_ty() const noexcept -> const ty::Type* { return m_val_ty; }
   inline void val_ty(const ty::Type* type) const {
     m_val_ty = type;
@@ -178,6 +209,8 @@ public:
     }
   }
 
+  /// Make the type of this node depend on the type of `other`.
+  /// \sa Attachment
   inline void attach_to(const AST* other) const {
     other->m_attach->observers.insert(this);
     this->m_attach->depends.insert(other);
@@ -185,8 +218,11 @@ public:
   }
 
   [[nodiscard]] auto kind() const -> Kind { return m_kind; };
+  /// Human-readable string representation of the `Kind` of this node.
   [[nodiscard]] auto kind_name() const -> string { return ast::kind_name(kind()); };
   [[nodiscard]] auto token_range() const -> const span<Token>& { return m_tok; };
+
+  /// The union of the locations of the `Token`s making up this node.
   [[nodiscard]] auto location() const -> Loc {
     if (m_tok.empty()) {
       return Loc{};
@@ -196,10 +232,22 @@ public:
     }
     return m_tok[0].m_loc + m_tok[m_tok.size() - 1].m_loc;
   };
+
+  /// A short, string representation for debugging.
   [[nodiscard]] virtual auto inline describe() const -> string { return string{"unknown "} + kind_name(); }
+
+  /// Deep copy, except for the type and attachments.
   [[nodiscard]] virtual auto clone() const -> AST* = 0;
 };
 
+/// Statements make up most things in source code.
+/**
+ * This includes declarations (such as function declarations) which must be at the top level of a program; or things
+ * such as if statements, which must be inside the bodies of functions, but have no associated value.
+ * Expressions (`Expr`) are subclasses of `Stmt`, but *do* have an associated value.
+ * Note that in a future version of the language, declarations could be moved to a separate class and the distinction
+ * between statements and expressions may be removed.
+ */
 class Stmt : public AST {
 protected:
   using AST::AST;
@@ -209,6 +257,7 @@ public:
   [[nodiscard]] auto clone() const -> Stmt* override = 0;
 };
 
+/// A type **annotation**. This (`ast::Type`) is distinct from the actual type of a value (`ty::Type`).
 class Type : public AST {
 protected:
   using AST::AST;
@@ -218,6 +267,7 @@ public:
   [[nodiscard]] auto clone() const -> Type* override = 0;
 };
 
+/// Just the name of a type, always capitalized.
 class SimpleType : public Type {
   string m_name;
 
@@ -231,6 +281,7 @@ public:
   [[nodiscard]] auto clone() const -> SimpleType* override;
 };
 
+/// A type with a `Qualifier` like `mut` or `[]` following.
 class QualType : public Type {
   unique_ptr<Type> m_base;
   Qualifier m_qualifier;
@@ -254,6 +305,7 @@ public:
   [[nodiscard]] auto clone() const -> QualType* override;
 };
 
+/// The `self` type.
 class SelfType : public Type {
 public:
   explicit inline SelfType(span<Token> tok) : Type(K_SelfType, tok) {}
@@ -263,6 +315,7 @@ public:
   [[nodiscard]] auto clone() const -> SelfType* override;
 };
 
+/// A pair of a `Type` and an identifier, \e i.e. a parameter name.
 class TypeName : public AST {
   unique_ptr<Type> m_type;
   string m_name;
@@ -303,6 +356,7 @@ public:
   [[nodiscard]] auto clone() const -> TypeName* override;
 };
 
+/// Expressions have an associated value and type.
 class Expr : public Stmt {
 protected:
   using Stmt::Stmt;
@@ -312,6 +366,7 @@ public:
   [[nodiscard]] auto clone() const -> Expr* override = 0;
 };
 
+/// Number literals.
 class NumberExpr : public Expr {
   int64_t m_val;
 
@@ -325,6 +380,7 @@ public:
   [[nodiscard]] auto clone() const -> NumberExpr* override;
 };
 
+/// Char literals.
 class CharExpr : public Expr {
   uint8_t m_val;
 
@@ -338,6 +394,7 @@ public:
   [[nodiscard]] auto clone() const -> CharExpr* override;
 };
 
+/// Bool literals (`true` or `false`).
 class BoolExpr : public Expr {
   bool m_val;
 
@@ -351,6 +408,7 @@ public:
   [[nodiscard]] auto clone() const -> BoolExpr* override;
 };
 
+/// String literals.
 class StringExpr : public Expr {
   string m_val;
 
@@ -364,6 +422,7 @@ public:
   [[nodiscard]] auto clone() const -> StringExpr* override;
 };
 
+/// A variable, \e i.e. just an identifier.
 class VarExpr : public Expr {
   string m_name;
 
@@ -377,6 +436,7 @@ public:
   [[nodiscard]] auto clone() const -> VarExpr* override;
 };
 
+/// A function call or operator.
 class CallExpr : public Expr {
   string m_name;
   vector<unique_ptr<Expr>> m_args;
@@ -397,6 +457,7 @@ public:
   [[nodiscard]] auto clone() const -> CallExpr* override;
 };
 
+/// A construction of a struct or cast of a primitive.
 class CtorExpr : public Expr {
   unique_ptr<Type> m_type;
   vector<unique_ptr<Expr>> m_args;
@@ -414,6 +475,7 @@ public:
   [[nodiscard]] auto clone() const -> CtorExpr* override;
 };
 
+/// A slice literal, i.e. an array.
 class SliceExpr : public Expr {
   unique_ptr<Type> m_type;
   vector<unique_ptr<Expr>> m_args;
@@ -431,6 +493,12 @@ public:
   [[nodiscard]] auto clone() const -> SliceExpr* override;
 };
 
+/// An assignment (`=`).
+/**
+ * Assignment has a specific target (the left-hand side), and the value (the right-hand-side).
+ * The target may be multiple things, such as a variable `VarExpr` or field `FieldAccessExpr`.
+ * Note that some things such as indexed assignment `[]=` become a `CallExpr` instead.
+ */
 class AssignExpr : public Expr {
   unique_ptr<Expr> m_target;
   unique_ptr<Expr> m_value;
@@ -446,6 +514,7 @@ public:
   [[nodiscard]] auto clone() const -> AssignExpr* override;
 };
 
+/// Direct access of a field of a struct (`::`).
 class FieldAccessExpr : public Expr {
   unique_ptr<Expr> m_base;
   string m_field;
@@ -465,6 +534,7 @@ public:
   [[nodiscard]] auto clone() const -> FieldAccessExpr* override;
 };
 
+/// A statement consisting of multiple other statements, i.e. the body of a function.
 class Compound : public Stmt {
   vector<unique_ptr<Stmt>> m_body;
 
@@ -478,6 +548,7 @@ public:
   [[nodiscard]] auto clone() const -> Compound* override;
 };
 
+/// A declaration of a function (`def`).
 class FnDecl : public Stmt {
   string m_name;
   bool m_varargs{};
@@ -509,6 +580,7 @@ public:
   [[nodiscard]] auto clone() const -> FnDecl* override;
 };
 
+/// A declaration of a struct (`struct`).
 class StructDecl : public Stmt {
   string m_name;
   vector<TypeName> m_fields;
@@ -529,6 +601,7 @@ public:
   [[nodiscard]] auto clone() const -> StructDecl* override;
 };
 
+/// A declaration of a local variable (`let`).
 class VarDecl : public Stmt {
   string m_name;
   optional<unique_ptr<Type>> m_type;
@@ -548,6 +621,7 @@ public:
   [[nodiscard]] auto clone() const -> VarDecl* override;
 };
 
+/// A while loop (`while`).
 class WhileStmt : public Stmt {
   unique_ptr<Expr> m_cond;
   unique_ptr<Compound> m_body;
@@ -563,6 +637,7 @@ public:
   [[nodiscard]] auto clone() const -> WhileStmt* override;
 };
 
+/// Clauses of an if statement `IfStmt`.
 class IfClause : public AST {
   unique_ptr<Expr> m_cond;
   unique_ptr<Compound> m_body;
@@ -578,6 +653,7 @@ public:
   [[nodiscard]] auto clone() const -> IfClause* override;
 };
 
+/// An if statement (`if`), with one or more `IfClause`s, and optionally an else clause.
 class IfStmt : public Stmt {
   vector<unique_ptr<IfClause>> m_clauses;
   optional<unique_ptr<Compound>> m_else_clause;
@@ -593,6 +669,7 @@ public:
   [[nodiscard]] auto clone() const -> IfStmt* override;
 };
 
+/// Return from a function body.
 class ReturnStmt : public Stmt {
   optional<unique_ptr<Expr>> m_expr;
 
@@ -606,6 +683,7 @@ public:
   [[nodiscard]] auto clone() const -> ReturnStmt* override;
 };
 
+/// The top level structure of a file of source code.
 class Program : public Stmt {
   vector<unique_ptr<Stmt>> m_body;
 
@@ -621,9 +699,12 @@ public:
 };
 } // namespace yume::ast
 
+// these clutter the docs and are marked private to be hidden from docs
+/// \cond
 namespace std {
 template <> struct tuple_size<yume::ast::TypeName> : std::integral_constant<size_t, 2> {};
 
 template <> struct tuple_element<0, yume::ast::TypeName> { using type = yume::ast::Type; };
 template <> struct tuple_element<1, yume::ast::TypeName> { using type = std::string; };
 } // namespace std
+/// \endcond
