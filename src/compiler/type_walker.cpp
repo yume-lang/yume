@@ -4,6 +4,7 @@
 #include "compiler.hpp"
 #include "vals.hpp"
 #include <algorithm>
+#include <functional>
 #include <stdexcept>
 
 namespace yume {
@@ -97,6 +98,16 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
   expr.val_ty(target_type);
 }
 
+template <typename Fn = std::identity> static auto join_args(auto iter, Fn fn = {}, std::ostream& stream = std::cerr) {
+  int j = 0;
+  for (auto& i : iter) {
+    if (j++ != 0) {
+      stream << ", ";
+    }
+    stream << fn(i)->name();
+  }
+}
+
 template <> void TypeWalker::expression(ast::CallExpr& expr) {
   auto fns_by_name = vector<Fn*>();
   auto overloads = vector<std::tuple<uint64_t, Fn*, Instantiation>>();
@@ -117,31 +128,52 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
     arg_types.push_back(i.val_ty());
   }
 
+#ifdef YUME_SPEW_OVERLOAD_SELECTION
+  std::cerr << "\n*** BEGIN OVERLOAD EVALUATION ***\n";
+  std::cerr << "Functions with matching names for call " << name << " with types ";
+  join_args(arg_types);
+  std::cerr << "\n";
+  for (const auto& i_s : fns_by_name) {
+    std::cerr << "  " << i_s->name() << ":" << i_s->ast().location().begin_line << " with types ";
+    join_args(i_s->ast().args(), [](const auto& ast) { return ast.val_ty(); });
+    std::cerr << "\n";
+  }
+#endif
+
   for (auto* fn : fns_by_name) {
     uint64_t compat = 0;
     Instantiation instantiation{};
     const auto& fn_ast = fn->m_ast_decl;
     auto fn_arg_size = fn_ast.args().size();
+
+    // The overload is only considered if it has a matching amount of parameters.
     if (arg_types.size() == fn_arg_size || (expr.args().size() >= fn_arg_size && fn_ast.varargs())) {
+      // Determine the type compatibility of each argument individually.
       unsigned i = 0;
       for (const auto& arg_type : arg_types) {
+        // Don't try to determine type compatibility of the "var" part of varargs functions.
+        // Currently, varargs methods can only be primitives and carry no type information for their variadic part. This
+        // will change in the future.
         if (i >= fn_arg_size) {
           break;
         }
+
         const auto* ast_arg = fn_ast.args()[i].val_ty();
-        if (ast_arg == nullptr) { // TODO: should be removed
-          break;
-        }
         auto [i_compat, gen, gen_sub] = arg_type->compatibility(*ast_arg);
+        // One incompatible parameter disqualifies the function entirely
         if (i_compat == ty::Type::Compatiblity::INVALID) {
           compat = i_compat;
           break;
         }
+
+        // The function compatibility determined a substitution for a type variable.
         if (gen != nullptr && gen_sub != nullptr) {
           auto existing = instantiation.m_sub.find(gen);
+          // The substitution must have an intersection with an already deduced value for the same type variable
           if (existing != instantiation.m_sub.end()) {
             const auto* intersection = gen_sub->intersect(*existing->second);
             if (intersection == nullptr) {
+              // The types don't have a common intersection, they cannot coexist.
               compat = ty::Type::Compatiblity::INVALID;
               break;
             }
@@ -159,16 +191,27 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
     }
   }
 
+#ifdef YUME_SPEW_OVERLOAD_SELECTION
+  std::cerr << "Available overloads for call " << name << " with types ";
+  join_args(arg_types);
+  std::cerr << "\n";
+  for (const auto& [i_w, i_s, i_i] : overloads) {
+    std::cerr << "  Weight " << i_w << " " << i_s->name() << ":" << i_s->ast().location().begin_line << " with types ";
+
+    join_args(i_s->ast().args(), [](const auto& ast) { return ast.val_ty(); });
+    std::cerr << " where";
+    for (const auto& [sub_k, sub_v] : i_i.m_sub) {
+      std::cerr << " " << sub_k->name() << " = " << sub_v->name();
+    }
+    std::cerr << "\n";
+  }
+  std::cerr << "\n*** END OVERLOAD EVALUATION ***\n\n";
+#endif
+
   if (overloads.empty()) {
     std::stringstream ss{};
     ss << "No matching overload for " << name << " with argument types ";
-    int j = 0;
-    for (const auto* i : arg_types) {
-      if (j++ != 0) {
-        ss << ", ";
-      }
-      ss << i->name();
-    }
+    join_args(arg_types, {}, ss);
     throw std::logic_error(ss.str());
   }
 
@@ -176,10 +219,13 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
       *std::max_element(overloads.begin(), overloads.end(),
                         [&](const auto& a, const auto& b) { return get<uint64_t>(a) < get<uint64_t>(b); });
 
+  // It is an instantiation of a function template
   if (!instantiate.m_sub.empty()) {
     // TODO: move most of this logic directly into Fn
+    // Try to find an already existing instantiation with the same substitutions
     auto existing_instantiation = m_current_fn->m_instantiations.find(instantiate);
     if (existing_instantiation == m_current_fn->m_instantiations.end()) {
+      // An existing one wasn't found. Duplicate the template's AST with the substituted types.
       auto* decl_clone = selected->m_ast_decl.clone();
       m_current_fn->m_member->direct_body().emplace_back(decl_clone);
       std::map<string, const ty::Type*> subs{};
@@ -205,6 +251,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
       m_scope.clear();
       m_current_fn = &new_fn;
 
+      // Type-annotate the cloned declaration
       body_statement(*decl_clone);
       m_in_depth = true;
 
@@ -274,16 +321,16 @@ template <> void TypeWalker::statement(ast::VarDecl& stat) {
   m_scope.insert({stat.name(), &stat});
 }
 
-auto TypeWalker::visit(ast::AST& expr, [[maybe_unused]] const char* label) -> TypeWalker& {
 #ifdef YUME_TYPE_WALKER_FALLBACK_VISITOR
+auto TypeWalker::visit(ast::AST& expr, [[maybe_unused]] const char* label) -> TypeWalker& {
   if (auto* stmt = dyn_cast<ast::Stmt>(&expr)) {
     body_statement(*stmt);
   } else {
     expr.visit(*this);
   }
-#endif
   return *this;
 }
+#endif
 
 void TypeWalker::body_statement(ast::Stmt& stat) {
   const ASTStackTrace guard("Semantic: "s + stat.kind_name() + " statement", stat);
