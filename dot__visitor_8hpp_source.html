@@ -99,17 +99,17 @@ $(function() {
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>  <span class="keywordtype">int</span> m_parent{};</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>  <span class="keywordtype">int</span> m_open_parent{};</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>  <span class="keyword">inline</span> <span class="keyword">auto</span> set_parent(<span class="keywordtype">int</span> new_parent) -&gt; <span class="keywordtype">int</span> {</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>  <span class="keyword">auto</span> set_parent(<span class="keywordtype">int</span> new_parent) -&gt; <span class="keywordtype">int</span> {</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <span class="keyword">auto</span> restore_parent = m_parent;</div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    m_parent = new_parent;</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <span class="keywordflow">return</span> restore_parent;</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>  }</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>  <span class="keyword">inline</span> <span class="keyword">auto</span> set_children(<span class="keywordtype">int</span> new_children) -&gt; <span class="keywordtype">int</span> {</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>  <span class="keyword">auto</span> set_children(<span class="keywordtype">int</span> new_children) -&gt; <span class="keywordtype">int</span> {</div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    <span class="keyword">auto</span> restore_children = m_children;</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    m_children = new_children;</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keywordflow">return</span> restore_children;</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>  }</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>  <span class="keyword">inline</span> <span class="keyword">auto</span> stream() -&gt; llvm::raw_ostream&amp; {</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>  <span class="keyword">auto</span> stream() -&gt; llvm::raw_ostream&amp; {</div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <span class="keywordflow">if</span> (m_write_to_buffer) {</div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>      <span class="keywordflow">return</span> m_buffer_stream;</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    }</div>
@@ -158,7 +158,7 @@ $(function() {
 <div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>};</div>
 <div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>} <span class="comment">// namespace yume::diagnostic</span></div>
 <div class="ttc" id="aclassyume_1_1Visitor_html"><div class="ttname"><a href="classyume_1_1Visitor.html">yume::Visitor</a></div><div class="ttdef"><b>Definition:</b> <a href="visitor_8hpp_source.html#l00019">visitor.hpp:19</a></div></div>
-<div class="ttc" id="aclassyume_1_1Visitor_html_af2a46e015e60821dbc2e23a6920d9836"><div class="ttname"><a href="classyume_1_1Visitor.html#af2a46e015e60821dbc2e23a6920d9836">yume::Visitor::visit</a></div><div class="ttdeci">void visit()</div><div class="ttdef"><b>Definition:</b> <a href="visitor_8hpp_source.html#l00066">visitor.hpp:66</a></div></div>
+<div class="ttc" id="aclassyume_1_1Visitor_html_af2a46e015e60821dbc2e23a6920d9836"><div class="ttname"><a href="classyume_1_1Visitor.html#af2a46e015e60821dbc2e23a6920d9836">yume::Visitor::visit</a></div><div class="ttdeci">void visit()</div><div class="ttdef"><b>Definition:</b> <a href="visitor_8hpp_source.html#l00064">visitor.hpp:64</a></div></div>
 <div class="ttc" id="aclassyume_1_1ast_1_1AST_html"><div class="ttname"><a href="classyume_1_1ast_1_1AST.html">yume::ast::AST</a></div><div class="ttdoc">All nodes in the AST tree of the program inherit from this class.</div><div class="ttdef"><b>Definition:</b> <a href="ast_8hpp_source.html#l00162">ast.hpp:162</a></div></div>
 <div class="ttc" id="aclassyume_1_1diagnostic_1_1DotVisitor_html"><div class="ttname"><a href="classyume_1_1diagnostic_1_1DotVisitor.html">yume::diagnostic::DotVisitor</a></div><div class="ttdef"><b>Definition:</b> <a href="dot__visitor_8hpp_source.html#l00016">dot_visitor.hpp:16</a></div></div>
 <div class="ttc" id="aclassyume_1_1diagnostic_1_1DotVisitor_html_a5f19da91fb20f179e6340ca69c506dd4"><div class="ttname"><a href="classyume_1_1diagnostic_1_1DotVisitor.html#a5f19da91fb20f179e6340ca69c506dd4">yume::diagnostic::DotVisitor::DotVisitor</a></div><div class="ttdeci">DotVisitor(DotVisitor &amp;&amp;)=delete</div></div>

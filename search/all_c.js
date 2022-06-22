@@ -31,10 +31,11 @@ var searchData=
   ['m_5fval_5fty_28',['m_val_ty',['../classyume_1_1ast_1_1AST.html#aa1051cf49f1d35ce936a102cd511c5be',1,'yume::ast::AST']]],
   ['main_29',['main',['../main_8cpp.html#a9d6b8cae4881c54db1d2df3da92c712f',1,'main.cpp']]],
   ['main_2ecpp_30',['main.cpp',['../main_8cpp.html',1,'']]],
-  ['make_5fatom_31',['make_atom',['../structyume_1_1Atom.html#a5c5f82cdeef5e63a5e005331c7014325',1,'yume::Atom::make_atom()'],['../namespaceyume.html#a673b026b70abd8c22b87fcf7f94236a9',1,'yume::make_atom()']]],
-  ['mangle_5fname_32',['mangle_name',['../classyume_1_1Compiler.html#afcd1f55798eac5d3e7d6551fae8cb827',1,'yume::Compiler::mangle_name(const Fn &amp;fn_decl) -&gt; string'],['../classyume_1_1Compiler.html#a4b62b57eda222acba72d877196b643c2',1,'yume::Compiler::mangle_name(const ty::Type &amp;ast_type, const Fn &amp;parent) -&gt; string']]],
-  ['maybe_5fconst_5ft_33',['maybe_const_t',['../namespaceyume.html#a0b0665f6fd5ded9b92b0734a4985d947',1,'yume']]],
-  ['memo_34',['memo',['../classyume_1_1ty_1_1Struct.html#a277cb85876533e746f4ff3e8f1b3409e',1,'yume::ty::Struct']]],
-  ['module_35',['module',['../classyume_1_1Compiler.html#acebe062c6f524b71429058a98442e747',1,'yume::Compiler']]],
-  ['mut_36',['Mut',['../namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7',1,'yume']]]
+  ['make_5fast_31',['make_ast',['../namespaceyume_1_1ast.html#ad09d58a0d4c029f1873e2d5c3ef7f87b',1,'yume::ast']]],
+  ['make_5fatom_32',['make_atom',['../structyume_1_1Atom.html#a5c5f82cdeef5e63a5e005331c7014325',1,'yume::Atom::make_atom()'],['../namespaceyume.html#a673b026b70abd8c22b87fcf7f94236a9',1,'yume::make_atom()']]],
+  ['mangle_5fname_33',['mangle_name',['../classyume_1_1Compiler.html#afcd1f55798eac5d3e7d6551fae8cb827',1,'yume::Compiler::mangle_name(const Fn &amp;fn_decl) -&gt; string'],['../classyume_1_1Compiler.html#a4b62b57eda222acba72d877196b643c2',1,'yume::Compiler::mangle_name(const ty::Type &amp;ast_type, const Fn &amp;parent) -&gt; string']]],
+  ['maybe_5fconst_5ft_34',['maybe_const_t',['../namespaceyume.html#a0b0665f6fd5ded9b92b0734a4985d947',1,'yume']]],
+  ['memo_35',['memo',['../classyume_1_1ty_1_1Struct.html#a277cb85876533e746f4ff3e8f1b3409e',1,'yume::ty::Struct']]],
+  ['module_36',['module',['../classyume_1_1Compiler.html#acebe062c6f524b71429058a98442e747',1,'yume::Compiler']]],
+  ['mut_37',['Mut',['../namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7',1,'yume']]]
 ];

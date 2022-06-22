@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['args_0',['args',['../classyume_1_1ast_1_1CtorExpr.html#a69e8f3f24fb62f8c7f431861715d1639',1,'yume::ast::CtorExpr::args()'],['../classyume_1_1ast_1_1SliceExpr.html#aaaee340e1cc536d63bc8eb0266b62d51',1,'yume::ast::SliceExpr::args()'],['../classyume_1_1ast_1_1FnDecl.html#a82761ff337ab64f8873d285214216dd6',1,'yume::ast::FnDecl::args()'],['../classyume_1_1ast_1_1CallExpr.html#a07ffcd5be72ca234e5e6cb3088e60052',1,'yume::ast::CallExpr::args()']]],
+  ['args_0',['args',['../classyume_1_1ast_1_1CtorExpr.html#a69e8f3f24fb62f8c7f431861715d1639',1,'yume::ast::CtorExpr::args()'],['../classyume_1_1ast_1_1SliceExpr.html#aaaee340e1cc536d63bc8eb0266b62d51',1,'yume::ast::SliceExpr::args()'],['../classyume_1_1ast_1_1FnDecl.html#a82761ff337ab64f8873d285214216dd6',1,'yume::ast::FnDecl::args()'],['../classyume_1_1ast_1_1CallExpr.html#aa2012dcd2bda469f248a9313b9949fda',1,'yume::ast::CallExpr::args()']]],
   ['assignexpr_1',['AssignExpr',['../classyume_1_1ast_1_1AssignExpr.html#a4a551d60611331b2aa0699be8b66fdaf',1,'yume::ast::AssignExpr']]],
   ['ast_2',['AST',['../classyume_1_1ast_1_1Type.html#a42e670ad594aae36657c38638cc72d41',1,'yume::ast::Type']]],
   ['ast_3',['ast',['../structyume_1_1Fn.html#ae00812d9decdd848bc7163cc9c2cee42',1,'yume::Fn']]],
