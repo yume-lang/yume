@@ -3,7 +3,7 @@ var searchData=
   ['function_20_2a_0',['Function *',['../structyume_1_1Fn.html#a490324fabe9718851b67964c78068de1',1,'yume::Fn']]],
   ['offset_1',['offset',['../classyume_1_1ast_1_1FieldAccessExpr.html#af9dc5247214f9384c19b341fae96fe45',1,'yume::ast::FieldAccessExpr::offset() const -&gt; int'],['../classyume_1_1ast_1_1FieldAccessExpr.html#a543b6b0b4858c0b23b4dd1366c1dda76',1,'yume::ast::FieldAccessExpr::offset(int offset) const']]],
   ['open_5ffile_2',['open_file',['../namespaceyume.html#a3d99b01535a052186b0ff7127d6c80d3',1,'yume']]],
-  ['operator_22_22_5fa_3',['operator&quot;&quot;_a',['../namespaceyume_1_1atom__literal.html#a9b82ba222765251d395378683f53f177',1,'yume::atom_literal']]],
+  ['operator_22_22_5fa_3',['operator&quot;&quot;_a',['../namespaceyume.html#a22ed0262dc7f9f367fa4c6eeb8202641',1,'yume']]],
   ['operator_2a_4',['operator*',['../structyume_1_1ast_1_1TokenIterator.html#abe6f795148602d000128443fdf9f8a21',1,'yume::ast::TokenIterator']]],
   ['operator_2b_5',['operator+',['../structyume_1_1ast_1_1TokenIterator.html#a7bde022cec2893c1d8a649ffe6c3d81a',1,'yume::ast::TokenIterator::operator+()'],['../structyume_1_1Loc.html#a8e035ee99cf5af2bd7a505e660caa2e5',1,'yume::Loc::operator+()'],['../structyume_1_1ty_1_1Type_1_1Compatiblity.html#ad790e23a58ae27f8384a52e399a9a6af',1,'yume::ty::Type::Compatiblity::operator+()']]],
   ['operator_2b_2b_6',['operator++',['../structyume_1_1ast_1_1TokenIterator.html#afd0a85e05e2bb9b2a6748c672ab6a88e',1,'yume::ast::TokenIterator::operator++() -&gt; TokenIterator &amp;'],['../structyume_1_1ast_1_1TokenIterator.html#ac01284382b490fa58fbeaa923d4bbe2b',1,'yume::ast::TokenIterator::operator++(int) -&gt; TokenIterator']]],

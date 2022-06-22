@@ -130,7 +130,7 @@ Public Attributes</h2></td></tr>
 <div class="textblock"><p >An iterator-like holding <code><a class="el" href="structyume_1_1Token.html" title="A categorized token in source code, created by the tokenizer. These tokens are consumed by the lexer.">Token</a></code>s, used when parsing. </p>
 <p >Every parse method usually takes this as the first parameter. This is its own struct as it actually holds two iterators, where one is the end. This is to provide safe indexing (avoiding going past the end) without having to pass the end iterator around as a separate parameter. </p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00109">109</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00104">104</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a30a8a8edd0acd2b99ef7579e86bff268" name="a30a8a8edd0acd2b99ef7579e86bff268"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a30a8a8edd0acd2b99ef7579e86bff268">&#9670;&nbsp;</a></span>TokenIterator()</h2>
@@ -166,7 +166,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00113">113</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00108">108</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -196,11 +196,11 @@ Public Attributes</h2></td></tr>
 
 <p>Check if the iterator is at the end and no more <code><a class="el" href="structyume_1_1Token.html" title="A categorized token in source code, created by the tokenizer. These tokens are consumed by the lexer.">Token</a></code>s could possibly be read. </p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00117">117</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00112">112</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00111">m_end</a>, and <a class="el" href="ast_8hpp_source.html#l00110">m_iterator</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00106">m_end</a>, and <a class="el" href="ast_8hpp_source.html#l00105">m_iterator</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00093">yume::ast::ignore_separator()</a>, <a class="el" href="ast_8hpp_source.html#l00123">operator++()</a>, <a class="el" href="ast_8cpp_source.html#l00231">yume::ast::Program::parse()</a>, and <a class="el" href="ast_8cpp_source.html#l00386">yume::ast::parse_return_stmt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00089">yume::ast::ignore_separator()</a>, <a class="el" href="ast_8hpp_source.html#l00118">operator++()</a>, <a class="el" href="ast_8cpp_source.html#l00227">yume::ast::Program::parse()</a>, and <a class="el" href="ast_8cpp_source.html#l00382">yume::ast::parse_return_stmt()</a>.</p>
 
 </div>
 </div>
@@ -229,11 +229,11 @@ Public Attributes</h2></td></tr>
 
 <p>Returns the underlying iterator. This shouldn't really be needed but I'm too lazy to properly model an iterator. </p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00137">137</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00132">132</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00110">m_iterator</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00105">m_iterator</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00231">yume::ast::Program::parse()</a>, <a class="el" href="ast_8cpp_source.html#l00470">yume::ast::parse_char_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00309">yume::ast::parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00398">yume::ast::parse_if_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00454">yume::ast::parse_number_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00595">yume::ast::parse_operator()</a>, <a class="el" href="ast_8cpp_source.html#l00478">yume::ast::parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00529">yume::ast::parse_receiver()</a>, <a class="el" href="ast_8cpp_source.html#l00386">yume::ast::parse_return_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00462">yume::ast::parse_string_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00278">yume::ast::parse_struct_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00643">yume::ast::parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00707">yume::ast::parse_type_name()</a>, <a class="el" href="ast_8cpp_source.html#l00582">yume::ast::parse_unary()</a>, <a class="el" href="ast_8cpp_source.html#l00352">yume::ast::parse_var_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00366">yume::ast::parse_while_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00673">yume::ast::try_parse_type()</a>, and <a class="el" href="ast_8cpp_source.html#l00017">yume::ast::ts()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00227">yume::ast::Program::parse()</a>, <a class="el" href="ast_8cpp_source.html#l00466">yume::ast::parse_char_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00305">yume::ast::parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00394">yume::ast::parse_if_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00450">yume::ast::parse_number_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00591">yume::ast::parse_operator()</a>, <a class="el" href="ast_8cpp_source.html#l00474">yume::ast::parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00525">yume::ast::parse_receiver()</a>, <a class="el" href="ast_8cpp_source.html#l00382">yume::ast::parse_return_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00458">yume::ast::parse_string_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00274">yume::ast::parse_struct_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00639">yume::ast::parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00703">yume::ast::parse_type_name()</a>, <a class="el" href="ast_8cpp_source.html#l00578">yume::ast::parse_unary()</a>, <a class="el" href="ast_8cpp_source.html#l00348">yume::ast::parse_var_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00362">yume::ast::parse_while_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00669">yume::ast::try_parse_type()</a>, and <a class="el" href="ast_8cpp_source.html#l00013">yume::ast::ts()</a>.</p>
 
 </div>
 </div>
@@ -260,9 +260,9 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00119">119</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00114">114</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00110">m_iterator</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00105">m_iterator</a>.</p>
 
 </div>
 </div>
@@ -290,9 +290,9 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00120">120</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00115">115</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00111">m_end</a>, and <a class="el" href="ast_8hpp_source.html#l00110">m_iterator</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00106">m_end</a>, and <a class="el" href="ast_8hpp_source.html#l00105">m_iterator</a>.</p>
 
 </div>
 </div>
@@ -319,9 +319,9 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00123">123</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00118">118</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00117">at_end()</a>, and <a class="el" href="ast_8hpp_source.html#l00110">m_iterator</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00112">at_end()</a>, and <a class="el" href="ast_8hpp_source.html#l00105">m_iterator</a>.</p>
 
 </div>
 </div>
@@ -349,9 +349,9 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00130">130</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00125">125</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00117">at_end()</a>, <a class="el" href="ast_8hpp_source.html#l00111">m_end</a>, and <a class="el" href="ast_8hpp_source.html#l00110">m_iterator</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00112">at_end()</a>, <a class="el" href="ast_8hpp_source.html#l00106">m_end</a>, and <a class="el" href="ast_8hpp_source.html#l00105">m_iterator</a>.</p>
 
 </div>
 </div>
@@ -378,9 +378,9 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00118">118</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00113">113</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00110">m_iterator</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00105">m_iterator</a>.</p>
 
 </div>
 </div>
@@ -397,9 +397,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00111">111</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00106">106</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8hpp_source.html#l00117">at_end()</a>, <a class="el" href="ast_8hpp_source.html#l00120">operator+()</a>, and <a class="el" href="ast_8hpp_source.html#l00130">operator++()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8hpp_source.html#l00112">at_end()</a>, <a class="el" href="ast_8hpp_source.html#l00115">operator+()</a>, and <a class="el" href="ast_8hpp_source.html#l00125">operator++()</a>.</p>
 
 </div>
 </div>
@@ -415,9 +415,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00110">110</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00105">105</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8hpp_source.html#l00117">at_end()</a>, <a class="el" href="ast_8hpp_source.html#l00137">begin()</a>, <a class="el" href="ast_8hpp_source.html#l00119">operator*()</a>, <a class="el" href="ast_8hpp_source.html#l00120">operator+()</a>, <a class="el" href="ast_8hpp_source.html#l00123">operator++()</a>, and <a class="el" href="ast_8hpp_source.html#l00118">operator-&gt;()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8hpp_source.html#l00112">at_end()</a>, <a class="el" href="ast_8hpp_source.html#l00132">begin()</a>, <a class="el" href="ast_8hpp_source.html#l00114">operator*()</a>, <a class="el" href="ast_8hpp_source.html#l00115">operator+()</a>, <a class="el" href="ast_8hpp_source.html#l00118">operator++()</a>, and <a class="el" href="ast_8hpp_source.html#l00113">operator-&gt;()</a>.</p>
 
 </div>
 </div>
