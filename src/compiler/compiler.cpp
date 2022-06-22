@@ -255,6 +255,7 @@ void Compiler::define(Fn& fn) {
   m_builder->SetInsertPoint(bb);
   m_current_fn->m_decl_bb = decl_bb;
 
+  // Allocate local variables for each parameter
   int i = 0;
   for (auto& arg : fn.llvm()->args()) {
     const auto& type = *fn.ast().args()[i].val_ty();
@@ -327,6 +328,8 @@ template <> void Compiler::statement(const ast::IfStmt& stat) {
       m_builder->CreateBr(merge_bb);
     }
   } else {
+    // TODO: this is a hack. For if statements with no else clause, it creates an empty `if.test` block which only
+    // contains a single `br` instruction to the merge point.
     m_builder->SetInsertPoint(next_test_bb);
     m_builder->CreateBr(merge_bb);
   }
@@ -367,6 +370,7 @@ template <> void Compiler::statement(const ast::VarDecl& stat) {
   m_scope.insert({stat.name(), alloc});
 }
 
+/// Assert that this expression isn't asked to be mutable.
 static inline void not_mut(const string& message, bool mut) {
   if (mut) {
     throw std::runtime_error(message + " cannot be mutable!");
@@ -421,8 +425,9 @@ template <> auto Compiler::expression(const ast::VarExpr& expr, bool mut) -> Val
   return val;
 }
 
+/// A constexpr-friendly simple string hash, for simple switches with string cases
 static auto constexpr const_hash(char const* input) -> unsigned {
-  return *input != 0 ? static_cast<unsigned int>(*input) + 33 * const_hash(input + 1) : 5381;
+  return *input != 0 ? static_cast<unsigned int>(*input) + 33 * const_hash(input + 1) : 5381; // NOLINT
 }
 
 auto Compiler::int_bin_primitive(const string& primitive, const vector<Val>& args) -> Val {
@@ -451,10 +456,7 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
   auto* selected = expr.selected_overload();
   llvm::Function* llvm_fn = nullptr;
   const auto* ret_ty = selected->ast().val_ty();
-  bool returns_mut = false;
-  if (ret_ty != nullptr) {
-    returns_mut = ret_ty->is_mut();
-  }
+  bool returns_mut = ret_ty != nullptr && ret_ty->is_mut();
 
   if (!returns_mut) {
     not_mut("call returning by value", mut);
@@ -463,6 +465,7 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
   vector<Val> args{};
   vector<const ty::Type*> arg_types{};
   vector<llvm::Value*> llvm_args{};
+
   unsigned j = 0;
   auto selected_args = selected->ast().args();
   for (const auto& i : expr.args()) {
@@ -473,6 +476,7 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
       return selected_args[index].val_ty()->is_mut();
     };
 
+    // TODO: a lot of this logic is copied from `Type.compatibility`; deduplicate please
     auto do_cast = [&](unsigned index, yume::Val val) -> yume::Val {
       if (index >= selected_args.size()) {
         return val; // varargs function, logic will probably change later but for now, always pass by value
@@ -623,24 +627,40 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
 
     auto* llvm_slice_type = llvm_type(*slice_type);
     auto* base_type = llvm_type(*slice_type->ptr_base()); // ???
-    if (auto* const_value = dyn_cast<llvm::ConstantInt>(slice_size.llvm())) {
-      auto slice_size_val = const_value->getLimitedValue();
-      auto* array_type = ArrayType::get(base_type, slice_size_val);
-      auto* array_alloc = m_builder->CreateAlloca(array_type, nullptr, "sl.ctor.alloc");
 
-      auto* data_ptr = m_builder->CreateBitCast(array_alloc, base_type->getPointerTo(), "sl.ctor.ptr");
-      llvm::Value* slice_inst = llvm::UndefValue::get(llvm_slice_type);
-      slice_inst = m_builder->CreateInsertValue(slice_inst, data_ptr, 0);
-      slice_inst = m_builder->CreateInsertValue(slice_inst, m_builder->getInt64(slice_size_val), 1);
-      slice_inst->setName("sl.ctor.inst");
+    //// Stack allocation
+    // if (auto* const_value = dyn_cast<llvm::ConstantInt>(slice_size.llvm())) {
+    //   auto slice_size_val = const_value->getLimitedValue();
+    //   auto* array_type = ArrayType::get(base_type, slice_size_val);
+    //   auto* array_alloc = m_builder->CreateAlloca(array_type, nullptr, "sl.ctor.alloc");
 
-      return slice_inst;
-    }
+    //   auto* data_ptr = m_builder->CreateBitCast(array_alloc, base_type->getPointerTo(), "sl.ctor.ptr");
+    //   llvm::Value* slice_inst = llvm::UndefValue::get(llvm_slice_type);
+    //   slice_inst = m_builder->CreateInsertValue(slice_inst, data_ptr, 0);
+    //   slice_inst = m_builder->CreateInsertValue(slice_inst, m_builder->getInt64(slice_size_val), 1);
+    //   slice_inst->setName("sl.ctor.inst");
+
+    //   return slice_inst;
+    // }
+
+    // TODO: the commented-out block above stack-allocates a slice constructor if its size can be determined trivially.
+    // However, since it references stack memory, a slice allocated this way could never be feasibly returned or passed
+    // into a function which stores a reference to it, etc. The compiler currently does nothing resembling "escape
+    // analysis", however something like that might be needed to perform an optimization like shown above.
+    // TODO: Note that also a slice could be stack-allocated even if its size *wasn't* known at compile time, however, I
+    // simply didn't know how to do that when i wrote the above snipped. But, since its problematic anyway, it remains
+    // unfixed (and commented out); revisit later.
+    // TODO: A large slice may be unfeasible to be stack-allocated anyway, so in addition to the above points, slice
+    // size could also be a consideration. Perhaps we don't *want* to stack-allocate unknown-sized slices as they may be
+    // absurdly huge in size and cause stack overflow.
+
     auto* alloc_size = ConstantExpr::getSizeOf(base_type);
     alloc_size = ConstantExpr::getTruncOrBitCast(alloc_size, m_builder->getInt32Ty());
     auto* array_size = m_builder->CreateTruncOrBitCast(slice_size, m_builder->getInt32Ty(), "sl.ctor.size");
     auto* array_alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), m_builder->getInt32Ty(), base_type,
                                                      alloc_size, array_size, nullptr, "sl.ctor.malloc");
+
+    // TODO: the above `malloc` is literally never `free`d because the language doesn't yet have destructors.
 
     auto* data_ptr = m_builder->Insert(array_alloc);
     llvm::Value* slice_inst = llvm::UndefValue::get(llvm_slice_type);
@@ -665,6 +685,7 @@ template <> auto Compiler::expression(const ast::SliceExpr& expr, bool mut) -> V
     values.push_back(body_expression(i));
   }
 
+  // Determine if all the operands are constant values instead, allowing us to use a constant array in LLVM
   auto const_values = vector<llvm::Constant*>();
   const_values.reserve(slice_size);
   bool all_const = std::all_of(values.begin(), values.end(), [&](const Val& i) {
@@ -738,7 +759,7 @@ auto Compiler::mangle_name(const Fn& fn) -> string {
   ss << ")";
   // TODO: should mangled names even contain the return type...?
   if (fn.ast().ret().has_value()) {
-    ss << mangle_name(*fn.ast().ret().value().get().val_ty(), fn);
+    ss << mangle_name(*fn.ast().ret().value().get().val_ty(), fn); // wtf
   }
   return ss.str();
 }
