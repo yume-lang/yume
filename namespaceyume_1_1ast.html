@@ -538,11 +538,11 @@ Variables</h2></td></tr>
 
 <p>Consume a token of type <code>token_type</code> with the given <code>payload</code>. Throws if it wasn't encountered. </p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00117">117</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00118">118</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="source__location_8hpp_source.html#l00030">yume::at()</a>, <a class="el" href="ast_8cpp_source.html#l00102">expect()</a>, <a class="el" href="ast_8cpp_source.html#l00088">ignore_separator()</a>, and <a class="el" href="ast_8cpp_source.html#l00080">to_string()</a>.</p>
+<p class="reference">References <a class="el" href="source__location_8hpp_source.html#l00030">yume::at()</a>, <a class="el" href="ast_8cpp_source.html#l00103">expect()</a>, <a class="el" href="ast_8cpp_source.html#l00089">ignore_separator()</a>, and <a class="el" href="ast_8cpp_source.html#l00081">to_string()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00176">consume_with_commas_until()</a>, <a class="el" href="ast_8cpp_source.html#l00308">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00239">parse_fn_name()</a>, <a class="el" href="ast_8cpp_source.html#l00398">parse_if_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00485">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00539">parse_receiver()</a>, <a class="el" href="ast_8cpp_source.html#l00386">parse_return_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00276">parse_struct_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00655">parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00352">parse_var_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00366">parse_while_stmt()</a>, and <a class="el" href="ast_8cpp_source.html#l00686">try_parse_type()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00177">consume_with_commas_until()</a>, <a class="el" href="ast_8cpp_source.html#l00309">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00240">parse_fn_name()</a>, <a class="el" href="ast_8cpp_source.html#l00399">parse_if_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00486">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00540">parse_receiver()</a>, <a class="el" href="ast_8cpp_source.html#l00387">parse_return_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00277">parse_struct_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00656">parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00353">parse_var_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00367">parse_while_stmt()</a>, and <a class="el" href="ast_8cpp_source.html#l00687">try_parse_type()</a>.</p>
 
 </div>
 </div>
@@ -592,11 +592,11 @@ Variables</h2></td></tr>
 
 <p>Consume tokens until a token of type <code>token_type</code> with the given <code>payload</code> is encountered. <code>action</code> (a no-arg function) is called every time. Between each call, a comma is expected. </p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00176">176</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00177">177</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8cpp_source.html#l00117">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00041">SYM_COMMA</a>, <a class="el" href="ast_8cpp_source.html#l00019">Symbol</a>, and <a class="el" href="ast_8cpp_source.html#l00134">try_consume()</a>.</p>
+<p class="reference">References <a class="el" href="ast_8cpp_source.html#l00118">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00042">SYM_COMMA</a>, <a class="el" href="ast_8cpp_source.html#l00020">Symbol</a>, and <a class="el" href="ast_8cpp_source.html#l00135">try_consume()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00308">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00485">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00539">parse_receiver()</a>, and <a class="el" href="ast_8cpp_source.html#l00276">parse_struct_decl()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00309">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00486">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00540">parse_receiver()</a>, and <a class="el" href="ast_8cpp_source.html#l00277">parse_struct_decl()</a>.</p>
 
 </div>
 </div>
@@ -628,11 +628,11 @@ Variables</h2></td></tr>
 
 <p>Return the payload of the next token. Throws if the next token isn't a <code>Word</code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00198">198</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00199">199</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="source__location_8hpp_source.html#l00030">yume::at()</a>, <a class="el" href="ast_8cpp_source.html#l00088">ignore_separator()</a>, <a class="el" href="ast_8cpp_source.html#l00188">next()</a>, <a class="el" href="ast_8cpp_source.html#l00080">to_string()</a>, and <a class="el" href="ast_8cpp_source.html#l00020">Word</a>.</p>
+<p class="reference">References <a class="el" href="source__location_8hpp_source.html#l00030">yume::at()</a>, <a class="el" href="ast_8cpp_source.html#l00089">ignore_separator()</a>, <a class="el" href="ast_8cpp_source.html#l00189">next()</a>, <a class="el" href="ast_8cpp_source.html#l00081">to_string()</a>, and <a class="el" href="ast_8cpp_source.html#l00021">Word</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00308">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00239">parse_fn_name()</a>, <a class="el" href="ast_8cpp_source.html#l00485">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00539">parse_receiver()</a>, <a class="el" href="ast_8cpp_source.html#l00276">parse_struct_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00655">parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00722">parse_type_name()</a>, <a class="el" href="ast_8cpp_source.html#l00352">parse_var_decl()</a>, and <a class="el" href="ast_8cpp_source.html#l00686">try_parse_type()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00309">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00240">parse_fn_name()</a>, <a class="el" href="ast_8cpp_source.html#l00486">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00540">parse_receiver()</a>, <a class="el" href="ast_8cpp_source.html#l00277">parse_struct_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00656">parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00723">parse_type_name()</a>, <a class="el" href="ast_8cpp_source.html#l00353">parse_var_decl()</a>, and <a class="el" href="ast_8cpp_source.html#l00687">try_parse_type()</a>.</p>
 
 </div>
 </div>
@@ -662,9 +662,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00755">755</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00756">756</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8cpp_source.html#l00735">dup()</a>.</p>
+<p class="reference">References <a class="el" href="ast_8cpp_source.html#l00736">dup()</a>.</p>
 
 </div>
 </div>
@@ -694,7 +694,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00759">759</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00760">760</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
 </div>
 </div>
@@ -724,7 +724,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00753">753</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00754">754</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
 </div>
 </div>
@@ -754,9 +754,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00744">744</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00745">745</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8cpp_source.html#l00735">dup()</a>.</p>
+<p class="reference">References <a class="el" href="ast_8cpp_source.html#l00736">dup()</a>.</p>
 
 </div>
 </div>
@@ -786,11 +786,11 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00735">735</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00736">736</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8cpp_source.html#l00735">dup()</a>.</p>
+<p class="reference">References <a class="el" href="ast_8cpp_source.html#l00736">dup()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00788">yume::ast::AssignExpr::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00785">yume::ast::CallExpr::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00783">yume::ast::Compound::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00786">yume::ast::CtorExpr::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00789">yume::ast::FieldAccessExpr::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00770">yume::ast::FnDecl::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00762">yume::ast::IfClause::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00761">yume::ast::IfStmt::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00790">yume::ast::Program::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00780">yume::ast::QualType::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00767">yume::ast::ReturnStmt::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00787">yume::ast::SliceExpr::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00776">yume::ast::StructDecl::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00782">yume::ast::TypeName::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00769">yume::ast::VarDecl::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00768">yume::ast::WhileStmt::clone()</a>, and <a class="el" href="ast_8cpp_source.html#l00735">dup()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00789">yume::ast::AssignExpr::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00786">yume::ast::CallExpr::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00784">yume::ast::Compound::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00787">yume::ast::CtorExpr::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00790">yume::ast::FieldAccessExpr::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00771">yume::ast::FnDecl::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00763">yume::ast::IfClause::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00762">yume::ast::IfStmt::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00791">yume::ast::Program::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00781">yume::ast::QualType::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00768">yume::ast::ReturnStmt::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00788">yume::ast::SliceExpr::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00777">yume::ast::StructDecl::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00783">yume::ast::TypeName::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00770">yume::ast::VarDecl::clone()</a>, <a class="el" href="ast_8cpp_source.html#l00769">yume::ast::WhileStmt::clone()</a>, and <a class="el" href="ast_8cpp_source.html#l00736">dup()</a>.</p>
 
 </div>
 </div>
@@ -828,11 +828,11 @@ template&lt;typename T &gt; </div>
 
 <p>If the next token doesn't have the type, <code>token_type</code>, throw a runtime exception. </p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00102">102</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00103">103</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="source__location_8hpp_source.html#l00030">yume::at()</a>, <a class="el" href="ast_8cpp_source.html#l00080">to_string()</a>, and <a class="el" href="token_8hpp_source.html#l00081">yume::Token::type_name()</a>.</p>
+<p class="reference">References <a class="el" href="source__location_8hpp_source.html#l00030">yume::at()</a>, <a class="el" href="ast_8cpp_source.html#l00081">to_string()</a>, and <a class="el" href="token_8hpp_source.html#l00081">yume::Token::type_name()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00117">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00477">parse_char_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00461">parse_number_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00469">parse_string_expr()</a>, and <a class="el" href="ast_8cpp_source.html#l00111">require_separator()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00118">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00478">parse_char_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00462">parse_number_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00470">parse_string_expr()</a>, and <a class="el" href="ast_8cpp_source.html#l00112">require_separator()</a>.</p>
 
 </div>
 </div>
@@ -865,11 +865,11 @@ template&lt;typename T &gt; </div>
 <p>Ignore any <code>Separator</code> tokens if any are present. </p>
 <dl class="section return"><dt>Returns</dt><dd>true if a separator was encountered (and consumed) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00088">88</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00089">89</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="source__location_8hpp_source.html#l00030">yume::at()</a>, <a class="el" href="ast_8hpp_source.html#l00117">yume::ast::TokenIterator::at_end()</a>, and <a class="el" href="ast_8cpp_source.html#l00021">Separator</a>.</p>
+<p class="reference">References <a class="el" href="source__location_8hpp_source.html#l00030">yume::at()</a>, <a class="el" href="ast_8hpp_source.html#l00117">yume::ast::TokenIterator::at_end()</a>, and <a class="el" href="ast_8cpp_source.html#l00022">Separator</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00117">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00198">consume_word()</a>, <a class="el" href="ast_8cpp_source.html#l00227">yume::ast::Program::parse()</a>, <a class="el" href="ast_8cpp_source.html#l00308">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00276">parse_struct_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00366">parse_while_stmt()</a>, and <a class="el" href="ast_8cpp_source.html#l00111">require_separator()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00118">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00199">consume_word()</a>, <a class="el" href="ast_8cpp_source.html#l00228">yume::ast::Program::parse()</a>, <a class="el" href="ast_8cpp_source.html#l00309">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00277">parse_struct_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00367">parse_while_stmt()</a>, and <a class="el" href="ast_8cpp_source.html#l00112">require_separator()</a>.</p>
 
 </div>
 </div>
@@ -891,9 +891,9 @@ template&lt;typename T &gt; </div>
 
 <p>Check if the string begins with a capital letter. Used for types, as all types must be capitalized. </p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00207">207</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00208">208</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00276">parse_struct_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00655">parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00686">try_parse_type()</a>, and <a class="el" href="ast_8cpp_source.html#l00210">try_peek_uword()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00277">parse_struct_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00656">parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00687">try_parse_type()</a>, and <a class="el" href="ast_8cpp_source.html#l00211">try_peek_uword()</a>.</p>
 
 </div>
 </div>
@@ -957,11 +957,11 @@ template&lt;typename T &gt; </div>
 
 <p>Return the next token and increment the iterator. </p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00188">188</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00189">189</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="source__location_8hpp_source.html#l00030">yume::at()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00198">consume_word()</a>, <a class="el" href="ast_8cpp_source.html#l00477">parse_char_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00461">parse_number_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00469">parse_string_expr()</a>, and <a class="el" href="compiler_8cpp_source.html#l00085">yume::Compiler::run()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00199">consume_word()</a>, <a class="el" href="ast_8cpp_source.html#l00478">parse_char_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00462">parse_number_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00470">parse_string_expr()</a>, and <a class="el" href="compiler_8cpp_source.html#l00085">yume::Compiler::run()</a>.</p>
 
 </div>
 </div>
@@ -980,11 +980,11 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00062">62</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00063">63</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8cpp_source.html#l00050">SYM_EQ_EQ</a>, <a class="el" href="ast_8cpp_source.html#l00052">SYM_GT</a>, <a class="el" href="ast_8cpp_source.html#l00053">SYM_LT</a>, <a class="el" href="ast_8cpp_source.html#l00055">SYM_MINUS</a>, <a class="el" href="ast_8cpp_source.html#l00051">SYM_NEQ</a>, <a class="el" href="ast_8cpp_source.html#l00056">SYM_PERCENT</a>, <a class="el" href="ast_8cpp_source.html#l00054">SYM_PLUS</a>, <a class="el" href="ast_8cpp_source.html#l00057">SYM_SLASH_SLASH</a>, and <a class="el" href="ast_8cpp_source.html#l00058">SYM_STAR</a>.</p>
+<p class="reference">References <a class="el" href="ast_8cpp_source.html#l00051">SYM_EQ_EQ</a>, <a class="el" href="ast_8cpp_source.html#l00053">SYM_GT</a>, <a class="el" href="ast_8cpp_source.html#l00054">SYM_LT</a>, <a class="el" href="ast_8cpp_source.html#l00056">SYM_MINUS</a>, <a class="el" href="ast_8cpp_source.html#l00052">SYM_NEQ</a>, <a class="el" href="ast_8cpp_source.html#l00057">SYM_PERCENT</a>, <a class="el" href="ast_8cpp_source.html#l00055">SYM_PLUS</a>, <a class="el" href="ast_8cpp_source.html#l00058">SYM_SLASH_SLASH</a>, and <a class="el" href="ast_8cpp_source.html#l00059">SYM_STAR</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00239">parse_fn_name()</a>, and <a class="el" href="ast_8cpp_source.html#l00605">parse_operator()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00240">parse_fn_name()</a>, and <a class="el" href="ast_8cpp_source.html#l00606">parse_operator()</a>.</p>
 
 </div>
 </div>
@@ -1012,11 +1012,11 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00477">477</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00478">478</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1ca8e95e84813830072b7516cfaa7dbc1a9">yume::Token::Char</a>, <a class="el" href="ast_8cpp_source.html#l00102">expect()</a>, <a class="el" href="ast_8cpp_source.html#l00188">next()</a>, and <a class="el" href="ast_8cpp_source.html#l00015">ts()</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1ca8e95e84813830072b7516cfaa7dbc1a9">yume::Token::Char</a>, <a class="el" href="ast_8cpp_source.html#l00103">expect()</a>, <a class="el" href="ast_8cpp_source.html#l00189">next()</a>, and <a class="el" href="ast_8cpp_source.html#l00016">ts()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00485">parse_primary()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00486">parse_primary()</a>.</p>
 
 </div>
 </div>
@@ -1044,11 +1044,11 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00733">733</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00734">734</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8cpp_source.html#l00605">parse_operator()</a>.</p>
+<p class="reference">References <a class="el" href="ast_8cpp_source.html#l00606">parse_operator()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00308">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00398">parse_if_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00485">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00539">parse_receiver()</a>, <a class="el" href="ast_8cpp_source.html#l00386">parse_return_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00632">parse_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00352">parse_var_decl()</a>, and <a class="el" href="ast_8cpp_source.html#l00366">parse_while_stmt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00309">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00399">parse_if_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00486">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00540">parse_receiver()</a>, <a class="el" href="ast_8cpp_source.html#l00387">parse_return_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00633">parse_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00353">parse_var_decl()</a>, and <a class="el" href="ast_8cpp_source.html#l00367">parse_while_stmt()</a>.</p>
 
 </div>
 </div>
@@ -1076,11 +1076,11 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00308">308</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00309">309</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00117">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00176">consume_with_commas_until()</a>, <a class="el" href="ast_8cpp_source.html#l00198">consume_word()</a>, <a class="el" href="ast_8cpp_source.html#l00088">ignore_separator()</a>, <a class="el" href="ast_8cpp_source.html#l00025">KWD_DEF</a>, <a class="el" href="ast_8cpp_source.html#l00026">KWD_END</a>, <a class="el" href="ast_8cpp_source.html#l00039">KWD_PRIMITIVE</a>, <a class="el" href="ast_8cpp_source.html#l00038">KWD_VARARGS</a>, <a class="el" href="ast_8cpp_source.html#l00733">parse_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00239">parse_fn_name()</a>, <a class="el" href="ast_8cpp_source.html#l00632">parse_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00722">parse_type_name()</a>, <a class="el" href="ast_8cpp_source.html#l00111">require_separator()</a>, <a class="el" href="ast_8cpp_source.html#l00043">SYM_EQ</a>, <a class="el" href="ast_8cpp_source.html#l00052">SYM_GT</a>, <a class="el" href="ast_8cpp_source.html#l00044">SYM_LPAREN</a>, <a class="el" href="ast_8cpp_source.html#l00053">SYM_LT</a>, <a class="el" href="ast_8cpp_source.html#l00045">SYM_RPAREN</a>, <a class="el" href="ast_8cpp_source.html#l00019">Symbol</a>, <a class="el" href="ast_8cpp_source.html#l00134">try_consume()</a>, <a class="el" href="ast_8cpp_source.html#l00686">try_parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00015">ts()</a>, and <a class="el" href="ast_8cpp_source.html#l00020">Word</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00118">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00177">consume_with_commas_until()</a>, <a class="el" href="ast_8cpp_source.html#l00199">consume_word()</a>, <a class="el" href="ast_8cpp_source.html#l00089">ignore_separator()</a>, <a class="el" href="ast_8cpp_source.html#l00026">KWD_DEF</a>, <a class="el" href="ast_8cpp_source.html#l00027">KWD_END</a>, <a class="el" href="ast_8cpp_source.html#l00040">KWD_PRIMITIVE</a>, <a class="el" href="ast_8cpp_source.html#l00039">KWD_VARARGS</a>, <a class="el" href="ast_8cpp_source.html#l00734">parse_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00240">parse_fn_name()</a>, <a class="el" href="ast_8cpp_source.html#l00633">parse_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00723">parse_type_name()</a>, <a class="el" href="ast_8cpp_source.html#l00112">require_separator()</a>, <a class="el" href="ast_8cpp_source.html#l00044">SYM_EQ</a>, <a class="el" href="ast_8cpp_source.html#l00053">SYM_GT</a>, <a class="el" href="ast_8cpp_source.html#l00045">SYM_LPAREN</a>, <a class="el" href="ast_8cpp_source.html#l00054">SYM_LT</a>, <a class="el" href="ast_8cpp_source.html#l00046">SYM_RPAREN</a>, <a class="el" href="ast_8cpp_source.html#l00020">Symbol</a>, <a class="el" href="ast_8cpp_source.html#l00135">try_consume()</a>, <a class="el" href="ast_8cpp_source.html#l00687">try_parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00016">ts()</a>, and <a class="el" href="ast_8cpp_source.html#l00021">Word</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00632">parse_stmt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00633">parse_stmt()</a>.</p>
 
 </div>
 </div>
@@ -1108,11 +1108,11 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00239">239</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00240">240</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8cpp_source.html#l00117">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00198">consume_word()</a>, <a class="el" href="ast_8cpp_source.html#l00062">operators()</a>, <a class="el" href="ast_8cpp_source.html#l00059">SYM_BANG</a>, <a class="el" href="ast_8cpp_source.html#l00043">SYM_EQ</a>, <a class="el" href="ast_8cpp_source.html#l00046">SYM_LBRACKET</a>, <a class="el" href="ast_8cpp_source.html#l00047">SYM_RBRACKET</a>, <a class="el" href="ast_8cpp_source.html#l00019">Symbol</a>, <a class="el" href="ast_8cpp_source.html#l00134">try_consume()</a>, and <a class="el" href="ast_8cpp_source.html#l00020">Word</a>.</p>
+<p class="reference">References <a class="el" href="ast_8cpp_source.html#l00118">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00199">consume_word()</a>, <a class="el" href="ast_8cpp_source.html#l00063">operators()</a>, <a class="el" href="ast_8cpp_source.html#l00060">SYM_BANG</a>, <a class="el" href="ast_8cpp_source.html#l00044">SYM_EQ</a>, <a class="el" href="ast_8cpp_source.html#l00047">SYM_LBRACKET</a>, <a class="el" href="ast_8cpp_source.html#l00048">SYM_RBRACKET</a>, <a class="el" href="ast_8cpp_source.html#l00020">Symbol</a>, <a class="el" href="ast_8cpp_source.html#l00135">try_consume()</a>, and <a class="el" href="ast_8cpp_source.html#l00021">Word</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00308">parse_fn_decl()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00309">parse_fn_decl()</a>.</p>
 
 </div>
 </div>
@@ -1140,11 +1140,11 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00398">398</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00399">399</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00117">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00030">KWD_ELSE</a>, <a class="el" href="ast_8cpp_source.html#l00026">KWD_END</a>, <a class="el" href="ast_8cpp_source.html#l00024">KWD_IF</a>, <a class="el" href="ast_8cpp_source.html#l00032">KWD_THEN</a>, <a class="el" href="ast_8cpp_source.html#l00733">parse_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00632">parse_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00111">require_separator()</a>, <a class="el" href="ast_8cpp_source.html#l00134">try_consume()</a>, <a class="el" href="ast_8cpp_source.html#l00015">ts()</a>, and <a class="el" href="ast_8cpp_source.html#l00020">Word</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00118">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00031">KWD_ELSE</a>, <a class="el" href="ast_8cpp_source.html#l00027">KWD_END</a>, <a class="el" href="ast_8cpp_source.html#l00025">KWD_IF</a>, <a class="el" href="ast_8cpp_source.html#l00033">KWD_THEN</a>, <a class="el" href="ast_8cpp_source.html#l00734">parse_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00633">parse_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00112">require_separator()</a>, <a class="el" href="ast_8cpp_source.html#l00135">try_consume()</a>, <a class="el" href="ast_8cpp_source.html#l00016">ts()</a>, and <a class="el" href="ast_8cpp_source.html#l00021">Word</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00632">parse_stmt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00633">parse_stmt()</a>.</p>
 
 </div>
 </div>
@@ -1172,11 +1172,11 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00461">461</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00462">462</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00102">expect()</a>, <a class="el" href="ast_8cpp_source.html#l00188">next()</a>, <a class="el" href="ast_8cpp_source.html#l00022">Number</a>, and <a class="el" href="ast_8cpp_source.html#l00015">ts()</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00103">expect()</a>, <a class="el" href="ast_8cpp_source.html#l00189">next()</a>, <a class="el" href="ast_8cpp_source.html#l00023">Number</a>, and <a class="el" href="ast_8cpp_source.html#l00016">ts()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00485">parse_primary()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00486">parse_primary()</a>.</p>
 
 </div>
 </div>
@@ -1214,11 +1214,11 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00605">605</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00606">606</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00062">operators()</a>, <a class="el" href="ast_8cpp_source.html#l00605">parse_operator()</a>, <a class="el" href="ast_8cpp_source.html#l00592">parse_unary()</a>, <a class="el" href="ast_8cpp_source.html#l00019">Symbol</a>, <a class="el" href="ast_8cpp_source.html#l00134">try_consume()</a>, and <a class="el" href="ast_8cpp_source.html#l00015">ts()</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00063">operators()</a>, <a class="el" href="ast_8cpp_source.html#l00606">parse_operator()</a>, <a class="el" href="ast_8cpp_source.html#l00593">parse_unary()</a>, <a class="el" href="ast_8cpp_source.html#l00020">Symbol</a>, <a class="el" href="ast_8cpp_source.html#l00135">try_consume()</a>, and <a class="el" href="ast_8cpp_source.html#l00016">ts()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00733">parse_expr()</a>, and <a class="el" href="ast_8cpp_source.html#l00605">parse_operator()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00734">parse_expr()</a>, and <a class="el" href="ast_8cpp_source.html#l00606">parse_operator()</a>.</p>
 
 </div>
 </div>
@@ -1246,11 +1246,11 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00485">485</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00486">486</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1ca8e95e84813830072b7516cfaa7dbc1a9">yume::Token::Char</a>, <a class="el" href="ast_8cpp_source.html#l00117">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00176">consume_with_commas_until()</a>, <a class="el" href="ast_8cpp_source.html#l00198">consume_word()</a>, <a class="el" href="ast_8cpp_source.html#l00034">KWD_FALSE</a>, <a class="el" href="ast_8cpp_source.html#l00031">KWD_SELF</a>, <a class="el" href="ast_8cpp_source.html#l00033">KWD_TRUE</a>, <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1cad7da1b76e5799f53a399b7a96ba67437">yume::Token::Literal</a>, <a class="el" href="ast_8cpp_source.html#l00022">Number</a>, <a class="el" href="ast_8cpp_source.html#l00477">parse_char_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00733">parse_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00461">parse_number_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00469">parse_string_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00655">parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00046">SYM_LBRACKET</a>, <a class="el" href="ast_8cpp_source.html#l00044">SYM_LPAREN</a>, <a class="el" href="ast_8cpp_source.html#l00047">SYM_RBRACKET</a>, <a class="el" href="ast_8cpp_source.html#l00045">SYM_RPAREN</a>, <a class="el" href="ast_8cpp_source.html#l00019">Symbol</a>, <a class="el" href="ast_8cpp_source.html#l00134">try_consume()</a>, <a class="el" href="ast_8cpp_source.html#l00149">try_peek()</a>, <a class="el" href="ast_8cpp_source.html#l00210">try_peek_uword()</a>, <a class="el" href="ast_8cpp_source.html#l00015">ts()</a>, and <a class="el" href="ast_8cpp_source.html#l00020">Word</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1ca8e95e84813830072b7516cfaa7dbc1a9">yume::Token::Char</a>, <a class="el" href="ast_8cpp_source.html#l00118">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00177">consume_with_commas_until()</a>, <a class="el" href="ast_8cpp_source.html#l00199">consume_word()</a>, <a class="el" href="ast_8cpp_source.html#l00035">KWD_FALSE</a>, <a class="el" href="ast_8cpp_source.html#l00032">KWD_SELF</a>, <a class="el" href="ast_8cpp_source.html#l00034">KWD_TRUE</a>, <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1cad7da1b76e5799f53a399b7a96ba67437">yume::Token::Literal</a>, <a class="el" href="ast_8cpp_source.html#l00023">Number</a>, <a class="el" href="ast_8cpp_source.html#l00478">parse_char_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00734">parse_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00462">parse_number_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00470">parse_string_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00656">parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00047">SYM_LBRACKET</a>, <a class="el" href="ast_8cpp_source.html#l00045">SYM_LPAREN</a>, <a class="el" href="ast_8cpp_source.html#l00048">SYM_RBRACKET</a>, <a class="el" href="ast_8cpp_source.html#l00046">SYM_RPAREN</a>, <a class="el" href="ast_8cpp_source.html#l00020">Symbol</a>, <a class="el" href="ast_8cpp_source.html#l00135">try_consume()</a>, <a class="el" href="ast_8cpp_source.html#l00150">try_peek()</a>, <a class="el" href="ast_8cpp_source.html#l00211">try_peek_uword()</a>, <a class="el" href="ast_8cpp_source.html#l00016">ts()</a>, and <a class="el" href="ast_8cpp_source.html#l00021">Word</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00587">parse_receiver()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00588">parse_receiver()</a>.</p>
 
 </div>
 </div>
@@ -1278,9 +1278,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00587">587</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00588">588</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00485">parse_primary()</a>, and <a class="el" href="ast_8cpp_source.html#l00539">parse_receiver()</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00486">parse_primary()</a>, and <a class="el" href="ast_8cpp_source.html#l00540">parse_receiver()</a>.</p>
 
 </div>
 </div>
@@ -1324,11 +1324,11 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00539">539</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00540">540</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00117">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00176">consume_with_commas_until()</a>, <a class="el" href="ast_8cpp_source.html#l00198">consume_word()</a>, <a class="el" href="ast_8cpp_source.html#l00733">parse_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00539">parse_receiver()</a>, <a class="el" href="ast_8cpp_source.html#l00060">SYM_COLON</a>, <a class="el" href="ast_8cpp_source.html#l00042">SYM_DOT</a>, <a class="el" href="ast_8cpp_source.html#l00043">SYM_EQ</a>, <a class="el" href="ast_8cpp_source.html#l00046">SYM_LBRACKET</a>, <a class="el" href="ast_8cpp_source.html#l00044">SYM_LPAREN</a>, <a class="el" href="ast_8cpp_source.html#l00047">SYM_RBRACKET</a>, <a class="el" href="ast_8cpp_source.html#l00045">SYM_RPAREN</a>, <a class="el" href="ast_8cpp_source.html#l00019">Symbol</a>, <a class="el" href="ast_8cpp_source.html#l00134">try_consume()</a>, and <a class="el" href="ast_8cpp_source.html#l00015">ts()</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00118">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00177">consume_with_commas_until()</a>, <a class="el" href="ast_8cpp_source.html#l00199">consume_word()</a>, <a class="el" href="ast_8cpp_source.html#l00734">parse_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00540">parse_receiver()</a>, <a class="el" href="ast_8cpp_source.html#l00061">SYM_COLON</a>, <a class="el" href="ast_8cpp_source.html#l00043">SYM_DOT</a>, <a class="el" href="ast_8cpp_source.html#l00044">SYM_EQ</a>, <a class="el" href="ast_8cpp_source.html#l00047">SYM_LBRACKET</a>, <a class="el" href="ast_8cpp_source.html#l00045">SYM_LPAREN</a>, <a class="el" href="ast_8cpp_source.html#l00048">SYM_RBRACKET</a>, <a class="el" href="ast_8cpp_source.html#l00046">SYM_RPAREN</a>, <a class="el" href="ast_8cpp_source.html#l00020">Symbol</a>, <a class="el" href="ast_8cpp_source.html#l00135">try_consume()</a>, and <a class="el" href="ast_8cpp_source.html#l00016">ts()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00539">parse_receiver()</a>, and <a class="el" href="ast_8cpp_source.html#l00592">parse_unary()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00540">parse_receiver()</a>, and <a class="el" href="ast_8cpp_source.html#l00593">parse_unary()</a>.</p>
 
 </div>
 </div>
@@ -1356,11 +1356,11 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00386">386</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00387">387</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00117">yume::ast::TokenIterator::at_end()</a>, <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00117">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00037">KWD_RETURN</a>, <a class="el" href="ast_8cpp_source.html#l00733">parse_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00021">Separator</a>, <a class="el" href="ast_8cpp_source.html#l00149">try_peek()</a>, <a class="el" href="ast_8cpp_source.html#l00015">ts()</a>, and <a class="el" href="ast_8cpp_source.html#l00020">Word</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00117">yume::ast::TokenIterator::at_end()</a>, <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00118">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00038">KWD_RETURN</a>, <a class="el" href="ast_8cpp_source.html#l00734">parse_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00022">Separator</a>, <a class="el" href="ast_8cpp_source.html#l00150">try_peek()</a>, <a class="el" href="ast_8cpp_source.html#l00016">ts()</a>, and <a class="el" href="ast_8cpp_source.html#l00021">Word</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00632">parse_stmt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00633">parse_stmt()</a>.</p>
 
 </div>
 </div>
@@ -1388,11 +1388,11 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00632">632</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00633">633</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8cpp_source.html#l00025">KWD_DEF</a>, <a class="el" href="ast_8cpp_source.html#l00024">KWD_IF</a>, <a class="el" href="ast_8cpp_source.html#l00027">KWD_LET</a>, <a class="el" href="ast_8cpp_source.html#l00037">KWD_RETURN</a>, <a class="el" href="ast_8cpp_source.html#l00036">KWD_STRUCT</a>, <a class="el" href="ast_8cpp_source.html#l00035">KWD_WHILE</a>, <a class="el" href="ast_8cpp_source.html#l00733">parse_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00308">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00398">parse_if_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00386">parse_return_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00276">parse_struct_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00352">parse_var_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00366">parse_while_stmt()</a>, and <a class="el" href="ast_8cpp_source.html#l00111">require_separator()</a>.</p>
+<p class="reference">References <a class="el" href="ast_8cpp_source.html#l00026">KWD_DEF</a>, <a class="el" href="ast_8cpp_source.html#l00025">KWD_IF</a>, <a class="el" href="ast_8cpp_source.html#l00028">KWD_LET</a>, <a class="el" href="ast_8cpp_source.html#l00038">KWD_RETURN</a>, <a class="el" href="ast_8cpp_source.html#l00037">KWD_STRUCT</a>, <a class="el" href="ast_8cpp_source.html#l00036">KWD_WHILE</a>, <a class="el" href="ast_8cpp_source.html#l00734">parse_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00309">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00399">parse_if_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00387">parse_return_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00277">parse_struct_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00353">parse_var_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00367">parse_while_stmt()</a>, and <a class="el" href="ast_8cpp_source.html#l00112">require_separator()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00227">yume::ast::Program::parse()</a>, <a class="el" href="ast_8cpp_source.html#l00308">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00398">parse_if_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00276">parse_struct_decl()</a>, and <a class="el" href="ast_8cpp_source.html#l00366">parse_while_stmt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00228">yume::ast::Program::parse()</a>, <a class="el" href="ast_8cpp_source.html#l00309">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00399">parse_if_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00277">parse_struct_decl()</a>, and <a class="el" href="ast_8cpp_source.html#l00367">parse_while_stmt()</a>.</p>
 
 </div>
 </div>
@@ -1420,11 +1420,11 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00469">469</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00470">470</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00102">expect()</a>, <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1cad7da1b76e5799f53a399b7a96ba67437">yume::Token::Literal</a>, <a class="el" href="ast_8cpp_source.html#l00188">next()</a>, and <a class="el" href="ast_8cpp_source.html#l00015">ts()</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00103">expect()</a>, <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1cad7da1b76e5799f53a399b7a96ba67437">yume::Token::Literal</a>, <a class="el" href="ast_8cpp_source.html#l00189">next()</a>, and <a class="el" href="ast_8cpp_source.html#l00016">ts()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00485">parse_primary()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00486">parse_primary()</a>.</p>
 
 </div>
 </div>
@@ -1452,11 +1452,11 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00276">276</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00277">277</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00117">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00176">consume_with_commas_until()</a>, <a class="el" href="ast_8cpp_source.html#l00198">consume_word()</a>, <a class="el" href="ast_8cpp_source.html#l00088">ignore_separator()</a>, <a class="el" href="ast_8cpp_source.html#l00207">is_uword()</a>, <a class="el" href="ast_8cpp_source.html#l00026">KWD_END</a>, <a class="el" href="ast_8cpp_source.html#l00036">KWD_STRUCT</a>, <a class="el" href="ast_8cpp_source.html#l00632">parse_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00722">parse_type_name()</a>, <a class="el" href="ast_8cpp_source.html#l00111">require_separator()</a>, <a class="el" href="ast_8cpp_source.html#l00052">SYM_GT</a>, <a class="el" href="ast_8cpp_source.html#l00044">SYM_LPAREN</a>, <a class="el" href="ast_8cpp_source.html#l00053">SYM_LT</a>, <a class="el" href="ast_8cpp_source.html#l00045">SYM_RPAREN</a>, <a class="el" href="ast_8cpp_source.html#l00019">Symbol</a>, <a class="el" href="ast_8cpp_source.html#l00134">try_consume()</a>, <a class="el" href="ast_8cpp_source.html#l00015">ts()</a>, and <a class="el" href="ast_8cpp_source.html#l00020">Word</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00118">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00177">consume_with_commas_until()</a>, <a class="el" href="ast_8cpp_source.html#l00199">consume_word()</a>, <a class="el" href="ast_8cpp_source.html#l00089">ignore_separator()</a>, <a class="el" href="ast_8cpp_source.html#l00208">is_uword()</a>, <a class="el" href="ast_8cpp_source.html#l00027">KWD_END</a>, <a class="el" href="ast_8cpp_source.html#l00037">KWD_STRUCT</a>, <a class="el" href="ast_8cpp_source.html#l00633">parse_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00723">parse_type_name()</a>, <a class="el" href="ast_8cpp_source.html#l00112">require_separator()</a>, <a class="el" href="ast_8cpp_source.html#l00053">SYM_GT</a>, <a class="el" href="ast_8cpp_source.html#l00045">SYM_LPAREN</a>, <a class="el" href="ast_8cpp_source.html#l00054">SYM_LT</a>, <a class="el" href="ast_8cpp_source.html#l00046">SYM_RPAREN</a>, <a class="el" href="ast_8cpp_source.html#l00020">Symbol</a>, <a class="el" href="ast_8cpp_source.html#l00135">try_consume()</a>, <a class="el" href="ast_8cpp_source.html#l00016">ts()</a>, and <a class="el" href="ast_8cpp_source.html#l00021">Word</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00632">parse_stmt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00633">parse_stmt()</a>.</p>
 
 </div>
 </div>
@@ -1484,11 +1484,11 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00655">655</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00656">656</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00117">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00198">consume_word()</a>, <a class="el" href="ast_8cpp_source.html#l00207">is_uword()</a>, <a class="el" href="ast_8cpp_source.html#l00029">KWD_MUT</a>, <a class="el" href="ast_8cpp_source.html#l00028">KWD_PTR</a>, <a class="el" href="ast_8cpp_source.html#l00031">KWD_SELF</a>, <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>, <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a165d3d525f6d0cbd55e42cc3058cafcc">yume::Ptr</a>, <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706ad140d37ad98c12ccd8e1c432f548bcdb">yume::Slice</a>, <a class="el" href="ast_8cpp_source.html#l00046">SYM_LBRACKET</a>, <a class="el" href="ast_8cpp_source.html#l00047">SYM_RBRACKET</a>, <a class="el" href="ast_8cpp_source.html#l00019">Symbol</a>, <a class="el" href="ast_8cpp_source.html#l00134">try_consume()</a>, <a class="el" href="ast_8cpp_source.html#l00149">try_peek()</a>, <a class="el" href="ast_8cpp_source.html#l00015">ts()</a>, and <a class="el" href="ast_8cpp_source.html#l00020">Word</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00118">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00199">consume_word()</a>, <a class="el" href="ast_8cpp_source.html#l00208">is_uword()</a>, <a class="el" href="ast_8cpp_source.html#l00030">KWD_MUT</a>, <a class="el" href="ast_8cpp_source.html#l00029">KWD_PTR</a>, <a class="el" href="ast_8cpp_source.html#l00032">KWD_SELF</a>, <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>, <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a165d3d525f6d0cbd55e42cc3058cafcc">yume::Ptr</a>, <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706ad140d37ad98c12ccd8e1c432f548bcdb">yume::Slice</a>, <a class="el" href="ast_8cpp_source.html#l00047">SYM_LBRACKET</a>, <a class="el" href="ast_8cpp_source.html#l00048">SYM_RBRACKET</a>, <a class="el" href="ast_8cpp_source.html#l00020">Symbol</a>, <a class="el" href="ast_8cpp_source.html#l00135">try_consume()</a>, <a class="el" href="ast_8cpp_source.html#l00150">try_peek()</a>, <a class="el" href="ast_8cpp_source.html#l00016">ts()</a>, and <a class="el" href="ast_8cpp_source.html#l00021">Word</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00485">parse_primary()</a>, and <a class="el" href="ast_8cpp_source.html#l00722">parse_type_name()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00486">parse_primary()</a>, and <a class="el" href="ast_8cpp_source.html#l00723">parse_type_name()</a>.</p>
 
 </div>
 </div>
@@ -1516,11 +1516,11 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00722">722</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00723">723</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00198">consume_word()</a>, <a class="el" href="ast_8cpp_source.html#l00031">KWD_SELF</a>, <a class="el" href="ast_8cpp_source.html#l00655">parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00149">try_peek()</a>, <a class="el" href="ast_8cpp_source.html#l00015">ts()</a>, and <a class="el" href="ast_8cpp_source.html#l00020">Word</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00199">consume_word()</a>, <a class="el" href="ast_8cpp_source.html#l00032">KWD_SELF</a>, <a class="el" href="ast_8cpp_source.html#l00656">parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00150">try_peek()</a>, <a class="el" href="ast_8cpp_source.html#l00016">ts()</a>, and <a class="el" href="ast_8cpp_source.html#l00021">Word</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00308">parse_fn_decl()</a>, and <a class="el" href="ast_8cpp_source.html#l00276">parse_struct_decl()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00309">parse_fn_decl()</a>, and <a class="el" href="ast_8cpp_source.html#l00277">parse_struct_decl()</a>.</p>
 
 </div>
 </div>
@@ -1548,11 +1548,11 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00592">592</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00593">593</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00539">parse_receiver()</a>, <a class="el" href="ast_8cpp_source.html#l00019">Symbol</a>, <a class="el" href="ast_8cpp_source.html#l00134">try_consume()</a>, <a class="el" href="ast_8cpp_source.html#l00015">ts()</a>, and <a class="el" href="ast_8cpp_source.html#l00071">unary_operators()</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00540">parse_receiver()</a>, <a class="el" href="ast_8cpp_source.html#l00020">Symbol</a>, <a class="el" href="ast_8cpp_source.html#l00135">try_consume()</a>, <a class="el" href="ast_8cpp_source.html#l00016">ts()</a>, and <a class="el" href="ast_8cpp_source.html#l00072">unary_operators()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00605">parse_operator()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00606">parse_operator()</a>.</p>
 
 </div>
 </div>
@@ -1580,11 +1580,11 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00352">352</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00353">353</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00117">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00198">consume_word()</a>, <a class="el" href="ast_8cpp_source.html#l00027">KWD_LET</a>, <a class="el" href="ast_8cpp_source.html#l00733">parse_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00043">SYM_EQ</a>, <a class="el" href="ast_8cpp_source.html#l00019">Symbol</a>, <a class="el" href="ast_8cpp_source.html#l00686">try_parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00015">ts()</a>, and <a class="el" href="ast_8cpp_source.html#l00020">Word</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00118">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00199">consume_word()</a>, <a class="el" href="ast_8cpp_source.html#l00028">KWD_LET</a>, <a class="el" href="ast_8cpp_source.html#l00734">parse_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00044">SYM_EQ</a>, <a class="el" href="ast_8cpp_source.html#l00020">Symbol</a>, <a class="el" href="ast_8cpp_source.html#l00687">try_parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00016">ts()</a>, and <a class="el" href="ast_8cpp_source.html#l00021">Word</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00632">parse_stmt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00633">parse_stmt()</a>.</p>
 
 </div>
 </div>
@@ -1612,11 +1612,11 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00366">366</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00367">367</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00117">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00088">ignore_separator()</a>, <a class="el" href="ast_8cpp_source.html#l00026">KWD_END</a>, <a class="el" href="ast_8cpp_source.html#l00035">KWD_WHILE</a>, <a class="el" href="ast_8cpp_source.html#l00733">parse_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00632">parse_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00134">try_consume()</a>, <a class="el" href="ast_8cpp_source.html#l00015">ts()</a>, and <a class="el" href="ast_8cpp_source.html#l00020">Word</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00118">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00089">ignore_separator()</a>, <a class="el" href="ast_8cpp_source.html#l00027">KWD_END</a>, <a class="el" href="ast_8cpp_source.html#l00036">KWD_WHILE</a>, <a class="el" href="ast_8cpp_source.html#l00734">parse_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00633">parse_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00135">try_consume()</a>, <a class="el" href="ast_8cpp_source.html#l00016">ts()</a>, and <a class="el" href="ast_8cpp_source.html#l00021">Word</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00632">parse_stmt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00633">parse_stmt()</a>.</p>
 
 </div>
 </div>
@@ -1648,11 +1648,11 @@ template&lt;typename T &gt; </div>
 
 <p>Consume all subsequent <code>Separator</code> tokens. Throws if none were found. </p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00111">111</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00112">112</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8cpp_source.html#l00102">expect()</a>, <a class="el" href="ast_8cpp_source.html#l00088">ignore_separator()</a>, and <a class="el" href="ast_8cpp_source.html#l00021">Separator</a>.</p>
+<p class="reference">References <a class="el" href="ast_8cpp_source.html#l00103">expect()</a>, <a class="el" href="ast_8cpp_source.html#l00089">ignore_separator()</a>, and <a class="el" href="ast_8cpp_source.html#l00022">Separator</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00308">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00398">parse_if_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00632">parse_stmt()</a>, and <a class="el" href="ast_8cpp_source.html#l00276">parse_struct_decl()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00309">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00399">parse_if_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00633">parse_stmt()</a>, and <a class="el" href="ast_8cpp_source.html#l00277">parse_struct_decl()</a>.</p>
 
 </div>
 </div>
@@ -1672,9 +1672,9 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00080">80</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00081">81</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="source__location_8hpp_source.html#l00030">yume::at()</a>, <a class="el" href="ast_8cpp_source.html#l00117">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00198">consume_word()</a>, <a class="el" href="ast_8hpp_source.html#l00376">yume::ast::NumberExpr::describe()</a>, <a class="el" href="ast_8hpp_source.html#l00390">yume::ast::CharExpr::describe()</a>, <a class="el" href="ast_8cpp_source.html#l00102">expect()</a>, and <a class="el" href="type__holder_8cpp_source.html#l00008">yume::TypeHolder::TypeHolder()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="source__location_8hpp_source.html#l00030">yume::at()</a>, <a class="el" href="ast_8cpp_source.html#l00118">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00199">consume_word()</a>, <a class="el" href="ast_8hpp_source.html#l00376">yume::ast::NumberExpr::describe()</a>, <a class="el" href="ast_8hpp_source.html#l00390">yume::ast::CharExpr::describe()</a>, <a class="el" href="ast_8cpp_source.html#l00103">expect()</a>, and <a class="el" href="type__holder_8cpp_source.html#l00008">yume::TypeHolder::TypeHolder()</a>.</p>
 
 </div>
 </div>
@@ -1718,11 +1718,11 @@ template&lt;typename T &gt; </div>
 
 <p>Attempt to consume a token of type <code>token_type</code> with the given <code>payload</code>. Does nothing if it wasn't encountered. </p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00134">134</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00135">135</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="source__location_8hpp_source.html#l00030">yume::at()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00176">consume_with_commas_until()</a>, <a class="el" href="ast_8cpp_source.html#l00308">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00239">parse_fn_name()</a>, <a class="el" href="ast_8cpp_source.html#l00398">parse_if_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00605">parse_operator()</a>, <a class="el" href="ast_8cpp_source.html#l00485">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00539">parse_receiver()</a>, <a class="el" href="ast_8cpp_source.html#l00276">parse_struct_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00655">parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00592">parse_unary()</a>, <a class="el" href="ast_8cpp_source.html#l00366">parse_while_stmt()</a>, and <a class="el" href="ast_8cpp_source.html#l00686">try_parse_type()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00177">consume_with_commas_until()</a>, <a class="el" href="ast_8cpp_source.html#l00309">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00240">parse_fn_name()</a>, <a class="el" href="ast_8cpp_source.html#l00399">parse_if_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00606">parse_operator()</a>, <a class="el" href="ast_8cpp_source.html#l00486">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00540">parse_receiver()</a>, <a class="el" href="ast_8cpp_source.html#l00277">parse_struct_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00656">parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00593">parse_unary()</a>, <a class="el" href="ast_8cpp_source.html#l00367">parse_while_stmt()</a>, and <a class="el" href="ast_8cpp_source.html#l00687">try_parse_type()</a>.</p>
 
 </div>
 </div>
@@ -1750,11 +1750,11 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00686">686</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00687">687</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00117">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00198">consume_word()</a>, <a class="el" href="ast_8cpp_source.html#l00207">is_uword()</a>, <a class="el" href="ast_8cpp_source.html#l00029">KWD_MUT</a>, <a class="el" href="ast_8cpp_source.html#l00028">KWD_PTR</a>, <a class="el" href="ast_8cpp_source.html#l00031">KWD_SELF</a>, <a class="el" href="util_8hpp_source.html#l00219">yume::make_atom()</a>, <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>, <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a165d3d525f6d0cbd55e42cc3058cafcc">yume::Ptr</a>, <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706ad140d37ad98c12ccd8e1c432f548bcdb">yume::Slice</a>, <a class="el" href="ast_8cpp_source.html#l00046">SYM_LBRACKET</a>, <a class="el" href="ast_8cpp_source.html#l00047">SYM_RBRACKET</a>, <a class="el" href="ast_8cpp_source.html#l00019">Symbol</a>, <a class="el" href="ast_8cpp_source.html#l00134">try_consume()</a>, <a class="el" href="ast_8cpp_source.html#l00149">try_peek()</a>, <a class="el" href="ast_8cpp_source.html#l00015">ts()</a>, and <a class="el" href="ast_8cpp_source.html#l00020">Word</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::TokenIterator::begin()</a>, <a class="el" href="ast_8cpp_source.html#l00118">consume()</a>, <a class="el" href="ast_8cpp_source.html#l00199">consume_word()</a>, <a class="el" href="ast_8cpp_source.html#l00208">is_uword()</a>, <a class="el" href="ast_8cpp_source.html#l00030">KWD_MUT</a>, <a class="el" href="ast_8cpp_source.html#l00029">KWD_PTR</a>, <a class="el" href="ast_8cpp_source.html#l00032">KWD_SELF</a>, <a class="el" href="util_8hpp_source.html#l00218">yume::make_atom()</a>, <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>, <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a165d3d525f6d0cbd55e42cc3058cafcc">yume::Ptr</a>, <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706ad140d37ad98c12ccd8e1c432f548bcdb">yume::Slice</a>, <a class="el" href="ast_8cpp_source.html#l00047">SYM_LBRACKET</a>, <a class="el" href="ast_8cpp_source.html#l00048">SYM_RBRACKET</a>, <a class="el" href="ast_8cpp_source.html#l00020">Symbol</a>, <a class="el" href="ast_8cpp_source.html#l00135">try_consume()</a>, <a class="el" href="ast_8cpp_source.html#l00150">try_peek()</a>, <a class="el" href="ast_8cpp_source.html#l00016">ts()</a>, and <a class="el" href="ast_8cpp_source.html#l00021">Word</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00308">parse_fn_decl()</a>, and <a class="el" href="ast_8cpp_source.html#l00352">parse_var_decl()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00309">parse_fn_decl()</a>, and <a class="el" href="ast_8cpp_source.html#l00353">parse_var_decl()</a>.</p>
 
 </div>
 </div>
@@ -1804,11 +1804,11 @@ template&lt;typename T &gt; </div>
 
 <p>Check if the token ahead by <code>ahead</code> is of type <code>token_type</code> with the given <code>payload</code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00149">149</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00150">150</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="source__location_8hpp_source.html#l00030">yume::at()</a>, and <a class="el" href="token_8hpp_source.html#l00081">yume::Token::type_name()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00485">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00386">parse_return_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00655">parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00722">parse_type_name()</a>, and <a class="el" href="ast_8cpp_source.html#l00686">try_parse_type()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00486">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00387">parse_return_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00656">parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00723">parse_type_name()</a>, and <a class="el" href="ast_8cpp_source.html#l00687">try_parse_type()</a>.</p>
 
 </div>
 </div>
@@ -1852,7 +1852,7 @@ template&lt;typename T &gt; </div>
 
 <p>Check if the token ahead by <code>ahead</code> is of type <code>token_type</code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00162">162</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00163">163</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="source__location_8hpp_source.html#l00030">yume::at()</a>, and <a class="el" href="token_8hpp_source.html#l00081">yume::Token::type_name()</a>.</p>
 
@@ -1892,11 +1892,11 @@ template&lt;typename T &gt; </div>
 
 <p>Check if the ahead by <code>ahead</code> is a capitalized word. </p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00210">210</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00211">211</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="source__location_8hpp_source.html#l00030">yume::at()</a>, <a class="el" href="ast_8cpp_source.html#l00207">is_uword()</a>, and <a class="el" href="ast_8cpp_source.html#l00020">Word</a>.</p>
+<p class="reference">References <a class="el" href="source__location_8hpp_source.html#l00030">yume::at()</a>, <a class="el" href="ast_8cpp_source.html#l00208">is_uword()</a>, and <a class="el" href="ast_8cpp_source.html#l00021">Word</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00485">parse_primary()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00486">parse_primary()</a>.</p>
 
 </div>
 </div>
@@ -1934,7 +1934,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00017">17</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00018">18</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
 </div>
 </div>
@@ -1972,9 +1972,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00015">15</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00016">16</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00227">yume::ast::Program::parse()</a>, <a class="el" href="ast_8cpp_source.html#l00477">parse_char_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00308">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00398">parse_if_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00461">parse_number_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00605">parse_operator()</a>, <a class="el" href="ast_8cpp_source.html#l00485">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00539">parse_receiver()</a>, <a class="el" href="ast_8cpp_source.html#l00386">parse_return_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00469">parse_string_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00276">parse_struct_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00655">parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00722">parse_type_name()</a>, <a class="el" href="ast_8cpp_source.html#l00592">parse_unary()</a>, <a class="el" href="ast_8cpp_source.html#l00352">parse_var_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00366">parse_while_stmt()</a>, and <a class="el" href="ast_8cpp_source.html#l00686">try_parse_type()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00228">yume::ast::Program::parse()</a>, <a class="el" href="ast_8cpp_source.html#l00478">parse_char_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00309">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00399">parse_if_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00462">parse_number_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00606">parse_operator()</a>, <a class="el" href="ast_8cpp_source.html#l00486">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00540">parse_receiver()</a>, <a class="el" href="ast_8cpp_source.html#l00387">parse_return_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00470">parse_string_expr()</a>, <a class="el" href="ast_8cpp_source.html#l00277">parse_struct_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00656">parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00723">parse_type_name()</a>, <a class="el" href="ast_8cpp_source.html#l00593">parse_unary()</a>, <a class="el" href="ast_8cpp_source.html#l00353">parse_var_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00367">parse_while_stmt()</a>, and <a class="el" href="ast_8cpp_source.html#l00687">try_parse_type()</a>.</p>
 
 </div>
 </div>
@@ -1993,11 +1993,11 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00071">71</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00072">72</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8cpp_source.html#l00059">SYM_BANG</a>, <a class="el" href="ast_8cpp_source.html#l00055">SYM_MINUS</a>, and <a class="el" href="ast_8cpp_source.html#l00054">SYM_PLUS</a>.</p>
+<p class="reference">References <a class="el" href="ast_8cpp_source.html#l00060">SYM_BANG</a>, <a class="el" href="ast_8cpp_source.html#l00056">SYM_MINUS</a>, and <a class="el" href="ast_8cpp_source.html#l00055">SYM_PLUS</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00592">parse_unary()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00593">parse_unary()</a>.</p>
 
 </div>
 </div>
@@ -2022,9 +2022,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00025">25</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00026">26</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00308">parse_fn_decl()</a>, and <a class="el" href="ast_8cpp_source.html#l00632">parse_stmt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00309">parse_fn_decl()</a>, and <a class="el" href="ast_8cpp_source.html#l00633">parse_stmt()</a>.</p>
 
 </div>
 </div>
@@ -2048,9 +2048,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00030">30</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00031">31</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00398">parse_if_stmt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00399">parse_if_stmt()</a>.</p>
 
 </div>
 </div>
@@ -2074,9 +2074,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00026">26</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00027">27</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00308">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00398">parse_if_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00276">parse_struct_decl()</a>, and <a class="el" href="ast_8cpp_source.html#l00366">parse_while_stmt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00309">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00399">parse_if_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00277">parse_struct_decl()</a>, and <a class="el" href="ast_8cpp_source.html#l00367">parse_while_stmt()</a>.</p>
 
 </div>
 </div>
@@ -2100,9 +2100,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00034">34</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00035">35</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00485">parse_primary()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00486">parse_primary()</a>.</p>
 
 </div>
 </div>
@@ -2126,9 +2126,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00024">24</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00025">25</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00398">parse_if_stmt()</a>, and <a class="el" href="ast_8cpp_source.html#l00632">parse_stmt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00399">parse_if_stmt()</a>, and <a class="el" href="ast_8cpp_source.html#l00633">parse_stmt()</a>.</p>
 
 </div>
 </div>
@@ -2152,9 +2152,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00027">27</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00028">28</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00632">parse_stmt()</a>, and <a class="el" href="ast_8cpp_source.html#l00352">parse_var_decl()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00633">parse_stmt()</a>, and <a class="el" href="ast_8cpp_source.html#l00353">parse_var_decl()</a>.</p>
 
 </div>
 </div>
@@ -2178,9 +2178,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00029">29</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00030">30</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00655">parse_type()</a>, and <a class="el" href="ast_8cpp_source.html#l00686">try_parse_type()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00656">parse_type()</a>, and <a class="el" href="ast_8cpp_source.html#l00687">try_parse_type()</a>.</p>
 
 </div>
 </div>
@@ -2204,9 +2204,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00039">39</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00040">40</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00308">parse_fn_decl()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00309">parse_fn_decl()</a>.</p>
 
 </div>
 </div>
@@ -2230,9 +2230,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00028">28</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00029">29</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00655">parse_type()</a>, and <a class="el" href="ast_8cpp_source.html#l00686">try_parse_type()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00656">parse_type()</a>, and <a class="el" href="ast_8cpp_source.html#l00687">try_parse_type()</a>.</p>
 
 </div>
 </div>
@@ -2256,9 +2256,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00037">37</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00038">38</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00386">parse_return_stmt()</a>, and <a class="el" href="ast_8cpp_source.html#l00632">parse_stmt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00387">parse_return_stmt()</a>, and <a class="el" href="ast_8cpp_source.html#l00633">parse_stmt()</a>.</p>
 
 </div>
 </div>
@@ -2282,9 +2282,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00031">31</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00032">32</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00485">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00655">parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00722">parse_type_name()</a>, and <a class="el" href="ast_8cpp_source.html#l00686">try_parse_type()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00486">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00656">parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00723">parse_type_name()</a>, and <a class="el" href="ast_8cpp_source.html#l00687">try_parse_type()</a>.</p>
 
 </div>
 </div>
@@ -2308,9 +2308,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00036">36</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00037">37</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00632">parse_stmt()</a>, and <a class="el" href="ast_8cpp_source.html#l00276">parse_struct_decl()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00633">parse_stmt()</a>, and <a class="el" href="ast_8cpp_source.html#l00277">parse_struct_decl()</a>.</p>
 
 </div>
 </div>
@@ -2334,9 +2334,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00032">32</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00033">33</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00398">parse_if_stmt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00399">parse_if_stmt()</a>.</p>
 
 </div>
 </div>
@@ -2360,9 +2360,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00033">33</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00034">34</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00485">parse_primary()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00486">parse_primary()</a>.</p>
 
 </div>
 </div>
@@ -2386,9 +2386,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00038">38</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00039">39</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00308">parse_fn_decl()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00309">parse_fn_decl()</a>.</p>
 
 </div>
 </div>
@@ -2412,9 +2412,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00035">35</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00036">36</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00632">parse_stmt()</a>, and <a class="el" href="ast_8cpp_source.html#l00366">parse_while_stmt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00633">parse_stmt()</a>, and <a class="el" href="ast_8cpp_source.html#l00367">parse_while_stmt()</a>.</p>
 
 </div>
 </div>
@@ -2438,9 +2438,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00022">22</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00023">23</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00461">parse_number_expr()</a>, and <a class="el" href="ast_8cpp_source.html#l00485">parse_primary()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00462">parse_number_expr()</a>, and <a class="el" href="ast_8cpp_source.html#l00486">parse_primary()</a>.</p>
 
 </div>
 </div>
@@ -2464,9 +2464,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00021">21</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00022">22</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00088">ignore_separator()</a>, <a class="el" href="ast_8cpp_source.html#l00386">parse_return_stmt()</a>, and <a class="el" href="ast_8cpp_source.html#l00111">require_separator()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00089">ignore_separator()</a>, <a class="el" href="ast_8cpp_source.html#l00387">parse_return_stmt()</a>, and <a class="el" href="ast_8cpp_source.html#l00112">require_separator()</a>.</p>
 
 </div>
 </div>
@@ -2490,9 +2490,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00059">59</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00060">60</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00239">parse_fn_name()</a>, and <a class="el" href="ast_8cpp_source.html#l00071">unary_operators()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00240">parse_fn_name()</a>, and <a class="el" href="ast_8cpp_source.html#l00072">unary_operators()</a>.</p>
 
 </div>
 </div>
@@ -2516,9 +2516,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00060">60</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00061">61</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00539">parse_receiver()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00540">parse_receiver()</a>.</p>
 
 </div>
 </div>
@@ -2542,9 +2542,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00041">41</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00042">42</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00176">consume_with_commas_until()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00177">consume_with_commas_until()</a>.</p>
 
 </div>
 </div>
@@ -2568,9 +2568,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00042">42</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00043">43</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00539">parse_receiver()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00540">parse_receiver()</a>.</p>
 
 </div>
 </div>
@@ -2594,9 +2594,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00043">43</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00044">44</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00308">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00239">parse_fn_name()</a>, <a class="el" href="ast_8cpp_source.html#l00539">parse_receiver()</a>, and <a class="el" href="ast_8cpp_source.html#l00352">parse_var_decl()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00309">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00240">parse_fn_name()</a>, <a class="el" href="ast_8cpp_source.html#l00540">parse_receiver()</a>, and <a class="el" href="ast_8cpp_source.html#l00353">parse_var_decl()</a>.</p>
 
 </div>
 </div>
@@ -2620,9 +2620,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00050">50</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00051">51</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00062">operators()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00063">operators()</a>.</p>
 
 </div>
 </div>
@@ -2646,9 +2646,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00052">52</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00053">53</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00062">operators()</a>, <a class="el" href="ast_8cpp_source.html#l00308">parse_fn_decl()</a>, and <a class="el" href="ast_8cpp_source.html#l00276">parse_struct_decl()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00063">operators()</a>, <a class="el" href="ast_8cpp_source.html#l00309">parse_fn_decl()</a>, and <a class="el" href="ast_8cpp_source.html#l00277">parse_struct_decl()</a>.</p>
 
 </div>
 </div>
@@ -2672,7 +2672,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00048">48</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00049">49</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
 </div>
 </div>
@@ -2696,9 +2696,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00046">46</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00047">47</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00239">parse_fn_name()</a>, <a class="el" href="ast_8cpp_source.html#l00485">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00539">parse_receiver()</a>, <a class="el" href="ast_8cpp_source.html#l00655">parse_type()</a>, and <a class="el" href="ast_8cpp_source.html#l00686">try_parse_type()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00240">parse_fn_name()</a>, <a class="el" href="ast_8cpp_source.html#l00486">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00540">parse_receiver()</a>, <a class="el" href="ast_8cpp_source.html#l00656">parse_type()</a>, and <a class="el" href="ast_8cpp_source.html#l00687">try_parse_type()</a>.</p>
 
 </div>
 </div>
@@ -2722,9 +2722,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00044">44</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00045">45</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00308">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00485">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00539">parse_receiver()</a>, and <a class="el" href="ast_8cpp_source.html#l00276">parse_struct_decl()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00309">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00486">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00540">parse_receiver()</a>, and <a class="el" href="ast_8cpp_source.html#l00277">parse_struct_decl()</a>.</p>
 
 </div>
 </div>
@@ -2748,9 +2748,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00053">53</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00054">54</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00062">operators()</a>, <a class="el" href="ast_8cpp_source.html#l00308">parse_fn_decl()</a>, and <a class="el" href="ast_8cpp_source.html#l00276">parse_struct_decl()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00063">operators()</a>, <a class="el" href="ast_8cpp_source.html#l00309">parse_fn_decl()</a>, and <a class="el" href="ast_8cpp_source.html#l00277">parse_struct_decl()</a>.</p>
 
 </div>
 </div>
@@ -2774,9 +2774,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00055">55</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00056">56</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00062">operators()</a>, and <a class="el" href="ast_8cpp_source.html#l00071">unary_operators()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00063">operators()</a>, and <a class="el" href="ast_8cpp_source.html#l00072">unary_operators()</a>.</p>
 
 </div>
 </div>
@@ -2800,9 +2800,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00051">51</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00052">52</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00062">operators()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00063">operators()</a>.</p>
 
 </div>
 </div>
@@ -2826,9 +2826,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00056">56</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00057">57</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00062">operators()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00063">operators()</a>.</p>
 
 </div>
 </div>
@@ -2852,9 +2852,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00054">54</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00055">55</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00062">operators()</a>, and <a class="el" href="ast_8cpp_source.html#l00071">unary_operators()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00063">operators()</a>, and <a class="el" href="ast_8cpp_source.html#l00072">unary_operators()</a>.</p>
 
 </div>
 </div>
@@ -2878,7 +2878,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00049">49</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00050">50</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
 </div>
 </div>
@@ -2902,9 +2902,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00047">47</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00048">48</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00239">parse_fn_name()</a>, <a class="el" href="ast_8cpp_source.html#l00485">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00539">parse_receiver()</a>, <a class="el" href="ast_8cpp_source.html#l00655">parse_type()</a>, and <a class="el" href="ast_8cpp_source.html#l00686">try_parse_type()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00240">parse_fn_name()</a>, <a class="el" href="ast_8cpp_source.html#l00486">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00540">parse_receiver()</a>, <a class="el" href="ast_8cpp_source.html#l00656">parse_type()</a>, and <a class="el" href="ast_8cpp_source.html#l00687">try_parse_type()</a>.</p>
 
 </div>
 </div>
@@ -2928,9 +2928,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00045">45</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00046">46</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00308">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00485">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00539">parse_receiver()</a>, and <a class="el" href="ast_8cpp_source.html#l00276">parse_struct_decl()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00309">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00486">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00540">parse_receiver()</a>, and <a class="el" href="ast_8cpp_source.html#l00277">parse_struct_decl()</a>.</p>
 
 </div>
 </div>
@@ -2954,9 +2954,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00057">57</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00058">58</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00062">operators()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00063">operators()</a>.</p>
 
 </div>
 </div>
@@ -2980,9 +2980,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00058">58</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00059">59</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00062">operators()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00063">operators()</a>.</p>
 
 </div>
 </div>
@@ -3006,9 +3006,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00019">19</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00020">20</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00176">consume_with_commas_until()</a>, <a class="el" href="ast_8cpp_source.html#l00308">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00239">parse_fn_name()</a>, <a class="el" href="ast_8cpp_source.html#l00605">parse_operator()</a>, <a class="el" href="ast_8cpp_source.html#l00485">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00539">parse_receiver()</a>, <a class="el" href="ast_8cpp_source.html#l00276">parse_struct_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00655">parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00592">parse_unary()</a>, <a class="el" href="ast_8cpp_source.html#l00352">parse_var_decl()</a>, and <a class="el" href="ast_8cpp_source.html#l00686">try_parse_type()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00177">consume_with_commas_until()</a>, <a class="el" href="ast_8cpp_source.html#l00309">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00240">parse_fn_name()</a>, <a class="el" href="ast_8cpp_source.html#l00606">parse_operator()</a>, <a class="el" href="ast_8cpp_source.html#l00486">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00540">parse_receiver()</a>, <a class="el" href="ast_8cpp_source.html#l00277">parse_struct_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00656">parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00593">parse_unary()</a>, <a class="el" href="ast_8cpp_source.html#l00353">parse_var_decl()</a>, and <a class="el" href="ast_8cpp_source.html#l00687">try_parse_type()</a>.</p>
 
 </div>
 </div>
@@ -3032,9 +3032,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00020">20</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00021">21</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00198">consume_word()</a>, <a class="el" href="ast_8cpp_source.html#l00308">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00239">parse_fn_name()</a>, <a class="el" href="ast_8cpp_source.html#l00398">parse_if_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00485">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00386">parse_return_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00276">parse_struct_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00655">parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00722">parse_type_name()</a>, <a class="el" href="ast_8cpp_source.html#l00352">parse_var_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00366">parse_while_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00686">try_parse_type()</a>, and <a class="el" href="ast_8cpp_source.html#l00210">try_peek_uword()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00199">consume_word()</a>, <a class="el" href="ast_8cpp_source.html#l00309">parse_fn_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00240">parse_fn_name()</a>, <a class="el" href="ast_8cpp_source.html#l00399">parse_if_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00486">parse_primary()</a>, <a class="el" href="ast_8cpp_source.html#l00387">parse_return_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00277">parse_struct_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00656">parse_type()</a>, <a class="el" href="ast_8cpp_source.html#l00723">parse_type_name()</a>, <a class="el" href="ast_8cpp_source.html#l00353">parse_var_decl()</a>, <a class="el" href="ast_8cpp_source.html#l00367">parse_while_stmt()</a>, <a class="el" href="ast_8cpp_source.html#l00687">try_parse_type()</a>, and <a class="el" href="ast_8cpp_source.html#l00211">try_peek_uword()</a>.</p>
 
 </div>
 </div>

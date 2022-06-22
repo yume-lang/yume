@@ -155,9 +155,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a4d0b3ac909119ef64ef8a54f014993d9"><td class="memItemLeft" align="right" valign="top">static auto constexpr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a4d0b3ac909119ef64ef8a54f014993d9">const_hash</a> (char const *input) -&gt; unsigned</td></tr>
 <tr class="memdesc:a4d0b3ac909119ef64ef8a54f014993d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">A constexpr-friendly simple string hash, for simple switches with string cases.  <a href="namespaceyume.html#a4d0b3ac909119ef64ef8a54f014993d9">More...</a><br /></td></tr>
 <tr class="separator:a4d0b3ac909119ef64ef8a54f014993d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac35b53faeaa93aee6966bda83ecec2ae"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="structyume_1_1Fn.html">Fn</a>  = std::identity&gt; </td></tr>
-<tr class="memitem:ac35b53faeaa93aee6966bda83ecec2ae"><td class="memTemplItemLeft" align="right" valign="top">static auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceyume.html#ac35b53faeaa93aee6966bda83ecec2ae">join_args</a> (auto iter, <a class="el" href="structyume_1_1Fn.html">Fn</a> fn={}, std::ostream &amp;stream=std::cerr)</td></tr>
-<tr class="separator:ac35b53faeaa93aee6966bda83ecec2ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7da5a1792027ed46ea5d64c3d568b920"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="structyume_1_1Fn.html">Fn</a>  = std::identity&gt; </td></tr>
+<tr class="memitem:a7da5a1792027ed46ea5d64c3d568b920"><td class="memTemplItemLeft" align="right" valign="top">static auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a7da5a1792027ed46ea5d64c3d568b920">join_args</a> (auto iter, <a class="el" href="structyume_1_1Fn.html">Fn</a> fn={}, llvm::raw_ostream &amp;stream=errs())</td></tr>
+<tr class="separator:a7da5a1792027ed46ea5d64c3d568b920"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae4f35db208c296a7200120a3c5ea3624"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#ae4f35db208c296a7200120a3c5ea3624">what</a> (const std::exception_ptr &amp;eptr=std::current_exception()) -&gt; std::string_view</td></tr>
 <tr class="separator:ae4f35db208c296a7200120a3c5ea3624"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1acf150b712c5a16aabf66d01458d7b8"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a1acf150b712c5a16aabf66d01458d7b8">current_exception_name</a> () -&gt; const char *</td></tr>
@@ -268,9 +268,9 @@ template&lt;bool Bool, typename Base &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="source__location_8hpp_source.html#l00030">30</a> of file <a class="el" href="source__location_8hpp_source.html">source_location.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8cpp_source.html#l00080">yume::ast::to_string()</a>.</p>
+<p class="reference">References <a class="el" href="ast_8cpp_source.html#l00081">yume::ast::to_string()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00117">yume::ast::consume()</a>, <a class="el" href="ast_8cpp_source.html#l00198">yume::ast::consume_word()</a>, <a class="el" href="ast_8cpp_source.html#l00102">yume::ast::expect()</a>, <a class="el" href="ast_8cpp_source.html#l00088">yume::ast::ignore_separator()</a>, <a class="el" href="ast_8cpp_source.html#l00188">yume::ast::next()</a>, <a class="el" href="ast_8cpp_source.html#l00134">yume::ast::try_consume()</a>, <a class="el" href="ast_8cpp_source.html#l00149">yume::ast::try_peek()</a>, and <a class="el" href="ast_8cpp_source.html#l00210">yume::ast::try_peek_uword()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00118">yume::ast::consume()</a>, <a class="el" href="ast_8cpp_source.html#l00199">yume::ast::consume_word()</a>, <a class="el" href="ast_8cpp_source.html#l00103">yume::ast::expect()</a>, <a class="el" href="ast_8cpp_source.html#l00089">yume::ast::ignore_separator()</a>, <a class="el" href="ast_8cpp_source.html#l00189">yume::ast::next()</a>, <a class="el" href="ast_8cpp_source.html#l00135">yume::ast::try_consume()</a>, <a class="el" href="ast_8cpp_source.html#l00150">yume::ast::try_peek()</a>, and <a class="el" href="ast_8cpp_source.html#l00211">yume::ast::try_peek_uword()</a>.</p>
 
 </div>
 </div>
@@ -337,8 +337,8 @@ template&lt;bool Bool, typename Base &gt; </div>
 
 </div>
 </div>
-<a id="ac35b53faeaa93aee6966bda83ecec2ae" name="ac35b53faeaa93aee6966bda83ecec2ae"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac35b53faeaa93aee6966bda83ecec2ae">&#9670;&nbsp;</a></span>join_args()</h2>
+<a id="a7da5a1792027ed46ea5d64c3d568b920" name="a7da5a1792027ed46ea5d64c3d568b920"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7da5a1792027ed46ea5d64c3d568b920">&#9670;&nbsp;</a></span>join_args()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -363,8 +363,8 @@ template&lt;typename <a class="el" href="structyume_1_1Fn.html">Fn</a>  = std::i
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::ostream &amp;&#160;</td>
-          <td class="paramname"><em>stream</em> = <code>std::cerr</code>&#160;</td>
+          <td class="paramtype">llvm::raw_ostream &amp;&#160;</td>
+          <td class="paramname"><em>stream</em> = <code>errs()</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -379,9 +379,9 @@ template&lt;typename <a class="el" href="structyume_1_1Fn.html">Fn</a>  = std::i
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type__walker_8cpp_source.html#l00101">101</a> of file <a class="el" href="type__walker_8cpp_source.html">type_walker.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type__walker_8cpp_source.html#l00102">102</a> of file <a class="el" href="type__walker_8cpp_source.html">type_walker.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00111">yume::TypeWalker::expression()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00112">yume::TypeWalker::expression()</a>.</p>
 
 </div>
 </div>
@@ -412,11 +412,11 @@ template&lt;typename <a class="el" href="structyume_1_1Fn.html">Fn</a>  = std::i
 <p>Create an <code><a class="el" href="structyume_1_1Atom.html" title="Atoms represent strings in a string pool.">Atom</a></code> with the given string content. </p>
 <dl class="section see"><dt>See also</dt><dd>atom_literal::operator""_a </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="util_8hpp_source.html#l00219">219</a> of file <a class="el" href="util_8hpp_source.html">util.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="util_8hpp_source.html#l00218">218</a> of file <a class="el" href="util_8hpp_source.html">util.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="util_8hpp_source.html#l00206">yume::Atom::make_atom()</a>.</p>
+<p class="reference">References <a class="el" href="util_8hpp_source.html#l00205">yume::Atom::make_atom()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="util_8hpp_source.html#l00222">yume::atom_literal::operator&quot;&quot;_a()</a>, and <a class="el" href="ast_8cpp_source.html#l00686">yume::ast::try_parse_type()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="util_8hpp_source.html#l00221">yume::atom_literal::operator&quot;&quot;_a()</a>, and <a class="el" href="ast_8cpp_source.html#l00687">yume::ast::try_parse_type()</a>.</p>
 
 </div>
 </div>
@@ -488,7 +488,7 @@ template&lt;typename <a class="el" href="structyume_1_1Fn.html">Fn</a>  = std::i
 
 <p>Opens a writeable stream to a file with the given filename relative to the current working directory. </p>
 
-<p class="definition">Definition at line <a class="el" href="util_8hpp_source.html#l00169">169</a> of file <a class="el" href="util_8hpp_source.html">util.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="util_8hpp_source.html#l00168">168</a> of file <a class="el" href="util_8hpp_source.html">util.hpp</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="main_8cpp_source.html#l00027">main()</a>, and <a class="el" href="compiler_8cpp_source.html#l00732">yume::Compiler::write_object()</a>.</p>
 
@@ -552,7 +552,7 @@ template&lt;typename <a class="el" href="structyume_1_1Fn.html">Fn</a>  = std::i
 <p>The stem of a path-like string, which is the component after the last slash. </p>
 <p >"foo/bar/file.txt" -&gt; "file.txt" </p>
 
-<p class="definition">Definition at line <a class="el" href="util_8hpp_source.html#l00185">185</a> of file <a class="el" href="util_8hpp_source.html">util.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="util_8hpp_source.html#l00184">184</a> of file <a class="el" href="util_8hpp_source.html">util.hpp</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="main_8cpp_source.html#l00027">main()</a>, and <a class="el" href="token_8hpp_source.html#l00047">yume::Loc::to_string()</a>.</p>
 
@@ -648,7 +648,7 @@ requires pointer_like&lt;T&gt;</div>
 
 <p>Dereference an <code>optional</code> holding a pointer-like value, if it is holding a value Because C++20 doesn't have monadic operations for optionals yet, which should be a basic, fundamental feature of an "Optional" type. </p>
 
-<p class="definition">Definition at line <a class="el" href="util_8hpp_source.html#l00160">160</a> of file <a class="el" href="util_8hpp_source.html">util.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="util_8hpp_source.html#l00159">159</a> of file <a class="el" href="util_8hpp_source.html">util.hpp</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ast_8hpp_source.html#l00667">yume::ast::IfStmt::else_clause()</a>, <a class="el" href="ast_8hpp_source.html#l00681">yume::ast::ReturnStmt::expr()</a>, <a class="el" href="ast_8hpp_source.html#l00575">yume::ast::FnDecl::ret()</a>, and <a class="el" href="ast_8hpp_source.html#l00617">yume::ast::VarDecl::type()</a>.</p>
 
