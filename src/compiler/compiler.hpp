@@ -79,14 +79,14 @@ public:
   auto mangle_name(const Fn& fn_decl) -> string;
   auto mangle_name(const ty::Type& ast_type, const Fn& parent) -> string;
 
-  [[nodiscard]] inline auto source_files() -> const auto& { return m_sources; }
+  [[nodiscard]] auto source_files() -> const auto& { return m_sources; }
 
 private:
-  template <typename T> inline void statement(const T& stat) {
+  template <typename T> void statement(const T& stat) {
     throw std::runtime_error("Unknown statement "s + stat.kind_name());
   }
 
-  template <typename T> inline auto expression(const T& expr, [[maybe_unused]] bool mut = false) -> Val {
+  template <typename T> auto expression(const T& expr, [[maybe_unused]] bool mut = false) -> Val {
     throw std::runtime_error("Unknown expression "s + expr.kind_name());
   }
 

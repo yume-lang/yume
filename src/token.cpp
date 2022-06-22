@@ -22,9 +22,8 @@ using char_raw_fn = int(int);
 using char_fn = std::function<bool(int, int, std::stringstream&)>;
 
 #if __cpp_lib_ranges >= 201911L
-inline constexpr auto any_of = std::ranges::any_of;
+static constexpr auto any_of = std::ranges::any_of;
 #else
-
 struct any_of_fn {
   template <std::input_iterator I, std::sentinel_for<I> S, std::indirect_unary_predicate<I> Pred>
   constexpr auto operator()(I first, S last, Pred pred) const -> bool {
@@ -37,8 +36,7 @@ struct any_of_fn {
   }
 };
 
-inline constexpr any_of_fn any_of;
-
+static constexpr any_of_fn any_of;
 #endif
 
 /// A criterion for classifying a stream of characters as a specific type of token \link Token::Type

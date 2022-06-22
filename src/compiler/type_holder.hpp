@@ -22,9 +22,9 @@ struct TypeHolder {
 
   TypeHolder();
 
-  inline constexpr auto int8() -> IntTypePair { return int_types[0]; }
-  inline constexpr auto int16() -> IntTypePair { return int_types[1]; }
-  inline constexpr auto int32() -> IntTypePair { return int_types[2]; }
-  inline constexpr auto int64() -> IntTypePair { return int_types[3]; }
+  constexpr auto int8() -> IntTypePair { return int_types[0]; }
+  constexpr auto int16() -> IntTypePair { return int_types[1]; }
+  constexpr auto int32() -> IntTypePair { return int_types[2]; }
+  constexpr auto int64() -> IntTypePair { return int_types[3]; }
 };
 } // namespace yume

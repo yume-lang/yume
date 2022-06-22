@@ -151,9 +151,11 @@ public:
   constexpr auto end() -> Iterator { return Iterator{this, std::ranges::end(m_base)}; }
 };
 
-/// \brief Dereference an `optional` holding a pointer-like value, if it is holding a value
-/// Because C++20 doesn't have monadic operations for optionals yet, which should be a basic, fundamental feature of an
-/// "Optional" type
+/// Dereference an `optional` holding a pointer-like value, if it is holding a value
+/**
+ * Because C++20 doesn't have monadic operations for optionals yet, which should be a basic, fundamental feature of an
+ * "Optional" type
+ */
 template <typename T>
 requires pointer_like<T>
 auto inline constexpr try_dereference(const std::optional<T>& opt) {
@@ -200,7 +202,7 @@ struct Atom {
   operator std::string() const { // NOLINT(google-explicit-constructor)
     return *m_str;
   }
-  auto inline operator<=>(const Atom& other) const noexcept = default;
+  auto operator<=>(const Atom& other) const noexcept = default;
 
   static auto inline make_atom(const string& value) noexcept -> Atom {
     auto data = Atom::interned.emplace(value).first;

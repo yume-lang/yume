@@ -29,7 +29,7 @@ struct Instantiation {
 #if __cpp_lib_three_way_comparison >= 201907L
   auto operator<=>(const Instantiation& other) const = default;
 #else
-  inline auto operator<=>(const Instantiation& other) const -> std::weak_ordering {
+  auto operator<=>(const Instantiation& other) const -> std::weak_ordering {
     if (m_sub == other.m_sub) {
       return std::weak_ordering::equivalent;
     }
@@ -66,15 +66,13 @@ struct Fn {
      std::map<string, const ty::Type*> subs = {}, vector<unique_ptr<ty::Generic>> type_args = {})
       : m_ast_decl(ast_decl), m_parent(parent), m_member(member), m_type_args(move(type_args)), m_subs(move(subs)) {}
 
-  [[nodiscard]] auto inline body() const -> const auto& { return m_ast_decl.body(); }
+  [[nodiscard]] auto body() const -> const auto& { return m_ast_decl.body(); }
 
-  [[nodiscard]] auto inline name() const { return m_ast_decl.name(); }
+  [[nodiscard]] auto name() const { return m_ast_decl.name(); }
 
-  [[nodiscard]] auto inline ast() const -> auto& { return m_ast_decl; }
-
-  [[nodiscard]] auto inline llvm() const -> llvm::Function* { return m_llvm_fn; }
-
-  [[nodiscard]] auto inline parent() const -> ty::Type* { return m_parent; }
+  [[nodiscard]] auto ast() const -> auto& { return m_ast_decl; }
+  [[nodiscard]] auto llvm() const -> llvm::Function* { return m_llvm_fn; }
+  [[nodiscard]] auto parent() const -> ty::Type* { return m_parent; }
 
   [[nodiscard]] auto declaration(Compiler& compiler, bool mangle = true) -> llvm::Function*;
 
@@ -89,9 +87,9 @@ struct Fn {
 struct Val {
   llvm::Value* m_llvm_val{};
 
-  /* implicit */ inline Val(llvm::Value* llvm_val) : m_llvm_val(llvm_val) {}
+  /* implicit */ Val(llvm::Value* llvm_val) : m_llvm_val(llvm_val) {}
 
-  [[nodiscard]] auto inline llvm() const -> llvm::Value* { return m_llvm_val; }
+  [[nodiscard]] auto llvm() const -> llvm::Value* { return m_llvm_val; }
 
   operator llvm::Value*() const { return m_llvm_val; }
 };
@@ -103,7 +101,7 @@ struct SourceFile {
   ast::TokenIterator m_iterator;
   unique_ptr<ast::Program> m_program;
 
-  explicit inline SourceFile(std::istream& in, string name)
+  SourceFile(std::istream& in, string name)
       : m_name(std::move(name)), m_tokens(yume::tokenize(in, m_name)), m_iterator{m_tokens.begin(), m_tokens.end()} {
 #ifdef YUME_SPEW_LIST_TOKENS
     llvm::outs() << "tokens:\n";

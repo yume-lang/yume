@@ -36,11 +36,11 @@ public:
 #ifdef YUME_TYPE_WALKER_FALLBACK_VISITOR
   auto visit(ast::AST& expr, const char* label) -> TypeWalker& override;
 
-  inline auto visit([[maybe_unused]] std::nullptr_t null, [[maybe_unused]] const char* label) -> TypeWalker& override {
+  auto visit([[maybe_unused]] std::nullptr_t null, [[maybe_unused]] const char* label) -> TypeWalker& override {
     return *this;
   }
 
-  inline auto visit([[maybe_unused]] const string& str, [[maybe_unused]] const char* label) -> TypeWalker& override {
+  auto visit([[maybe_unused]] const string& str, [[maybe_unused]] const char* label) -> TypeWalker& override {
     return *this;
   }
 #endif
@@ -49,7 +49,7 @@ public:
   void body_expression(ast::Expr&);
 
 private:
-  template <typename T> inline void statement([[maybe_unused]] T& stat) {
+  template <typename T> void statement([[maybe_unused]] T& stat) {
 #ifdef YUME_SPEW_TYPE_WALKER_STUB
     llvm::errs() << "Type walker stubbed on statement " << stat.kind_name() << "\n";
 #endif
@@ -58,7 +58,7 @@ private:
 #endif
   }
 
-  template <typename T> inline void expression([[maybe_unused]] T& expr) {
+  template <typename T> void expression([[maybe_unused]] T& expr) {
 #ifdef YUME_SPEW_TYPE_WALKER_STUB
     llvm::errs() << "Type walker stubbed on expression " << expr.kind_name() << "\n";
 #endif

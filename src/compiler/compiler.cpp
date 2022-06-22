@@ -371,7 +371,7 @@ template <> void Compiler::statement(const ast::VarDecl& stat) {
 }
 
 /// Assert that this expression isn't asked to be mutable.
-static inline void not_mut(const string& message, bool mut) {
+static void not_mut(const string& message, bool mut) {
   if (mut) {
     throw std::runtime_error(message + " cannot be mutable!");
   }

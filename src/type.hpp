@@ -71,7 +71,7 @@ public:
     const Generic* substituted_generic{};
     const Type* substituted_with{};
 
-    inline auto operator+(uint64_t other) const -> Compatiblity {
+    auto operator+(uint64_t other) const -> Compatiblity {
       return {rating + other, substituted_generic, substituted_with};
     }
   };
@@ -90,9 +90,9 @@ public:
    * qualifiers, such as `mut` don't stack. Getting the `mut`-qualified type of `T mut` returns itself.
    */
   [[nodiscard]] auto known_qual(Qualifier qual) const -> const Type&;
-  [[nodiscard]] inline auto known_ptr() const -> const Type& { return known_qual(Qualifier::Ptr); }
-  [[nodiscard]] inline auto known_mut() const -> const Type& { return known_qual(Qualifier::Mut); }
-  [[nodiscard]] inline auto known_slice() const -> const Type& { return known_qual(Qualifier::Slice); }
+  [[nodiscard]] auto known_ptr() const -> const Type& { return known_qual(Qualifier::Ptr); }
+  [[nodiscard]] auto known_mut() const -> const Type& { return known_qual(Qualifier::Mut); }
+  [[nodiscard]] auto known_slice() const -> const Type& { return known_qual(Qualifier::Slice); }
 
   [[nodiscard]] auto compatibility(const Type& other) const -> Compatiblity;
   /// The union of this and `other`. For example, the union of `T` and `T mut` is `T mut`.
@@ -126,9 +126,9 @@ class Int : public Type {
   bool m_signed;
 
 public:
-  inline Int(string name, int size, bool signed_) : Type(K_Int, move(name)), m_size(size), m_signed(signed_) {}
-  [[nodiscard]] inline auto size() const -> int { return m_size; }
-  [[nodiscard]] inline auto is_signed() const -> bool { return m_signed; }
+  Int(string name, int size, bool signed_) : Type(K_Int, move(name)), m_size(size), m_signed(signed_) {}
+  [[nodiscard]] auto size() const -> int { return m_size; }
+  [[nodiscard]] auto is_signed() const -> bool { return m_signed; }
   static auto classof(const Type* a) -> bool { return a->kind() == K_Int; }
 };
 
@@ -142,8 +142,8 @@ private:
 
 public:
   Qual(string name, const Type& base, bool mut) : Type(K_Qual, move(name)), m_base(base), m_mut(mut) {}
-  [[nodiscard]] inline auto base() const -> const Type& { return m_base; }
-  [[nodiscard]] inline auto has_qualifier(Qualifier qual) const -> bool { return (qual == Qualifier::Mut && m_mut); }
+  [[nodiscard]] auto base() const -> const Type& { return m_base; }
+  [[nodiscard]] auto has_qualifier(Qualifier qual) const -> bool { return (qual == Qualifier::Mut && m_mut); }
   static auto classof(const Type* a) -> bool { return a->kind() == K_Qual; }
 };
 
@@ -157,9 +157,9 @@ private:
 
 public:
   Ptr(string name, const Type& base, Qualifier qual) : Type(K_Ptr, move(name)), m_base(base), m_qual(qual) {}
-  [[nodiscard]] inline auto base() const -> const Type& { return m_base; }
-  [[nodiscard]] inline auto qualifier() const -> Qualifier { return m_qual; }
-  [[nodiscard]] inline auto has_qualifier(Qualifier qual) const -> bool { return m_qual == qual; }
+  [[nodiscard]] auto base() const -> const Type& { return m_base; }
+  [[nodiscard]] auto qualifier() const -> Qualifier { return m_qual; }
+  [[nodiscard]] auto has_qualifier(Qualifier qual) const -> bool { return m_qual == qual; }
   static auto classof(const Type* a) -> bool { return a->kind() == K_Ptr; }
 };
 
@@ -167,15 +167,15 @@ public:
 class Struct : public Type {
   vector<const ast::TypeName*> m_fields;
   mutable llvm::StructType* m_memo{};
-  inline void memo(llvm::StructType* memo) const { m_memo = memo; }
+  void memo(llvm::StructType* memo) const { m_memo = memo; }
 
   friend Compiler;
 
 public:
-  inline Struct(string name, vector<const ast::TypeName*> fields)
+  Struct(string name, vector<const ast::TypeName*> fields)
       : Type(K_Struct, move(name)), m_fields(move(fields)) {}
-  [[nodiscard]] inline auto fields() const { return dereference_view(m_fields); }
-  [[nodiscard]] inline auto memo() const -> auto* { return m_memo; }
+  [[nodiscard]] auto fields() const { return dereference_view(m_fields); }
+  [[nodiscard]] auto memo() const -> auto* { return m_memo; }
   static auto classof(const Type* a) -> bool { return a->kind() == K_Struct; }
 };
 
@@ -185,14 +185,14 @@ public:
  */
 class Generic : public Type {
 public:
-  inline Generic(string name) : Type(K_Generic, move(name)) {}
+  Generic(string name) : Type(K_Generic, move(name)) {}
   static auto classof(const Type* a) -> bool { return a->kind() == K_Generic; }
 };
 
 /// TODO: remove
 class UnknownType : public Type {
 public:
-  inline UnknownType() : Type(K_Unknown, "?") {}
+  UnknownType() : Type(K_Unknown, "?") {}
   static auto classof(const Type* a) -> bool { return a->kind() == K_Unknown; }
 };
 } // namespace yume::ty

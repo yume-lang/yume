@@ -99,7 +99,8 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
   expr.val_ty(target_type);
 }
 
-template <typename Fn = std::identity> static auto join_args(auto iter, Fn fn = {}, llvm::raw_ostream& stream = errs()) {
+template <typename Fn = std::identity>
+static auto join_args(auto iter, Fn fn = {}, llvm::raw_ostream& stream = errs()) {
   int j = 0;
   for (auto& i : iter) {
     if (j++ != 0) {

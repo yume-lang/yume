@@ -31,13 +31,13 @@ public:
 
   virtual auto visit(const string&, const char*) -> Visitor& = 0;
 
-  inline virtual auto visit(ast::AST& expr) -> Visitor& { return visit(expr, (const char*)nullptr); }
+  virtual auto visit(ast::AST& expr) -> Visitor& { return visit(expr, (const char*)nullptr); }
 
-  inline virtual auto visit(std::nullptr_t) -> Visitor& { return visit(nullptr, (const char*)nullptr); }
+  virtual auto visit(std::nullptr_t) -> Visitor& { return visit(nullptr, (const char*)nullptr); }
 
-  inline virtual auto visit(const string& str) -> Visitor& { return visit(str, (const char*)nullptr); }
+  virtual auto visit(const string& str) -> Visitor& { return visit(str, (const char*)nullptr); }
 
-  template <typename T> inline auto visit(vector<T>& vector, const char* label = nullptr) -> Visitor& {
+  template <typename T> auto visit(vector<T>& vector, const char* label = nullptr) -> Visitor& {
     Visitor& vis = *this;
     for (auto& i : vector) {
       vis = std::move(vis.visit(i, label));
@@ -45,25 +45,25 @@ public:
     return vis;
   }
 
-  template <typename T> inline auto visit(unique_ptr<T>& ptr, const char* label = nullptr) -> Visitor& {
+  template <typename T> auto visit(unique_ptr<T>& ptr, const char* label = nullptr) -> Visitor& {
     if (ptr) {
       return visit(*ptr, label);
     }
     return visit(nullptr, label);
   }
 
-  template <typename T> inline auto visit(optional<T>& opt, const char* label = nullptr) -> Visitor& {
+  template <typename T> auto visit(optional<T>& opt, const char* label = nullptr) -> Visitor& {
     if (opt.has_value()) {
       return visit(*opt, label);
     }
     return *this;
   }
 
-  template <typename T> inline auto visit(std::pair<T, const char*>& pair) -> Visitor& {
+  template <typename T> auto visit(std::pair<T, const char*>& pair) -> Visitor& {
     return visit(pair.first, pair.second);
   }
 
-  inline void visit() {}
+  void visit() {}
 };
 } // namespace yume
 

@@ -28,17 +28,17 @@ class DotVisitor : public Visitor {
   int m_parent{};
   int m_open_parent{};
 
-  inline auto set_parent(int new_parent) -> int {
+  auto set_parent(int new_parent) -> int {
     auto restore_parent = m_parent;
     m_parent = new_parent;
     return restore_parent;
   }
-  inline auto set_children(int new_children) -> int {
+  auto set_children(int new_children) -> int {
     auto restore_children = m_children;
     m_children = new_children;
     return restore_children;
   }
-  inline auto stream() -> llvm::raw_ostream& {
+  auto stream() -> llvm::raw_ostream& {
     if (m_write_to_buffer) {
       return m_buffer_stream;
     }

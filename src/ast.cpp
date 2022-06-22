@@ -13,9 +13,9 @@
 
 namespace yume::ast {
 
-inline auto ts(auto&& begin, int end) { return span<Token>(begin.base(), end); }
+static auto ts(auto&& begin, int end) { return span<Token>(begin.base(), end); }
 
-inline auto ts(auto&& begin, auto&& end) { return span<Token>(begin.base(), end.base()); }
+static auto ts(auto&& begin, auto&& end) { return span<Token>(begin.base(), end.base()); }
 
 constexpr static auto Symbol = Token::Type::Symbol;
 constexpr static auto Word = Token::Type::Word;

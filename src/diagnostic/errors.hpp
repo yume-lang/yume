@@ -55,6 +55,6 @@ struct ASTStackTrace : public llvm::PrettyStackTraceEntry {
   ASTStackTrace(std::string message);
   ASTStackTrace(std::string message, const ast::AST& ast);
 
-  inline void print(llvm::raw_ostream& OS) const override { OS << m_message << "\n"; };
+  void print(llvm::raw_ostream& OS) const override { OS << m_message << "\n"; };
 };
 } // namespace yume
