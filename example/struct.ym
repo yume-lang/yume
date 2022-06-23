@@ -8,7 +8,7 @@ struct Vector(x I32, y I32)
   def x=(self mut, j I32) I32 = self::x = j
   def y=(self mut, j I32) I32 = self::y = j
 
-  def +(a self, b self) self = self(a::x + b::x, a::y + b::y)
+  def +(a Self, b Self) Self = Self(a::x + b::x, a::y + b::y)
 end
 
 def ptrto(v Vector mut) Vector ptr = __primitive__(ptrto)

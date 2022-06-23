@@ -29,7 +29,8 @@ static const Atom KWD_LET = "let"_a;
 static const Atom KWD_PTR = "ptr"_a;
 static const Atom KWD_MUT = "mut"_a;
 static const Atom KWD_ELSE = "else"_a;
-static const Atom KWD_SELF = "self"_a;
+static const Atom KWD_SELF_ITEM = "self"_a;
+static const Atom KWD_SELF_TYPE = "Self"_a;
 static const Atom KWD_THEN = "then"_a;
 static const Atom KWD_TRUE = "true"_a;
 static const Atom KWD_FALSE = "false"_a;
@@ -220,7 +221,7 @@ auto try_peek_uword(TokenIterator& tokens, int ahead,
 
 static auto parse_stmt(TokenIterator& tokens) -> unique_ptr<Stmt>;
 static auto parse_expr(TokenIterator& tokens) -> unique_ptr<Expr>;
-static auto parse_type(TokenIterator& tokens) -> unique_ptr<Type>;
+static auto parse_type(TokenIterator& tokens, bool implicit_self = false) -> unique_ptr<Type>;
 static auto parse_type_name(TokenIterator& tokens) -> unique_ptr<TypeName>;
 static auto try_parse_type(TokenIterator& tokens) -> optional<unique_ptr<Type>>;
 
@@ -491,8 +492,7 @@ static auto parse_primary(TokenIterator& tokens) -> unique_ptr<Expr> {
     return make_ast<BoolExpr>(entry, tokens, false);
 
   if (tokens->m_type == Word) {
-    bool use_self = false;
-    if (try_peek_uword(tokens, 0) || try_peek(tokens, 0, Word, KWD_SELF)) {
+    if (try_peek_uword(tokens, 0)) {
       auto type = parse_type(tokens);
       if (try_consume(tokens, Symbol, SYM_LPAREN)) {
         auto call_args = vector<unique_ptr<Expr>>{};
@@ -504,14 +504,9 @@ static auto parse_primary(TokenIterator& tokens) -> unique_ptr<Expr> {
         consume_with_commas_until(tokens, Symbol, SYM_RBRACKET, [&] { slice_members.push_back(parse_expr(tokens)); });
         return make_ast<SliceExpr>(entry, tokens, move(type), move(slice_members));
       }
-      // `self` may be used as a type in a constructor `self()`, but also by itself as a variable.
-      if (llvm::isa<SelfType>(*type)) {
-        use_self = true;
-      } else {
-        throw std::runtime_error("Couldn't make an expression from here with an uword");
-      }
+      throw std::runtime_error("Couldn't make an expression from here with a type");
     }
-    auto name = use_self ? "self" : consume_word(tokens);
+    auto name = consume_word(tokens);
     if (try_consume(tokens, Symbol, SYM_LPAREN)) {
       auto call_args = vector<unique_ptr<Expr>>{};
       consume_with_commas_until(tokens, Symbol, SYM_RPAREN, [&] { call_args.push_back(parse_expr(tokens)); });
@@ -636,10 +631,10 @@ static auto parse_stmt(TokenIterator& tokens) -> unique_ptr<Stmt> {
   return stat;
 }
 
-static auto parse_type(TokenIterator& tokens) -> unique_ptr<Type> {
+static auto parse_type(TokenIterator& tokens, bool implicit_self) -> unique_ptr<Type> {
   auto entry = tokens.begin();
   auto base = [&]() -> unique_ptr<Type> {
-    if (try_consume(tokens, Word, KWD_SELF))
+    if (implicit_self || try_consume(tokens, Word, KWD_SELF_TYPE))
       return make_ast<SelfType>(entry, tokens);
 
     const string name = consume_word(tokens);
@@ -672,11 +667,11 @@ static auto try_parse_type(TokenIterator& tokens) -> optional<unique_ptr<Type>> 
     return {};
 
   const string name = consume_word(tokens);
-  if (make_atom(name) != KWD_SELF && !is_uword(name))
+  if (make_atom(name) != KWD_SELF_TYPE && !is_uword(name))
     return {};
 
   auto base = [&]() -> unique_ptr<Type> {
-    if (make_atom(name) == KWD_SELF)
+    if (make_atom(name) == KWD_SELF_TYPE)
       return make_ast<SelfType>(entry, tokens);
 
     return make_ast<SimpleType>(entry, tokens, name);
@@ -702,8 +697,8 @@ static auto try_parse_type(TokenIterator& tokens) -> optional<unique_ptr<Type>> 
 
 static auto parse_type_name(TokenIterator& tokens) -> unique_ptr<TypeName> {
   auto entry = tokens.begin();
-  if (try_peek(tokens, 0, Word, KWD_SELF)) {
-    unique_ptr<Type> type = parse_type(tokens);
+  if (try_consume(tokens, Word, KWD_SELF_ITEM)) {
+    unique_ptr<Type> type = parse_type(tokens, /* implicit_self= */ true);
     return make_ast<TypeName>(entry, tokens, move(type), "self");
   }
   const string name = consume_word(tokens);
