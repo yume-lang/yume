@@ -1,23 +1,6 @@
 <map id="yume::ast::AssignExpr" name="yume::ast::AssignExpr">
-<area shape="rect" id="node1" title="An assignment (=)." alt="" coords="1596,219,1744,245"/>
-<area shape="rect" id="node2" href="$classyume_1_1ast_1_1Expr.html" title="Expressions have an associated value and type." alt="" coords="1439,219,1547,245"/>
-<area shape="rect" id="node3" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="1279,219,1389,245"/>
-<area shape="rect" id="node4" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="1120,219,1229,245"/>
-<area shape="rect" id="node5" title=" " alt="" coords="889,141,971,168"/>
-<area shape="rect" id="node6" title=" " alt="" coords="845,192,1015,219"/>
-<area shape="rect" id="node7" href="$structyume_1_1Token.html" title="A categorized token in source code, created by the tokenizer. These tokens are consumed by the lexer." alt="" coords="521,107,616,133"/>
-<area shape="rect" id="node8" title=" " alt="" coords="282,5,333,32"/>
-<area shape="rect" id="node9" title=" " alt="" coords="247,56,367,83"/>
-<area shape="rect" id="node10" title=" " alt="" coords="33,56,100,83"/>
-<area shape="rect" id="node11" title=" " alt="" coords="288,107,327,133"/>
-<area shape="rect" id="node12" href="$structyume_1_1Loc.html" title="Represents a location in source code, as a range starting at a line and column and ending at some oth..." alt="" coords="267,157,348,184"/>
-<area shape="rect" id="node13" title=" " alt="" coords="31,152,102,179"/>
-<area shape="rect" id="node14" title=" " alt="" coords="5,203,128,229"/>
-<area shape="rect" id="node15" title=" " alt="" coords="517,195,621,221"/>
-<area shape="rect" id="node16" title=" " alt="" coords="288,225,327,252"/>
-<area shape="rect" id="node21" title=" " alt="" coords="501,247,637,273"/>
-<area shape="rect" id="node17" href="$classyume_1_1ty_1_1Type.html" title="Represents a type in the type system. All types inherit from this class." alt="" coords="879,309,981,336"/>
-<area shape="rect" id="node18" title=" " alt="" coords="856,243,1004,285"/>
-<area shape="rect" id="node19" href="$structyume_1_1ast_1_1Attachment.html" title="Represents the relationship between multiple AST nodes." alt="" coords="493,299,644,325"/>
-<area shape="rect" id="node20" title=" " alt="" coords="235,295,380,337"/>
+<area shape="rect" id="node1" title="An assignment (=)." alt="" coords="5,229,153,256"/>
+<area shape="rect" id="node2" href="$classyume_1_1ast_1_1Expr.html" title="Expressions have an associated value and type." alt="" coords="25,155,133,181"/>
+<area shape="rect" id="node3" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="24,80,135,107"/>
+<area shape="rect" id="node4" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="25,5,134,32"/>
 </map>

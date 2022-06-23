@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['else_5fclause_0',['else_clause',['../classyume_1_1ast_1_1IfStmt.html#aba9d781f177642a7347bd9f834c2af16',1,'yume::ast::IfStmt']]],
+  ['else_5fclause_0',['else_clause',['../classyume_1_1ast_1_1IfStmt.html#a5d99c5ca273fa78badf11b8f85ce64a3',1,'yume::ast::IfStmt']]],
   ['end_1',['end',['../classyume_1_1dereference__view.html#ae9e493a36ac1f66ac92f128b11ed1829',1,'yume::dereference_view']]],
   ['expect_2',['expect',['../namespaceyume_1_1ast.html#a0c686ce49ec8c5c8f96bced6c3d2a60c',1,'yume::ast']]],
   ['expr_3',['expr',['../classyume_1_1ast_1_1ReturnStmt.html#a1541a7f3f1a0bf2fb4da66d36de35897',1,'yume::ast::ReturnStmt']]],
