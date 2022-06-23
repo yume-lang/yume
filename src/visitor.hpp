@@ -7,7 +7,7 @@ class AST;
 }
 } // namespace yume
 
-#include "ast.hpp"
+#include "ast/ast.hpp"
 #include "util.hpp"
 
 namespace yume {

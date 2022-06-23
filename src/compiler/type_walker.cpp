@@ -1,5 +1,5 @@
 #include "type_walker.hpp"
-#include "../ast.hpp"
+#include "../ast/ast.hpp"
 #include "../diagnostic/errors.hpp"
 #include "../type.hpp"
 #include "compiler.hpp"
@@ -107,7 +107,7 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
 }
 
 template <typename Fn = std::identity>
-static auto join_args(auto iter, Fn fn = {}, llvm::raw_ostream& stream = errs()) {
+static auto join_args(const auto& iter, Fn fn = {}, llvm::raw_ostream& stream = errs()) {
   int j = 0;
   for (auto& i : iter) {
     if (j++ != 0)
@@ -302,7 +302,7 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
   }
 
   if (m_in_depth && stat.body().index() == 0)
-    statement(*get<0>(stat.body()));
+    statement(get<0>(stat.body()));
 }
 
 template <> void TypeWalker::statement(ast::ReturnStmt& stat) {

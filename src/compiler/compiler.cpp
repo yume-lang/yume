@@ -1,5 +1,5 @@
 #include "compiler.hpp"
-#include "../ast.hpp"
+#include "../ast/ast.hpp"
 #include "../diagnostic/errors.hpp"
 #include "../type.hpp"
 #include "../util.hpp"
@@ -249,8 +249,8 @@ void Compiler::define(Fn& fn) {
     m_scope.insert({name, alloc});
   }
 
-  if (const auto* body = get_if<unique_ptr<ast::Compound>>(&fn.body()); body != nullptr) {
-    statement(**body);
+  if (const auto* body = get_if<ast::Compound>(&fn.body()); body != nullptr) {
+    statement(*body);
   }
   if (m_builder->GetInsertBlock()->getTerminator() == nullptr)
     m_builder->CreateRetVoid();
@@ -279,15 +279,15 @@ template <> void Compiler::statement(const ast::IfStmt& stat) {
   bool all_terminated = true;
   m_builder->CreateBr(next_test_bb);
 
-  auto clauses = stat.clauses();
-  for (auto b = clauses.begin(); b != clauses.end(); ++b) {
+  const auto& clauses = stat.clauses();
+  for (const auto& clause : clauses) {
     m_builder->SetInsertPoint(next_test_bb);
     auto* body_bb = BasicBlock::Create(*m_context, "if.then", *m_current_fn, merge_bb);
     next_test_bb = BasicBlock::Create(*m_context, "if.test", *m_current_fn, merge_bb);
-    auto condition = body_expression(b->cond());
+    auto condition = body_expression(clause.cond());
     m_builder->CreateCondBr(condition, body_bb, next_test_bb);
     m_builder->SetInsertPoint(body_bb);
-    statement(b->body());
+    statement(clause.body());
     if (m_builder->GetInsertBlock()->getTerminator() == nullptr) {
       all_terminated = false;
       m_builder->CreateBr(merge_bb);
@@ -297,7 +297,7 @@ template <> void Compiler::statement(const ast::IfStmt& stat) {
   if (stat.else_clause().has_value()) {
     next_test_bb->setName("if.else");
     m_builder->SetInsertPoint(next_test_bb);
-    statement(stat.else_clause()->get());
+    statement(*stat.else_clause());
     if (m_builder->GetInsertBlock()->getTerminator() == nullptr) {
       all_terminated = false;
       m_builder->CreateBr(merge_bb);
@@ -436,7 +436,7 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
   vector<llvm::Value*> llvm_args{};
 
   unsigned j = 0;
-  auto selected_args = selected->ast().args();
+  const auto& selected_args = selected->ast().args();
   for (const auto& i : expr.args()) {
     auto should_pass_by_mut = [&](unsigned index) {
       if (index >= selected_args.size())

@@ -1,6 +1,6 @@
 #include "errors.hpp"
 
-#include "../ast.hpp"
+#include "../ast/ast.hpp"
 #include <utility>
 
 namespace yume {

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "token.hpp"
-#include "type.hpp"
-#include "util.hpp"
+#include "../token.hpp"
+#include "../type.hpp"
+#include "../util.hpp"
 #include <cstddef>
 #include <cstdint>
 #include <llvm/ADT/SmallPtrSet.h>
@@ -155,7 +155,6 @@ struct Attachment {
  * depending on what the types the template is instantiated with.
  */
 class AST {
-protected:
   /// Every subclass of `AST` has a distinct `Kind`.
   const Kind m_kind;
   /// The range of tokenizer `Token`s that this node was parsed from.
@@ -165,6 +164,7 @@ protected:
   /// \see Attachment
   unique_ptr<Attachment> m_attach{std::make_unique<Attachment>()};
 
+protected:
   /// Verify the type compatibility of the depends of this node, and merge the types if possible.
   /// This is called every time the node's type is updated.
   void unify_val_ty() const {
@@ -184,6 +184,8 @@ protected:
       }
     }
   }
+
+  [[nodiscard]] auto tok() const noexcept -> span<Token> { return m_tok; }
 
   AST(Kind kind, span<Token> tok) : m_kind(kind), m_tok(tok) {}
 
@@ -545,28 +547,30 @@ public:
 class FnDecl : public Stmt {
   string m_name;
   bool m_varargs{};
-  vector<unique_ptr<TypeName>> m_args;
+  vector<TypeName> m_args;
   vector<string> m_type_args;
   optional<unique_ptr<Type>> m_ret;
-  variant<unique_ptr<Compound>, string> m_body;
+  variant<Compound, string> m_body;
 
 public:
-  FnDecl(span<Token> tok, string name, vector<unique_ptr<TypeName>> args, vector<string> type_args,
-         optional<unique_ptr<Type>> ret, unique_ptr<Compound> body)
+  FnDecl(span<Token> tok, string name, vector<TypeName> args, vector<string> type_args, optional<unique_ptr<Type>> ret,
+         Compound body)
       : Stmt(K_FnDecl, tok), m_name{move(name)}, m_args{move(args)},
-        m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(body)} {}
-  FnDecl(span<Token> tok, string name, vector<unique_ptr<TypeName>> args, vector<string> type_args,
-         optional<unique_ptr<Type>> ret, bool varargs, string primitive)
+        m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{std::move(body)} {}
+  FnDecl(span<Token> tok, string name, vector<TypeName> args, vector<string> type_args, optional<unique_ptr<Type>> ret,
+         bool varargs, string primitive)
       : Stmt(K_FnDecl, tok), m_name{move(name)}, m_varargs{varargs}, m_args{move(args)},
         m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(primitive)} {}
   void visit(Visitor& visitor) override;
   [[nodiscard]] auto describe() const -> string override { return m_name; }
 
   [[nodiscard]] auto name() const -> string { return m_name; }
-  [[nodiscard]] constexpr auto args() const { return dereference_view(m_args); }
+  [[nodiscard]] auto args() const -> const auto& { return m_args; }
+  [[nodiscard]] auto args() -> auto& { return m_args; }
   [[nodiscard]] auto type_args() const { return m_type_args; }
   [[nodiscard]] constexpr auto ret() const { return try_dereference(m_ret); }
   [[nodiscard]] constexpr auto body() const -> const auto& { return m_body; }
+  [[nodiscard]] constexpr auto body() -> auto& { return m_body; }
   [[nodiscard]] constexpr auto varargs() const -> bool { return m_varargs; }
   [[nodiscard]] constexpr auto primitive() const -> bool { return holds_alternative<string>(m_body); }
   static auto classof(const AST* a) -> bool { return a->kind() == K_FnDecl; }
@@ -617,15 +621,15 @@ public:
 /// A while loop (`while`).
 class WhileStmt : public Stmt {
   unique_ptr<Expr> m_cond;
-  unique_ptr<Compound> m_body;
+  Compound m_body;
 
 public:
-  WhileStmt(span<Token> tok, unique_ptr<Expr> cond, unique_ptr<Compound> body)
-      : Stmt(K_While, tok), m_cond{move(cond)}, m_body{move(body)} {}
+  WhileStmt(span<Token> tok, unique_ptr<Expr> cond, Compound body)
+      : Stmt(K_While, tok), m_cond{move(cond)}, m_body{std::move(body)} {}
   void visit(Visitor& visitor) override;
 
-  [[nodiscard]] auto body() const -> const auto& { return *m_body; }
   [[nodiscard]] auto cond() const -> const auto& { return *m_cond; }
+  [[nodiscard]] auto body() const -> const auto& { return m_body; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_While; }
   [[nodiscard]] auto clone() const -> WhileStmt* override;
 };
@@ -633,31 +637,31 @@ public:
 /// Clauses of an if statement `IfStmt`.
 class IfClause : public AST {
   unique_ptr<Expr> m_cond;
-  unique_ptr<Compound> m_body;
+  Compound m_body;
 
 public:
-  IfClause(span<Token> tok, unique_ptr<Expr> cond, unique_ptr<Compound> body)
-      : AST(K_IfClause, tok), m_cond{move(cond)}, m_body{move(body)} {}
+  IfClause(span<Token> tok, unique_ptr<Expr> cond, Compound body)
+      : AST(K_IfClause, tok), m_cond{move(cond)}, m_body{std::move(body)} {}
   void visit(Visitor& visitor) override;
 
   [[nodiscard]] auto cond() const -> const auto& { return *m_cond; }
-  [[nodiscard]] auto body() const -> const auto& { return *m_body; }
+  [[nodiscard]] auto body() const -> const auto& { return m_body; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_IfClause; }
   [[nodiscard]] auto clone() const -> IfClause* override;
 };
 
 /// An if statement (`if`), with one or more `IfClause`s, and optionally an else clause.
 class IfStmt : public Stmt {
-  vector<unique_ptr<IfClause>> m_clauses;
-  optional<unique_ptr<Compound>> m_else_clause;
+  vector<IfClause> m_clauses;
+  optional<Compound> m_else_clause;
 
 public:
-  IfStmt(span<Token> tok, vector<unique_ptr<IfClause>> clauses, optional<unique_ptr<Compound>> else_clause)
+  IfStmt(span<Token> tok, vector<IfClause> clauses, optional<Compound> else_clause)
       : Stmt(K_If, tok), m_clauses{move(clauses)}, m_else_clause{move(else_clause)} {}
   void visit(Visitor& visitor) override;
 
-  [[nodiscard]] auto clauses() const { return dereference_view(m_clauses); }
-  [[nodiscard]] auto else_clause() const { return try_dereference(m_else_clause); }
+  [[nodiscard]] auto clauses() const -> const auto& { return m_clauses; }
+  [[nodiscard]] auto else_clause() const -> const auto& { return m_else_clause; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_If; }
   [[nodiscard]] auto clone() const -> IfStmt* override;
 };
@@ -691,7 +695,7 @@ public:
 };
 } // namespace yume::ast
 
-// these clutter the docs and are marked private to be hidden from docs
+// these clutter the docs and are hidden from docs
 /// \cond
 namespace std {
 template <> struct tuple_size<yume::ast::TypeName> : std::integral_constant<size_t, 2> {};

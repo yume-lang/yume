@@ -1,6 +1,6 @@
 #include "ast.hpp"
-#include "diagnostic/source_location.hpp"
-#include "visitor.hpp"
+#include "../diagnostic/source_location.hpp"
+#include "../visitor.hpp"
 #include <algorithm>
 #include <cctype>
 #include <cstddef>
@@ -314,8 +314,8 @@ static auto parse_fn_decl(TokenIterator& tokens) -> unique_ptr<FnDecl> {
 
   consume(tokens, Symbol, SYM_LPAREN);
 
-  auto args = vector<unique_ptr<TypeName>>{};
-  consume_with_commas_until(tokens, Symbol, SYM_RPAREN, [&] { args.push_back(parse_type_name(tokens)); });
+  auto args = vector<TypeName>{};
+  consume_with_commas_until(tokens, Symbol, SYM_RPAREN, [&] { args.push_back(std::move(*parse_type_name(tokens))); });
 
   auto ret_type = try_parse_type(tokens);
   auto body = vector<unique_ptr<Stmt>>{};
@@ -343,7 +343,7 @@ static auto parse_fn_decl(TokenIterator& tokens) -> unique_ptr<FnDecl> {
   }
 
   return make_ast<FnDecl>(entry, tokens, name, move(args), type_args, move(ret_type),
-                          make_ast<Compound>(body_begin, tokens, move(body)));
+                          Compound(ts(body_begin, tokens), move(body)));
 }
 
 static auto parse_var_decl(TokenIterator& tokens) -> unique_ptr<VarDecl> {
@@ -375,9 +375,9 @@ static auto parse_while_stmt(TokenIterator& tokens) -> unique_ptr<WhileStmt> {
     ignore_separator(tokens);
   }
 
-  auto compound = make_ast<Compound>(body_begin, tokens, move(body));
+  auto compound = Compound(ts(body_begin, tokens), move(body));
 
-  return make_ast<WhileStmt>(entry, tokens, move(cond), move(compound));
+  return make_ast<WhileStmt>(entry, tokens, move(cond), std::move(compound));
 }
 
 static auto parse_return_stmt(TokenIterator& tokens) -> unique_ptr<ReturnStmt> {
@@ -402,7 +402,7 @@ static auto parse_if_stmt(TokenIterator& tokens) -> unique_ptr<IfStmt> {
 
   auto current_entry = tokens.begin();
   auto else_entry = tokens.begin();
-  auto clauses = vector<unique_ptr<IfClause>>{};
+  auto clauses = vector<IfClause>{};
   auto current_body = vector<unique_ptr<Stmt>>{};
   auto else_body = vector<unique_ptr<Stmt>>{};
   bool in_else = false;
@@ -414,8 +414,8 @@ static auto parse_if_stmt(TokenIterator& tokens) -> unique_ptr<IfStmt> {
     if (try_consume(tokens, Word, KWD_ELSE)) {
       // An `else` followed by an `if` begins a new clause of the same if statement.
       if (!in_else && try_consume(tokens, Word, KWD_IF)) {
-        clauses.push_back(make_ast<IfClause>(clause_begin, tokens, move(cond),
-                                             make_ast<Compound>(current_entry, tokens, move(current_body))));
+        clauses.emplace_back(ts(clause_begin, tokens), move(cond),
+                             Compound(ts(current_entry, tokens), move(current_body)));
         current_body = vector<unique_ptr<Stmt>>{};
         cond = parse_expr(tokens);
         current_entry = tokens.begin();
@@ -438,12 +438,12 @@ static auto parse_if_stmt(TokenIterator& tokens) -> unique_ptr<IfStmt> {
   if (else_body.empty())
     else_entry = tokens.begin();
 
-  clauses.push_back(make_ast<IfClause>(clause_begin, else_entry - 1, move(cond),
-                                       make_ast<Compound>(current_entry, else_entry - 1, move(current_body))));
+  clauses.emplace_back(ts(clause_begin, else_entry - 1), move(cond),
+                       Compound(ts(current_entry, else_entry - 1), move(current_body)));
 
-  auto else_clause = optional<unique_ptr<Compound>>{};
+  auto else_clause = optional<Compound>{};
   if (!else_body.empty())
-    else_clause = make_ast<Compound>(else_entry, tokens, move(else_body));
+    else_clause.emplace(ts(else_entry, tokens), move(else_body));
 
   return make_ast<IfStmt>(entry, tokens, move(clauses), move(else_clause));
 }
@@ -707,94 +707,4 @@ static auto parse_type_name(TokenIterator& tokens) -> unique_ptr<TypeName> {
 }
 
 static auto parse_expr(TokenIterator& tokens) -> unique_ptr<Expr> { return parse_operator(tokens, 0); }
-
-template <typename T> static auto dup(const vector<unique_ptr<T>>& items) {
-  auto dup = vector<unique_ptr<T>>();
-  dup.reserve(items.size());
-  for (auto& i : items)
-    dup.push_back(unique_ptr<T>(i->clone()));
-
-  return dup;
-}
-
-template <typename T> static auto dup(const vector<T>& items) {
-  auto dup = vector<T>();
-  dup.reserve(items.size());
-  for (auto& i : items)
-    dup.push_back(std::move(*i.clone()));
-
-  return dup;
-}
-
-template <typename T> static auto dup(const unique_ptr<T>& ptr) { return unique_ptr<T>(ptr->clone()); }
-
-template <typename T> static auto dup(const optional<T>& opt) {
-  return opt.has_value() ? optional<T>{dup(opt.value())} : optional<T>{};
-}
-
-template <typename T> static auto dup(const T& ast) -> decltype(auto) { return std::move(*ast.clone()); }
-
-auto IfStmt::clone() const -> IfStmt* { return new IfStmt(m_tok, dup(m_clauses), dup(m_else_clause)); }
-auto IfClause::clone() const -> IfClause* { return new IfClause(m_tok, dup(m_cond), dup(m_body)); }
-auto NumberExpr::clone() const -> NumberExpr* { return new NumberExpr(m_tok, m_val); }
-auto StringExpr::clone() const -> StringExpr* { return new StringExpr(m_tok, m_val); }
-auto CharExpr::clone() const -> CharExpr* { return new CharExpr(m_tok, m_val); }
-auto BoolExpr::clone() const -> BoolExpr* { return new BoolExpr(m_tok, m_val); }
-auto ReturnStmt::clone() const -> ReturnStmt* { return new ReturnStmt(m_tok, dup(m_expr)); }
-auto WhileStmt::clone() const -> WhileStmt* { return new WhileStmt(m_tok, dup(m_cond), dup(m_body)); }
-auto VarDecl::clone() const -> VarDecl* { return new VarDecl(m_tok, m_name, dup(m_type), dup(m_init)); }
-auto FnDecl::clone() const -> FnDecl* {
-  if (const auto* s = get_if<string>(&m_body); s)
-    return new FnDecl(m_tok, m_name, dup(m_args), m_type_args, dup(m_ret), m_varargs, *s);
-  return new FnDecl(m_tok, m_name, dup(m_args), m_type_args, dup(m_ret), dup(get<unique_ptr<Compound>>(m_body)));
-}
-auto StructDecl::clone() const -> StructDecl* {
-  return new StructDecl(m_tok, m_name, dup(m_fields), m_type_args, dup(m_body));
-}
-auto SimpleType::clone() const -> SimpleType* { return new SimpleType(m_tok, m_name); }
-auto QualType::clone() const -> QualType* { return new QualType(m_tok, dup(m_base), m_qualifier); }
-auto SelfType::clone() const -> SelfType* { return new SelfType(m_tok); }
-auto TypeName::clone() const -> TypeName* { return new TypeName(m_tok, dup(m_type), m_name); }
-auto Compound::clone() const -> Compound* { return new Compound(m_tok, dup(m_body)); }
-auto VarExpr::clone() const -> VarExpr* { return new VarExpr(m_tok, m_name); }
-auto CallExpr::clone() const -> CallExpr* { return new CallExpr(m_tok, m_name, dup(m_args)); }
-auto CtorExpr::clone() const -> CtorExpr* { return new CtorExpr(m_tok, dup(m_type), dup(m_args)); }
-auto SliceExpr::clone() const -> SliceExpr* { return new SliceExpr(m_tok, dup(m_type), dup(m_args)); }
-auto AssignExpr::clone() const -> AssignExpr* { return new AssignExpr(m_tok, dup(m_target), dup(m_value)); }
-auto FieldAccessExpr::clone() const -> FieldAccessExpr* { return new FieldAccessExpr(m_tok, dup(m_base), m_field); }
-auto Program::clone() const -> Program* { return new Program(m_tok, dup(m_body)); }
-
-void IfStmt::visit(Visitor& visitor) { visitor.visit(m_clauses).visit(m_else_clause, "else"); }
-void IfClause::visit(Visitor& visitor) { visitor.visit(m_cond).visit(m_body); }
-void NumberExpr::visit(Visitor& visitor) { visitor.visit(describe()); }
-void StringExpr::visit(Visitor& visitor) { visitor.visit(m_val); }
-void CharExpr::visit(Visitor& visitor) { visitor.visit(string{static_cast<char>(m_val)}); }
-void BoolExpr::visit(Visitor& visitor) { visitor.visit(describe()); }
-void ReturnStmt::visit(Visitor& visitor) { visitor.visit(m_expr); }
-void WhileStmt::visit(Visitor& visitor) { visitor.visit(m_cond).visit(m_body); }
-void VarDecl::visit(Visitor& visitor) { visitor.visit(m_name).visit(m_type).visit(m_init); }
-void FnDecl::visit(Visitor& visitor) {
-  visitor.visit(m_name).visit(m_args, "arg").visit(m_type_args, "type arg").visit(m_ret, "ret");
-  if (const auto* s = get_if<string>(&m_body); s)
-    visitor.visit(*s, "primitive");
-  else
-    visitor.visit(get<unique_ptr<Compound>>(m_body));
-
-  if (m_varargs)
-    visitor.visit("varargs");
-}
-void StructDecl::visit(Visitor& visitor) {
-  visitor.visit(m_name).visit(m_fields, "field").visit(m_type_args, "type arg").visit(m_body);
-}
-void SimpleType::visit(Visitor& visitor) { visitor.visit(m_name); }
-void QualType::visit(Visitor& visitor) { visitor.visit(m_base, describe().c_str()); }
-void TypeName::visit(Visitor& visitor) { visitor.visit(m_name).visit(m_type); }
-void Compound::visit(Visitor& visitor) { visitor.visit(m_body); }
-void VarExpr::visit(Visitor& visitor) { visitor.visit(m_name); }
-void CallExpr::visit(Visitor& visitor) { visitor.visit(m_name).visit(m_args); }
-void CtorExpr::visit(Visitor& visitor) { visitor.visit(m_type).visit(m_args); }
-void SliceExpr::visit(Visitor& visitor) { visitor.visit(m_type).visit(m_args); }
-void AssignExpr::visit(Visitor& visitor) { visitor.visit(m_target).visit(m_value); }
-void FieldAccessExpr::visit(Visitor& visitor) { visitor.visit(m_base).visit(m_field); }
-void Program::visit(Visitor& visitor) { visitor.visit(m_body); }
 } // namespace yume::ast

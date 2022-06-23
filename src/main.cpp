@@ -1,4 +1,4 @@
-#include "ast.hpp"
+#include "ast/ast.hpp"
 #include "compiler/compiler.hpp"
 #include "compiler/vals.hpp"
 #include "diagnostic/dot_visitor.hpp"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../ast.hpp"
+#include "../ast/ast.hpp"
 #include <type_traits>
 
 namespace yume {
