@@ -53,10 +53,11 @@ var searchData=
   ['kwd_5fprimitive_50',['KWD_PRIMITIVE',['../namespaceyume_1_1ast.html#a738887a67cc8fdf484014b15fd90766b',1,'yume::ast']]],
   ['kwd_5fptr_51',['KWD_PTR',['../namespaceyume_1_1ast.html#aa201ee16ffe84a88275f727013b1bce3',1,'yume::ast']]],
   ['kwd_5freturn_52',['KWD_RETURN',['../namespaceyume_1_1ast.html#ab3e044ad423ae8f26ca418dea4d5ba65',1,'yume::ast']]],
-  ['kwd_5fself_53',['KWD_SELF',['../namespaceyume_1_1ast.html#ada3471d8814b78431bbddc4b39d8ed99',1,'yume::ast']]],
-  ['kwd_5fstruct_54',['KWD_STRUCT',['../namespaceyume_1_1ast.html#ac909ed3244f9a0e56fd0bf16c8a34413',1,'yume::ast']]],
-  ['kwd_5fthen_55',['KWD_THEN',['../namespaceyume_1_1ast.html#a06b0578920c69f6670491c1098ba215e',1,'yume::ast']]],
-  ['kwd_5ftrue_56',['KWD_TRUE',['../namespaceyume_1_1ast.html#adedaaf9e90129e76b266082864f7498c',1,'yume::ast']]],
-  ['kwd_5fvarargs_57',['KWD_VARARGS',['../namespaceyume_1_1ast.html#a2cadeedbaac3579e6d50738398ad85d7',1,'yume::ast']]],
-  ['kwd_5fwhile_58',['KWD_WHILE',['../namespaceyume_1_1ast.html#a6ef3e1eb28c57e9b7edb2ee5946955ec',1,'yume::ast']]]
+  ['kwd_5fself_5fitem_53',['KWD_SELF_ITEM',['../namespaceyume_1_1ast.html#a863de4b029dd0d79c76ca81c6fd068c9',1,'yume::ast']]],
+  ['kwd_5fself_5ftype_54',['KWD_SELF_TYPE',['../namespaceyume_1_1ast.html#aac2e12103922f3110f5fd151022bf0b4',1,'yume::ast']]],
+  ['kwd_5fstruct_55',['KWD_STRUCT',['../namespaceyume_1_1ast.html#ac909ed3244f9a0e56fd0bf16c8a34413',1,'yume::ast']]],
+  ['kwd_5fthen_56',['KWD_THEN',['../namespaceyume_1_1ast.html#a06b0578920c69f6670491c1098ba215e',1,'yume::ast']]],
+  ['kwd_5ftrue_57',['KWD_TRUE',['../namespaceyume_1_1ast.html#adedaaf9e90129e76b266082864f7498c',1,'yume::ast']]],
+  ['kwd_5fvarargs_58',['KWD_VARARGS',['../namespaceyume_1_1ast.html#a2cadeedbaac3579e6d50738398ad85d7',1,'yume::ast']]],
+  ['kwd_5fwhile_59',['KWD_WHILE',['../namespaceyume_1_1ast.html#a6ef3e1eb28c57e9b7edb2ee5946955ec',1,'yume::ast']]]
 ];
