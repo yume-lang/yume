@@ -19,10 +19,11 @@ var searchData=
   ['m_5fpayload_16',['m_payload',['../structyume_1_1Token.html#acfc9792c2db9c24cc1167b46a6cb1c4e',1,'yume::Token']]],
   ['m_5fprogram_17',['m_program',['../structyume_1_1SourceFile.html#a0cffcc504255242ee5c3f2b4628fdaac',1,'yume::SourceFile']]],
   ['m_5fscope_18',['m_scope',['../structyume_1_1TypeWalker.html#ab1d000606dcd6af9bf869b8b7d7414fe',1,'yume::TypeWalker']]],
-  ['m_5fstr_19',['m_str',['../structyume_1_1Atom.html#a9b50f52526880cddf15ccdfff31c1056',1,'yume::Atom']]],
-  ['m_5fsub_20',['m_sub',['../structyume_1_1Instantiation.html#a01fbb7b9eada5b6aa93b7008260d9afc',1,'yume::Instantiation']]],
-  ['m_5fsubs_21',['m_subs',['../structyume_1_1Fn.html#a3c1f2a3a52374600f51a23f5cc418add',1,'yume::Fn']]],
-  ['m_5ftokens_22',['m_tokens',['../structyume_1_1SourceFile.html#aef441250c3e827384da8ccd104872dde',1,'yume::SourceFile']]],
-  ['m_5ftype_23',['m_type',['../structyume_1_1Token.html#a1b739d76b9ff3721c10cdd2cfbd8890d',1,'yume::Token']]],
-  ['m_5ftype_5fargs_24',['m_type_args',['../structyume_1_1Fn.html#a46c4be1d0588e5af2374b66e7d509660',1,'yume::Fn']]]
+  ['m_5fspan_19',['m_span',['../ast_8cpp.html#a6f13d256d640475eb20d9c4a07eb8f23',1,'ast.cpp']]],
+  ['m_5fstr_20',['m_str',['../structyume_1_1Atom.html#a9b50f52526880cddf15ccdfff31c1056',1,'yume::Atom']]],
+  ['m_5fsub_21',['m_sub',['../structyume_1_1Instantiation.html#a01fbb7b9eada5b6aa93b7008260d9afc',1,'yume::Instantiation']]],
+  ['m_5fsubs_22',['m_subs',['../structyume_1_1Fn.html#a3c1f2a3a52374600f51a23f5cc418add',1,'yume::Fn']]],
+  ['m_5ftokens_23',['m_tokens',['../structyume_1_1SourceFile.html#aef441250c3e827384da8ccd104872dde',1,'yume::SourceFile']]],
+  ['m_5ftype_24',['m_type',['../structyume_1_1Token.html#a1b739d76b9ff3721c10cdd2cfbd8890d',1,'yume::Token']]],
+  ['m_5ftype_5fargs_25',['m_type_args',['../structyume_1_1Fn.html#a46c4be1d0588e5af2374b66e7d509660',1,'yume::Fn']]]
 ];
