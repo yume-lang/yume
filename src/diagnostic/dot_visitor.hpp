@@ -45,11 +45,8 @@ class DotVisitor : public Visitor {
 
   llvm::raw_ostream& m_stream;
   int m_index{};
-
   DotNode* m_parent{};
-  vector<DotNode> m_roots{};
 
-  auto add_node(yume::Loc location, optional<string>& type, string& kind, const char* label) -> DotNode&;
   auto add_node(const string& content, const char* label) -> DotNode&;
   auto add_node(DotNode&& node, const char* label) -> DotNode&;
 
@@ -58,8 +55,6 @@ public:
     m_stream << "digraph \"yume\" {\nnode [shape=box, style=rounded];\n";
   }
   ~DotVisitor() override {
-    for (const auto& root : m_roots)
-      root.write(m_stream);
     m_stream << "\n}";
     m_stream.flush();
   }

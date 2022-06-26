@@ -28,10 +28,6 @@ inline static auto opt_str(const char* ptr) -> optional<string> {
   return string(ptr);
 }
 
-auto DotVisitor::add_node(yume::Loc location, optional<string>& type, string& kind, const char* label) -> DotNode& {
-  return add_node(DotNode(m_index, location, type, kind), label);
-}
-
 auto DotVisitor::add_node(const string& content, const char* label) -> DotNode& {
   return add_node(DotNode(m_index, Loc{}, std::nullopt, content), label);
 }
@@ -39,7 +35,7 @@ auto DotVisitor::add_node(const string& content, const char* label) -> DotNode& 
 auto DotVisitor::add_node(DotNode&& node, const char* label) -> DotNode& {
   m_index++;
   if (m_parent == nullptr) {
-    return m_roots.emplace_back(std::move(node));
+    return node;
   }
   return m_parent->children.emplace_back(opt_str(label), std::move(node)).child;
 }
@@ -88,14 +84,16 @@ auto DotVisitor::visit(ast::AST& expr, const char* label) -> DotVisitor& {
   string kind_label;
   xml_escape(llvm::raw_string_ostream(kind_label), expr.kind_name());
 
-  auto& node = add_node(location, type, kind_label, label);
+  auto& node = add_node(DotNode(m_index, location, type, kind_label), label);
 
   auto* restore_parent = std::exchange(m_parent, &node);
   expr.visit(*this);
   m_parent = restore_parent;
-  // TODO: The visitor could write the node out to the stream if restore_parent was nullptr (i.e. there was no parent),
-  // as it means this object was a root. This could get rid of the m_roots member variable and also remove the stream
-  // code from the destructor.
+
+  // This node had no parent, which means its a root node.
+  if (restore_parent == nullptr) {
+    node.write(m_stream);
+  }
 
   return *this;
 }
