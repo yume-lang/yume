@@ -323,6 +323,20 @@ template <> void TypeWalker::statement(ast::VarDecl& stat) {
   m_scope.insert({stat.name(), &stat});
 }
 
+template <> void TypeWalker::statement(ast::IfStmt& stat) {
+  for (auto& i : stat.clauses()) {
+    body_expression(i.cond());
+    statement(i.body());
+  }
+  if (stat.else_clause().has_value())
+    statement(*stat.else_clause());
+}
+
+template <> void TypeWalker::statement(ast::WhileStmt& stat) {
+  body_expression(stat.cond());
+  statement(stat.body());
+}
+
 #ifdef YUME_TYPE_WALKER_FALLBACK_VISITOR
 auto TypeWalker::visit(ast::AST& expr, [[maybe_unused]] const char* label) -> TypeWalker& {
   if (auto* stmt = dyn_cast<ast::Stmt>(&expr)) {

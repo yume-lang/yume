@@ -32,7 +32,7 @@ enum Kind {
   K_IfClause, ///< `IfClause`
   K_TypeName, ///< `TypeName`
 
-  /* subclasses of Stmt */
+  /** subclasses of Stmt */
   /**/ K_Stmt,       ///< `Stmt`
   /**/ K_Compound,   ///< `Compound`
   /**/ K_FnDecl,     ///< `FnDecl`
@@ -616,7 +616,9 @@ public:
   void visit(Visitor& visitor) override;
 
   [[nodiscard]] auto cond() const -> const auto& { return *m_cond; }
+  [[nodiscard]] auto cond() -> auto& { return *m_cond; }
   [[nodiscard]] auto body() const -> const auto& { return m_body; }
+  [[nodiscard]] auto body() -> auto& { return m_body; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_While; }
   [[nodiscard]] auto clone() const -> WhileStmt* override;
 };
@@ -632,7 +634,9 @@ public:
   void visit(Visitor& visitor) override;
 
   [[nodiscard]] auto cond() const -> const auto& { return *m_cond; }
+  [[nodiscard]] auto cond() -> auto& { return *m_cond; }
   [[nodiscard]] auto body() const -> const auto& { return m_body; }
+  [[nodiscard]] auto body() -> auto& { return m_body; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_IfClause; }
   [[nodiscard]] auto clone() const -> IfClause* override;
 };
@@ -648,7 +652,9 @@ public:
   void visit(Visitor& visitor) override;
 
   [[nodiscard]] auto clauses() const -> const auto& { return m_clauses; }
+  [[nodiscard]] auto clauses() -> auto& { return m_clauses; }
   [[nodiscard]] auto else_clause() const -> const auto& { return m_else_clause; }
+  [[nodiscard]] auto else_clause() -> auto& { return m_else_clause; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_If; }
   [[nodiscard]] auto clone() const -> IfStmt* override;
 };
