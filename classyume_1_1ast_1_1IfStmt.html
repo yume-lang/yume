@@ -106,8 +106,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a47065e5d73b16574eb34be3cb85cb7f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af93dd79950394b73d09a7e46484f4e49"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1IfStmt.html#af93dd79950394b73d09a7e46484f4e49">clauses</a> () const -&gt; const auto &amp;</td></tr>
 <tr class="separator:af93dd79950394b73d09a7e46484f4e49"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2e8df2a440dac671573e768afb616fa"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1IfStmt.html#ae2e8df2a440dac671573e768afb616fa">clauses</a> () -&gt; auto &amp;</td></tr>
+<tr class="separator:ae2e8df2a440dac671573e768afb616fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5d99c5ca273fa78badf11b8f85ce64a3"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1IfStmt.html#a5d99c5ca273fa78badf11b8f85ce64a3">else_clause</a> () const -&gt; const auto &amp;</td></tr>
 <tr class="separator:a5d99c5ca273fa78badf11b8f85ce64a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b3ce4a9e25f99db90529bd7d702c3e4"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1IfStmt.html#a0b3ce4a9e25f99db90529bd7d702c3e4">else_clause</a> () -&gt; auto &amp;</td></tr>
+<tr class="separator:a0b3ce4a9e25f99db90529bd7d702c3e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a72bb470137bedf2419c7102f28712cea"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1IfStmt.html#a72bb470137bedf2419c7102f28712cea">clone</a> () const -&gt; <a class="el" href="classyume_1_1ast_1_1IfStmt.html">IfStmt</a> *override</td></tr>
 <tr class="memdesc:a72bb470137bedf2419c7102f28712cea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deep copy, except for the type and attachments.  <a href="classyume_1_1ast_1_1IfStmt.html#a72bb470137bedf2419c7102f28712cea">More...</a><br /></td></tr>
 <tr class="separator:a72bb470137bedf2419c7102f28712cea"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -172,7 +176,7 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >An if statement (<code>if</code>), with one or more <code><a class="el" href="classyume_1_1ast_1_1IfClause.html" title="Clauses of an if statement IfStmt.">IfClause</a></code>s, and optionally an else clause. </p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00641">641</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00645">645</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aff3e68fd555b42344a02ecf2c1853706" name="aff3e68fd555b42344a02ecf2c1853706"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aff3e68fd555b42344a02ecf2c1853706">&#9670;&nbsp;</a></span>IfStmt()</h2>
@@ -214,15 +218,42 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00646">646</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00650">650</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="clone_8cpp_source.html#l00042">clone()</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="ae2e8df2a440dac671573e768afb616fa" name="ae2e8df2a440dac671573e768afb616fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2e8df2a440dac671573e768afb616fa">&#9670;&nbsp;</a></span>clauses() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto yume::ast::IfStmt::clauses </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> -&gt; auto&amp; </td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00655">655</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+
+</div>
+</div>
 <a id="af93dd79950394b73d09a7e46484f4e49" name="af93dd79950394b73d09a7e46484f4e49"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af93dd79950394b73d09a7e46484f4e49">&#9670;&nbsp;</a></span>clauses()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#af93dd79950394b73d09a7e46484f4e49">&#9670;&nbsp;</a></span>clauses() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -244,9 +275,9 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00650">650</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00654">654</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00274">yume::Compiler::statement()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00326">yume::TypeWalker::statement()</a>, and <a class="el" href="compiler_8cpp_source.html#l00274">yume::Compiler::statement()</a>.</p>
 
 </div>
 </div>
@@ -279,12 +310,39 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="clone_8cpp_source.html#l00042">42</a> of file <a class="el" href="clone_8cpp_source.html">clone.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00646">IfStmt()</a>, and <a class="el" href="ast_8hpp_source.html#l00175">yume::ast::AST::tok()</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00650">IfStmt()</a>, and <a class="el" href="ast_8hpp_source.html#l00175">yume::ast::AST::tok()</a>.</p>
+
+</div>
+</div>
+<a id="a0b3ce4a9e25f99db90529bd7d702c3e4" name="a0b3ce4a9e25f99db90529bd7d702c3e4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0b3ce4a9e25f99db90529bd7d702c3e4">&#9670;&nbsp;</a></span>else_clause() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto yume::ast::IfStmt::else_clause </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> -&gt; auto&amp; </td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00657">657</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
 <a id="a5d99c5ca273fa78badf11b8f85ce64a3" name="a5d99c5ca273fa78badf11b8f85ce64a3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5d99c5ca273fa78badf11b8f85ce64a3">&#9670;&nbsp;</a></span>else_clause()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a5d99c5ca273fa78badf11b8f85ce64a3">&#9670;&nbsp;</a></span>else_clause() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -306,9 +364,9 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00651">651</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00656">656</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00274">yume::Compiler::statement()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00326">yume::TypeWalker::statement()</a>, and <a class="el" href="compiler_8cpp_source.html#l00274">yume::Compiler::statement()</a>.</p>
 
 </div>
 </div>
