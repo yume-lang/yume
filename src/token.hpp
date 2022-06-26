@@ -45,7 +45,7 @@ struct Loc {
       ss << stem(file);
     }
 
-    if (begin_line == 0 || end_line == 0) {
+    if (!valid()) {
       ss << ":?";
     } else {
       ss << ':' << begin_line << ':' << begin_col;
@@ -57,6 +57,8 @@ struct Loc {
     }
     return ss.str();
   }
+
+  [[nodiscard]] auto valid() const -> bool { return begin_line > 0 && end_line > 0; }
 };
 
 /// A categorized token in source code, created by the tokenizer. These tokens are consumed by the lexer.

@@ -1,11 +1,13 @@
 #pragma once
 
+#include "../token.hpp"
 #include "../util.hpp"
 #include "../visitor.hpp"
 #include <iosfwd>
 #include <llvm/Support/raw_ostream.h>
+#include <optional>
 #include <string>
-#include <tuple>
+#include <utility>
 #include <vector>
 
 namespace yume::ast {
@@ -16,63 +18,50 @@ namespace yume::diagnostic {
 class DotVisitor : public Visitor {
   static constexpr const char* AST_KEY = "ym_ast_";
 
-  llvm::raw_ostream& m_direct_stream;
-  llvm::raw_string_ostream m_buffer_stream;
-  bool m_open = false;
-  bool m_write_to_buffer = false;
-  vector<std::tuple<int, int, string>> m_lines{};
-  string m_buffer{};
-  string m_prev_label{};
-  int m_children{};
-  int m_index{};
-  int m_parent{};
-  int m_open_parent{};
+  struct DotConnection;
 
-  auto set_parent(int new_parent) -> int {
-    auto restore_parent = m_parent;
-    m_parent = new_parent;
-    return restore_parent;
-  }
-  auto set_children(int new_children) -> int {
-    auto restore_children = m_children;
-    m_children = new_children;
-    return restore_children;
-  }
-  auto stream() -> llvm::raw_ostream& {
-    if (m_write_to_buffer) {
-      return m_buffer_stream;
-    }
-    return m_direct_stream;
-  }
-  void header(const char* label, bool is_inline);
-  void footer(bool is_inline);
-  void emit_debug_header();
-  void visit_expr(ast::AST& expr, const char* label);
+  struct DotNode {
+    int index;
+    Loc location;
+    optional<string> type;
+    string content;
+    vector<DotConnection> children{};
+
+    DotNode(int index_, Loc location_, optional<string> type_, string kind)
+        : index(index_), location(location_), type(std::move(type_)), content(std::move(kind)) {}
+
+    [[nodiscard]] auto simple() const -> bool { return !location.valid(); }
+
+    void write(llvm::raw_ostream& stream) const;
+  };
+
+  struct DotConnection {
+    optional<string> line_label;
+    DotNode child;
+
+    DotConnection(optional<string> line_label_, DotNode child_)
+        : line_label(std::move(line_label_)), child(std::move(child_)) {}
+  };
+
+  llvm::raw_ostream& m_stream;
+  int m_index{};
+
+  DotNode* m_parent{};
+  vector<DotNode> m_roots{};
+
+  auto add_node(yume::Loc location, optional<string>& type, string& kind, const char* label) -> DotNode&;
+  auto add_node(const string& content, const char* label) -> DotNode&;
+  auto add_node(DotNode&& node, const char* label) -> DotNode&;
 
 public:
-  explicit DotVisitor(llvm::raw_ostream& stream_) : m_direct_stream{stream_}, m_buffer_stream{m_buffer} {
-    stream() << "digraph \"yume\" {\nnode [shape=box, style=rounded];\n";
+  explicit DotVisitor(llvm::raw_ostream& stream_) : m_stream{stream_} {
+    m_stream << "digraph \"yume\" {\nnode [shape=box, style=rounded];\n";
   }
   ~DotVisitor() override {
-    if (m_write_to_buffer) {
-      m_write_to_buffer = false;
-      if (m_open_parent != -1) {
-        stream() << "<BR/>";
-      }
-      stream() << m_buffer;
-    }
-    if (m_open) {
-      stream() << ">];\n";
-    }
-    for (const auto& i : m_lines) {
-      stream() << AST_KEY << get<0>(i) << " -> " << AST_KEY << get<1>(i);
-      if (auto s = get<2>(i); !s.empty()) {
-        stream() << " [label=\"" << s << "\"]";
-      }
-      stream() << ";\n";
-    }
-    stream() << "\n}";
-    stream().flush();
+    for (const auto& root : m_roots)
+      root.write(m_stream);
+    m_stream << "\n}";
+    m_stream.flush();
   }
   DotVisitor(const DotVisitor&) = delete;
   DotVisitor(DotVisitor&&) = delete;

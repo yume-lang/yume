@@ -5,9 +5,10 @@
 #include "../util.hpp"
 #include "llvm/Support/raw_ostream.h"
 #include <algorithm>
+#include <memory>
 
 namespace yume::diagnostic {
-static void xml_escape(llvm::raw_ostream& stream, const string& data) {
+static void xml_escape(llvm::raw_ostream&& stream, const string& data) {
   for (char i : data) {
     switch (i) {
     case '&': stream << "&amp;"; break;
@@ -15,104 +16,102 @@ static void xml_escape(llvm::raw_ostream& stream, const string& data) {
     case '\"': stream << "&quot;"; break;
     case '<': stream << "&lt;"; break;
     case '>': stream << "&gt;"; break;
-    case '\x00': stream << "\\\\x00"; break;
+    case '\0': stream << "\\\\0"; break;
     default: stream << i; break;
     }
   }
 }
 
-void DotVisitor::emit_debug_header() {
-#ifdef YUME_SPEW_DOT_TOKEN_HEADER
-  stream() << "<FONT POINT-SIZE=\"6\">" << m_index << "/" << m_parent;
-  if (m_open_parent != -1)
-    stream() << "-" << m_open_parent;
-
-  stream() << "/" << m_children << "</FONT><BR/>";
-#endif
+inline static auto opt_str(const char* ptr) -> optional<string> {
+  if (ptr == nullptr)
+    return {};
+  return string(ptr);
 }
 
-void DotVisitor::header(const char* label, bool is_inline) {
-  if (m_write_to_buffer) {
-    m_write_to_buffer = false;
-    if ((m_children > 0) && m_parent == m_open_parent) {
-      m_lines.emplace_back(m_parent, m_index - 1, m_prev_label);
-      stream() << ">];\n" << AST_KEY << m_index - 1 << " [label=<";
-      m_open_parent = -1;
-    }
-    if (m_open_parent != -1) {
-      stream() << "<BR/>";
-    }
-    stream() << m_buffer;
-  }
-  if (is_inline && m_children == 0) {
-    m_buffer = "";
-    m_write_to_buffer = true;
-    emit_debug_header();
-    m_open_parent = m_parent;
-  } else {
-    if (m_open) {
-      stream() << ">];\n";
-      m_open = false;
-    }
-    if (m_index != 0)
-      m_lines.emplace_back(m_parent, m_index, label == nullptr ? "" : label);
-
-    stream() << AST_KEY << m_index << " [label=<";
-    emit_debug_header();
-    m_open = true;
-  }
-
-  m_prev_label = label == nullptr ? "" : label;
+auto DotVisitor::add_node(yume::Loc location, optional<string>& type, string& kind, const char* label) -> DotNode& {
+  return add_node(DotNode(m_index, location, type, kind), label);
 }
 
-void DotVisitor::footer(bool is_inline) {
-  if (is_inline) {
-    stream() << ">];\n";
-    m_open = false;
-    m_children++;
-  }
+auto DotVisitor::add_node(const string& content, const char* label) -> DotNode& {
+  return add_node(DotNode(m_index, Loc{}, std::nullopt, content), label);
+}
+
+auto DotVisitor::add_node(DotNode&& node, const char* label) -> DotNode& {
   m_index++;
+  if (m_parent == nullptr) {
+    return m_roots.emplace_back(std::move(node));
+  }
+  return m_parent->children.emplace_back(opt_str(label), std::move(node)).child;
 }
 
-void DotVisitor::visit_expr(ast::AST& expr, const char* label) {
-  header(label, false);
-
-  stream() << "<FONT POINT-SIZE=\"9\">" << expr.location().to_string() << "</FONT><BR/>";
-  if (const auto* val_ty = expr.val_ty(); val_ty != nullptr) {
-    stream() << "<U>" << val_ty->name() << "</U><BR/>";
+void DotVisitor::DotNode::write(llvm::raw_ostream& stream) const {
+  stream << AST_KEY << index << " [label=<";
+  if (simple()) {
+    stream << "<I>" << content << "</I>";
+  } else {
+    stream << "<FONT POINT-SIZE=\"9\">" << location.to_string() << "</FONT><BR/>";
+    if (type.has_value())
+      stream << "<U>" << *type << "</U><BR/>";
+    stream << "<B>" << content << "</B>";
   }
-  stream() << "<B>";
-  xml_escape(stream(), expr.kind_name());
-  stream() << "</B>";
-  auto restore_parent = set_parent(m_index);
-  auto restore_children = set_children(0);
-  footer(false);
-  expr.visit(*this);
-  m_parent = restore_parent;
-  m_children = ++restore_children;
+
+  bool skip_first_child = false;
+  if (!children.empty()) {
+    const auto& first = children.at(0);
+    if (!first.line_label.has_value() && first.child.simple()) {
+      skip_first_child = true;
+      stream << "<BR/><I>" << first.child.content << "</I>";
+    }
+  }
+
+  stream << ">];\n";
+
+  for (const auto& [line_label, child] : children) {
+    if (skip_first_child) {
+      skip_first_child = false;
+      continue;
+    }
+    child.write(stream);
+    stream << AST_KEY << index << " -> " << AST_KEY << child.index;
+    if (line_label.has_value())
+      stream << " [label=\"" << *line_label << "\"]";
+    stream << ";\n";
+  }
 }
 
 auto DotVisitor::visit(ast::AST& expr, const char* label) -> DotVisitor& {
-  visit_expr(expr, label);
+  Loc location = expr.location();
+  optional<string> type = {};
+  if (const auto* val_ty = expr.val_ty(); val_ty != nullptr) {
+    type = val_ty->name();
+  }
+  string kind_label;
+  xml_escape(llvm::raw_string_ostream(kind_label), expr.kind_name());
+
+  auto& node = add_node(location, type, kind_label, label);
+
+  auto* restore_parent = std::exchange(m_parent, &node);
+  expr.visit(*this);
+  m_parent = restore_parent;
+  // TODO: The visitor could write the node out to the stream if restore_parent was nullptr (i.e. there was no parent),
+  // as it means this object was a root. This could get rid of the m_roots member variable and also remove the stream
+  // code from the destructor.
+
   return *this;
 }
 
 auto DotVisitor::visit(const string& str, const char* label) -> DotVisitor& {
-  header(label, label == nullptr);
+  string content;
+  xml_escape(llvm::raw_string_ostream(content), str);
 
-  stream() << "<I>";
-  xml_escape(stream(), str);
-  stream() << "</I>";
+  add_node(content, label);
 
-  footer(label == nullptr);
   return *this;
 }
+
 auto DotVisitor::visit(std::nullptr_t, const char* label) -> DotVisitor& {
-  header(label, label == nullptr);
+  add_node("<FONT COLOR=\"RED\">NULL</FONT>", label);
 
-  stream() << "<I><FONT COLOR=\"RED\">NULL</FONT></I>";
-
-  footer(label == nullptr);
   return *this;
 }
 } // namespace yume::diagnostic
