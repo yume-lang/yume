@@ -2,10 +2,8 @@
 
 #include "crtp_walker.hpp"
 #include "util.hpp"
-#include "visitor.hpp"
-#include <iosfwd>
-#include <llvm/Support/raw_ostream.h>
 #include <map>
+#include <stdexcept>
 #include <string>
 
 namespace yume {
@@ -19,12 +17,7 @@ class Stmt;
 
 /// Determine the type information of AST nodes.
 /// This makes up most of the "semantic" phase of the compiler.
-struct TypeWalker : public CRTPWalker<TypeWalker, false>
-#ifdef YUME_TYPE_WALKER_FALLBACK_VISITOR
-    ,
-                    public Visitor
-#endif
-{
+struct TypeWalker : public CRTPWalker<TypeWalker, false> {
   friend CRTPWalker;
 
 public:
@@ -38,34 +31,16 @@ public:
 
   explicit TypeWalker(Compiler& compiler) : m_compiler(compiler) {}
 
-#ifdef YUME_TYPE_WALKER_FALLBACK_VISITOR
-  auto visit(ast::AST& expr, const char* label) -> TypeWalker& override;
-
-  auto visit([[maybe_unused]] std::nullptr_t null, [[maybe_unused]] const char* label) -> TypeWalker& override {
-    return *this;
-  }
-
-  auto visit([[maybe_unused]] const string& str, [[maybe_unused]] const char* label) -> TypeWalker& override {
-    return *this;
-  }
-#endif
-
   void body_statement(ast::Stmt&);
   void body_expression(ast::Expr&);
 
 private:
   template <typename T> void statement([[maybe_unused]] T& stat) {
     throw std::runtime_error("Type walker stubbed on statement "s + stat.kind_name());
-#ifdef YUME_TYPE_WALKER_FALLBACK_VISITOR
-    stat.visit(*this);
-#endif
   }
 
   template <typename T> void expression([[maybe_unused]] T& expr) {
     throw std::runtime_error("Type walker stubbed on expression "s + expr.kind_name());
-#ifdef YUME_TYPE_WALKER_FALLBACK_VISITOR
-    expr.visit(*this);
-#endif
   }
 };
 } // namespace yume

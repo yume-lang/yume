@@ -337,17 +337,6 @@ template <> void TypeWalker::statement(ast::WhileStmt& stat) {
   statement(stat.body());
 }
 
-#ifdef YUME_TYPE_WALKER_FALLBACK_VISITOR
-auto TypeWalker::visit(ast::AST& expr, [[maybe_unused]] const char* label) -> TypeWalker& {
-  if (auto* stmt = dyn_cast<ast::Stmt>(&expr)) {
-    body_statement(*stmt);
-  } else {
-    expr.visit(*this);
-  }
-  return *this;
-}
-#endif
-
 void TypeWalker::body_statement(ast::Stmt& stat) {
   const ASTStackTrace guard("Semantic: "s + stat.kind_name() + " statement", stat);
   return CRTPWalker::body_statement(stat);
