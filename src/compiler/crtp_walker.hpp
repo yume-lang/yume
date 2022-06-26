@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../ast/ast.hpp"
+#include "ast/ast.hpp"
+#include <llvm/Support/Casting.h>
 #include <type_traits>
 
 namespace yume {

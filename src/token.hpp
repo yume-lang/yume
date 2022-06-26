@@ -6,8 +6,13 @@
 #include <optional>
 #include <sstream>
 #include <string>
+#include <string_view>
 #include <utility>
 #include <vector>
+
+namespace llvm {
+class raw_ostream;
+}
 
 namespace yume {
 

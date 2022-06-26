@@ -10,12 +10,17 @@
 #include <exception>
 #include <fstream>
 #include <iterator>
+#include <llvm/ADT/StringRef.h>
 #include <llvm/IR/Module.h>
+#include <llvm/Support/ErrorOr.h>
 #include <llvm/Support/MemoryBuffer.h>
+#include <llvm/Support/PrettyStackTrace.h>
+#include <llvm/Support/Signals.h>
 #include <llvm/Support/raw_ostream.h>
 #include <memory>
 #include <span>
 #include <string>
+#include <string_view>
 #include <utility>
 #include <vector>
 

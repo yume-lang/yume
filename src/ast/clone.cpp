@@ -1,6 +1,13 @@
 #include "ast.hpp"
 
-#include "../util.hpp"
+#include "util.hpp"
+#include <algorithm>
+#include <memory>
+#include <optional>
+#include <string>
+#include <utility>
+#include <variant>
+#include <vector>
 
 namespace yume::ast {
 

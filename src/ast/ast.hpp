@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../token.hpp"
-#include "../type.hpp"
-#include "../util.hpp"
+#include "qualifier.hpp"
+#include "token.hpp"
+#include "util.hpp"
 #include <cstddef>
 #include <cstdint>
 #include <llvm/ADT/SmallPtrSet.h>
@@ -20,6 +20,9 @@
 namespace yume {
 class Visitor;
 struct Fn;
+namespace ty {
+class Type;
+}
 } // namespace yume
 
 namespace yume::ast {
@@ -167,23 +170,7 @@ class AST {
 protected:
   /// Verify the type compatibility of the depends of this node, and merge the types if possible.
   /// This is called every time the node's type is updated.
-  void unify_val_ty() const {
-    for (const auto* other : m_attach->depends) {
-      if (m_val_ty == other->m_val_ty || other->m_val_ty == nullptr)
-        return;
-
-      if (m_val_ty == nullptr) {
-        m_val_ty = other->m_val_ty;
-      } else {
-        const auto* merged = m_val_ty->coalesce(*other->m_val_ty);
-        if (merged == nullptr) {
-          throw std::logic_error("Conflicting types between AST nodes that are attached: `"s + m_val_ty->name() +
-                                 "` vs `" + other->m_val_ty->name() + "`!");
-        }
-        m_val_ty = merged;
-      }
-    }
-  }
+  void unify_val_ty() const;
 
   [[nodiscard]] auto tok() const noexcept -> span<Token> { return m_tok; }
 

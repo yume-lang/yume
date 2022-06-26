@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../ast/ast.hpp"
-#include "../token.hpp"
-#include "../type.hpp"
-#include "../util.hpp"
+#include "ast/ast.hpp"
+#include "token.hpp"
+#include "util.hpp"
 #include <compare>
 #include <iosfwd>
+#include <llvm/Support/raw_ostream.h>
 #include <map>
 #include <memory>
 #include <string>
@@ -20,6 +20,11 @@ class BasicBlock;
 
 namespace yume {
 class Compiler;
+
+namespace ty {
+class Generic;
+class Type;
+} // namespace ty
 
 /// A mapping between type variables and substitutions for them.
 struct Instantiation {

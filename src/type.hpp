@@ -1,5 +1,6 @@
 #pragma once
 
+#include "qualifier.hpp"
 #include "util.hpp"
 #include "llvm/Support/Casting.h"
 #include <array>
@@ -17,13 +18,6 @@ class Compiler;
 namespace ast {
 class TypeName;
 }
-
-enum struct Qualifier {
-  Ptr,   ///< `ptr`
-  Slice, ///< `[]`
-  Mut,   ///< `mut`
-  Q_END  /// Used for the amount of qualifiers.
-};
 } // namespace yume
 
 namespace yume::ty {

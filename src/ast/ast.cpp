@@ -1,7 +1,12 @@
 #include "ast.hpp"
-#include "../diagnostic/source_location.hpp"
-#include "../visitor.hpp"
+
+#include "diagnostic/source_location.hpp"
+#include "qualifier.hpp"
+#include "token.hpp"
+#include "type.hpp"
+#include "util.hpp"
 #include <algorithm>
+#include <array>
 #include <cctype>
 #include <cstddef>
 #include <llvm/Support/raw_ostream.h>
@@ -47,6 +52,24 @@ static const Atom SYM_SLASH_SLASH = "//"_a;
 static const Atom SYM_STAR = "*"_a;
 static const Atom SYM_BANG = "!"_a;
 static const Atom SYM_COLON = ":"_a;
+
+void AST::unify_val_ty() const {
+  for (const auto* other : m_attach->depends) {
+    if (m_val_ty == other->m_val_ty || other->m_val_ty == nullptr)
+      return;
+
+    if (m_val_ty == nullptr) {
+      m_val_ty = other->m_val_ty;
+    } else {
+      const auto* merged = m_val_ty->coalesce(*other->m_val_ty);
+      if (merged == nullptr) {
+        throw std::logic_error("Conflicting types between AST nodes that are attached: `"s + m_val_ty->name() +
+                               "` vs `" + other->m_val_ty->name() + "`!");
+      }
+      m_val_ty = merged;
+    }
+  }
+}
 
 namespace {
 struct TokenRange {

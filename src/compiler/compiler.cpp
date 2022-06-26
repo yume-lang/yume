@@ -1,9 +1,9 @@
 #include "compiler.hpp"
-#include "../ast/ast.hpp"
-#include "../diagnostic/errors.hpp"
-#include "../type.hpp"
-#include "../util.hpp"
+#include "ast/ast.hpp"
+#include "diagnostic/errors.hpp"
+#include "type.hpp"
 #include "type_walker.hpp"
+#include "util.hpp"
 #include "vals.hpp"
 #include <algorithm>
 #include <exception>
@@ -37,8 +37,6 @@
 #include <optional>
 #include <sstream>
 #include <stdexcept>
-#include <tuple>
-#include <type_traits>
 #include <utility>
 #include <variant>
 

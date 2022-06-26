@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../util.hpp"
 #include "crtp_walker.hpp"
 #include "type_holder.hpp"
 #include "type_walker.hpp"
+#include "util.hpp"
 #include "vals.hpp"
 #include <llvm/ADT/iterator_range.h>
 #include <llvm/IR/IRBuilder.h>
@@ -13,8 +13,10 @@
 #include <map>
 #include <memory>
 #include <queue>
+#include <stdexcept>
 #include <string>
 #include <vector>
+
 namespace llvm {
 class Function;
 class Type;

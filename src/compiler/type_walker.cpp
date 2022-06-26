@@ -1,8 +1,8 @@
 #include "type_walker.hpp"
-#include "../ast/ast.hpp"
-#include "../diagnostic/errors.hpp"
-#include "../type.hpp"
+#include "ast/ast.hpp"
 #include "compiler.hpp"
+#include "diagnostic/errors.hpp"
+#include "type.hpp"
 #include "type_holder.hpp"
 #include "vals.hpp"
 #include <algorithm>

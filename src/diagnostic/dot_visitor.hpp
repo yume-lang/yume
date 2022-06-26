@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../token.hpp"
-#include "../util.hpp"
-#include "../visitor.hpp"
+#include "token.hpp"
+#include "util.hpp"
+#include "visitor.hpp"
 #include <iosfwd>
 #include <llvm/Support/raw_ostream.h>
 #include <optional>

@@ -1,14 +1,14 @@
 #pragma once
 
+#include "ast/ast.hpp"
+#include "util.hpp"
+
 namespace yume {
 class Visitor;
 namespace ast {
 class AST;
 }
 } // namespace yume
-
-#include "ast/ast.hpp"
-#include "util.hpp"
 
 namespace yume {
 class Visitor {

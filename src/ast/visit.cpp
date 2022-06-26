@@ -1,7 +1,12 @@
 #include "ast.hpp"
 
-#include "../util.hpp"
-#include "../visitor.hpp"
+#include "util.hpp"
+#include "visitor.hpp"
+#include <memory>
+#include <string>
+#include <utility>
+#include <variant>
+#include <vector>
 
 namespace yume::ast {
 

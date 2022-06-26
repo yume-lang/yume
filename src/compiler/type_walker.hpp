@@ -2,9 +2,11 @@
 
 #define YUME_TYPE_WALKER_FALLBACK_VISITOR
 
-#include "../util.hpp"
-#include "../visitor.hpp"
 #include "crtp_walker.hpp"
+#include "util.hpp"
+#include "visitor.hpp"
+#include <iosfwd>
+#include <llvm/Support/raw_ostream.h>
 #include <map>
 #include <string>
 
