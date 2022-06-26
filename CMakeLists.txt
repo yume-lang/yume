@@ -18,16 +18,12 @@ if(YUME_SANITIZE)
   target_link_options(yumec PRIVATE "$<$<CONFIG:DEBUG>:-fsanitize=undefined,vptr>")
 endif()
 
-if(YUME_SPEW GREATER 3)
-  target_compile_definitions(yumec PRIVATE YUME_SPEW_DOT_TOKEN_HEADER)
-endif()
-
 if(YUME_SPEW GREATER 2)
   target_compile_definitions(yumec PRIVATE YUME_SPEW_OVERLOAD_SELECTION)
 endif()
 
 if(YUME_SPEW GREATER 1)
-  target_compile_definitions(yumec PRIVATE YUME_SPEW_LIST_TOKENS YUME_SPEW_TYPE_WALKER_STUB)
+  target_compile_definitions(yumec PRIVATE YUME_SPEW_LIST_TOKENS)
 endif()
 
 if(YUME_SPEW GREATER 0)
