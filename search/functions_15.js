@@ -1,9 +1,9 @@
 var searchData=
 [
-  ['val_0',['val',['../classyume_1_1ast_1_1CharExpr.html#aa93a521c54a97350a426ed08b3eed687',1,'yume::ast::CharExpr::val()'],['../classyume_1_1ast_1_1BoolExpr.html#a47337b71e5d7808a3c90501680525265',1,'yume::ast::BoolExpr::val()'],['../classyume_1_1ast_1_1StringExpr.html#a967b03b25f93ce771e484eb7a2a2593b',1,'yume::ast::StringExpr::val()']]],
+  ['val_0',['val',['../classyume_1_1ast_1_1NumberExpr.html#ad7d6983c442cc8275d6420881a19ca51',1,'yume::ast::NumberExpr::val()'],['../classyume_1_1ast_1_1CharExpr.html#aa93a521c54a97350a426ed08b3eed687',1,'yume::ast::CharExpr::val()'],['../classyume_1_1ast_1_1BoolExpr.html#a47337b71e5d7808a3c90501680525265',1,'yume::ast::BoolExpr::val()'],['../classyume_1_1ast_1_1StringExpr.html#a967b03b25f93ce771e484eb7a2a2593b',1,'yume::ast::StringExpr::val()']]],
   ['val_1',['Val',['../structyume_1_1Val.html#a9fc3342cf3d703f8c6a4fb21c8e685a4',1,'yume::Val']]],
-  ['val_2',['val',['../classyume_1_1ast_1_1NumberExpr.html#ad7d6983c442cc8275d6420881a19ca51',1,'yume::ast::NumberExpr']]],
-  ['val_5fty_3',['val_ty',['../classyume_1_1ast_1_1AST.html#a8437174337ab610fd2968b6aa133028e',1,'yume::ast::AST::val_ty() const noexcept -&gt; const ty::Type *'],['../classyume_1_1ast_1_1AST.html#a7e3b0124822a9fa3a986bee5d5fa88be',1,'yume::ast::AST::val_ty(const ty::Type *type) const']]],
+  ['val_5fty_2',['val_ty',['../classyume_1_1ast_1_1AST.html#a8437174337ab610fd2968b6aa133028e',1,'yume::ast::AST::val_ty() const noexcept -&gt; const ty::Type *'],['../classyume_1_1ast_1_1AST.html#a7e3b0124822a9fa3a986bee5d5fa88be',1,'yume::ast::AST::val_ty(const ty::Type *type) const']]],
+  ['valid_3',['valid',['../structyume_1_1Loc.html#a5d7d786b093077b0f0ce213ce86023a8',1,'yume::Loc']]],
   ['value_4',['value',['../classyume_1_1ast_1_1AssignExpr.html#a6e8521cb9da1815d807ccba9e3fdb4e3',1,'yume::ast::AssignExpr']]],
   ['varargs_5',['varargs',['../classyume_1_1ast_1_1FnDecl.html#aab145566da5d54f718e0a3120eb14fce',1,'yume::ast::FnDecl']]],
   ['vardecl_6',['VarDecl',['../classyume_1_1ast_1_1VarDecl.html#a2719e6230cac780949fa732c004ccb05',1,'yume::ast::VarDecl']]],
