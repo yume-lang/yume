@@ -10,7 +10,8 @@ var searchData=
   ['int64_7',['int64',['../structyume_1_1TypeHolder.html#a0ca37f69476c54ccaae1acbcd87bd8de',1,'yume::TypeHolder']]],
   ['int8_8',['int8',['../structyume_1_1TypeHolder.html#a0c1aefada325245bd55668b2ab3542a6',1,'yume::TypeHolder']]],
   ['intersect_9',['intersect',['../classyume_1_1ty_1_1Type.html#a948f65ace0dbe9392cfb13601aad0a62',1,'yume::ty::Type']]],
-  ['is_5fkeyword_10',['is_keyword',['../structyume_1_1Token.html#a06a01069256d00c335d5ebe41e4a4483',1,'yume::Token']]],
-  ['is_5fmut_11',['is_mut',['../classyume_1_1ty_1_1Type.html#a14e89718449e055ee8f9f192fda8b4fc',1,'yume::ty::Type']]],
-  ['is_5fsigned_12',['is_signed',['../classyume_1_1ty_1_1Int.html#acb504b970d97dd2ebbd28de842b9f527',1,'yume::ty::Int']]]
+  ['intersect_5fgenerics_10',['intersect_generics',['../namespaceyume.html#a15927ec37006cbdd3385e73eabe2bb8d',1,'yume']]],
+  ['is_5fkeyword_11',['is_keyword',['../structyume_1_1Token.html#a06a01069256d00c335d5ebe41e4a4483',1,'yume::Token']]],
+  ['is_5fmut_12',['is_mut',['../classyume_1_1ty_1_1Type.html#a14e89718449e055ee8f9f192fda8b4fc',1,'yume::ty::Type']]],
+  ['is_5fsigned_13',['is_signed',['../classyume_1_1ty_1_1Int.html#acb504b970d97dd2ebbd28de842b9f527',1,'yume::ty::Int']]]
 ];

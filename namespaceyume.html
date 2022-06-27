@@ -156,6 +156,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a51260a151bed18c650bd6b42091d03c0"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="structyume_1_1Fn.html">Fn</a>  = std::identity&gt; </td></tr>
 <tr class="memitem:a51260a151bed18c650bd6b42091d03c0"><td class="memTemplItemLeft" align="right" valign="top">static auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a51260a151bed18c650bd6b42091d03c0">join_args</a> (const auto &amp;iter, <a class="el" href="structyume_1_1Fn.html">Fn</a> fn={}, llvm::raw_ostream &amp;stream=errs())</td></tr>
 <tr class="separator:a51260a151bed18c650bd6b42091d03c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15927ec37006cbdd3385e73eabe2bb8d"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a15927ec37006cbdd3385e73eabe2bb8d">intersect_generics</a> (<a class="el" href="structyume_1_1Instantiation.html">Instantiation</a> &amp;instantiation, const <a class="el" href="classyume_1_1ty_1_1Generic.html">ty::Generic</a> *gen, const <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> *gen_sub) -&gt; bool</td></tr>
+<tr class="memdesc:a15927ec37006cbdd3385e73eabe2bb8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add the substitution <code>gen_sub</code> for the generic type variable <code>gen</code> in template instantiation <code>instantiation</code>. If a substitution already exists for the same type variable, the two substitutions are intersected.  <a href="namespaceyume.html#a15927ec37006cbdd3385e73eabe2bb8d">More...</a><br /></td></tr>
+<tr class="separator:a15927ec37006cbdd3385e73eabe2bb8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae4f35db208c296a7200120a3c5ea3624"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#ae4f35db208c296a7200120a3c5ea3624">what</a> (const std::exception_ptr &amp;eptr=std::current_exception()) -&gt; std::string_view</td></tr>
 <tr class="separator:ae4f35db208c296a7200120a3c5ea3624"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1acf150b712c5a16aabf66d01458d7b8"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a1acf150b712c5a16aabf66d01458d7b8">current_exception_name</a> () -&gt; const char *</td></tr>
@@ -333,6 +336,55 @@ template&lt;bool Bool, typename Base &gt; </div>
 
 </div>
 </div>
+<a id="a15927ec37006cbdd3385e73eabe2bb8d" name="a15927ec37006cbdd3385e73eabe2bb8d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a15927ec37006cbdd3385e73eabe2bb8d">&#9670;&nbsp;</a></span>intersect_generics()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static auto yume::intersect_generics </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structyume_1_1Instantiation.html">Instantiation</a> &amp;&#160;</td>
+          <td class="paramname"><em>instantiation</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classyume_1_1ty_1_1Generic.html">ty::Generic</a> *&#160;</td>
+          <td class="paramname"><em>gen</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> *&#160;</td>
+          <td class="paramname"><em>gen_sub</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> -&gt; bool </td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Add the substitution <code>gen_sub</code> for the generic type variable <code>gen</code> in template instantiation <code>instantiation</code>. If a substitution already exists for the same type variable, the two substitutions are intersected. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if substitution failed </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="type__walker_8cpp_source.html#l00123">123</a> of file <a class="el" href="type__walker_8cpp_source.html">type_walker.cpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00140">yume::TypeWalker::expression()</a>.</p>
+
+</div>
+</div>
 <a id="a51260a151bed18c650bd6b42091d03c0" name="a51260a151bed18c650bd6b42091d03c0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a51260a151bed18c650bd6b42091d03c0">&#9670;&nbsp;</a></span>join_args()</h2>
 
@@ -375,9 +427,9 @@ template&lt;typename <a class="el" href="structyume_1_1Fn.html">Fn</a>  = std::i
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type__walker_8cpp_source.html#l00110">110</a> of file <a class="el" href="type__walker_8cpp_source.html">type_walker.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type__walker_8cpp_source.html#l00111">111</a> of file <a class="el" href="type__walker_8cpp_source.html">type_walker.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00119">yume::TypeWalker::expression()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00140">yume::TypeWalker::expression()</a>.</p>
 
 </div>
 </div>
