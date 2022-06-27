@@ -754,6 +754,8 @@ template <> auto Compiler::expression(const ast::ImplicitCastExpr& expr, bool mu
     current_ty = &current_ty->without_qual();
     target_ty = &target_ty->without_qual();
   } else if (!target_ty->is_mut()) {
+    not_mut("implicit cast to non-mutable type", mut);
+  } else if (!current_ty->is_mut()) {
     not_mut("implicit cast from non-mutable type", mut);
   }
 
