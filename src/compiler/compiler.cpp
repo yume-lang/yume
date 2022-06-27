@@ -25,6 +25,7 @@
 #include <llvm/IR/Verifier.h>
 #include <llvm/Support/Casting.h>
 #include <llvm/Support/CodeGen.h>
+#include <llvm/Support/ErrorHandling.h>
 #include <llvm/Support/Host.h>
 #include <llvm/Support/TargetSelect.h>
 #include <llvm/Support/raw_ostream.h>
@@ -156,7 +157,7 @@ auto Compiler::llvm_type(const ty::Type& type) -> llvm::Type* {
       args.push_back(llvm::Type::getInt64Ty(*m_context));
       return llvm::StructType::get(*m_context, args);
     }
-    default: return llvm_type(ptr_type->base());
+    default: llvm_unreachable("Ptr type cannot hold this qualifier");
     }
   }
   if (const auto* struct_type = dyn_cast<ty::Struct>(&type)) {
@@ -175,6 +176,37 @@ auto Compiler::llvm_type(const ty::Type& type) -> llvm::Type* {
 
   return Type::getVoidTy(*m_context);
 }
+
+auto Compiler::default_init(const ty::Type& type) -> Val {
+  if (const auto* int_type = dyn_cast<ty::Int>(&type))
+    return m_builder->getIntN(int_type->size(), 0);
+  if (const auto* qual_type = dyn_cast<ty::Qual>(&type))
+    throw std::runtime_error("Cannot default-initialize a reference");
+  if (const auto* ptr_type = dyn_cast<ty::Ptr>(&type)) {
+    switch (ptr_type->qualifier()) {
+    case Qualifier::Ptr: llvm::ConstantPointerNull::get(llvm::PointerType::getUnqual(llvm_type(ptr_type->base())));
+    case Qualifier::Slice: {
+      auto* ptr_member_type = llvm::PointerType::getUnqual(llvm_type(ptr_type->base()));
+      auto* struct_type = cast<llvm::StructType>(llvm_type(type));
+      return llvm::ConstantStruct::get(struct_type, llvm::ConstantPointerNull::get(ptr_member_type),
+                                       m_builder->getInt64(0));
+    }
+    default: llvm_unreachable("Ptr type cannot hold this qualifier");
+    }
+  }
+  if (const auto* struct_type = dyn_cast<ty::Struct>(&type)) {
+    auto* llvm_ty = cast<llvm::StructType>(llvm_type(type));
+    llvm::Value* val = llvm::UndefValue::get(llvm_ty);
+    int i = 0;
+    for (const auto& field : struct_type->fields()) {
+      val = m_builder->CreateInsertValue(val, default_init(convert_type(field.type())), i++);
+    }
+
+    return val;
+  }
+
+  throw std::runtime_error("Cannot default-initialize "s + type.name());
+};
 
 auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
   if (fn.m_llvm_fn != nullptr)

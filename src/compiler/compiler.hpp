@@ -80,6 +80,9 @@ public:
   /// Convert a type into its corresponding llvm type
   auto llvm_type(const ty::Type& type) -> llvm::Type*;
 
+  /// Default-constructs an object of specified type
+  auto default_init(const ty::Type& type) -> Val;
+
   auto mangle_name(const Fn& fn_decl) -> string;
   auto mangle_name(const ty::Type& ast_type, const Fn& parent) -> string;
 
