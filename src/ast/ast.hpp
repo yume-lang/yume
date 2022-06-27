@@ -44,21 +44,22 @@ enum Kind {
   /**/ K_Program,    ///< `Program`
 
   /**** subclasses of Expr */
-  /****/ K_Expr,        ///< `Expr`
-  /****/ K_Number,      ///< `NumberExpr`
-  /****/ K_Char,        ///< `CharExpr`
-  /****/ K_Bool,        ///< `BoolExpr`
-  /****/ K_String,      ///< `StringExpr`
-  /****/ K_Var,         ///< `VarExpr`
-  /****/ K_Call,        ///< `CallExpr`
-  /****/ K_Ctor,        ///< `CtorExpr`
-  /****/ K_Slice,       ///< `SliceExpr`
-  /****/ K_Assign,      ///< `AssignExpr`
-  /****/ K_FieldAccess, ///< `FieldAccessExpr`
+  /****/ K_Expr,         ///< `Expr`
+  /****/ K_Number,       ///< `NumberExpr`
+  /****/ K_Char,         ///< `CharExpr`
+  /****/ K_Bool,         ///< `BoolExpr`
+  /****/ K_String,       ///< `StringExpr`
+  /****/ K_Var,          ///< `VarExpr`
+  /****/ K_Call,         ///< `CallExpr`
+  /****/ K_Ctor,         ///< `CtorExpr`
+  /****/ K_Slice,        ///< `SliceExpr`
+  /****/ K_Assign,       ///< `AssignExpr`
+  /****/ K_FieldAccess,  ///< `FieldAccessExpr`
+  /****/ K_ImplicitCast, ///< `ImplicitCastExpr`
   /****/ K_END_Expr,
   /**/ K_END_Stmt,
 
-  /* subclasses of Type */
+  /** subclasses of Type */
   /**/ K_Type,       ///< `Type`
   /**/ K_SimpleType, ///< `SimpleType`
   /**/ K_QualType,   ///< `QualType`
@@ -92,6 +93,7 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case K_Return: return "return statement";
   case K_Assign: return "assign";
   case K_FieldAccess: return "field access";
+  case K_ImplicitCast: return "implicit cast";
   default: return "?";
   }
 }
@@ -433,6 +435,7 @@ public:
 
   [[nodiscard]] auto name() const -> string { return m_name; }
   [[nodiscard]] auto args() const { return dereference_view(m_args); }
+  [[nodiscard]] auto direct_args() -> auto& { return m_args; }
 
   void selected_overload(Fn* fn) const { m_selected_overload = fn; }
   [[nodiscard]] auto selected_overload() const -> Fn* { return m_selected_overload; }
@@ -515,6 +518,23 @@ public:
   [[nodiscard]] auto offset() const -> int { return m_offset; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_FieldAccess; }
   [[nodiscard]] auto clone() const -> FieldAccessExpr* override;
+};
+
+class ImplicitCastExpr : public Expr {
+  unique_ptr<Expr> m_base;
+  const ty::Type* m_target_type;
+
+public:
+  ImplicitCastExpr(span<Token> tok, unique_ptr<Expr> base, const ty::Type* target_type)
+      : Expr(K_ImplicitCast, tok), m_base{move(base)}, m_target_type{target_type} {}
+  void visit(Visitor& visitor) override;
+
+  [[nodiscard]] auto base() const -> const auto& { return *m_base; }
+  [[nodiscard]] auto base() -> auto& { return *m_base; }
+  [[nodiscard]] auto target_type() const -> const auto* { return m_target_type; }
+
+  static auto classof(const AST* a) -> bool { return a->kind() == K_ImplicitCast; }
+  [[nodiscard]] auto clone() const -> ImplicitCastExpr* override;
 };
 
 /// A statement consisting of multiple other statements, i.e. the body of a function.

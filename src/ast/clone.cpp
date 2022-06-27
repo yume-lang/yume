@@ -67,6 +67,7 @@ auto CtorExpr::clone() const -> CtorExpr* { return new CtorExpr(tok(), dup(m_typ
 auto SliceExpr::clone() const -> SliceExpr* { return new SliceExpr(tok(), dup(m_type), dup(m_args)); }
 auto AssignExpr::clone() const -> AssignExpr* { return new AssignExpr(tok(), dup(m_target), dup(m_value)); }
 auto FieldAccessExpr::clone() const -> FieldAccessExpr* { return new FieldAccessExpr(tok(), dup(m_base), m_field); }
+auto ImplicitCastExpr::clone() const -> ImplicitCastExpr* { return new ImplicitCastExpr(tok(), dup(m_base), m_target_type); }
 auto Program::clone() const -> Program* { return new Program(tok(), dup(m_body)); }
 
 } // namespace yume::ast

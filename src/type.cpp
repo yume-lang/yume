@@ -66,6 +66,7 @@ auto Type::compatibility(const Type& other) const -> Compatiblity {
   }
   // `Foo mut` -> `Foo mut`.
   // Note that the base types are also compared, so `I32 mut` -> `I64 mut`.
+  // TODO: `I32 mut` -> `I64 mut` is actually an illegal conversion!!!
   if (is_mut() && other.is_mut()) {
     auto base_compat = qual_base()->compatibility(other.without_qual());
     if (base_compat.rating != Compatiblity::INVALID)

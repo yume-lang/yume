@@ -12,6 +12,7 @@
 #include <llvm/Support/raw_ostream.h>
 #include <memory>
 #include <optional>
+#include <ranges>
 #include <stdexcept>
 #include <tuple>
 #include <utility>
@@ -271,7 +272,17 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
     }
   }
 
-  if (selected->m_ast_decl.ret().has_value())
+  for (auto [target, expr_arg] : llvm::zip(selected->ast().args(), expr.direct_args())) {
+    const auto* target_type = target.type().val_ty();
+    if (expr_arg->val_ty() == target_type)
+      continue;
+
+    auto cast_expr = std::make_unique<ast::ImplicitCastExpr>(expr_arg->token_range(), std::move(expr_arg), target_type);
+    cast_expr->val_ty(target_type);
+    expr_arg = std::move(cast_expr);
+  }
+
+  if (selected->ast().ret().has_value())
     expr.val_ty(selected->ast().ret()->get().val_ty());
 
   expr.selected_overload(selected);

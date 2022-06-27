@@ -461,22 +461,7 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
       return selected_args[index].val_ty()->is_mut();
     };
 
-    // TODO: a lot of this logic is copied from `Type.compatibility`; deduplicate please
-    auto do_cast = [&](unsigned index, yume::Val val) -> yume::Val {
-      if (index >= selected_args.size())
-        return val; // varargs function, logic will probably change later but for now, always pass by value
-      const auto* target_ty = selected_args[index].val_ty();
-      const auto* current_ty = i.val_ty();
-      if (isa<ty::Int>(target_ty) && isa<ty::Int>(current_ty->without_qual())) {
-        if (cast<ty::Int>(current_ty->without_qual()).is_signed())
-          return m_builder->CreateSExtOrTrunc(val, llvm_type(*target_ty));
-        return m_builder->CreateZExtOrTrunc(val, llvm_type(*target_ty));
-      }
-
-      return val;
-    };
-
-    auto arg = do_cast(j, body_expression(i, should_pass_by_mut(j)));
+    auto arg = body_expression(i, should_pass_by_mut(j));
     args.push_back(arg);
     llvm_args.push_back(arg.llvm());
     arg_types.push_back(i.val_ty());
@@ -738,6 +723,41 @@ template <> auto Compiler::expression(const ast::FieldAccessExpr& expr, bool mut
   int base_offset = expr.offset();
 
   return m_builder->CreateExtractValue(base, base_offset, "s.field."s + base_name);
+}
+
+auto Compiler::implicit_cast(Val val, const ty::Type* current_ty, const ty::Type* target_ty) -> Val {
+  // TODO: a lot of this logic is *still* similar to `Type.compatibility`; overload selection really needs to be
+  // rehauled...
+  if (current_ty == target_ty)
+    return val;
+
+  if (!target_ty->is_mut() && current_ty->is_mut()) {
+    auto* new_val = m_builder->CreateLoad(llvm_type(*target_ty), val, "ic.deref");
+    const auto* new_current = current_ty->qual_base();
+    return implicit_cast(new_val, new_current, target_ty);
+  }
+
+  if (isa<ty::Int>(target_ty) && isa<ty::Int>(current_ty)) {
+    return m_builder->CreateIntCast(val, llvm_type(*target_ty), cast<ty::Int>(current_ty)->is_signed(), "ic.int");
+  }
+
+  throw std::runtime_error("Cannot implicitly convert from "s + current_ty->name() + " to " + target_ty->name());
+}
+
+template <> auto Compiler::expression(const ast::ImplicitCastExpr& expr, bool mut) -> Val {
+  llvm::Value* base = body_expression(expr.base(), mut);
+
+  const auto* target_ty = expr.target_type();
+  const auto* current_ty = expr.base().val_ty();
+
+  if (!mut) {
+    current_ty = &current_ty->without_qual();
+    target_ty = &target_ty->without_qual();
+  } else if (!target_ty->is_mut()) {
+    not_mut("implicit cast from non-mutable type", mut);
+  }
+
+  return implicit_cast(base, current_ty, target_ty);
 }
 
 void Compiler::write_object(const char* filename, bool binary) {
