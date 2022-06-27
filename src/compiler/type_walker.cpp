@@ -77,7 +77,7 @@ template <> void TypeWalker::expression(ast::AssignExpr& expr) {
 
 template <> void TypeWalker::expression(ast::VarExpr& expr) {
   if (!m_scope.contains(expr.name()))
-    return; // TODO: this should be an error
+    throw std::runtime_error("Scope doesn't contain variable called "s + expr.name());
   expr.attach_to(m_scope.at(expr.name()));
 }
 

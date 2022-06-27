@@ -176,11 +176,4 @@ public:
   Generic(string name) : Type(K_Generic, move(name)) {}
   static auto classof(const Type* a) -> bool { return a->kind() == K_Generic; }
 };
-
-/// TODO: remove
-class UnknownType : public Type {
-public:
-  UnknownType() : Type(K_Unknown, "?") {}
-  static auto classof(const Type* a) -> bool { return a->kind() == K_Unknown; }
-};
 } // namespace yume::ty
