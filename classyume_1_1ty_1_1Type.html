@@ -84,13 +84,12 @@ Inheritance diagram for yume::ty::Type:</div>
 <div class="dyncontent">
 <div class="center"><img src="classyume_1_1ty_1_1Type__inherit__graph.png" border="0" usemap="#ayume_1_1ty_1_1Type_inherit__map" alt="Inheritance graph"/></div>
 <map name="ayume_1_1ty_1_1Type_inherit__map" id="ayume_1_1ty_1_1Type_inherit__map">
-<area shape="rect" title="Represents a type in the type system. All types inherit from this class." alt="" coords="5,132,108,159"/>
-<area shape="rect" href="classyume_1_1ty_1_1Generic.html" title="An unsubstituted generic type variable, usually something like T." alt="" coords="175,5,295,32"/>
-<area shape="rect" href="classyume_1_1ty_1_1Int.html" title="A built&#45;in integral type, such as I32 or Bool." alt="" coords="190,56,281,83"/>
-<area shape="rect" href="classyume_1_1ty_1_1Ptr.html" title="A &quot;qualified&quot; type, with a stackable qualifier, i.e. ptr." alt="" coords="189,107,281,133"/>
-<area shape="rect" href="classyume_1_1ty_1_1Qual.html" title="A &quot;qualified&quot; type, with a non&#45;stackable qualifier, .i.e. mut." alt="" coords="184,157,287,184"/>
-<area shape="rect" href="classyume_1_1ty_1_1Struct.html" title="An user&#45;defined struct type with associated fields." alt="" coords="180,208,291,235"/>
-<area shape="rect" href="classyume_1_1ty_1_1UnknownType.html" title="TODO: remove." alt="" coords="156,259,315,285"/>
+<area shape="rect" title="Represents a type in the type system. All types inherit from this class." alt="" coords="259,5,362,32"/>
+<area shape="rect" href="classyume_1_1ty_1_1Generic.html" title="An unsubstituted generic type variable, usually something like T." alt="" coords="5,80,125,107"/>
+<area shape="rect" href="classyume_1_1ty_1_1Int.html" title="A built&#45;in integral type, such as I32 or Bool." alt="" coords="149,80,240,107"/>
+<area shape="rect" href="classyume_1_1ty_1_1Ptr.html" title="A &quot;qualified&quot; type, with a stackable qualifier, i.e. ptr." alt="" coords="265,80,357,107"/>
+<area shape="rect" href="classyume_1_1ty_1_1Qual.html" title="A &quot;qualified&quot; type, with a non&#45;stackable qualifier, .i.e. mut." alt="" coords="381,80,483,107"/>
+<area shape="rect" href="classyume_1_1ty_1_1Struct.html" title="An user&#45;defined struct type with associated fields." alt="" coords="507,80,618,107"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -294,7 +293,7 @@ Protected Member Functions</h2></td></tr>
 <p>The union of this and <code>other</code>. For example, the union of <code>T</code> and <code>T mut</code> is <code>T mut</code>. </p>
 <dl class="section return"><dt>Returns</dt><dd><code>nullptr</code> if an union cannot be created. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00110">110</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00111">111</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00056">yume::ast::AST::unify_val_ty()</a>.</p>
 
@@ -340,7 +339,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>Return the intersection of this and <code>other</code>. For example, the intersection of <code>T and</code>T mut<code>is</code>T<code>. \returns</code>nullptr` is there's not intersection between the types. </p>
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00121">121</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00122">122</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
 </div>
 </div>
@@ -359,7 +358,7 @@ Protected Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00096">96</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00097">97</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>.</p>
 
@@ -531,7 +530,7 @@ Protected Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00074">74</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00056">yume::ast::AST::unify_val_ty()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00056">yume::ast::AST::unify_val_ty()</a>, and <a class="el" href="visit_8cpp_source.html#l00046">yume::ast::ImplicitCastExpr::visit()</a>.</p>
 
 </div>
 </div>
@@ -605,7 +604,7 @@ Protected Member Functions</h2></td></tr>
 <p>If this type is a <code><a class="el" href="classyume_1_1ty_1_1Ptr.html" title="A &quot;qualified&quot; type, with a stackable qualifier, i.e. ptr.">Ptr</a></code>, return the base of it (<code>T ptr</code> -&gt; <code>T</code>) </p>
 <dl class="section return"><dt>Returns</dt><dd><code>nullptr</code> if this type isn't <code><a class="el" href="classyume_1_1ty_1_1Ptr.html" title="A &quot;qualified&quot; type, with a stackable qualifier, i.e. ptr.">Ptr</a></code>. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00104">104</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00105">105</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
 </div>
 </div>
@@ -627,9 +626,9 @@ Protected Member Functions</h2></td></tr>
 <p>If this type is a <code><a class="el" href="classyume_1_1ty_1_1Qual.html" title="A &quot;qualified&quot; type, with a non-stackable qualifier, .i.e. mut.">Qual</a></code>, return the base of it (<code>T mut</code> -&gt; <code>T</code>) </p>
 <dl class="section return"><dt>Returns</dt><dd><code>nullptr</code> if this type isn't <code><a class="el" href="classyume_1_1ty_1_1Qual.html" title="A &quot;qualified&quot; type, with a non-stackable qualifier, .i.e. mut.">Qual</a></code>. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00098">98</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00099">99</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00132">without_qual()</a>, and <a class="el" href="type_8cpp_source.html#l00134">without_qual_kind()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00133">without_qual()</a>, and <a class="el" href="type_8cpp_source.html#l00135">without_qual_kind()</a>.</p>
 
 </div>
 </div>
@@ -650,9 +649,9 @@ Protected Member Functions</h2></td></tr>
 
 <p>If this type is a <code><a class="el" href="classyume_1_1ty_1_1Qual.html" title="A &quot;qualified&quot; type, with a non-stackable qualifier, .i.e. mut.">Qual</a></code>, return the base of it, otherwise return itself. </p>
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00132">132</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00133">133</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="type_8cpp_source.html#l00098">qual_base()</a>.</p>
+<p class="reference">References <a class="el" href="type_8cpp_source.html#l00099">qual_base()</a>.</p>
 
 </div>
 </div>
@@ -671,9 +670,9 @@ Protected Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00134">134</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00135">135</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="type_8cpp_source.html#l00098">qual_base()</a>.</p>
+<p class="reference">References <a class="el" href="type_8cpp_source.html#l00099">qual_base()</a>.</p>
 
 </div>
 </div>

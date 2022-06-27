@@ -1,15 +1,16 @@
 <map id="yume::ast::Expr" name="yume::ast::Expr">
-<area shape="rect" id="node1" title="Expressions have an associated value and type." alt="" coords="321,233,429,260"/>
+<area shape="rect" id="node1" title="Expressions have an associated value and type." alt="" coords="321,259,429,285"/>
 <area shape="rect" id="node4" href="$classyume_1_1ast_1_1AssignExpr.html" title="An assignment (=)." alt="" coords="493,5,641,32"/>
 <area shape="rect" id="node5" href="$classyume_1_1ast_1_1BoolExpr.html" title="Bool literals (true or false)." alt="" coords="500,56,635,83"/>
 <area shape="rect" id="node6" href="$classyume_1_1ast_1_1CallExpr.html" title="A function call or operator." alt="" coords="502,107,633,133"/>
 <area shape="rect" id="node7" href="$classyume_1_1ast_1_1CharExpr.html" title="Char literals." alt="" coords="500,157,635,184"/>
 <area shape="rect" id="node8" href="$classyume_1_1ast_1_1CtorExpr.html" title="A construction of a struct or cast of a primitive." alt="" coords="501,208,633,235"/>
 <area shape="rect" id="node9" href="$classyume_1_1ast_1_1FieldAccessExpr.html" title="Direct access of a field of a struct (::)." alt="" coords="477,259,657,285"/>
-<area shape="rect" id="node10" href="$classyume_1_1ast_1_1NumberExpr.html" title="Number literals." alt="" coords="490,309,645,336"/>
-<area shape="rect" id="node11" href="$classyume_1_1ast_1_1SliceExpr.html" title="A slice literal, i.e. an array." alt="" coords="499,360,636,387"/>
-<area shape="rect" id="node12" href="$classyume_1_1ast_1_1StringExpr.html" title="String literals." alt="" coords="496,411,639,437"/>
-<area shape="rect" id="node13" href="$classyume_1_1ast_1_1VarExpr.html" title="A variable, i.e. just an identifier." alt="" coords="503,461,631,488"/>
-<area shape="rect" id="node2" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="163,233,273,260"/>
-<area shape="rect" id="node3" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,233,115,260"/>
+<area shape="rect" id="node10" href="$classyume_1_1ast_1_1ImplicitCastExpr.html" title=" " alt="" coords="479,309,656,336"/>
+<area shape="rect" id="node11" href="$classyume_1_1ast_1_1NumberExpr.html" title="Number literals." alt="" coords="490,360,645,387"/>
+<area shape="rect" id="node12" href="$classyume_1_1ast_1_1SliceExpr.html" title="A slice literal, i.e. an array." alt="" coords="499,411,636,437"/>
+<area shape="rect" id="node13" href="$classyume_1_1ast_1_1StringExpr.html" title="String literals." alt="" coords="496,461,639,488"/>
+<area shape="rect" id="node14" href="$classyume_1_1ast_1_1VarExpr.html" title="A variable, i.e. just an identifier." alt="" coords="503,512,631,539"/>
+<area shape="rect" id="node2" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="163,259,273,285"/>
+<area shape="rect" id="node3" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,259,115,285"/>
 </map>
