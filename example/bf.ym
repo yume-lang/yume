@@ -10,6 +10,9 @@ def parse(input U8[]) Instruction[]
   # This should be dynamically sized...
   let stack = I32[](512)
   let stack_i = 0
+  # TODO
+  # This could be simplified if i had better iteration, i.e. something akin
+  # to a for-each loop
   while i < input.size
     let chr = input[i]
     let instruction = Instruction(0, 0)
@@ -57,17 +60,6 @@ def main(argc I32, argv U8 ptr ptr) I32
   let pc I32 = 0
   let ptr I32 = 0
   let memory = U8[](65535)
-
-  # TODO
-  # This could be simplified if i had better iteration, i.e. something akin
-  # to a for-each loop
-  let i I32 = 0
-  # TODO
-  # There should be an easier way to zero-fill a slice
-  while i < memory.size
-    memory[i] = ?\0
-    i = i + 1
-  end
 
   while pc < instructions.size
     let instr = instructions[pc]

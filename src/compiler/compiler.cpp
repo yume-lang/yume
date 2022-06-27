@@ -621,7 +621,8 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
     auto slice_size = body_expression(slice_size_expr);
 
     auto* llvm_slice_type = llvm_type(*slice_type);
-    auto* base_type = llvm_type(*slice_type->ptr_base()); // ???
+    const auto& base_ty_type = *slice_type->ptr_base(); // ???
+    auto* base_type = llvm_type(base_ty_type);
 
     //// Stack allocation
     // if (auto* const_value = dyn_cast<llvm::ConstantInt>(slice_size.llvm())) {
@@ -659,11 +660,39 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
     // TODO: the above `malloc` is literally never `free`d because the language doesn't yet have destructors.
 
     auto* data_ptr = m_builder->Insert(array_alloc);
+    auto* data_size = m_builder->CreateSExtOrBitCast(slice_size, m_builder->getInt64Ty());
     llvm::Value* slice_inst = llvm::UndefValue::get(llvm_slice_type);
     slice_inst = m_builder->CreateInsertValue(slice_inst, data_ptr, 0);
-    slice_inst = m_builder->CreateInsertValue(slice_inst,
-                                              m_builder->CreateSExtOrBitCast(slice_size, m_builder->getInt64Ty()), 1);
+    slice_inst = m_builder->CreateInsertValue(slice_inst, data_size, 1);
     slice_inst->setName("sl.ctor.inst");
+
+    auto* current_block = m_builder->GetInsertBlock();
+    m_builder->SetInsertPoint(m_current_fn->m_decl_bb);
+    auto* iter_alloc = m_builder->CreateAlloca(m_builder->getInt64Ty(), nullptr, "sl.ctor.definit.iter");
+    m_builder->SetInsertPoint(current_block);
+    m_builder->CreateStore(m_builder->getInt64(0), iter_alloc);
+
+    auto* iter_test = BasicBlock::Create(*m_context, "sl.ctor.definit.test", *m_current_fn);
+    auto* iter_body = BasicBlock::Create(*m_context, "sl.ctor.definit.head", *m_current_fn);
+    auto* iter_merge = BasicBlock::Create(*m_context, "sl.ctor.definit.merge", *m_current_fn);
+
+    m_builder->CreateBr(iter_test);
+    m_builder->SetInsertPoint(iter_test);
+
+    auto* iter_less = m_builder->CreateICmpSLT(m_builder->CreateLoad(m_builder->getInt64Ty(), iter_alloc), data_size,
+                                               "sl.ctor.definit.cmp");
+    m_builder->CreateCondBr(iter_less, iter_body, iter_merge);
+
+    m_builder->SetInsertPoint(iter_body);
+    auto* iter_next_addr = m_builder->CreateInBoundsGEP(
+        base_type, data_ptr, m_builder->CreateLoad(m_builder->getInt64Ty(), iter_alloc), "sl.ctor.definit.gep");
+    m_builder->CreateStore(default_init(base_ty_type), iter_next_addr);
+    m_builder->CreateStore(
+        m_builder->CreateAdd(m_builder->CreateLoad(m_builder->getInt64Ty(), iter_alloc), m_builder->getInt64(1)),
+        iter_alloc);
+    m_builder->CreateBr(iter_test);
+
+    m_builder->SetInsertPoint(iter_merge);
 
     return slice_inst;
   }
