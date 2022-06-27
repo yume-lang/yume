@@ -75,10 +75,6 @@ public:
 
   void write_object(const char* filename, bool binary);
 
-  /// Convert an ast type (`ast::Type`) into a type in the type system (`ty::Type`).
-  [[deprecated]] auto convert_type(const ast::Type& ast_type, const ty::Type* parent = nullptr, Fn* context = nullptr)
-      -> const ty::Type&;
-
   /// Convert a type into its corresponding llvm type
   auto llvm_type(const ty::Type& type) -> llvm::Type*;
 

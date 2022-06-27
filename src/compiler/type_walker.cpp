@@ -39,8 +39,7 @@ template <> void TypeWalker::expression(ast::CharExpr& expr) { expr.val_ty(m_com
 template <> void TypeWalker::expression(ast::BoolExpr& expr) { expr.val_ty(m_compiler.m_types.bool_type); }
 
 template <> void TypeWalker::expression(ast::Type& expr) {
-  const auto* resolved_type =
-      &m_compiler.convert_type(expr, m_current_fn == nullptr ? m_current_struct : m_current_fn->parent(), m_current_fn);
+  const auto* resolved_type = &convert_type(expr);
   expr.val_ty(resolved_type);
   if (auto* qual_type = dyn_cast<ast::QualType>(&expr))
     expression(qual_type->base());
@@ -57,7 +56,7 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
     body_expression(i);
   }
   expression(expr.type());
-  const auto& base_type = m_compiler.convert_type(expr.type(), m_current_fn->parent(), m_current_fn);
+  const auto& base_type = convert_type(expr.type());
   expr.val_ty(&base_type);
 }
 
@@ -66,7 +65,7 @@ template <> void TypeWalker::expression(ast::SliceExpr& expr) {
     body_expression(i);
   }
   expression(expr.type());
-  const auto& base_type = m_compiler.convert_type(expr.type(), m_current_fn->parent(), m_current_fn);
+  const auto& base_type = convert_type(expr.type());
   expr.val_ty(&base_type.known_slice());
 }
 
@@ -352,4 +351,28 @@ void TypeWalker::body_expression(ast::Expr& expr) {
   return CRTPWalker::body_expression(expr);
 };
 
+auto TypeWalker::convert_type(const ast::Type& ast_type) -> const ty::Type& {
+  const ty::Type* parent = m_current_fn == nullptr ? m_current_struct : m_current_fn->parent();
+  Fn* context = m_current_fn;
+
+  if (const auto* simple_type = dyn_cast<ast::SimpleType>(&ast_type)) {
+    auto name = simple_type->name();
+    if (context != nullptr) {
+      auto generic = context->m_subs.find(name);
+      if (generic != context->m_subs.end())
+        return *generic->second;
+    }
+    auto val = m_compiler.m_types.known.find(name);
+    if (val != m_compiler.m_types.known.end())
+      return *val->second;
+  } else if (const auto* qual_type = dyn_cast<ast::QualType>(&ast_type)) {
+    auto qualifier = qual_type->qualifier();
+    return convert_type(qual_type->base()).known_qual(qualifier);
+  } else if (isa<ast::SelfType>(ast_type)) {
+    if (parent != nullptr)
+      return *parent;
+  }
+
+  throw std::runtime_error("Cannot convert AST type to actual type!");
+};
 } // namespace yume

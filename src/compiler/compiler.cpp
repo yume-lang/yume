@@ -130,28 +130,6 @@ void Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* m
   }
 }
 
-auto Compiler::convert_type(const ast::Type& ast_type, const ty::Type* parent, Fn* context) -> const ty::Type& {
-  if (const auto* simple_type = dyn_cast<ast::SimpleType>(&ast_type)) {
-    auto name = simple_type->name();
-    if (context != nullptr) {
-      auto generic = context->m_subs.find(name);
-      if (generic != context->m_subs.end())
-        return *generic->second;
-    }
-    auto val = m_types.known.find(name);
-    if (val != m_types.known.end())
-      return *val->second;
-  } else if (const auto* qual_type = dyn_cast<ast::QualType>(&ast_type)) {
-    auto qualifier = qual_type->qualifier();
-    return convert_type(qual_type->base(), parent, context).known_qual(qualifier);
-  } else if (isa<ast::SelfType>(ast_type)) {
-    if (parent != nullptr)
-      return *parent;
-  }
-
-  return m_types.unknown;
-}
-
 auto Compiler::llvm_type(const ty::Type& type) -> llvm::Type* {
   if (const auto* int_type = dyn_cast<ty::Int>(&type))
     return llvm::Type::getIntNTy(*m_context, int_type->size());

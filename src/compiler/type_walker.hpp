@@ -38,6 +38,9 @@ public:
   void body_expression(ast::Expr&);
 
 private:
+  /// Convert an ast type (`ast::Type`) into a type in the type system (`ty::Type`).
+  auto convert_type(const ast::Type& ast_type) -> const ty::Type&;
+
   template <typename T> void statement([[maybe_unused]] T& stat) {
     throw std::runtime_error("Type walker stubbed on statement "s + stat.kind_name());
   }
