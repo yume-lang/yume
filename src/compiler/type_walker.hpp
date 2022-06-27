@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ast/ast.hpp"
 #include "crtp_walker.hpp"
 #include "util.hpp"
 #include <map>
@@ -11,6 +12,7 @@ class Compiler;
 struct Fn;
 namespace ast {
 class AST;
+class StructDecl;
 class Expr;
 class Stmt;
 } // namespace ast
@@ -22,6 +24,7 @@ struct TypeWalker : public CRTPWalker<TypeWalker, false> {
 
 public:
   Compiler& m_compiler;
+  ty::Type* m_current_struct{};
   Fn* m_current_fn{};
   std::map<string, ast::AST*> m_scope{};
 

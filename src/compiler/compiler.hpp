@@ -40,6 +40,8 @@ class Compiler : public CRTPWalker<Compiler> {
   vector<SourceFile> m_sources;
   TypeHolder m_types;
   vector<Fn> m_fns{};
+  // TODO: turn into proper helper struct in vals
+  vector<std::pair<yume::ast::StructDecl*, ty::Type*>> m_structs{};
   std::queue<Fn*> m_decl_queue{};
   unique_ptr<TypeWalker> m_walker;
 
@@ -74,7 +76,7 @@ public:
   void write_object(const char* filename, bool binary);
 
   /// Convert an ast type (`ast::Type`) into a type in the type system (`ty::Type`).
-  auto convert_type(const ast::Type& ast_type, const ty::Type* parent = nullptr, Fn* context = nullptr)
+  [[deprecated]] auto convert_type(const ast::Type& ast_type, const ty::Type* parent = nullptr, Fn* context = nullptr)
       -> const ty::Type&;
 
   /// Convert a type into its corresponding llvm type

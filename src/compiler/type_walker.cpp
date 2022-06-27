@@ -39,7 +39,8 @@ template <> void TypeWalker::expression(ast::CharExpr& expr) { expr.val_ty(m_com
 template <> void TypeWalker::expression(ast::BoolExpr& expr) { expr.val_ty(m_compiler.m_types.bool_type); }
 
 template <> void TypeWalker::expression(ast::Type& expr) {
-  const auto* resolved_type = &m_compiler.convert_type(expr, m_current_fn->parent(), m_current_fn);
+  const auto* resolved_type =
+      &m_compiler.convert_type(expr, m_current_fn == nullptr ? m_current_struct : m_current_fn->parent(), m_current_fn);
   expr.val_ty(resolved_type);
   if (auto* qual_type = dyn_cast<ast::QualType>(&expr))
     expression(qual_type->base());
@@ -95,8 +96,7 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
   int j = 0;
   for (const auto& field : struct_type->fields()) {
     if (field.name() == target_name) {
-      // TODO: struct fields should also go through the type walker so they have attached types
-      target_type = &m_compiler.convert_type(field.type(), struct_type);
+      target_type = field.type().val_ty();
       break;
     }
     j++;
@@ -281,6 +281,12 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
 template <> void TypeWalker::statement(ast::Compound& stat) {
   for (auto& i : stat.body())
     body_statement(i);
+}
+
+template <> void TypeWalker::statement(ast::StructDecl& stat) {
+  for (auto& i : stat.fields()) {
+    expression(i);
+  }
 }
 
 template <> void TypeWalker::statement(ast::FnDecl& stat) {

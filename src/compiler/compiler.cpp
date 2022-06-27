@@ -89,13 +89,21 @@ void Compiler::run() {
 }
 
 void Compiler::walk_types() {
-  // First pass: only convert function parameters
+  // First pass: only convert struct fields
+  for (auto& [st_ast, st_type] : m_structs) {
+    m_walker->m_current_struct = st_type;
+    m_walker->body_statement(*st_ast);
+  }
+  m_walker->m_current_struct = nullptr;
+
+  // Second pass: only convert function parameters
   for (auto& fn : m_fns) {
     m_walker->m_current_fn = &fn;
     m_walker->body_statement(fn.ast());
   }
+  m_walker->m_current_fn = nullptr;
 
-  // Second pass: convert everything else, but only when instantiated
+  // Third pass: convert everything else, but only when instantiated
   m_walker->m_in_depth = true;
 }
 
@@ -115,6 +123,7 @@ void Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* m
       fields.push_back(&f);
 
     auto i_ty = m_types.known.insert({s_decl->name(), std::make_unique<ty::Struct>(s_decl->name(), fields)});
+    m_structs.emplace_back(s_decl, i_ty.first->second.get());
 
     for (auto& f : s_decl->body().body())
       decl_statement(f, i_ty.first->second.get());
@@ -165,7 +174,7 @@ auto Compiler::llvm_type(const ty::Type& type) -> llvm::Type* {
     if (memo == nullptr) {
       auto fields = vector<llvm::Type*>{};
       for (const auto& i : struct_type->fields())
-        fields.push_back(llvm_type(convert_type(i.type())));
+        fields.push_back(llvm_type(*i.type().val_ty()));
 
       memo = llvm::StructType::create(*m_context, fields, "_"s + struct_type->name());
       struct_type->memo(memo);
@@ -199,7 +208,7 @@ auto Compiler::default_init(const ty::Type& type) -> Val {
     llvm::Value* val = llvm::UndefValue::get(llvm_ty);
     int i = 0;
     for (const auto& field : struct_type->fields()) {
-      val = m_builder->CreateInsertValue(val, default_init(convert_type(field.type())), i++);
+      val = m_builder->CreateInsertValue(val, default_init(*field.type().val_ty()), i++);
     }
 
     return val;

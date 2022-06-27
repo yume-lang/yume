@@ -580,6 +580,7 @@ public:
 
   [[nodiscard]] auto name() const -> string { return m_name; }
   [[nodiscard]] constexpr auto fields() const -> const auto& { return m_fields; }
+  [[nodiscard]] constexpr auto fields() -> auto& { return m_fields; }
   [[nodiscard]] constexpr auto body() const -> const auto& { return m_body; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_StructDecl; }
   [[nodiscard]] auto clone() const -> StructDecl* override;
