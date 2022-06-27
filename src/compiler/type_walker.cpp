@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <functional>
 #include <limits>
+#include <llvm/ADT/STLExtras.h>
 #include <llvm/Support/raw_ostream.h>
 #include <memory>
 #include <optional>
@@ -116,6 +117,26 @@ static auto join_args(const auto& iter, Fn fn = {}, llvm::raw_ostream& stream = 
   }
 }
 
+/// Add the substitution `gen_sub` for the generic type variable `gen` in template instantiation `instantiation`.
+/// If a substitution already exists for the same type variable, the two substitutions are intersected.
+/// \returns true if substitution failed
+static auto intersect_generics(Instantiation& instantiation, const ty::Generic* gen, const ty::Type* gen_sub) -> bool {
+  auto existing = instantiation.m_sub.find(gen);
+  // The substitution must have an intersection with an already deduced value for the same type variable
+  if (existing != instantiation.m_sub.end()) {
+    const auto* intersection = gen_sub->intersect(*existing->second);
+    if (intersection == nullptr) {
+      // The types don't have a common intersection, they cannot coexist.
+      return true;
+    }
+    instantiation.m_sub[gen] = intersection;
+  } else {
+    instantiation.m_sub.try_emplace(gen, gen_sub);
+  }
+
+  return false;
+}
+
 template <> void TypeWalker::expression(ast::CallExpr& expr) {
   auto fns_by_name = vector<Fn*>();
   auto overloads = vector<std::tuple<uint64_t, Fn*, Instantiation>>();
@@ -155,16 +176,12 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
     // The overload is only considered if it has a matching amount of parameters.
     if (arg_types.size() == fn_arg_size || (expr.args().size() >= fn_arg_size && fn_ast.varargs())) {
       // Determine the type compatibility of each argument individually.
-      unsigned i = 0;
-      for (const auto& arg_type : arg_types) {
-        // Don't try to determine type compatibility of the "var" part of varargs functions.
-        // Currently, varargs methods can only be primitives and carry no type information for their variadic part. This
-        // will change in the future.
-        if (i >= fn_arg_size)
-          break;
+      // As `llvm::zip` only iterates up to the size of the shorter argument, we don't try to determine type
+      // compatibility of the "var" part of varargs functions. Currently, varargs methods can only be primitives and
+      // carry no type information for their variadic part. This will change in the future.
+      for (const auto& [ast_arg, arg_type] : llvm::zip_first(fn_ast.args(), arg_types)) {
 
-        const auto* ast_arg = fn_ast.args()[i].val_ty();
-        auto [i_compat, gen, gen_sub] = arg_type->compatibility(*ast_arg);
+        auto [i_compat, gen, gen_sub] = arg_type->compatibility(*ast_arg.val_ty());
         // One incompatible parameter disqualifies the function entirely
         if (i_compat == ty::Type::Compatiblity::INVALID) {
           compat = i_compat;
@@ -173,23 +190,16 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
 
         // The function compatibility determined a substitution for a type variable.
         if (gen != nullptr && gen_sub != nullptr) {
-          auto existing = instantiation.m_sub.find(gen);
-          // The substitution must have an intersection with an already deduced value for the same type variable
-          if (existing != instantiation.m_sub.end()) {
-            const auto* intersection = gen_sub->intersect(*existing->second);
-            if (intersection == nullptr) {
-              // The types don't have a common intersection, they cannot coexist.
-              compat = ty::Type::Compatiblity::INVALID;
-              break;
-            }
-            instantiation.m_sub[gen] = intersection;
-          } else {
-            instantiation.m_sub.try_emplace(gen, gen_sub);
+          if (intersect_generics(instantiation, gen, gen_sub)) {
+            // Incompatiblity while adding substitution.
+            compat = ty::Type::Compatiblity::INVALID;
+            break;
           }
         }
+
         compat += i_compat;
-        i++;
       }
+
       if (compat != ty::Type::Compatiblity::INVALID)
         overloads.emplace_back(compat, fn, instantiation);
     }
