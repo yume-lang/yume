@@ -249,10 +249,9 @@ void Compiler::define(Fn& fn) {
   m_current_fn->m_decl_bb = decl_bb;
 
   // Allocate local variables for each parameter
-  int i = 0;
-  for (auto& arg : fn.llvm()->args()) {
-    const auto& type = *fn.ast().args()[i].val_ty();
-    auto name = fn.ast().args()[i++].name();
+  for (auto [arg, ast_arg] : llvm::zip(fn.llvm()->args(), fn.ast().args())) {
+    const auto& type = *ast_arg.val_ty();
+    auto name = ast_arg.name();
     llvm::Value* alloc = nullptr;
     if (const auto* qual_type = dyn_cast<ty::Qual>(&type)) {
       if (qual_type->is_mut()) {
