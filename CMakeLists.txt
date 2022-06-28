@@ -69,3 +69,19 @@ execute_process(COMMAND ${LLVM_TOOLS_BINARY_DIR}/llvm-config --libs all
 message(STATUS "LLVM libs: ${LLVM_LIBS}")
 
 target_link_libraries(yumec ${LLVM_LIBS})
+
+find_package(Catch2 3)
+message(STATUS "Catch2: ${Catch2_FOUND}")
+
+if(Catch2_FOUND)
+  file(GLOB_RECURSE YUME_TEST CONFIGURE_DEPENDS test/*.cpp)
+  add_executable(yume_test ${YUME_TEST})
+  set_target_properties(yume_test PROPERTIES EXCLUDE_FROM_ALL TRUE)
+
+  target_include_directories(yume_test BEFORE PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+  target_link_libraries(yume_test PRIVATE Catch2::Catch2WithMain)
+
+  include(CTest)
+  include(Catch)
+  catch_discover_tests(yume_test)
+endif()
