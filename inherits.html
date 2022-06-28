@@ -135,7 +135,7 @@ $(function() {
 <tr><td><img src="inherit_graph_7.png" border="0" usemap="#ayume_1_1CRTPWalker_3_01TypeWalker_00_01false_01_4" alt=""/>
 <map name="ayume_1_1CRTPWalker_3_01TypeWalker_00_01false_01_4" id="ayume_1_1CRTPWalker_3_01TypeWalker_00_01false_01_4">
 <area shape="rect" href="structyume_1_1CRTPWalker.html" title=" " alt="" coords="5,5,223,47"/>
-<area shape="rect" href="structyume_1_1TypeWalker.html" title="Determine the type information of AST nodes. This makes up most of the &quot;semantic&quot; phase of the compil..." alt="" coords="271,13,397,39"/>
+<area shape="rect" href="structyume_1_1semantic_1_1TypeWalker.html" title="Determine the type information of AST nodes. This makes up most of the &quot;semantic&quot; phase of the compil..." alt="" coords="271,13,457,39"/>
 </map>
 </td></tr>
 <tr><td><img src="inherit_graph_8.png" border="0" usemap="#ayume_1_1dereference__view_3_01T_01_4" alt=""/>
@@ -158,22 +158,42 @@ $(function() {
 <area shape="rect" href="structyume_1_1Loc.html" title="Represents a location in source code, as a range starting at a line and column and ending at some oth..." alt="" coords="5,5,87,32"/>
 </map>
 </td></tr>
-<tr><td><img src="inherit_graph_12.png" border="0" usemap="#ayume_1_1source__location" alt=""/>
+<tr><td><img src="inherit_graph_12.png" border="0" usemap="#ayume_1_1semantic_1_1Overload" alt=""/>
+<map name="ayume_1_1semantic_1_1Overload" id="ayume_1_1semantic_1_1Overload">
+<area shape="rect" href="structyume_1_1semantic_1_1Overload.html" title=" " alt="" coords="5,5,176,32"/>
+</map>
+</td></tr>
+<tr><td><img src="inherit_graph_13.png" border="0" usemap="#ayume_1_1semantic_1_1OverloadSet" alt=""/>
+<map name="ayume_1_1semantic_1_1OverloadSet" id="ayume_1_1semantic_1_1OverloadSet">
+<area shape="rect" href="structyume_1_1semantic_1_1OverloadSet.html" title=" " alt="" coords="5,5,196,32"/>
+</map>
+</td></tr>
+<tr><td><img src="inherit_graph_14.png" border="0" usemap="#ayume_1_1source__location" alt=""/>
 <map name="ayume_1_1source__location" id="ayume_1_1source__location">
 <area shape="rect" href="structyume_1_1source__location.html" title=" " alt="" coords="5,5,156,32"/>
 </map>
 </td></tr>
-<tr><td><img src="inherit_graph_13.png" border="0" usemap="#ayume_1_1SourceFile" alt=""/>
+<tr><td><img src="inherit_graph_15.png" border="0" usemap="#ayume_1_1SourceFile" alt=""/>
 <map name="ayume_1_1SourceFile" id="ayume_1_1SourceFile">
 <area shape="rect" href="structyume_1_1SourceFile.html" title="A source file with its associated Syntax Tree." alt="" coords="5,5,127,32"/>
 </map>
 </td></tr>
-<tr><td><img src="inherit_graph_14.png" border="0" usemap="#ayume_1_1Token" alt=""/>
+<tr><td><img src="inherit_graph_16.png" border="0" usemap="#ayume_1_1Token" alt=""/>
 <map name="ayume_1_1Token" id="ayume_1_1Token">
 <area shape="rect" href="structyume_1_1Token.html" title="A categorized token in source code, created by the tokenizer. These tokens are consumed by the lexer." alt="" coords="5,5,100,32"/>
 </map>
 </td></tr>
-<tr><td><img src="inherit_graph_15.png" border="0" usemap="#ayume_1_1ty_1_1Type" alt=""/>
+<tr><td><img src="inherit_graph_17.png" border="0" usemap="#ayume_1_1ty_1_1Compatiblity" alt=""/>
+<map name="ayume_1_1ty_1_1Compatiblity" id="ayume_1_1ty_1_1Compatiblity">
+<area shape="rect" href="structyume_1_1ty_1_1Compatiblity.html" title="The compatibility between two types, for overload selection." alt="" coords="5,5,152,32"/>
+</map>
+</td></tr>
+<tr><td><img src="inherit_graph_18.png" border="0" usemap="#ayume_1_1ty_1_1Conversion" alt=""/>
+<map name="ayume_1_1ty_1_1Conversion" id="ayume_1_1ty_1_1Conversion">
+<area shape="rect" href="structyume_1_1ty_1_1Conversion.html" title=" " alt="" coords="5,5,145,32"/>
+</map>
+</td></tr>
+<tr><td><img src="inherit_graph_19.png" border="0" usemap="#ayume_1_1ty_1_1Type" alt=""/>
 <map name="ayume_1_1ty_1_1Type" id="ayume_1_1ty_1_1Type">
 <area shape="rect" href="classyume_1_1ty_1_1Type.html" title="Represents a type in the type system. All types inherit from this class." alt="" coords="5,107,108,133"/>
 <area shape="rect" href="classyume_1_1ty_1_1Generic.html" title="An unsubstituted generic type variable, usually something like T." alt="" coords="156,5,276,32"/>
@@ -183,27 +203,22 @@ $(function() {
 <area shape="rect" href="classyume_1_1ty_1_1Struct.html" title="An user&#45;defined struct type with associated fields." alt="" coords="161,208,271,235"/>
 </map>
 </td></tr>
-<tr><td><img src="inherit_graph_16.png" border="0" usemap="#ayume_1_1ty_1_1Type_1_1Compatiblity" alt=""/>
-<map name="ayume_1_1ty_1_1Type_1_1Compatiblity" id="ayume_1_1ty_1_1Type_1_1Compatiblity">
-<area shape="rect" href="structyume_1_1ty_1_1Type_1_1Compatiblity.html" title="The compatibility between two types, for overload selection." alt="" coords="5,5,185,32"/>
-</map>
-</td></tr>
-<tr><td><img src="inherit_graph_17.png" border="0" usemap="#ayume_1_1TypeHolder" alt=""/>
+<tr><td><img src="inherit_graph_20.png" border="0" usemap="#ayume_1_1TypeHolder" alt=""/>
 <map name="ayume_1_1TypeHolder" id="ayume_1_1TypeHolder">
 <area shape="rect" href="structyume_1_1TypeHolder.html" title=" " alt="" coords="5,5,131,32"/>
 </map>
 </td></tr>
-<tr><td><img src="inherit_graph_18.png" border="0" usemap="#ayume_1_1TypeHolder_1_1IntTypePair" alt=""/>
+<tr><td><img src="inherit_graph_21.png" border="0" usemap="#ayume_1_1TypeHolder_1_1IntTypePair" alt=""/>
 <map name="ayume_1_1TypeHolder_1_1IntTypePair" id="ayume_1_1TypeHolder_1_1IntTypePair">
 <area shape="rect" href="structyume_1_1TypeHolder_1_1IntTypePair.html" title=" " alt="" coords="5,5,203,32"/>
 </map>
 </td></tr>
-<tr><td><img src="inherit_graph_19.png" border="0" usemap="#ayume_1_1Val" alt=""/>
+<tr><td><img src="inherit_graph_22.png" border="0" usemap="#ayume_1_1Val" alt=""/>
 <map name="ayume_1_1Val" id="ayume_1_1Val">
 <area shape="rect" href="structyume_1_1Val.html" title="A value of a complied expression." alt="" coords="5,5,84,32"/>
 </map>
 </td></tr>
-<tr><td><img src="inherit_graph_20.png" border="0" usemap="#ayume_1_1Visitor" alt=""/>
+<tr><td><img src="inherit_graph_23.png" border="0" usemap="#ayume_1_1Visitor" alt=""/>
 <map name="ayume_1_1Visitor" id="ayume_1_1Visitor">
 <area shape="rect" href="classyume_1_1Visitor.html" title=" " alt="" coords="5,5,101,32"/>
 <area shape="rect" href="classyume_1_1diagnostic_1_1DotVisitor.html" title=" " alt="" coords="149,5,331,32"/>

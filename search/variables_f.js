@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['u_5fty_0',['u_ty',['../structyume_1_1TypeHolder_1_1IntTypePair.html#a4edce067a0a3e629fe0fbf7b86675faf',1,'yume::TypeHolder::IntTypePair']]]
+  ['valid_0',['valid',['../structyume_1_1ty_1_1Compatiblity.html#ad22c6c2f17f8060a1141512626d623eb',1,'yume::ty::Compatiblity']]],
+  ['viable_1',['viable',['../structyume_1_1semantic_1_1Overload.html#a9914e2a55fdcf5f73195b73ad00a3efd',1,'yume::semantic::Overload']]]
 ];

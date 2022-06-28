@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.4"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Yume: src/compiler/type_walker.hpp File Reference</title>
+<title>Yume: src/semantic/type_walker.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -62,7 +62,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_f13bc85843fa14191e0ad4a3a157cf60.html">compiler</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_f8bacd05876e9609c05b390a7201ebf7.html">semantic</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -72,8 +72,8 @@ $(function() {
   <div class="headertitle"><div class="title">type_walker.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;<a class="el" href="ast_8hpp_source.html">ast/ast.hpp</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="crtp__walker_8hpp_source.html">crtp_walker.hpp</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="crtp__walker_8hpp_source.html">ast/crtp_walker.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="overload_8hpp_source.html">semantic/overload.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="util_8hpp_source.html">util.hpp</a>&quot;</code><br />
 <code>#include &lt;map&gt;</code><br />
 <code>#include &lt;stdexcept&gt;</code><br />
@@ -81,50 +81,55 @@ $(function() {
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for type_walker.hpp:</div>
 <div class="dyncontent">
-<div class="center"><img src="type__walker_8hpp__incl.png" border="0" usemap="#asrc_2compiler_2type__walker_8hpp" alt=""/></div>
-<map name="asrc_2compiler_2type__walker_8hpp" id="asrc_2compiler_2type__walker_8hpp">
-<area shape="rect" title=" " alt="" coords="1028,5,1219,32"/>
-<area shape="rect" href="ast_8hpp.html" title=" " alt="" coords="973,155,1060,181"/>
-<area shape="rect" href="util_8hpp.html" title=" " alt="" coords="1041,304,1104,331"/>
-<area shape="rect" title=" " alt="" coords="5,304,60,331"/>
-<area shape="rect" title=" " alt="" coords="1424,229,1503,256"/>
-<area shape="rect" href="crtp__walker_8hpp.html" title=" " alt="" coords="1187,80,1300,107"/>
-<area shape="rect" title=" " alt="" coords="1324,80,1371,107"/>
-<area shape="rect" href="qualifier_8hpp.html" title=" " alt="" coords="329,229,419,256"/>
-<area shape="rect" href="token_8hpp.html" title=" " alt="" coords="641,229,720,256"/>
-<area shape="rect" title=" " alt="" coords="1169,379,1235,405"/>
-<area shape="rect" title=" " alt="" coords="1259,379,1327,405"/>
-<area shape="rect" title=" " alt="" coords="438,379,505,405"/>
-<area shape="rect" title=" " alt="" coords="1351,379,1402,405"/>
-<area shape="rect" title=" " alt="" coords="361,379,413,405"/>
-<area shape="rect" title=" " alt="" coords="1426,379,1487,405"/>
-<area shape="rect" title=" " alt="" coords="529,379,587,405"/>
-<area shape="rect" title=" " alt="" coords="1287,229,1349,256"/>
-<area shape="rect" title=" " alt="" coords="70,229,230,256"/>
-<area shape="rect" title=" " alt="" coords="254,229,305,256"/>
-<area shape="rect" title=" " alt="" coords="1527,229,1610,256"/>
-<area shape="rect" title=" " alt="" coords="595,304,670,331"/>
-<area shape="rect" title=" " alt="" coords="695,304,760,331"/>
-<area shape="rect" title=" " alt="" coords="785,304,854,331"/>
-<area shape="rect" title=" " alt="" coords="878,304,966,331"/>
-<area shape="rect" title=" " alt="" coords="612,379,787,405"/>
-<area shape="rect" title=" " alt="" coords="961,379,1145,405"/>
-<area shape="rect" title=" " alt="" coords="811,379,873,405"/>
-<area shape="rect" title=" " alt="" coords="897,379,937,405"/>
-<area shape="rect" title=" " alt="" coords="1187,155,1340,181"/>
+<div class="center"><img src="type__walker_8hpp__incl.png" border="0" usemap="#asrc_2semantic_2type__walker_8hpp" alt=""/></div>
+<map name="asrc_2semantic_2type__walker_8hpp" id="asrc_2semantic_2type__walker_8hpp">
+<area shape="rect" title=" " alt="" coords="1385,5,1580,32"/>
+<area shape="rect" href="crtp__walker_8hpp.html" title=" " alt="" coords="38,155,173,181"/>
+<area shape="rect" href="util_8hpp.html" title=" " alt="" coords="999,379,1062,405"/>
+<area shape="rect" title=" " alt="" coords="1837,379,1891,405"/>
+<area shape="rect" title=" " alt="" coords="1282,304,1361,331"/>
+<area shape="rect" href="overload_8hpp.html" title=" " alt="" coords="1432,80,1584,107"/>
+<area shape="rect" title=" " alt="" coords="1913,229,1959,256"/>
+<area shape="rect" href="ast_8hpp.html" title=" " alt="" coords="873,229,959,256"/>
+<area shape="rect" title=" " alt="" coords="252,304,335,331"/>
+<area shape="rect" title=" " alt="" coords="23,229,177,256"/>
+<area shape="rect" href="compatibility_8hpp.html" title=" " alt="" coords="1037,304,1155,331"/>
+<area shape="rect" title=" " alt="" coords="483,453,549,480"/>
+<area shape="rect" title=" " alt="" coords="287,453,355,480"/>
+<area shape="rect" title=" " alt="" coords="1183,453,1249,480"/>
+<area shape="rect" title=" " alt="" coords="621,453,672,480"/>
+<area shape="rect" title=" " alt="" coords="1274,453,1326,480"/>
+<area shape="rect" title=" " alt="" coords="748,453,809,480"/>
+<area shape="rect" title=" " alt="" coords="1769,453,1828,480"/>
+<area shape="rect" title=" " alt="" coords="913,379,975,405"/>
+<area shape="rect" href="qualifier_8hpp.html" title=" " alt="" coords="871,304,961,331"/>
+<area shape="rect" href="token_8hpp.html" title=" " alt="" coords="1487,304,1566,331"/>
+<area shape="rect" title=" " alt="" coords="460,304,620,331"/>
+<area shape="rect" title=" " alt="" coords="644,304,695,331"/>
+<area shape="rect" title=" " alt="" coords="1087,379,1156,405"/>
+<area shape="rect" title=" " alt="" coords="983,453,1158,480"/>
+<area shape="rect" title=" " alt="" coords="1459,453,1643,480"/>
+<area shape="rect" title=" " alt="" coords="833,453,895,480"/>
+<area shape="rect" title=" " alt="" coords="919,453,959,480"/>
+<area shape="rect" title=" " alt="" coords="1433,379,1508,405"/>
+<area shape="rect" title=" " alt="" coords="1533,379,1598,405"/>
+<area shape="rect" title=" " alt="" coords="1623,379,1711,405"/>
+<area shape="rect" href="vals_8hpp.html" title=" " alt="" coords="1524,155,1647,181"/>
+<area shape="rect" title=" " alt="" coords="1423,229,1495,256"/>
+<area shape="rect" title=" " alt="" coords="1519,229,1579,256"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><img src="type__walker_8hpp__dep__incl.png" border="0" usemap="#asrc_2compiler_2type__walker_8hppdep" alt=""/></div>
-<map name="asrc_2compiler_2type__walker_8hppdep" id="asrc_2compiler_2type__walker_8hppdep">
-<area shape="rect" title=" " alt="" coords="139,5,330,32"/>
+<div class="center"><img src="type__walker_8hpp__dep__incl.png" border="0" usemap="#asrc_2semantic_2type__walker_8hppdep" alt=""/></div>
+<map name="asrc_2semantic_2type__walker_8hppdep" id="asrc_2semantic_2type__walker_8hppdep">
+<area shape="rect" title=" " alt="" coords="224,5,419,32"/>
 <area shape="rect" href="compiler_8cpp.html" title=" " alt="" coords="5,155,176,181"/>
-<area shape="rect" href="compiler_8hpp.html" title=" " alt="" coords="272,80,443,107"/>
-<area shape="rect" href="type__walker_8cpp.html" title=" " alt="" coords="201,155,391,181"/>
-<area shape="rect" href="vals_8cpp.html" title=" " alt="" coords="415,155,561,181"/>
-<area shape="rect" href="main_8cpp.html" title=" " alt="" coords="585,155,681,181"/>
+<area shape="rect" href="compiler_8hpp.html" title=" " alt="" coords="236,80,407,107"/>
+<area shape="rect" href="type__walker_8cpp.html" title=" " alt="" coords="491,155,685,181"/>
+<area shape="rect" href="vals_8cpp.html" title=" " alt="" coords="201,155,346,181"/>
+<area shape="rect" href="main_8cpp.html" title=" " alt="" coords="371,155,467,181"/>
 </map>
 </div>
 </div>
@@ -132,8 +137,8 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1TypeWalker.html">yume::TypeWalker</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine the type information of AST nodes. This makes up most of the "semantic" phase of the compiler.  <a href="structyume_1_1TypeWalker.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1semantic_1_1TypeWalker.html">yume::semantic::TypeWalker</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine the type information of AST nodes. This makes up most of the "semantic" phase of the compiler.  <a href="structyume_1_1semantic_1_1TypeWalker.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
@@ -141,6 +146,10 @@ Namespaces</h2></td></tr>
 <tr class="memitem:namespaceyume"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html">yume</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:namespaceyume_1_1ast"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html">yume::ast</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespaceyume_1_1ty"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ty.html">yume::ty</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespaceyume_1_1semantic"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html">yume::semantic</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->

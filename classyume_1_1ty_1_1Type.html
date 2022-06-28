@@ -67,7 +67,6 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="classyume_1_1ty_1_1Type-members.html">List of all members</a>  </div>
@@ -93,12 +92,6 @@ Inheritance diagram for yume::ty::Type:</div>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ty_1_1Type_1_1Compatiblity.html">Compatiblity</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The compatibility between two types, for overload selection.  <a href="structyume_1_1ty_1_1Type_1_1Compatiblity.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a8ffc2423e45f2499b6de5b2c64784a21"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Type.html#a8ffc2423e45f2499b6de5b2c64784a21">Type</a> (const <a class="el" href="classyume_1_1ty_1_1Type.html">Type</a> &amp;) noexcept=delete</td></tr>
@@ -124,8 +117,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:afcc69522e76e908c5983da96b4f0c18f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a056c4b002310a257c6b550624cde2bbf"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Type.html#a056c4b002310a257c6b550624cde2bbf">known_slice</a> () const -&gt; const <a class="el" href="classyume_1_1ty_1_1Type.html">Type</a> &amp;</td></tr>
 <tr class="separator:a056c4b002310a257c6b550624cde2bbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a719cce49f89522258ac23b7ef5986122"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Type.html#a719cce49f89522258ac23b7ef5986122">compatibility</a> (const <a class="el" href="classyume_1_1ty_1_1Type.html">Type</a> &amp;other) const -&gt; <a class="el" href="structyume_1_1ty_1_1Type_1_1Compatiblity.html">Compatiblity</a></td></tr>
-<tr class="separator:a719cce49f89522258ac23b7ef5986122"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93aaac826c91ddcb68f3445a855b169c"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Type.html#a93aaac826c91ddcb68f3445a855b169c">compatibility</a> (const <a class="el" href="classyume_1_1ty_1_1Type.html">Type</a> &amp;other, <a class="el" href="structyume_1_1ty_1_1Compatiblity.html">Compatiblity</a> compat=<a class="el" href="structyume_1_1ty_1_1Compatiblity.html">Compatiblity</a>()) const -&gt; <a class="el" href="structyume_1_1ty_1_1Compatiblity.html">Compatiblity</a></td></tr>
+<tr class="separator:a93aaac826c91ddcb68f3445a855b169c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f10a61534bac1908cd3fdabee576adf"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Type.html#a8f10a61534bac1908cd3fdabee576adf">coalesce</a> (const <a class="el" href="classyume_1_1ty_1_1Type.html">Type</a> &amp;other) const -&gt; const <a class="el" href="classyume_1_1ty_1_1Type.html">Type</a> *</td></tr>
 <tr class="memdesc:a8f10a61534bac1908cd3fdabee576adf"><td class="mdescLeft">&#160;</td><td class="mdescRight">The union of this and <code>other</code>. For example, the union of <code>T</code> and <code>T mut</code> is <code>T mut</code>.  <a href="classyume_1_1ty_1_1Type.html#a8f10a61534bac1908cd3fdabee576adf">More...</a><br /></td></tr>
 <tr class="separator:a8f10a61534bac1908cd3fdabee576adf"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -156,7 +149,7 @@ Protected Member Functions</h2></td></tr>
 <p >Similar to <code>AST</code> nodes, <code><a class="el" href="classyume_1_1ty_1_1Type.html" title="Represents a type in the type system. All types inherit from this class.">Type</a></code>s cannot be copied or moved as all special member functions (aside from the destructor) are <code>delete</code>d. There will always be one instance of a <code><a class="el" href="classyume_1_1ty_1_1Type.html" title="Represents a type in the type system. All types inherit from this class.">Type</a></code> object for a specific type. This means that comparing if two types are the same type is simply a pointer equality check. The single instance of most types is located in <code><a class="el" href="structyume_1_1TypeHolder.html">TypeHolder</a></code>, except for "qualified" types, which are located in their base type.</p>
 <p >This means that a type such as <code>I32 ptr</code>, which is a <code><a class="el" href="classyume_1_1ty_1_1Ptr.html" title="A &quot;qualified&quot; type, with a stackable qualifier, i.e. ptr.">Ptr</a></code>, is stored in the <code>m_known_qual</code> array of the <code>I32</code> type, at the index <code><a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a165d3d525f6d0cbd55e42cc3058cafcc" title="ptr">Qualifier::Ptr</a></code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00049">49</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00047">47</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a8ffc2423e45f2499b6de5b2c64784a21" name="a8ffc2423e45f2499b6de5b2c64784a21"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8ffc2423e45f2499b6de5b2c64784a21">&#9670;&nbsp;</a></span>Type() <span class="overload">[1/3]</span></h2>
@@ -269,7 +262,7 @@ Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00109">109</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00094">94</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
 
 </div>
 </div>
@@ -293,14 +286,14 @@ Protected Member Functions</h2></td></tr>
 <p>The union of this and <code>other</code>. For example, the union of <code>T</code> and <code>T mut</code> is <code>T mut</code>. </p>
 <dl class="section return"><dt>Returns</dt><dd><code>nullptr</code> if an union cannot be created. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00111">111</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00128">128</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00056">yume::ast::AST::unify_val_ty()</a>.</p>
 
 </div>
 </div>
-<a id="a719cce49f89522258ac23b7ef5986122" name="a719cce49f89522258ac23b7ef5986122"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a719cce49f89522258ac23b7ef5986122">&#9670;&nbsp;</a></span>compatibility()</h2>
+<a id="a93aaac826c91ddcb68f3445a855b169c" name="a93aaac826c91ddcb68f3445a855b169c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a93aaac826c91ddcb68f3445a855b169c">&#9670;&nbsp;</a></span>compatibility()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -309,15 +302,25 @@ Protected Member Functions</h2></td></tr>
           <td class="memname">auto yume::ty::Type::compatibility </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classyume_1_1ty_1_1Type.html">Type</a> &amp;&#160;</td>
-          <td class="paramname"><em>other</em></td><td>)</td>
-          <td> const -&gt; <a class="el" href="structyume_1_1ty_1_1Type_1_1Compatiblity.html">Compatiblity</a></td>
+          <td class="paramname"><em>other</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structyume_1_1ty_1_1Compatiblity.html">Compatiblity</a>&#160;</td>
+          <td class="paramname"><em>compat</em> = <code><a class="el" href="structyume_1_1ty_1_1Compatiblity.html">Compatiblity</a>()</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const -&gt; <a class="el" href="structyume_1_1ty_1_1Compatiblity.html">Compatiblity</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00047">47</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00043">43</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="type_8cpp_source.html#l00045">yume::ty::GENERIC_SUBSTITUTION</a>, <a class="el" href="type_8cpp_source.html#l00043">yume::ty::PERFECT_MATCH</a>, and <a class="el" href="type_8cpp_source.html#l00044">yume::ty::SAFE_CONVERSION</a>.</p>
+<p class="reference">References <a class="el" href="namespaceyume_1_1ty.html#a89ab07c76d860b0fca375fa17c038e30a1686a6c336b71b36d77354cea19a8b52">yume::ty::Int</a>, and <a class="el" href="compatibility_8hpp_source.html#l00040">yume::ty::Compatiblity::valid</a>.</p>
 
 </div>
 </div>
@@ -339,7 +342,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>Return the intersection of this and <code>other</code>. For example, the intersection of <code>T and</code>T mut<code>is</code>T<code>. \returns</code>nullptr` is there's not intersection between the types. </p>
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00122">122</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00139">139</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
 </div>
 </div>
@@ -358,7 +361,7 @@ Protected Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00097">97</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00114">114</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>.</p>
 
@@ -387,7 +390,7 @@ Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00073">73</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00058">58</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
 
 </div>
 </div>
@@ -414,7 +417,7 @@ Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00083">83</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00068">68</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="type_8cpp_source.html#l00015">known_qual()</a>, and <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>.</p>
 
@@ -443,7 +446,7 @@ Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00082">82</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00067">67</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="type_8cpp_source.html#l00015">known_qual()</a>, and <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a165d3d525f6d0cbd55e42cc3058cafcc">yume::Ptr</a>.</p>
 
@@ -472,7 +475,7 @@ Protected Member Functions</h2></td></tr>
 
 <p class="reference">References <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>, and <a class="el" href="type_8cpp_source.html#l00006">yume::ty::qual_suffix()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type_8hpp_source.html#l00083">known_mut()</a>, <a class="el" href="type_8hpp_source.html#l00082">known_ptr()</a>, and <a class="el" href="type_8hpp_source.html#l00084">known_slice()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type_8hpp_source.html#l00068">known_mut()</a>, <a class="el" href="type_8hpp_source.html#l00067">known_ptr()</a>, and <a class="el" href="type_8hpp_source.html#l00069">known_slice()</a>.</p>
 
 </div>
 </div>
@@ -499,7 +502,7 @@ Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00084">84</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00069">69</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="type_8cpp_source.html#l00015">known_qual()</a>, and <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706ad140d37ad98c12ccd8e1c432f548bcdb">yume::Slice</a>.</p>
 
@@ -528,9 +531,9 @@ Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00074">74</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00059">59</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00056">yume::ast::AST::unify_val_ty()</a>, and <a class="el" href="visit_8cpp_source.html#l00046">yume::ast::ImplicitCastExpr::visit()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00056">yume::ast::AST::unify_val_ty()</a>.</p>
 
 </div>
 </div>
@@ -604,7 +607,7 @@ Protected Member Functions</h2></td></tr>
 <p>If this type is a <code><a class="el" href="classyume_1_1ty_1_1Ptr.html" title="A &quot;qualified&quot; type, with a stackable qualifier, i.e. ptr.">Ptr</a></code>, return the base of it (<code>T ptr</code> -&gt; <code>T</code>) </p>
 <dl class="section return"><dt>Returns</dt><dd><code>nullptr</code> if this type isn't <code><a class="el" href="classyume_1_1ty_1_1Ptr.html" title="A &quot;qualified&quot; type, with a stackable qualifier, i.e. ptr.">Ptr</a></code>. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00105">105</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00122">122</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
 </div>
 </div>
@@ -626,9 +629,9 @@ Protected Member Functions</h2></td></tr>
 <p>If this type is a <code><a class="el" href="classyume_1_1ty_1_1Qual.html" title="A &quot;qualified&quot; type, with a non-stackable qualifier, .i.e. mut.">Qual</a></code>, return the base of it (<code>T mut</code> -&gt; <code>T</code>) </p>
 <dl class="section return"><dt>Returns</dt><dd><code>nullptr</code> if this type isn't <code><a class="el" href="classyume_1_1ty_1_1Qual.html" title="A &quot;qualified&quot; type, with a non-stackable qualifier, .i.e. mut.">Qual</a></code>. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00099">99</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00116">116</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00133">without_qual()</a>, and <a class="el" href="type_8cpp_source.html#l00135">without_qual_kind()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00150">without_qual()</a>, and <a class="el" href="type_8cpp_source.html#l00152">without_qual_kind()</a>.</p>
 
 </div>
 </div>
@@ -649,9 +652,9 @@ Protected Member Functions</h2></td></tr>
 
 <p>If this type is a <code><a class="el" href="classyume_1_1ty_1_1Qual.html" title="A &quot;qualified&quot; type, with a non-stackable qualifier, .i.e. mut.">Qual</a></code>, return the base of it, otherwise return itself. </p>
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00133">133</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00150">150</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="type_8cpp_source.html#l00099">qual_base()</a>.</p>
+<p class="reference">References <a class="el" href="type_8cpp_source.html#l00116">qual_base()</a>.</p>
 
 </div>
 </div>
@@ -670,9 +673,9 @@ Protected Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00135">135</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00152">152</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="type_8cpp_source.html#l00099">qual_base()</a>.</p>
+<p class="reference">References <a class="el" href="type_8cpp_source.html#l00116">qual_base()</a>.</p>
 
 </div>
 </div>

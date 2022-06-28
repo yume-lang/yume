@@ -37,7 +37,7 @@ var searchData=
   ['k_5fvardecl_34',['K_VarDecl',['../namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a946bdf8ff3e75cdaf555ca2e32bcb2aa',1,'yume::ast']]],
   ['k_5fwhile_35',['K_While',['../namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406adbc49daadf28bb31b8a248d249196015',1,'yume::ast']]],
   ['kind_36',['Kind',['../namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406',1,'yume::ast::Kind()'],['../namespaceyume_1_1ty.html#a4c255b641f0b91ee4ff8bc878e7bd04e',1,'yume::ty::Kind()']]],
-  ['kind_37',['kind',['../classyume_1_1ty_1_1Type.html#a584eb23337c353a1be4907cd6a28b23b',1,'yume::ty::Type::kind()'],['../classyume_1_1ast_1_1AST.html#a46b0acf3444bcdbd8d9b7359eac2c0e0',1,'yume::ast::AST::kind() const -&gt; Kind']]],
+  ['kind_37',['kind',['../classyume_1_1ast_1_1AST.html#a46b0acf3444bcdbd8d9b7359eac2c0e0',1,'yume::ast::AST::kind()'],['../classyume_1_1ty_1_1Type.html#a584eb23337c353a1be4907cd6a28b23b',1,'yume::ty::Type::kind()'],['../structyume_1_1ty_1_1Conversion.html#a2654ed200956d2ebd5d0e28b82a8b303',1,'yume::ty::Conversion::kind()']]],
   ['kind_5fname_38',['kind_name',['../classyume_1_1ast_1_1AST.html#a35e3f20abd8401f7ac9b50dcc8cfff9e',1,'yume::ast::AST::kind_name()'],['../namespaceyume_1_1ast.html#a0e53ddb9e8b135706396313ccadf7149',1,'yume::ast::kind_name()']]],
   ['known_39',['known',['../structyume_1_1TypeHolder.html#ab0842e1bc2c82ce8c5adba95a7964327',1,'yume::TypeHolder']]],
   ['known_5fmut_40',['known_mut',['../classyume_1_1ty_1_1Type.html#afcc69522e76e908c5983da96b4f0c18f',1,'yume::ty::Type']]],

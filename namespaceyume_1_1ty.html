@@ -69,14 +69,18 @@ $(function() {
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
-<a href="#func-members">Functions</a> &#124;
-<a href="#var-members">Variables</a>  </div>
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">yume::ty Namespace Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ty_1_1Compatiblity.html">Compatiblity</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The compatibility between two types, for overload selection.  <a href="structyume_1_1ty_1_1Compatiblity.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ty_1_1Conversion.html">Conversion</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Generic.html">Generic</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An unsubstituted generic type variable, usually something like <code>T</code>.  <a href="classyume_1_1ty_1_1Generic.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -98,6 +102,10 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
+<tr class="memitem:a89ab07c76d860b0fca375fa17c038e30"><td class="memItemLeft" align="right" valign="top">enum struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ty.html#a89ab07c76d860b0fca375fa17c038e30">ConversionKind</a> : uint8_t { <a class="el" href="namespaceyume_1_1ty.html#a89ab07c76d860b0fca375fa17c038e30a6adf97f83acf6453d4a6a4b1070f3754">None</a>
+, <a class="el" href="namespaceyume_1_1ty.html#a89ab07c76d860b0fca375fa17c038e30a1686a6c336b71b36d77354cea19a8b52">Int</a>
+ }</td></tr>
+<tr class="separator:a89ab07c76d860b0fca375fa17c038e30"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4c255b641f0b91ee4ff8bc878e7bd04e"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ty.html#a4c255b641f0b91ee4ff8bc878e7bd04e">Kind</a> { <br />
 &#160;&#160;<a class="el" href="namespaceyume_1_1ty.html#a4c255b641f0b91ee4ff8bc878e7bd04ea337311f4a0312ec61dd1cd555b795b3f">K_Unknown</a>
 , <a class="el" href="namespaceyume_1_1ty.html#a4c255b641f0b91ee4ff8bc878e7bd04ea222f2839099dfc9bd05812ba49c3bb0b">K_Int</a>
@@ -114,17 +122,36 @@ Enumerations</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:a57a89e61c2dc52a531245495b3371dcb"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ty.html#a57a89e61c2dc52a531245495b3371dcb">qual_suffix</a> (<a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706">Qualifier</a> qual) -&gt; string</td></tr>
 <tr class="separator:a57a89e61c2dc52a531245495b3371dcb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
-Variables</h2></td></tr>
-<tr class="memitem:a1b60a616304d0007d5b37cff42ce52fd"><td class="memItemLeft" align="right" valign="top">static constinit const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ty.html#a1b60a616304d0007d5b37cff42ce52fd">PERFECT_MATCH</a> = 1000</td></tr>
-<tr class="separator:a1b60a616304d0007d5b37cff42ce52fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abfe43522d2fa9ee829a5472fe70a8681"><td class="memItemLeft" align="right" valign="top">static constinit const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ty.html#abfe43522d2fa9ee829a5472fe70a8681">SAFE_CONVERSION</a> = 100</td></tr>
-<tr class="separator:abfe43522d2fa9ee829a5472fe70a8681"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa53fe2b2975275d6622141bd663ae867"><td class="memItemLeft" align="right" valign="top">static constinit const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ty.html#aa53fe2b2975275d6622141bd663ae867">GENERIC_SUBSTITUTION</a> = 10</td></tr>
-<tr class="separator:aa53fe2b2975275d6622141bd663ae867"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="a89ab07c76d860b0fca375fa17c038e30" name="a89ab07c76d860b0fca375fa17c038e30"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a89ab07c76d860b0fca375fa17c038e30">&#9670;&nbsp;</a></span>ConversionKind</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum struct <a class="el" href="namespaceyume_1_1ty.html#a89ab07c76d860b0fca375fa17c038e30">yume::ty::ConversionKind</a> : uint8_t</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a89ab07c76d860b0fca375fa17c038e30a6adf97f83acf6453d4a6a4b1070f3754" name="a89ab07c76d860b0fca375fa17c038e30a6adf97f83acf6453d4a6a4b1070f3754"></a>None&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a89ab07c76d860b0fca375fa17c038e30a1686a6c336b71b36d77354cea19a8b52" name="a89ab07c76d860b0fca375fa17c038e30a1686a6c336b71b36d77354cea19a8b52"></a>Int&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="compatibility_8hpp_source.html#l00011">11</a> of file <a class="el" href="compatibility_8hpp_source.html">compatibility.hpp</a>.</p>
+
+</div>
+</div>
 <a id="a4c255b641f0b91ee4ff8bc878e7bd04e" name="a4c255b641f0b91ee4ff8bc878e7bd04e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4c255b641f0b91ee4ff8bc878e7bd04e">&#9670;&nbsp;</a></span>Kind</h2>
 
@@ -151,7 +178,7 @@ Variables</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00030">30</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00028">28</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
 
 </div>
 </div>
@@ -185,85 +212,6 @@ Variables</h2></td></tr>
 <p class="reference">References <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>, <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a165d3d525f6d0cbd55e42cc3058cafcc">yume::Ptr</a>, and <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706ad140d37ad98c12ccd8e1c432f548bcdb">yume::Slice</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00015">yume::ty::Type::known_qual()</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Variable Documentation</h2>
-<a id="aa53fe2b2975275d6622141bd663ae867" name="aa53fe2b2975275d6622141bd663ae867"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa53fe2b2975275d6622141bd663ae867">&#9670;&nbsp;</a></span>GENERIC_SUBSTITUTION</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">constinit const int yume::ty::GENERIC_SUBSTITUTION = 10</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00045">45</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00047">yume::ty::Type::compatibility()</a>.</p>
-
-</div>
-</div>
-<a id="a1b60a616304d0007d5b37cff42ce52fd" name="a1b60a616304d0007d5b37cff42ce52fd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1b60a616304d0007d5b37cff42ce52fd">&#9670;&nbsp;</a></span>PERFECT_MATCH</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">constinit const int yume::ty::PERFECT_MATCH = 1000</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00043">43</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00047">yume::ty::Type::compatibility()</a>.</p>
-
-</div>
-</div>
-<a id="abfe43522d2fa9ee829a5472fe70a8681" name="abfe43522d2fa9ee829a5472fe70a8681"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abfe43522d2fa9ee829a5472fe70a8681">&#9670;&nbsp;</a></span>SAFE_CONVERSION</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">constinit const int yume::ty::SAFE_CONVERSION = 100</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00044">44</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00047">yume::ty::Type::compatibility()</a>.</p>
 
 </div>
 </div>

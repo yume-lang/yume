@@ -1,9 +1,9 @@
-<map id="src/compiler/crtp_walker.hpp" name="src/compiler/crtp_walker.hpp">
-<area shape="rect" id="node1" title=" " alt="" coords="271,5,459,32"/>
-<area shape="rect" id="node2" href="$compiler_8hpp.html" title=" " alt="" coords="219,155,389,181"/>
-<area shape="rect" id="node7" href="$type__walker_8hpp.html" title=" " alt="" coords="337,80,527,107"/>
-<area shape="rect" id="node3" href="$compiler_8cpp.html" title=" " alt="" coords="511,229,681,256"/>
-<area shape="rect" id="node4" href="$type__walker_8cpp.html" title=" " alt="" coords="295,229,486,256"/>
-<area shape="rect" id="node5" href="$vals_8cpp.html" title=" " alt="" coords="126,229,271,256"/>
-<area shape="rect" id="node6" href="$main_8cpp.html" title=" " alt="" coords="5,229,101,256"/>
+<map id="src/ast/crtp_walker.hpp" name="src/ast/crtp_walker.hpp">
+<area shape="rect" id="node1" title=" " alt="" coords="289,5,447,32"/>
+<area shape="rect" id="node2" href="$compiler_8hpp.html" title=" " alt="" coords="221,155,392,181"/>
+<area shape="rect" id="node7" href="$type__walker_8hpp.html" title=" " alt="" coords="339,80,533,107"/>
+<area shape="rect" id="node3" href="$compiler_8cpp.html" title=" " alt="" coords="515,229,685,256"/>
+<area shape="rect" id="node4" href="$vals_8cpp.html" title=" " alt="" coords="126,229,271,256"/>
+<area shape="rect" id="node5" href="$main_8cpp.html" title=" " alt="" coords="5,229,101,256"/>
+<area shape="rect" id="node6" href="$type__walker_8cpp.html" title=" " alt="" coords="296,229,491,256"/>
 </map>
