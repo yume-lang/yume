@@ -137,14 +137,20 @@ static auto intersect_generics(Instantiation& instantiation, const ty::Generic* 
   return false;
 }
 
-template <> void TypeWalker::expression(ast::CallExpr& expr) {
+auto TypeWalker::findAllFunctionsByName(ast::CallExpr& call) -> vector<Fn*> {
   auto fns_by_name = vector<Fn*>();
-  auto overloads = vector<std::tuple<uint64_t, Fn*, Instantiation>>();
-  auto name = expr.name();
 
   for (auto& fn : m_compiler.m_fns)
-    if (fn.name() == name)
+    if (fn.name() == call.name())
       fns_by_name.push_back(&fn);
+
+  return fns_by_name;
+}
+
+template <> void TypeWalker::expression(ast::CallExpr& expr) {
+  auto fns_by_name = findAllFunctionsByName(expr);
+  auto overloads = vector<std::tuple<uint64_t, Fn*, Instantiation>>();
+  auto name = expr.name();
 
   if (fns_by_name.empty())
     throw std::logic_error("No function overload named "s + name);
