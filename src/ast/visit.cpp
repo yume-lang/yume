@@ -1,6 +1,6 @@
 #include "ast.hpp"
 
-#include "type.hpp"
+#include "compatibility.hpp"
 #include "util.hpp"
 #include "visitor.hpp"
 #include <memory>
@@ -43,7 +43,7 @@ void CtorExpr::visit(Visitor& visitor) { visitor.visit(m_type).visit(m_args); }
 void SliceExpr::visit(Visitor& visitor) { visitor.visit(m_type).visit(m_args); }
 void AssignExpr::visit(Visitor& visitor) { visitor.visit(m_target).visit(m_value); }
 void FieldAccessExpr::visit(Visitor& visitor) { visitor.visit(m_base).visit(m_field); }
-void ImplicitCastExpr::visit(Visitor& visitor) { visitor.visit(m_target_type->name()).visit(m_base); }
+void ImplicitCastExpr::visit(Visitor& visitor) { visitor.visit(m_conversion.to_string()).visit(m_base); }
 void Program::visit(Visitor& visitor) { visitor.visit(m_body); }
 
 } // namespace yume::ast

@@ -28,7 +28,7 @@ class Type;
 
 /// A mapping between type variables and substitutions for them.
 struct Instantiation {
-  std::map<const ty::Generic*, const ty::Type*> m_sub{};
+  std::map<const ty::Generic*, const ty::Type*> sub{};
 
 #if __cpp_lib_three_way_comparison >= 201907L
   auto operator<=>(const Instantiation& other) const = default;

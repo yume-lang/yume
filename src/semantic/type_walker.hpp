@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ast/ast.hpp"
 #include "ast/crtp_walker.hpp"
+#include "semantic/overload.hpp"
 #include "util.hpp"
 #include <map>
 #include <stdexcept>
@@ -12,12 +12,18 @@ class Compiler;
 struct Fn;
 namespace ast {
 class AST;
-class StructDecl;
+class CallExpr;
 class Expr;
 class Stmt;
+class Type;
 } // namespace ast
+namespace ty {
+class Type;
+}
+} // namespace yume
 
-namespace semantic {
+namespace yume::semantic {
+
 /// Determine the type information of AST nodes.
 /// This makes up most of the "semantic" phase of the compiler.
 struct TypeWalker : public CRTPWalker<TypeWalker, false> {
@@ -42,7 +48,7 @@ private:
   /// Convert an ast type (`ast::Type`) into a type in the type system (`ty::Type`).
   auto convert_type(const ast::Type& ast_type) -> const ty::Type&;
 
-  auto findAllFunctionsByName(ast::CallExpr& call) -> vector<Fn*>;
+  auto all_overloads_by_name(ast::CallExpr& call) -> OverloadSet;
 
   template <typename T> void statement([[maybe_unused]] T& stat) {
     throw std::runtime_error("Type walker stubbed on statement "s + stat.kind_name());
@@ -52,5 +58,4 @@ private:
     throw std::runtime_error("Type walker stubbed on expression "s + expr.kind_name());
   }
 };
-} // namespace semantic
-} // namespace yume
+} // namespace yume::semantic

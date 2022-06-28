@@ -1,5 +1,6 @@
 #include "type_walker.hpp"
 #include "ast/ast.hpp"
+#include "compatibility.hpp"
 #include "compiler/compiler.hpp"
 #include "compiler/type_holder.hpp"
 #include "compiler/vals.hpp"
@@ -10,12 +11,14 @@
 #include <functional>
 #include <limits>
 #include <llvm/ADT/STLExtras.h>
+#include <llvm/ADT/StringMap.h>
+#include <llvm/ADT/StringMapEntry.h>
+#include <llvm/ADT/iterator.h>
+#include <llvm/Support/Casting.h>
 #include <llvm/Support/raw_ostream.h>
 #include <memory>
 #include <optional>
-#include <ranges>
 #include <stdexcept>
-#include <tuple>
 #include <utility>
 #include <variant>
 #include <vector>
@@ -107,141 +110,54 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
   expr.val_ty(target_type);
 }
 
-template <typename Fn = std::identity>
-static auto join_args(const auto& iter, Fn fn = {}, llvm::raw_ostream& stream = errs()) {
-  int j = 0;
-  for (auto& i : iter) {
-    if (j++ != 0)
-      stream << ", ";
-    stream << fn(i)->name();
-  }
-}
-
-/// Add the substitution `gen_sub` for the generic type variable `gen` in template instantiation `instantiation`.
-/// If a substitution already exists for the same type variable, the two substitutions are intersected.
-/// \returns true if substitution failed
-static auto intersect_generics(Instantiation& instantiation, const ty::Generic* gen, const ty::Type* gen_sub) -> bool {
-  auto existing = instantiation.m_sub.find(gen);
-  // The substitution must have an intersection with an already deduced value for the same type variable
-  if (existing != instantiation.m_sub.end()) {
-    const auto* intersection = gen_sub->intersect(*existing->second);
-    if (intersection == nullptr) {
-      // The types don't have a common intersection, they cannot coexist.
-      return true;
-    }
-    instantiation.m_sub[gen] = intersection;
-  } else {
-    instantiation.m_sub.try_emplace(gen, gen_sub);
-  }
-
-  return false;
-}
-
-auto TypeWalker::findAllFunctionsByName(ast::CallExpr& call) -> vector<Fn*> {
-  auto fns_by_name = vector<Fn*>();
+auto TypeWalker::all_overloads_by_name(ast::CallExpr& call) -> OverloadSet {
+  auto fns_by_name = vector<Overload>();
 
   for (auto& fn : m_compiler.m_fns)
     if (fn.name() == call.name())
-      fns_by_name.push_back(&fn);
+      fns_by_name.emplace_back(&fn);
 
-  return fns_by_name;
+  return OverloadSet{call, fns_by_name, {}};
 }
 
 template <> void TypeWalker::expression(ast::CallExpr& expr) {
-  auto fns_by_name = findAllFunctionsByName(expr);
-  auto overloads = vector<std::tuple<uint64_t, Fn*, Instantiation>>();
+  auto overload_set = all_overloads_by_name(expr);
   auto name = expr.name();
 
-  if (fns_by_name.empty())
+  if (overload_set.empty())
     throw std::logic_error("No function overload named "s + name);
 
-  vector<const ty::Type*> arg_types{};
   for (auto& i : expr.args()) {
     body_expression(i);
-    arg_types.push_back(i.val_ty());
+    overload_set.arg_types.push_back(i.val_ty());
   }
 
 #ifdef YUME_SPEW_OVERLOAD_SELECTION
   errs() << "\n*** BEGIN OVERLOAD EVALUATION ***\n";
-  errs() << "Functions with matching names for call " << name << " with types ";
-  join_args(arg_types);
-  errs() << "\n";
-  for (const auto& i_s : fns_by_name) {
-    errs() << "  " << i_s->name() << ":" << i_s->ast().location().begin_line << " with types ";
-    join_args(i_s->ast().args(), [](const auto& ast) { return ast.val_ty(); });
-    errs() << "\n";
-  }
+  errs() << "Functions with matching names:\n";
+  overload_set.dump(errs());
 #endif
 
-  for (auto* fn : fns_by_name) {
-    uint64_t compat = 0;
-    Instantiation instantiation{};
-    const auto& fn_ast = fn->m_ast_decl;
-    auto fn_arg_size = fn_ast.args().size();
-
-    // The overload is only considered if it has a matching amount of parameters.
-    if (arg_types.size() == fn_arg_size || (expr.args().size() >= fn_arg_size && fn_ast.varargs())) {
-      // Determine the type compatibility of each argument individually.
-      // As `llvm::zip` only iterates up to the size of the shorter argument, we don't try to determine type
-      // compatibility of the "var" part of varargs functions. Currently, varargs methods can only be primitives and
-      // carry no type information for their variadic part. This will change in the future.
-      for (const auto& [ast_arg, arg_type] : llvm::zip_first(fn_ast.args(), arg_types)) {
-
-        auto [i_compat, gen, gen_sub] = arg_type->compatibility(*ast_arg.val_ty());
-        // One incompatible parameter disqualifies the function entirely
-        if (i_compat == ty::Type::Compatiblity::INVALID) {
-          compat = i_compat;
-          break;
-        }
-
-        // The function compatibility determined a substitution for a type variable.
-        if (gen != nullptr && gen_sub != nullptr) {
-          if (intersect_generics(instantiation, gen, gen_sub)) {
-            // Incompatiblity while adding substitution.
-            compat = ty::Type::Compatiblity::INVALID;
-            break;
-          }
-        }
-
-        compat += i_compat;
-      }
-
-      if (compat != ty::Type::Compatiblity::INVALID)
-        overloads.emplace_back(compat, fn, instantiation);
-    }
-  }
+  overload_set.determine_valid_overloads();
 
 #ifdef YUME_SPEW_OVERLOAD_SELECTION
-  errs() << "Available overloads for call " << name << " with types ";
-  join_args(arg_types);
-  errs() << "\n";
-  for (const auto& [i_w, i_s, i_i] : overloads) {
-    errs() << "  Weight " << i_w << " " << i_s->name() << ":" << i_s->ast().location().begin_line << " with types ";
+  errs() << "\nViable overloads:\n";
+  overload_set.dump(errs(), true);
+#endif
 
-    join_args(i_s->ast().args(), [](const auto& ast) { return ast.val_ty(); });
-    errs() << " where";
-    for (const auto& [sub_k, sub_v] : i_i.m_sub) {
-      errs() << " " << sub_k->name() << " = " << sub_v->name();
-    }
-    errs() << "\n";
-  }
+  Overload best_overload = overload_set.best_viable_overload();
+
+#ifdef YUME_SPEW_OVERLOAD_SELECTION
+  errs() << "\nSelected overload:\n";
+  best_overload.dump(errs());
   errs() << "\n*** END OVERLOAD EVALUATION ***\n\n";
 #endif
 
-  if (overloads.empty()) {
-    string str{};
-    raw_string_ostream ss{str};
-    ss << "No matching overload for " << name << " with argument types ";
-    join_args(arg_types, {}, ss);
-    throw std::logic_error(str);
-  }
-
-  auto [selected_weight, selected, instantiate] =
-      *std::max_element(overloads.begin(), overloads.end(),
-                        [&](const auto& a, const auto& b) { return get<uint64_t>(a) < get<uint64_t>(b); });
+  auto& instantiate = best_overload.instantiation;
+  auto& selected = best_overload.fn;
 
   // It is an instantiation of a function template
-  if (!instantiate.m_sub.empty()) {
+  if (!instantiate.sub.empty()) {
     // TODO: move most of this logic directly into Fn
     // Try to find an already existing instantiation with the same substitutions
     auto existing_instantiation = m_current_fn->m_instantiations.find(instantiate);
@@ -251,7 +167,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
       m_current_fn->m_member->direct_body().emplace_back(decl_clone);
 
       std::map<string, const ty::Type*> subs{};
-      for (const auto& [k, v] : instantiate.m_sub)
+      for (const auto& [k, v] : instantiate.sub)
         subs.try_emplace(k->name(), v);
 
       auto fn_ptr = std::make_unique<Fn>(*decl_clone, selected->m_parent, selected->m_member, move(subs));
@@ -288,12 +204,15 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
     }
   }
 
-  for (auto [target, expr_arg] : llvm::zip(selected->ast().args(), expr.direct_args())) {
-    const auto* target_type = target.type().val_ty();
-    if (expr_arg->val_ty() == target_type)
+  for (auto [target, expr_arg, compat] :
+       llvm::zip(selected->ast().args(), expr.direct_args(), best_overload.compatibilities)) {
+    assert(compat.valid && "Invalid compatibility after overload already selected?????"); // NOLINT
+    if (compat.conversion.empty())
       continue;
 
-    auto cast_expr = std::make_unique<ast::ImplicitCastExpr>(expr_arg->token_range(), std::move(expr_arg), target_type);
+    const auto* target_type = target.type().val_ty();
+    auto cast_expr =
+        std::make_unique<ast::ImplicitCastExpr>(expr_arg->token_range(), std::move(expr_arg), compat.conversion);
     cast_expr->val_ty(target_type);
     expr_arg = std::move(cast_expr);
   }

@@ -1,8 +1,9 @@
 #include "compiler.hpp"
 #include "ast/ast.hpp"
+#include "compatibility.hpp"
 #include "diagnostic/errors.hpp"
-#include "type.hpp"
 #include "semantic/type_walker.hpp"
+#include "type.hpp"
 #include "util.hpp"
 #include "vals.hpp"
 #include <algorithm>
@@ -744,21 +745,49 @@ auto Compiler::implicit_cast(Val val, const ty::Type* current_ty, const ty::Type
 }
 
 template <> auto Compiler::expression(const ast::ImplicitCastExpr& expr, bool mut) -> Val {
-  llvm::Value* base = body_expression(expr.base(), mut);
-
-  const auto* target_ty = expr.target_type();
+  const auto* target_ty = expr.val_ty();
   const auto* current_ty = expr.base().val_ty();
+  llvm::Value* base = body_expression(expr.base(), current_ty->is_mut());
 
-  if (!mut) {
-    current_ty = &current_ty->without_qual();
-    target_ty = &target_ty->without_qual();
-  } else if (!target_ty->is_mut()) {
-    not_mut("implicit cast to non-mutable type", mut);
-  } else if (!current_ty->is_mut()) {
-    not_mut("implicit cast from non-mutable type", mut);
+  if (mut != target_ty->is_mut()) {
+    throw std::logic_error("Implicit cast target and expression mutability don't match!");
   }
 
-  return implicit_cast(base, current_ty, target_ty);
+  if (expr.conversion().dereference) {
+    assert(current_ty->is_mut() && "Source type must be mutable when implicitly derefencing"); // NOLINT
+    current_ty = current_ty->qual_base();
+    base = m_builder->CreateLoad(llvm_type(*current_ty), base, "ic.deref");
+  }
+
+  // TODO: this is a workaround for a very specific bug where multiple parameters use the same type variable, and only
+  // one of them is inferred from a mutable type.
+  //
+  // For example, a function like `def foo<T>(a T, b T)` when called with types `I32` and `I32 mut`.
+  // When evaluating the first parameter (`a`), it will infer T to be `I32` and treat it as a perfect conversion.
+  // However, when evaluating the second parameter (`b`), it will infer T to be `I32 mut` and also treat it as a perfect
+  // conversion.
+  //
+  // These two substitutions are compatible, and the intersection of `I32` and `I32 mut` is determined to be `I32`.
+  // However, the conversion steps aren't re-evaluated. This means the type walker has essentially determined that
+  // `I32 mut` and `I32` are *pefectly* compatible, but a dereference should be used instead.
+
+  // TODO: to solve the above, generic substitutions should be moved to the type compatibility function. See the
+  // existing todo in `intersect_generics`. Alternatively, the TypeWalker could simply run the type conversion algorithm
+  // a second time for types with generic substitutions
+
+  // TODO: once the above issue is solved, AND implicit conversion checking is added in the remaining locations (i.e.
+  // field assignment and return) there is no real reason to keep the `mut` parameter on all expression compilation
+  // methods. All the mutability information is in the type system and dereferences are handled by the TypeWalker.
+  if (!mut && !target_ty->is_mut() && current_ty->is_mut() && !expr.conversion().dereference) {
+    current_ty = current_ty->qual_base();
+    base = m_builder->CreateLoad(llvm_type(*current_ty), base, "ic.deref");
+  }
+
+  if (expr.conversion().kind == ty::ConversionKind::Int) {
+    return m_builder->CreateIntCast(base, llvm_type(*target_ty), cast<ty::Int>(current_ty)->is_signed(), "ic.int");
+  }
+
+  return base;
 }
 
 void Compiler::write_object(const char* filename, bool binary) {

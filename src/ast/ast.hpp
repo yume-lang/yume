@@ -1,5 +1,6 @@
 #pragma once
 
+#include "compatibility.hpp"
 #include "qualifier.hpp"
 #include "token.hpp"
 #include "util.hpp"
@@ -522,16 +523,16 @@ public:
 
 class ImplicitCastExpr : public Expr {
   unique_ptr<Expr> m_base;
-  const ty::Type* m_target_type;
+  ty::Conversion m_conversion;
 
 public:
-  ImplicitCastExpr(span<Token> tok, unique_ptr<Expr> base, const ty::Type* target_type)
-      : Expr(K_ImplicitCast, tok), m_base{move(base)}, m_target_type{target_type} {}
+  ImplicitCastExpr(span<Token> tok, unique_ptr<Expr> base, ty::Conversion conversion)
+      : Expr(K_ImplicitCast, tok), m_base{move(base)}, m_conversion{conversion} {}
   void visit(Visitor& visitor) override;
 
   [[nodiscard]] auto base() const -> const auto& { return *m_base; }
   [[nodiscard]] auto base() -> auto& { return *m_base; }
-  [[nodiscard]] auto target_type() const -> const auto* { return m_target_type; }
+  [[nodiscard]] auto conversion() const { return m_conversion; }
 
   static auto classof(const AST* a) -> bool { return a->kind() == K_ImplicitCast; }
   [[nodiscard]] auto clone() const -> ImplicitCastExpr* override;

@@ -1,10 +1,10 @@
 #pragma once
 
+#include "compatibility.hpp"
 #include "qualifier.hpp"
 #include "util.hpp"
 #include "llvm/Support/Casting.h"
 #include <array>
-#include <cstdint>
 #include <memory>
 #include <string>
 #include <utility>
@@ -21,8 +21,6 @@ class TypeName;
 } // namespace yume
 
 namespace yume::ty {
-class Generic;
-
 using llvm::cast;
 using llvm::dyn_cast;
 using llvm::isa;
@@ -52,19 +50,6 @@ class Type {
   string m_name;
 
 public:
-  /// The compatibility between two types, for overload selection.
-  struct Compatiblity {
-    static constexpr const uint64_t INVALID = -1;
-
-    uint64_t rating{};
-    const Generic* substituted_generic{};
-    const Type* substituted_with{};
-
-    auto operator+(uint64_t other) const -> Compatiblity {
-      return {rating + other, substituted_generic, substituted_with};
-    }
-  };
-
   Type(const Type&) noexcept = delete;
   Type(Type&&) noexcept = delete;
   auto operator=(const Type&) noexcept -> Type& = delete;
@@ -83,7 +68,7 @@ public:
   [[nodiscard]] auto known_mut() const -> const Type& { return known_qual(Qualifier::Mut); }
   [[nodiscard]] auto known_slice() const -> const Type& { return known_qual(Qualifier::Slice); }
 
-  [[nodiscard]] auto compatibility(const Type& other) const -> Compatiblity;
+  [[nodiscard]] auto compatibility(const Type& other, Compatiblity compat = Compatiblity()) const -> Compatiblity;
   /// The union of this and `other`. For example, the union of `T` and `T mut` is `T mut`.
   /// \returns `nullptr` if an union cannot be created.
   [[nodiscard]] auto coalesce(const Type& other) const -> const Type*;

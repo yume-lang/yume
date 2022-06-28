@@ -40,58 +40,75 @@ auto Type::known_qual(Qualifier qual) const -> const Type& {
   return *m_known_qual.at(qual_idx);
 }
 
-static constinit const int PERFECT_MATCH = 1000;
-static constinit const int SAFE_CONVERSION = 100;
-static constinit const int GENERIC_SUBSTITUTION = 10;
-
-auto Type::compatibility(const Type& other) const -> Compatiblity {
-  if (this == &other)
-    return {PERFECT_MATCH};
-
-  // `Foo[] mut` -> `T[]`, with `T = Foo`.
-  if (auto this_ptr_base = without_qual().ptr_base(), other_ptr_base = other.without_qual().ptr_base();
-      (is_mut() && !other.is_mut()) && this_ptr_base != nullptr && other_ptr_base != nullptr &&
-      cast<Ptr>(without_qual()).qualifier() == cast<Ptr>(other.without_qual()).qualifier()) {
-    if (isa<Generic>(other_ptr_base))
-      return {GENERIC_SUBSTITUTION, cast<Generic>(other_ptr_base), this_ptr_base};
-    return {0};
+auto Type::compatibility(const Type& other, Compatiblity compat) const -> Compatiblity {
+  if (this == &other) {
+    compat.valid = true;
+    return compat;
   }
+
+  // // `Foo[] mut` -> `T[]`, with `T = Foo`.
+  // if (auto this_ptr_base = without_qual().ptr_base(), other_ptr_base = other.without_qual().ptr_base();
+  //     (is_mut() && !other.is_mut()) && this_ptr_base != nullptr && other_ptr_base != nullptr &&
+  //     cast<Ptr>(without_qual()).qualifier() == cast<Ptr>(other.without_qual()).qualifier()) {
+  //   if (isa<Generic>(other_ptr_base)) {
+  //     assert(!compat.dereference && "Cannot derefence twice"); // NOLINT
+  //     compat.valid = true;
+  //     compat.dereference = true;
+  //     compat.indirection = true;
+  //     compat.substituted_generic = cast<Generic>(other_ptr_base);
+  //     compat.substituted_with = this_ptr_base;
+  //   }
+  //   return compat;
+  // }
+
   // `Foo ptr` -> `T ptr`, with `T = Foo`.
   if (auto this_ptr_base = ptr_base(), other_ptr_base = other.ptr_base();
       this_ptr_base != nullptr && other_ptr_base != nullptr &&
       cast<Ptr>(this)->qualifier() == cast<Ptr>(other).qualifier()) {
-    if (isa<Generic>(other_ptr_base))
-      return {GENERIC_SUBSTITUTION, cast<Generic>(other_ptr_base), this_ptr_base};
-    return {0};
+    compat.indirection = true;
+    compat = this_ptr_base->compatibility(*other_ptr_base, compat);
+    return compat;
   }
-  // `Foo mut` -> `Foo mut`.
-  // Note that the base types are also compared, so `I32 mut` -> `I64 mut`.
-  // TODO: `I32 mut` -> `I64 mut` is actually an illegal conversion!!!
+  // `Foo mut` -> `T mut`, with `T = Foo`.
   if (is_mut() && other.is_mut()) {
-    auto base_compat = qual_base()->compatibility(other.without_qual());
-    if (base_compat.rating != Compatiblity::INVALID)
-      return base_compat + 1;
+    compat.indirection = true;
+    compat = qual_base()->compatibility(other.without_qual(), compat);
+    return compat;
   }
   // Any other generic that didn't match above.
   // `Foo ptr` -> `T`, with `T = Foo ptr`.
-  if (isa<Generic>(other))
-    return {GENERIC_SUBSTITUTION, &cast<Generic>(other), this};
+  if (isa<Generic>(other)) {
+    compat.valid = true;
+    compat.conversion.generic = true;
+    compat.substituted_generic = &cast<Generic>(other);
+    compat.substituted_with = this;
+    return compat;
+  }
   // `Foo mut` -> `Foo`.
   // Note that the base types are also compared, so `I32 mut` -> `I64`.
   if (is_mut() && !other.is_mut()) {
-    auto base_compat = qual_base()->compatibility(other);
-    if (base_compat.rating != Compatiblity::INVALID)
-      return base_compat + 1;
+    compat.conversion.dereference = true;
+    compat = qual_base()->compatibility(other.without_qual(), compat);
+    return compat;
   }
+
+  // Conversions beyond this point may not take place if indirection is required.
+  // I32 ptr -> I64 ptr isn't valid!!
+  if (compat.indirection)
+    return compat;
+
   // `I32` -> `I64`. An implicit integer cast with no loss of information.
   // Note that the signs need to be the same, even when converting `U8` -> `I32`.
   // TODO: change this
   if (const auto this_int = dyn_cast<Int>(this), other_int = dyn_cast<Int>(&other);
       (this_int != nullptr) && (other_int != nullptr)) {
-    if (this_int->is_signed() == other_int->is_signed() && this_int->size() <= other_int->size())
-      return {SAFE_CONVERSION};
+    if (this_int->is_signed() == other_int->is_signed() && this_int->size() <= other_int->size()) {
+      compat.valid = true;
+      compat.conversion.kind = ConversionKind::Int;
+      return compat;
+    }
   }
-  return {Compatiblity::INVALID};
+  return compat;
 }
 
 auto Type::is_mut() const -> bool { return isa<Qual>(*this) && cast<Qual>(this)->has_qualifier(Qualifier::Mut); }

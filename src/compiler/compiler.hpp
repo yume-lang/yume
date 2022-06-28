@@ -1,8 +1,8 @@
 #pragma once
 
 #include "ast/crtp_walker.hpp"
-#include "type_holder.hpp"
 #include "semantic/type_walker.hpp"
+#include "type_holder.hpp"
 #include "util.hpp"
 #include "vals.hpp"
 #include <llvm/ADT/iterator_range.h>
@@ -15,6 +15,7 @@
 #include <queue>
 #include <stdexcept>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace llvm {
@@ -26,8 +27,8 @@ namespace yume {
 namespace ast {
 class Expr;
 class Program;
+class StructDecl;
 class Stmt;
-class Type;
 } // namespace ast
 namespace ty {
 class Type;
