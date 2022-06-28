@@ -1,10 +1,10 @@
 #include "type_walker.hpp"
 #include "ast/ast.hpp"
-#include "compiler.hpp"
+#include "compiler/compiler.hpp"
+#include "compiler/type_holder.hpp"
+#include "compiler/vals.hpp"
 #include "diagnostic/errors.hpp"
 #include "type.hpp"
-#include "type_holder.hpp"
-#include "vals.hpp"
 #include <algorithm>
 #include <cstdint>
 #include <functional>
@@ -20,7 +20,7 @@
 #include <variant>
 #include <vector>
 
-namespace yume {
+namespace yume::semantic {
 
 template <> void TypeWalker::expression(ast::NumberExpr& expr) {
   auto val = expr.val();
@@ -402,4 +402,4 @@ auto TypeWalker::convert_type(const ast::Type& ast_type) -> const ty::Type& {
 
   throw std::runtime_error("Cannot convert AST type to actual type!");
 };
-} // namespace yume
+} // namespace yume::semantic

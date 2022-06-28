@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ast/ast.hpp"
-#include "crtp_walker.hpp"
+#include "ast/crtp_walker.hpp"
 #include "util.hpp"
 #include <map>
 #include <stdexcept>
@@ -17,6 +17,7 @@ class Expr;
 class Stmt;
 } // namespace ast
 
+namespace semantic {
 /// Determine the type information of AST nodes.
 /// This makes up most of the "semantic" phase of the compiler.
 struct TypeWalker : public CRTPWalker<TypeWalker, false> {
@@ -51,4 +52,5 @@ private:
     throw std::runtime_error("Type walker stubbed on expression "s + expr.kind_name());
   }
 };
+} // namespace semantic
 } // namespace yume

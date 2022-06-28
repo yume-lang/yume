@@ -2,7 +2,7 @@
 #include "ast/ast.hpp"
 #include "diagnostic/errors.hpp"
 #include "type.hpp"
-#include "type_walker.hpp"
+#include "semantic/type_walker.hpp"
 #include "util.hpp"
 #include "vals.hpp"
 #include <algorithm>
@@ -43,7 +43,7 @@
 
 namespace yume {
 Compiler::Compiler(std::vector<SourceFile> source_files)
-    : m_sources(std::move(source_files)), m_walker(std::make_unique<TypeWalker>(*this)) {
+    : m_sources(std::move(source_files)), m_walker(std::make_unique<semantic::TypeWalker>(*this)) {
   m_context = std::make_unique<LLVMContext>();
   m_module = std::make_unique<Module>("yume", *m_context);
   m_builder = std::make_unique<IRBuilder<>>(*m_context);

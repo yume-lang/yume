@@ -1,8 +1,8 @@
 #pragma once
 
-#include "crtp_walker.hpp"
+#include "ast/crtp_walker.hpp"
 #include "type_holder.hpp"
-#include "type_walker.hpp"
+#include "semantic/type_walker.hpp"
 #include "util.hpp"
 #include "vals.hpp"
 #include <llvm/ADT/iterator_range.h>
@@ -43,7 +43,7 @@ class Compiler : public CRTPWalker<Compiler> {
   // TODO: turn into proper helper struct in vals
   vector<std::pair<yume::ast::StructDecl*, ty::Type*>> m_structs{};
   std::queue<Fn*> m_decl_queue{};
-  unique_ptr<TypeWalker> m_walker;
+  unique_ptr<semantic::TypeWalker> m_walker;
 
   Fn* m_current_fn{};
   std::map<string, Val> m_scope{};
@@ -53,7 +53,7 @@ class Compiler : public CRTPWalker<Compiler> {
   unique_ptr<Module> m_module;
   unique_ptr<TargetMachine> m_targetMachine;
 
-  friend TypeWalker;
+  friend semantic::TypeWalker;
   friend CRTPWalker;
 
 public:
