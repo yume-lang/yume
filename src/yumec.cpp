@@ -52,8 +52,13 @@ auto main(int argc, const char* argv[]) -> int {
     auto visitor = yume::diagnostic::DotVisitor{*dot};
 #endif
 
-    for (const auto& i : src_file_names)
-      inputs.emplace_back(std::move(llvm::MemoryBuffer::getFileOrSTDIN(i).get()));
+    for (const auto& i : src_file_names) {
+      auto buffer = llvm::MemoryBuffer::getFileOrSTDIN(i);
+      if (!buffer)
+        throw std::runtime_error("While opening file "s + i + ": " + buffer.getError().message());
+
+      inputs.emplace_back(std::move(buffer.get()));
+    }
 
     for (auto& src_input : inputs) {
       auto src_name = src_input->getBufferIdentifier().str();
