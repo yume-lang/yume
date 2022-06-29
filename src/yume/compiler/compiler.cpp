@@ -725,25 +725,6 @@ template <> auto Compiler::expression(const ast::FieldAccessExpr& expr, bool mut
   return m_builder->CreateExtractValue(base, base_offset, "s.field."s + base_name);
 }
 
-auto Compiler::implicit_cast(Val val, const ty::Type* current_ty, const ty::Type* target_ty) -> Val {
-  // TODO: a lot of this logic is *still* similar to `Type.compatibility`; overload selection really needs to be
-  // rehauled...
-  if (current_ty == target_ty)
-    return val;
-
-  if (!target_ty->is_mut() && current_ty->is_mut()) {
-    auto* new_val = m_builder->CreateLoad(llvm_type(*target_ty), val, "ic.deref");
-    const auto* new_current = current_ty->qual_base();
-    return implicit_cast(new_val, new_current, target_ty);
-  }
-
-  if (isa<ty::Int>(target_ty) && isa<ty::Int>(current_ty)) {
-    return m_builder->CreateIntCast(val, llvm_type(*target_ty), cast<ty::Int>(current_ty)->is_signed(), "ic.int");
-  }
-
-  throw std::runtime_error("Cannot implicitly convert from "s + current_ty->name() + " to " + target_ty->name());
-}
-
 template <> auto Compiler::expression(const ast::ImplicitCastExpr& expr, bool mut) -> Val {
   const auto* target_ty = expr.val_ty();
   const auto* current_ty = expr.base().val_ty();

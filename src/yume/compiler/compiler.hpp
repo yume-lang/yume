@@ -96,8 +96,6 @@ private:
     throw std::runtime_error("Unknown expression "s + expr.kind_name());
   }
 
-  auto implicit_cast(Val val, const ty::Type* current_ty, const ty::Type* target_ty) -> Val;
-
   auto known_type(const string& str) -> ty::Type&;
 
   auto int_bin_primitive(const string& primitive, const vector<Val>& args) -> Val;
