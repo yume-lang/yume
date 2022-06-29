@@ -1,0 +1,5 @@
+<map id="yume::ty::Sub" name="yume::ty::Sub">
+<area shape="rect" id="node1" title=" " alt="" coords="34,171,133,197"/>
+<area shape="rect" id="node2" href="$classyume_1_1ty_1_1Generic.html" title="An unsubstituted generic type variable, usually something like T." alt="" coords="110,81,230,108"/>
+<area shape="rect" id="node3" href="$classyume_1_1ty_1_1Type.html" title="Represents a type in the type system. All types inherit from this class." alt="" coords="5,5,108,32"/>
+</map>
