@@ -42,10 +42,24 @@ namespace Catch {
   template <typename T>
   requires os_adaptable<T>
   struct StringMaker<T> {
-    static auto convert(T const& value) -> std::string {
+    static auto convert(const T& value) -> std::string {
       std::string str;
       llvm::raw_string_ostream ss(str);
       ss << value;
+      return str;
+    }
+  };
+
+  template <> struct StringMaker<yume::Token> {
+    static auto convert(const yume::Token& token) -> std::string {
+      std::string str = "(";
+      llvm::raw_string_ostream ss(str);
+      ss << yume::Token::type_name(token.m_type);
+      if (token.m_payload.has_value()) {
+        ss << " \"";
+        ss.write_escaped(std::string(*token.m_payload));
+        ss << "\")";
+      }
       return str;
     }
   };
