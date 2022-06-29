@@ -127,29 +127,25 @@ void OverloadSet::determine_valid_overloads() {
   }
 }
 
-static auto compare_implicit_conversions(ty::Conversion a, ty::Conversion b) -> std::strong_ordering {
-  // TODO: a lot of this function is repetitive
+static auto cmp(bool a, bool b) -> std::strong_ordering { return static_cast<int>(a) <=> static_cast<int>(b); }
+
+static auto compare_implicit_conversions(ty::Conversion a, ty::Conversion b) -> std::weak_ordering {
+  const auto& equal = std::strong_ordering::equal;
 
   // Concrete arguments are always better than ones requiring generic substitution
-  if (!a.generic && b.generic)
-    return std::strong_ordering::greater;
-  if (!b.generic && a.generic)
-    return std::strong_ordering::less;
+  if (auto c = cmp(!a.generic, !b.generic); c != equal)
+    return c;
 
   // No conversion is better than some conversion
-  if (a.kind == ty::ConversionKind::None && b.kind != ty::ConversionKind::None)
-    return std::strong_ordering::greater;
-  if (b.kind == ty::ConversionKind::None && a.kind != ty::ConversionKind::None)
-    return std::strong_ordering::less;
+  if (auto c = cmp(a.kind == ty::ConversionKind::None, b.kind != ty::ConversionKind::None); c != equal)
+    return c;
 
   // No dereference is better than performing a dereference
-  if (!a.dereference && b.dereference)
-    return std::strong_ordering::greater;
-  if (!b.dereference && a.dereference)
-    return std::strong_ordering::less;
+  if (auto c = cmp(!a.dereference, !b.dereference); c != equal)
+    return c;
 
   // Cannot distinguish!
-  return std::strong_ordering::equivalent;
+  return equal;
 }
 
 auto Overload::better_candidate_than(Overload other) const -> bool {
