@@ -87,7 +87,7 @@ struct Tokenizer {
 
     if (c == '\\' && !escape) {
       escape = true;
-    } else if (c == '"' && !end) {
+    } else if (c == '"' && !escape && !end) {
       end = true;
     } else {
       if (escape && c == 'n')
