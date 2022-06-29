@@ -68,6 +68,8 @@ public:
   [[nodiscard]] auto known_mut() const -> const Type& { return known_qual(Qualifier::Mut); }
   [[nodiscard]] auto known_slice() const -> const Type& { return known_qual(Qualifier::Slice); }
 
+  [[nodiscard]] auto determine_generic_substitution(const Type& generic, Sub sub = Sub()) const -> Sub;
+  [[nodiscard]] auto apply_generic_substitution(Sub sub) const -> const Type*;
   [[nodiscard]] auto compatibility(const Type& other, Compat compat = Compat()) const -> Compat;
   /// The union of this and `other`. For example, the union of `T` and `T mut` is `T mut`.
   /// \returns `nullptr` if an union cannot be created.
@@ -77,6 +79,7 @@ public:
   [[nodiscard]] auto intersect(const Type& other) const -> const Type*;
 
   [[nodiscard]] auto is_mut() const -> bool;
+  [[nodiscard]] auto is_generic() const -> bool;
 
   /// If this type is a `Qual`, return the base of it (`T mut` -> `T`)
   /// \returns `nullptr` if this type isn't `Qual`.

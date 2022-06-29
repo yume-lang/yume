@@ -40,50 +40,40 @@ auto Type::known_qual(Qualifier qual) const -> const Type& {
   return *m_known_qual.at(qual_idx);
 }
 
+auto Type::determine_generic_substitution(const Type& generic, Sub sub) const -> Sub {
+  assert(generic.is_generic() && "Cannot substitute generics in a non-generic type"); // NOLINT
+
+  // `Foo ptr` -> `T ptr`, with `T = Foo`.
+  if (auto this_ptr_base = ptr_base(), gen_ptr_base = generic.ptr_base();
+      this_ptr_base != nullptr && gen_ptr_base != nullptr &&
+      cast<Ptr>(this)->qualifier() == cast<Ptr>(generic).qualifier()) {
+    return this_ptr_base->determine_generic_substitution(*gen_ptr_base, sub);
+  }
+  // `Foo mut` -> `T mut`, with `T = Foo`.
+  if (is_mut() && generic.is_mut())
+    return qual_base()->determine_generic_substitution(generic.without_qual(), sub);
+
+  // `Foo[] mut` -> `T[]`, with `T = Foo`.
+  if (is_mut() && !generic.is_mut())
+    return qual_base()->determine_generic_substitution(generic, sub);
+
+  // Substitution impossible! For example, `Foo` -> `T ptr`.
+  if (!isa<Generic>(generic))
+    return sub;
+
+  // Any other generic that didn't match above.
+  // `Foo ptr` -> `T`, with `T = Foo ptr`.
+  sub.target = &cast<Generic>(generic);
+  sub.replace = this;
+  return sub;
+}
+
 auto Type::compatibility(const Type& other, Compat compat) const -> Compat {
   if (this == &other) {
     compat.valid = true;
     return compat;
   }
 
-  // // `Foo[] mut` -> `T[]`, with `T = Foo`.
-  // if (auto this_ptr_base = without_qual().ptr_base(), other_ptr_base = other.without_qual().ptr_base();
-  //     (is_mut() && !other.is_mut()) && this_ptr_base != nullptr && other_ptr_base != nullptr &&
-  //     cast<Ptr>(without_qual()).qualifier() == cast<Ptr>(other.without_qual()).qualifier()) {
-  //   if (isa<Generic>(other_ptr_base)) {
-  //     assert(!compat.dereference && "Cannot derefence twice"); // NOLINT
-  //     compat.valid = true;
-  //     compat.dereference = true;
-  //     compat.indirection = true;
-  //     compat.substituted_generic = cast<Generic>(other_ptr_base);
-  //     compat.substituted_with = this_ptr_base;
-  //   }
-  //   return compat;
-  // }
-
-  // `Foo ptr` -> `T ptr`, with `T = Foo`.
-  if (auto this_ptr_base = ptr_base(), other_ptr_base = other.ptr_base();
-      this_ptr_base != nullptr && other_ptr_base != nullptr &&
-      cast<Ptr>(this)->qualifier() == cast<Ptr>(other).qualifier()) {
-    compat.indirection = true;
-    compat = this_ptr_base->compatibility(*other_ptr_base, compat);
-    return compat;
-  }
-  // `Foo mut` -> `T mut`, with `T = Foo`.
-  if (is_mut() && other.is_mut()) {
-    compat.indirection = true;
-    compat = qual_base()->compatibility(other.without_qual(), compat);
-    return compat;
-  }
-  // Any other generic that didn't match above.
-  // `Foo ptr` -> `T`, with `T = Foo ptr`.
-  if (isa<Generic>(other)) {
-    compat.valid = true;
-    compat.conv.generic = true;
-    compat.substituted_generic = &cast<Generic>(other);
-    compat.substituted_with = this;
-    return compat;
-  }
   // `Foo mut` -> `Foo`.
   // Note that the base types are also compared, so `I32 mut` -> `I64`.
   if (is_mut() && !other.is_mut()) {
@@ -91,11 +81,6 @@ auto Type::compatibility(const Type& other, Compat compat) const -> Compat {
     compat = qual_base()->compatibility(other.without_qual(), compat);
     return compat;
   }
-
-  // Conversions beyond this point may not take place if indirection is required.
-  // I32 ptr -> I64 ptr isn't valid!!
-  if (compat.indirection)
-    return compat;
 
   // `I32` -> `I64`. An implicit integer cast with no loss of information.
   // Note that the signs need to be the same, even when converting `U8` -> `I32`.
@@ -112,6 +97,36 @@ auto Type::compatibility(const Type& other, Compat compat) const -> Compat {
 }
 
 auto Type::is_mut() const -> bool { return isa<Qual>(*this) && cast<Qual>(this)->has_qualifier(Qualifier::Mut); }
+
+auto Type::is_generic() const -> bool {
+  if (llvm::isa<Generic>(*this))
+    return true;
+
+  if (llvm::isa<Qual>(*this))
+    return qual_base()->is_generic();
+
+  if (llvm::isa<Ptr>(*this))
+    return ptr_base()->is_generic();
+
+  return false;
+}
+
+auto Type::apply_generic_substitution(Sub sub) const -> const Type* {
+  assert(is_generic() && "Can't perform generic substitution without a generic type"); // NOLINT
+  assert(sub.target != nullptr && sub.replace != nullptr &&                            // NOLINT
+         "Can't perform generic substitution without anything to substitute");
+  if (llvm::isa<Generic>(*this))
+    return sub.replace;
+
+  if (const auto* qual_this = llvm::dyn_cast<Qual>(this))
+    if (qual_this->m_mut)
+      return &qual_base()->apply_generic_substitution(sub)->known_mut();
+
+  if (const auto* ptr_this = llvm::dyn_cast<Ptr>(this))
+    return &ptr_base()->apply_generic_substitution(sub)->known_qual(ptr_this->qualifier());
+
+  return nullptr;
+}
 
 auto Type::qual_base() const -> const Type* {
   if (const auto* qual = dyn_cast<Qual>(this))

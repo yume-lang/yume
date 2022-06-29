@@ -27,8 +27,9 @@ static auto join_args(const auto& iter, Fn fn = {}, llvm::raw_ostream& stream = 
 
 /// Add the substitution `gen_sub` for the generic type variable `gen` in template instantiation `instantiation`.
 /// If a substitution already exists for the same type variable, the two substitutions are intersected.
-/// \returns true if substitution failed
-static auto intersect_generics(Instantiation& instantiation, const ty::Generic* gen, const ty::Type* gen_sub) -> bool {
+/// \returns nullptr if substitution failed
+static auto intersect_generics(Instantiation& instantiation, const ty::Generic* gen, const ty::Type* gen_sub)
+    -> const ty::Type* {
   // TODO: this logic should be in the Type compatibility checker algorithm itself
   auto existing = instantiation.sub.find(gen);
   // The substitution must have an intersection with an already deduced value for the same type variable
@@ -36,14 +37,14 @@ static auto intersect_generics(Instantiation& instantiation, const ty::Generic* 
     const auto* intersection = gen_sub->intersect(*existing->second);
     if (intersection == nullptr) {
       // The types don't have a common intersection, they cannot coexist.
-      return true;
+      return nullptr;
     }
     instantiation.sub[gen] = intersection;
   } else {
     instantiation.sub.try_emplace(gen, gen_sub);
   }
 
-  return false;
+  return instantiation.sub.at(gen);
 }
 
 inline static constexpr auto get_val_ty = [](const ast::AST& ast) { return ast.val_ty(); };
@@ -93,18 +94,31 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
   // As `llvm::zip` only iterates up to the size of the shorter argument, we don't try to determine type
   // compatibility of the "variadic" part of varargs functions. Currently, varargs methods can only be primitives and
   // carry no type information for their variadic part. This will change in the future.
-  for (const auto& [ast_arg, arg_type] : llvm::zip_first(fn_ast.args(), arg_types)) {
-    auto compat = arg_type->compatibility(*ast_arg.val_ty());
+  for (const auto& [param, arg_type] : llvm::zip_first(fn_ast.args(), arg_types)) {
+    const auto* param_type = param.val_ty();
+
+    if (param_type->is_generic()) {
+      auto sub = arg_type->determine_generic_substitution(*param_type);
+
+      // No valid substitution found
+      if (sub.target == nullptr || sub.replace == nullptr)
+        return false;
+
+      // Determined a substitution for a type variable, check it against others (if there are any).
+      const auto* new_target = intersect_generics(overload.instantiation, sub.target, sub.replace);
+      if (new_target == nullptr)
+        return false; // Incompatibility
+
+      param_type = param_type->apply_generic_substitution({sub.target, new_target});
+
+      if (param_type == nullptr)
+        return false;
+    }
+
+    auto compat = arg_type->compatibility(*param_type);
     // One invalid conversion disqualifies the function entirely
     if (!compat.valid)
       return false;
-
-    // The function compatibility determined a substitution for a type variable.
-    if (compat.substituted_generic != nullptr && compat.substituted_with != nullptr) {
-      if (intersect_generics(overload.instantiation, compat.substituted_generic, compat.substituted_with)) {
-        return false;
-      }
-    }
 
     // Save the steps needed to perform the conversion
     overload.compatibilities.push_back(compat);
@@ -122,19 +136,15 @@ void OverloadSet::determine_valid_overloads() {
   auto& [call_expr, overloads, arg_types] = *this;
 
   // All `Overload`s are determined to not be viable by default, so determine the ones which actually are
-  for (auto& i : overloads) {
+  // TODO: Actually keep track of *why* a type is not viable, for diagnostics.
+  for (auto& i : overloads)
     i.viable = is_valid_overload(i);
-  }
 }
 
 static auto cmp(bool a, bool b) -> std::strong_ordering { return static_cast<int>(a) <=> static_cast<int>(b); }
 
 static auto compare_implicit_conversions(ty::Conv a, ty::Conv b) -> std::weak_ordering {
   const auto& equal = std::strong_ordering::equal;
-
-  // Concrete arguments are always better than ones requiring generic substitution
-  if (auto c = cmp(!a.generic, !b.generic); c != equal)
-    return c;
 
   // No conversion is better than some conversion
   if (auto c = cmp(a.kind == ty::Conv::None, b.kind == ty::Conv::None); c != equal)
