@@ -2,12 +2,12 @@ name: CMake
 
 on:
   push:
-    branches: [ cpp ]
+    branches: [cpp]
   pull_request:
-    branches: [ cpp ]
+    branches: [cpp]
 
 env:
-  BUILD_TYPE: Release
+  BUILD_TYPE: Debug
 
 jobs:
   build:
@@ -23,51 +23,60 @@ jobs:
       CXX: clang++-${{ matrix.clang }}
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - if: matrix.clang == 15 || matrix.llvm == 15
-      name: Add LLVM Repo
-      run: |
-        sudo add-apt-repository 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy main'
-        wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-        sudo apt update
+      - if: matrix.clang == 15 || matrix.llvm == 15
+        name: Add LLVM Repo
+        run: |
+          sudo add-apt-repository 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy main'
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+          sudo apt update
 
-    - if: matrix.llvm == 15
-      name: Install LLVM
-      run: sudo apt install llvm-15
+      - if: matrix.llvm == 15
+        name: Install LLVM
+        run: sudo apt install llvm-15
 
-    - if: matrix.clang == 15
-      name: Install Clang
-      run: sudo apt install clang-15
+      - if: matrix.clang == 15
+        name: Install Clang
+        run: sudo apt install clang-15
 
-    - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DYUME_FORCE_LLVM_VERSION=${{ matrix.llvm }}
+      - name: Install Catch2
+        run: |
+          git clone https://github.com/catchorg/Catch2.git
+          cd Catch2
+          cmake -B build -H . -DBUILD_TESTING=OFF
+          sudo cmake --build build/ --target install
 
-    - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      - name: Configure CMake
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DYUME_FORCE_LLVM_VERSION=${{ matrix.llvm }} -DBUILD_TESTING=ON
 
-    - name: Test collatz.ym
-      run: build/yumec example/collatz.ym && mv output.ll result-collatz.ll && ./yume.out
-    - name: Test fizzbuzz.ym
-      run: build/yumec example/fizzbuzz.ym && mv output.ll result-fizzbuzz.ll && ./yume.out
-    - name: Test overloads.ym
-      run: build/yumec example/overloads.ym && mv output.ll result-overloads.ll && ./yume.out
-    - name: Test struct.ym
-      run: build/yumec example/struct.ym && mv output.ll result-struct.ll && ./yume.out
-    - name: Test generic.ym
-      run: build/yumec example/generic.ym && mv output.ll result-generic.ll && ./yume.out
-    - name: Test slice.ym
-      run: build/yumec example/slice.ym && mv output.ll result-slice.ll && ./yume.out
-    - name: Test bf.ym
-      run: build/yumec example/bf.ym && mv output.ll result-bf.ll && ./yume.out
-    - name: Test bf.ym (alt)
-      run: build/yumec example/bf.ym && ./yume.out '>++[<+++++++++++++>-]<[[>+>+<<-]>[<+>-]++++++++[>++++++++<-]>.[-]<<>++++++++++[>++++++++++[>++++++++++[>++++++++++[>++++++++++[>++++++++++[>++++++++++[-]<-]<-]<-]<-]<-]<-]<-]++++++++++.'
+      - name: Build
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
-    - uses: actions/upload-artifact@v3
-      with:
-        name: ir-output-llvm${{ matrix.llvm }}
-        path: ./result-*.ll
+      - name: Test
+        run: ${{github.workspace}}/build/yume_test
 
+      - name: Test collatz.ym
+        run: build/yumec example/collatz.ym && mv output.ll result-collatz.ll && ./yume.out
+      - name: Test fizzbuzz.ym
+        run: build/yumec example/fizzbuzz.ym && mv output.ll result-fizzbuzz.ll && ./yume.out
+      - name: Test overloads.ym
+        run: build/yumec example/overloads.ym && mv output.ll result-overloads.ll && ./yume.out
+      - name: Test struct.ym
+        run: build/yumec example/struct.ym && mv output.ll result-struct.ll && ./yume.out
+      - name: Test generic.ym
+        run: build/yumec example/generic.ym && mv output.ll result-generic.ll && ./yume.out
+      - name: Test slice.ym
+        run: build/yumec example/slice.ym && mv output.ll result-slice.ll && ./yume.out
+      - name: Test bf.ym
+        run: build/yumec example/bf.ym && mv output.ll result-bf.ll && ./yume.out
+      - name: Test bf.ym (alt)
+        run: build/yumec example/bf.ym && ./yume.out '>++[<+++++++++++++>-]<[[>+>+<<-]>[<+>-]++++++++[>++++++++<-]>.[-]<<>++++++++++[>++++++++++[>++++++++++[>++++++++++[>++++++++++[>++++++++++[>++++++++++[-]<-]<-]<-]<-]<-]<-]<-]++++++++++.'
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ir-output-llvm${{ matrix.llvm }}
+          path: ./result-*.ll
 #     - name: Test
 #       working-directory: ${{github.workspace}}/build
 #       run: ctest -C ${{env.BUILD_TYPE}}
