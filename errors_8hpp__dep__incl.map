@@ -1,7 +1,7 @@
-<map id="src/diagnostic/errors.hpp" name="src/diagnostic/errors.hpp">
-<area shape="rect" id="node1" title=" " alt="" coords="278,5,442,32"/>
-<area shape="rect" id="node2" href="$compiler_8cpp.html" title=" " alt="" coords="5,80,176,107"/>
-<area shape="rect" id="node3" href="$errors_8cpp.html" title=" " alt="" coords="201,80,365,107"/>
-<area shape="rect" id="node4" href="$main_8cpp.html" title=" " alt="" coords="389,80,485,107"/>
-<area shape="rect" id="node5" href="$type__walker_8cpp.html" title=" " alt="" coords="509,80,704,107"/>
+<map id="src/yume/diagnostic/errors.hpp" name="src/yume/diagnostic/errors.hpp">
+<area shape="rect" id="node1" title=" " alt="" coords="321,5,460,47"/>
+<area shape="rect" id="node2" href="$compiler_8cpp.html" title=" " alt="" coords="5,102,211,129"/>
+<area shape="rect" id="node3" href="$errors_8cpp.html" title=" " alt="" coords="235,95,373,136"/>
+<area shape="rect" id="node4" href="$type__walker_8cpp.html" title=" " alt="" coords="397,95,557,136"/>
+<area shape="rect" id="node5" href="$yumec_8cpp.html" title=" " alt="" coords="581,102,688,129"/>
 </map>

@@ -1,7 +1,7 @@
-<map id="src/compiler/compiler.hpp" name="src/compiler/compiler.hpp">
-<area shape="rect" id="node1" title=" " alt="" coords="260,5,431,32"/>
-<area shape="rect" id="node2" href="$compiler_8cpp.html" title=" " alt="" coords="5,80,176,107"/>
-<area shape="rect" id="node3" href="$vals_8cpp.html" title=" " alt="" coords="201,80,346,107"/>
-<area shape="rect" id="node4" href="$main_8cpp.html" title=" " alt="" coords="371,80,467,107"/>
-<area shape="rect" id="node5" href="$type__walker_8cpp.html" title=" " alt="" coords="491,80,685,107"/>
+<map id="src/yume/compiler/compiler.hpp" name="src/yume/compiler/compiler.hpp">
+<area shape="rect" id="node1" title=" " alt="" coords="320,5,525,32"/>
+<area shape="rect" id="node2" href="$compiler_8cpp.html" title=" " alt="" coords="5,87,211,114"/>
+<area shape="rect" id="node3" href="$vals_8cpp.html" title=" " alt="" coords="235,87,415,114"/>
+<area shape="rect" id="node4" href="$type__walker_8cpp.html" title=" " alt="" coords="440,80,600,121"/>
+<area shape="rect" id="node5" href="$yumec_8cpp.html" title=" " alt="" coords="624,87,731,114"/>
 </map>

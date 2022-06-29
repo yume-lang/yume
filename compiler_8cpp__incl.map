@@ -1,5 +1,5 @@
-<map id="src/compiler/compiler.cpp" name="src/compiler/compiler.cpp">
-<area shape="rect" id="node1" title=" " alt="" coords="1725,5,1896,32"/>
+<map id="src/yume/compiler/compiler.cpp" name="src/yume/compiler/compiler.cpp">
+<area shape="rect" id="node1" title=" " alt="" coords="1708,5,1913,32"/>
 <area shape="rect" id="node2" href="$compiler_8hpp.html" title=" " alt="" coords="1171,80,1266,107"/>
 <area shape="rect" id="node4" href="$ast_8hpp.html" title=" " alt="" coords="743,304,830,331"/>
 <area shape="rect" id="node5" href="$compatibility_8hpp.html" title=" " alt="" coords="465,379,583,405"/>

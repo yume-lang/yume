@@ -1,10 +1,10 @@
-<map id="src/diagnostic/errors.hpp" name="src/diagnostic/errors.hpp">
-<area shape="rect" id="node1" title=" " alt="" coords="400,5,564,32"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,87,73,114"/>
-<area shape="rect" id="node3" title=" " alt="" coords="98,87,175,114"/>
-<area shape="rect" id="node4" title=" " alt="" coords="199,80,365,121"/>
-<area shape="rect" id="node5" title=" " alt="" coords="390,87,574,114"/>
-<area shape="rect" id="node6" title=" " alt="" coords="599,87,653,114"/>
-<area shape="rect" id="node7" title=" " alt="" coords="678,87,766,114"/>
-<area shape="rect" id="node8" title=" " alt="" coords="790,87,857,114"/>
+<map id="src/yume/diagnostic/errors.hpp" name="src/yume/diagnostic/errors.hpp">
+<area shape="rect" id="node1" title=" " alt="" coords="413,5,551,47"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,102,73,129"/>
+<area shape="rect" id="node3" title=" " alt="" coords="98,102,175,129"/>
+<area shape="rect" id="node4" title=" " alt="" coords="199,95,365,136"/>
+<area shape="rect" id="node5" title=" " alt="" coords="390,102,574,129"/>
+<area shape="rect" id="node6" title=" " alt="" coords="599,102,653,129"/>
+<area shape="rect" id="node7" title=" " alt="" coords="678,102,766,129"/>
+<area shape="rect" id="node8" title=" " alt="" coords="790,102,857,129"/>
 </map>

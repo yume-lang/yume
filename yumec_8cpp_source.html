@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.4"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Yume: src/main.cpp Source File</title>
+<title>Yume: src/yumec.cpp Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -66,10 +66,10 @@ $(function() {
 </div>
 </div><!-- top -->
 <div class="header">
-  <div class="headertitle"><div class="title">main.cpp</div></div>
+  <div class="headertitle"><div class="title">yumec.cpp</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="main_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#include &quot;<a class="code" href="ast_8hpp.html">ast/ast.hpp</a>&quot;</span></div>
+<a href="yumec_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#include &quot;<a class="code" href="ast_8hpp.html">ast/ast.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &quot;<a class="code" href="compiler_8hpp.html">compiler/compiler.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="vals_8hpp.html">compiler/vals.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;<a class="code" href="dot__visitor_8hpp.html">diagnostic/dot_visitor.hpp</a>&quot;</span></div>
@@ -97,14 +97,14 @@ $(function() {
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="comment">// this should be provided by cmake</span></div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="preprocessor">#ifndef YUME_LIB_DIR</span></div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="main_8cpp.html#a5c73686a5889b94db1da84d9bab434a7">   29</a></span><span class="preprocessor">#define YUME_LIB_DIR &quot;./lib/&quot;</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="yumec_8cpp.html#a5c73686a5889b94db1da84d9bab434a7">   29</a></span><span class="preprocessor">#define YUME_LIB_DIR &quot;./lib/&quot;</span></div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno"><a class="line" href="main_8cpp.html#a9d6b8cae4881c54db1d2df3da92c712f">   32</a></span><span class="keyword">auto</span> <a class="code hl_function" href="main_8cpp.html#a9d6b8cae4881c54db1d2df3da92c712f">main</a>(<span class="keywordtype">int</span> argc, <span class="keyword">const</span> <span class="keywordtype">char</span>* argv[]) -&gt; <span class="keywordtype">int</span> {</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno"><a class="line" href="yumec_8cpp.html#a9d6b8cae4881c54db1d2df3da92c712f">   32</a></span><span class="keyword">auto</span> <a class="code hl_function" href="yumec_8cpp.html#a9d6b8cae4881c54db1d2df3da92c712f">main</a>(<span class="keywordtype">int</span> argc, <span class="keyword">const</span> <span class="keywordtype">char</span>* argv[]) -&gt; <span class="keywordtype">int</span> {</div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>  <span class="keyword">auto</span> args = std::span(argv, argc);</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>  std::vector&lt;std::string&gt; src_file_names{};</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>  src_file_names.reserve(argc + 1);</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>  src_file_names.push_back(std::string(<a class="code hl_define" href="main_8cpp.html#a5c73686a5889b94db1da84d9bab434a7">YUME_LIB_DIR</a>) + <span class="stringliteral">&quot;std.ym&quot;</span>);</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>  src_file_names.push_back(std::string(<a class="code hl_define" href="yumec_8cpp.html#a5c73686a5889b94db1da84d9bab434a7">YUME_LIB_DIR</a>) + <span class="stringliteral">&quot;std.ym&quot;</span>);</div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>  std::copy(args.begin() + 1, args.end(), std::back_inserter(src_file_names));</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>  std::vector&lt;yume::SourceFile&gt; source_files{};</div>
@@ -176,14 +176,14 @@ $(function() {
 <div class="ttc" id="acompiler_8hpp_html"><div class="ttname"><a href="compiler_8hpp.html">compiler.hpp</a></div></div>
 <div class="ttc" id="adot__visitor_8hpp_html"><div class="ttname"><a href="dot__visitor_8hpp.html">dot_visitor.hpp</a></div></div>
 <div class="ttc" id="aerrors_8hpp_html"><div class="ttname"><a href="errors_8hpp.html">errors.hpp</a></div></div>
-<div class="ttc" id="amain_8cpp_html_a5c73686a5889b94db1da84d9bab434a7"><div class="ttname"><a href="main_8cpp.html#a5c73686a5889b94db1da84d9bab434a7">YUME_LIB_DIR</a></div><div class="ttdeci">#define YUME_LIB_DIR</div><div class="ttdef"><b>Definition:</b> <a href="main_8cpp_source.html#l00029">main.cpp:29</a></div></div>
-<div class="ttc" id="amain_8cpp_html_a9d6b8cae4881c54db1d2df3da92c712f"><div class="ttname"><a href="main_8cpp.html#a9d6b8cae4881c54db1d2df3da92c712f">main</a></div><div class="ttdeci">auto main(int argc, const char *argv[]) -&gt; int</div><div class="ttdef"><b>Definition:</b> <a href="main_8cpp_source.html#l00032">main.cpp:32</a></div></div>
 <div class="ttc" id="anamespaceyume_html_a3d99b01535a052186b0ff7127d6c80d3"><div class="ttname"><a href="namespaceyume.html#a3d99b01535a052186b0ff7127d6c80d3">yume::open_file</a></div><div class="ttdeci">auto open_file(const char *filename) -&gt; unique_ptr&lt; llvm::raw_pwrite_stream &gt;</div><div class="ttdoc">Opens a writeable stream to a file with the given filename relative to the current working directory.</div><div class="ttdef"><b>Definition:</b> <a href="util_8hpp_source.html#l00164">util.hpp:164</a></div></div>
 <div class="ttc" id="anamespaceyume_html_a84da801f2471cee6b1007cf0c0e98ce5"><div class="ttname"><a href="namespaceyume.html#a84da801f2471cee6b1007cf0c0e98ce5">yume::stem</a></div><div class="ttdeci">auto stem(std::string_view sv) -&gt; std::string_view</div><div class="ttdoc">The stem of a path-like string, which is the component after the last slash.</div><div class="ttdef"><b>Definition:</b> <a href="util_8hpp_source.html#l00180">util.hpp:180</a></div></div>
 <div class="ttc" id="anamespaceyume_html_ac65a0c1d9630e090ade17fffca2de339"><div class="ttname"><a href="namespaceyume.html#ac65a0c1d9630e090ade17fffca2de339">yume::stacktrace</a></div><div class="ttdeci">void stacktrace()</div><div class="ttdef"><b>Definition:</b> <a href="errors_8hpp_source.html#l00040">errors.hpp:40</a></div></div>
 <div class="ttc" id="atoken_8hpp_html"><div class="ttname"><a href="token_8hpp.html">token.hpp</a></div></div>
 <div class="ttc" id="autil_8hpp_html"><div class="ttname"><a href="util_8hpp.html">util.hpp</a></div></div>
 <div class="ttc" id="avals_8hpp_html"><div class="ttname"><a href="vals_8hpp.html">vals.hpp</a></div></div>
+<div class="ttc" id="ayumec_8cpp_html_a5c73686a5889b94db1da84d9bab434a7"><div class="ttname"><a href="yumec_8cpp.html#a5c73686a5889b94db1da84d9bab434a7">YUME_LIB_DIR</a></div><div class="ttdeci">#define YUME_LIB_DIR</div><div class="ttdef"><b>Definition:</b> <a href="yumec_8cpp_source.html#l00029">yumec.cpp:29</a></div></div>
+<div class="ttc" id="ayumec_8cpp_html_a9d6b8cae4881c54db1d2df3da92c712f"><div class="ttname"><a href="yumec_8cpp.html#a9d6b8cae4881c54db1d2df3da92c712f">main</a></div><div class="ttdeci">auto main(int argc, const char *argv[]) -&gt; int</div><div class="ttdef"><b>Definition:</b> <a href="yumec_8cpp_source.html#l00032">yumec.cpp:32</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
