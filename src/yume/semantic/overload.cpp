@@ -137,7 +137,7 @@ static auto compare_implicit_conversions(ty::Conv a, ty::Conv b) -> std::weak_or
     return c;
 
   // No conversion is better than some conversion
-  if (auto c = cmp(a.kind == ty::Conv::None, b.kind != ty::Conv::None); c != equal)
+  if (auto c = cmp(a.kind == ty::Conv::None, b.kind == ty::Conv::None); c != equal)
     return c;
 
   // No dereference is better than performing a dereference
