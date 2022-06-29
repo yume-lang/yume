@@ -523,10 +523,10 @@ public:
 
 class ImplicitCastExpr : public Expr {
   unique_ptr<Expr> m_base;
-  ty::Conversion m_conversion;
+  ty::Conv m_conversion;
 
 public:
-  ImplicitCastExpr(span<Token> tok, unique_ptr<Expr> base, ty::Conversion conversion)
+  ImplicitCastExpr(span<Token> tok, unique_ptr<Expr> base, ty::Conv conversion)
       : Expr(K_ImplicitCast, tok), m_base{move(base)}, m_conversion{conversion} {}
   void visit(Visitor& visitor) override;
 

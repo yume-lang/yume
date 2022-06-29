@@ -68,7 +68,7 @@ public:
   [[nodiscard]] auto known_mut() const -> const Type& { return known_qual(Qualifier::Mut); }
   [[nodiscard]] auto known_slice() const -> const Type& { return known_qual(Qualifier::Slice); }
 
-  [[nodiscard]] auto compatibility(const Type& other, Compatiblity compat = Compatiblity()) const -> Compatiblity;
+  [[nodiscard]] auto compatibility(const Type& other, Compat compat = Compat()) const -> Compat;
   /// The union of this and `other`. For example, the union of `T` and `T mut` is `T mut`.
   /// \returns `nullptr` if an union cannot be created.
   [[nodiscard]] auto coalesce(const Type& other) const -> const Type*;

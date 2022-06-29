@@ -40,7 +40,7 @@ auto Type::known_qual(Qualifier qual) const -> const Type& {
   return *m_known_qual.at(qual_idx);
 }
 
-auto Type::compatibility(const Type& other, Compatiblity compat) const -> Compatiblity {
+auto Type::compatibility(const Type& other, Compat compat) const -> Compat {
   if (this == &other) {
     compat.valid = true;
     return compat;
@@ -79,7 +79,7 @@ auto Type::compatibility(const Type& other, Compatiblity compat) const -> Compat
   // `Foo ptr` -> `T`, with `T = Foo ptr`.
   if (isa<Generic>(other)) {
     compat.valid = true;
-    compat.conversion.generic = true;
+    compat.conv.generic = true;
     compat.substituted_generic = &cast<Generic>(other);
     compat.substituted_with = this;
     return compat;
@@ -87,7 +87,7 @@ auto Type::compatibility(const Type& other, Compatiblity compat) const -> Compat
   // `Foo mut` -> `Foo`.
   // Note that the base types are also compared, so `I32 mut` -> `I64`.
   if (is_mut() && !other.is_mut()) {
-    compat.conversion.dereference = true;
+    compat.conv.dereference = true;
     compat = qual_base()->compatibility(other.without_qual(), compat);
     return compat;
   }
@@ -104,7 +104,7 @@ auto Type::compatibility(const Type& other, Compatiblity compat) const -> Compat
       (this_int != nullptr) && (other_int != nullptr)) {
     if (this_int->is_signed() == other_int->is_signed() && this_int->size() <= other_int->size()) {
       compat.valid = true;
-      compat.conversion.kind = ConversionKind::Int;
+      compat.conv.kind = Conv::Int;
       return compat;
     }
   }

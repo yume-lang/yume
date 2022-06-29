@@ -129,7 +129,7 @@ void OverloadSet::determine_valid_overloads() {
 
 static auto cmp(bool a, bool b) -> std::strong_ordering { return static_cast<int>(a) <=> static_cast<int>(b); }
 
-static auto compare_implicit_conversions(ty::Conversion a, ty::Conversion b) -> std::weak_ordering {
+static auto compare_implicit_conversions(ty::Conv a, ty::Conv b) -> std::weak_ordering {
   const auto& equal = std::strong_ordering::equal;
 
   // Concrete arguments are always better than ones requiring generic substitution
@@ -137,7 +137,7 @@ static auto compare_implicit_conversions(ty::Conversion a, ty::Conversion b) -> 
     return c;
 
   // No conversion is better than some conversion
-  if (auto c = cmp(a.kind == ty::ConversionKind::None, b.kind != ty::ConversionKind::None); c != equal)
+  if (auto c = cmp(a.kind == ty::Conv::None, b.kind != ty::Conv::None); c != equal)
     return c;
 
   // No dereference is better than performing a dereference
@@ -157,7 +157,7 @@ auto Overload::better_candidate_than(Overload other) const -> bool {
 
   // For each argument, determine which candidate has a "better" conversion.
   for (const auto& [self_compat, other_compat] : llvm::zip_first(compatibilities, other.compatibilities)) {
-    auto comparison = compare_implicit_conversions(self_compat.conversion, other_compat.conversion);
+    auto comparison = compare_implicit_conversions(self_compat.conv, other_compat.conv);
 
     if (is_gt(comparison))
       return true;

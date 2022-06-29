@@ -8,38 +8,39 @@ namespace yume::ty {
 class Generic;
 class Type;
 
-enum struct ConversionKind : uint8_t { None, Int };
+struct Conv {
+  enum struct Kind : uint8_t { None, Int };
 
-struct Conversion {
+  using Kind::Int;
+  using Kind::None;
+
   bool dereference = false;
   bool generic = false;
-  ConversionKind kind{};
+  Kind kind{};
 
-  [[nodiscard]] constexpr auto empty() const -> bool {
-    return !dereference && !generic && kind == ConversionKind::None;
-  }
+  [[nodiscard]] constexpr auto empty() const -> bool { return !dereference && !generic && kind == None; }
 
   [[nodiscard]] auto to_string() const -> string {
     if (empty())
-      return "no conversion";
+      return "noconv";
 
     std::stringstream ss;
     if (generic)
       ss << "generic ";
     if (dereference)
       ss << "deref ";
-    if (kind == ConversionKind::Int)
-      ss << "integer ";
-    ss << "conversion";
+    if (kind == Int)
+      ss << "int ";
+    ss << "conv";
     return ss.str();
   }
 };
 
 /// The compatibility between two types, for overload selection.
-struct Compatiblity {
+struct Compat {
   bool valid = false;
   bool indirection = false;
-  Conversion conversion{};
+  Conv conv{};
   const Generic* substituted_generic{};
   const Type* substituted_with{};
 };

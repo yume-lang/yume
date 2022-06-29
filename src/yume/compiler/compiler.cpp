@@ -764,7 +764,7 @@ template <> auto Compiler::expression(const ast::ImplicitCastExpr& expr, bool mu
     base = m_builder->CreateLoad(llvm_type(*current_ty), base, "ic.deref");
   }
 
-  if (expr.conversion().kind == ty::ConversionKind::Int) {
+  if (expr.conversion().kind == ty::Conv::Int) {
     return m_builder->CreateIntCast(base, llvm_type(*target_ty), cast<ty::Int>(current_ty)->is_signed(), "ic.int");
   }
 

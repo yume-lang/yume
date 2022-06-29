@@ -15,7 +15,7 @@ namespace yume::semantic {
 
 struct Overload {
   Fn* fn{};
-  vector<ty::Compatiblity> compatibilities{};
+  vector<ty::Compat> compatibilities{};
   Instantiation instantiation{};
   bool viable = false;
 
