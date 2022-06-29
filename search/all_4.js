@@ -1,7 +1,7 @@
 var searchData=
 [
   ['else_5fclause_0',['else_clause',['../classyume_1_1ast_1_1IfStmt.html#a5d99c5ca273fa78badf11b8f85ce64a3',1,'yume::ast::IfStmt::else_clause() const -&gt; const auto &amp;'],['../classyume_1_1ast_1_1IfStmt.html#a0b3ce4a9e25f99db90529bd7d702c3e4',1,'yume::ast::IfStmt::else_clause() -&gt; auto &amp;']]],
-  ['empty_1',['empty',['../structyume_1_1ty_1_1Conversion.html#a819a9885a872a566195a6d50524cfd9c',1,'yume::ty::Conversion::empty()'],['../structyume_1_1semantic_1_1OverloadSet.html#ad59b27dd3a3dae43e5488cc44c856a27',1,'yume::semantic::OverloadSet::empty()']]],
+  ['empty_1',['empty',['../structyume_1_1ty_1_1Conv.html#a0bef44fe30563f4e207f656d75bb0906',1,'yume::ty::Conv::empty()'],['../structyume_1_1semantic_1_1OverloadSet.html#ad59b27dd3a3dae43e5488cc44c856a27',1,'yume::semantic::OverloadSet::empty()']]],
   ['end_2',['end',['../classyume_1_1dereference__view.html#ae9e493a36ac1f66ac92f128b11ed1829',1,'yume::dereference_view']]],
   ['end_5fcol_3',['end_col',['../structyume_1_1Loc.html#a076b7241c476c3be6daedb78c871b31c',1,'yume::Loc']]],
   ['end_5fline_4',['end_line',['../structyume_1_1Loc.html#ae662b2b5d46b62bb1d0d30529af15a61',1,'yume::Loc']]],

@@ -1,8 +1,0 @@
-<map id="yume::ty::Compatiblity" name="yume::ty::Compatiblity">
-<area shape="rect" id="node1" title="The compatibility between two types, for overload selection." alt="" coords="163,201,310,228"/>
-<area shape="rect" id="node2" title=" " alt="" coords="8,5,54,32"/>
-<area shape="rect" id="node3" href="$structyume_1_1ty_1_1Conversion.html" title=" " alt="" coords="92,111,232,137"/>
-<area shape="rect" id="node4" title=" " alt="" coords="105,5,218,32"/>
-<area shape="rect" id="node5" href="$classyume_1_1ty_1_1Generic.html" title="An unsubstituted generic type variable, usually something like T." alt="" coords="403,111,523,137"/>
-<area shape="rect" id="node6" href="$classyume_1_1ty_1_1Type.html" title="Represents a type in the type system. All types inherit from this class." alt="" coords="290,5,393,32"/>
-</map>

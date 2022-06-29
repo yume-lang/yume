@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['int_0',['Int',['../namespaceyume_1_1ty.html#a89ab07c76d860b0fca375fa17c038e30a1686a6c336b71b36d77354cea19a8b52',1,'yume::ty']]]
+  ['int_0',['Int',['../structyume_1_1ty_1_1Conv.html#a52dc705eb4433198881d0a5b76ad7aa6a1686a6c336b71b36d77354cea19a8b52',1,'yume::ty::Conv']]]
 ];

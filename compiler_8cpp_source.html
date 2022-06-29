@@ -835,7 +835,7 @@ $(function() {
 <div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>    base = m_builder-&gt;CreateLoad(llvm_type(*current_ty), base, <span class="stringliteral">&quot;ic.deref&quot;</span>);</div>
 <div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>  }</div>
 <div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span> </div>
-<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>  <span class="keywordflow">if</span> (expr.conversion().kind == ty::ConversionKind::Int) {</div>
+<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>  <span class="keywordflow">if</span> (expr.conversion().kind == ty::Conv::Int) {</div>
 <div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>    <span class="keywordflow">return</span> m_builder-&gt;CreateIntCast(base, llvm_type(*target_ty), cast&lt;ty::Int&gt;(current_ty)-&gt;is_signed(), <span class="stringliteral">&quot;ic.int&quot;</span>);</div>
 <div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>  }</div>
 <div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span> </div>
