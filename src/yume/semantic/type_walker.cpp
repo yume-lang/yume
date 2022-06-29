@@ -207,12 +207,11 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
   for (auto [target, expr_arg, compat] :
        llvm::zip(selected->ast().args(), expr.direct_args(), best_overload.compatibilities)) {
     assert(compat.valid && "Invalid compatibility after overload already selected?????"); // NOLINT
-    if (compat.conversion.empty())
+    if (compat.conv.empty())
       continue;
 
     const auto* target_type = target.type().val_ty();
-    auto cast_expr =
-        std::make_unique<ast::ImplicitCastExpr>(expr_arg->token_range(), std::move(expr_arg), compat.conversion);
+    auto cast_expr = std::make_unique<ast::ImplicitCastExpr>(expr_arg->token_range(), std::move(expr_arg), compat.conv);
     cast_expr->val_ty(target_type);
     expr_arg = std::move(cast_expr);
   }
