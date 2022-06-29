@@ -87,9 +87,15 @@ if(BUILD_TESTING)
   file(GLOB_RECURSE YUME_TEST CONFIGURE_DEPENDS test/*.cpp)
   add_executable(yume_test ${YUME_TEST} ${YUME_SRC})
   set_property(TARGET yume_test PROPERTY CXX_STANDARD 20)
+  set_target_properties(Catch2::Catch2 PROPERTIES
+    INTERFACE_COMPILE_OPTIONS ""
+  )
+  set_target_properties(Catch2::Catch2WithMain PROPERTIES
+    INTERFACE_COMPILE_OPTIONS ""
+  )
 
   target_include_directories(yume_test BEFORE PRIVATE src/yume)
-  target_link_libraries(yume_test PRIVATE Catch2::Catch2WithMain)
+  target_link_libraries(yume_test PRIVATE Catch2::Catch2WithMain yume)
 
   # include(CTest)
   include(Catch)
