@@ -740,30 +740,6 @@ template <> auto Compiler::expression(const ast::ImplicitCastExpr& expr, bool mu
     base = m_builder->CreateLoad(llvm_type(*current_ty), base, "ic.deref");
   }
 
-  // TODO: this is a workaround for a very specific bug where multiple parameters use the same type variable, and only
-  // one of them is inferred from a mutable type.
-  //
-  // For example, a function like `def foo<T>(a T, b T)` when called with types `I32` and `I32 mut`.
-  // When evaluating the first parameter (`a`), it will infer T to be `I32` and treat it as a perfect conversion.
-  // However, when evaluating the second parameter (`b`), it will infer T to be `I32 mut` and also treat it as a perfect
-  // conversion.
-  //
-  // These two substitutions are compatible, and the intersection of `I32` and `I32 mut` is determined to be `I32`.
-  // However, the conversion steps aren't re-evaluated. This means the type walker has essentially determined that
-  // `I32 mut` and `I32` are *pefectly* compatible, but a dereference should be used instead.
-
-  // TODO: to solve the above, generic substitutions should be moved to the type compatibility function. See the
-  // existing todo in `intersect_generics`. Alternatively, the TypeWalker could simply run the type conversion algorithm
-  // a second time for types with generic substitutions
-
-  // TODO: once the above issue is solved, AND implicit conversion checking is added in the remaining locations (i.e.
-  // field assignment and return) there is no real reason to keep the `mut` parameter on all expression compilation
-  // methods. All the mutability information is in the type system and dereferences are handled by the TypeWalker.
-  if (!mut && !target_ty->is_mut() && current_ty->is_mut() && !expr.conversion().dereference) {
-    current_ty = current_ty->qual_base();
-    base = m_builder->CreateLoad(llvm_type(*current_ty), base, "ic.deref");
-  }
-
   if (expr.conversion().kind == ty::Conv::Int) {
     return m_builder->CreateIntCast(base, llvm_type(*target_ty), cast<ty::Int>(current_ty)->is_signed(), "ic.int");
   }
@@ -835,6 +811,10 @@ void Compiler::body_statement(const ast::Stmt& stat) {
   const ASTStackTrace guard("Codegen: "s + stat.kind_name() + " statement", stat);
   return CRTPWalker::body_statement(stat);
 };
+
+// TODO: once implicit conversion checking is added in the remaining locations (i.e. field assignment and return)
+// there is no real reason to keep the `mut` parameter on all expression compilation methods. All the mutability
+// information is in the type system and dereferences are handled by the TypeWalker.
 auto Compiler::body_expression(const ast::Expr& expr, bool mut) -> Val {
   const ASTStackTrace guard("Codegen: "s + expr.kind_name() + " expression", expr);
   return CRTPWalker::body_expression(expr, mut);
