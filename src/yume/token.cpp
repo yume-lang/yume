@@ -210,7 +210,7 @@ private:
     int end_line = m_line;
     int end_col = m_col;
     next();
-    while (fun(m_last, i, out) && !m_in.eof()) {
+    while (!m_in.eof() && fun(m_last, i, out)) {
       i++;
       end_line = m_line;
       end_col = m_col;
