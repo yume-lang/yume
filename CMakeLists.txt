@@ -38,8 +38,6 @@ if(YUME_EMIT_DOT)
   target_compile_definitions(yume PRIVATE YUME_EMIT_DOT)
 endif()
 
-target_compile_definitions(yume PRIVATE "YUME_LIB_DIR=\"${CMAKE_SOURCE_DIR}/lib/\"")
-
 find_package(LLVM ${YUME_FORCE_LLVM_VERSION} REQUIRED CONFIG)
 
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
@@ -79,6 +77,8 @@ add_executable(yumec src/yumec.cpp)
 set_property(TARGET yumec PROPERTY CXX_STANDARD 20)
 set_property(TARGET yumec PROPERTY EXPORT_COMPILE_COMMANDS TRUE)
 target_link_libraries(yumec PUBLIC yume)
+
+target_compile_definitions(yumec PRIVATE "YUME_LIB_DIR=\"${CMAKE_SOURCE_DIR}/lib/\"")
 
 if(BUILD_TESTING)
   enable_testing()
