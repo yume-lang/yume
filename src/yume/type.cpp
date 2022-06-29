@@ -82,12 +82,11 @@ auto Type::compatibility(const Type& other, Compat compat) const -> Compat {
     return compat;
   }
 
-  // `I32` -> `I64`. An implicit integer cast with no loss of information.
-  // Note that the signs need to be the same, even when converting `U8` -> `I32`.
-  // TODO: change this
+  // `I32` -> `I64`. `U8` -> `I16`. An implicit integer cast with no loss of information.
   if (const auto this_int = dyn_cast<Int>(this), other_int = dyn_cast<Int>(&other);
       (this_int != nullptr) && (other_int != nullptr)) {
-    if (this_int->is_signed() == other_int->is_signed() && this_int->size() <= other_int->size()) {
+    if ((this_int->is_signed() == other_int->is_signed() && this_int->size() <= other_int->size()) ||
+        (this_int->is_signed() && !other_int->is_signed() && this_int->size() * 2 >= other_int->size())) {
       compat.valid = true;
       compat.conv.kind = Conv::Int;
       return compat;
