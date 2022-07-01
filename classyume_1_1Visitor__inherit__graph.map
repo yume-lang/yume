@@ -1,5 +1,6 @@
 <map id="yume::Visitor" name="yume::Visitor">
-<area shape="rect" id="node1" title=" " alt="" coords="152,5,248,32"/>
-<area shape="rect" id="node2" href="$classyume_1_1diagnostic_1_1DotVisitor.html" title=" " alt="" coords="5,80,187,107"/>
-<area shape="rect" id="node3" href="$classyume_1_1diagnostic_1_1PrintVisitor.html" title=" " alt="" coords="211,80,399,107"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,56,101,83"/>
+<area shape="rect" id="node2" href="$classyume_1_1diagnostic_1_1DotVisitor.html" title=" " alt="" coords="155,5,336,32"/>
+<area shape="rect" id="node3" href="$classyume_1_1diagnostic_1_1HashVisitor.html" title=" " alt="" coords="149,56,341,83"/>
+<area shape="rect" id="node4" href="$classyume_1_1diagnostic_1_1PrintVisitor.html" title=" " alt="" coords="151,107,339,133"/>
 </map>

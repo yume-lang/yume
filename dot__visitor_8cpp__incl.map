@@ -1,5 +1,5 @@
-<map id="src/yume/diagnostic/dot_visitor.cpp" name="src/yume/diagnostic/dot_visitor.cpp">
-<area shape="rect" id="node1" title=" " alt="" coords="1675,5,1813,47"/>
+<map id="src/yume/visitor/dot_visitor.cpp" name="src/yume/visitor/dot_visitor.cpp">
+<area shape="rect" id="node1" title=" " alt="" coords="1676,5,1812,47"/>
 <area shape="rect" id="node2" href="$dot__visitor_8hpp.html" title=" " alt="" coords="399,95,505,121"/>
 <area shape="rect" id="node3" href="$token_8hpp.html" title=" " alt="" coords="1406,319,1485,345"/>
 <area shape="rect" id="node4" href="$util_8hpp.html" title=" " alt="" coords="669,393,731,420"/>

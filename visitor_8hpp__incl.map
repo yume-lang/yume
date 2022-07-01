@@ -1,5 +1,5 @@
-<map id="src/yume/visitor.hpp" name="src/yume/visitor.hpp">
-<area shape="rect" id="node1" title=" " alt="" coords="413,5,551,32"/>
+<map id="src/yume/visitor/visitor.hpp" name="src/yume/visitor/visitor.hpp">
+<area shape="rect" id="node1" title=" " alt="" coords="393,5,571,32"/>
 <area shape="rect" id="node2" href="$ast_8hpp.html" title=" " alt="" coords="752,80,839,107"/>
 <area shape="rect" id="node4" href="$util_8hpp.html" title=" " alt="" coords="363,229,425,256"/>
 <area shape="rect" id="node3" href="$compatibility_8hpp.html" title=" " alt="" coords="552,155,671,181"/>
