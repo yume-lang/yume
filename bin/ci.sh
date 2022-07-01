@@ -20,6 +20,6 @@ case $1 in
     done;;
 
   "coverage" )
-    llvm-profdata merge -sparse default.profraw -o default.profdata
-    llvm-cov show build/yume_test -instr-profile default.profdata -Xdemangler c++filt -Xdemangler -i -format html -output-dir cov -ignore-filename-regex '/test/.*'
+    llvm-profdata-13 merge -sparse default.profraw -o default.profdata
+    llvm-cov-13 show build/yume_test -instr-profile default.profdata -Xdemangler c++filt -Xdemangler -i -format html -output-dir cov -ignore-filename-regex '/test/.*'
 esac
