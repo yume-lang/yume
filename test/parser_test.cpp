@@ -6,12 +6,14 @@
 #include <iterator>
 
 namespace {
-auto prog(const std::string& str) -> std::unique_ptr<yume::ast::Program> {
+using namespace yume::ast;
+
+auto prog(const std::string& str) -> std::unique_ptr<Program> {
   static const std::string test_filename = "<test>";
   auto in_stream = std::stringstream(str);
   auto tokens = yume::tokenize(in_stream, test_filename);
-  auto iter = yume::ast::TokenIterator{tokens.begin(), tokens.end()};
-  return yume::ast::Program::parse(iter);
+  auto iter = TokenIterator{tokens.begin(), tokens.end()};
+  return Program::parse(iter);
 }
 
 template <typename T, typename... Ts> auto ast(Ts&&... ts) -> std::unique_ptr<T> {
@@ -24,6 +26,11 @@ template <typename T, typename... Ts> auto ptr_vec(Ts&&... ts) {
   (vec.emplace_back(std::forward<Ts>(ts)), ...);
   return vec;
 }
+
+auto operator""_Var(const char* str, size_t size) { return ast<VarExpr>(std::string{str, size}); }
+auto operator""_Num(unsigned long long val) { return ast<NumberExpr>(val); }
+auto operator""_String(const char* str, size_t size) { return ast<StringExpr>(std::string{str, size}); }
+auto operator""_Char(char chr) { return ast<CharExpr>(chr); }
 
 constexpr auto ast_comparison = [](const yume::ast::Program& a,
                                    const std::vector<std::unique_ptr<yume::ast::AST>>& b) -> bool {
@@ -62,26 +69,29 @@ TEST_CASE("Parsing", "[parse]") {
   CHECK_PARSER("true", ast<BoolExpr>(true));
   CHECK_PARSER("false", ast<BoolExpr>(false));
 
-  CHECK_PARSER("1", ast<NumberExpr>(1));
+  CHECK_PARSER("1", 1_Num);
 
-  CHECK_PARSER("?a", ast<CharExpr>('a'));
+  CHECK_PARSER("?a", 'a'_Char);
 
-  CHECK_PARSER(R"("hi")", ast<StringExpr>("hi"));
+  CHECK_PARSER(R"("hi")", "hi"_String);
 
-  CHECK_PARSER("1 + 2", ast<CallExpr>("+", ptr_vec<Expr>(ast<NumberExpr>(1), ast<NumberExpr>(2))));
-  CHECK_PARSER("1 +2", ast<CallExpr>("+", ptr_vec<Expr>(ast<NumberExpr>(1), ast<NumberExpr>(2))));
-  CHECK_PARSER("1 - 2", ast<CallExpr>("-", ptr_vec<Expr>(ast<NumberExpr>(1), ast<NumberExpr>(2))));
-  CHECK_PARSER("1 -2", ast<CallExpr>("-", ptr_vec<Expr>(ast<NumberExpr>(1), ast<NumberExpr>(2))));
-  CHECK_PARSER("-2", ast<CallExpr>("-", ptr_vec<Expr>(ast<NumberExpr>(2))));
+  CHECK_PARSER("1 + 2", ast<CallExpr>("+", ptr_vec<Expr>(1_Num, 2_Num)));
+  CHECK_PARSER("1 +2", ast<CallExpr>("+", ptr_vec<Expr>(1_Num, 2_Num)));
+  CHECK_PARSER("1 - 2", ast<CallExpr>("-", ptr_vec<Expr>(1_Num, 2_Num)));
+  CHECK_PARSER("1 -2", ast<CallExpr>("-", ptr_vec<Expr>(1_Num, 2_Num)));
+  CHECK_PARSER("-2", ast<CallExpr>("-", ptr_vec<Expr>(2_Num)));
   CHECK_PARSER("!true", ast<CallExpr>("!", ptr_vec<Expr>(ast<BoolExpr>(true))));
 
-  CHECK_PARSER("a = 1\nb = 2", ast<AssignExpr>(ast<VarExpr>("a"), ast<NumberExpr>(1)),
-               ast<AssignExpr>(ast<VarExpr>("b"), ast<NumberExpr>(2)));
-  CHECK_PARSER("a = b = 2", ast<AssignExpr>(ast<VarExpr>("a"), ast<AssignExpr>(ast<VarExpr>("b"), ast<NumberExpr>(2))));
+  CHECK_PARSER("a = 1\nb = 2", ast<AssignExpr>("a"_Var, 1_Num), ast<AssignExpr>("b"_Var, 2_Num));
+  CHECK_PARSER("a = b = 2", ast<AssignExpr>("a"_Var, ast<AssignExpr>("b"_Var, 2_Num)));
 
-  CHECK_PARSER("a[b]", ast<CallExpr>("[]", ptr_vec<Expr>(ast<VarExpr>("a"), ast<VarExpr>("b"))));
-  CHECK_PARSER("a[b] = c",
-               ast<CallExpr>("[]=", ptr_vec<Expr>(ast<VarExpr>("a"), ast<VarExpr>("b"), ast<VarExpr>("c"))));
+  CHECK_PARSER("a", "a"_Var);
+  CHECK_PARSER("(a)", "a"_Var);
+  CHECK_PARSER("a()", ast<CallExpr>("a", ptr_vec<Expr>()));
+  // CHECK_PARSER("(a)()", ast<CallExpr>("a", ptr_vec<Expr>()));
+
+  CHECK_PARSER("a[b]", ast<CallExpr>("[]", ptr_vec<Expr>("a"_Var, "b"_Var)));
+  CHECK_PARSER("a[b] = c", ast<CallExpr>("[]=", ptr_vec<Expr>("a"_Var, "b"_Var, "c"_Var)));
 }
 
 #undef CHECK_PARSER
