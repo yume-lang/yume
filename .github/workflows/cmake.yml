@@ -53,23 +53,12 @@ jobs:
       - name: Build
         run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
-      - name: Test
+      - name: Unit Test
         run: ${{github.workspace}}/build/yume_test
 
-      - name: Test collatz.ym
-        run: build/yumec example/collatz.ym && mv output.ll result-collatz.ll && ./yume.out
-      - name: Test fizzbuzz.ym
-        run: build/yumec example/fizzbuzz.ym && mv output.ll result-fizzbuzz.ll && ./yume.out
-      - name: Test overloads.ym
-        run: build/yumec example/overloads.ym && mv output.ll result-overloads.ll && ./yume.out
-      - name: Test struct.ym
-        run: build/yumec example/struct.ym && mv output.ll result-struct.ll && ./yume.out
-      - name: Test generic.ym
-        run: build/yumec example/generic.ym && mv output.ll result-generic.ll && ./yume.out
-      - name: Test slice.ym
-        run: build/yumec example/slice.ym && mv output.ll result-slice.ll && ./yume.out
-      - name: Test bf.ym
-        run: build/yumec example/bf.ym && mv output.ll result-bf.ll && ./yume.out
+      - name: Example Test
+        run: bin/ci.sh
+
       - name: Test bf.ym (alt)
         run: build/yumec example/bf.ym && ./yume.out '>++[<+++++++++++++>-]<[[>+>+<<-]>[<+>-]++++++++[>++++++++<-]>.[-]<<>++++++++++[>++++++++++[>++++++++++[>++++++++++[>++++++++++[>++++++++++[>++++++++++[-]<-]<-]<-]<-]<-]<-]<-]++++++++++.'
 

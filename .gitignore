@@ -36,6 +36,7 @@ out
 gen
 
 # Other
-bin
+bin/*
+!bin/ci.sh
 .cache
 docs/
