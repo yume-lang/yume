@@ -58,7 +58,7 @@ jobs:
       - name: Unit Test
         run: ${{github.workspace}}/build/yume_test
 
-      - if: matrix.clang == env.TARGET_CLANG && matrix.llvm == env.TARGET_llvm
+      - if: matrix.clang == env.TARGET_CLANG && matrix.llvm == env.TARGET_LLVM
         name: Coverage
         run: ${{github.workspace}}/bin/ci.sh coverage
 
@@ -73,7 +73,7 @@ jobs:
           name: ir-output-llvm${{ matrix.llvm }}
           path: ./result-*.ll
 
-      - if: matrix.clang == env.TARGET_CLANG && matrix.llvm == env.TARGET_llvm
+      - if: matrix.clang == env.TARGET_CLANG && matrix.llvm == env.TARGET_LLVM
         uses: actions/upload-artifact@v3
         with:
           name: coverage
