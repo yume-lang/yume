@@ -56,10 +56,10 @@ jobs:
 
       - if: matrix.clang == env.TARGET_CLANG && matrix.llvm == env.TARGET_LLVM
         name: Coverage
-        run: ${{github.workspace}}/bin/ci.sh coverage
+        run: cd ${{github.workspace}}/build && ${{github.workspace}}/bin/ci.sh coverage
 
       - name: Example Test
-        run: cd ${{github.workspace}} && ${{github.workspace}}/bin/ci.sh examples
+        run: ${{github.workspace}}/bin/ci.sh examples
 
       - name: Test bf.ym (alt)
         run: build/yumec example/bf.ym && ./yume.out '>++[<+++++++++++++>-]<[[>+>+<<-]>[<+>-]++++++++[>++++++++<-]>.[-]<<>++++++++++[>++++++++++[>++++++++++[>++++++++++[>++++++++++[>++++++++++[>++++++++++[-]<-]<-]<-]<-]<-]<-]<-]++++++++++.'

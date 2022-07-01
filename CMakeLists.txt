@@ -28,19 +28,19 @@ if(YUME_COV)
   target_link_options(yume PUBLIC "-fprofile-instr-generate;-fcoverage-mapping")
 endif()
 if(YUME_SPEW GREATER 2)
-  target_compile_definitions(yume INTERFACE YUME_SPEW_OVERLOAD_SELECTION)
+  target_compile_definitions(yume PUBLIC YUME_SPEW_OVERLOAD_SELECTION)
 endif()
 
 if(YUME_SPEW GREATER 1)
-  target_compile_definitions(yume INTERFACE YUME_SPEW_LIST_TOKENS)
+  target_compile_definitions(yume PUBLIC YUME_SPEW_LIST_TOKENS)
 endif()
 
 if(YUME_SPEW GREATER 0)
-  target_compile_definitions(yume INTERFACE YUME_SPEW_CONSUMED_TOKENS)
+  target_compile_definitions(yume PUBLIC YUME_SPEW_CONSUMED_TOKENS)
 endif()
 
 if(YUME_EMIT_DOT)
-  target_compile_definitions(yume INTERFACE YUME_EMIT_DOT)
+  target_compile_definitions(yume PUBLIC YUME_EMIT_DOT)
 endif()
 
 find_package(LLVM ${YUME_FORCE_LLVM_VERSION} REQUIRED CONFIG)
@@ -57,7 +57,7 @@ message(STATUS "Using LLVM include: ${LLVM_INCLUDE_DIRS}")
 message(STATUS "Using LLVM library: ${LLVM_LIBRARY_DIRS}")
 message(STATUS "Using LLVM tool dir: ${LLVM_TOOLS_BINARY_DIR}")
 
-target_compile_options(yume INTERFACE -W -Wall)
+target_compile_options(yume PUBLIC -W -Wall)
 
 if(YUME_FORCE_LIBCXX)
   target_compile_options(yume PUBLIC -stdlib=libc++)
@@ -90,7 +90,7 @@ if(BUILD_TESTING)
   find_package(Catch2 3)
 
   file(GLOB_RECURSE YUME_TEST CONFIGURE_DEPENDS test/*.cpp)
-  add_executable(yume_test ${YUME_TEST} ${YUME_SRC})
+  add_executable(yume_test ${YUME_TEST})
   set_property(TARGET yume_test PROPERTY CXX_STANDARD 20)
   set_target_properties(Catch2::Catch2 PROPERTIES
     INTERFACE_COMPILE_OPTIONS ""
@@ -99,7 +99,6 @@ if(BUILD_TESTING)
     INTERFACE_COMPILE_OPTIONS ""
   )
 
-  target_include_directories(yume_test BEFORE PRIVATE src/yume)
   target_link_libraries(yume_test PRIVATE Catch2::Catch2WithMain)
   target_link_libraries(yume_test PRIVATE yume)
 
