@@ -47,7 +47,7 @@ private:
     using Base_iter = std::ranges::iterator_t<std::add_const_t<Base>>;
 
     Base_iter m_current = Base_iter();
-    Parent* m_parent = nullptr;
+    const Parent* m_parent = nullptr;
 
   public:
     using difference_type = std::ranges::range_difference_t<Base>;
@@ -55,7 +55,7 @@ private:
     Iterator() requires std::default_initializable<Base_iter>
     = default;
 
-    constexpr Iterator(Parent* parent, Base_iter current) : m_current(std::move(current)), m_parent(parent) {}
+    constexpr Iterator(const Parent* parent, Base_iter current) : m_current(std::move(current)), m_parent(parent) {}
 
     constexpr auto operator*() const -> decltype(auto) { return **m_current; }
 
@@ -134,7 +134,7 @@ private:
 public:
   constexpr explicit dereference_view(const T& base) : m_base(base) {}
 
-  constexpr auto begin() -> Iterator { return Iterator{this, std::ranges::begin(m_base)}; }
+  constexpr auto begin() const -> Iterator { return Iterator{this, std::ranges::begin(m_base)}; }
 
   constexpr auto size() -> size_t { return std::ranges::size(m_base); }
 
@@ -143,7 +143,7 @@ public:
     return begin()[n];
   }
 
-  constexpr auto end() -> Iterator { return Iterator{this, std::ranges::end(m_base)}; }
+  constexpr auto end() const -> Iterator { return Iterator{this, std::ranges::end(m_base)}; }
 };
 
 /// Dereference an `optional` holding a pointer-like value, if it is holding a value
