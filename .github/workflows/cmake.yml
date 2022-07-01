@@ -27,6 +27,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - if: matrix.clang == env.TARGET_CLANG && matrix.llvm == env.TARGET_LLVM
+        name: Add LLVM Repo
+        run: |
+          sudo add-apt-repository 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-${{ env.TARGET_LLVM }} main'
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+          sudo apt update
+
       - if: matrix.clang == 15 || matrix.llvm == 15
         name: Add LLVM Repo
         run: |
@@ -35,11 +42,15 @@ jobs:
           sudo apt update
 
       - if: matrix.llvm == 15
-        name: Install LLVM
+        name: Install LLVM 15
         run: sudo apt install llvm-15
 
+      - if: matrix.clang == env.TARGET_CLANG && matrix.llvm == env.TARGET_LLVM
+        name: Install LLVM (tools)
+        run: sudo apt install llvm-${{ env.TARGET_LLVM }}
+
       - if: matrix.clang == 15
-        name: Install Clang
+        name: Install Clang 15
         run: sudo apt install clang-15
 
       - name: Install Catch2
