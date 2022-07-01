@@ -1,10 +1,6 @@
 name: CMake
 
-on:
-  push:
-    branches: [cpp]
-  pull_request:
-    branches: [cpp]
+on: push
 
 env:
   BUILD_TYPE: Debug
@@ -78,4 +74,3 @@ jobs:
         with:
           name: coverage
           path: ./cov
-
