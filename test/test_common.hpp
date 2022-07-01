@@ -74,7 +74,7 @@ namespace Catch {
   requires std::derived_from<T, yume::ast::AST>
   struct StringMaker<T> {
     static auto convert(const T& token) -> std::string {
-      std::string str = "(";
+      std::string str;
       llvm::raw_string_ostream ss(str);
       yume::diagnostic::PrintVisitor visitor(ss);
       visitor.visit(token, nullptr);
