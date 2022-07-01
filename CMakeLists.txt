@@ -48,7 +48,7 @@ find_package(LLVM ${YUME_FORCE_LLVM_VERSION} REQUIRED CONFIG)
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 
-target_include_directories(yume PUBLIC ${LLVM_INCLUDE_DIRS})
+target_include_directories(yume SYSTEM PUBLIC ${LLVM_INCLUDE_DIRS})
 target_link_directories(yume PUBLIC ${LLVM_LIBRARY_DIRS})
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
 target_compile_definitions(yume PUBLIC ${LLVM_DEFINITIONS_LIST})
