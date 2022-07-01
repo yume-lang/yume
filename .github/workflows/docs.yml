@@ -5,6 +5,8 @@ on:
     workflows: ["CMake"]
     types:
       - completed
+    branches:
+      - 'cpp'
 
 permissions:
   contents: write
