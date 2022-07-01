@@ -162,7 +162,8 @@ struct Parser {
 
   /// Consume all subsequent `Separator` tokens. Throws if none were found.
   void require_separator(const source_location location = source_location::current()) {
-    expect(Separator, location);
+    if (!tokens.at_end())
+      expect(Separator, location);
     ignore_separator(location);
   }
 
