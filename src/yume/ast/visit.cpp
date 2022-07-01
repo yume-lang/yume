@@ -2,7 +2,7 @@
 
 #include "compatibility.hpp"
 #include "util.hpp"
-#include "visitor.hpp"
+#include "visitor/visitor.hpp"
 #include <memory>
 #include <string>
 #include <utility>

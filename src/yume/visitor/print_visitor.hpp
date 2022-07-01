@@ -34,4 +34,47 @@ public:
 
   auto visit(const string& str, const char* label) -> PrintVisitor& override;
 };
+
+inline void PrintVisitor::header(const char* label) {
+  if (m_needs_sep)
+    m_stream << " ";
+  else
+    m_needs_sep = true;
+
+  if (label != nullptr)
+    m_stream << label << "=";
+}
+
+inline auto PrintVisitor::visit(const ast::AST& expr, const char* label) -> PrintVisitor& {
+  header(label);
+
+  m_stream.changeColor(llvm::raw_ostream::SAVEDCOLOR, true) << expr.kind_name();
+  m_stream.resetColor();
+  m_stream << "(";
+  m_needs_sep = false;
+
+  expr.visit(*this);
+  m_stream << ")";
+
+  return *this;
+}
+
+inline auto PrintVisitor::visit(const string& str, const char* label) -> PrintVisitor& {
+  header(label);
+
+  m_stream << '\"';
+  m_stream.write_escaped(str);
+  m_stream << '\"';
+
+  return *this;
+}
+
+inline auto PrintVisitor::visit(std::nullptr_t, const char* label) -> PrintVisitor& {
+  header(label);
+
+  m_stream.changeColor(llvm::raw_ostream::RED) << "null";
+  m_stream.resetColor();
+
+  return *this;
+}
 } // namespace yume::diagnostic
