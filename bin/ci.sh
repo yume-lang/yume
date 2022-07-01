@@ -21,5 +21,5 @@ case $1 in
 
   "coverage" )
     llvm-profdata-13 merge -sparse default.profraw -o default.profdata
-    llvm-cov-13 show build/yume_test -instr-profile default.profdata -Xdemangler c++filt -Xdemangler -i -format html -output-dir cov -ignore-filename-regex '/test/.*'
+    llvm-cov-13 show ./yume_test -instr-profile default.profdata -Xdemangler c++filt -Xdemangler -i -format html -output-dir cov -ignore-filename-regex '/(test|usr)/.*'
 esac

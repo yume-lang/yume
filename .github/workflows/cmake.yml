@@ -52,14 +52,14 @@ jobs:
         run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
       - name: Unit Test
-        run: ${{github.workspace}}/build/yume_test
+        run: cd ${{github.workspace}}/build && ./yume_test
 
       - if: matrix.clang == env.TARGET_CLANG && matrix.llvm == env.TARGET_LLVM
         name: Coverage
         run: ${{github.workspace}}/bin/ci.sh coverage
 
       - name: Example Test
-        run: ${{github.workspace}}/bin/ci.sh examples
+        run: cd ${{github.workspace}} && ${{github.workspace}}/bin/ci.sh examples
 
       - name: Test bf.ym (alt)
         run: build/yumec example/bf.ym && ./yume.out '>++[<+++++++++++++>-]<[[>+>+<<-]>[<+>-]++++++++[>++++++++<-]>.[-]<<>++++++++++[>++++++++++[>++++++++++[>++++++++++[>++++++++++[>++++++++++[>++++++++++[-]<-]<-]<-]<-]<-]<-]<-]++++++++++.'
@@ -73,4 +73,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: coverage
-          path: ./cov
+          path: ./build/cov
