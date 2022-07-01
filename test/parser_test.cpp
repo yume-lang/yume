@@ -2,6 +2,7 @@
 #include "ast/ast.hpp"
 #include "token.hpp"
 #include "util.hpp"
+#include "visitor/hash_visitor.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <iterator>
 
@@ -34,21 +35,19 @@ auto operator""_Char(char chr) { return ast<CharExpr>(chr); }
 
 constexpr auto ast_comparison = [](const yume::ast::Program& a,
                                    const std::vector<std::unique_ptr<yume::ast::AST>>& b) -> bool {
-  std::string expected_str;                     // HACK
-  std::string actual_str;                       // HACK
-  {                                             // HACK
-    llvm::raw_string_ostream ss(expected_str);  // HACK
-    yume::diagnostic::PrintVisitor visitor(ss); // HACK
-    for (const auto& i : a.body())              // HACK
-      visitor.visit(i, nullptr);                // HACK
-  }                                             // HACK
-  {                                             // HACK
-    llvm::raw_string_ostream ss(actual_str);    // HACK
-    yume::diagnostic::PrintVisitor visitor(ss); // HACK
-    for (const auto& i : b)                     // HACK
-      visitor.visit(*i, nullptr);               // HACK
-  }                                             // HACK
-  return expected_str == actual_str;            // HACK
+  uint64_t expected_seed = 0;
+  uint64_t actual_seed = 0;
+  {
+    yume::diagnostic::HashVisitor visitor(expected_seed);
+    for (const auto& i : a.body())
+      visitor.visit(i, nullptr);
+  }
+  {
+    yume::diagnostic::HashVisitor visitor(actual_seed);
+    for (const auto& i : b)
+      visitor.visit(*i, nullptr);
+  }
+  return expected_seed == actual_seed;
 };
 
 constexpr auto deref = [](const auto& ptr_range) { return yume::dereference_view(ptr_range); };
