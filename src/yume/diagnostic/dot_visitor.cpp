@@ -75,7 +75,7 @@ void DotVisitor::DotNode::write(llvm::raw_ostream& stream) const {
   }
 }
 
-auto DotVisitor::visit(ast::AST& expr, const char* label) -> DotVisitor& {
+auto DotVisitor::visit(const ast::AST& expr, const char* label) -> DotVisitor& {
   Loc location = expr.location();
   optional<string> type = {};
   if (const auto* val_ty = expr.val_ty(); val_ty != nullptr) {
