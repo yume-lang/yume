@@ -12,6 +12,7 @@
 *.exe
 *.out
 *.app
+output.*
 
 # CMake
 CMakeLists.txt.user

@@ -2,7 +2,7 @@
 
 An experiment in programming language design. Not meant to be used seriously!
 
-Check out the `example/` directory to see what the language looks like. ~~All examples *should* compile!~~ (Currently undergoing refactoring)
+Check out the `example/` directory to see what the language looks like. All examples *should* compile, except for those in the `unimplemented` directory
 
 ## Usage
 
@@ -10,11 +10,9 @@ The Yume compiler is written in C++20 and built using CMake. Requires libllvm an
 Only tested with libllvm 13 & 14 and Clang 13 & 14.
 
 ```sh
-mkdir build
-cd build
-cmake .. && make
+cmake -B build && cmake --build build
 # Then try an example!
-./yumec ../example/collatz.ym
+build/yumec example/collatz.ym
 ```
 
 Yume compiles to LLVM statically. The compiler outputs the resulting linked binary as `yume.out`.
