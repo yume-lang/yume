@@ -35,70 +35,72 @@ template <bool FilterSkip> auto tkn(const std::string& str) -> std::vector<Token
 }
 } // namespace
 
-#define CHECK_TOKENIZER_GEN(m, body, ...) CHECK_THAT(tkn m(body), EqualsTokens(__VA_ARGS__))
-#define CHECK_TOKENIZER(...) CHECK_TOKENIZER_GEN(<1>, __VA_ARGS__)
-#define CHECK_TOKENIZER_PRESERVED(...) CHECK_TOKENIZER_GEN(<0>, __VA_ARGS__)
+#define CHECK_TOKENIZER(body, ...) CHECK_THAT(tkn<true>(body), EqualsTokens(__VA_ARGS__))
+#define CHECK_TOKENIZER_THROWS(body) CHECK_THROWS(tkn<true>(body))
+#define CHECK_TOKENIZER_PRESERVED(body, ...) CHECK_THAT(tkn<false>(body), EqualsTokens(__VA_ARGS__))
 
-TEST_CASE("Tokenization", "[token]") {
-  using enum yume::Token::Type;
+using enum yume::Token::Type;
 
-  SECTION("Whitespace") {
-    CHECK_TOKENIZER("");
+TEST_CASE("Tokenize whitespace", "[token]") {
+  CHECK_TOKENIZER("");
 
-    CHECK_TOKENIZER(" ");
-    CHECK_TOKENIZER_PRESERVED(" ", " "_Skip);
+  CHECK_TOKENIZER(" ");
+  CHECK_TOKENIZER_PRESERVED(" ", " "_Skip);
 
-    CHECK_TOKENIZER("\n", "\n"_Separator);
-  }
-
-  SECTION("Literals") {
-    CHECK_TOKENIZER("hello", "hello"_Word);
-    CHECK_TOKENIZER("true", "true"_Word);
-    CHECK_TOKENIZER("false", "false"_Word);
-
-    CHECK_TOKENIZER("a b", "a"_Word, "b"_Word);
-    CHECK_TOKENIZER_PRESERVED("a b", "a"_Word, " "_Skip, "b"_Word);
-    CHECK_TOKENIZER("a\nb", "a"_Word, "\n"_Separator, "b"_Word);
-    CHECK_TOKENIZER("a\n  b", "a"_Word, "\n"_Separator, "b"_Word);
-  }
-
-  SECTION("Comments") {
-    CHECK_TOKENIZER("# goodbye");
-    CHECK_TOKENIZER("# goodbye\n", "\n"_Separator);
-    CHECK_TOKENIZER("# goodbye\na", "\n"_Separator, "a"_Word);
-    CHECK_TOKENIZER_PRESERVED("# goodbye", "# goodbye"_Skip);
-    CHECK_TOKENIZER_PRESERVED("# goodbye\n", "# goodbye"_Skip, "\n"_Separator);
-    CHECK_TOKENIZER_PRESERVED("# goodbye\na", "# goodbye"_Skip, "\n"_Separator, "a"_Word);
-  }
-
-  SECTION("Numbers") {
-    CHECK_TOKENIZER("0", "0"_Number);
-    CHECK_TOKENIZER("123", "123"_Number);
-  }
-
-  SECTION("Characters") {
-    CHECK_TOKENIZER("?a", "a"_Char);
-    CHECK_TOKENIZER("??", "?"_Char);
-    CHECK_TOKENIZER("?\\0", "\0"_Char);
-    CHECK_TOKENIZER("?\\\\", "\\"_Char);
-  }
-
-  SECTION("String literals") {
-    CHECK_TOKENIZER(R"("hi")", R"(hi)"_Literal);
-    CHECK_TOKENIZER(R"("h\"i")", R"(h"i)"_Literal);
-    CHECK_TOKENIZER(R"("h\\i")", R"(h\i)"_Literal);
-  }
-
-  SECTION("Operators/symbols") {
-    for (std::string i :
-         {"=", "<", ">", "+", "-", "*", "/", "//", "(", ")", "==", "!=", "!", ",", ".", ":", "%", "[", "]"}) {
-      CHECK_TOKENIZER(i, Token(Symbol, make_atom(i)));
-    }
-
-    CHECK_TOKENIZER("[]", "["_Symbol, "]"_Symbol);
-  }
+  CHECK_TOKENIZER("\n", "\n"_Separator);
 }
 
-#undef CHECK_TOKENIZER_GEN
+TEST_CASE("Tokenize literals", "[token]") {
+  CHECK_TOKENIZER("hello", "hello"_Word);
+  CHECK_TOKENIZER("true", "true"_Word);
+  CHECK_TOKENIZER("false", "false"_Word);
+
+  CHECK_TOKENIZER("a b", "a"_Word, "b"_Word);
+  CHECK_TOKENIZER_PRESERVED("a b", "a"_Word, " "_Skip, "b"_Word);
+  CHECK_TOKENIZER("a\nb", "a"_Word, "\n"_Separator, "b"_Word);
+  CHECK_TOKENIZER("a\n  b", "a"_Word, "\n"_Separator, "b"_Word);
+}
+
+TEST_CASE("Tokenize comments", "[token]") {
+  CHECK_TOKENIZER("# goodbye");
+  CHECK_TOKENIZER("# goodbye\n", "\n"_Separator);
+  CHECK_TOKENIZER("# goodbye\na", "\n"_Separator, "a"_Word);
+  CHECK_TOKENIZER_PRESERVED("# goodbye", "# goodbye"_Skip);
+  CHECK_TOKENIZER_PRESERVED("# goodbye\n", "# goodbye"_Skip, "\n"_Separator);
+  CHECK_TOKENIZER_PRESERVED("# goodbye\na", "# goodbye"_Skip, "\n"_Separator, "a"_Word);
+}
+
+TEST_CASE("Tokenize numbers", "[token]") {
+  CHECK_TOKENIZER("0", "0"_Number);
+  CHECK_TOKENIZER("123", "123"_Number);
+}
+
+TEST_CASE("Tokenize characters", "[token]") {
+  CHECK_TOKENIZER("?a", "a"_Char);
+  CHECK_TOKENIZER("??", "?"_Char);
+  CHECK_TOKENIZER("?\\0", "\0"_Char);
+  CHECK_TOKENIZER("?\\\\", "\\"_Char);
+}
+
+TEST_CASE("Tokenize string literals", "[token]") {
+  CHECK_TOKENIZER(R"("hi")", R"(hi)"_Literal);
+  CHECK_TOKENIZER(R"("h\"i")", R"(h"i)"_Literal);
+  CHECK_TOKENIZER(R"("h\ni")", "h\ni"_Literal);
+  CHECK_TOKENIZER(R"("h\\i")", R"(h\i)"_Literal);
+  CHECK_TOKENIZER(R"("foo" "bar")", "foo"_Literal, "bar"_Literal);
+}
+
+TEST_CASE("Tokenize operators/symbols", "[token]") {
+  for (std::string i :
+       {"=", "<", ">", "+", "-", "*", "/", "//", "(", ")", "==", "!=", "!", ",", ".", ":", "%", "[", "]"}) {
+    CHECK_TOKENIZER(i, Token(Symbol, make_atom(i)));
+  }
+
+  CHECK_TOKENIZER("[]", "["_Symbol, "]"_Symbol);
+}
+
+TEST_CASE("Tokenize invalid tokens", "[token][throws]") { CHECK_TOKENIZER_THROWS("`"); }
+
 #undef CHECK_TOKENIZER
+#undef CHECK_TOKENIZER_THROWS
 #undef CHECK_TOKENIZER_PRESERVED
