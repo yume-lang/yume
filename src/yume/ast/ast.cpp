@@ -76,7 +76,6 @@ struct TokenRange {
   span<Token> m_span;
 
   constexpr TokenRange(auto&& begin, int end) : m_span{begin.base(), static_cast<size_t>(end)} {}
-  constexpr TokenRange(auto&& begin, TokenIterator& end) : m_span{begin.base(), end.begin().base()} {}
   constexpr TokenRange(auto&& begin, auto&& end) : m_span{begin.base(), end.base()} {}
 
   operator span<Token>() const { return m_span; }
@@ -103,10 +102,6 @@ struct Parser {
 
   template <typename T, typename... Args> auto make_ast(const VectorTokenIterator& entry, Args&&... args) {
     return T(span<Token>{entry.base(), tokens.begin().base()}, std::forward<Args>(args)...);
-  }
-
-  template <typename T, typename... Args> auto make_ast(TokenRange&& range, Args&&... args) {
-    return T(static_cast<span<Token>>(range), std::forward<Args>(args)...);
   }
 
   constexpr static auto Symbol = Token::Type::Symbol;

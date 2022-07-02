@@ -289,11 +289,11 @@ template <> void TypeWalker::statement(ast::WhileStmt& stat) {
 void TypeWalker::body_statement(ast::Stmt& stat) {
   const ASTStackTrace guard("Semantic: "s + stat.kind_name() + " statement", stat);
   return CRTPWalker::body_statement(stat);
-};
+}
 void TypeWalker::body_expression(ast::Expr& expr) {
   const ASTStackTrace guard("Semantic: "s + expr.kind_name() + " expression", expr);
   return CRTPWalker::body_expression(expr);
-};
+}
 
 auto TypeWalker::convert_type(const ast::Type& ast_type) -> const ty::Type& {
   const ty::Type* parent = m_current_fn == nullptr ? m_current_struct : m_current_fn->parent();
@@ -318,5 +318,5 @@ auto TypeWalker::convert_type(const ast::Type& ast_type) -> const ty::Type& {
   }
 
   throw std::runtime_error("Cannot convert AST type to actual type!");
-};
+}
 } // namespace yume::semantic

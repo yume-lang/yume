@@ -57,7 +57,12 @@ message(STATUS "Using LLVM include: ${LLVM_INCLUDE_DIRS}")
 message(STATUS "Using LLVM library: ${LLVM_LIBRARY_DIRS}")
 message(STATUS "Using LLVM tool dir: ${LLVM_TOOLS_BINARY_DIR}")
 
-target_compile_options(yume PUBLIC -W -Wall -Wimplicit-fallthrough)
+target_compile_options(yume PUBLIC -Wno-error -W -Wall -Wimplicit-fallthrough -Wpedantic -Wno-gnu-zero-variadic-macro-arguments)
+include(CheckCXXCompilerFlag)
+check_cxx_compiler_flag(-Wunused_template SUPPORTS_W_UNUSED_TEMPLATE)
+if(SUPPORTS_W_UNUSED_TEMPLATE)
+  target_compiler_options(yume PUBLIC -Wunused-template)
+endif()
 
 if(YUME_FORCE_LIBCXX)
   target_compile_options(yume PUBLIC -stdlib=libc++)

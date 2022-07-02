@@ -195,7 +195,7 @@ auto Compiler::default_init(const ty::Type& type) -> Val {
   }
 
   throw std::runtime_error("Cannot default-initialize "s + type.name());
-};
+}
 
 auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
   if (fn.m_llvm_fn != nullptr)
@@ -811,7 +811,7 @@ auto Compiler::known_type(const string& str) -> ty::Type& { return *m_types.know
 void Compiler::body_statement(const ast::Stmt& stat) {
   const ASTStackTrace guard("Codegen: "s + stat.kind_name() + " statement", stat);
   return CRTPWalker::body_statement(stat);
-};
+}
 
 // TODO: once implicit conversion checking is added in the remaining locations (i.e. field assignment and return)
 // there is no real reason to keep the `mut` parameter on all expression compilation methods. All the mutability
@@ -819,5 +819,5 @@ void Compiler::body_statement(const ast::Stmt& stat) {
 auto Compiler::body_expression(const ast::Expr& expr, bool mut) -> Val {
   const ASTStackTrace guard("Codegen: "s + expr.kind_name() + " expression", expr);
   return CRTPWalker::body_expression(expr, mut);
-};
+}
 } // namespace yume

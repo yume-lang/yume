@@ -1,10 +1,10 @@
 #include "ast/ast.hpp"
 #include "compiler/compiler.hpp"
 #include "compiler/vals.hpp"
-#include "visitor/dot_visitor.hpp"
 #include "diagnostic/errors.hpp"
 #include "token.hpp"
 #include "util.hpp"
+#include "visitor/dot_visitor.hpp"
 #include <algorithm>
 #include <cstdlib>
 #include <exception>
