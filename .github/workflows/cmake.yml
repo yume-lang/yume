@@ -19,6 +19,7 @@ jobs:
     env:
       CC: clang-${{ matrix.clang }}
       CXX: clang++-${{ matrix.clang }}
+      LLVM_SYMBOLIZER_PATH: llvm-symbolizer-${{ matrix.llvm }}
 
     steps:
       - uses: actions/checkout@v3
