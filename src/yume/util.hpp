@@ -29,8 +29,8 @@ constexpr bool ENABLE_ASSERT = true;
 #endif
 
 template <typename T>
-inline void yume_assert(T&& assertion, const std::string_view log_msg = {},
-                        const source_location location = source_location::current()) noexcept {
+constexpr inline void yume_assert(T&& assertion, const std::string_view log_msg = {},
+                                  const source_location location = source_location::current()) noexcept {
   if constexpr (ENABLE_ASSERT)
     if (!assertion) {
       llvm::errs() << "*** assertion failed: " << at(location) << " " << log_msg << '\n';
