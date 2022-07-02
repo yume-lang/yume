@@ -46,6 +46,7 @@ class DotVisitor : public Visitor {
   llvm::raw_ostream& m_stream;
   int m_index{};
   DotNode* m_parent{};
+  std::unique_ptr<DotNode> m_root{};
 
   auto add_node(const string& content, const char* label) -> DotNode&;
   auto add_node(DotNode&& node, const char* label) -> DotNode&;

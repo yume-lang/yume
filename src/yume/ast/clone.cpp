@@ -24,15 +24,21 @@ template <typename T> static auto dup(const vector<unique_ptr<T>>& items) {
 template <typename T> static auto dup(const vector<T>& items) {
   auto dup = vector<T>();
   dup.reserve(items.size());
-  for (auto& i : items)
-    dup.push_back(std::move(*i.clone()));
+  for (auto& i : items) {
+    auto* cloned = i.clone();
+    dup.push_back(std::move(*cloned));
+    delete cloned; // Need to free the cloned object even though it was moved from
+  }
 
   return dup;
 }
 
 template <typename T> static auto dup(const unique_ptr<T>& ptr) { return unique_ptr<T>(ptr->clone()); }
 
-template <typename T> static auto dup(const T& ast) -> decltype(auto) { return std::move(*ast.clone()); }
+template <typename T> static auto dup(const T& ast) -> T {
+  auto cloned = unique_ptr<T>(ast.clone());
+  return std::move(*cloned);
+}
 
 template <typename T> static auto dup(const optional<T>& opt) {
   return opt.has_value() ? optional<T>{dup(opt.value())} : optional<T>{};

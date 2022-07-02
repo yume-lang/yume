@@ -35,9 +35,10 @@ auto DotVisitor::add_node(const string& content, const char* label) -> DotNode& 
 auto DotVisitor::add_node(DotNode&& node, const char* label) -> DotNode& {
   m_index++;
   if (m_parent == nullptr) {
-    return node;
+    m_root = std::make_unique<DotNode>(node);
+    return *m_root;
   }
-  return m_parent->children.emplace_back(opt_str(label), std::move(node)).child;
+  return m_parent->children.emplace_back(opt_str(label), node).child;
 }
 
 void DotVisitor::DotNode::write(llvm::raw_ostream& stream) const {
@@ -93,6 +94,7 @@ auto DotVisitor::visit(const ast::AST& expr, const char* label) -> DotVisitor& {
   // This node had no parent, which means its a root node.
   if (restore_parent == nullptr) {
     node.write(m_stream);
+    m_root.reset();
   }
 
   return *this;
