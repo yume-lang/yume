@@ -57,7 +57,7 @@ message(STATUS "Using LLVM include: ${LLVM_INCLUDE_DIRS}")
 message(STATUS "Using LLVM library: ${LLVM_LIBRARY_DIRS}")
 message(STATUS "Using LLVM tool dir: ${LLVM_TOOLS_BINARY_DIR}")
 
-target_compile_options(yume PUBLIC -W -Wall)
+target_compile_options(yume PUBLIC -W -Wall -Wimplicit-fallthrough)
 
 if(YUME_FORCE_LIBCXX)
   target_compile_options(yume PUBLIC -stdlib=libc++)

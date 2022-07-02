@@ -168,18 +168,19 @@ auto Compiler::llvm_type(const ty::Type& type) -> llvm::Type* {
 auto Compiler::default_init(const ty::Type& type) -> Val {
   if (const auto* int_type = dyn_cast<ty::Int>(&type))
     return m_builder->getIntN(int_type->size(), 0);
-  if (const auto* qual_type = dyn_cast<ty::Qual>(&type))
+  if (isa<ty::Qual>(&type))
     throw std::runtime_error("Cannot default-initialize a reference");
   if (const auto* ptr_type = dyn_cast<ty::Ptr>(&type)) {
     switch (ptr_type->qualifier()) {
-    case Qualifier::Ptr: llvm::ConstantPointerNull::get(llvm::PointerType::getUnqual(llvm_type(ptr_type->base())));
-    case Qualifier::Slice: {
+    default: llvm_unreachable("Ptr type cannot hold this qualifier");
+    case Qualifier::Ptr:
+      llvm::ConstantPointerNull::get(llvm::PointerType::getUnqual(llvm_type(ptr_type->base())));
+      break;
+    case Qualifier::Slice:
       auto* ptr_member_type = llvm::PointerType::getUnqual(llvm_type(ptr_type->base()));
       auto* struct_type = cast<llvm::StructType>(llvm_type(type));
       return llvm::ConstantStruct::get(struct_type, llvm::ConstantPointerNull::get(ptr_member_type),
                                        m_builder->getInt64(0));
-    }
-    default: llvm_unreachable("Ptr type cannot hold this qualifier");
     }
   }
   if (const auto* struct_type = dyn_cast<ty::Struct>(&type)) {
