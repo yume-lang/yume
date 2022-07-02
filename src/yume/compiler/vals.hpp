@@ -5,7 +5,6 @@
 #include "util.hpp"
 #include <compare>
 #include <iosfwd>
-#include <llvm/Support/raw_ostream.h>
 #include <map>
 #include <memory>
 #include <string>

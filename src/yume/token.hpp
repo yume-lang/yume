@@ -2,7 +2,6 @@
 
 #include "util.hpp"
 #include <algorithm>
-#include <cassert>
 #include <optional>
 #include <sstream>
 #include <string>
@@ -37,7 +36,7 @@ struct Loc {
   /// The new location will have the beginning line and column of whichever location has a beginning earlier in the
   /// file, and an ending line and column of whichever location has an ending later in the file.
   constexpr auto operator+(const Loc& other) const noexcept -> Loc {
-    assert(other.file == file); // NOLINT
+    yume_assert(other.file == file, "Cannot add locations in different files");
     auto [min_begin_line, min_begin_col] =
         std::min(std::pair{begin_line, begin_col}, std::pair{other.begin_line, other.begin_col});
     auto [max_end_line, max_end_col] = std::max(std::pair{end_line, end_col}, std::pair{other.end_line, other.end_col});

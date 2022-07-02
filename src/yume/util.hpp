@@ -1,5 +1,6 @@
 #pragma once
 
+#include "diagnostic/source_location.hpp"
 #include <cstddef>
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/raw_ostream.h>
@@ -20,6 +21,22 @@ using std::string;
 using std::unique_ptr;
 using std::variant;
 using std::vector;
+
+#ifdef NDEBUG
+constexpr bool ENABLE_ASSERT = false;
+#else
+constexpr bool ENABLE_ASSERT = true;
+#endif
+
+template <typename T>
+inline void yume_assert(T&& assertion, const std::string_view log_msg = {},
+                        const source_location location = source_location::current()) noexcept {
+  if constexpr (ENABLE_ASSERT)
+    if (!assertion) {
+      llvm::errs() << "*** assertion failed: " << at(location) << " " << log_msg << '\n';
+      std::abort();
+    }
+}
 
 template <class T>
 concept pointer_like = requires(T t) {

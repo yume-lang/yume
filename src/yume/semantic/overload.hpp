@@ -10,6 +10,9 @@ class CallExpr;
 namespace yume::ty {
 class Type;
 }
+namespace llvm {
+class raw_ostream;
+}
 
 namespace yume::semantic {
 

@@ -15,7 +15,6 @@
 #include <llvm/ADT/StringMapEntry.h>
 #include <llvm/ADT/iterator.h>
 #include <llvm/Support/Casting.h>
-#include <llvm/Support/raw_ostream.h>
 #include <memory>
 #include <optional>
 #include <stdexcept>
@@ -206,7 +205,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
 
   for (auto [target, expr_arg, compat] :
        llvm::zip(selected->ast().args(), expr.direct_args(), best_overload.compatibilities)) {
-    assert(compat.valid && "Invalid compatibility after overload already selected?????"); // NOLINT
+    yume_assert(compat.valid, "Invalid compatibility after overload already selected?????");
     if (compat.conv.empty())
       continue;
 

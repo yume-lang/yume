@@ -576,9 +576,9 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
     return base_value;
   }
   if (const auto* int_type = dyn_cast<ty::Int>(&type.without_qual())) {
-    assert(expr.args().size() == 1); // NOLINT
+    yume_assert(expr.args().size() == 1, "Numeric cast can only contain a single argument");
     auto& cast_from = expr.args()[0];
-    assert(isa<ty::Int>(cast_from.val_ty()->without_qual())); // NOLINT
+    yume_assert(isa<ty::Int>(cast_from.val_ty()->without_qual()), "Numeric cast must convert from int");
     auto base = body_expression(cast_from);
     if (cast<ty::Int>(cast_from.val_ty()->without_qual()).is_signed()) {
       return m_builder->CreateSExtOrTrunc(base, llvm_type(*int_type));
@@ -587,9 +587,9 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
   }
   if (const auto* slice_type = dyn_cast<ty::Ptr>(&type.without_qual());
       slice_type != nullptr && slice_type->has_qualifier(Qualifier::Slice)) {
-    assert(expr.args().size() == 1); // NOLINT
+    yume_assert(expr.args().size() == 1, "Slice constructor can only contain a single argument");
     auto& slice_size_expr = expr.args()[0];
-    assert(isa<ty::Int>(slice_size_expr.val_ty()->without_qual())); // NOLINT
+    yume_assert(isa<ty::Int>(slice_size_expr.val_ty()->without_qual()), "Slice constructor must convert from int");
     auto slice_size = body_expression(slice_size_expr);
 
     auto* llvm_slice_type = llvm_type(*slice_type);
@@ -735,7 +735,7 @@ template <> auto Compiler::expression(const ast::ImplicitCastExpr& expr, bool mu
   }
 
   if (expr.conversion().dereference) {
-    assert(current_ty->is_mut() && "Source type must be mutable when implicitly derefencing"); // NOLINT
+    yume_assert(current_ty->is_mut(), "Source type must be mutable when implicitly derefencing");
     current_ty = current_ty->qual_base();
     base = m_builder->CreateLoad(llvm_type(*current_ty), base, "ic.deref");
   }
@@ -799,7 +799,7 @@ auto Compiler::mangle_name(const ty::Type& ast_type, const Fn& parent) -> string
   }
   if (const auto* generic_type = dyn_cast<ty::Generic>(&ast_type)) {
     auto match = parent.m_subs.find(generic_type->name());
-    assert(match != parent.m_subs.end()); // NOLINT
+    yume_assert(match != parent.m_subs.end(), "Cannot mangle unsubstituted generic");
     return match->second->name();
   }
   return ast_type.name();

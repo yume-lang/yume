@@ -41,7 +41,7 @@ auto Type::known_qual(Qualifier qual) const -> const Type& {
 }
 
 auto Type::determine_generic_substitution(const Type& generic, Sub sub) const -> Sub {
-  assert(generic.is_generic() && "Cannot substitute generics in a non-generic type"); // NOLINT
+  yume_assert(generic.is_generic(), "Cannot substitute generics in a non-generic type");
 
   // `Foo ptr` -> `T ptr`, with `T = Foo`.
   if (auto this_ptr_base = ptr_base(), gen_ptr_base = generic.ptr_base();
@@ -111,9 +111,9 @@ auto Type::is_generic() const -> bool {
 }
 
 auto Type::apply_generic_substitution(Sub sub) const -> const Type* {
-  assert(is_generic() && "Can't perform generic substitution without a generic type"); // NOLINT
-  assert(sub.target != nullptr && sub.replace != nullptr &&                            // NOLINT
-         "Can't perform generic substitution without anything to substitute");
+  yume_assert(is_generic(), "Can't perform generic substitution without a generic type");
+  yume_assert(sub.target != nullptr && sub.replace != nullptr,
+              "Can't perform generic substitution without anything to substitute");
   if (llvm::isa<Generic>(*this))
     return sub.replace;
 
