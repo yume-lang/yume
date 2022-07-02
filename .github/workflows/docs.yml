@@ -20,6 +20,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Download coverage
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: ${{ github.event.workflow_run.workflow_id }}
+          workflow_conclusion: success
+          path: docs/html/coverage
+          name: coverage
+
       - name: Doxygen
         uses: mattnotmitt/doxygen-action@v1.9.4
         with:
