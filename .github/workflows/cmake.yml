@@ -9,13 +9,14 @@ env:
 
 jobs:
   build:
+    name: "Build clang ${{ matrix.clang }}, llvm ${{ matrix.llvm }}"
+    runs-on: ubuntu-22.04
+
     strategy:
       fail-fast: false
       matrix:
         clang: [13, 14] #, 15]
         llvm: [13, 14, 15]
-    runs-on: ubuntu-22.04
-    name: "Build clang ${{ matrix.clang }}, llvm ${{ matrix.llvm }}"
     env:
       CC: clang-${{ matrix.clang }}
       CXX: clang++-${{ matrix.clang }}
@@ -53,14 +54,21 @@ jobs:
         run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
       - name: Unit Test
-        run: cd ${{github.workspace}}/build && ./yume_test
+        run: bin/ci.sh test
+
+      - name: Publish Test Results
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: "tests-${{ matrix.clang }}-${{ matrix.llvm }}"
+          path: "build/junit.xml"
 
       - if: matrix.clang == env.TARGET_CLANG && matrix.llvm == env.TARGET_LLVM
         name: Coverage
         run: cd ${{github.workspace}}/build && ${{github.workspace}}/bin/ci.sh coverage
 
       - name: Example Test
-        run: ${{github.workspace}}/bin/ci.sh examples
+        run: bin/ci.sh examples
 
       - name: Test bf.ym (alt)
         run: build/yumec example/bf.ym && ./yume.out '>++[<+++++++++++++>-]<[[>+>+<<-]>[<+>-]++++++++[>++++++++<-]>.[-]<<>++++++++++[>++++++++++[>++++++++++[>++++++++++[>++++++++++[>++++++++++[>++++++++++[-]<-]<-]<-]<-]<-]<-]<-]++++++++++.'
