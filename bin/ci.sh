@@ -15,7 +15,7 @@ case $1 in
 
   "test" )
     cd "${BUILD_DIR}" || exit
-    ./yume_test -r junit::out=junit.xml -r console;;
+    ./yume_test -r junit::out=junit.xml -r console '~[!shouldfail]';;
 
   "coverage" )
     cd "${BUILD_DIR}" || exit
