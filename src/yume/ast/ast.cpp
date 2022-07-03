@@ -199,6 +199,9 @@ struct Parser {
   [[nodiscard]] auto try_peek(int ahead, Token::Type token_type, Atom payload,
                               [[maybe_unused]] const source_location location = source_location::current()) const
       -> bool {
+    if (tokens.at_end())
+      return false;
+
     auto token = tokens + ahead;
 
 #ifdef YUME_SPEW_CONSUMED_TOKENS
@@ -213,6 +216,8 @@ struct Parser {
   [[nodiscard]] auto try_peek(int ahead, Token::Type token_type,
                               [[maybe_unused]] const source_location location = source_location::current()) const
       -> bool {
+    if (tokens.at_end())
+      return false;
     auto token = tokens + ahead;
 
 #ifdef YUME_SPEW_CONSUMED_TOKENS
@@ -543,6 +548,15 @@ struct Parser {
           consume_with_commas_until(Symbol, SYM_RBRACKET, [&] { slice_members.push_back(parse_expr()); });
           return ast_ptr<SliceExpr>(entry, move(type), move(slice_members));
         }
+
+        if (auto* qual_type = llvm::dyn_cast<QualType>(type.get());
+            qual_type != nullptr && qual_type->qualifier() == Qualifier::Slice) {
+          // This isn't a slice type, it's an empty slice literal!
+          // i.e. `I32[]` should be parsed as `I32[...]` (where the ... is just empty)
+          auto slice_members = vector<unique_ptr<Expr>>{};
+          return ast_ptr<SliceExpr>(entry, std::move(qual_type->direct_base()), move(slice_members));
+        }
+
         throw std::runtime_error("Couldn't make an expression from here with a type");
       }
       auto name = consume_word();

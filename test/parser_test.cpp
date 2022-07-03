@@ -181,10 +181,6 @@ TEST_CASE("Parse constructor calling", "[parse]") {
 
 TEST_CASE("Parse slice literal", "[parse]") {
   CHECK_PARSER("I32[1, 2, 3]", make_call<SliceExpr>("I32"_Type, 1_Num, 2_Num, 3_Num));
-}
-
-// TODO:
-TEST_CASE("Parse empty slice literal", "[!shouldfail][parse]") {
   CHECK_PARSER("I32[]", make_call<SliceExpr>("I32"_Type));
 }
 

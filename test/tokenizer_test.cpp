@@ -121,7 +121,7 @@ TEST_CASE("Tokenize invalid tokens", "[token][throws]") { CHECK_TOKENIZER_THROWS
 
 TEST_CASE("Tokenize empty char", "[token][throws]") { CHECK_TOKENIZER_THROWS("?"); }
 
-TEST_CASE("Tokenize incomplete string", "[token][throws][help]") {
+TEST_CASE("Tokenize incomplete string", "[token][throws]") {
   CHECK_TOKENIZER_THROWS(R"("who stole the closing quote)");
 }
 

@@ -294,7 +294,8 @@ public:
   }
 
   [[nodiscard]] constexpr auto qualifier() const -> Qualifier { return m_qualifier; }
-  [[nodiscard]] auto base() const -> auto& { return *m_base; }
+  [[nodiscard]] auto base() const -> const auto& { return *m_base; }
+  [[nodiscard]] auto direct_base() -> auto& { return m_base; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_QualType; }
   [[nodiscard]] auto clone() const -> QualType* override;
 };
