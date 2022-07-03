@@ -102,6 +102,10 @@ template <typename... Ts> auto EqualsAST(Ts&&... ts) {
 }
 } // namespace
 
+namespace yume::ast {
+auto operator&(std::unique_ptr<Type> type, Qualifier qual) { return ::ast<QualType>(std::move(type), qual); }
+} // namespace yume::ast
+
 #define CHECK_PARSER(body, ...) CHECK_THAT(*prog(body), EqualsAST(__VA_ARGS__))
 #define CHECK_PARSER_THROWS(body) CHECK_THROWS(*prog(body))
 
@@ -171,8 +175,8 @@ TEST_CASE("Parse constructor calling", "[parse]") {
   CHECK_PARSER("Type()", make_call<CtorExpr>("Type"_Type));
   CHECK_PARSER("Type(a)", make_call<CtorExpr>("Type"_Type, "a"_Var));
 
-  CHECK_PARSER("Type[]()", make_call<CtorExpr>(ast<QualType>("Type"_Type, Slice)));
-  CHECK_PARSER("Type[](a)", make_call<CtorExpr>(ast<QualType>("Type"_Type, Slice), "a"_Var));
+  CHECK_PARSER("Type[]()", make_call<CtorExpr>("Type"_Type & Slice));
+  CHECK_PARSER("Type[](a)", make_call<CtorExpr>("Type"_Type & Slice, "a"_Var));
 }
 
 TEST_CASE("Parse slice literal", "[parse]") {
@@ -239,10 +243,10 @@ TEST_CASE("Parse templated function declaration", "[parse][fn]") {
 
   CHECK_PARSER("def templated<T>(slice T[], pointer T ptr, mutable T mut, mix T ptr[] mut)\nend",
                make_fn_decl("templated",
-                            {{"slice", ast<QualType>("T"_Type, Slice)},
-                             {"pointer", ast<QualType>("T"_Type, Ptr)},
-                             {"mutable", ast<QualType>("T"_Type, Mut)},
-                             {"mix", ast<QualType>(ast<QualType>(ast<QualType>("T"_Type, Ptr), Slice), Mut)}},
+                            {{"slice", "T"_Type & Slice},
+                             {"pointer", "T"_Type & Ptr},
+                             {"mutable", "T"_Type & Mut},
+                             {"mix", "T"_Type & Ptr & Slice & Mut}},
                             {"T"}, {}));
 }
 
@@ -253,15 +257,14 @@ TEST_CASE("Parse operator function declaration", "[parse][fn]") {
 
   CHECK_PARSER("def -(a I32) I32\nend", make_fn_decl("-", {{"a", "I32"_Type}}, {}, "I32"_Type));
 
-  CHECK_PARSER("def [](a I32[], x Foo)\nend",
-               make_fn_decl("[]", {{"a", ast<QualType>("I32"_Type, Slice)}, {"x", "Foo"_Type}}));
+  CHECK_PARSER("def [](a I32[], x Foo)\nend", make_fn_decl("[]", {{"a", "I32"_Type & Slice}, {"x", "Foo"_Type}}));
 
-  CHECK_PARSER("def []=(target L, offs I32, val V) L[]\nend",
-               make_fn_decl("[]=", {{"target", "L"_Type}, {"offs", "I32"_Type}, {"val", "V"_Type}}, {},
-                            ast<QualType>("L"_Type, Slice)));
+  CHECK_PARSER(
+      "def []=(target L, offs I32, val V) L[]\nend",
+      make_fn_decl("[]=", {{"target", "L"_Type}, {"offs", "I32"_Type}, {"val", "V"_Type}}, {}, "L"_Type & Slice));
 
-  CHECK_PARSER("def +=(i I32, j I32) I32 = i + j",
-               make_fn_decl("+=", {{"i", "I32"_Type}, {"j", "I32"_Type}}, {}, "I32"_Type,
+  CHECK_PARSER("def +=(i I32 mut, j I32) I32 mut = i + j",
+               make_fn_decl("+=", {{"i", "I32"_Type & Mut}, {"j", "I32"_Type}}, {}, "I32"_Type & Mut,
                             ast<ReturnStmt>(make_call("+", "i"_Var, "j"_Var))));
 
   CHECK_PARSER("def baz(l Left, r Right) U32\nend",
@@ -272,11 +275,10 @@ TEST_CASE("Parse operator function declaration", "[parse][fn]") {
 
 TEST_CASE("Parse primitive function declaration", "[parse][fn]") {
   CHECK_PARSER("def prim() = __primitive__(name_of_primitive)", make_fn_decl("prim", {}, {}, "name_of_primitive"));
-  CHECK_PARSER(
-      "def munge(a I32 ptr) I32 ptr = __primitive__(native_munge)",
-      make_fn_decl("munge", {{"a", ast<QualType>("I32"_Type, Ptr)}}, ast<QualType>("I32"_Type, Ptr), "native_munge"));
+  CHECK_PARSER("def munge(a I32 ptr) I32 ptr = __primitive__(native_munge)",
+               make_fn_decl("munge", {{"a", "I32"_Type & Ptr}}, "I32"_Type & Ptr, "native_munge"));
   CHECK_PARSER("def printf(format U8 ptr) = __primitive__(libc_printf) __varargs__",
-               make_fn_decl("printf", {{"format", ast<QualType>("U8"_Type, Ptr)}}, {}, "libc_printf", true));
+               make_fn_decl("printf", {{"format", "U8"_Type & Ptr}}, {}, "libc_printf", true));
 }
 
 #undef CHECK_PARSER
