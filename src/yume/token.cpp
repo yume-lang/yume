@@ -129,6 +129,7 @@ struct Tokenizer {
     return [checks = move(chars)](char c, int i) { return i == 0 && checks.find(c) != string::npos; };
   };
 
+  // TODO: fix below bug (see !mustfail case in tokenizer test)
   /// Generate a criterion matching the string exactly.
   /// \bug Partial matches also work...
   constexpr static const auto is_exactly = [](string str) {
