@@ -101,7 +101,11 @@ TEST_CASE("Tokenize operators/symbols", "[token]") {
 
 TEST_CASE("Tokenize invalid tokens", "[token][throws]") { CHECK_TOKENIZER_THROWS("`"); }
 
-TEST_CASE("Tokenize empty char", "[!shouldfail][token][throws]") { CHECK_TOKENIZER_THROWS("?"); }
+TEST_CASE("Tokenize empty char", "[token][throws]") { CHECK_TOKENIZER_THROWS("?"); }
+
+TEST_CASE("Tokenize incomplete string", "[token][throws][help]") {
+  CHECK_TOKENIZER_THROWS(R"("who stole the closing quote)");
+}
 
 #undef CHECK_TOKENIZER
 #undef CHECK_TOKENIZER_THROWS

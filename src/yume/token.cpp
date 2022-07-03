@@ -13,9 +13,6 @@
 #include <vector>
 
 namespace yume {
-using char_raw_fn = int(int);
-using char_fn = std::function<bool(int, int, std::stringstream&)>;
-
 #if __cpp_lib_ranges >= 201911L
 static constexpr auto any_of = std::ranges::any_of;
 #else
@@ -34,8 +31,19 @@ struct any_of_fn {
 static constexpr any_of_fn any_of;
 #endif
 
+struct TokenState {
+  bool valid;
+  char c;
+  std::size_t index;
+  std::stringstream& stream;
+};
+using char_raw_fn = int(int);
+using char_fn = std::function<bool(TokenState&)>;
+
 /// A criterion for classifying a stream of characters as a specific type of token \link Token::Type
 /**
+ * TODO: requires doc update regarding TokenState (and TokenState itself needs docs)
+ *
  * The criterion is a function taking three arguments:
  * an `int` representing the current character being evaluated, a second `int` representing the
  * index of this character relative to the current character sequence (that is, since the end of the previous token),
@@ -47,20 +55,20 @@ static constexpr any_of_fn any_of;
  * literals may include escapes and thus output the corresponding unescaped value.
  */
 struct Characteristic {
-  char_fn m_fn;
-  Token::Type m_type;
+  char_fn fn;
+  Token::Type type;
 
   /// Criterion doesn't take a stringstream: if `true` is returned the same character is appended. This is usually
   /// preferred.
   Characteristic(Token::Type type, const std::function<bool(int, int)>& fn)
-      : m_fn([fn](int c, int i, std::stringstream& stream) {
-          bool b = fn(c, i);
+      : fn([fn](TokenState& state) {
+          bool b = fn(state.c, static_cast<int>(state.index));
           if (b)
-            stream.put((char)c);
+            state.stream.put(state.c);
           return b;
         }),
-        m_type(type) {}
-  Characteristic(Token::Type type, char_fn fn) : m_fn(std::move(fn)), m_type(type) {}
+        type(type) {}
+  Characteristic(Token::Type type, char_fn fn) : fn(std::move(fn)), type(type) {}
 };
 
 /// Contains the state while the tokenizer is running, such as the position within the file currently being read
@@ -79,21 +87,24 @@ struct Tokenizer {
   };
 
   /// Strings are delimited by double quotes `"` and may contain escapes.
-  constexpr static const auto is_str = [end = false, escape = false](char c, int i, std::stringstream& stream) mutable {
-    if (i == 0)
-      return c == '"';
+  constexpr static const auto is_str = [end = false, escape = false](TokenState& state) mutable {
     if (end)
       return false;
 
-    if (c == '\\' && !escape) {
+    state.valid = false;
+    if (state.index == 0)
+      return state.c == '"';
+
+    if (state.c == '\\' && !escape) {
       escape = true;
-    } else if (c == '"' && !escape && !end) {
+    } else if (state.c == '"' && !escape && !end) {
       end = true;
+      state.valid = true;
     } else {
-      if (escape && c == 'n')
-        stream.put('\n');
+      if (escape && state.c == 'n')
+        state.stream.put('\n');
       else
-        stream.put((char)c);
+        state.stream.put(state.c);
 
       escape = false;
     }
@@ -101,21 +112,24 @@ struct Tokenizer {
   };
 
   /// Chars begin with a question mark `?` and may contain escapes.
-  constexpr static const auto is_char = [escape = false](char c, int i, std::stringstream& stream) mutable {
-    if (i == 0)
-      return c == '?';
-    if (i == 1) {
-      if (c == '\\')
+  constexpr static const auto is_char = [escape = false](TokenState& state) mutable {
+    state.valid = false;
+    if (state.index == 0)
+      return state.c == '?';
+    if (state.index == 1) {
+      if (state.c == '\\')
         escape = true;
       else
-        stream.put((char)c);
+        state.stream.put(state.c);
+      state.valid = true;
       return true;
     }
-    if (i == 2 && escape) {
-      if (c == '0')
-        stream.put('\x00');
+    if (state.index == 2 && escape) {
+      if (state.c == '0')
+        state.stream.put('\x00');
       else
-        stream.put((char)c);
+        state.stream.put(state.c);
+      state.valid = true;
       return true;
     }
     return false;
@@ -129,11 +143,20 @@ struct Tokenizer {
     return [checks = move(chars)](char c, int i) { return i == 0 && checks.find(c) != string::npos; };
   };
 
-  // TODO: fix below bug (see !mustfail case in tokenizer test)
   /// Generate a criterion matching the string exactly.
-  /// \bug Partial matches also work...
   constexpr static const auto is_exactly = [](string str) {
-    return [s = move(str)](char c, int i) { return s[i] == c; };
+    return [s = move(str)](TokenState& state) {
+      if (state.index == s.size())
+        return false;
+      state.valid = state.index == s.size() - 1;
+
+      bool matches = s[state.index] == state.c;
+      if (matches) {
+        state.stream.put(state.c);
+      }
+
+      return matches;
+    };
   };
 
   /// Generate a criterion from a libc function from the `is...` family of functions, such as `isdigit`.
@@ -155,7 +178,7 @@ struct Tokenizer {
               {Token::Type::Symbol, is_exactly("==")},
               {Token::Type::Symbol, is_exactly("!=")},
               {Token::Type::Symbol, is_exactly("//")},
-              {Token::Type::Symbol, is_any_of(R"(()[]<>=:#"%-+.,!?/*\)")},
+              {Token::Type::Symbol, is_any_of(R"(()[]<>=:#%-+.,!/*\)")},
           })) {
         string message = "Tokenizer didn't recognize ";
         message += m_last;
@@ -179,11 +202,6 @@ private:
     return m_last;
   }
 
-  /// Check if the current character is viable as the first character of the given criterion.
-  [[nodiscard]] auto is_characteristic(const char_fn& fun, std::stringstream& stream) const -> bool {
-    return fun(m_last, 0, stream);
-  }
-
   /// Find the first criterion for which the current character is viable as the first character, then consume tokens
   /// until the criterion becomes false. The result is appended to the current list of tokens `m_tokens`.
   ///
@@ -192,12 +210,24 @@ private:
   auto select_characteristic(std::initializer_list<Characteristic> list) -> bool {
     int begin_line = m_line;
     int begin_col = m_col;
+    char begin_last = m_last;
+    auto begin_position = m_in.tellg();
+
     return any_of(list, [&](const auto& c) {
+      m_line = begin_line;
+      m_col = begin_col;
+      m_last = begin_last;
+      m_in.seekg(begin_position);
+      m_in.clear();
+
       auto stream = std::stringstream{};
-      if (is_characteristic(c.m_fn, stream)) {
-        auto [atom, end_line, end_col] = consume_characteristic(c.m_fn, stream);
-        m_tokens.emplace_back(c.m_type, atom, m_count, Loc{begin_line, begin_col, end_line, end_col, m_source_file});
-        return true;
+      auto state = TokenState{true, m_last, 0, stream};
+      if (c.fn(state)) {
+        auto [atom, end_line, end_col] = consume_characteristic(c.fn, state);
+        if (state.valid) {
+          m_tokens.emplace_back(c.type, atom, m_count, Loc{begin_line, begin_col, end_line, end_col, m_source_file});
+          return true;
+        }
       }
       return false;
     });
@@ -206,19 +236,21 @@ private:
   /// Consume characters until the criterion becomes false. Note that the first character is assumed to already be
   /// matched by `is_characteristic`
   /// \returns `Atom` containing the payload of the matched token, and the line and col number it stopped on.
-  auto consume_characteristic(const char_fn& fun, std::stringstream& out) -> std::tuple<Atom, int, int> {
-    int i = 1;
+  auto consume_characteristic(const char_fn& fun, TokenState& state) -> std::tuple<Atom, int, int> {
+    state.index++;
     int end_line = m_line;
     int end_col = m_col;
     next();
-    while (!m_in.eof() && fun(m_last, i, out)) {
-      i++;
+    state.c = m_last;
+    while (!m_in.eof() && fun(state)) {
+      state.index++;
       end_line = m_line;
       end_col = m_col;
       next();
+      state.c = m_last;
     }
 
-    return {make_atom(out.str()), end_line, end_col};
+    return {make_atom(state.stream.str()), end_line, end_col};
   }
 };
 
