@@ -710,6 +710,11 @@ auto Parser::parse_type(bool implicit_self) -> unique_ptr<Type> {
       consume(Symbol, SYM_LBRACKET);
       consume(Symbol, SYM_RBRACKET);
       base = ast_ptr<QualType>(entry, move(base), Qualifier::Slice);
+    } else if (try_consume(Symbol, SYM_LT)) {
+      auto type_args = vector<string>{};
+      consume_with_commas_until(Symbol, SYM_GT, [&] { type_args.push_back(consume_word()); });
+
+      base = ast_ptr<TemplatedType>(entry, move(base), std::move(type_args));
     } else {
       break;
     }

@@ -317,6 +317,7 @@ auto TypeWalker::convert_type(const ast::Type& ast_type) -> const ty::Type& {
       return *parent;
   }
 
-  throw std::runtime_error("Cannot convert AST type to actual type!");
+  throw std::runtime_error("Cannot convert AST type to actual type! "s + ast_type.kind_name() + " (" +
+                           ast_type.describe() + ")");
 }
 } // namespace yume::semantic

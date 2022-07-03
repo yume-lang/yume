@@ -61,10 +61,11 @@ enum Kind {
   /**/ K_END_Stmt,
 
   /** subclasses of Type */
-  /**/ K_Type,       ///< `Type`
-  /**/ K_SimpleType, ///< `SimpleType`
-  /**/ K_QualType,   ///< `QualType`
-  /**/ K_SelfType,   ///< `SelfType`
+  /**/ K_Type,          ///< `Type`
+  /**/ K_SimpleType,    ///< `SimpleType`
+  /**/ K_QualType,      ///< `QualType`
+  /**/ K_TemplatedType, ///< `TemplatedType`
+  /**/ K_SelfType,      ///< `SelfType`
   /**/ K_END_Type,
 };
 
@@ -281,7 +282,7 @@ class QualType : public Type {
   Qualifier m_qualifier;
 
 public:
-  explicit QualType(span<Token> tok, unique_ptr<Type> base, Qualifier qualifier)
+  QualType(span<Token> tok, unique_ptr<Type> base, Qualifier qualifier)
       : Type(K_QualType, tok), m_base{move(base)}, m_qualifier{qualifier} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override {
@@ -298,6 +299,32 @@ public:
   [[nodiscard]] auto direct_base() -> auto& { return m_base; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_QualType; }
   [[nodiscard]] auto clone() const -> QualType* override;
+};
+
+/// A type with explicit type parameters \e i.e. Foo<Bar,Baz>.
+class TemplatedType : public Type {
+  unique_ptr<Type> m_base;
+  vector<string> m_type_args;
+
+public:
+  TemplatedType(span<Token> tok, unique_ptr<Type> base, vector<string> type_args)
+      : Type(K_TemplatedType, tok), m_base{move(base)}, m_type_args{std::move(type_args)} {}
+  void visit(Visitor& visitor) const override;
+  [[nodiscard]] auto describe() const -> string override {
+    std::stringstream ss{};
+    int j = 0;
+    for (const auto& i : m_type_args) {
+      if (j++ > 0)
+        ss << ",";
+      ss << i;
+    }
+    return ss.str();
+  }
+
+  [[nodiscard]] auto type_vars() const -> const vector<string>& { return m_type_args; }
+  [[nodiscard]] auto base() const -> auto& { return *m_base; }
+  static auto classof(const AST* a) -> bool { return a->kind() == K_TemplatedType; }
+  [[nodiscard]] auto clone() const -> TemplatedType* override;
 };
 
 /// The `self` type.
