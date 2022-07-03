@@ -1,30 +1,3 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,563,115,589"/>
-<area shape="rect" id="node2" href="$classyume_1_1ast_1_1IfClause.html" title="Clauses of an if statement IfStmt." alt="" coords="171,411,301,437"/>
-<area shape="rect" id="node3" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="181,461,291,488"/>
-<area shape="rect" id="node24" href="$classyume_1_1ast_1_1Type.html" title="A type annotation. This (ast::Type) is distinct from the actual type of a value (ty::Type)." alt="" coords="181,664,291,691"/>
-<area shape="rect" id="node28" href="$classyume_1_1ast_1_1TypeName.html" title="A pair of a Type and an identifier, i.e. a parameter name." alt="" coords="163,715,309,741"/>
-<area shape="rect" id="node4" href="$classyume_1_1ast_1_1Compound.html" title="A statement consisting of multiple other statements, i.e. the body of a function." alt="" coords="360,208,505,235"/>
-<area shape="rect" id="node5" href="$classyume_1_1ast_1_1Expr.html" title="Expressions have an associated value and type." alt="" coords="379,259,487,285"/>
-<area shape="rect" id="node17" href="$classyume_1_1ast_1_1FnDecl.html" title="A declaration of a function (def)." alt="" coords="371,309,495,336"/>
-<area shape="rect" id="node18" href="$classyume_1_1ast_1_1IfStmt.html" title="An if statement (if), with one or more IfClauses, and optionally an else clause." alt="" coords="373,360,492,387"/>
-<area shape="rect" id="node19" href="$classyume_1_1ast_1_1Program.html" title="The top level structure of a file of source code." alt="" coords="367,411,499,437"/>
-<area shape="rect" id="node20" href="$classyume_1_1ast_1_1ReturnStmt.html" title="Return from a function body." alt="" coords="358,461,507,488"/>
-<area shape="rect" id="node21" href="$classyume_1_1ast_1_1StructDecl.html" title="A declaration of a struct (struct)." alt="" coords="361,512,505,539"/>
-<area shape="rect" id="node22" href="$classyume_1_1ast_1_1VarDecl.html" title="A declaration of a local variable (let)." alt="" coords="368,563,497,589"/>
-<area shape="rect" id="node23" href="$classyume_1_1ast_1_1WhileStmt.html" title="A while loop (while)." alt="" coords="361,613,504,640"/>
-<area shape="rect" id="node6" href="$classyume_1_1ast_1_1AssignExpr.html" title="An assignment (=)." alt="" coords="572,5,720,32"/>
-<area shape="rect" id="node7" href="$classyume_1_1ast_1_1BoolExpr.html" title="Bool literals (true or false)." alt="" coords="579,56,713,83"/>
-<area shape="rect" id="node8" href="$classyume_1_1ast_1_1CallExpr.html" title="A function call or operator." alt="" coords="581,107,711,133"/>
-<area shape="rect" id="node9" href="$classyume_1_1ast_1_1CharExpr.html" title="Char literals." alt="" coords="579,157,713,184"/>
-<area shape="rect" id="node10" href="$classyume_1_1ast_1_1CtorExpr.html" title="A construction of a struct or cast of a primitive." alt="" coords="580,208,712,235"/>
-<area shape="rect" id="node11" href="$classyume_1_1ast_1_1FieldAccessExpr.html" title="Direct access of a field of a struct (::)." alt="" coords="556,259,736,285"/>
-<area shape="rect" id="node12" href="$classyume_1_1ast_1_1ImplicitCastExpr.html" title=" " alt="" coords="557,309,735,336"/>
-<area shape="rect" id="node13" href="$classyume_1_1ast_1_1NumberExpr.html" title="Number literals." alt="" coords="569,360,723,387"/>
-<area shape="rect" id="node14" href="$classyume_1_1ast_1_1SliceExpr.html" title="A slice literal, i.e. an array." alt="" coords="577,411,715,437"/>
-<area shape="rect" id="node15" href="$classyume_1_1ast_1_1StringExpr.html" title="String literals." alt="" coords="575,461,717,488"/>
-<area shape="rect" id="node16" href="$classyume_1_1ast_1_1VarExpr.html" title="A variable, i.e. just an identifier." alt="" coords="582,512,710,539"/>
-<area shape="rect" id="node25" href="$classyume_1_1ast_1_1QualType.html" title="A type with a Qualifier like mut or [] following." alt="" coords="363,664,502,691"/>
-<area shape="rect" id="node26" href="$classyume_1_1ast_1_1SelfType.html" title="The self type." alt="" coords="365,715,500,741"/>
-<area shape="rect" id="node27" href="$classyume_1_1ast_1_1SimpleType.html" title="Just the name of a type, always capitalized." alt="" coords="357,765,508,792"/>
+<area shape="rect" id="node1" href="$structyume_1_1any__of__fn.html" title=" " alt="" coords="5,5,120,32"/>
 </map>

@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['maybe_5fconst_5ft_0',['maybe_const_t',['../namespaceyume.html#a0b0665f6fd5ded9b92b0734a4985d947',1,'yume']]]
+  ['char_5ffn_0',['char_fn',['../namespaceyume.html#a09d7f83a0a3df0cc1e2ee960371be534',1,'yume']]],
+  ['char_5fraw_5ffn_1',['char_raw_fn',['../namespaceyume.html#a997bcd6d643359ce4f51d40406275eb9',1,'yume']]]
 ];

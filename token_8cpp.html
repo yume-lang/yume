@@ -66,6 +66,12 @@ $(function() {
 </div>
 </div><!-- top -->
 <div class="header">
+  <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#namespaces">Namespaces</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">token.cpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -117,6 +123,48 @@ Include dependency graph for token.cpp:</div>
 </div>
 </div>
 <p><a href="token_8cpp_source.html">Go to the source code of this file.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1any__of__fn.html">yume::any_of_fn</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1TokenState.html">yume::TokenState</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Characteristic.html">yume::Characteristic</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A criterion for classifying a stream of characters as a specific type of token <a class="el" href="">Token::Type.</a> <a href="structyume_1_1Characteristic.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Tokenizer.html">yume::Tokenizer</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the state while the tokenizer is running, such as the position within the file currently being read.  <a href="structyume_1_1Tokenizer.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespaceyume"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html">yume</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:a997bcd6d643359ce4f51d40406275eb9"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a997bcd6d643359ce4f51d40406275eb9">yume::char_raw_fn</a> = int(int)</td></tr>
+<tr class="separator:a997bcd6d643359ce4f51d40406275eb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09d7f83a0a3df0cc1e2ee960371be534"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a09d7f83a0a3df0cc1e2ee960371be534">yume::char_fn</a> = std::function&lt; bool(TokenState &amp;)&gt;</td></tr>
+<tr class="separator:a09d7f83a0a3df0cc1e2ee960371be534"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a4920534072ee0bb3deb3389fce655517"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a4920534072ee0bb3deb3389fce655517">yume::tokenize_preserve_skipped</a> (std::istream &amp;in, const string &amp;source_file) -&gt; vector&lt; Token &gt;</td></tr>
+<tr class="memdesc:a4920534072ee0bb3deb3389fce655517"><td class="mdescLeft">&#160;</td><td class="mdescRight">Consume the contents of the input stream and create corresponding tokens, preserving every token, including whitespace. This is usually undesired.  <a href="namespaceyume.html#a4920534072ee0bb3deb3389fce655517">More...</a><br /></td></tr>
+<tr class="separator:a4920534072ee0bb3deb3389fce655517"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add085d2c7691142e008ebdede18cce21"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#add085d2c7691142e008ebdede18cce21">yume::tokenize</a> (std::istream &amp;in, const string &amp;source_file) -&gt; vector&lt; Token &gt;</td></tr>
+<tr class="memdesc:add085d2c7691142e008ebdede18cce21"><td class="mdescLeft">&#160;</td><td class="mdescRight">Consume the contents of the input stream and create corresponding tokens, ignoring insignificant whitespace.  <a href="namespaceyume.html#add085d2c7691142e008ebdede18cce21">More...</a><br /></td></tr>
+<tr class="separator:add085d2c7691142e008ebdede18cce21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab39377a9b036ce77f2dabb7052480c6d"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#ab39377a9b036ce77f2dabb7052480c6d">yume::operator&lt;&lt;</a> (llvm::raw_ostream &amp;os, const Token &amp;token) -&gt; llvm::raw_ostream &amp;</td></tr>
+<tr class="separator:ab39377a9b036ce77f2dabb7052480c6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a71865b15853a8ff7b98ed793716e21d7"><td class="memItemLeft" align="right" valign="top">static constexpr any_of_fn&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a71865b15853a8ff7b98ed793716e21d7">yume::any_of</a></td></tr>
+<tr class="separator:a71865b15853a8ff7b98ed793716e21d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -87,10 +87,15 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1any__of__fn.html">any_of_fn</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ASTStackTrace.html">ASTStackTrace</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Atom.html">Atom</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><code><a class="el" href="structyume_1_1Atom.html" title="Atoms represent strings in a string pool.">Atom</a></code>s represent strings in a string pool.  <a href="structyume_1_1Atom.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Characteristic.html">Characteristic</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A criterion for classifying a stream of characters as a specific type of token <a class="el" href="">Token::Type.</a> <a href="structyume_1_1Characteristic.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Compiler.html">Compiler</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <code><a class="el" href="classyume_1_1Compiler.html" title="The Compiler the the primary top-level type during compilation. A single instance is created during t...">Compiler</a></code> the the primary top-level type during compilation. A single instance is created during the compilation process.  <a href="classyume_1_1Compiler.html#details">More...</a><br /></td></tr>
@@ -117,6 +122,11 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Token.html">Token</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A categorized token in source code, created by the tokenizer. These tokens are consumed by the lexer.  <a href="structyume_1_1Token.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Tokenizer.html">Tokenizer</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the state while the tokenizer is running, such as the position within the file currently being read.  <a href="structyume_1_1Tokenizer.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1TokenState.html">TokenState</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1TypeHolder.html">TypeHolder</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Val.html">Val</a></td></tr>
@@ -135,6 +145,10 @@ Typedefs</h2></td></tr>
 <tr class="memitem:a0b0665f6fd5ded9b92b0734a4985d947"><td class="memTemplParams" colspan="2">template&lt;bool Bool, typename Base &gt; </td></tr>
 <tr class="memitem:a0b0665f6fd5ded9b92b0734a4985d947"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a0b0665f6fd5ded9b92b0734a4985d947">maybe_const_t</a> = std::conditional_t&lt; Bool, std::add_const_t&lt; Base &gt;, Base &gt;</td></tr>
 <tr class="separator:a0b0665f6fd5ded9b92b0734a4985d947"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a997bcd6d643359ce4f51d40406275eb9"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a997bcd6d643359ce4f51d40406275eb9">char_raw_fn</a> = int(int)</td></tr>
+<tr class="separator:a997bcd6d643359ce4f51d40406275eb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09d7f83a0a3df0cc1e2ee960371be534"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a09d7f83a0a3df0cc1e2ee960371be534">char_fn</a> = std::function&lt; bool(<a class="el" href="structyume_1_1TokenState.html">TokenState</a> &amp;)&gt;</td></tr>
+<tr class="separator:a09d7f83a0a3df0cc1e2ee960371be534"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -167,6 +181,8 @@ Functions</h2></td></tr>
 <tr class="memitem:add085d2c7691142e008ebdede18cce21"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#add085d2c7691142e008ebdede18cce21">tokenize</a> (std::istream &amp;in, const string &amp;source_file) -&gt; vector&lt; <a class="el" href="structyume_1_1Token.html">Token</a> &gt;</td></tr>
 <tr class="memdesc:add085d2c7691142e008ebdede18cce21"><td class="mdescLeft">&#160;</td><td class="mdescRight">Consume the contents of the input stream and create corresponding tokens, ignoring insignificant whitespace.  <a href="namespaceyume.html#add085d2c7691142e008ebdede18cce21">More...</a><br /></td></tr>
 <tr class="separator:add085d2c7691142e008ebdede18cce21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab39377a9b036ce77f2dabb7052480c6d"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#ab39377a9b036ce77f2dabb7052480c6d">operator&lt;&lt;</a> (llvm::raw_ostream &amp;os, const <a class="el" href="structyume_1_1Token.html">Token</a> &amp;token) -&gt; llvm::raw_ostream &amp;</td></tr>
+<tr class="separator:ab39377a9b036ce77f2dabb7052480c6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a64670ac9f02bffbee6be875e64e4e7f6"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a64670ac9f02bffbee6be875e64e4e7f6"><td class="memTemplItemLeft" align="right" valign="top">constexpr void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a64670ac9f02bffbee6be875e64e4e7f6">yume_assert</a> (T &amp;&amp;assertion, const std::string_view log_msg={}, const <a class="el" href="structyume_1_1source__location.html">source_location</a> location=<a class="el" href="structyume_1_1source__location.html#ad108a54f98ee467385af98ca279fd95a">source_location::current</a>()) noexcept</td></tr>
 <tr class="separator:a64670ac9f02bffbee6be875e64e4e7f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -189,10 +205,44 @@ requires pointer_like&lt;T&gt;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
+<tr class="memitem:a71865b15853a8ff7b98ed793716e21d7"><td class="memItemLeft" align="right" valign="top">static constexpr <a class="el" href="structyume_1_1any__of__fn.html">any_of_fn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a71865b15853a8ff7b98ed793716e21d7">any_of</a></td></tr>
+<tr class="separator:a71865b15853a8ff7b98ed793716e21d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aedb12619c04c37318fc716c081ebb968"><td class="memItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#aedb12619c04c37318fc716c081ebb968">ENABLE_ASSERT</a> = true</td></tr>
 <tr class="separator:aedb12619c04c37318fc716c081ebb968"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Typedef Documentation</h2>
+<a id="a09d7f83a0a3df0cc1e2ee960371be534" name="a09d7f83a0a3df0cc1e2ee960371be534"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a09d7f83a0a3df0cc1e2ee960371be534">&#9670;&nbsp;</a></span>char_fn</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespaceyume.html#a09d7f83a0a3df0cc1e2ee960371be534">yume::char_fn</a> = typedef std::function&lt;bool(<a class="el" href="structyume_1_1TokenState.html">TokenState</a>&amp;)&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00041">41</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a997bcd6d643359ce4f51d40406275eb9" name="a997bcd6d643359ce4f51d40406275eb9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a997bcd6d643359ce4f51d40406275eb9">&#9670;&nbsp;</a></span>char_raw_fn</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespaceyume.html#a997bcd6d643359ce4f51d40406275eb9">yume::char_raw_fn</a> = typedef int(int)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00040">40</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
+
+</div>
+</div>
 <a id="a0b0665f6fd5ded9b92b0734a4985d947" name="a0b0665f6fd5ded9b92b0734a4985d947"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0b0665f6fd5ded9b92b0734a4985d947">&#9670;&nbsp;</a></span>maybe_const_t</h2>
 
@@ -487,6 +537,36 @@ template&lt;bool Bool, typename Base &gt; </div>
 
 </div>
 </div>
+<a id="ab39377a9b036ce77f2dabb7052480c6d" name="ab39377a9b036ce77f2dabb7052480c6d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab39377a9b036ce77f2dabb7052480c6d">&#9670;&nbsp;</a></span>operator&lt;&lt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto yume::operator&lt;&lt; </td>
+          <td>(</td>
+          <td class="paramtype">llvm::raw_ostream &amp;&#160;</td>
+          <td class="paramname"><em>os</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structyume_1_1Token.html">Token</a> &amp;&#160;</td>
+          <td class="paramname"><em>token</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> -&gt; llvm::raw_ostream&amp; </td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00273">273</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
+
+</div>
+</div>
 <a id="ac65a0c1d9630e090ade17fffca2de339" name="ac65a0c1d9630e090ade17fffca2de339"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac65a0c1d9630e090ade17fffca2de339">&#9670;&nbsp;</a></span>stacktrace()</h2>
 
@@ -579,6 +659,10 @@ template&lt;bool Bool, typename Base &gt; </div>
 
 <p>Consume the contents of the input stream and create corresponding tokens, ignoring insignificant whitespace. </p>
 
+<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00264">264</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
+
+<p class="reference">References <a class="el" href="token_8cpp_source.html#l00258">tokenize_preserve_skipped()</a>.</p>
+
 </div>
 </div>
 <a id="a4920534072ee0bb3deb3389fce655517" name="a4920534072ee0bb3deb3389fce655517"></a>
@@ -609,6 +693,10 @@ template&lt;bool Bool, typename Base &gt; </div>
 
 <p>Consume the contents of the input stream and create corresponding tokens, preserving every token, including whitespace. This is usually undesired. </p>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="namespaceyume.html#add085d2c7691142e008ebdede18cce21" title="Consume the contents of the input stream and create corresponding tokens, ignoring insignificant whit...">tokenize</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00258">258</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="token_8cpp_source.html#l00264">tokenize()</a>.</p>
 
 </div>
 </div>
@@ -727,6 +815,32 @@ template&lt;typename T &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Variable Documentation</h2>
+<a id="a71865b15853a8ff7b98ed793716e21d7" name="a71865b15853a8ff7b98ed793716e21d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a71865b15853a8ff7b98ed793716e21d7">&#9670;&nbsp;</a></span>any_of</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr <a class="el" href="structyume_1_1any__of__fn.html">any_of_fn</a> yume::any_of</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00031">31</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00235">yume::semantic::TypeWalker::statement()</a>.</p>
+
+</div>
+</div>
 <a id="aedb12619c04c37318fc716c081ebb968" name="aedb12619c04c37318fc716c081ebb968"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aedb12619c04c37318fc716c081ebb968">&#9670;&nbsp;</a></span>ENABLE_ASSERT</h2>
 

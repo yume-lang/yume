@@ -1,0 +1,13 @@
+<map id="yume::TokenState" name="yume::TokenState">
+<area shape="rect" id="node1" title=" " alt="" coords="73,519,200,545"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,429,52,456"/>
+<area shape="rect" id="node3" title=" " alt="" coords="76,429,123,456"/>
+<area shape="rect" id="node4" title=" " alt="" coords="147,429,203,456"/>
+<area shape="rect" id="node5" title=" " alt="" coords="227,429,345,456"/>
+<area shape="rect" id="node6" title=" " alt="" coords="208,339,364,380"/>
+<area shape="rect" id="node7" title=" " alt="" coords="219,248,353,289"/>
+<area shape="rect" id="node8" title=" " alt="" coords="147,157,273,199"/>
+<area shape="rect" id="node9" title=" " alt="" coords="211,81,361,108"/>
+<area shape="rect" id="node11" title=" " alt="" coords="298,157,429,199"/>
+<area shape="rect" id="node10" title=" " alt="" coords="237,5,335,32"/>
+</map>
