@@ -91,9 +91,9 @@ void Compiler::run() {
 
 void Compiler::walk_types() {
   // First pass: only convert struct fields
-  for (auto& [st_ast, st_type] : m_structs) {
-    m_walker->m_current_struct = st_type;
-    m_walker->body_statement(*st_ast);
+  for (auto& st : m_structs) {
+    m_walker->m_current_struct = &st;
+    m_walker->body_statement(st.ast());
   }
   m_walker->m_current_struct = nullptr;
 
@@ -124,7 +124,7 @@ void Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* m
       fields.push_back(&f);
 
     auto i_ty = m_types.known.insert({s_decl->name(), std::make_unique<ty::Struct>(s_decl->name(), fields)});
-    m_structs.emplace_back(s_decl, i_ty.first->second.get());
+    m_structs.emplace_back(*s_decl, i_ty.first->second.get());
 
     for (auto& f : s_decl->body().body())
       decl_statement(f, i_ty.first->second.get());
