@@ -30,3 +30,4 @@ jobs:
           event_name: ${{ github.event.workflow_run.event }}
           files: "artifacts/**/junit.xml"
           comment_mode: off
+          fail_on: nothing
