@@ -21,6 +21,7 @@ jobs:
       CC: clang-${{ matrix.clang }}
       CXX: clang++-${{ matrix.clang }}
       LLVM_SYMBOLIZER_PATH: llvm-symbolizer-${{ matrix.llvm }}
+      BUILD_DIR: ${{github.workspace}}/build
 
     steps:
       - uses: actions/checkout@v3
@@ -48,38 +49,40 @@ jobs:
           sudo cmake --build build/ --target install
 
       - name: Configure CMake
-        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DYUME_FORCE_LLVM_VERSION=${{ matrix.llvm }} -DYUME_COV=ON -DBUILD_TESTING=ON
+        run: cmake -B ${{env.BUILD_DIR}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DYUME_FORCE_LLVM_VERSION=${{ matrix.llvm }} -DYUME_COV=ON -DBUILD_TESTING=ON
 
       - name: Build
-        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+        run: cmake --build ${{env.BUILD_DIR}} --config ${{env.BUILD_TYPE}}
 
       - name: Unit Test
         run: bin/ci.sh test
 
-      - name: Publish Test Results
-        uses: actions/upload-artifact@v2
-        if: always()
-        with:
-          name: "tests-${{ matrix.clang }}-${{ matrix.llvm }}"
-          path: "build/junit.xml"
-
       - if: matrix.clang == env.TARGET_CLANG && matrix.llvm == env.TARGET_LLVM
         name: Coverage
-        run: cd ${{github.workspace}}/build && ${{github.workspace}}/bin/ci.sh coverage
+        run: bin/ci.sh coverage
 
       - name: Example Test
         run: bin/ci.sh examples
 
       - name: Test bf.ym (alt)
-        run: build/yumec example/bf.ym && ./yume.out '>++[<+++++++++++++>-]<[[>+>+<<-]>[<+>-]++++++++[>++++++++<-]>.[-]<<>++++++++++[>++++++++++[>++++++++++[>++++++++++[>++++++++++[>++++++++++[>++++++++++[-]<-]<-]<-]<-]<-]<-]<-]++++++++++.'
+        run: ${{env.BUILD_DIR}}/yumec example/bf.ym && ./yume.out '>++[<+++++++++++++>-]<[[>+>+<<-]>[<+>-]++++++++[>++++++++<-]>.[-]<<>++++++++++[>++++++++++[>++++++++++[>++++++++++[>++++++++++[>++++++++++[>++++++++++[-]<-]<-]<-]<-]<-]<-]<-]++++++++++.'
 
-      - uses: actions/upload-artifact@v3
+      - if: always()
+        name: Publish Test Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: "tests-${{ matrix.clang }}-${{ matrix.llvm }}"
+          path: "${{env.BUILD_DIR}}/junit.xml"
+
+      - name: Publish IR Output
+        uses: actions/upload-artifact@v3
         with:
           name: ir-output-llvm${{ matrix.llvm }}
-          path: ./result-*.ll
+          path: result-*.ll
 
       - if: matrix.clang == env.TARGET_CLANG && matrix.llvm == env.TARGET_LLVM
+        name: Publish Coverage
         uses: actions/upload-artifact@v3
         with:
           name: coverage
-          path: ./build/cov
+          path: ${{env.BUILD_DIR}}/cov
