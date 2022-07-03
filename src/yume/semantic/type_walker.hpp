@@ -4,6 +4,7 @@
 #include "semantic/overload.hpp"
 #include "util.hpp"
 #include <map>
+#include <queue>
 #include <stdexcept>
 #include <string>
 
@@ -35,6 +36,8 @@ public:
   Fn* m_current_fn{};
   std::map<string, ast::AST*> m_scope{};
 
+  std::queue<Fn*> m_decl_queue{};
+
   /// Whether or not to compile the bodies of methods.  Initially, on the parameter types of methods are traversed and
   /// converted, then everything else in a second pass.
   bool m_in_depth = false;
@@ -44,11 +47,27 @@ public:
   void body_statement(ast::Stmt&);
   void body_expression(ast::Expr&);
 
+  void resolve_queue();
+
 private:
   /// Convert an ast type (`ast::Type`) into a type in the type system (`ty::Type`).
   auto convert_type(const ast::Type& ast_type) -> const ty::Type&;
 
   auto all_overloads_by_name(ast::CallExpr& call) -> OverloadSet;
+
+  auto with_saved_scope(auto&& callback) {
+    // Save everything pertaining to the old context
+    auto saved_scope = m_scope;
+    auto* saved_current = m_current_fn;
+    auto saved_depth = m_in_depth;
+
+    callback();
+
+    // Restore again
+    m_in_depth = saved_depth;
+    m_scope = saved_scope;
+    m_current_fn = saved_current;
+  }
 
   template <typename T> void statement([[maybe_unused]] T& stat) {
     throw std::runtime_error("Type walker stubbed on statement "s + stat.kind_name());
