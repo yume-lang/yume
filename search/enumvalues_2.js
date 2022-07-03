@@ -30,10 +30,11 @@ var searchData=
   ['k_5fstring_27',['K_String',['../namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a04140bbad212603506fc382a2d3d81a5',1,'yume::ast']]],
   ['k_5fstruct_28',['K_Struct',['../namespaceyume_1_1ty.html#a4c255b641f0b91ee4ff8bc878e7bd04ea32b366cfa0eb5e025d4f6bfea7c8a9e8',1,'yume::ty']]],
   ['k_5fstructdecl_29',['K_StructDecl',['../namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406af369edc2068d114686cf488435a34ffb',1,'yume::ast']]],
-  ['k_5ftype_30',['K_Type',['../namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a59e9625693ebd150640e6ea809dbe880',1,'yume::ast']]],
-  ['k_5ftypename_31',['K_TypeName',['../namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406af1e9f2140cf76d67d255de25fcd3088b',1,'yume::ast']]],
-  ['k_5funknown_32',['K_Unknown',['../namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a72b651554947e1604e412bddbfb771ca',1,'yume::ast::K_Unknown()'],['../namespaceyume_1_1ty.html#a4c255b641f0b91ee4ff8bc878e7bd04ea337311f4a0312ec61dd1cd555b795b3f',1,'yume::ty::K_Unknown()']]],
-  ['k_5fvar_33',['K_Var',['../namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a5bd1845d5247253184d0fc9ec0627611',1,'yume::ast']]],
-  ['k_5fvardecl_34',['K_VarDecl',['../namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a946bdf8ff3e75cdaf555ca2e32bcb2aa',1,'yume::ast']]],
-  ['k_5fwhile_35',['K_While',['../namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406adbc49daadf28bb31b8a248d249196015',1,'yume::ast']]]
+  ['k_5ftemplatedtype_30',['K_TemplatedType',['../namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a3ee321004266cc8caae4081094acdcd4',1,'yume::ast']]],
+  ['k_5ftype_31',['K_Type',['../namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a59e9625693ebd150640e6ea809dbe880',1,'yume::ast']]],
+  ['k_5ftypename_32',['K_TypeName',['../namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406af1e9f2140cf76d67d255de25fcd3088b',1,'yume::ast']]],
+  ['k_5funknown_33',['K_Unknown',['../namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a72b651554947e1604e412bddbfb771ca',1,'yume::ast::K_Unknown()'],['../namespaceyume_1_1ty.html#a4c255b641f0b91ee4ff8bc878e7bd04ea337311f4a0312ec61dd1cd555b795b3f',1,'yume::ty::K_Unknown()']]],
+  ['k_5fvar_34',['K_Var',['../namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a5bd1845d5247253184d0fc9ec0627611',1,'yume::ast']]],
+  ['k_5fvardecl_35',['K_VarDecl',['../namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a946bdf8ff3e75cdaf555ca2e32bcb2aa',1,'yume::ast']]],
+  ['k_5fwhile_36',['K_While',['../namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406adbc49daadf28bb31b8a248d249196015',1,'yume::ast']]]
 ];
