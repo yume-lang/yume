@@ -6,10 +6,9 @@ case $1 in
   "examples" )
     for i in example/*; do
       [[ -f "${i}" ]] || continue
-      echo "Running example ${i}.ym"
+      echo "Running example ${i}"
       "${BUILD_DIR}"/yumec "${i}" || exit 1
       mv output.ll result-"$(basename "${i}")".ll
-      rm output.ll
       ./yume.out
     done;;
 
