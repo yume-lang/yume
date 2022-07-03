@@ -55,6 +55,8 @@ template <> void TypeWalker::expression(ast::TypeName& expr) {
   expression(type);
 }
 
+template <> void TypeWalker::expression(ast::ImplicitCastExpr& expr) { body_expression(expr.base()); }
+
 template <> void TypeWalker::expression(ast::CtorExpr& expr) {
   for (auto& i : expr.args()) {
     body_expression(i);
