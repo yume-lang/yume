@@ -105,10 +105,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a81fd4667a2199a1ccdf19b6b9c15b3c7"><td class="memItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1TokenIterator.html#a81fd4667a2199a1ccdf19b6b9c15b3c7">at_end</a> () const noexcept -&gt; bool</td></tr>
 <tr class="memdesc:a81fd4667a2199a1ccdf19b6b9c15b3c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the iterator is at the end and no more <code><a class="el" href="structyume_1_1Token.html" title="A categorized token in source code, created by the tokenizer. These tokens are consumed by the lexer.">Token</a></code>s could possibly be read.  <a href="structyume_1_1ast_1_1TokenIterator.html#a81fd4667a2199a1ccdf19b6b9c15b3c7">More...</a><br /></td></tr>
 <tr class="separator:a81fd4667a2199a1ccdf19b6b9c15b3c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7cc13409f050c827dc4449fa73c19e5c"><td class="memItemLeft" align="right" valign="top">auto constexpr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1TokenIterator.html#a7cc13409f050c827dc4449fa73c19e5c">operator-&gt;</a> () const noexcept -&gt; <a class="el" href="structyume_1_1Token.html">Token</a> *</td></tr>
-<tr class="separator:a7cc13409f050c827dc4449fa73c19e5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abe6f795148602d000128443fdf9f8a21"><td class="memItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1TokenIterator.html#abe6f795148602d000128443fdf9f8a21">operator*</a> () const noexcept -&gt; <a class="el" href="structyume_1_1Token.html">Token</a></td></tr>
-<tr class="separator:abe6f795148602d000128443fdf9f8a21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0879d4e44d6c0ac4f68b95baf033983f"><td class="memItemLeft" align="right" valign="top">auto constexpr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1TokenIterator.html#a0879d4e44d6c0ac4f68b95baf033983f">operator-&gt;</a> () const -&gt; <a class="el" href="structyume_1_1Token.html">Token</a> *</td></tr>
+<tr class="separator:a0879d4e44d6c0ac4f68b95baf033983f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a87a01699b515a3e6b890d0acb35944"><td class="memItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1TokenIterator.html#a5a87a01699b515a3e6b890d0acb35944">operator*</a> () const -&gt; <a class="el" href="structyume_1_1Token.html">Token</a></td></tr>
+<tr class="separator:a5a87a01699b515a3e6b890d0acb35944"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7bde022cec2893c1d8a649ffe6c3d81a"><td class="memItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1TokenIterator.html#a7bde022cec2893c1d8a649ffe6c3d81a">operator+</a> (int i) const noexcept -&gt; <a class="el" href="structyume_1_1ast_1_1TokenIterator.html">TokenIterator</a></td></tr>
 <tr class="separator:a7bde022cec2893c1d8a649ffe6c3d81a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afd0a85e05e2bb9b2a6748c672ab6a88e"><td class="memItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1TokenIterator.html#afd0a85e05e2bb9b2a6748c672ab6a88e">operator++</a> () -&gt; <a class="el" href="structyume_1_1ast_1_1TokenIterator.html">TokenIterator</a> &amp;</td></tr>
@@ -200,7 +200,7 @@ Public Attributes</h2></td></tr>
 
 <p class="reference">References <a class="el" href="ast_8hpp_source.html#l00112">m_end</a>, and <a class="el" href="ast_8hpp_source.html#l00111">m_iterator</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8hpp_source.html#l00124">operator++()</a>, and <a class="el" href="ast_8cpp_source.html#l00750">yume::ast::Program::parse()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8hpp_source.html#l00124">operator*()</a>, <a class="el" href="ast_8hpp_source.html#l00132">operator++()</a>, <a class="el" href="ast_8hpp_source.html#l00119">operator-&gt;()</a>, and <a class="el" href="ast_8cpp_source.html#l00754">yume::ast::Program::parse()</a>.</p>
 
 </div>
 </div>
@@ -229,16 +229,16 @@ Public Attributes</h2></td></tr>
 
 <p>Returns the underlying iterator. This shouldn't really be needed but I'm too lazy to properly model an iterator. </p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00138">138</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00146">146</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="ast_8hpp_source.html#l00111">m_iterator</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00750">yume::ast::Program::parse()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00754">yume::ast::Program::parse()</a>.</p>
 
 </div>
 </div>
-<a id="abe6f795148602d000128443fdf9f8a21" name="abe6f795148602d000128443fdf9f8a21"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abe6f795148602d000128443fdf9f8a21">&#9670;&nbsp;</a></span>operator*()</h2>
+<a id="a5a87a01699b515a3e6b890d0acb35944" name="a5a87a01699b515a3e6b890d0acb35944"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a87a01699b515a3e6b890d0acb35944">&#9670;&nbsp;</a></span>operator*()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -255,14 +255,14 @@ Public Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00120">120</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00124">124</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00111">m_iterator</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00118">at_end()</a>, and <a class="el" href="ast_8hpp_source.html#l00111">m_iterator</a>.</p>
 
 </div>
 </div>
@@ -290,7 +290,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00121">121</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00129">129</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="ast_8hpp_source.html#l00112">m_end</a>, and <a class="el" href="ast_8hpp_source.html#l00111">m_iterator</a>.</p>
 
@@ -319,7 +319,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00124">124</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00132">132</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="ast_8hpp_source.html#l00118">at_end()</a>, and <a class="el" href="ast_8hpp_source.html#l00111">m_iterator</a>.</p>
 
@@ -349,14 +349,14 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00131">131</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00139">139</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="ast_8hpp_source.html#l00118">at_end()</a>, <a class="el" href="ast_8hpp_source.html#l00112">m_end</a>, and <a class="el" href="ast_8hpp_source.html#l00111">m_iterator</a>.</p>
 
 </div>
 </div>
-<a id="a7cc13409f050c827dc4449fa73c19e5c" name="a7cc13409f050c827dc4449fa73c19e5c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7cc13409f050c827dc4449fa73c19e5c">&#9670;&nbsp;</a></span>operator-&gt;()</h2>
+<a id="a0879d4e44d6c0ac4f68b95baf033983f" name="a0879d4e44d6c0ac4f68b95baf033983f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0879d4e44d6c0ac4f68b95baf033983f">&#9670;&nbsp;</a></span>operator-&gt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -373,14 +373,14 @@ Public Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00119">119</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00111">m_iterator</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00118">at_end()</a>, and <a class="el" href="ast_8hpp_source.html#l00111">m_iterator</a>.</p>
 
 </div>
 </div>
@@ -399,7 +399,7 @@ Public Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00112">112</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8hpp_source.html#l00118">at_end()</a>, <a class="el" href="ast_8hpp_source.html#l00121">operator+()</a>, and <a class="el" href="ast_8hpp_source.html#l00131">operator++()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8hpp_source.html#l00118">at_end()</a>, <a class="el" href="ast_8hpp_source.html#l00129">operator+()</a>, and <a class="el" href="ast_8hpp_source.html#l00139">operator++()</a>.</p>
 
 </div>
 </div>
@@ -417,7 +417,7 @@ Public Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00111">111</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8hpp_source.html#l00118">at_end()</a>, <a class="el" href="ast_8hpp_source.html#l00138">begin()</a>, <a class="el" href="ast_8hpp_source.html#l00120">operator*()</a>, <a class="el" href="ast_8hpp_source.html#l00121">operator+()</a>, <a class="el" href="ast_8hpp_source.html#l00124">operator++()</a>, and <a class="el" href="ast_8hpp_source.html#l00119">operator-&gt;()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8hpp_source.html#l00118">at_end()</a>, <a class="el" href="ast_8hpp_source.html#l00146">begin()</a>, <a class="el" href="ast_8hpp_source.html#l00124">operator*()</a>, <a class="el" href="ast_8hpp_source.html#l00129">operator+()</a>, <a class="el" href="ast_8hpp_source.html#l00132">operator++()</a>, and <a class="el" href="ast_8hpp_source.html#l00119">operator-&gt;()</a>.</p>
 
 </div>
 </div>
