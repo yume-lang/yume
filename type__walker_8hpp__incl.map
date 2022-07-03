@@ -1,11 +1,12 @@
 <map id="src/yume/semantic/type_walker.hpp" name="src/yume/semantic/type_walker.hpp">
-<area shape="rect" id="node1" title=" " alt="" coords="781,5,941,47"/>
+<area shape="rect" id="node1" title=" " alt="" coords="1673,5,1833,47"/>
 <area shape="rect" id="node2" href="$crtp__walker_8hpp.html" title=" " alt="" coords="51,169,186,196"/>
 <area shape="rect" id="node5" href="$util_8hpp.html" title=" " alt="" coords="997,393,1059,420"/>
 <area shape="rect" id="node7" title=" " alt="" coords="1597,543,1651,569"/>
 <area shape="rect" id="node26" title=" " alt="" coords="137,319,215,345"/>
-<area shape="rect" id="node30" href="$overload_8hpp.html" title=" " alt="" coords="1332,95,1484,121"/>
+<area shape="rect" id="node30" href="$overload_8hpp.html" title=" " alt="" coords="1677,95,1829,121"/>
 <area shape="rect" id="node34" title=" " alt="" coords="2065,244,2111,271"/>
+<area shape="rect" id="node35" title=" " alt="" coords="2187,95,2245,121"/>
 <area shape="rect" id="node3" href="$ast_8hpp.html" title=" " alt="" coords="722,244,809,271"/>
 <area shape="rect" id="node28" title=" " alt="" coords="5,319,88,345"/>
 <area shape="rect" id="node29" title=" " alt="" coords="37,244,190,271"/>
@@ -19,7 +20,7 @@
 <area shape="rect" id="node18" title=" " alt="" coords="1795,468,1853,495"/>
 <area shape="rect" id="node19" title=" " alt="" coords="905,393,967,420"/>
 <area shape="rect" id="node21" href="$qualifier_8hpp.html" title=" " alt="" coords="803,319,893,345"/>
-<area shape="rect" id="node22" href="$token_8hpp.html" title=" " alt="" coords="1462,319,1541,345"/>
+<area shape="rect" id="node22" href="$token_8hpp.html" title=" " alt="" coords="1477,319,1555,345"/>
 <area shape="rect" id="node25" title=" " alt="" coords="493,319,653,345"/>
 <area shape="rect" id="node27" title=" " alt="" coords="677,319,728,345"/>
 <area shape="rect" id="node20" title=" " alt="" coords="1203,393,1272,420"/>
@@ -30,7 +31,7 @@
 <area shape="rect" id="node14" title=" " alt="" coords="879,468,919,495"/>
 <area shape="rect" id="node23" title=" " alt="" coords="1661,393,1736,420"/>
 <area shape="rect" id="node24" title=" " alt="" coords="1499,393,1587,420"/>
-<area shape="rect" id="node31" href="$vals_8hpp.html" title=" " alt="" coords="1591,169,1713,196"/>
+<area shape="rect" id="node31" href="$vals_8hpp.html" title=" " alt="" coords="1692,169,1815,196"/>
 <area shape="rect" id="node32" title=" " alt="" coords="1816,244,1888,271"/>
-<area shape="rect" id="node33" title=" " alt="" coords="1554,244,1614,271"/>
+<area shape="rect" id="node33" title=" " alt="" coords="1630,244,1690,271"/>
 </map>

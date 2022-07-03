@@ -80,11 +80,27 @@ $(function() {
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>  }</div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>  <span class="keywordflow">return</span> m_llvm_fn;</div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>}</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>} <span class="comment">// namespace yume</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="structyume_1_1Fn.html#acb6b4e0328d27093d82e1043a8f32adc">   13</a></span><span class="keyword">auto</span> <a class="code hl_function" href="structyume_1_1Fn.html#acb6b4e0328d27093d82e1043a8f32adc">Fn::create_template_instantiation</a>(<a class="code hl_struct" href="structyume_1_1Instantiation.html">Instantiation</a>&amp; instantiate) -&gt; <a class="code hl_struct" href="structyume_1_1Fn.html">Fn</a>&amp; {</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>  <span class="keyword">auto</span>* decl_clone = m_ast_decl.clone();</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>  m_member-&gt;direct_body().emplace_back(decl_clone);</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>  std::map&lt;string, const ty::Type*&gt; subs{};</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; [k, v] : instantiate.sub)</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    subs.try_emplace(k-&gt;name(), v);</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>  <span class="keyword">auto</span> fn_ptr = std::make_unique&lt;Fn&gt;(*decl_clone, m_parent, m_member, move(subs));</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>  <span class="keyword">auto</span> new_emplace = m_instantiations.emplace(instantiate, move(fn_ptr));</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>  <span class="keywordflow">return</span> *new_emplace.first-&gt;second;</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>}</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>} <span class="comment">// namespace yume</span></div>
 <div class="ttc" id="aclassyume_1_1Compiler_html"><div class="ttname"><a href="classyume_1_1Compiler.html">yume::Compiler</a></div><div class="ttdoc">The Compiler the the primary top-level type during compilation. A single instance is created during t...</div><div class="ttdef"><b>Definition:</b> <a href="compiler_8hpp_source.html#l00040">compiler.hpp:40</a></div></div>
 <div class="ttc" id="acompiler_8hpp_html"><div class="ttname"><a href="compiler_8hpp.html">compiler.hpp</a></div></div>
 <div class="ttc" id="anamespaceyume_html"><div class="ttname"><a href="namespaceyume.html">yume</a></div><div class="ttdef"><b>Definition:</b> <a href="ast_8cpp_source.html#l00015">ast.cpp:15</a></div></div>
+<div class="ttc" id="astructyume_1_1Fn_html"><div class="ttname"><a href="structyume_1_1Fn.html">yume::Fn</a></div><div class="ttdoc">A function declaration in the compiler.</div><div class="ttdef"><b>Definition:</b> <a href="vals_8hpp_source.html#l00052">vals.hpp:52</a></div></div>
 <div class="ttc" id="astructyume_1_1Fn_html_a634fae505471c98a9a2aa528005f50cb"><div class="ttname"><a href="structyume_1_1Fn.html#a634fae505471c98a9a2aa528005f50cb">yume::Fn::declaration</a></div><div class="ttdeci">auto declaration(Compiler &amp;compiler, bool mangle=true) -&gt; llvm::Function *</div><div class="ttdef"><b>Definition:</b> <a href="vals_8cpp_source.html#l00006">vals.cpp:6</a></div></div>
+<div class="ttc" id="astructyume_1_1Fn_html_acb6b4e0328d27093d82e1043a8f32adc"><div class="ttname"><a href="structyume_1_1Fn.html#acb6b4e0328d27093d82e1043a8f32adc">yume::Fn::create_template_instantiation</a></div><div class="ttdeci">auto create_template_instantiation(Instantiation &amp;instantiate) -&gt; Fn &amp;</div><div class="ttdef"><b>Definition:</b> <a href="vals_8cpp_source.html#l00013">vals.cpp:13</a></div></div>
+<div class="ttc" id="astructyume_1_1Instantiation_html"><div class="ttname"><a href="structyume_1_1Instantiation.html">yume::Instantiation</a></div><div class="ttdoc">A mapping between type variables and substitutions for them.</div><div class="ttdef"><b>Definition:</b> <a href="vals_8hpp_source.html#l00029">vals.hpp:29</a></div></div>
 <div class="ttc" id="avals_8hpp_html"><div class="ttname"><a href="vals_8hpp.html">vals.hpp</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
