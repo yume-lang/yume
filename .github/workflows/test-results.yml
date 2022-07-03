@@ -1,0 +1,32 @@
+name: Test Results
+
+on:
+  workflow_run:
+    workflows: ["CMake"]
+    types:
+      - completed
+permissions: {}
+
+jobs:
+  test-results:
+    if: github.event.workflow_run.conclusion != 'skipped'
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+
+    steps:
+      - name: Download test results
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: ${{ github.event.workflow_run.workflow_id }}
+          workflow_conclusion: success
+          path: artifacts
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        with:
+          commit: ${{ github.event.workflow_run.head_sha }}
+          event_file: artifacts/Event File/event.json
+          event_name: ${{ github.event.workflow_run.event }}
+          files: "artifacts/**/junit.xml"
+          comment_mode: off
