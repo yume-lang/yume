@@ -5,6 +5,7 @@
 #include "visitor/hash_visitor.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <iterator>
+#include <utility>
 
 namespace {
 using namespace yume::ast;
@@ -31,6 +32,31 @@ template <typename T, typename... Ts> auto ptr_vec(Ts&&... ts) {
 template <typename T = CallExpr, typename E = Expr, typename N, typename... Ts>
 auto make_call(N&& name, Ts&&... ts) -> std::unique_ptr<T> {
   return ast<T>(std::forward<N>(name), ptr_vec<E>(std::forward<Ts>(ts)...));
+}
+
+template <typename... Ts> auto make_compound(Ts&&... ts) -> Compound {
+  return std::move(*ast<Compound>(ptr_vec<Stmt>(std::forward<Ts>(ts)...)));
+}
+
+struct TName {
+  mutable std::unique_ptr<Type> type; // because initializer lists always add const
+  std::string name;
+
+  TName(std::unique_ptr<Type> type, std::string name) : type(std::move(type)), name(std::move(name)) {}
+  TName(std::string name, std::unique_ptr<Type> type) : type(std::move(type)), name(std::move(name)) {}
+
+  explicit operator TypeName() const { return std::move(*ast<TypeName>(std::move(type), name)); }
+};
+
+template <typename... Ts>
+auto make_fn_decl(const std::string& name, std::initializer_list<TName> args, std::vector<std::string> type_args,
+                  std::optional<std::unique_ptr<Type>> ret, Ts&&... ts) -> std::unique_ptr<FnDecl> {
+  auto ast_args = std::vector<TypeName>();
+  ast_args.reserve(args.size());
+  std::transform(args.begin(), args.end(), std::back_inserter(ast_args),
+                 [](auto& tn) { return static_cast<TypeName>(tn); });
+  return ast<FnDecl>(name, std::move(ast_args), std::move(type_args), std::move(ret),
+                     make_compound(std::forward<Ts>(ts)...));
 }
 
 auto operator""_Var(const char* str, size_t size) { return ast<VarExpr>(std::string{str, size}); }
@@ -161,6 +187,17 @@ TEST_CASE("Parse index operator", "[parse]") {
 TEST_CASE("Parse variable declaration", "[parse]") {
   CHECK_PARSER("let a = 0", ast<VarDecl>("a", std::nullopt, 0_Num));
   CHECK_PARSER("let a I32 = 0", ast<VarDecl>("a", "I32"_Type, 0_Num));
+}
+
+TEST_CASE("Parse function declaration", "[parse][fn]") {
+  CHECK_PARSER("def foo()\nend", make_fn_decl("foo", {}, {}, {}));
+  CHECK_PARSER("def foo(a I32)\nend", make_fn_decl("foo", {{"a", "I32"_Type}}, {}, {}));
+  CHECK_PARSER("def bar(a I32, x Foo)\nend", make_fn_decl("bar", {{"a", "I32"_Type}, {"x", "Foo"_Type}}, {}, {}));
+  CHECK_PARSER("def bar() U32\nend", make_fn_decl("bar", {}, {}, "U32"_Type));
+  CHECK_PARSER("def baz(l Left, r Right) U32\nend",
+               make_fn_decl("baz", {{"l", "Left"_Type}, {"r", "Right"_Type}}, {}, "U32"_Type));
+  CHECK_PARSER("def foo(a I32) I32\na\nend", make_fn_decl("foo", {{"a", "I32"_Type}}, {}, "I32"_Type, "a"_Var));
+  CHECK_PARSER("def templated<T>()\nend", make_fn_decl("templated", {}, {"T"}, {}));
 }
 
 #undef CHECK_PARSER
