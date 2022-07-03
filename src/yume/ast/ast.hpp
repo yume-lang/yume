@@ -116,8 +116,16 @@ struct TokenIterator {
 
   /// Check if the iterator is at the end and no more `Token`s could possibly be read.
   [[nodiscard]] constexpr auto at_end() const noexcept -> bool { return m_iterator == m_end; }
-  [[nodiscard]] auto constexpr operator->() const noexcept -> Token* { return m_iterator.operator->(); }
-  [[nodiscard]] constexpr auto operator*() const noexcept -> Token { return m_iterator.operator*(); }
+  [[nodiscard]] auto constexpr operator->() const -> Token* {
+    if (at_end())
+      throw std::runtime_error("Can't dereference at end");
+    return m_iterator.operator->();
+  }
+  [[nodiscard]] constexpr auto operator*() const -> Token {
+    if (at_end())
+      throw std::runtime_error("Can't dereference at end");
+    return m_iterator.operator*();
+  }
   [[nodiscard]] constexpr auto operator+(int i) const noexcept -> TokenIterator {
     return TokenIterator{m_iterator + i, m_end};
   }

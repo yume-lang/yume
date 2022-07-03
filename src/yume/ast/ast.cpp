@@ -149,10 +149,12 @@ struct Parser {
 
   /// If the next token doesn't have the type, `token_type`, throw a runtime exception.
   void expect(Token::Type token_type, const source_location location = source_location::current()) const {
-    if (tokens->m_type != token_type) {
+    if (tokens.at_end())
+      throw std::runtime_error("Expected token type "s + Token::type_name(token_type) + ", got the end of the file");
+
+    if (tokens->m_type != token_type)
       throw std::runtime_error("Expected token type "s + Token::type_name(token_type) + ", got " + to_string(*tokens) +
                                " at " + at(location));
-    }
   }
 
   /// Consume all subsequent `Separator` tokens. Throws if none were found.
@@ -181,7 +183,7 @@ struct Parser {
   /// Attempt to consume a token of type `token_type` with the given `payload`. Does nothing if it wasn't encountered.
   auto try_consume(Token::Type tokenType, Atom payload,
                    [[maybe_unused]] const source_location location = source_location::current()) -> bool {
-    if (tokens->m_type != tokenType || tokens->m_payload != payload) {
+    if (tokens.at_end() || tokens->m_type != tokenType || tokens->m_payload != payload) {
       return false;
     }
 
@@ -245,6 +247,8 @@ struct Parser {
   /// Return the payload of the next token. Throws if the next token isn't a `Word`.
   auto consume_word(const source_location location = source_location::current()) -> string {
     ignore_separator();
+    if (tokens->m_type != Word)
+      throw std::runtime_error("Expected word, got the end of the file");
     if (tokens->m_type != Word)
       throw std::runtime_error("Expected word, got "s + to_string(*tokens) + " at " + at(location));
 
