@@ -159,26 +159,20 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
 
   // It is an instantiation of a function template
   if (!instantiate.sub.empty()) {
-    // TODO: move most of this logic directly into Fn
     // Try to find an already existing instantiation with the same substitutions
     auto existing_instantiation = m_current_fn->m_instantiations.find(instantiate);
     if (existing_instantiation == m_current_fn->m_instantiations.end()) {
       // An existing one wasn't found. Duplicate the template's AST with the substituted types.
-      auto* decl_clone = selected->m_ast_decl.clone();
-      m_current_fn->m_member->direct_body().emplace_back(decl_clone);
-
-      std::map<string, const ty::Type*> subs{};
-      for (const auto& [k, v] : instantiate.sub)
-        subs.try_emplace(k->name(), v);
-
-      auto fn_ptr = std::make_unique<Fn>(*decl_clone, selected->m_parent, selected->m_member, move(subs));
-      auto new_emplace = m_current_fn->m_instantiations.emplace(instantiate, move(fn_ptr));
-      auto& new_fn = *new_emplace.first->second;
+      auto& new_fn = selected->create_template_instantiation(instantiate);
 
       // The types of the instantiated function must be set immediately (i.e. with in_depth = false)
       // This is because the implicit cast logic below depends on the direct type being set here and bound type
       // information doesn't propagate across ImplicitCastExpr...
       // TODO: Find a better solution; such as moving cast logic also into queue?
+      // However that would require evaluation of the queue very eagerly (i.e. immediately when the function is used,
+      // which kinda defeats the purpose of the queue). So I guess we'll just keep this until I think of a better
+      // solution
+      // TODO: find a better solution other than the solution proposed above
       with_saved_scope([&] {
         m_in_depth = false;
         m_current_fn = &new_fn;
