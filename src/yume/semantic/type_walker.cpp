@@ -214,9 +214,12 @@ template <> void TypeWalker::statement(ast::Compound& stat) {
 }
 
 template <> void TypeWalker::statement(ast::StructDecl& stat) {
-  for (auto& i : stat.fields()) {
+  // can't instantiate body of templated structs (currently no way to know which are substituted anyway)
+  if (!stat.type_args().empty())
+    return;
+
+  for (auto& i : stat.fields())
     expression(i);
-  }
 }
 
 template <> void TypeWalker::statement(ast::FnDecl& stat) {
@@ -233,7 +236,7 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
 
   // This decl still has unsubstituted generics, can't instantiate its body
   if (std::any_of(m_current_fn->m_subs.begin(), m_current_fn->m_subs.end(),
-                  [&](const auto& sub) { return isa<ty::Generic>(sub.second); })) {
+                  [&](const auto& sub) { return sub.second->is_generic(); })) {
     return;
   }
 
@@ -283,7 +286,7 @@ void TypeWalker::body_expression(ast::Expr& expr) {
 }
 
 auto TypeWalker::convert_type(const ast::Type& ast_type) -> const ty::Type& {
-  const ty::Type* parent = m_current_fn == nullptr ? m_current_struct : m_current_fn->parent();
+  const ty::Type* parent = m_current_fn == nullptr ? m_current_struct->type() : m_current_fn->parent();
   Fn* context = m_current_fn;
 
   if (const auto* simple_type = dyn_cast<ast::SimpleType>(&ast_type)) {

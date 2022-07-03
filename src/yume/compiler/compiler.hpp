@@ -40,8 +40,7 @@ class Compiler : public CRTPWalker<Compiler> {
   vector<SourceFile> m_sources;
   TypeHolder m_types;
   vector<Fn> m_fns{};
-  // TODO: turn into proper helper struct in vals
-  vector<std::pair<yume::ast::StructDecl*, ty::Type*>> m_structs{};
+  vector<Struct> m_structs{};
   std::queue<Fn*> m_decl_queue{};
   unique_ptr<semantic::TypeWalker> m_walker;
 

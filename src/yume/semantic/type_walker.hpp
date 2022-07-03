@@ -32,7 +32,7 @@ struct TypeWalker : public CRTPWalker<TypeWalker, false> {
 
 public:
   Compiler& m_compiler;
-  ty::Type* m_current_struct{};
+  Struct* m_current_struct{};
   Fn* m_current_fn{};
   std::map<string, ast::AST*> m_scope{};
 

@@ -83,6 +83,29 @@ struct Fn {
   operator llvm::Function*() const { return m_llvm_fn; }
 };
 
+struct Struct {
+  ast::StructDecl& m_ast_decl;
+  /// The type of this struct. Used for the `self` type.
+  ty::Type* m_type{};
+  /// The program this declaration is a member of.
+  ast::Program* m_member{};
+  vector<unique_ptr<ty::Generic>> m_type_args{};
+  /// If this is an instantiation of a template, a mapping between type variables and their substitutions.
+  std::map<string, const ty::Type*> m_subs{};
+  std::map<Instantiation, unique_ptr<Struct>> m_instantiations{};
+
+  Struct(ast::StructDecl& ast_decl, ty::Type* type = nullptr, ast::Program* member = nullptr,
+         std::map<string, const ty::Type*> subs = {}, vector<unique_ptr<ty::Generic>> type_args = {})
+      : m_ast_decl(ast_decl), m_type(type), m_member(member), m_type_args(move(type_args)), m_subs(move(subs)) {}
+
+  [[nodiscard]] auto body() const -> const auto& { return m_ast_decl.body(); }
+
+  [[nodiscard]] auto name() const { return m_ast_decl.name(); }
+
+  [[nodiscard]] auto ast() const -> auto& { return m_ast_decl; }
+  [[nodiscard]] auto type() const -> ty::Type* { return m_type; }
+};
+
 /// A value of a complied expression.
 /**
  * Note that this struct is mostly useless, it is a very thin wrapper around `llvm::Value`. It may be removed in the
