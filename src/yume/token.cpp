@@ -113,9 +113,10 @@ struct Tokenizer {
 
   /// Chars begin with a question mark `?` and may contain escapes.
   constexpr static const auto is_char = [escape = false](TokenState& state) mutable {
-    state.valid = false;
-    if (state.index == 0)
+    if (state.index == 0) {
+      state.valid = false;
       return state.c == '?';
+    }
     if (state.index == 1) {
       if (state.c == '\\')
         escape = true;

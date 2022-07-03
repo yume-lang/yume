@@ -80,6 +80,10 @@ TEST_CASE("Tokenize characters", "[token]") {
   CHECK_TOKENIZER("??", "?"_Char);
   CHECK_TOKENIZER("?\\0", "\0"_Char);
   CHECK_TOKENIZER("?\\\\", "\\"_Char);
+  CHECK_TOKENIZER("?a ", "a"_Char);
+  CHECK_TOKENIZER("?? ", "?"_Char);
+  CHECK_TOKENIZER("?\\0 ", "\0"_Char);
+  CHECK_TOKENIZER("?\\\\ ", "\\"_Char);
 }
 
 TEST_CASE("Tokenize string literals", "[token]") {
