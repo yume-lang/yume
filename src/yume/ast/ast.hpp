@@ -82,6 +82,7 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case K_Program: return "program";
   case K_SimpleType: return "simple type";
   case K_QualType: return "qual type";
+  case K_TemplatedType: return "templated type";
   case K_SelfType: return "self type";
   case K_TypeName: return "type name";
   case K_Compound: return "compound";
@@ -313,12 +314,14 @@ public:
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override {
     stringstream ss{};
+    ss << "<";
     int j = 0;
     for (const auto& i : m_type_args) {
       if (j++ > 0)
         ss << ",";
       ss << i;
     }
+    ss << ">";
     return ss.str();
   }
 
@@ -640,6 +643,7 @@ public:
   [[nodiscard]] constexpr auto fields() const -> const auto& { return m_fields; }
   [[nodiscard]] constexpr auto fields() -> auto& { return m_fields; }
   [[nodiscard]] constexpr auto body() const -> const auto& { return m_body; }
+  [[nodiscard]] auto type_args() const { return m_type_args; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_StructDecl; }
   [[nodiscard]] auto clone() const -> StructDecl* override;
 };
