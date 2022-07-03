@@ -60,6 +60,15 @@ auto make_fn_decl(const std::string& name, std::initializer_list<TName> args = {
                      make_compound(std::forward<Ts>(ts)...));
 }
 
+auto make_fn_decl(const std::string& name, std::initializer_list<TName> args, std::optional<std::unique_ptr<Type>> ret,
+                  const std::string& primitive, bool varargs = false) -> std::unique_ptr<FnDecl> {
+  auto ast_args = std::vector<TypeName>();
+  ast_args.reserve(args.size());
+  std::transform(args.begin(), args.end(), std::back_inserter(ast_args),
+                 [](auto& tn) { return static_cast<TypeName>(tn); });
+  return ast<FnDecl>(name, std::move(ast_args), std::vector<std::string>{}, std::move(ret), varargs, primitive);
+}
+
 auto operator""_Var(const char* str, size_t size) { return ast<VarExpr>(std::string{str, size}); }
 auto operator""_Num(unsigned long long val) { return ast<NumberExpr>(val); }
 auto operator""_String(const char* str, size_t size) { return ast<StringExpr>(std::string{str, size}); }
@@ -247,8 +256,9 @@ TEST_CASE("Parse operator function declaration", "[parse][fn]") {
   CHECK_PARSER("def [](a I32[], x Foo)\nend",
                make_fn_decl("[]", {{"a", ast<QualType>("I32"_Type, Slice)}, {"x", "Foo"_Type}}));
 
-  CHECK_PARSER("def []=(target L, offs I32, val V)\nend",
-               make_fn_decl("[]=", {{"target", "L"_Type}, {"offs", "I32"_Type}, {"val", "V"_Type}}));
+  CHECK_PARSER("def []=(target L, offs I32, val V) L[]\nend",
+               make_fn_decl("[]=", {{"target", "L"_Type}, {"offs", "I32"_Type}, {"val", "V"_Type}}, {},
+                            ast<QualType>("L"_Type, Slice)));
 
   CHECK_PARSER("def +=(i I32, j I32) I32 = i + j",
                make_fn_decl("+=", {{"i", "I32"_Type}, {"j", "I32"_Type}}, {}, "I32"_Type,
@@ -258,6 +268,15 @@ TEST_CASE("Parse operator function declaration", "[parse][fn]") {
                make_fn_decl("baz", {{"l", "Left"_Type}, {"r", "Right"_Type}}, {}, "U32"_Type));
 
   CHECK_PARSER("def foo(a I32) I32\na\nend", make_fn_decl("foo", {{"a", "I32"_Type}}, {}, "I32"_Type, "a"_Var));
+}
+
+TEST_CASE("Parse primitive function declaration", "[parse][fn]") {
+  CHECK_PARSER("def prim() = __primitive__(name_of_primitive)", make_fn_decl("prim", {}, {}, "name_of_primitive"));
+  CHECK_PARSER(
+      "def munge(a I32 ptr) I32 ptr = __primitive__(native_munge)",
+      make_fn_decl("munge", {{"a", ast<QualType>("I32"_Type, Ptr)}}, ast<QualType>("I32"_Type, Ptr), "native_munge"));
+  CHECK_PARSER("def printf(format U8 ptr) = __primitive__(libc_printf) __varargs__",
+               make_fn_decl("printf", {{"format", ast<QualType>("U8"_Type, Ptr)}}, {}, "libc_printf", true));
 }
 
 #undef CHECK_PARSER
