@@ -120,6 +120,8 @@ auto TypeWalker::all_overloads_by_name(ast::CallExpr& call) -> OverloadSet {
 }
 
 template <> void TypeWalker::expression(ast::CallExpr& expr) {
+  resolve_queue();
+
   auto overload_set = all_overloads_by_name(expr);
   auto name = expr.name();
 
@@ -173,31 +175,19 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
       auto new_emplace = m_current_fn->m_instantiations.emplace(instantiate, move(fn_ptr));
       auto& new_fn = *new_emplace.first->second;
 
-      // TODO: Push this in a queue to not cause a huge stack trace when an instantiation causes another instantiation
-      // TODO: This really needs to go into a queue because an instantiation can loop back to requiring to instantiate
-      // itself while the first instantiation hasn't finished existing this scope yet, leading to god knows what
-      // outcome.
+      // The types of the instantiated function must be set immediately (i.e. with in_depth = false)
+      // This is because the implicit cast logic below depends on the direct type being set here and bound type
+      // information doesn't propagate across ImplicitCastExpr...
+      // TODO: Find a better solution; such as moving cast logic also into queue?
+      with_saved_scope([&] {
+        m_in_depth = false;
+        m_current_fn = &new_fn;
+        body_statement(new_fn.ast());
+      });
 
-      // Save everything pertaining to the old context
-      auto saved_scope = m_scope;
-      auto* saved_current = m_current_fn;
+      m_decl_queue.push(&new_fn);
 
-      // Temporarily create a new context
-      m_in_depth = false;
-      m_scope.clear();
-      m_current_fn = &new_fn;
-
-      // Type-annotate the cloned declaration
-      body_statement(*decl_clone);
-      m_in_depth = true;
-
-      auto* llvm_fn = m_compiler.declare(new_fn);
-      new_fn.m_llvm_fn = llvm_fn;
       selected = &new_fn;
-
-      // Restore again
-      m_scope = saved_scope;
-      m_current_fn = saved_current;
     } else {
       selected = existing_instantiation->second.get();
     }
@@ -216,7 +206,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
   }
 
   if (selected->ast().ret().has_value())
-    expr.val_ty(selected->ast().ret()->get().val_ty());
+    expr.attach_to(&selected->ast());
 
   expr.selected_overload(selected);
 }
@@ -319,5 +309,19 @@ auto TypeWalker::convert_type(const ast::Type& ast_type) -> const ty::Type& {
 
   throw std::runtime_error("Cannot convert AST type to actual type! "s + ast_type.kind_name() + " (" +
                            ast_type.describe() + ")");
+}
+
+void TypeWalker::resolve_queue() {
+  while (!m_decl_queue.empty()) {
+    auto* next = m_decl_queue.front();
+    m_decl_queue.pop();
+
+    with_saved_scope([&] {
+      m_in_depth = true;
+
+      auto* llvm_fn = m_compiler.declare(*next);
+      next->m_llvm_fn = llvm_fn;
+    });
+  }
 }
 } // namespace yume::semantic
