@@ -2,6 +2,7 @@
 #include "token.hpp"
 #include "util.hpp"
 #include <catch2/catch_test_macros.hpp>
+#include <llvm/Support/raw_ostream.h>
 
 namespace {
 constexpr auto token_comparison = [](const yume::Token& a, const yume::Token& b) -> bool {
@@ -101,6 +102,19 @@ TEST_CASE("Tokenize operators/symbols", "[token]") {
   }
 
   CHECK_TOKENIZER("[]", "["_Symbol, "]"_Symbol);
+}
+
+TEST_CASE("Token stringification", "[token][str]") {
+  std::string str;
+  llvm::raw_string_ostream ss(str);
+
+  auto in_stream = std::stringstream("foo");
+  auto tokens = yume::tokenize(in_stream, "<filename>");
+
+  REQUIRE(tokens.size() == 1);
+  ss << tokens[0];
+
+  CHECK(str == "Token   0(<filename>:1:1 :3,Word,\"foo\")");
 }
 
 TEST_CASE("Tokenize invalid tokens", "[token][throws]") { CHECK_TOKENIZER_THROWS("`"); }
