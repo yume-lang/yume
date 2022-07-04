@@ -237,7 +237,7 @@ $(function() {
 <div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span><span class="keywordtype">void</span> stacktrace_ostream::format_phase(std::string_view msg) {</div>
 <div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>  <span class="keyword">using namespace </span>std::literals;</div>
 <div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>  <span class="keyword">static</span> std::array skip_lines = {<span class="stringliteral">&quot;yume::CRTPWalker&lt;&quot;</span>sv, <span class="stringliteral">&quot;__libc_start_&quot;</span>sv};</div>
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>  <span class="keyword">static</span> std::string source_dir = <a class="code hl_define" href="yumec_8cpp.html#a713db508187fddfd6ff054a6de478ce2">YUME_SRC_DIR</a>;</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>  <span class="keyword">static</span> std::string source_dir = YUME_SRC_DIR;</div>
 <div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span> </div>
 <div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>  <span class="keywordflow">switch</span> (current_phase) {</div>
 <div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>  <span class="keywordflow">case</span> Address: buffer &lt;&lt; msg; <span class="keywordflow">break</span>;</div>
@@ -328,7 +328,6 @@ $(function() {
 <div class="ttc" id="astructyume_1_1ASTStackTrace_html_adb8aee3865fbb9b54b96fcc03f51cce1"><div class="ttname"><a href="structyume_1_1ASTStackTrace.html#adb8aee3865fbb9b54b96fcc03f51cce1">yume::ASTStackTrace::ASTStackTrace</a></div><div class="ttdeci">ASTStackTrace(std::string message)</div><div class="ttdef"><b>Definition:</b> <a href="errors_8cpp_source.html#l00015">errors.cpp:15</a></div></div>
 <div class="ttc" id="atoken_8hpp_html"><div class="ttname"><a href="token_8hpp.html">token.hpp</a></div></div>
 <div class="ttc" id="autil_8hpp_html"><div class="ttname"><a href="util_8hpp.html">util.hpp</a></div></div>
-<div class="ttc" id="ayumec_8cpp_html_a713db508187fddfd6ff054a6de478ce2"><div class="ttname"><a href="yumec_8cpp.html#a713db508187fddfd6ff054a6de478ce2">YUME_SRC_DIR</a></div><div class="ttdeci">#define YUME_SRC_DIR</div><div class="ttdef"><b>Definition:</b> <a href="yumec_8cpp_source.html#l00032">yumec.cpp:32</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

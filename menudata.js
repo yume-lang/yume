@@ -53,7 +53,8 @@ var menudata={children:[
 {text:"e",url:"namespacemembers_vars.html#index_e"},
 {text:"g",url:"namespacemembers_vars.html#index_g"},
 {text:"k",url:"namespacemembers_vars.html#index_k"},
-{text:"s",url:"namespacemembers_vars.html#index_s"}]},
+{text:"s",url:"namespacemembers_vars.html#index_s"},
+{text:"v",url:"namespacemembers_vars.html#index_v"}]},
 {text:"Typedefs",url:"namespacemembers_type.html"},
 {text:"Enumerations",url:"namespacemembers_enum.html"},
 {text:"Enumerator",url:"namespacemembers_eval.html",children:[

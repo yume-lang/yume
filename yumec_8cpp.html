@@ -67,8 +67,9 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#define-members">Macros</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#namespaces">Namespaces</a> &#124;
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">yumec.cpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -157,52 +158,75 @@ Include dependency graph for yumec.cpp:</div>
 </div>
 <p><a href="yumec_8cpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
-Macros</h2></td></tr>
-<tr class="memitem:a5c73686a5889b94db1da84d9bab434a7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="yumec_8cpp.html#a5c73686a5889b94db1da84d9bab434a7">YUME_LIB_DIR</a>&#160;&#160;&#160;&quot;./lib/&quot;</td></tr>
-<tr class="separator:a5c73686a5889b94db1da84d9bab434a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a713db508187fddfd6ff054a6de478ce2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="yumec_8cpp.html#a713db508187fddfd6ff054a6de478ce2">YUME_SRC_DIR</a>&#160;&#160;&#160;&quot;./src/&quot;</td></tr>
-<tr class="separator:a713db508187fddfd6ff054a6de478ce2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespaceyume"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html">yume</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a497f47bf1566db0d52fbe0d15379c056"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="yumec_8cpp.html#a497f47bf1566db0d52fbe0d15379c056">compile</a> (std::span&lt; const char * &gt; args) -&gt; int</td></tr>
+<tr class="separator:a497f47bf1566db0d52fbe0d15379c056"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a8e321a3310f5f588c8e2105b00d53e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="yumec_8cpp.html#a7a8e321a3310f5f588c8e2105b00d53e">emit_version</a> ()</td></tr>
+<tr class="separator:a7a8e321a3310f5f588c8e2105b00d53e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9d6b8cae4881c54db1d2df3da92c712f"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="yumec_8cpp.html#a9d6b8cae4881c54db1d2df3da92c712f">main</a> (int argc, const char *argv[]) -&gt; int</td></tr>
 <tr class="separator:a9d6b8cae4881c54db1d2df3da92c712f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:af4ae9d2f36afcdb09e5ea1eae1015e40"><td class="memItemLeft" align="right" valign="top">static constexpr std::string_view&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#af4ae9d2f36afcdb09e5ea1eae1015e40">yume::VERSION</a> = &quot;???&quot;</td></tr>
+<tr class="separator:af4ae9d2f36afcdb09e5ea1eae1015e40"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abdc1b94ef97d3e392b1984f7919265c9"><td class="memItemLeft" align="right" valign="top">static constexpr std::string_view&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#abdc1b94ef97d3e392b1984f7919265c9">yume::GIT_SHORTHASH</a> = &quot;???&quot;</td></tr>
+<tr class="separator:abdc1b94ef97d3e392b1984f7919265c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Macro Definition Documentation</h2>
-<a id="a5c73686a5889b94db1da84d9bab434a7" name="a5c73686a5889b94db1da84d9bab434a7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5c73686a5889b94db1da84d9bab434a7">&#9670;&nbsp;</a></span>YUME_LIB_DIR</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define YUME_LIB_DIR&#160;&#160;&#160;&quot;./lib/&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="yumec_8cpp_source.html#l00029">29</a> of file <a class="el" href="yumec_8cpp_source.html">yumec.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a713db508187fddfd6ff054a6de478ce2" name="a713db508187fddfd6ff054a6de478ce2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a713db508187fddfd6ff054a6de478ce2">&#9670;&nbsp;</a></span>YUME_SRC_DIR</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define YUME_SRC_DIR&#160;&#160;&#160;&quot;./src/&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="yumec_8cpp_source.html#l00032">32</a> of file <a class="el" href="yumec_8cpp_source.html">yumec.cpp</a>.</p>
-
-</div>
-</div>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="a497f47bf1566db0d52fbe0d15379c056" name="a497f47bf1566db0d52fbe0d15379c056"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a497f47bf1566db0d52fbe0d15379c056">&#9670;&nbsp;</a></span>compile()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto compile </td>
+          <td>(</td>
+          <td class="paramtype">std::span&lt; const char * &gt;&#160;</td>
+          <td class="paramname"><em>args</em></td><td>)</td>
+          <td> -&gt; int </td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="yumec_8cpp_source.html#l00036">36</a> of file <a class="el" href="yumec_8cpp_source.html">yumec.cpp</a>.</p>
+
+<p class="reference">References <a class="el" href="util_8hpp_source.html#l00181">yume::open_file()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="yumec_8cpp_source.html#l00110">main()</a>.</p>
+
+</div>
+</div>
+<a id="a7a8e321a3310f5f588c8e2105b00d53e" name="a7a8e321a3310f5f588c8e2105b00d53e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7a8e321a3310f5f588c8e2105b00d53e">&#9670;&nbsp;</a></span>emit_version()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void emit_version </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="yumec_8cpp_source.html#l00104">104</a> of file <a class="el" href="yumec_8cpp_source.html">yumec.cpp</a>.</p>
+
+<p class="reference">References <a class="el" href="yumec_8cpp_source.html#l00032">yume::GIT_SHORTHASH</a>, and <a class="el" href="yumec_8cpp_source.html#l00031">yume::VERSION</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="yumec_8cpp_source.html#l00110">main()</a>.</p>
+
+</div>
+</div>
 <a id="a9d6b8cae4881c54db1d2df3da92c712f" name="a9d6b8cae4881c54db1d2df3da92c712f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9d6b8cae4881c54db1d2df3da92c712f">&#9670;&nbsp;</a></span>main()</h2>
 
@@ -229,9 +253,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="yumec_8cpp_source.html#l00035">35</a> of file <a class="el" href="yumec_8cpp_source.html">yumec.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="yumec_8cpp_source.html#l00110">110</a> of file <a class="el" href="yumec_8cpp_source.html">yumec.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="errors_8cpp_source.html#l00239">yume::backtrace()</a>, <a class="el" href="util_8hpp_source.html#l00181">yume::open_file()</a>, <a class="el" href="errors_8hpp_source.html#l00041">yume::print_exception()</a>, and <a class="el" href="yumec_8cpp_source.html#l00029">YUME_LIB_DIR</a>.</p>
+<p class="reference">References <a class="el" href="errors_8cpp_source.html#l00239">yume::backtrace()</a>, <a class="el" href="yumec_8cpp_source.html#l00036">compile()</a>, <a class="el" href="yumec_8cpp_source.html#l00104">emit_version()</a>, and <a class="el" href="errors_8hpp_source.html#l00041">yume::print_exception()</a>.</p>
 
 </div>
 </div>
