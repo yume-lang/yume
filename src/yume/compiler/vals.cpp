@@ -22,4 +22,12 @@ auto Fn::create_template_instantiation(Instantiation& instantiate) -> Fn& {
   auto new_emplace = m_instantiations.emplace(instantiate, move(fn_ptr));
   return *new_emplace.first->second;
 }
+
+auto Fn::get_or_create_instantiation(Instantiation& instantiate) -> std::pair<bool, Fn&> {
+  auto existing_instantiation = m_instantiations.find(instantiate);
+  if (existing_instantiation == m_instantiations.end())
+    return {false, create_instantiation(instantiate)};
+
+  return {true, *existing_instantiation->second};
+};
 } // namespace yume

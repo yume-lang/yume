@@ -162,10 +162,11 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
   // It is an instantiation of a function template
   if (!instantiate.sub.empty()) {
     // Try to find an already existing instantiation with the same substitutions
-    auto existing_instantiation = m_current_fn->m_instantiations.find(instantiate);
-    if (existing_instantiation == m_current_fn->m_instantiations.end()) {
-      // An existing one wasn't found. Duplicate the template's AST with the substituted types.
-      auto& new_fn = selected->create_template_instantiation(instantiate);
+    auto [already_existed, inst_fn] = selected->get_or_create_instantiation(instantiate);
+    if (!already_existed) {
+      // An existing one wasn't found. We've been given a duplicate of the template's AST but without types
+      // The duplicate will have its types set again according to the substitutions being used.
+      auto& new_fn = inst_fn;
 
       // The types of the instantiated function must be set immediately (i.e. with in_depth = false)
       // This is because the implicit cast logic below depends on the direct type being set here and bound type
@@ -185,7 +186,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
 
       selected = &new_fn;
     } else {
-      selected = existing_instantiation->second.get();
+      selected = &inst_fn;
     }
   }
 
@@ -315,8 +316,7 @@ void TypeWalker::resolve_queue() {
     with_saved_scope([&] {
       m_in_depth = true;
 
-      auto* llvm_fn = m_compiler.declare(*next);
-      next->m_llvm_fn = llvm_fn;
+      m_compiler.declare(*next);
     });
   }
 }

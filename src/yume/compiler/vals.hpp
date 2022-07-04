@@ -77,7 +77,8 @@ struct Fn {
 
   [[nodiscard]] auto declaration(Compiler& compiler, bool mangle = true) -> llvm::Function*;
 
-  [[nodiscard]] auto create_template_instantiation(Instantiation& instantiate) -> Fn&;
+  [[nodiscard]] auto get_or_create_instantiation(Instantiation& instantiate) -> std::pair<bool, Fn&>;
+  [[nodiscard]] auto create_instantiation(Instantiation& instantiate) -> Fn&;
 
   operator llvm::Function*() const { return m_llvm_fn; }
 };
