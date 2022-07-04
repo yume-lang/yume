@@ -6,7 +6,7 @@ Check out the `example/` directory to see what the language looks like. All exam
 
 ## Usage
 
-The Yume compiler is written in modern C++20 and built using CMake. Requires LLVM to be installed as a library. [See below](#compiler-compatiblity) for compatibility with compilers
+The Yume compiler is written in modern C++20 and built using CMake. Requires LLVM to be installed as a library. [See below](#compiler-compatibility) for compatibility with compilers
 
 ```sh
 cmake -B build && cmake --build build
