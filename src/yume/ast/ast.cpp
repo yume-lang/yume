@@ -543,18 +543,11 @@ struct Parser {
           consume_with_commas_until(Symbol, SYM_RPAREN, [&] { call_args.push_back(parse_expr()); });
           return ast_ptr<CtorExpr>(entry, move(type), move(call_args));
         }
-        if (try_consume(Symbol, SYM_LBRACKET)) {
+        if (try_consume(Symbol, SYM_COLON)) {
+          consume(Symbol, SYM_LBRACKET);
           auto slice_members = vector<unique_ptr<Expr>>{};
           consume_with_commas_until(Symbol, SYM_RBRACKET, [&] { slice_members.push_back(parse_expr()); });
           return ast_ptr<SliceExpr>(entry, move(type), move(slice_members));
-        }
-
-        if (auto* qual_type = llvm::dyn_cast<QualType>(type.get());
-            qual_type != nullptr && qual_type->qualifier() == Qualifier::Slice) {
-          // This isn't a slice type, it's an empty slice literal!
-          // i.e. `I32[]` should be parsed as `I32[...]` (where the ... is just empty)
-          auto slice_members = vector<unique_ptr<Expr>>{};
-          return ast_ptr<SliceExpr>(entry, std::move(qual_type->direct_base()), move(slice_members));
         }
 
         throw std::runtime_error("Couldn't make an expression from here with a type");
