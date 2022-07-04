@@ -1,0 +1,33 @@
+# TODO: #7
+struct Vector(x I32, y I32)
+  def x(self) I32 = self::x
+  def y(self) I32 = self::y
+
+  def x=(self mut, j I32) I32 = self::x = j
+  def y=(self mut, j I32) I32 = self::y = j
+
+  def +(a Self, b Self) Self = Self(a::x + b::x, a::y + b::y)
+end
+
+struct VectorContainer(vec Vector)
+  #def vec(self mut*) Vector mut* = self::vec
+  def vec(self mut) Vector mut = self::vec
+  def vec(self) Vector = self::vec
+end
+
+# Can't yet declare locals as not mut, so need this function
+def make_const_vector() VectorContainer
+  return VectorContainer(Vector(4, 4))
+end
+
+def ptrto(v Vector mut) Vector ptr = __primitive__(ptrto)
+
+def main() I32
+  let a = Vector(2, 3)
+  let container = VectorContainer(a)
+
+  container.vec.x = 1
+  make_const_vector().vec.x = 2
+
+  return 0
+end
