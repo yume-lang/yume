@@ -4,8 +4,8 @@ on: push
 
 env:
   BUILD_TYPE: Debug
-  TARGET_CLANG: 13
-  TARGET_LLVM: 13
+  TARGET_CLANG: 14
+  TARGET_LLVM: 14
 
 jobs:
   build:
