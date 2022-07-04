@@ -250,9 +250,9 @@ TEST_CASE("Parse templated function declaration", "[parse][fn]") {
 TEST_CASE("Parse operator function declaration", "[parse][fn]") {
   CHECK_PARSER("def +()\nend", make_fn_decl("+"));
 
-  CHECK_PARSER("def +() = 0", make_fn_decl("+", {}, {}, {}, ast<ReturnStmt>(0_Num)));
+  CHECK_PARSER("def -() = 0", make_fn_decl("-", {}, {}, {}, ast<ReturnStmt>(0_Num)));
 
-  CHECK_PARSER("def -(a I32) I32\nend", make_fn_decl("-", {{"a", "I32"_Type}}, {}, "I32"_Type));
+  CHECK_PARSER("def !(a I32) I32\nend", make_fn_decl("!", {{"a", "I32"_Type}}, {}, "I32"_Type));
 
   CHECK_PARSER("def [](a I32[], x Foo)\nend", make_fn_decl("[]", {{"a", "I32"_Type & Slice}, {"x", "Foo"_Type}}));
 

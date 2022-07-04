@@ -15,6 +15,7 @@
 output.*
 
 # CMake
+src/yumec-version.hpp
 CMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles

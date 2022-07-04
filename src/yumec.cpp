@@ -24,29 +24,23 @@
 #include <utility>
 #include <vector>
 
-// these should be provided by cmake
-#ifndef YUME_LIB_DIR
-#define YUME_LIB_DIR "./lib/"
-#endif
-#ifndef YUME_SRC_DIR
-#define YUME_SRC_DIR "./src/"
+#if __has_include("yumec-version.hpp")
+#include "yumec-version.hpp"
+#else
+namespace yume {
+static constexpr std::string_view VERSION = "???";
+static constexpr std::string_view GIT_SHORTHASH = "???";
+} // namespace yume
 #endif
 
-auto main(int argc, const char* argv[]) -> int {
-  auto args = std::span(argv, argc);
+auto compile(std::span<const char*> args) -> int {
   std::vector<std::string> src_file_names{};
-  src_file_names.reserve(argc + 1);
+  src_file_names.reserve(args.size());
   src_file_names.push_back(std::string(YUME_LIB_DIR) + "std.ym");
-  std::copy(args.begin() + 1, args.end(), std::back_inserter(src_file_names));
+  std::copy(args.begin(), args.end(), std::back_inserter(src_file_names));
 
   std::vector<yume::SourceFile> source_files{};
   source_files.reserve(src_file_names.size());
-
-  std::set_terminate(yume::print_exception);
-  llvm::EnablePrettyStackTrace();
-  llvm::setBugReportMsg("");
-  // llvm::sys::PrintStackTraceOnErrorSignal(args[0]);
-  llvm::sys::AddSignalHandler(yume::backtrace, args.data());
 
   {
     std::vector<std::unique_ptr<llvm::MemoryBuffer>> inputs{};
@@ -105,4 +99,37 @@ auto main(int argc, const char* argv[]) -> int {
   std::system("cc output.o -o yume.out");
 
   return EXIT_SUCCESS;
+}
+
+void emit_version() {
+  llvm::outs() << "yume version " << yume::VERSION << "-" << yume::GIT_SHORTHASH << "\n";
+  llvm::outs() << "LIB_DIR: " YUME_LIB_DIR "\n";
+  llvm::outs() << "SRC_DIR: " YUME_SRC_DIR "\n";
+}
+
+auto main(int argc, const char* argv[]) -> int {
+  auto raw_args = std::span(argv, argc);
+  auto args = raw_args.subspan(1); // omit argv 0 (program name)
+
+  for (const auto& arg : args) {
+    if (arg == "--version"s) {
+      emit_version();
+      return EXIT_SUCCESS;
+    }
+  }
+
+  if (args.empty()) {
+    emit_version();
+    llvm::outs() << "\n";
+    llvm::outs() << raw_args[0] << ": error: provide at least one source file\n";
+
+    return EXIT_FAILURE;
+  }
+
+  std::set_terminate(yume::print_exception);
+  llvm::EnablePrettyStackTrace();
+  llvm::setBugReportMsg("");
+  llvm::sys::AddSignalHandler(yume::backtrace, args.data());
+
+  return compile(args);
 }
