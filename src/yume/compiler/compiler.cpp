@@ -543,7 +543,7 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
     auto* llvm_struct_type = llvm_type(*struct_type);
 
     llvm::Value* alloc = nullptr;
-    // TODO: determine what kind of allocation must be done, and if at all. It'll probably require a complicated
+    // TODO: #4 determine what kind of allocation must be done, and if at all. It'll probably require a complicated
     // semantic step to determine object lifetime, which would probably be evaluated before compilation of these
     // expressions. currently just using "mut" constraint, which probably won't be permanent and is probably
     // faulty, but, oh well
@@ -623,6 +623,7 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
     // TODO: A large slice may be unfeasible to be stack-allocated anyway, so in addition to the above points,
     // slice size could also be a consideration. Perhaps we don't *want* to stack-allocate unknown-sized slices as
     // they may be absurdly huge in size and cause stack overflow.
+    // Related: #4
 
     auto* alloc_size = ConstantExpr::getSizeOf(base_type);
     alloc_size = ConstantExpr::getTruncOrBitCast(alloc_size, m_builder->getInt32Ty());
@@ -813,7 +814,7 @@ void Compiler::body_statement(const ast::Stmt& stat) {
   return CRTPWalker::body_statement(stat);
 }
 
-// TODO: once implicit conversion checking is added in the remaining locations (i.e. field assignment and return)
+// TODO: #3 once implicit conversion checking is added in the remaining locations (i.e. field assignment and return)
 // there is no real reason to keep the `mut` parameter on all expression compilation methods. All the mutability
 // information is in the type system and dereferences are handled by the TypeWalker.
 auto Compiler::body_expression(const ast::Expr& expr, bool mut) -> Val {

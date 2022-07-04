@@ -1,4 +1,4 @@
-# TODO
+# TODO #5
 # This would be a lot clearer if i had enums
 struct Instruction(type I32, payload I32)
 end

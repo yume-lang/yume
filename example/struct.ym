@@ -1,6 +1,6 @@
 struct Vector(x I32, y I32)
 
-  # TODO
+  # TODO #6
   # These field accessors will be implicitly defined one day
   def x(self) I32 = self::x
   def y(self) I32 = self::y
