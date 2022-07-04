@@ -180,13 +180,14 @@ TEST_CASE("Parse constructor calling", "[parse]") {
 }
 
 TEST_CASE("Parse slice literal", "[parse]") {
-  CHECK_PARSER("I32[1, 2, 3]", make_call<SliceExpr>("I32"_Type, 1_Num, 2_Num, 3_Num));
-  CHECK_PARSER("I32[]", make_call<SliceExpr>("I32"_Type));
+  CHECK_PARSER("I32:[1, 2, 3]", make_call<SliceExpr>("I32"_Type, 1_Num, 2_Num, 3_Num));
+  CHECK_PARSER("I32:[]", make_call<SliceExpr>("I32"_Type));
 }
 
 TEST_CASE("Parse bare type", "[parse][throws]") {
   CHECK_PARSER_THROWS("T ptr");
   CHECK_PARSER_THROWS("I32");
+  CHECK_PARSER_THROWS("I32[]");
 }
 
 TEST_CASE("Parse index operator", "[parse]") {
