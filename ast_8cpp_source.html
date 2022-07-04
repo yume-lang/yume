@@ -614,246 +614,239 @@ $(function() {
 <div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span>          consume_with_commas_until(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a7de2ae38537cf1fbb757c435dcce17e5">SYM_RPAREN</a>, [&amp;] { call_args.push_back(parse_expr()); });</div>
 <div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>          <span class="keywordflow">return</span> ast_ptr&lt;CtorExpr&gt;(entry, move(type), move(call_args));</div>
 <div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span>        }</div>
-<div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span>        <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a79bb923e401c89ba793f9173fa383af6">SYM_LBRACKET</a>)) {</div>
-<div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span>          <span class="keyword">auto</span> slice_members = vector&lt;unique_ptr&lt;Expr&gt;&gt;{};</div>
-<div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span>          consume_with_commas_until(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#abeb7bf169a6f9f95650e6ec1e6dd3707">SYM_RBRACKET</a>, [&amp;] { slice_members.push_back(parse_expr()); });</div>
-<div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span>          <span class="keywordflow">return</span> ast_ptr&lt;SliceExpr&gt;(entry, move(type), move(slice_members));</div>
-<div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span>        }</div>
-<div class="line"><a id="l00551" name="l00551"></a><span class="lineno">  551</span> </div>
-<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span>        <span class="keywordflow">if</span> (<span class="keyword">auto</span>* qual_type = llvm::dyn_cast&lt;QualType&gt;(type.get());</div>
-<div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span>            qual_type != <span class="keyword">nullptr</span> &amp;&amp; qual_type-&gt;qualifier() == <a class="code hl_enumvalue" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706ad140d37ad98c12ccd8e1c432f548bcdb">Qualifier::Slice</a>) {</div>
-<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span>          <span class="comment">// This isn&#39;t a slice type, it&#39;s an empty slice literal!</span></div>
-<div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span>          <span class="comment">// i.e. `I32[]` should be parsed as `I32[...]` (where the ... is just empty)</span></div>
-<div class="line"><a id="l00556" name="l00556"></a><span class="lineno">  556</span>          <span class="keyword">auto</span> slice_members = vector&lt;unique_ptr&lt;Expr&gt;&gt;{};</div>
-<div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span>          <span class="keywordflow">return</span> ast_ptr&lt;SliceExpr&gt;(entry, std::move(qual_type-&gt;direct_base()), move(slice_members));</div>
-<div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span>        }</div>
-<div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span> </div>
-<div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span>        <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Couldn&#39;t make an expression from here with a type&quot;</span>);</div>
-<div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span>      }</div>
-<div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span>      <span class="keyword">auto</span> name = consume_word();</div>
-<div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span>      <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a63569709cbe06c4b07870f6a9e1ec226">SYM_LPAREN</a>)) {</div>
-<div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span>        <span class="keyword">auto</span> call_args = vector&lt;unique_ptr&lt;Expr&gt;&gt;{};</div>
-<div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span>        consume_with_commas_until(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a7de2ae38537cf1fbb757c435dcce17e5">SYM_RPAREN</a>, [&amp;] { call_args.push_back(parse_expr()); });</div>
-<div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span>        <span class="keywordflow">return</span> ast_ptr&lt;CallExpr&gt;(entry, name, move(call_args));</div>
-<div class="line"><a id="l00567" name="l00567"></a><span class="lineno">  567</span>      }</div>
-<div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span>      <span class="keywordflow">return</span> ast_ptr&lt;VarExpr&gt;({entry, 1}, name);</div>
-<div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span>    }</div>
-<div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span>    <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Couldn&#39;t make an expression from here&quot;</span>);</div>
-<div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span>  }</div>
-<div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span> </div>
-<div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>  <span class="keyword">auto</span> parse_receiver(unique_ptr&lt;Expr&gt; receiver, <span class="keyword">auto</span> receiver_entry) -&gt; unique_ptr&lt;Expr&gt; {</div>
-<div class="line"><a id="l00574" name="l00574"></a><span class="lineno">  574</span>    <span class="keyword">auto</span> entry = <a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>.begin();</div>
-<div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span>    <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#aa78b351bb6c2029b16fbaa49730c0aa8">SYM_DOT</a>)) {</div>
-<div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>      <span class="keyword">auto</span> name = consume_word();</div>
-<div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span>      <span class="keyword">auto</span> call_args = vector&lt;unique_ptr&lt;Expr&gt;&gt;{};</div>
-<div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span>      call_args.push_back(move(receiver));</div>
-<div class="line"><a id="l00579" name="l00579"></a><span class="lineno">  579</span>      <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a63569709cbe06c4b07870f6a9e1ec226">SYM_LPAREN</a>)) { <span class="comment">// A call with a dot `a.b(...)`</span></div>
-<div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span>        consume_with_commas_until(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a7de2ae38537cf1fbb757c435dcce17e5">SYM_RPAREN</a>, [&amp;] { call_args.push_back(parse_expr()); });</div>
-<div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span>        <span class="keyword">auto</span> call = ast_ptr&lt;CallExpr&gt;(entry + 1, name, move(call_args));</div>
-<div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span>        <span class="keywordflow">return</span> parse_receiver(move(call), receiver_entry);</div>
-<div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span>      }</div>
-<div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span>      <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#ab7f629f7e49493c0f6e302a001d37512">SYM_EQ</a>)) { <span class="comment">// A setter `a.b = ...`</span></div>
-<div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span>        <span class="keyword">auto</span> value = parse_expr();</div>
-<div class="line"><a id="l00586" name="l00586"></a><span class="lineno">  586</span>        call_args.push_back(move(value));</div>
-<div class="line"><a id="l00587" name="l00587"></a><span class="lineno">  587</span>        <span class="keyword">auto</span> call = ast_ptr&lt;CallExpr&gt;(entry + 1, name + <span class="charliteral">&#39;=&#39;</span>, move(call_args));</div>
-<div class="line"><a id="l00588" name="l00588"></a><span class="lineno">  588</span>        <span class="keywordflow">return</span> parse_receiver(move(call), receiver_entry);</div>
-<div class="line"><a id="l00589" name="l00589"></a><span class="lineno">  589</span>      }</div>
-<div class="line"><a id="l00590" name="l00590"></a><span class="lineno">  590</span>      <span class="keyword">auto</span> noarg_call = ast_ptr&lt;CallExpr&gt;(receiver_entry, name, move(call_args));</div>
-<div class="line"><a id="l00591" name="l00591"></a><span class="lineno">  591</span>      <span class="keywordflow">return</span> parse_receiver(move(noarg_call), receiver_entry);</div>
-<div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span>    }</div>
-<div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span>    <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#ab7f629f7e49493c0f6e302a001d37512">SYM_EQ</a>)) {</div>
-<div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span>      <span class="keyword">auto</span> value = parse_expr();</div>
-<div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span>      <span class="keyword">auto</span> assign = ast_ptr&lt;AssignExpr&gt;(receiver_entry, move(receiver), move(value));</div>
-<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>      <span class="keywordflow">return</span> parse_receiver(move(assign), receiver_entry);</div>
-<div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span>    }</div>
-<div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span>    <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a79bb923e401c89ba793f9173fa383af6">SYM_LBRACKET</a>)) {</div>
-<div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span>      <span class="keyword">auto</span> args = vector&lt;unique_ptr&lt;Expr&gt;&gt;{};</div>
-<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>      args.push_back(move(receiver));</div>
-<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>      args.push_back(parse_expr());</div>
-<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span>      consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#abeb7bf169a6f9f95650e6ec1e6dd3707">SYM_RBRACKET</a>);</div>
-<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span>      <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#ab7f629f7e49493c0f6e302a001d37512">SYM_EQ</a>)) {</div>
-<div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span>        <span class="keyword">auto</span> value = parse_expr();</div>
-<div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span>        args.push_back(move(value));</div>
-<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span>        <span class="keyword">auto</span> call = ast_ptr&lt;CallExpr&gt;(entry, <span class="stringliteral">&quot;[]=&quot;</span>, move(args));</div>
-<div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span>        <span class="keywordflow">return</span> parse_receiver(move(call), receiver_entry);</div>
-<div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span>      }</div>
-<div class="line"><a id="l00609" name="l00609"></a><span class="lineno">  609</span>      <span class="keyword">auto</span> call = ast_ptr&lt;CallExpr&gt;(entry, <span class="stringliteral">&quot;[]&quot;</span>, move(args));</div>
-<div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span>      <span class="keywordflow">return</span> parse_receiver(move(call), receiver_entry);</div>
-<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span>    }</div>
-<div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span>    <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a7aebd4fd401a3cddeaee8925b3afe06b">SYM_COLON</a>)) {</div>
-<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>      consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a7aebd4fd401a3cddeaee8925b3afe06b">SYM_COLON</a>);</div>
-<div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span>      <span class="keyword">auto</span> field = consume_word();</div>
-<div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span>      <span class="keyword">auto</span> access = ast_ptr&lt;FieldAccessExpr&gt;(receiver_entry, move(receiver), field);</div>
-<div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span>      <span class="keywordflow">return</span> parse_receiver(move(access), receiver_entry);</div>
-<div class="line"><a id="l00617" name="l00617"></a><span class="lineno">  617</span>    }</div>
-<div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span>    <span class="keywordflow">return</span> receiver;</div>
-<div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span>  }</div>
-<div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span> </div>
-<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span>  <span class="keyword">auto</span> parse_receiver() -&gt; unique_ptr&lt;Expr&gt; {</div>
-<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span>    <span class="keyword">auto</span> entry = <a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>.begin();</div>
-<div class="line"><a id="l00623" name="l00623"></a><span class="lineno">  623</span>    <span class="keywordflow">return</span> parse_receiver(parse_primary(), entry);</div>
-<div class="line"><a id="l00624" name="l00624"></a><span class="lineno">  624</span>  }</div>
-<div class="line"><a id="l00625" name="l00625"></a><span class="lineno">  625</span> </div>
-<div class="line"><a id="l00626" name="l00626"></a><span class="lineno">  626</span>  <span class="keyword">auto</span> parse_unary() -&gt; unique_ptr&lt;Expr&gt; {</div>
-<div class="line"><a id="l00627" name="l00627"></a><span class="lineno">  627</span>    <span class="keyword">auto</span> entry = <a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>.begin();</div>
-<div class="line"><a id="l00628" name="l00628"></a><span class="lineno">  628</span>    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; un_op : unary_operators()) {</div>
-<div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span>      <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, un_op)) {</div>
-<div class="line"><a id="l00630" name="l00630"></a><span class="lineno">  630</span>        <span class="keyword">auto</span> value = parse_receiver();</div>
-<div class="line"><a id="l00631" name="l00631"></a><span class="lineno">  631</span>        <span class="keyword">auto</span> args = vector&lt;unique_ptr&lt;Expr&gt;&gt;{};</div>
-<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span>        args.push_back(move(value));</div>
-<div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span>        <span class="keywordflow">return</span> ast_ptr&lt;CallExpr&gt;(entry, un_op, move(args));</div>
-<div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span>      }</div>
-<div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span>    }</div>
-<div class="line"><a id="l00636" name="l00636"></a><span class="lineno">  636</span>    <span class="keywordflow">return</span> parse_receiver();</div>
-<div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span>  }</div>
+<div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span>        <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a7aebd4fd401a3cddeaee8925b3afe06b">SYM_COLON</a>)) {</div>
+<div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span>          consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a79bb923e401c89ba793f9173fa383af6">SYM_LBRACKET</a>);</div>
+<div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span>          <span class="keyword">auto</span> slice_members = vector&lt;unique_ptr&lt;Expr&gt;&gt;{};</div>
+<div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span>          consume_with_commas_until(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#abeb7bf169a6f9f95650e6ec1e6dd3707">SYM_RBRACKET</a>, [&amp;] { slice_members.push_back(parse_expr()); });</div>
+<div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span>          <span class="keywordflow">return</span> ast_ptr&lt;SliceExpr&gt;(entry, move(type), move(slice_members));</div>
+<div class="line"><a id="l00551" name="l00551"></a><span class="lineno">  551</span>        }</div>
+<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span> </div>
+<div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span>        <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Couldn&#39;t make an expression from here with a type&quot;</span>);</div>
+<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span>      }</div>
+<div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span>      <span class="keyword">auto</span> name = consume_word();</div>
+<div class="line"><a id="l00556" name="l00556"></a><span class="lineno">  556</span>      <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a63569709cbe06c4b07870f6a9e1ec226">SYM_LPAREN</a>)) {</div>
+<div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span>        <span class="keyword">auto</span> call_args = vector&lt;unique_ptr&lt;Expr&gt;&gt;{};</div>
+<div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span>        consume_with_commas_until(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a7de2ae38537cf1fbb757c435dcce17e5">SYM_RPAREN</a>, [&amp;] { call_args.push_back(parse_expr()); });</div>
+<div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span>        <span class="keywordflow">return</span> ast_ptr&lt;CallExpr&gt;(entry, name, move(call_args));</div>
+<div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span>      }</div>
+<div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span>      <span class="keywordflow">return</span> ast_ptr&lt;VarExpr&gt;({entry, 1}, name);</div>
+<div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span>    }</div>
+<div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span>    <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Couldn&#39;t make an expression from here&quot;</span>);</div>
+<div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span>  }</div>
+<div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span> </div>
+<div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span>  <span class="keyword">auto</span> parse_receiver(unique_ptr&lt;Expr&gt; receiver, <span class="keyword">auto</span> receiver_entry) -&gt; unique_ptr&lt;Expr&gt; {</div>
+<div class="line"><a id="l00567" name="l00567"></a><span class="lineno">  567</span>    <span class="keyword">auto</span> entry = <a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>.begin();</div>
+<div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span>    <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#aa78b351bb6c2029b16fbaa49730c0aa8">SYM_DOT</a>)) {</div>
+<div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span>      <span class="keyword">auto</span> name = consume_word();</div>
+<div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span>      <span class="keyword">auto</span> call_args = vector&lt;unique_ptr&lt;Expr&gt;&gt;{};</div>
+<div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span>      call_args.push_back(move(receiver));</div>
+<div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span>      <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a63569709cbe06c4b07870f6a9e1ec226">SYM_LPAREN</a>)) { <span class="comment">// A call with a dot `a.b(...)`</span></div>
+<div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>        consume_with_commas_until(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a7de2ae38537cf1fbb757c435dcce17e5">SYM_RPAREN</a>, [&amp;] { call_args.push_back(parse_expr()); });</div>
+<div class="line"><a id="l00574" name="l00574"></a><span class="lineno">  574</span>        <span class="keyword">auto</span> call = ast_ptr&lt;CallExpr&gt;(entry + 1, name, move(call_args));</div>
+<div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span>        <span class="keywordflow">return</span> parse_receiver(move(call), receiver_entry);</div>
+<div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>      }</div>
+<div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span>      <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#ab7f629f7e49493c0f6e302a001d37512">SYM_EQ</a>)) { <span class="comment">// A setter `a.b = ...`</span></div>
+<div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span>        <span class="keyword">auto</span> value = parse_expr();</div>
+<div class="line"><a id="l00579" name="l00579"></a><span class="lineno">  579</span>        call_args.push_back(move(value));</div>
+<div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span>        <span class="keyword">auto</span> call = ast_ptr&lt;CallExpr&gt;(entry + 1, name + <span class="charliteral">&#39;=&#39;</span>, move(call_args));</div>
+<div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span>        <span class="keywordflow">return</span> parse_receiver(move(call), receiver_entry);</div>
+<div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span>      }</div>
+<div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span>      <span class="keyword">auto</span> noarg_call = ast_ptr&lt;CallExpr&gt;(receiver_entry, name, move(call_args));</div>
+<div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span>      <span class="keywordflow">return</span> parse_receiver(move(noarg_call), receiver_entry);</div>
+<div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span>    }</div>
+<div class="line"><a id="l00586" name="l00586"></a><span class="lineno">  586</span>    <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#ab7f629f7e49493c0f6e302a001d37512">SYM_EQ</a>)) {</div>
+<div class="line"><a id="l00587" name="l00587"></a><span class="lineno">  587</span>      <span class="keyword">auto</span> value = parse_expr();</div>
+<div class="line"><a id="l00588" name="l00588"></a><span class="lineno">  588</span>      <span class="keyword">auto</span> assign = ast_ptr&lt;AssignExpr&gt;(receiver_entry, move(receiver), move(value));</div>
+<div class="line"><a id="l00589" name="l00589"></a><span class="lineno">  589</span>      <span class="keywordflow">return</span> parse_receiver(move(assign), receiver_entry);</div>
+<div class="line"><a id="l00590" name="l00590"></a><span class="lineno">  590</span>    }</div>
+<div class="line"><a id="l00591" name="l00591"></a><span class="lineno">  591</span>    <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a79bb923e401c89ba793f9173fa383af6">SYM_LBRACKET</a>)) {</div>
+<div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span>      <span class="keyword">auto</span> args = vector&lt;unique_ptr&lt;Expr&gt;&gt;{};</div>
+<div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span>      args.push_back(move(receiver));</div>
+<div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span>      args.push_back(parse_expr());</div>
+<div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span>      consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#abeb7bf169a6f9f95650e6ec1e6dd3707">SYM_RBRACKET</a>);</div>
+<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>      <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#ab7f629f7e49493c0f6e302a001d37512">SYM_EQ</a>)) {</div>
+<div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span>        <span class="keyword">auto</span> value = parse_expr();</div>
+<div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span>        args.push_back(move(value));</div>
+<div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span>        <span class="keyword">auto</span> call = ast_ptr&lt;CallExpr&gt;(entry, <span class="stringliteral">&quot;[]=&quot;</span>, move(args));</div>
+<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>        <span class="keywordflow">return</span> parse_receiver(move(call), receiver_entry);</div>
+<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>      }</div>
+<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span>      <span class="keyword">auto</span> call = ast_ptr&lt;CallExpr&gt;(entry, <span class="stringliteral">&quot;[]&quot;</span>, move(args));</div>
+<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span>      <span class="keywordflow">return</span> parse_receiver(move(call), receiver_entry);</div>
+<div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span>    }</div>
+<div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span>    <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a7aebd4fd401a3cddeaee8925b3afe06b">SYM_COLON</a>)) {</div>
+<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span>      consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a7aebd4fd401a3cddeaee8925b3afe06b">SYM_COLON</a>);</div>
+<div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span>      <span class="keyword">auto</span> field = consume_word();</div>
+<div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span>      <span class="keyword">auto</span> access = ast_ptr&lt;FieldAccessExpr&gt;(receiver_entry, move(receiver), field);</div>
+<div class="line"><a id="l00609" name="l00609"></a><span class="lineno">  609</span>      <span class="keywordflow">return</span> parse_receiver(move(access), receiver_entry);</div>
+<div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span>    }</div>
+<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span>    <span class="keywordflow">return</span> receiver;</div>
+<div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span>  }</div>
+<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span> </div>
+<div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span>  <span class="keyword">auto</span> parse_receiver() -&gt; unique_ptr&lt;Expr&gt; {</div>
+<div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span>    <span class="keyword">auto</span> entry = <a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>.begin();</div>
+<div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span>    <span class="keywordflow">return</span> parse_receiver(parse_primary(), entry);</div>
+<div class="line"><a id="l00617" name="l00617"></a><span class="lineno">  617</span>  }</div>
+<div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span> </div>
+<div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span>  <span class="keyword">auto</span> parse_unary() -&gt; unique_ptr&lt;Expr&gt; {</div>
+<div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span>    <span class="keyword">auto</span> entry = <a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>.begin();</div>
+<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span>    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; un_op : unary_operators()) {</div>
+<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span>      <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, un_op)) {</div>
+<div class="line"><a id="l00623" name="l00623"></a><span class="lineno">  623</span>        <span class="keyword">auto</span> value = parse_receiver();</div>
+<div class="line"><a id="l00624" name="l00624"></a><span class="lineno">  624</span>        <span class="keyword">auto</span> args = vector&lt;unique_ptr&lt;Expr&gt;&gt;{};</div>
+<div class="line"><a id="l00625" name="l00625"></a><span class="lineno">  625</span>        args.push_back(move(value));</div>
+<div class="line"><a id="l00626" name="l00626"></a><span class="lineno">  626</span>        <span class="keywordflow">return</span> ast_ptr&lt;CallExpr&gt;(entry, un_op, move(args));</div>
+<div class="line"><a id="l00627" name="l00627"></a><span class="lineno">  627</span>      }</div>
+<div class="line"><a id="l00628" name="l00628"></a><span class="lineno">  628</span>    }</div>
+<div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span>    <span class="keywordflow">return</span> parse_receiver();</div>
+<div class="line"><a id="l00630" name="l00630"></a><span class="lineno">  630</span>  }</div>
+<div class="line"><a id="l00631" name="l00631"></a><span class="lineno">  631</span> </div>
+<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span>  <span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> N = 0&gt; <span class="keyword">auto</span> parse_operator() -&gt; unique_ptr&lt;Expr&gt; {</div>
+<div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span>    <span class="keyword">auto</span> entry = <a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>.begin();</div>
+<div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span>    <span class="keyword">const</span> <span class="keyword">auto</span> ops = operators();</div>
+<div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (N == ops.size()) {</div>
+<div class="line"><a id="l00636" name="l00636"></a><span class="lineno">  636</span>      <span class="keywordflow">return</span> parse_unary();</div>
+<div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span>    } <span class="keywordflow">else</span> {</div>
 <div class="line"><a id="l00638" name="l00638"></a><span class="lineno">  638</span> </div>
-<div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span>  <span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> N = 0&gt; <span class="keyword">auto</span> parse_operator() -&gt; unique_ptr&lt;Expr&gt; {</div>
-<div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span>    <span class="keyword">auto</span> entry = <a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>.begin();</div>
-<div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span>    <span class="keyword">const</span> <span class="keyword">auto</span> ops = operators();</div>
-<div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (N == ops.size()) {</div>
-<div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span>      <span class="keywordflow">return</span> parse_unary();</div>
-<div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span> </div>
-<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span>      <span class="keyword">auto</span> left = parse_operator&lt;N + 1&gt;();</div>
-<div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span>      <span class="keywordflow">while</span> (<span class="keyword">true</span>) {</div>
-<div class="line"><a id="l00648" name="l00648"></a><span class="lineno">  648</span>        <span class="keyword">auto</span> found_operator = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00649" name="l00649"></a><span class="lineno">  649</span>        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; op : ops[N]) {</div>
-<div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span>          <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, op)) {</div>
-<div class="line"><a id="l00651" name="l00651"></a><span class="lineno">  651</span>            <span class="keyword">auto</span> right = parse_operator&lt;N + 1&gt;();</div>
-<div class="line"><a id="l00652" name="l00652"></a><span class="lineno">  652</span>            <span class="keyword">auto</span> args = vector&lt;unique_ptr&lt;Expr&gt;&gt;{};</div>
-<div class="line"><a id="l00653" name="l00653"></a><span class="lineno">  653</span>            args.push_back(move(left));</div>
-<div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span>            args.push_back(move(right));</div>
-<div class="line"><a id="l00655" name="l00655"></a><span class="lineno">  655</span>            left = ast_ptr&lt;CallExpr&gt;(entry, op, move(args));</div>
-<div class="line"><a id="l00656" name="l00656"></a><span class="lineno">  656</span>            found_operator = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00657" name="l00657"></a><span class="lineno">  657</span>            <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00658" name="l00658"></a><span class="lineno">  658</span>          }</div>
-<div class="line"><a id="l00659" name="l00659"></a><span class="lineno">  659</span>        }</div>
-<div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span>        <span class="keywordflow">if</span> (!found_operator)</div>
-<div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span>          <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span>      }</div>
-<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span>      <span class="keywordflow">return</span> left;</div>
-<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>    }</div>
-<div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span>  }</div>
-<div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>};</div>
-<div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span>} <span class="comment">// namespace</span></div>
-<div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span> </div>
-<div class="line"><a id="l00669" name="l00669"></a><span class="lineno">  669</span><span class="keyword">auto</span> Parser::parse_stmt() -&gt; unique_ptr&lt;Stmt&gt; {</div>
-<div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span>  <span class="keyword">auto</span> stat = unique_ptr&lt;Stmt&gt;();</div>
-<div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span> </div>
-<div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span>  <span class="keywordflow">if</span> (<a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>-&gt;is_keyword(<a class="code hl_variable" href="namespaceyume_1_1ast.html#ab14831a4d35f8f1577570133373ec848">KWD_DEF</a>))</div>
-<div class="line"><a id="l00673" name="l00673"></a><span class="lineno">  673</span>    stat = parse_fn_decl();</div>
-<div class="line"><a id="l00674" name="l00674"></a><span class="lineno">  674</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>-&gt;is_keyword(<a class="code hl_variable" href="namespaceyume_1_1ast.html#ac909ed3244f9a0e56fd0bf16c8a34413">KWD_STRUCT</a>))</div>
-<div class="line"><a id="l00675" name="l00675"></a><span class="lineno">  675</span>    stat = parse_struct_decl();</div>
-<div class="line"><a id="l00676" name="l00676"></a><span class="lineno">  676</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>-&gt;is_keyword(<a class="code hl_variable" href="namespaceyume_1_1ast.html#a1d25b598292b61b91b4c46e8157354c2">KWD_LET</a>))</div>
-<div class="line"><a id="l00677" name="l00677"></a><span class="lineno">  677</span>    stat = parse_var_decl();</div>
-<div class="line"><a id="l00678" name="l00678"></a><span class="lineno">  678</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>-&gt;is_keyword(<a class="code hl_variable" href="namespaceyume_1_1ast.html#a6ef3e1eb28c57e9b7edb2ee5946955ec">KWD_WHILE</a>))</div>
-<div class="line"><a id="l00679" name="l00679"></a><span class="lineno">  679</span>    stat = parse_while_stmt();</div>
-<div class="line"><a id="l00680" name="l00680"></a><span class="lineno">  680</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>-&gt;is_keyword(<a class="code hl_variable" href="namespaceyume_1_1ast.html#a6f8fb52a3c8bd885ce2947ad0056d798">KWD_IF</a>))</div>
-<div class="line"><a id="l00681" name="l00681"></a><span class="lineno">  681</span>    stat = parse_if_stmt();</div>
-<div class="line"><a id="l00682" name="l00682"></a><span class="lineno">  682</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>-&gt;is_keyword(<a class="code hl_variable" href="namespaceyume_1_1ast.html#ab3e044ad423ae8f26ca418dea4d5ba65">KWD_RETURN</a>))</div>
-<div class="line"><a id="l00683" name="l00683"></a><span class="lineno">  683</span>    stat = parse_return_stmt();</div>
-<div class="line"><a id="l00684" name="l00684"></a><span class="lineno">  684</span>  <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00685" name="l00685"></a><span class="lineno">  685</span>    stat = parse_expr();</div>
-<div class="line"><a id="l00686" name="l00686"></a><span class="lineno">  686</span> </div>
-<div class="line"><a id="l00687" name="l00687"></a><span class="lineno">  687</span>  require_separator();</div>
-<div class="line"><a id="l00688" name="l00688"></a><span class="lineno">  688</span>  <span class="keywordflow">return</span> stat;</div>
-<div class="line"><a id="l00689" name="l00689"></a><span class="lineno">  689</span>}</div>
-<div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span> </div>
-<div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span><span class="keyword">auto</span> Parser::parse_type(<span class="keywordtype">bool</span> implicit_self) -&gt; unique_ptr&lt;Type&gt; {</div>
-<div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span>  <span class="keyword">auto</span> entry = <a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>.<a class="code hl_function" href="structyume_1_1ast_1_1TokenIterator.html#aa2140637cf9d477c9c2549ffcf8b9414">begin</a>();</div>
-<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span>  <span class="keyword">auto</span> base = [&amp;]() -&gt; unique_ptr&lt;Type&gt; {</div>
-<div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span>    <span class="keywordflow">if</span> (implicit_self || try_consume(<a class="code hl_variable" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Word</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#aac2e12103922f3110f5fd151022bf0b4">KWD_SELF_TYPE</a>))</div>
-<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span>      <span class="keywordflow">return</span> ast_ptr&lt;SelfType&gt;(entry);</div>
-<div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span> </div>
-<div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span>    <span class="keyword">const</span> <span class="keywordtype">string</span> name = consume_word();</div>
-<div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span>    <span class="keywordflow">if</span> (!(is_uword(name)))</div>
-<div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span>      <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Expected capitalized payload for simple type&quot;</span>);</div>
-<div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span> </div>
-<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span>    <span class="keywordflow">return</span> ast_ptr&lt;SimpleType&gt;(entry, name);</div>
-<div class="line"><a id="l00702" name="l00702"></a><span class="lineno">  702</span>  }();</div>
-<div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span>  <span class="keywordflow">while</span> (<span class="keyword">true</span>) {</div>
-<div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span>    <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Word</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#aa201ee16ffe84a88275f727013b1bce3">KWD_PTR</a>)) {</div>
-<div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span>      base = ast_ptr&lt;QualType&gt;(entry, move(base), <a class="code hl_enumvalue" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a165d3d525f6d0cbd55e42cc3058cafcc">Qualifier::Ptr</a>);</div>
-<div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span>    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Word</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#aff7f4ed4b7e6ae00e9a17fc58ec6e0cd">KWD_MUT</a>)) {</div>
-<div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span>      base = ast_ptr&lt;QualType&gt;(entry, move(base), <a class="code hl_enumvalue" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">Qualifier::Mut</a>);</div>
-<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span>    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (try_peek(0, <a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a79bb923e401c89ba793f9173fa383af6">SYM_LBRACKET</a>) &amp;&amp; try_peek(1, <a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#abeb7bf169a6f9f95650e6ec1e6dd3707">SYM_RBRACKET</a>)) {</div>
-<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span>      <span class="comment">// Don&#39;t consume the `[` unless the `]` is directly after; it might be a slice literal.</span></div>
-<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span>      consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a79bb923e401c89ba793f9173fa383af6">SYM_LBRACKET</a>);</div>
-<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span>      consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#abeb7bf169a6f9f95650e6ec1e6dd3707">SYM_RBRACKET</a>);</div>
-<div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span>      base = ast_ptr&lt;QualType&gt;(entry, move(base), <a class="code hl_enumvalue" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706ad140d37ad98c12ccd8e1c432f548bcdb">Qualifier::Slice</a>);</div>
-<div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span>    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a09f6d05013ada9400b57eb402ad4c2b1">SYM_LT</a>)) {</div>
-<div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span>      <span class="keyword">auto</span> type_args = vector&lt;string&gt;{};</div>
-<div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span>      consume_with_commas_until(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a1099b10a5bf91612ca3ab13a6f5711fe">SYM_GT</a>, [&amp;] { type_args.push_back(consume_word()); });</div>
-<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span> </div>
-<div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span>      base = ast_ptr&lt;TemplatedType&gt;(entry, move(base), std::move(type_args));</div>
-<div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span>      <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span>    }</div>
-<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span>  }</div>
-<div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span> </div>
-<div class="line"><a id="l00723" name="l00723"></a><span class="lineno">  723</span>  <span class="keywordflow">return</span> base;</div>
-<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span>}</div>
-<div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span> </div>
-<div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span><span class="keyword">auto</span> Parser::try_parse_type() -&gt; optional&lt;unique_ptr&lt;Type&gt;&gt; {</div>
-<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span>  <span class="keyword">auto</span> entry = <a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>.<a class="code hl_function" href="structyume_1_1ast_1_1TokenIterator.html#aa2140637cf9d477c9c2549ffcf8b9414">begin</a>();</div>
-<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span>  <span class="keywordflow">if</span> (<a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>-&gt;m_type != <a class="code hl_variable" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Word</a> || !<a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>-&gt;m_payload.has_value())</div>
-<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span>    <span class="keywordflow">return</span> {};</div>
-<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span> </div>
-<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span>  <span class="keyword">const</span> <span class="keywordtype">string</span> name = consume_word();</div>
-<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>  <span class="keywordflow">if</span> (<a class="code hl_function" href="namespaceyume.html#a673b026b70abd8c22b87fcf7f94236a9">make_atom</a>(name) != <a class="code hl_variable" href="namespaceyume_1_1ast.html#aac2e12103922f3110f5fd151022bf0b4">KWD_SELF_TYPE</a> &amp;&amp; !is_uword(name))</div>
-<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span>    <span class="keywordflow">return</span> {};</div>
+<div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span>      <span class="keyword">auto</span> left = parse_operator&lt;N + 1&gt;();</div>
+<div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span>      <span class="keywordflow">while</span> (<span class="keyword">true</span>) {</div>
+<div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span>        <span class="keyword">auto</span> found_operator = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span>        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; op : ops[N]) {</div>
+<div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span>          <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, op)) {</div>
+<div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span>            <span class="keyword">auto</span> right = parse_operator&lt;N + 1&gt;();</div>
+<div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span>            <span class="keyword">auto</span> args = vector&lt;unique_ptr&lt;Expr&gt;&gt;{};</div>
+<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span>            args.push_back(move(left));</div>
+<div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span>            args.push_back(move(right));</div>
+<div class="line"><a id="l00648" name="l00648"></a><span class="lineno">  648</span>            left = ast_ptr&lt;CallExpr&gt;(entry, op, move(args));</div>
+<div class="line"><a id="l00649" name="l00649"></a><span class="lineno">  649</span>            found_operator = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00651" name="l00651"></a><span class="lineno">  651</span>          }</div>
+<div class="line"><a id="l00652" name="l00652"></a><span class="lineno">  652</span>        }</div>
+<div class="line"><a id="l00653" name="l00653"></a><span class="lineno">  653</span>        <span class="keywordflow">if</span> (!found_operator)</div>
+<div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span>          <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00655" name="l00655"></a><span class="lineno">  655</span>      }</div>
+<div class="line"><a id="l00656" name="l00656"></a><span class="lineno">  656</span>      <span class="keywordflow">return</span> left;</div>
+<div class="line"><a id="l00657" name="l00657"></a><span class="lineno">  657</span>    }</div>
+<div class="line"><a id="l00658" name="l00658"></a><span class="lineno">  658</span>  }</div>
+<div class="line"><a id="l00659" name="l00659"></a><span class="lineno">  659</span>};</div>
+<div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span>} <span class="comment">// namespace</span></div>
+<div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span> </div>
+<div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span><span class="keyword">auto</span> Parser::parse_stmt() -&gt; unique_ptr&lt;Stmt&gt; {</div>
+<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span>  <span class="keyword">auto</span> stat = unique_ptr&lt;Stmt&gt;();</div>
+<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span> </div>
+<div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span>  <span class="keywordflow">if</span> (<a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>-&gt;is_keyword(<a class="code hl_variable" href="namespaceyume_1_1ast.html#ab14831a4d35f8f1577570133373ec848">KWD_DEF</a>))</div>
+<div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>    stat = parse_fn_decl();</div>
+<div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>-&gt;is_keyword(<a class="code hl_variable" href="namespaceyume_1_1ast.html#ac909ed3244f9a0e56fd0bf16c8a34413">KWD_STRUCT</a>))</div>
+<div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span>    stat = parse_struct_decl();</div>
+<div class="line"><a id="l00669" name="l00669"></a><span class="lineno">  669</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>-&gt;is_keyword(<a class="code hl_variable" href="namespaceyume_1_1ast.html#a1d25b598292b61b91b4c46e8157354c2">KWD_LET</a>))</div>
+<div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span>    stat = parse_var_decl();</div>
+<div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>-&gt;is_keyword(<a class="code hl_variable" href="namespaceyume_1_1ast.html#a6ef3e1eb28c57e9b7edb2ee5946955ec">KWD_WHILE</a>))</div>
+<div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span>    stat = parse_while_stmt();</div>
+<div class="line"><a id="l00673" name="l00673"></a><span class="lineno">  673</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>-&gt;is_keyword(<a class="code hl_variable" href="namespaceyume_1_1ast.html#a6f8fb52a3c8bd885ce2947ad0056d798">KWD_IF</a>))</div>
+<div class="line"><a id="l00674" name="l00674"></a><span class="lineno">  674</span>    stat = parse_if_stmt();</div>
+<div class="line"><a id="l00675" name="l00675"></a><span class="lineno">  675</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>-&gt;is_keyword(<a class="code hl_variable" href="namespaceyume_1_1ast.html#ab3e044ad423ae8f26ca418dea4d5ba65">KWD_RETURN</a>))</div>
+<div class="line"><a id="l00676" name="l00676"></a><span class="lineno">  676</span>    stat = parse_return_stmt();</div>
+<div class="line"><a id="l00677" name="l00677"></a><span class="lineno">  677</span>  <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00678" name="l00678"></a><span class="lineno">  678</span>    stat = parse_expr();</div>
+<div class="line"><a id="l00679" name="l00679"></a><span class="lineno">  679</span> </div>
+<div class="line"><a id="l00680" name="l00680"></a><span class="lineno">  680</span>  require_separator();</div>
+<div class="line"><a id="l00681" name="l00681"></a><span class="lineno">  681</span>  <span class="keywordflow">return</span> stat;</div>
+<div class="line"><a id="l00682" name="l00682"></a><span class="lineno">  682</span>}</div>
+<div class="line"><a id="l00683" name="l00683"></a><span class="lineno">  683</span> </div>
+<div class="line"><a id="l00684" name="l00684"></a><span class="lineno">  684</span><span class="keyword">auto</span> Parser::parse_type(<span class="keywordtype">bool</span> implicit_self) -&gt; unique_ptr&lt;Type&gt; {</div>
+<div class="line"><a id="l00685" name="l00685"></a><span class="lineno">  685</span>  <span class="keyword">auto</span> entry = <a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>.<a class="code hl_function" href="structyume_1_1ast_1_1TokenIterator.html#aa2140637cf9d477c9c2549ffcf8b9414">begin</a>();</div>
+<div class="line"><a id="l00686" name="l00686"></a><span class="lineno">  686</span>  <span class="keyword">auto</span> base = [&amp;]() -&gt; unique_ptr&lt;Type&gt; {</div>
+<div class="line"><a id="l00687" name="l00687"></a><span class="lineno">  687</span>    <span class="keywordflow">if</span> (implicit_self || try_consume(<a class="code hl_variable" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Word</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#aac2e12103922f3110f5fd151022bf0b4">KWD_SELF_TYPE</a>))</div>
+<div class="line"><a id="l00688" name="l00688"></a><span class="lineno">  688</span>      <span class="keywordflow">return</span> ast_ptr&lt;SelfType&gt;(entry);</div>
+<div class="line"><a id="l00689" name="l00689"></a><span class="lineno">  689</span> </div>
+<div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span>    <span class="keyword">const</span> <span class="keywordtype">string</span> name = consume_word();</div>
+<div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span>    <span class="keywordflow">if</span> (!(is_uword(name)))</div>
+<div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span>      <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Expected capitalized payload for simple type&quot;</span>);</div>
+<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span> </div>
+<div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span>    <span class="keywordflow">return</span> ast_ptr&lt;SimpleType&gt;(entry, name);</div>
+<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span>  }();</div>
+<div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span>  <span class="keywordflow">while</span> (<span class="keyword">true</span>) {</div>
+<div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span>    <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Word</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#aa201ee16ffe84a88275f727013b1bce3">KWD_PTR</a>)) {</div>
+<div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span>      base = ast_ptr&lt;QualType&gt;(entry, move(base), <a class="code hl_enumvalue" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a165d3d525f6d0cbd55e42cc3058cafcc">Qualifier::Ptr</a>);</div>
+<div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span>    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Word</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#aff7f4ed4b7e6ae00e9a17fc58ec6e0cd">KWD_MUT</a>)) {</div>
+<div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span>      base = ast_ptr&lt;QualType&gt;(entry, move(base), <a class="code hl_enumvalue" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">Qualifier::Mut</a>);</div>
+<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span>    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (try_peek(0, <a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a79bb923e401c89ba793f9173fa383af6">SYM_LBRACKET</a>) &amp;&amp; try_peek(1, <a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#abeb7bf169a6f9f95650e6ec1e6dd3707">SYM_RBRACKET</a>)) {</div>
+<div class="line"><a id="l00702" name="l00702"></a><span class="lineno">  702</span>      <span class="comment">// Don&#39;t consume the `[` unless the `]` is directly after; it might be a slice literal.</span></div>
+<div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span>      consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a79bb923e401c89ba793f9173fa383af6">SYM_LBRACKET</a>);</div>
+<div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span>      consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#abeb7bf169a6f9f95650e6ec1e6dd3707">SYM_RBRACKET</a>);</div>
+<div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span>      base = ast_ptr&lt;QualType&gt;(entry, move(base), <a class="code hl_enumvalue" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706ad140d37ad98c12ccd8e1c432f548bcdb">Qualifier::Slice</a>);</div>
+<div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span>    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a09f6d05013ada9400b57eb402ad4c2b1">SYM_LT</a>)) {</div>
+<div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span>      <span class="keyword">auto</span> type_args = vector&lt;string&gt;{};</div>
+<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span>      consume_with_commas_until(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a1099b10a5bf91612ca3ab13a6f5711fe">SYM_GT</a>, [&amp;] { type_args.push_back(consume_word()); });</div>
+<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span> </div>
+<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span>      base = ast_ptr&lt;TemplatedType&gt;(entry, move(base), std::move(type_args));</div>
+<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span>      <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span>    }</div>
+<div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span>  }</div>
+<div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span> </div>
+<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span>  <span class="keywordflow">return</span> base;</div>
+<div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span>}</div>
+<div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span> </div>
+<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span><span class="keyword">auto</span> Parser::try_parse_type() -&gt; optional&lt;unique_ptr&lt;Type&gt;&gt; {</div>
+<div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span>  <span class="keyword">auto</span> entry = <a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>.<a class="code hl_function" href="structyume_1_1ast_1_1TokenIterator.html#aa2140637cf9d477c9c2549ffcf8b9414">begin</a>();</div>
+<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span>  <span class="keywordflow">if</span> (<a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>-&gt;m_type != <a class="code hl_variable" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Word</a> || !<a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>-&gt;m_payload.has_value())</div>
+<div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span>    <span class="keywordflow">return</span> {};</div>
+<div class="line"><a id="l00723" name="l00723"></a><span class="lineno">  723</span> </div>
+<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span>  <span class="keyword">const</span> <span class="keywordtype">string</span> name = consume_word();</div>
+<div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span>  <span class="keywordflow">if</span> (<a class="code hl_function" href="namespaceyume.html#a673b026b70abd8c22b87fcf7f94236a9">make_atom</a>(name) != <a class="code hl_variable" href="namespaceyume_1_1ast.html#aac2e12103922f3110f5fd151022bf0b4">KWD_SELF_TYPE</a> &amp;&amp; !is_uword(name))</div>
+<div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span>    <span class="keywordflow">return</span> {};</div>
+<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span> </div>
+<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span>  <span class="keyword">auto</span> base = [&amp;]() -&gt; unique_ptr&lt;Type&gt; {</div>
+<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span>    <span class="keywordflow">if</span> (<a class="code hl_function" href="namespaceyume.html#a673b026b70abd8c22b87fcf7f94236a9">make_atom</a>(name) == <a class="code hl_variable" href="namespaceyume_1_1ast.html#aac2e12103922f3110f5fd151022bf0b4">KWD_SELF_TYPE</a>)</div>
+<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span>      <span class="keywordflow">return</span> ast_ptr&lt;SelfType&gt;(entry);</div>
+<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span> </div>
+<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>    <span class="keywordflow">return</span> ast_ptr&lt;SimpleType&gt;(entry, name);</div>
+<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span>  }();</div>
 <div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span> </div>
-<div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span>  <span class="keyword">auto</span> base = [&amp;]() -&gt; unique_ptr&lt;Type&gt; {</div>
-<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span>    <span class="keywordflow">if</span> (<a class="code hl_function" href="namespaceyume.html#a673b026b70abd8c22b87fcf7f94236a9">make_atom</a>(name) == <a class="code hl_variable" href="namespaceyume_1_1ast.html#aac2e12103922f3110f5fd151022bf0b4">KWD_SELF_TYPE</a>)</div>
-<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span>      <span class="keywordflow">return</span> ast_ptr&lt;SelfType&gt;(entry);</div>
-<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span> </div>
-<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span>    <span class="keywordflow">return</span> ast_ptr&lt;SimpleType&gt;(entry, name);</div>
-<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span>  }();</div>
-<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span> </div>
-<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span>  <span class="keywordflow">while</span> (<span class="keyword">true</span>) {</div>
-<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>    <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Word</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#aa201ee16ffe84a88275f727013b1bce3">KWD_PTR</a>)) {</div>
-<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span>      base = ast_ptr&lt;QualType&gt;(entry, move(base), <a class="code hl_enumvalue" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a165d3d525f6d0cbd55e42cc3058cafcc">Qualifier::Ptr</a>);</div>
-<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span>    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Word</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#aff7f4ed4b7e6ae00e9a17fc58ec6e0cd">KWD_MUT</a>)) {</div>
-<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>      base = ast_ptr&lt;QualType&gt;(entry, move(base), <a class="code hl_enumvalue" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">Qualifier::Mut</a>);</div>
-<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (try_peek(0, <a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a79bb923e401c89ba793f9173fa383af6">SYM_LBRACKET</a>) &amp;&amp; try_peek(1, <a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#abeb7bf169a6f9f95650e6ec1e6dd3707">SYM_RBRACKET</a>)) {</div>
-<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span>      <span class="comment">// Don&#39;t consume the `[` unless the `]` is directly after; it might be a slice literal.</span></div>
-<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>      consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a79bb923e401c89ba793f9173fa383af6">SYM_LBRACKET</a>);</div>
-<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>      consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#abeb7bf169a6f9f95650e6ec1e6dd3707">SYM_RBRACKET</a>);</div>
-<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>      base = ast_ptr&lt;QualType&gt;(entry, move(base), <a class="code hl_enumvalue" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706ad140d37ad98c12ccd8e1c432f548bcdb">Qualifier::Slice</a>);</div>
-<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>      <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span>    }</div>
-<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>  }</div>
-<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span> </div>
-<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>  <span class="keywordflow">return</span> base;</div>
-<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>}</div>
-<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span> </div>
-<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span><span class="keyword">auto</span> Parser::parse_type_name() -&gt; unique_ptr&lt;TypeName&gt; {</div>
-<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>  <span class="keyword">auto</span> entry = <a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>.<a class="code hl_function" href="structyume_1_1ast_1_1TokenIterator.html#aa2140637cf9d477c9c2549ffcf8b9414">begin</a>();</div>
-<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span>  <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Word</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a863de4b029dd0d79c76ca81c6fd068c9">KWD_SELF_ITEM</a>)) {</div>
-<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span>    unique_ptr&lt;Type&gt; type = parse_type(<span class="comment">/* implicit_self= */</span> <span class="keyword">true</span>);</div>
-<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>    <span class="keywordflow">return</span> ast_ptr&lt;TypeName&gt;(entry, move(type), <span class="stringliteral">&quot;self&quot;</span>);</div>
-<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>  }</div>
-<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span>  <span class="keyword">const</span> <span class="keywordtype">string</span> name = consume_word();</div>
-<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>  unique_ptr&lt;Type&gt; type = parse_type();</div>
-<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>  <span class="keywordflow">return</span> ast_ptr&lt;TypeName&gt;(entry, move(type), name);</div>
-<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>}</div>
+<div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span>  <span class="keywordflow">while</span> (<span class="keyword">true</span>) {</div>
+<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span>    <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Word</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#aa201ee16ffe84a88275f727013b1bce3">KWD_PTR</a>)) {</div>
+<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span>      base = ast_ptr&lt;QualType&gt;(entry, move(base), <a class="code hl_enumvalue" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a165d3d525f6d0cbd55e42cc3058cafcc">Qualifier::Ptr</a>);</div>
+<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span>    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Word</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#aff7f4ed4b7e6ae00e9a17fc58ec6e0cd">KWD_MUT</a>)) {</div>
+<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span>      base = ast_ptr&lt;QualType&gt;(entry, move(base), <a class="code hl_enumvalue" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">Qualifier::Mut</a>);</div>
+<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span>    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (try_peek(0, <a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a79bb923e401c89ba793f9173fa383af6">SYM_LBRACKET</a>) &amp;&amp; try_peek(1, <a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#abeb7bf169a6f9f95650e6ec1e6dd3707">SYM_RBRACKET</a>)) {</div>
+<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span>      <span class="comment">// Don&#39;t consume the `[` unless the `]` is directly after; it might be a slice literal.</span></div>
+<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span>      consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a79bb923e401c89ba793f9173fa383af6">SYM_LBRACKET</a>);</div>
+<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>      consume(<a class="code hl_variable" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#abeb7bf169a6f9f95650e6ec1e6dd3707">SYM_RBRACKET</a>);</div>
+<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span>      base = ast_ptr&lt;QualType&gt;(entry, move(base), <a class="code hl_enumvalue" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706ad140d37ad98c12ccd8e1c432f548bcdb">Qualifier::Slice</a>);</div>
+<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>      <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>    }</div>
+<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span>  }</div>
+<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span> </div>
+<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>  <span class="keywordflow">return</span> base;</div>
+<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>}</div>
+<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span> </div>
+<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span><span class="keyword">auto</span> Parser::parse_type_name() -&gt; unique_ptr&lt;TypeName&gt; {</div>
+<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span>  <span class="keyword">auto</span> entry = <a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>.<a class="code hl_function" href="structyume_1_1ast_1_1TokenIterator.html#aa2140637cf9d477c9c2549ffcf8b9414">begin</a>();</div>
+<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>  <span class="keywordflow">if</span> (try_consume(<a class="code hl_variable" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Word</a>, <a class="code hl_variable" href="namespaceyume_1_1ast.html#a863de4b029dd0d79c76ca81c6fd068c9">KWD_SELF_ITEM</a>)) {</div>
+<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span>    unique_ptr&lt;Type&gt; type = parse_type(<span class="comment">/* implicit_self= */</span> <span class="keyword">true</span>);</div>
+<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>    <span class="keywordflow">return</span> ast_ptr&lt;TypeName&gt;(entry, move(type), <span class="stringliteral">&quot;self&quot;</span>);</div>
+<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>  }</div>
+<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>  <span class="keyword">const</span> <span class="keywordtype">string</span> name = consume_word();</div>
+<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>  unique_ptr&lt;Type&gt; type = parse_type();</div>
+<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>  <span class="keywordflow">return</span> ast_ptr&lt;TypeName&gt;(entry, move(type), name);</div>
+<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span>}</div>
+<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span> </div>
+<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span><span class="keyword">auto</span> Parser::parse_expr() -&gt; unique_ptr&lt;Expr&gt; { <span class="keywordflow">return</span> parse_operator(); }</div>
+<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span> </div>
+<div class="line"><a id="l00766" name="l00766"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1Program.html#ab3090a617ad1dc4ce9396ec367c69f4c">  766</a></span><span class="keyword">auto</span> <a class="code hl_function" href="classyume_1_1ast_1_1Program.html#ab3090a617ad1dc4ce9396ec367c69f4c">Program::parse</a>(<a class="code hl_struct" href="structyume_1_1ast_1_1TokenIterator.html">TokenIterator</a>&amp; <a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>) -&gt; unique_ptr&lt;Program&gt; {</div>
+<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>  <span class="keyword">auto</span> parser = Parser{<a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>};</div>
+<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>  parser.ignore_separator();</div>
+<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>  <span class="keyword">auto</span> entry = <a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>.<a class="code hl_function" href="structyume_1_1ast_1_1TokenIterator.html#aa2140637cf9d477c9c2549ffcf8b9414">begin</a>();</div>
 <div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span> </div>
-<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span><span class="keyword">auto</span> Parser::parse_expr() -&gt; unique_ptr&lt;Expr&gt; { <span class="keywordflow">return</span> parse_operator(); }</div>
-<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span> </div>
-<div class="line"><a id="l00773" name="l00773"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1Program.html#ab3090a617ad1dc4ce9396ec367c69f4c">  773</a></span><span class="keyword">auto</span> <a class="code hl_function" href="classyume_1_1ast_1_1Program.html#ab3090a617ad1dc4ce9396ec367c69f4c">Program::parse</a>(<a class="code hl_struct" href="structyume_1_1ast_1_1TokenIterator.html">TokenIterator</a>&amp; <a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>) -&gt; unique_ptr&lt;Program&gt; {</div>
-<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>  <span class="keyword">auto</span> parser = Parser{<a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>};</div>
-<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span>  parser.ignore_separator();</div>
-<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>  <span class="keyword">auto</span> entry = <a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>.<a class="code hl_function" href="structyume_1_1ast_1_1TokenIterator.html#aa2140637cf9d477c9c2549ffcf8b9414">begin</a>();</div>
-<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span> </div>
-<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>  <span class="keyword">auto</span> statements = vector&lt;unique_ptr&lt;Stmt&gt;&gt;{};</div>
-<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>  <span class="keywordflow">while</span> (!<a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>.<a class="code hl_function" href="structyume_1_1ast_1_1TokenIterator.html#a81fd4667a2199a1ccdf19b6b9c15b3c7">at_end</a>()) {</div>
-<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>    statements.push_back(parser.parse_stmt());</div>
-<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>  }</div>
-<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span> </div>
-<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>  <span class="keywordflow">return</span> make_unique&lt;Program&gt;(parser.ts(entry), move(statements));</div>
-<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>}</div>
-<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>} <span class="comment">// namespace yume::ast</span></div>
+<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>  <span class="keyword">auto</span> statements = vector&lt;unique_ptr&lt;Stmt&gt;&gt;{};</div>
+<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>  <span class="keywordflow">while</span> (!<a class="code hl_variable" href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a>.<a class="code hl_function" href="structyume_1_1ast_1_1TokenIterator.html#a81fd4667a2199a1ccdf19b6b9c15b3c7">at_end</a>()) {</div>
+<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>    statements.push_back(parser.parse_stmt());</div>
+<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>  }</div>
+<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span> </div>
+<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>  <span class="keywordflow">return</span> make_unique&lt;Program&gt;(parser.ts(entry), move(statements));</div>
+<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>}</div>
+<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>} <span class="comment">// namespace yume::ast</span></div>
 <div class="ttc" id="aast_8cpp_html_a4c555d5726bc20f71d1050728f059fb8"><div class="ttname"><a href="ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8">tokens</a></div><div class="ttdeci">TokenIterator &amp; tokens</div><div class="ttdef"><b>Definition:</b> <a href="ast_8cpp_source.html#l00085">ast.cpp:85</a></div></div>
 <div class="ttc" id="aast_8cpp_html_a6f13d256d640475eb20d9c4a07eb8f23"><div class="ttname"><a href="ast_8cpp.html#a6f13d256d640475eb20d9c4a07eb8f23">m_span</a></div><div class="ttdeci">span&lt; Token &gt; m_span</div><div class="ttdef"><b>Definition:</b> <a href="ast_8cpp_source.html#l00076">ast.cpp:76</a></div></div>
 <div class="ttc" id="aast_8cpp_html_abea2bfa46f91991375c735fce4a3cbfc"><div class="ttname"><a href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Symbol</a></div><div class="ttdeci">static constexpr auto Symbol</div><div class="ttdef"><b>Definition:</b> <a href="ast_8cpp_source.html#l00107">ast.cpp:107</a></div></div>
@@ -862,7 +855,7 @@ $(function() {
 <div class="ttc" id="aast_8cpp_html_afe2d44d1929217bc859578bde66fe913"><div class="ttname"><a href="ast_8cpp.html#afe2d44d1929217bc859578bde66fe913">Number</a></div><div class="ttdeci">static constexpr auto Number</div><div class="ttdef"><b>Definition:</b> <a href="ast_8cpp_source.html#l00110">ast.cpp:110</a></div></div>
 <div class="ttc" id="aast_8hpp_html"><div class="ttname"><a href="ast_8hpp.html">ast.hpp</a></div></div>
 <div class="ttc" id="aclassyume_1_1ast_1_1AST_html_ae27576d9b234da5753ac12d7f8eba513"><div class="ttname"><a href="classyume_1_1ast_1_1AST.html#ae27576d9b234da5753ac12d7f8eba513">yume::ast::AST::unify_val_ty</a></div><div class="ttdeci">void unify_val_ty() const</div><div class="ttdoc">Verify the type compatibility of the depends of this node, and merge the types if possible....</div><div class="ttdef"><b>Definition:</b> <a href="ast_8cpp_source.html#l00056">ast.cpp:56</a></div></div>
-<div class="ttc" id="aclassyume_1_1ast_1_1Program_html_ab3090a617ad1dc4ce9396ec367c69f4c"><div class="ttname"><a href="classyume_1_1ast_1_1Program.html#ab3090a617ad1dc4ce9396ec367c69f4c">yume::ast::Program::parse</a></div><div class="ttdeci">static auto parse(TokenIterator &amp;tokens) -&gt; unique_ptr&lt; Program &gt;</div><div class="ttdef"><b>Definition:</b> <a href="ast_8cpp_source.html#l00773">ast.cpp:773</a></div></div>
+<div class="ttc" id="aclassyume_1_1ast_1_1Program_html_ab3090a617ad1dc4ce9396ec367c69f4c"><div class="ttname"><a href="classyume_1_1ast_1_1Program.html#ab3090a617ad1dc4ce9396ec367c69f4c">yume::ast::Program::parse</a></div><div class="ttdeci">static auto parse(TokenIterator &amp;tokens) -&gt; unique_ptr&lt; Program &gt;</div><div class="ttdef"><b>Definition:</b> <a href="ast_8cpp_source.html#l00766">ast.cpp:766</a></div></div>
 <div class="ttc" id="aclassyume_1_1ty_1_1Type_html_a8f10a61534bac1908cd3fdabee576adf"><div class="ttname"><a href="classyume_1_1ty_1_1Type.html#a8f10a61534bac1908cd3fdabee576adf">yume::ty::Type::coalesce</a></div><div class="ttdeci">auto coalesce(const Type &amp;other) const -&gt; const Type *</div><div class="ttdoc">The union of this and other. For example, the union of T and T mut is T mut.</div><div class="ttdef"><b>Definition:</b> <a href="type_8cpp_source.html#l00142">type.cpp:142</a></div></div>
 <div class="ttc" id="aclassyume_1_1ty_1_1Type_html_ae38fa8998004a15c0e70e6122ddf7685"><div class="ttname"><a href="classyume_1_1ty_1_1Type.html#ae38fa8998004a15c0e70e6122ddf7685">yume::ty::Type::name</a></div><div class="ttdeci">auto name() const -&gt; string</div><div class="ttdef"><b>Definition:</b> <a href="type_8hpp_source.html#l00059">type.hpp:59</a></div></div>
 <div class="ttc" id="anamespaceyume_1_1ast_html"><div class="ttname"><a href="namespaceyume_1_1ast.html">yume::ast</a></div><div class="ttdef"><b>Definition:</b> <a href="ast_8cpp_source.html#l00015">ast.cpp:15</a></div></div>
