@@ -21,6 +21,8 @@ jobs:
       CC: clang-${{ matrix.clang }}
       CXX: clang++-${{ matrix.clang }}
       LLVM_SYMBOLIZER_PATH: llvm-symbolizer-${{ matrix.llvm }}
+      LLVM_PROFDATA: llvm-profdata-${{ matrix.llvm }}
+      LLVM_COV: llvm-cov-${{ matrix.llvm }}
       BUILD_DIR: ${{github.workspace}}/build
 
     steps:
