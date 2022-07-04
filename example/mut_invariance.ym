@@ -1,4 +1,3 @@
-# TODO: #7
 struct Vector(x I32, y I32)
   def x(self) I32 = self::x
   def y(self) I32 = self::y
@@ -10,9 +9,10 @@ struct Vector(x I32, y I32)
 end
 
 struct VectorContainer(vec Vector)
-  #def vec(self mut*) Vector mut* = self::vec
-  def vec(self mut) Vector mut = self::vec
-  def vec(self) Vector = self::vec
+  # TODO: #7
+  def vec(self mut*) Vector mut* = self::vec
+  #def vec(self mut) Vector mut = self::vec
+  #def vec(self) Vector = self::vec
 end
 
 # Can't yet declare locals as not mut, so need this function
