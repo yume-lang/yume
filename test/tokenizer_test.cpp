@@ -109,7 +109,8 @@ TEST_CASE("Token stringification", "[token][str]") {
   llvm::raw_string_ostream ss(str);
 
   auto in_stream = std::stringstream("foo");
-  auto tokens = yume::tokenize(in_stream, "<filename>");
+  auto filename = "<filename>"s;
+  auto tokens = yume::tokenize(in_stream, filename);
 
   REQUIRE(tokens.size() == 1);
   ss << tokens[0];
