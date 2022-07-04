@@ -116,8 +116,8 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a06a01069256d00c335d5ebe41e4a4483"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Token.html#a06a01069256d00c335d5ebe41e4a4483">is_keyword</a> (const <a class="el" href="structyume_1_1Atom.html">Atom</a> &amp;str) const -&gt; bool</td></tr>
-<tr class="separator:a06a01069256d00c335d5ebe41e4a4483"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac5667608eae86918686364d74e67c428"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Token.html#ac5667608eae86918686364d74e67c428">is_a</a> (const std::pair&lt; <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1c">Type</a>, <a class="el" href="structyume_1_1Atom.html">Atom</a> &gt; &amp;type_atom) const -&gt; bool</td></tr>
+<tr class="separator:ac5667608eae86918686364d74e67c428"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe8a1376fcb43d484398c187bfca5c25"><td class="memItemLeft" align="right" valign="top">constexpr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Token.html#abe8a1376fcb43d484398c187bfca5c25">Token</a> (<a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1c">Type</a> type)</td></tr>
 <tr class="separator:abe8a1376fcb43d484398c187bfca5c25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aae9d389a8631fecfd0bace0b353b85ce"><td class="memItemLeft" align="right" valign="top">constexpr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Token.html#aae9d389a8631fecfd0bace0b353b85ce">Token</a> (<a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1c">Type</a> type, <a class="el" href="structyume_1_1Token.html#a45fbde9023f1f51b4d48b9b14470685e">Payload</a> payload)</td></tr>
@@ -234,7 +234,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="token_8hpp_source.html#l00104">104</a> of file <a class="el" href="token_8hpp_source.html">token.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="token_8hpp_source.html#l00106">106</a> of file <a class="el" href="token_8hpp_source.html">token.hpp</a>.</p>
 
 </div>
 </div>
@@ -272,7 +272,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="token_8hpp_source.html#l00105">105</a> of file <a class="el" href="token_8hpp_source.html">token.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="token_8hpp_source.html#l00107">107</a> of file <a class="el" href="token_8hpp_source.html">token.hpp</a>.</p>
 
 </div>
 </div>
@@ -322,13 +322,13 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="token_8hpp_source.html#l00106">106</a> of file <a class="el" href="token_8hpp_source.html">token.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="token_8hpp_source.html#l00108">108</a> of file <a class="el" href="token_8hpp_source.html">token.hpp</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a06a01069256d00c335d5ebe41e4a4483" name="a06a01069256d00c335d5ebe41e4a4483"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a06a01069256d00c335d5ebe41e4a4483">&#9670;&nbsp;</a></span>is_keyword()</h2>
+<a id="ac5667608eae86918686364d74e67c428" name="ac5667608eae86918686364d74e67c428"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac5667608eae86918686364d74e67c428">&#9670;&nbsp;</a></span>is_a()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -337,10 +337,10 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">auto yume::Token::is_keyword </td>
+          <td class="memname">auto yume::Token::is_a </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="structyume_1_1Atom.html">Atom</a> &amp;&#160;</td>
-          <td class="paramname"><em>str</em></td><td>)</td>
+          <td class="paramtype">const std::pair&lt; <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1c">Type</a>, <a class="el" href="structyume_1_1Atom.html">Atom</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>type_atom</em></td><td>)</td>
           <td> const -&gt; bool </td>
         </tr>
       </table>
@@ -353,7 +353,7 @@ Friends</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="token_8hpp_source.html#l00102">102</a> of file <a class="el" href="token_8hpp_source.html">token.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="token_8hpp_source.html#l00098">m_payload</a>, <a class="el" href="token_8hpp_source.html#l00097">m_type</a>, and <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1ca07a094a210794e74a0e5e1a1457a92ee">Word</a>.</p>
+<p class="reference">References <a class="el" href="token_8hpp_source.html#l00098">m_payload</a>, and <a class="el" href="token_8hpp_source.html#l00097">m_type</a>.</p>
 
 </div>
 </div>
@@ -471,7 +471,7 @@ Friends</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="token_8hpp_source.html#l00098">98</a> of file <a class="el" href="token_8hpp_source.html">token.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="token_8hpp_source.html#l00102">is_keyword()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="token_8hpp_source.html#l00102">is_a()</a>.</p>
 
 </div>
 </div>
@@ -489,7 +489,7 @@ Friends</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="token_8hpp_source.html#l00097">97</a> of file <a class="el" href="token_8hpp_source.html">token.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="token_8hpp_source.html#l00102">is_keyword()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="token_8hpp_source.html#l00102">is_a()</a>.</p>
 
 </div>
 </div>

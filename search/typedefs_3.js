@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['vectortokeniterator_0',['VectorTokenIterator',['../namespaceyume_1_1ast.html#aeb273ed3fe6a9f254028a283e103c8df',1,'yume::ast']]]
+  ['tokenatom_0',['TokenAtom',['../namespaceyume_1_1ast.html#a290d4c309a2aea4fad931a92cf0ddbf4',1,'yume::ast']]]
 ];

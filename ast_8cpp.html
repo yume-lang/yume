@@ -68,6 +68,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#namespaces">Namespaces</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">ast.cpp File Reference</div></div>
 </div><!--header-->
@@ -82,6 +83,7 @@ $(function() {
 <code>#include &lt;array&gt;</code><br />
 <code>#include &lt;cctype&gt;</code><br />
 <code>#include &lt;cstddef&gt;</code><br />
+<code>#include &lt;functional&gt;</code><br />
 <code>#include &lt;llvm/Support/raw_ostream.h&gt;</code><br />
 <code>#include &lt;memory&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
@@ -89,37 +91,38 @@ Include dependency graph for ast.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="ast_8cpp__incl.png" border="0" usemap="#asrc_2yume_2ast_2ast_8cpp" alt=""/></div>
 <map name="asrc_2yume_2ast_2ast_8cpp" id="asrc_2yume_2ast_2ast_8cpp">
-<area shape="rect" title=" " alt="" coords="998,5,1141,32"/>
-<area shape="rect" href="ast_8hpp.html" title=" " alt="" coords="1211,80,1275,107"/>
-<area shape="rect" href="util_8hpp.html" title=" " alt="" coords="783,229,846,256"/>
-<area shape="rect" href="source__location_8hpp.html" title=" " alt="" coords="393,304,593,331"/>
-<area shape="rect" title=" " alt="" coords="1899,304,1965,331"/>
-<area shape="rect" title=" " alt="" coords="1469,304,1653,331"/>
-<area shape="rect" title=" " alt="" coords="617,304,685,331"/>
-<area shape="rect" href="qualifier_8hpp.html" title=" " alt="" coords="579,155,669,181"/>
-<area shape="rect" href="token_8hpp.html" title=" " alt="" coords="1713,155,1791,181"/>
-<area shape="rect" title=" " alt="" coords="1840,229,1915,256"/>
-<area shape="rect" href="type_8hpp.html" title=" " alt="" coords="430,80,501,107"/>
-<area shape="rect" title=" " alt="" coords="72,155,123,181"/>
-<area shape="rect" title=" " alt="" coords="2142,80,2202,107"/>
-<area shape="rect" href="compatibility_8hpp.html" title=" " alt="" coords="846,155,965,181"/>
-<area shape="rect" title=" " alt="" coords="1065,379,1119,405"/>
-<area shape="rect" title=" " alt="" coords="1379,304,1445,331"/>
-<area shape="rect" title=" " alt="" coords="709,304,760,331"/>
-<area shape="rect" title=" " alt="" coords="1219,304,1271,331"/>
-<area shape="rect" title=" " alt="" coords="1133,304,1195,331"/>
-<area shape="rect" title=" " alt="" coords="1296,304,1355,331"/>
-<area shape="rect" title=" " alt="" coords="972,229,1033,256"/>
-<area shape="rect" title=" " alt="" coords="1091,155,1251,181"/>
-<area shape="rect" title=" " alt="" coords="1275,155,1354,181"/>
-<area shape="rect" title=" " alt="" coords="1379,155,1429,181"/>
-<area shape="rect" title=" " alt="" coords="1453,155,1536,181"/>
-<area shape="rect" title=" " alt="" coords="1195,229,1264,256"/>
-<area shape="rect" title=" " alt="" coords="934,304,1109,331"/>
-<area shape="rect" title=" " alt="" coords="784,304,845,331"/>
-<area shape="rect" title=" " alt="" coords="869,304,909,331"/>
-<area shape="rect" title=" " alt="" coords="1728,229,1816,256"/>
-<area shape="rect" title=" " alt="" coords="198,155,351,181"/>
+<area shape="rect" title=" " alt="" coords="1223,5,1366,32"/>
+<area shape="rect" href="ast_8hpp.html" title=" " alt="" coords="1263,80,1327,107"/>
+<area shape="rect" href="util_8hpp.html" title=" " alt="" coords="695,229,758,256"/>
+<area shape="rect" href="source__location_8hpp.html" title=" " alt="" coords="277,304,477,331"/>
+<area shape="rect" title=" " alt="" coords="1902,304,1967,331"/>
+<area shape="rect" title=" " alt="" coords="1687,304,1871,331"/>
+<area shape="rect" title=" " alt="" coords="501,304,569,331"/>
+<area shape="rect" href="qualifier_8hpp.html" title=" " alt="" coords="559,155,649,181"/>
+<area shape="rect" href="token_8hpp.html" title=" " alt="" coords="1693,155,1771,181"/>
+<area shape="rect" title=" " alt="" coords="1792,229,1867,256"/>
+<area shape="rect" href="type_8hpp.html" title=" " alt="" coords="410,80,481,107"/>
+<area shape="rect" title=" " alt="" coords="52,155,103,181"/>
+<area shape="rect" title=" " alt="" coords="2094,80,2154,107"/>
+<area shape="rect" title=" " alt="" coords="2178,80,2257,107"/>
+<area shape="rect" href="compatibility_8hpp.html" title=" " alt="" coords="775,155,894,181"/>
+<area shape="rect" title=" " alt="" coords="971,379,1026,405"/>
+<area shape="rect" title=" " alt="" coords="1457,304,1524,331"/>
+<area shape="rect" title=" " alt="" coords="943,304,993,331"/>
+<area shape="rect" title=" " alt="" coords="1173,304,1225,331"/>
+<area shape="rect" title=" " alt="" coords="1017,304,1079,331"/>
+<area shape="rect" title=" " alt="" coords="1336,304,1395,331"/>
+<area shape="rect" title=" " alt="" coords="884,229,945,256"/>
+<area shape="rect" title=" " alt="" coords="1071,155,1231,181"/>
+<area shape="rect" title=" " alt="" coords="1255,155,1334,181"/>
+<area shape="rect" title=" " alt="" coords="1359,155,1409,181"/>
+<area shape="rect" title=" " alt="" coords="1433,155,1516,181"/>
+<area shape="rect" title=" " alt="" coords="1283,229,1352,256"/>
+<area shape="rect" title=" " alt="" coords="743,304,918,331"/>
+<area shape="rect" title=" " alt="" coords="593,304,655,331"/>
+<area shape="rect" title=" " alt="" coords="679,304,719,331"/>
+<area shape="rect" title=" " alt="" coords="1680,229,1768,256"/>
+<area shape="rect" title=" " alt="" coords="229,155,382,181"/>
 </map>
 </div>
 </div>
@@ -132,82 +135,87 @@ Namespaces</h2></td></tr>
 <tr class="memitem:namespaceyume_1_1ast"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html">yume::ast</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:a290d4c309a2aea4fad931a92cf0ddbf4"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a290d4c309a2aea4fad931a92cf0ddbf4">yume::ast::TokenAtom</a> = std::pair&lt; Token::Type, Atom &gt;</td></tr>
+<tr class="separator:a290d4c309a2aea4fad931a92cf0ddbf4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a6f8fb52a3c8bd885ce2947ad0056d798"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a6f8fb52a3c8bd885ce2947ad0056d798">yume::ast::KWD_IF</a> = &quot;if&quot;_a</td></tr>
-<tr class="separator:a6f8fb52a3c8bd885ce2947ad0056d798"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab14831a4d35f8f1577570133373ec848"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#ab14831a4d35f8f1577570133373ec848">yume::ast::KWD_DEF</a> = &quot;def&quot;_a</td></tr>
-<tr class="separator:ab14831a4d35f8f1577570133373ec848"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8cb65b524f5041627d4821d3106d7979"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a8cb65b524f5041627d4821d3106d7979">yume::ast::KWD_END</a> = &quot;end&quot;_a</td></tr>
-<tr class="separator:a8cb65b524f5041627d4821d3106d7979"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1d25b598292b61b91b4c46e8157354c2"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a1d25b598292b61b91b4c46e8157354c2">yume::ast::KWD_LET</a> = &quot;let&quot;_a</td></tr>
-<tr class="separator:a1d25b598292b61b91b4c46e8157354c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa201ee16ffe84a88275f727013b1bce3"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#aa201ee16ffe84a88275f727013b1bce3">yume::ast::KWD_PTR</a> = &quot;ptr&quot;_a</td></tr>
-<tr class="separator:aa201ee16ffe84a88275f727013b1bce3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aff7f4ed4b7e6ae00e9a17fc58ec6e0cd"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#aff7f4ed4b7e6ae00e9a17fc58ec6e0cd">yume::ast::KWD_MUT</a> = &quot;mut&quot;_a</td></tr>
-<tr class="separator:aff7f4ed4b7e6ae00e9a17fc58ec6e0cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a550d4022f18ca29a4137078ff212c70d"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a550d4022f18ca29a4137078ff212c70d">yume::ast::KWD_ELSE</a> = &quot;else&quot;_a</td></tr>
-<tr class="separator:a550d4022f18ca29a4137078ff212c70d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a863de4b029dd0d79c76ca81c6fd068c9"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a863de4b029dd0d79c76ca81c6fd068c9">yume::ast::KWD_SELF_ITEM</a> = &quot;self&quot;_a</td></tr>
-<tr class="separator:a863de4b029dd0d79c76ca81c6fd068c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aac2e12103922f3110f5fd151022bf0b4"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#aac2e12103922f3110f5fd151022bf0b4">yume::ast::KWD_SELF_TYPE</a> = &quot;Self&quot;_a</td></tr>
-<tr class="separator:aac2e12103922f3110f5fd151022bf0b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a06b0578920c69f6670491c1098ba215e"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a06b0578920c69f6670491c1098ba215e">yume::ast::KWD_THEN</a> = &quot;then&quot;_a</td></tr>
-<tr class="separator:a06b0578920c69f6670491c1098ba215e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adedaaf9e90129e76b266082864f7498c"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#adedaaf9e90129e76b266082864f7498c">yume::ast::KWD_TRUE</a> = &quot;true&quot;_a</td></tr>
-<tr class="separator:adedaaf9e90129e76b266082864f7498c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a074a846d6f9adb2078b60fdc5e64b50f"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a074a846d6f9adb2078b60fdc5e64b50f">yume::ast::KWD_FALSE</a> = &quot;false&quot;_a</td></tr>
-<tr class="separator:a074a846d6f9adb2078b60fdc5e64b50f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6ef3e1eb28c57e9b7edb2ee5946955ec"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a6ef3e1eb28c57e9b7edb2ee5946955ec">yume::ast::KWD_WHILE</a> = &quot;while&quot;_a</td></tr>
-<tr class="separator:a6ef3e1eb28c57e9b7edb2ee5946955ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac909ed3244f9a0e56fd0bf16c8a34413"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#ac909ed3244f9a0e56fd0bf16c8a34413">yume::ast::KWD_STRUCT</a> = &quot;struct&quot;_a</td></tr>
-<tr class="separator:ac909ed3244f9a0e56fd0bf16c8a34413"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab3e044ad423ae8f26ca418dea4d5ba65"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#ab3e044ad423ae8f26ca418dea4d5ba65">yume::ast::KWD_RETURN</a> = &quot;return&quot;_a</td></tr>
-<tr class="separator:ab3e044ad423ae8f26ca418dea4d5ba65"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2cadeedbaac3579e6d50738398ad85d7"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a2cadeedbaac3579e6d50738398ad85d7">yume::ast::KWD_VARARGS</a> = &quot;__varargs__&quot;_a</td></tr>
-<tr class="separator:a2cadeedbaac3579e6d50738398ad85d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a738887a67cc8fdf484014b15fd90766b"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a738887a67cc8fdf484014b15fd90766b">yume::ast::KWD_PRIMITIVE</a> = &quot;__primitive__&quot;_a</td></tr>
-<tr class="separator:a738887a67cc8fdf484014b15fd90766b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a143b6b8fd64ddf64829dc3b921dff846"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a143b6b8fd64ddf64829dc3b921dff846">yume::ast::SYM_COMMA</a> = &quot;,&quot;_a</td></tr>
-<tr class="separator:a143b6b8fd64ddf64829dc3b921dff846"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa78b351bb6c2029b16fbaa49730c0aa8"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#aa78b351bb6c2029b16fbaa49730c0aa8">yume::ast::SYM_DOT</a> = &quot;.&quot;_a</td></tr>
-<tr class="separator:aa78b351bb6c2029b16fbaa49730c0aa8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab7f629f7e49493c0f6e302a001d37512"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#ab7f629f7e49493c0f6e302a001d37512">yume::ast::SYM_EQ</a> = &quot;=&quot;_a</td></tr>
-<tr class="separator:ab7f629f7e49493c0f6e302a001d37512"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63569709cbe06c4b07870f6a9e1ec226"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a63569709cbe06c4b07870f6a9e1ec226">yume::ast::SYM_LPAREN</a> = &quot;(&quot;_a</td></tr>
-<tr class="separator:a63569709cbe06c4b07870f6a9e1ec226"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7de2ae38537cf1fbb757c435dcce17e5"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a7de2ae38537cf1fbb757c435dcce17e5">yume::ast::SYM_RPAREN</a> = &quot;)&quot;_a</td></tr>
-<tr class="separator:a7de2ae38537cf1fbb757c435dcce17e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a79bb923e401c89ba793f9173fa383af6"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a79bb923e401c89ba793f9173fa383af6">yume::ast::SYM_LBRACKET</a> = &quot;[&quot;_a</td></tr>
-<tr class="separator:a79bb923e401c89ba793f9173fa383af6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abeb7bf169a6f9f95650e6ec1e6dd3707"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#abeb7bf169a6f9f95650e6ec1e6dd3707">yume::ast::SYM_RBRACKET</a> = &quot;]&quot;_a</td></tr>
-<tr class="separator:abeb7bf169a6f9f95650e6ec1e6dd3707"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5dd2b82e945d084ec3005c393ea59eeb"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a5dd2b82e945d084ec3005c393ea59eeb">yume::ast::SYM_LBRACE</a> = &quot;{&quot;_a</td></tr>
-<tr class="separator:a5dd2b82e945d084ec3005c393ea59eeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7203fb67f3f4cadca5cab3712dea2c93"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a7203fb67f3f4cadca5cab3712dea2c93">yume::ast::SYM_RBRACE</a> = &quot;}&quot;_a</td></tr>
-<tr class="separator:a7203fb67f3f4cadca5cab3712dea2c93"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a277de4fe9444dda58b71353232231dbf"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a277de4fe9444dda58b71353232231dbf">yume::ast::SYM_EQ_EQ</a> = &quot;==&quot;_a</td></tr>
-<tr class="separator:a277de4fe9444dda58b71353232231dbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ace3846106a4bc40764c9af5e76df024f"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#ace3846106a4bc40764c9af5e76df024f">yume::ast::SYM_NEQ</a> = &quot;!=&quot;_a</td></tr>
-<tr class="separator:ace3846106a4bc40764c9af5e76df024f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1099b10a5bf91612ca3ab13a6f5711fe"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a1099b10a5bf91612ca3ab13a6f5711fe">yume::ast::SYM_GT</a> = &quot;&gt;&quot;_a</td></tr>
-<tr class="separator:a1099b10a5bf91612ca3ab13a6f5711fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a09f6d05013ada9400b57eb402ad4c2b1"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a09f6d05013ada9400b57eb402ad4c2b1">yume::ast::SYM_LT</a> = &quot;&lt;&quot;_a</td></tr>
-<tr class="separator:a09f6d05013ada9400b57eb402ad4c2b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4908322a35a6a86d5ef4ed6a1fdcb630"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a4908322a35a6a86d5ef4ed6a1fdcb630">yume::ast::SYM_PLUS</a> = &quot;+&quot;_a</td></tr>
-<tr class="separator:a4908322a35a6a86d5ef4ed6a1fdcb630"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad1bd717fe26a61e7b99325d5735b0022"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#ad1bd717fe26a61e7b99325d5735b0022">yume::ast::SYM_MINUS</a> = &quot;-&quot;_a</td></tr>
-<tr class="separator:ad1bd717fe26a61e7b99325d5735b0022"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc405f09ff80a85ac27c183043883dda"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#afc405f09ff80a85ac27c183043883dda">yume::ast::SYM_PERCENT</a> = &quot;%&quot;_a</td></tr>
-<tr class="separator:afc405f09ff80a85ac27c183043883dda"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a04249c339c84d1c01a0a6c9a2493ea38"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a04249c339c84d1c01a0a6c9a2493ea38">yume::ast::SYM_SLASH_SLASH</a> = &quot;//&quot;_a</td></tr>
-<tr class="separator:a04249c339c84d1c01a0a6c9a2493ea38"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7bf45060689d0d0af6acbec5cd4f6d03"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a7bf45060689d0d0af6acbec5cd4f6d03">yume::ast::SYM_STAR</a> = &quot;*&quot;_a</td></tr>
-<tr class="separator:a7bf45060689d0d0af6acbec5cd4f6d03"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc85862b07b3a63a7480ceaec12c304f"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#afc85862b07b3a63a7480ceaec12c304f">yume::ast::SYM_BANG</a> = &quot;!&quot;_a</td></tr>
-<tr class="separator:afc85862b07b3a63a7480ceaec12c304f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7aebd4fd401a3cddeaee8925b3afe06b"><td class="memItemLeft" align="right" valign="top">static const Atom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a7aebd4fd401a3cddeaee8925b3afe06b">yume::ast::SYM_COLON</a> = &quot;:&quot;_a</td></tr>
-<tr class="separator:a7aebd4fd401a3cddeaee8925b3afe06b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae60ee426d4fba9cdbae4518ab5e0a564"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#ae60ee426d4fba9cdbae4518ab5e0a564">yume::ast::KWD_IF</a> = {<a class="el" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Token::Type::Word</a>, &quot;if&quot;_a}</td></tr>
+<tr class="separator:ae60ee426d4fba9cdbae4518ab5e0a564"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9946159d23b2d17820f4eb52fdc28a32"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a9946159d23b2d17820f4eb52fdc28a32">yume::ast::KWD_DEF</a> = {<a class="el" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Token::Type::Word</a>, &quot;def&quot;_a}</td></tr>
+<tr class="separator:a9946159d23b2d17820f4eb52fdc28a32"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a913e1e697d2b976df998261cdfc5b832"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a913e1e697d2b976df998261cdfc5b832">yume::ast::KWD_END</a> = {<a class="el" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Token::Type::Word</a>, &quot;end&quot;_a}</td></tr>
+<tr class="separator:a913e1e697d2b976df998261cdfc5b832"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3857cb71872c5d2e290801df9113fea3"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a3857cb71872c5d2e290801df9113fea3">yume::ast::KWD_LET</a> = {<a class="el" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Token::Type::Word</a>, &quot;let&quot;_a}</td></tr>
+<tr class="separator:a3857cb71872c5d2e290801df9113fea3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f034e39b334a9fdcf800e049431ea14"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a6f034e39b334a9fdcf800e049431ea14">yume::ast::KWD_PTR</a> = {<a class="el" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Token::Type::Word</a>, &quot;ptr&quot;_a}</td></tr>
+<tr class="separator:a6f034e39b334a9fdcf800e049431ea14"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad18ce7f457272756340e905580e313b1"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#ad18ce7f457272756340e905580e313b1">yume::ast::KWD_MUT</a> = {<a class="el" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Token::Type::Word</a>, &quot;mut&quot;_a}</td></tr>
+<tr class="separator:ad18ce7f457272756340e905580e313b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62718d4b64497c9d32c60b8b9cad4f7f"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a62718d4b64497c9d32c60b8b9cad4f7f">yume::ast::KWD_ELSE</a> = {<a class="el" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Token::Type::Word</a>, &quot;else&quot;_a}</td></tr>
+<tr class="separator:a62718d4b64497c9d32c60b8b9cad4f7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7ff933fc4dd5bcdcc40f0cf952b64254"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a7ff933fc4dd5bcdcc40f0cf952b64254">yume::ast::KWD_SELF_ITEM</a> = {<a class="el" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Token::Type::Word</a>, &quot;self&quot;_a}</td></tr>
+<tr class="separator:a7ff933fc4dd5bcdcc40f0cf952b64254"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7c7f736df991f12c90597a95d97f4c9"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#ab7c7f736df991f12c90597a95d97f4c9">yume::ast::KWD_SELF_TYPE</a> = {<a class="el" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Token::Type::Word</a>, &quot;Self&quot;_a}</td></tr>
+<tr class="separator:ab7c7f736df991f12c90597a95d97f4c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a42a3d8d2fd50c5198ae415ffaf7b7717"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a42a3d8d2fd50c5198ae415ffaf7b7717">yume::ast::KWD_THEN</a> = {<a class="el" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Token::Type::Word</a>, &quot;then&quot;_a}</td></tr>
+<tr class="separator:a42a3d8d2fd50c5198ae415ffaf7b7717"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad568e2b0ebf0c1b7599ad9c01d0361dc"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#ad568e2b0ebf0c1b7599ad9c01d0361dc">yume::ast::KWD_TRUE</a> = {<a class="el" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Token::Type::Word</a>, &quot;true&quot;_a}</td></tr>
+<tr class="separator:ad568e2b0ebf0c1b7599ad9c01d0361dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6cf1d32011b14b57197a33cce00930ff"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a6cf1d32011b14b57197a33cce00930ff">yume::ast::KWD_FALSE</a> = {<a class="el" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Token::Type::Word</a>, &quot;false&quot;_a}</td></tr>
+<tr class="separator:a6cf1d32011b14b57197a33cce00930ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d99834088a268119bc5f432ec739701"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a3d99834088a268119bc5f432ec739701">yume::ast::KWD_WHILE</a> = {<a class="el" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Token::Type::Word</a>, &quot;while&quot;_a}</td></tr>
+<tr class="separator:a3d99834088a268119bc5f432ec739701"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f46632e10e3490a965b52d0b894e3e2"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a7f46632e10e3490a965b52d0b894e3e2">yume::ast::KWD_STRUCT</a> = {<a class="el" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Token::Type::Word</a>, &quot;struct&quot;_a}</td></tr>
+<tr class="separator:a7f46632e10e3490a965b52d0b894e3e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a223b6c06ad0adbaa4ca19b0a7e7d75ca"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a223b6c06ad0adbaa4ca19b0a7e7d75ca">yume::ast::KWD_RETURN</a> = {<a class="el" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Token::Type::Word</a>, &quot;return&quot;_a}</td></tr>
+<tr class="separator:a223b6c06ad0adbaa4ca19b0a7e7d75ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4af6fd2f9a031307978be2bbbbbb727"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#af4af6fd2f9a031307978be2bbbbbb727">yume::ast::KWD_VARARGS</a> = {<a class="el" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Token::Type::Word</a>, &quot;__varargs__&quot;_a}</td></tr>
+<tr class="separator:af4af6fd2f9a031307978be2bbbbbb727"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab394a8a5628df5b1b54eac2ca5d8921c"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#ab394a8a5628df5b1b54eac2ca5d8921c">yume::ast::KWD_PRIMITIVE</a> = {<a class="el" href="ast_8cpp.html#accdaf6c4cd5ed0080fe0ff6e92cb3266">Token::Type::Word</a>, &quot;__primitive__&quot;_a}</td></tr>
+<tr class="separator:ab394a8a5628df5b1b54eac2ca5d8921c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d2cb5baf79cf2b9a7d3eb3670fcb51f"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a4d2cb5baf79cf2b9a7d3eb3670fcb51f">yume::ast::SYM_COMMA</a> = {<a class="el" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Token::Type::Symbol</a>, &quot;,&quot;_a}</td></tr>
+<tr class="separator:a4d2cb5baf79cf2b9a7d3eb3670fcb51f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a5d61ffe69098d32b0c3727d9f174ff"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a3a5d61ffe69098d32b0c3727d9f174ff">yume::ast::SYM_DOT</a> = {<a class="el" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Token::Type::Symbol</a>, &quot;.&quot;_a}</td></tr>
+<tr class="separator:a3a5d61ffe69098d32b0c3727d9f174ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a76d8527815bcad8ee2bfcd38d7115865"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a76d8527815bcad8ee2bfcd38d7115865">yume::ast::SYM_EQ</a> = {<a class="el" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Token::Type::Symbol</a>, &quot;=&quot;_a}</td></tr>
+<tr class="separator:a76d8527815bcad8ee2bfcd38d7115865"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acdc7a1b54c42313017ba9c7477115bcc"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#acdc7a1b54c42313017ba9c7477115bcc">yume::ast::SYM_LPAREN</a> = {<a class="el" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Token::Type::Symbol</a>, &quot;(&quot;_a}</td></tr>
+<tr class="separator:acdc7a1b54c42313017ba9c7477115bcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0bd41b3a95054b518b425e35e0362634"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a0bd41b3a95054b518b425e35e0362634">yume::ast::SYM_RPAREN</a> = {<a class="el" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Token::Type::Symbol</a>, &quot;)&quot;_a}</td></tr>
+<tr class="separator:a0bd41b3a95054b518b425e35e0362634"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a91d7d1b73b70d9bf989554a4399c4471"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a91d7d1b73b70d9bf989554a4399c4471">yume::ast::SYM_LBRACKET</a> = {<a class="el" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Token::Type::Symbol</a>, &quot;[&quot;_a}</td></tr>
+<tr class="separator:a91d7d1b73b70d9bf989554a4399c4471"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea34ccbde77aa608cf12dfefeb98b020"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#aea34ccbde77aa608cf12dfefeb98b020">yume::ast::SYM_RBRACKET</a> = {<a class="el" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Token::Type::Symbol</a>, &quot;]&quot;_a}</td></tr>
+<tr class="separator:aea34ccbde77aa608cf12dfefeb98b020"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a534a0cbc858ca0854a8671d31957baf9"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a534a0cbc858ca0854a8671d31957baf9">yume::ast::SYM_LBRACE</a> = {<a class="el" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Token::Type::Symbol</a>, &quot;{&quot;_a}</td></tr>
+<tr class="separator:a534a0cbc858ca0854a8671d31957baf9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1770f93249cfca9fbe4ba758bc0ce31a"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a1770f93249cfca9fbe4ba758bc0ce31a">yume::ast::SYM_RBRACE</a> = {<a class="el" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Token::Type::Symbol</a>, &quot;}&quot;_a}</td></tr>
+<tr class="separator:a1770f93249cfca9fbe4ba758bc0ce31a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2ba77eea7d55ed1f8b697695f8719131"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a2ba77eea7d55ed1f8b697695f8719131">yume::ast::SYM_EQ_EQ</a> = {<a class="el" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Token::Type::Symbol</a>, &quot;==&quot;_a}</td></tr>
+<tr class="separator:a2ba77eea7d55ed1f8b697695f8719131"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ff6da77016e11160dea0b4a4ffb82f3"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a9ff6da77016e11160dea0b4a4ffb82f3">yume::ast::SYM_NEQ</a> = {<a class="el" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Token::Type::Symbol</a>, &quot;!=&quot;_a}</td></tr>
+<tr class="separator:a9ff6da77016e11160dea0b4a4ffb82f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab75168ac6710fd3fb8fb2fe51ce559a7"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#ab75168ac6710fd3fb8fb2fe51ce559a7">yume::ast::SYM_GT</a> = {<a class="el" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Token::Type::Symbol</a>, &quot;&gt;&quot;_a}</td></tr>
+<tr class="separator:ab75168ac6710fd3fb8fb2fe51ce559a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87fc60033920a0984c08b577f0218330"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a87fc60033920a0984c08b577f0218330">yume::ast::SYM_LT</a> = {<a class="el" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Token::Type::Symbol</a>, &quot;&lt;&quot;_a}</td></tr>
+<tr class="separator:a87fc60033920a0984c08b577f0218330"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8efc480ac0aa67623587c295440241d1"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a8efc480ac0aa67623587c295440241d1">yume::ast::SYM_PLUS</a> = {<a class="el" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Token::Type::Symbol</a>, &quot;+&quot;_a}</td></tr>
+<tr class="separator:a8efc480ac0aa67623587c295440241d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4cfc060cc78a1820c4ff68221eda66f"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#af4cfc060cc78a1820c4ff68221eda66f">yume::ast::SYM_MINUS</a> = {<a class="el" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Token::Type::Symbol</a>, &quot;-&quot;_a}</td></tr>
+<tr class="separator:af4cfc060cc78a1820c4ff68221eda66f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10e66b48204f1490adda7dfe3ee8db24"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a10e66b48204f1490adda7dfe3ee8db24">yume::ast::SYM_PERCENT</a> = {<a class="el" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Token::Type::Symbol</a>, &quot;%&quot;_a}</td></tr>
+<tr class="separator:a10e66b48204f1490adda7dfe3ee8db24"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af431e25995cab3c7b826efab9fe58c75"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#af431e25995cab3c7b826efab9fe58c75">yume::ast::SYM_SLASH_SLASH</a> = {<a class="el" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Token::Type::Symbol</a>, &quot;//&quot;_a}</td></tr>
+<tr class="separator:af431e25995cab3c7b826efab9fe58c75"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a05e97031dbbc71143d3fa381b5e5c29d"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a05e97031dbbc71143d3fa381b5e5c29d">yume::ast::SYM_STAR</a> = {<a class="el" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Token::Type::Symbol</a>, &quot;*&quot;_a}</td></tr>
+<tr class="separator:a05e97031dbbc71143d3fa381b5e5c29d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa34667e0c61c41019b9ee95bd54fc9cb"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#aa34667e0c61c41019b9ee95bd54fc9cb">yume::ast::SYM_BANG</a> = {<a class="el" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Token::Type::Symbol</a>, &quot;!&quot;_a}</td></tr>
+<tr class="separator:aa34667e0c61c41019b9ee95bd54fc9cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2a883ab6c96ba565e699146fe5bb09da"><td class="memItemLeft" align="right" valign="top">static const TokenAtom&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a2a883ab6c96ba565e699146fe5bb09da">yume::ast::SYM_COLON</a> = {<a class="el" href="ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc">Token::Type::Symbol</a>, &quot;:&quot;_a}</td></tr>
+<tr class="separator:a2a883ab6c96ba565e699146fe5bb09da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Variable Documentation</h2>
 <a id="a6f13d256d640475eb20d9c4a07eb8f23" name="a6f13d256d640475eb20d9c4a07eb8f23"></a>
@@ -222,7 +230,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00076">76</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00079">79</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
 </div>
 </div>
@@ -246,7 +254,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00110">110</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00113">113</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
 </div>
 </div>
@@ -270,7 +278,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00109">109</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00112">112</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
 </div>
 </div>
@@ -294,7 +302,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00107">107</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00110">110</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
 </div>
 </div>
@@ -310,9 +318,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00085">85</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00088">88</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00766">yume::ast::Program::parse()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00774">yume::ast::Program::parse()</a>.</p>
 
 </div>
 </div>
@@ -336,7 +344,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00108">108</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00111">111</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
 </div>
 </div>
