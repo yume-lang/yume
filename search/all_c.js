@@ -35,9 +35,10 @@ var searchData=
   ['m_5ftype_5fargs_32',['m_type_args',['../structyume_1_1Fn.html#a46c4be1d0588e5af2374b66e7d509660',1,'yume::Fn']]],
   ['main_33',['main',['../yumec_8cpp.html#a9d6b8cae4881c54db1d2df3da92c712f',1,'yumec.cpp']]],
   ['make_5fatom_34',['make_atom',['../structyume_1_1Atom.html#a5c5f82cdeef5e63a5e005331c7014325',1,'yume::Atom::make_atom()'],['../namespaceyume.html#a673b026b70abd8c22b87fcf7f94236a9',1,'yume::make_atom()']]],
-  ['mangle_5fname_35',['mangle_name',['../classyume_1_1Compiler.html#afcd1f55798eac5d3e7d6551fae8cb827',1,'yume::Compiler::mangle_name(const Fn &amp;fn_decl) -&gt; string'],['../classyume_1_1Compiler.html#a4b62b57eda222acba72d877196b643c2',1,'yume::Compiler::mangle_name(const ty::Type &amp;ast_type, const Fn &amp;parent) -&gt; string']]],
+  ['mangle_5fname_35',['mangle_name',['../classyume_1_1Compiler.html#a4b62b57eda222acba72d877196b643c2',1,'yume::Compiler::mangle_name(const ty::Type &amp;ast_type, const Fn &amp;parent) -&gt; string'],['../classyume_1_1Compiler.html#afcd1f55798eac5d3e7d6551fae8cb827',1,'yume::Compiler::mangle_name(const Fn &amp;fn_decl) -&gt; string']]],
   ['maybe_5fconst_5ft_36',['maybe_const_t',['../namespaceyume.html#a0b0665f6fd5ded9b92b0734a4985d947',1,'yume']]],
   ['memo_37',['memo',['../classyume_1_1ty_1_1Struct.html#a277cb85876533e746f4ff3e8f1b3409e',1,'yume::ty::Struct']]],
-  ['module_38',['module',['../classyume_1_1Compiler.html#acebe062c6f524b71429058a98442e747',1,'yume::Compiler']]],
-  ['mut_39',['Mut',['../namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7',1,'yume']]]
+  ['middle_38',['middle',['../errors_8cpp.html#a303991e533e198124a5e2d39a8a19356',1,'errors.cpp']]],
+  ['module_39',['module',['../classyume_1_1Compiler.html#acebe062c6f524b71429058a98442e747',1,'yume::Compiler']]],
+  ['mut_40',['Mut',['../namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7',1,'yume']]]
 ];

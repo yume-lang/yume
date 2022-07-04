@@ -74,24 +74,261 @@ $(function() {
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="ast_8hpp.html">ast/ast.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;<a class="code" href="token_8hpp.html">token.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="util_8hpp.html">util.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &lt;utility&gt;</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceyume.html">yume</a> {</div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno"><a class="line" href="structyume_1_1ASTStackTrace.html#adb8aee3865fbb9b54b96fcc03f51cce1">    9</a></span><a class="code hl_function" href="structyume_1_1ASTStackTrace.html#adb8aee3865fbb9b54b96fcc03f51cce1">ASTStackTrace::ASTStackTrace</a>(std::string message) : m_message(std::move(message)) {}</div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno"><a class="line" href="structyume_1_1ASTStackTrace.html#a6eb5692a55802d2ff169e6efff58c546">   11</a></span><a class="code hl_function" href="structyume_1_1ASTStackTrace.html#adb8aee3865fbb9b54b96fcc03f51cce1">ASTStackTrace::ASTStackTrace</a>(std::string message, <span class="keyword">const</span> <a class="code hl_class" href="classyume_1_1ast_1_1AST.html">ast::AST</a>&amp; ast) : m_message(std::move(message)) {</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>  <a class="code hl_variable" href="structyume_1_1ASTStackTrace.html#a4d8298ad4ba1502135824df5bbda5fa2">m_message</a> += <span class="stringliteral">&quot; (&quot;</span> + ast.<a class="code hl_function" href="classyume_1_1ast_1_1AST.html#ab30cf0f1bcb19522b1a27a95098c4cc2">location</a>().to_string() + <span class="stringliteral">&quot;)&quot;</span>;</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>}</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>} <span class="comment">// namespace yume</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &lt;filesystem&gt;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &lt;limits&gt;</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;llvm/ADT/StringExtras.h&gt;</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &lt;llvm/Support/Process.h&gt;</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;llvm/Support/raw_ostream.h&gt;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;string_view&gt;</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;utility&gt;</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceyume.html">yume</a> {</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno"><a class="line" href="structyume_1_1ASTStackTrace.html#adb8aee3865fbb9b54b96fcc03f51cce1">   15</a></span><a class="code hl_function" href="structyume_1_1ASTStackTrace.html#adb8aee3865fbb9b54b96fcc03f51cce1">ASTStackTrace::ASTStackTrace</a>(std::string message) : m_message(std::move(message)) {}</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno"><a class="line" href="structyume_1_1ASTStackTrace.html#a6eb5692a55802d2ff169e6efff58c546">   17</a></span><a class="code hl_function" href="structyume_1_1ASTStackTrace.html#adb8aee3865fbb9b54b96fcc03f51cce1">ASTStackTrace::ASTStackTrace</a>(std::string message, <span class="keyword">const</span> <a class="code hl_class" href="classyume_1_1ast_1_1AST.html">ast::AST</a>&amp; ast) : m_message(std::move(message)) {</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>  <a class="code hl_variable" href="structyume_1_1ASTStackTrace.html#a4d8298ad4ba1502135824df5bbda5fa2">m_message</a> += <span class="stringliteral">&quot; (&quot;</span> + ast.<a class="code hl_function" href="classyume_1_1ast_1_1AST.html#ab30cf0f1bcb19522b1a27a95098c4cc2">location</a>().to_string() + <span class="stringliteral">&quot;)&quot;</span>;</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>}</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">namespace </span>{</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="keyword">enum</span> Phase : uint8_t { Index, Address, Function, Source, Offset };</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="keyword">struct </span>ContainerLikeSimplify {</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno"><a class="line" href="errors_8cpp.html#a5303a4701391135cfae69d4318078ff8">   25</a></span>  std::string_view <a class="code hl_variable" href="errors_8cpp.html#a5303a4701391135cfae69d4318078ff8">front</a>;</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="errors_8cpp.html#a303991e533e198124a5e2d39a8a19356">   26</a></span>  std::string_view <a class="code hl_variable" href="errors_8cpp.html#a303991e533e198124a5e2d39a8a19356">middle</a>;</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>};</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">struct </span>DirectReplaceSimplify {</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno"><a class="line" href="errors_8cpp.html#ab4f9ab07af6210b8b961b3784cc8b773">   30</a></span>  std::string_view <a class="code hl_variable" href="errors_8cpp.html#ab4f9ab07af6210b8b961b3784cc8b773">from</a>;</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="errors_8cpp.html#a7cd3163279d49b81b366c95715c0df60">   31</a></span>  std::string_view <a class="code hl_variable" href="errors_8cpp.html#a7cd3163279d49b81b366c95715c0df60">to</a>;</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>};</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="keyword">class </span>stacktrace_ostream : <span class="keyword">public</span> llvm::raw_ostream {</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>  <span class="keyword">using </span>enum llvm::raw_ostream::Colors;</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>  Phase current_phase{};</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>  <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> template_depth{};</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>  <span class="keywordtype">bool</span> unknown{};</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>  <span class="keywordtype">bool</span> skip{};</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>  uint64_t total_size{};</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>  std::string direct_buffer{};</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>  llvm::raw_string_ostream buffer;</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>  <span class="keywordtype">void</span> write_impl(<span class="keyword">const</span> <span class="keywordtype">char</span>* Ptr, <span class="keywordtype">size_t</span> Size) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>  <span class="keywordtype">void</span> simplify(std::string_view msg);</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>  <span class="keyword">auto</span> simplify(std::string_view msg, ContainerLikeSimplify s) -&gt; bool;</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>  <span class="keyword">auto</span> simplify(std::string_view msg, DirectReplaceSimplify s) -&gt; bool;</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>  <span class="keywordtype">void</span> format_phase(std::string_view msg);</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>  <span class="keywordtype">void</span> set_color(llvm::raw_ostream::Colors color);</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>  [[nodiscard]] <span class="keyword">auto</span> current_pos() const -&gt; uint64_t<span class="keyword"> override </span>{ <span class="keywordflow">return</span> total_size; }</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>  <span class="keyword">static</span> <span class="keyword">const</span> std::size_t ALLOC_FOR_BUFFER = 128;</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>  <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">bool</span> use_color;</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>  <span class="keyword">explicit</span> stacktrace_ostream() : buffer(direct_buffer) {</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    SetUnbuffered();</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    direct_buffer.reserve(ALLOC_FOR_BUFFER);</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>  }</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>  <span class="keywordtype">void</span> clean_buffer() {</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    <span class="keywordflow">if</span> (!skip)</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>      llvm::errs() &lt;&lt; direct_buffer;</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    skip = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    direct_buffer.clear();</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>  }</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>};</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span><span class="keyword">const</span> <span class="keywordtype">bool</span> stacktrace_ostream::use_color = llvm::errs().has_colors();</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span><span class="comment">// std::unique_ptr&lt;$, std::default_delete&lt;$&gt; &gt;</span></div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span><span class="keyword">constexpr</span> ContainerLikeSimplify UPTR_SIMPLIFY = {<span class="stringliteral">&quot;std::unique_ptr&lt;&quot;</span>, <span class="stringliteral">&quot;, std::default_delete&lt;&quot;</span>};</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span><span class="comment">// std::vector&lt;$, std::allocator&lt;$&gt; &gt;</span></div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="keyword">constexpr</span> ContainerLikeSimplify VEC_SIMPLIFY = {<span class="stringliteral">&quot;std::vector&lt;&quot;</span>, <span class="stringliteral">&quot;, std::allocator&lt;&quot;</span>};</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span><span class="keyword">constexpr</span> DirectReplaceSimplify STRING_SIMPLIFY = {</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    <span class="stringliteral">&quot;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;&quot;</span>, <span class="stringliteral">&quot;std::string&quot;</span>};</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span><span class="keyword">constexpr</span> DirectReplaceSimplify STRINGSTREAM_SIMPLIFY = {</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    <span class="stringliteral">&quot;std::__cxx11::basic_stringstream&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;&quot;</span>, <span class="stringliteral">&quot;std::stringstream&quot;</span>};</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span><span class="keyword">constexpr</span> DirectReplaceSimplify ANONYMOUS_NS_SIMPLIFY = {<span class="stringliteral">&quot;::(anonymous namespace)::&quot;</span>, <span class="stringliteral">&quot;:::&quot;</span>};</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span> </div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span><span class="keyword">auto</span> stacktrace_ostream::simplify(std::string_view msg, ContainerLikeSimplify s) -&gt; <span class="keywordtype">bool</span> {</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>  <span class="keyword">constexpr</span> <span class="keyword">static</span> <span class="keyword">const</span> std::string_view middle_end = <span class="stringliteral">&quot;&gt; &gt;&quot;</span>;</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>  <span class="keyword">constexpr</span> <span class="keyword">static</span> <span class="keyword">const</span> std::string_view end = <span class="stringliteral">&quot;&gt;&quot;</span>;</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>  <span class="keyword">auto</span> uptr_start = msg.find(s.front);</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>  <span class="keywordflow">if</span> (uptr_start == std::string::npos)</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>  <span class="keyword">auto</span> uptr_delete_start = msg.find(s.middle, uptr_start);</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>  <span class="keywordflow">if</span> (uptr_delete_start == std::string::npos)</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span> </div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>  <span class="keyword">auto</span> contained_start = uptr_start + s.front.length();</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>  <span class="keyword">auto</span> contained_typename = msg.substr(contained_start, uptr_delete_start - contained_start);</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>  <span class="keyword">auto</span> from_deleter = msg.substr(uptr_delete_start + s.middle.length());</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span> </div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>  <span class="keywordflow">if</span> (!from_deleter.starts_with(contained_typename))</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>  <span class="keywordflow">if</span> (!from_deleter.substr(contained_typename.length()).starts_with(middle_end))</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span> </div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>  <span class="keyword">auto</span> uptr_end = uptr_delete_start + s.middle.length() + contained_typename.length() + middle_end.length();</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span> </div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>  simplify(msg.substr(0, uptr_start));</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>  buffer &lt;&lt; s.front &lt;&lt; contained_typename &lt;&lt; end;</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>  simplify(msg.substr(uptr_end));</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span> </div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>  <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>};</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span> </div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span><span class="keyword">auto</span> stacktrace_ostream::simplify(std::string_view msg, DirectReplaceSimplify s) -&gt; <span class="keywordtype">bool</span> {</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>  <span class="keyword">auto</span> start = msg.find(s.from);</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>  <span class="keywordflow">if</span> (start == std::string::npos)</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span> </div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>  simplify(msg.substr(0, start));</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>  buffer &lt;&lt; s.to;</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>  simplify(msg.substr(start + s.from.size()));</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span> </div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>  <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>}</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span> </div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span><span class="keywordtype">void</span> stacktrace_ostream::simplify(std::string_view msg) {</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>  <span class="keywordtype">bool</span> found_any = simplify(msg, UPTR_SIMPLIFY) || simplify(msg, VEC_SIMPLIFY) || simplify(msg, STRING_SIMPLIFY) ||</div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>                   simplify(msg, STRINGSTREAM_SIMPLIFY) || simplify(msg, ANONYMOUS_NS_SIMPLIFY);</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span> </div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>  <span class="keywordflow">if</span> (found_any)</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>    <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span> </div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>  <span class="keywordtype">size_t</span> prev_pos = 0;</div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>  <span class="keywordtype">size_t</span> start_pos = 0;</div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>  <span class="keywordflow">while</span> (<span class="keyword">true</span>) {</div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>    start_pos = msg.find_first_of(<span class="stringliteral">&quot;&lt;&gt;()&quot;</span>, prev_pos);</div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>    <span class="keyword">auto</span> substr = msg.substr(prev_pos, start_pos == std::string::npos ? start_pos : start_pos - prev_pos);</div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span> </div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>    <span class="keywordflow">if</span> (template_depth == 0)</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>      set_color(CYAN);</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span> </div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>    buffer &lt;&lt; substr;</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span> </div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>    <span class="keywordflow">if</span> (template_depth == 0 &amp;&amp; use_color)</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>      buffer &lt;&lt; llvm::sys::Process::ResetColor();</div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span> </div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>    <span class="keywordflow">if</span> (start_pos == std::string::npos)</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>      <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span> </div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>    <span class="keyword">auto</span> angle = msg.at(start_pos);</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>    template_depth += (angle == <span class="charliteral">&#39;&lt;&#39;</span> || angle == <span class="charliteral">&#39;(&#39;</span>) ? 1 : -1;</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>    buffer &lt;&lt; angle;</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>    prev_pos = start_pos + 1;</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>  }</div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>}</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span> </div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span><span class="keywordtype">void</span> stacktrace_ostream::set_color(llvm::raw_ostream::Colors color) {</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>  <span class="keywordflow">if</span> (color != RESET &amp;&amp; use_color)</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>    buffer &lt;&lt; llvm::sys::Process::OutputColor(static_cast&lt;char&gt;(color), <span class="keyword">false</span>, <span class="keyword">false</span>);</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>};</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span> </div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span><span class="keywordtype">void</span> stacktrace_ostream::format_phase(std::string_view msg) {</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>  <span class="keyword">using namespace </span>std::literals;</div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>  <span class="keyword">static</span> std::array skip_lines = {<span class="stringliteral">&quot;yume::CRTPWalker&lt;&quot;</span>sv, <span class="stringliteral">&quot;__libc_start_&quot;</span>sv};</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>  <span class="keyword">static</span> std::string source_dir = <a class="code hl_define" href="yumec_8cpp.html#a713db508187fddfd6ff054a6de478ce2">YUME_SRC_DIR</a>;</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span> </div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>  <span class="keywordflow">switch</span> (current_phase) {</div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>  <span class="keywordflow">case</span> Address: buffer &lt;&lt; msg; <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>  <span class="keywordflow">case</span> Index:</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>    set_color(GREEN);</div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>    buffer &lt;&lt; msg;</div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>    <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>  <span class="keywordflow">case</span> Offset:</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>    set_color(RED);</div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>    buffer &lt;&lt; msg;</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>    <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>  <span class="keywordflow">case</span> Function:</div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>    set_color(CYAN);</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="namespaceyume.html#a71865b15853a8ff7b98ed793716e21d7">std::ranges::any_of</a>(skip_lines, [&amp;](std::string_view s) { <span class="keywordflow">return</span> msg.find(s) != std::string::npos; }))</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>      skip = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>    <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>      simplify(msg);</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>    <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>  <span class="keywordflow">case</span> Source:</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>    set_color(YELLOW);</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>    <span class="keywordflow">if</span> (<span class="keyword">auto</span> normal_path = std::filesystem::path(msg).lexically_normal().native();</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>        normal_path.starts_with(source_dir) &amp;&amp; use_color) {</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>      buffer &lt;&lt; llvm::sys::Process::OutputBold(<span class="keyword">false</span>);</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>      buffer &lt;&lt; static_cast&lt;std::string_view&gt;(normal_path).substr(source_dir.size());</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>      buffer &lt;&lt; normal_path;</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>    }</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>  };</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span> </div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>  <span class="keywordflow">if</span> (use_color)</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>    buffer &lt;&lt; llvm::sys::Process::ResetColor();</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>}</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span> </div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span><span class="keywordtype">void</span> stacktrace_ostream::write_impl(<span class="keyword">const</span> <span class="keywordtype">char</span>* ptr, <span class="keywordtype">size_t</span> size) {</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span> </div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>  <span class="keyword">auto</span> msg = std::string_view(ptr, size);</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>  total_size += size;</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span> </div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>  <span class="keywordflow">if</span> (size == 1 &amp;&amp; llvm::isSpace(msg.at(0))) {</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>    buffer &lt;&lt; msg.at(0);</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>    <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>  }</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span> </div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>  <span class="keywordflow">if</span> (unknown) {</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>    unknown = msg.at(0) != <span class="charliteral">&#39;)&#39;</span>;</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>  } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (msg.at(0) == <span class="charliteral">&#39;(&#39;</span>) {</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>    skip = current_phase == Function;</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>    unknown = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>    current_phase = Offset;</div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>  } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (msg.at(0) == <span class="charliteral">&#39;/&#39;</span> &amp;&amp; current_phase != Source) {</div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>    current_phase = Source;</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>  }</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span> </div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>  format_phase(msg);</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span> </div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>  <span class="keywordtype">int</span> counter = <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(current_phase);</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>  <span class="keywordflow">if</span> (current_phase != Offset)</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>    counter = ++counter % 4;</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span> </div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>  <span class="keywordflow">if</span> (counter == 0)</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>    clean_buffer();</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span> </div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>  current_phase = <span class="keyword">static_cast&lt;</span>Phase<span class="keyword">&gt;</span>(counter);</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>  <span class="keywordflow">if</span> (current_phase == Offset &amp;&amp; !unknown)</div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>    current_phase = Index;</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>}</div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span> </div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>} <span class="comment">// namespace</span></div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span> </div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno"><a class="line" href="namespaceyume.html#a2f50f2670ba68fea92723cf1dd310ffe">  239</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceyume.html#a2f50f2670ba68fea92723cf1dd310ffe">backtrace</a>(<span class="keywordtype">void</span>* <span class="comment">/*unused*/</span>) {</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>  <span class="keyword">static</span> stacktrace_ostream stream{};</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>  llvm::sys::PrintStackTrace(stream);</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>  stream.clean_buffer();</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>}</div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>} <span class="comment">// namespace yume</span></div>
 <div class="ttc" id="aast_8hpp_html"><div class="ttname"><a href="ast_8hpp.html">ast.hpp</a></div></div>
 <div class="ttc" id="aclassyume_1_1ast_1_1AST_html"><div class="ttname"><a href="classyume_1_1ast_1_1AST.html">yume::ast::AST</a></div><div class="ttdoc">All nodes in the AST tree of the program inherit from this class.</div><div class="ttdef"><b>Definition:</b> <a href="ast_8hpp_source.html#l00172">ast.hpp:172</a></div></div>
 <div class="ttc" id="aclassyume_1_1ast_1_1AST_html_ab30cf0f1bcb19522b1a27a95098c4cc2"><div class="ttname"><a href="classyume_1_1ast_1_1AST.html#ab30cf0f1bcb19522b1a27a95098c4cc2">yume::ast::AST::location</a></div><div class="ttdeci">auto location() const -&gt; Loc</div><div class="ttdoc">The union of the locations of the Tokens making up this node.</div><div class="ttdef"><b>Definition:</b> <a href="ast_8hpp_source.html#l00222">ast.hpp:222</a></div></div>
+<div class="ttc" id="aerrors_8cpp_html_a303991e533e198124a5e2d39a8a19356"><div class="ttname"><a href="errors_8cpp.html#a303991e533e198124a5e2d39a8a19356">middle</a></div><div class="ttdeci">std::string_view middle</div><div class="ttdef"><b>Definition:</b> <a href="errors_8cpp_source.html#l00026">errors.cpp:26</a></div></div>
+<div class="ttc" id="aerrors_8cpp_html_a5303a4701391135cfae69d4318078ff8"><div class="ttname"><a href="errors_8cpp.html#a5303a4701391135cfae69d4318078ff8">front</a></div><div class="ttdeci">std::string_view front</div><div class="ttdef"><b>Definition:</b> <a href="errors_8cpp_source.html#l00025">errors.cpp:25</a></div></div>
+<div class="ttc" id="aerrors_8cpp_html_a7cd3163279d49b81b366c95715c0df60"><div class="ttname"><a href="errors_8cpp.html#a7cd3163279d49b81b366c95715c0df60">to</a></div><div class="ttdeci">std::string_view to</div><div class="ttdef"><b>Definition:</b> <a href="errors_8cpp_source.html#l00031">errors.cpp:31</a></div></div>
+<div class="ttc" id="aerrors_8cpp_html_ab4f9ab07af6210b8b961b3784cc8b773"><div class="ttname"><a href="errors_8cpp.html#ab4f9ab07af6210b8b961b3784cc8b773">from</a></div><div class="ttdeci">std::string_view from</div><div class="ttdef"><b>Definition:</b> <a href="errors_8cpp_source.html#l00030">errors.cpp:30</a></div></div>
 <div class="ttc" id="aerrors_8hpp_html"><div class="ttname"><a href="errors_8hpp.html">errors.hpp</a></div></div>
 <div class="ttc" id="anamespaceyume_html"><div class="ttname"><a href="namespaceyume.html">yume</a></div><div class="ttdef"><b>Definition:</b> <a href="ast_8cpp_source.html#l00016">ast.cpp:16</a></div></div>
-<div class="ttc" id="astructyume_1_1ASTStackTrace_html_a4d8298ad4ba1502135824df5bbda5fa2"><div class="ttname"><a href="structyume_1_1ASTStackTrace.html#a4d8298ad4ba1502135824df5bbda5fa2">yume::ASTStackTrace::m_message</a></div><div class="ttdeci">std::string m_message</div><div class="ttdef"><b>Definition:</b> <a href="errors_8hpp_source.html#l00054">errors.hpp:54</a></div></div>
-<div class="ttc" id="astructyume_1_1ASTStackTrace_html_adb8aee3865fbb9b54b96fcc03f51cce1"><div class="ttname"><a href="structyume_1_1ASTStackTrace.html#adb8aee3865fbb9b54b96fcc03f51cce1">yume::ASTStackTrace::ASTStackTrace</a></div><div class="ttdeci">ASTStackTrace(std::string message)</div><div class="ttdef"><b>Definition:</b> <a href="errors_8cpp_source.html#l00009">errors.cpp:9</a></div></div>
+<div class="ttc" id="anamespaceyume_html_a2f50f2670ba68fea92723cf1dd310ffe"><div class="ttname"><a href="namespaceyume.html#a2f50f2670ba68fea92723cf1dd310ffe">yume::backtrace</a></div><div class="ttdeci">void backtrace(void *)</div><div class="ttdef"><b>Definition:</b> <a href="errors_8cpp_source.html#l00239">errors.cpp:239</a></div></div>
+<div class="ttc" id="anamespaceyume_html_a71865b15853a8ff7b98ed793716e21d7"><div class="ttname"><a href="namespaceyume.html#a71865b15853a8ff7b98ed793716e21d7">yume::any_of</a></div><div class="ttdeci">static constexpr any_of_fn any_of</div><div class="ttdef"><b>Definition:</b> <a href="token_8cpp_source.html#l00031">token.cpp:31</a></div></div>
+<div class="ttc" id="astructyume_1_1ASTStackTrace_html_a4d8298ad4ba1502135824df5bbda5fa2"><div class="ttname"><a href="structyume_1_1ASTStackTrace.html#a4d8298ad4ba1502135824df5bbda5fa2">yume::ASTStackTrace::m_message</a></div><div class="ttdeci">std::string m_message</div><div class="ttdef"><b>Definition:</b> <a href="errors_8hpp_source.html#l00057">errors.hpp:57</a></div></div>
+<div class="ttc" id="astructyume_1_1ASTStackTrace_html_adb8aee3865fbb9b54b96fcc03f51cce1"><div class="ttname"><a href="structyume_1_1ASTStackTrace.html#adb8aee3865fbb9b54b96fcc03f51cce1">yume::ASTStackTrace::ASTStackTrace</a></div><div class="ttdeci">ASTStackTrace(std::string message)</div><div class="ttdef"><b>Definition:</b> <a href="errors_8cpp_source.html#l00015">errors.cpp:15</a></div></div>
 <div class="ttc" id="atoken_8hpp_html"><div class="ttname"><a href="token_8hpp.html">token.hpp</a></div></div>
 <div class="ttc" id="autil_8hpp_html"><div class="ttname"><a href="util_8hpp.html">util.hpp</a></div></div>
+<div class="ttc" id="ayumec_8cpp_html_a713db508187fddfd6ff054a6de478ce2"><div class="ttname"><a href="yumec_8cpp.html#a713db508187fddfd6ff054a6de478ce2">YUME_SRC_DIR</a></div><div class="ttdeci">#define YUME_SRC_DIR</div><div class="ttdef"><b>Definition:</b> <a href="yumec_8cpp_source.html#l00032">yumec.cpp:32</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
