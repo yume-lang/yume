@@ -65,7 +65,7 @@ public:
   void run();
 
   /// Declare a function in bytecode, or get an existing declaration.
-  [[nodiscard]] auto declare(Fn&, bool mangle = true) -> llvm::Function*;
+  auto declare(Fn&, bool mangle = true) -> llvm::Function*;
 
   /// Compile the body of a function.
   void define(Fn&);

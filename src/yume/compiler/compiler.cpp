@@ -80,7 +80,7 @@ void Compiler::run() {
 
   for (auto& fn : m_fns)
     if (fn.name() == "main")
-      fn.m_llvm_fn = declare(fn, false);
+      declare(fn, false);
 
   while (!m_decl_queue.empty()) {
     auto* next = m_decl_queue.front();
@@ -220,6 +220,7 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
 
   auto linkage = mangle ? Function::InternalLinkage : Function::ExternalLinkage;
   Function* llvm_fn = Function::Create(fn_t, linkage, name, m_module.get());
+  fn.m_llvm_fn = llvm_fn;
 
   int arg_i = 0;
   for (auto& arg : llvm_fn->args()) {
