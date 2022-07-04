@@ -3,6 +3,7 @@
 #include <cxxabi.h>
 #include <exception>
 #include <llvm/Support/PrettyStackTrace.h>
+#include <llvm/Support/Signals.h>
 #include <llvm/Support/raw_ostream.h>
 #include <string>
 #include <string_view>
@@ -37,7 +38,7 @@ inline auto current_exception_name() -> const char* {
 }
 
 // Performance is really not important when the application has already crashed
-inline void stacktrace() {
+inline void print_exception() {
   auto exception = std::current_exception();
   if (exception != nullptr) {
     using enum llvm::raw_fd_ostream::Colors;
@@ -49,6 +50,8 @@ inline void stacktrace() {
     llvm::errs().resetColor();
   }
 }
+
+void backtrace(void* /*unused*/);
 
 struct ASTStackTrace : public llvm::PrettyStackTraceEntry {
   std::string m_message;

@@ -24,9 +24,12 @@
 #include <utility>
 #include <vector>
 
-// this should be provided by cmake
+// these should be provided by cmake
 #ifndef YUME_LIB_DIR
 #define YUME_LIB_DIR "./lib/"
+#endif
+#ifndef YUME_SRC_DIR
+#define YUME_SRC_DIR "./src/"
 #endif
 
 auto main(int argc, const char* argv[]) -> int {
@@ -39,10 +42,11 @@ auto main(int argc, const char* argv[]) -> int {
   std::vector<yume::SourceFile> source_files{};
   source_files.reserve(src_file_names.size());
 
-  std::set_terminate(yume::stacktrace);
+  std::set_terminate(yume::print_exception);
   llvm::EnablePrettyStackTrace();
   llvm::setBugReportMsg("");
-  llvm::sys::PrintStackTraceOnErrorSignal(args[0]);
+  // llvm::sys::PrintStackTraceOnErrorSignal(args[0]);
+  llvm::sys::AddSignalHandler(yume::backtrace, args.data());
 
   {
     std::vector<std::unique_ptr<llvm::MemoryBuffer>> inputs{};
