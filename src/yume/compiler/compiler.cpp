@@ -718,13 +718,19 @@ template <> auto Compiler::expression(const ast::SliceExpr& expr, bool mut) -> V
 }
 
 template <> auto Compiler::expression(const ast::FieldAccessExpr& expr, bool mut) -> Val {
-  // TODO: struct can only contain things by value, later this needs a condition
-  not_mut("immutable field", mut);
+  const auto* base_type = expr.base().val_ty();
+  auto base_is_mut = base_type->is_mut();
+  if (!base_is_mut)
+    not_mut("immutable field", mut);
 
-  auto base = body_expression(expr.base());
+  auto base = body_expression(expr.base(), mut);
   auto base_name = expr.field();
   int base_offset = expr.offset();
 
+  if (base_is_mut) {
+    return m_builder->CreateStructGEP(llvm_type(*base_type->qual_base()), base, base_offset,
+                                      "s.fieldmut."s + base_name);
+  }
   return m_builder->CreateExtractValue(base, base_offset, "s.field."s + base_name);
 }
 
