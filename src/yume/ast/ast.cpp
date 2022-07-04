@@ -167,8 +167,9 @@ struct Parser {
     ignore_separator(location);
   }
 
-  /// Consume a token of type `token_type` with the given `payload`. Throws if it wasn't encountered.
-  void consume(Token::Type token_type, Atom payload, const source_location location = source_location::current()) {
+  /// Consume a token of the given type and payload. Throws if it wasn't encountered.
+  void consume(TokenAtom token_atom, const source_location location = source_location::current()) {
+    auto [token_type, payload] = token_atom;
     ignore_separator();
     expect(token_type, location);
     if (tokens->m_payload != payload) {
@@ -183,16 +184,11 @@ struct Parser {
     tokens++;
   }
 
-  /// Consume a token of the given type and payload. Throws if it wasn't encountered.
-  void consume(TokenAtom token_atom, const source_location location = source_location::current()) {
+  /// Attempt to consume a token of the given type and payload. Returns false if it wasn't encountered.
+  auto try_consume(TokenAtom token_atom, [[maybe_unused]] const source_location location = source_location::current())
+      -> bool {
     auto [token_type, payload] = token_atom;
-    consume(token_type, payload, location);
-  }
-
-  /// Attempt to consume a token of type `token_type` with the given `payload`. Returns false if it wasn't encountered.
-  auto try_consume(Token::Type tokenType, Atom payload,
-                   [[maybe_unused]] const source_location location = source_location::current()) -> bool {
-    if (tokens.at_end() || tokens->m_type != tokenType || tokens->m_payload != payload) {
+    if (tokens.at_end() || tokens->m_type != token_type || tokens->m_payload != payload) {
       return false;
     }
 
@@ -202,12 +198,6 @@ struct Parser {
 
     tokens++;
     return true;
-  }
-
-  /// Attempt to consume a token of the given type and payload. Returns false if it wasn't encountered.
-  auto try_consume(TokenAtom token_atom, const source_location location = source_location::current()) -> bool {
-    auto [token_type, payload] = token_atom;
-    return try_consume(token_type, payload, location);
   }
 
   /// Check if the token ahead by `ahead` is of the given type and payload.
