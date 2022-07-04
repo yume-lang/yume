@@ -99,7 +99,9 @@ struct Token {
   int m_i = -1;
   Loc m_loc{};
 
-  [[nodiscard]] auto is_keyword(const Atom& str) const -> bool { return m_type == Type::Word && m_payload == str; }
+  [[nodiscard]] auto is_a(const std::pair<Type, Atom>& type_atom) const -> bool {
+    return m_type == type_atom.first && m_payload == type_atom.second;
+  }
 
   explicit constexpr Token(Type type) : m_type(type) {}
   constexpr Token(Type type, Payload payload) : m_type(type), m_payload(payload) {}
