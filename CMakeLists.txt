@@ -28,15 +28,15 @@ if(YUME_COV)
   target_link_options(yume PUBLIC "-fprofile-instr-generate;-fcoverage-mapping")
 endif()
 if(YUME_SPEW GREATER 2)
-  target_compile_definitions(yume PUBLIC YUME_SPEW_OVERLOAD_SELECTION)
-endif()
-
-if(YUME_SPEW GREATER 1)
   target_compile_definitions(yume PUBLIC YUME_SPEW_LIST_TOKENS)
 endif()
 
-if(YUME_SPEW GREATER 0)
+if(YUME_SPEW GREATER 1)
   target_compile_definitions(yume PUBLIC YUME_SPEW_CONSUMED_TOKENS)
+endif()
+
+if(YUME_SPEW GREATER 0)
+  target_compile_definitions(yume PUBLIC YUME_SPEW_OVERLOAD_SELECTION)
 endif()
 
 if(YUME_EMIT_DOT)
