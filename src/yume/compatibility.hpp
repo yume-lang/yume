@@ -23,7 +23,7 @@ struct Conv {
     if (empty())
       return "noconv";
 
-    std::stringstream ss;
+    stringstream ss;
     if (dereference)
       ss << "deref ";
     if (kind == Int)

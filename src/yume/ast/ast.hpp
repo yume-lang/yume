@@ -312,7 +312,7 @@ public:
       : Type(K_TemplatedType, tok), m_base{move(base)}, m_type_args{std::move(type_args)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override {
-    std::stringstream ss{};
+    stringstream ss{};
     int j = 0;
     for (const auto& i : m_type_args) {
       if (j++ > 0)

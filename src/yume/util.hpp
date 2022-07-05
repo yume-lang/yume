@@ -10,6 +10,7 @@
 #include <set>
 #include <span>
 #include <sstream>
+#include <string_view>
 #include <utility>
 #include <variant>
 #include <vector>
@@ -17,9 +18,11 @@
 namespace yume {
 
 using namespace std::literals::string_literals;
+using namespace std::literals::string_view_literals;
 using std::optional;
 using std::span;
 using std::string;
+using std::string_view;
 using std::stringstream;
 using std::unique_ptr;
 using std::variant;

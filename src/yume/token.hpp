@@ -45,7 +45,7 @@ struct Loc {
   }
 
   [[nodiscard]] auto to_string() const -> string {
-    std::stringstream ss{};
+    stringstream ss{};
     if (file != nullptr) {
       ss << stem(file);
     }

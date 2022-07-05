@@ -41,6 +41,7 @@ template <bool FilterSkip> auto tkn(const std::string& str) -> std::vector<Token
 #define CHECK_TOKENIZER_PRESERVED(body, ...) CHECK_THAT(tkn<false>(body), EqualsTokens(__VA_ARGS__))
 
 using enum yume::Token::Type;
+using namespace std::string_literals;
 
 TEST_CASE("Tokenize whitespace", "[token]") {
   CHECK_TOKENIZER("");

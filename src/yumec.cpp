@@ -33,6 +33,8 @@ static constexpr std::string_view GIT_SHORTHASH = "???";
 } // namespace yume
 #endif
 
+using namespace std::string_literals;
+
 auto compile(std::span<const char*> args) -> int {
   std::vector<std::string> src_file_names{};
   src_file_names.reserve(args.size());

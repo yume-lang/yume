@@ -36,8 +36,8 @@ static constexpr any_of_fn any_of;
 struct TokenState {
   bool valid;
   char c;
-  std::size_t index;
-  std::stringstream& stream;
+  size_t index;
+  stringstream& stream;
 };
 using char_raw_fn = int(int);
 using char_fn = std::function<bool(TokenState&)>;
@@ -49,7 +49,7 @@ using char_fn = std::function<bool(TokenState&)>;
  * The criterion is a function taking three arguments:
  * an `int` representing the current character being evaluated, a second `int` representing the
  * index of this character relative to the current character sequence (that is, since the end of the previous token),
- * and a `std::stringstream`, where matching characters should be written to. The function should return a `bool`,
+ * and a `stringstream`, where matching characters should be written to. The function should return a `bool`,
  * whether or not this character is viable as this type of token. As soon as `false` is returned, this token ends and
  * the process is repeated.
  *
@@ -223,7 +223,7 @@ private:
       m_in.seekg(begin_position);
       m_in.clear();
 
-      auto stream = std::stringstream{};
+      auto stream = stringstream{};
       auto state = TokenState{true, m_last, 0, stream};
       if (c.fn(state)) {
         auto [atom, end_line, end_col] = consume_characteristic(c.fn, state);

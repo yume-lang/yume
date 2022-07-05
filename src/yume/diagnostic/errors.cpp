@@ -12,15 +12,15 @@
 #include <utility>
 
 namespace yume {
-ASTStackTrace::ASTStackTrace(std::string message) : m_message(std::move(message)) {}
+ASTStackTrace::ASTStackTrace(string message) : m_message(std::move(message)) {}
 
-ASTStackTrace::ASTStackTrace(std::string message, const ast::AST& ast) : m_message(std::move(message)) {
+ASTStackTrace::ASTStackTrace(string message, const ast::AST& ast) : m_message(std::move(message)) {
   m_message += " (" + ast.location().to_string() + ")";
 }
 
-ParserStackTrace::ParserStackTrace(std::string message) : m_message(std::move(message)) {}
+ParserStackTrace::ParserStackTrace(string message) : m_message(std::move(message)) {}
 
-ParserStackTrace::ParserStackTrace(std::string message, const Token& token) : m_message(std::move(message)) {
+ParserStackTrace::ParserStackTrace(string message, const Token& token) : m_message(std::move(message)) {
   m_message += " (" + token.m_loc.to_string() + ")";
 }
 
@@ -28,13 +28,13 @@ namespace {
 enum Phase : uint8_t { Index, Address, Function, Source, Offset };
 
 struct ContainerLikeSimplify {
-  std::string_view front;
-  std::string_view middle;
+  string_view front;
+  string_view middle;
 };
 
 struct DirectReplaceSimplify {
-  std::string_view from;
-  std::string_view to;
+  string_view from;
+  string_view to;
 };
 
 class stacktrace_ostream : public llvm::raw_ostream {
@@ -45,16 +45,16 @@ class stacktrace_ostream : public llvm::raw_ostream {
   bool unknown{};
   bool skip{};
   uint64_t total_size{};
-  std::string direct_buffer{};
+  string direct_buffer{};
   llvm::raw_string_ostream buffer;
 
   void write_impl(const char* Ptr, size_t Size) override;
 
-  void simplify(std::string_view msg);
-  auto simplify(std::string_view msg, ContainerLikeSimplify s) -> bool;
-  auto simplify(std::string_view msg, DirectReplaceSimplify s) -> bool;
+  void simplify(string_view msg);
+  auto simplify(string_view msg, ContainerLikeSimplify s) -> bool;
+  auto simplify(string_view msg, DirectReplaceSimplify s) -> bool;
 
-  void format_phase(std::string_view msg);
+  void format_phase(string_view msg);
   void set_color(llvm::raw_ostream::Colors color);
 
   [[nodiscard]] auto current_pos() const -> uint64_t override { return total_size; }
@@ -90,16 +90,16 @@ constexpr DirectReplaceSimplify STRINGSTREAM_SIMPLIFY = {
     "std::__cxx11::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >", "std::stringstream"};
 constexpr DirectReplaceSimplify ANONYMOUS_NS_SIMPLIFY = {"::(anonymous namespace)::", ":::"};
 
-auto stacktrace_ostream::simplify(std::string_view msg, ContainerLikeSimplify s) -> bool {
-  constexpr static const std::string_view middle_end = "> >";
-  constexpr static const std::string_view end = ">";
+auto stacktrace_ostream::simplify(string_view msg, ContainerLikeSimplify s) -> bool {
+  constexpr static const string_view middle_end = "> >";
+  constexpr static const string_view end = ">";
 
   auto uptr_start = msg.find(s.front);
-  if (uptr_start == std::string::npos)
+  if (uptr_start == string::npos)
     return false;
 
   auto uptr_delete_start = msg.find(s.middle, uptr_start);
-  if (uptr_delete_start == std::string::npos)
+  if (uptr_delete_start == string::npos)
     return false;
 
   auto contained_start = uptr_start + s.front.length();
@@ -121,9 +121,9 @@ auto stacktrace_ostream::simplify(std::string_view msg, ContainerLikeSimplify s)
   return true;
 };
 
-auto stacktrace_ostream::simplify(std::string_view msg, DirectReplaceSimplify s) -> bool {
+auto stacktrace_ostream::simplify(string_view msg, DirectReplaceSimplify s) -> bool {
   auto start = msg.find(s.from);
-  if (start == std::string::npos)
+  if (start == string::npos)
     return false;
 
   simplify(msg.substr(0, start));
@@ -133,7 +133,7 @@ auto stacktrace_ostream::simplify(std::string_view msg, DirectReplaceSimplify s)
   return true;
 }
 
-void stacktrace_ostream::simplify(std::string_view msg) {
+void stacktrace_ostream::simplify(string_view msg) {
   bool found_any = simplify(msg, UPTR_SIMPLIFY) || simplify(msg, VEC_SIMPLIFY) || simplify(msg, STRING_SIMPLIFY) ||
                    simplify(msg, STRINGSTREAM_SIMPLIFY) || simplify(msg, ANONYMOUS_NS_SIMPLIFY);
 
@@ -144,7 +144,7 @@ void stacktrace_ostream::simplify(std::string_view msg) {
   size_t start_pos = 0;
   while (true) {
     start_pos = msg.find_first_of("<>()", prev_pos);
-    auto substr = msg.substr(prev_pos, start_pos == std::string::npos ? start_pos : start_pos - prev_pos);
+    auto substr = msg.substr(prev_pos, start_pos == string::npos ? start_pos : start_pos - prev_pos);
 
     if (template_depth == 0)
       set_color(CYAN);
@@ -154,7 +154,7 @@ void stacktrace_ostream::simplify(std::string_view msg) {
     if (template_depth == 0 && use_color)
       buffer << llvm::sys::Process::ResetColor();
 
-    if (start_pos == std::string::npos)
+    if (start_pos == string::npos)
       break;
 
     auto angle = msg.at(start_pos);
@@ -169,10 +169,10 @@ void stacktrace_ostream::set_color(llvm::raw_ostream::Colors color) {
     buffer << llvm::sys::Process::OutputColor(static_cast<char>(color), false, false);
 };
 
-void stacktrace_ostream::format_phase(std::string_view msg) {
+void stacktrace_ostream::format_phase(string_view msg) {
   using namespace std::literals;
   static std::array skip_lines = {"yume::CRTPWalker<"sv, "__libc_start_"sv};
-  static std::string source_dir = YUME_SRC_DIR;
+  static string source_dir = YUME_SRC_DIR;
 
   switch (current_phase) {
   case Address: buffer << msg; break;
@@ -186,7 +186,7 @@ void stacktrace_ostream::format_phase(std::string_view msg) {
     break;
   case Function:
     set_color(CYAN);
-    if (std::ranges::any_of(skip_lines, [&](std::string_view s) { return msg.find(s) != std::string::npos; }))
+    if (std::ranges::any_of(skip_lines, [&](string_view s) { return msg.find(s) != string::npos; }))
       skip = true;
     else
       simplify(msg);
@@ -196,7 +196,7 @@ void stacktrace_ostream::format_phase(std::string_view msg) {
     if (auto normal_path = std::filesystem::path(msg).lexically_normal().native();
         normal_path.starts_with(source_dir) && use_color) {
       buffer << llvm::sys::Process::OutputBold(false);
-      buffer << static_cast<std::string_view>(normal_path).substr(source_dir.size());
+      buffer << static_cast<string_view>(normal_path).substr(source_dir.size());
     } else {
       buffer << normal_path;
     }
@@ -207,8 +207,7 @@ void stacktrace_ostream::format_phase(std::string_view msg) {
 }
 
 void stacktrace_ostream::write_impl(const char* ptr, size_t size) {
-
-  auto msg = std::string_view(ptr, size);
+  auto msg = string_view(ptr, size);
   total_size += size;
 
   if (size == 1 && llvm::isSpace(msg.at(0))) {
