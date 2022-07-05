@@ -80,7 +80,6 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
     for (const auto& [gen, gen_sub] : llvm::zip(struct_obj->m_type_args, templated->type_vars()))
       instantiation.sub.try_emplace(gen.get(), gen_sub->val_ty());
 
-    // XXX: Duplicated from CallExpr handling
     auto [already_existed, inst_struct] = struct_obj->get_or_create_instantiation(instantiation);
 
     if (!already_existed) {

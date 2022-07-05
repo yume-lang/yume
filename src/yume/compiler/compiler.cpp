@@ -349,8 +349,8 @@ template <> void Compiler::statement(const ast::IfStmt& stat) {
       m_builder->CreateBr(merge_bb);
     }
   } else {
-    // TODO: this is a hack. For if statements with no else clause, it creates an empty `if.test` block which only
-    // contains a single `br` instruction to the merge point.
+    // HACK:  For if statements with no else clause, it creates an empty `if.test` block which only contains a single
+    // `br` instruction to the merge point.
     m_builder->SetInsertPoint(next_test_bb);
     m_builder->CreateBr(merge_bb);
   }
@@ -806,7 +806,7 @@ auto Compiler::mangle_name(const Fn& fn) -> string {
   ss << ")";
   // TODO: should mangled names even contain the return type...?
   if (fn.ast().ret().has_value())
-    ss << mangle_name(*fn.ast().ret().value().get().val_ty(), fn); // wtf
+    ss << mangle_name(*fn.ast().ret()->get().val_ty(), fn); // wtf
 
   return ss.str();
 }
