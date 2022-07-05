@@ -1,5 +1,6 @@
 #include "ast.hpp"
 
+#include "diagnostic/errors.hpp"
 #include "diagnostic/source_location.hpp"
 #include "qualifier.hpp"
 #include "token.hpp"
@@ -111,6 +112,8 @@ struct Parser {
   constexpr static auto Word = Token::Type::Word;
   constexpr static auto Separator = Token::Type::Separator;
   constexpr static auto Number = Token::Type::Number;
+
+  [[nodiscard]] auto make_guard(const std::string& message) const -> ParserStackTrace { return {message, *tokens}; }
 
   static auto operators() {
     const static std::array OPERATORS = {
@@ -525,6 +528,8 @@ struct Parser {
   }
 
   auto parse_primary() -> unique_ptr<Expr> {
+    const auto guard = make_guard("Parsing primary expression");
+
     auto entry = tokens.begin();
     if (try_consume(SYM_LPAREN)) {
       auto val = parse_expr();

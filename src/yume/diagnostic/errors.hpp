@@ -13,6 +13,7 @@ namespace yume {
 namespace ast {
 class AST;
 }
+struct Token;
 
 inline auto what(const std::exception_ptr& eptr = std::current_exception()) -> std::string_view {
   if (!eptr)
@@ -58,6 +59,15 @@ struct ASTStackTrace : public llvm::PrettyStackTraceEntry {
 
   ASTStackTrace(std::string message);
   ASTStackTrace(std::string message, const ast::AST& ast);
+
+  void print(llvm::raw_ostream& OS) const override { OS << m_message << "\n"; };
+};
+
+struct ParserStackTrace : public llvm::PrettyStackTraceEntry {
+  std::string m_message;
+
+  ParserStackTrace(std::string message);
+  ParserStackTrace(std::string message, const Token& token);
 
   void print(llvm::raw_ostream& OS) const override { OS << m_message << "\n"; };
 };

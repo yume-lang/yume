@@ -18,6 +18,12 @@ ASTStackTrace::ASTStackTrace(std::string message, const ast::AST& ast) : m_messa
   m_message += " (" + ast.location().to_string() + ")";
 }
 
+ParserStackTrace::ParserStackTrace(std::string message) : m_message(std::move(message)) {}
+
+ParserStackTrace::ParserStackTrace(std::string message, const Token& token) : m_message(std::move(message)) {
+  m_message += " (" + token.m_loc.to_string() + ")";
+}
+
 namespace {
 enum Phase : uint8_t { Index, Address, Function, Source, Offset };
 
