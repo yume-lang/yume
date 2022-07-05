@@ -103,15 +103,7 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
           std::make_unique<ty::Struct>(new_st.ast().name() + templated->describe(), fields));
 
       new_st.m_type = i_ty.get();
-
-      // XXX: Two saved scopes? also duplicated from compiler.cpp
-      // XXX: Should probably be queued similar to function instantiations
-      with_saved_scope([&] {
-        for (auto& i : new_st.body().body()) {
-          auto decl = m_compiler.decl_statement(i, i_ty.get(), new_st.m_member);
-          m_compiler.walk_types(decl);
-        }
-      });
+      m_decl_queue.push(&new_st);
     }
 
     expr.val_ty(inst_struct.type());
@@ -368,14 +360,24 @@ auto TypeWalker::convert_type(const ast::Type& ast_type) -> const ty::Type& {
 
 void TypeWalker::resolve_queue() {
   while (!m_decl_queue.empty()) {
-    auto* next = m_decl_queue.front();
+    auto next = m_decl_queue.front();
     m_decl_queue.pop();
 
-    with_saved_scope([&] {
-      m_in_depth = true;
+    if (auto** fnp = std::get_if<Fn*>(&next)) {
+      with_saved_scope([&] {
+        m_in_depth = true;
 
-      m_compiler.declare(*next);
-    });
+        m_compiler.declare(**fnp);
+      });
+    } else if (auto** stp = std::get_if<Struct*>(&next)) {
+      auto* next_st = *stp;
+      with_saved_scope([&] {
+        for (auto& i : next_st->body().body()) {
+          auto decl = m_compiler.decl_statement(i, next_st->m_type, next_st->m_member);
+          m_compiler.walk_types(decl);
+        }
+      });
+    }
   }
 }
 } // namespace yume::semantic

@@ -36,7 +36,7 @@ public:
   Fn* m_current_fn{};
   std::map<string, ast::AST*> m_scope{};
 
-  std::queue<Fn*> m_decl_queue{};
+  std::queue<DeclLike> m_decl_queue{};
 
   /// Whether or not to compile the bodies of methods.  Initially, on the parameter types of methods are traversed and
   /// converted, then everything else in a second pass.
