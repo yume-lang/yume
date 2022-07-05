@@ -8,7 +8,10 @@
 #include <memory>
 
 namespace yume::diagnostic {
-static void xml_escape(llvm::raw_ostream&& stream, const string& data) {
+static auto xml_escape(std::string_view data) -> std::string {
+  std::string str{};
+  llvm::raw_string_ostream stream(str);
+
   for (char i : data) {
     switch (i) {
     case '&': stream << "&amp;"; break;
@@ -20,6 +23,8 @@ static void xml_escape(llvm::raw_ostream&& stream, const string& data) {
     default: stream << i; break;
     }
   }
+
+  return str;
 }
 
 inline static auto opt_str(const char* ptr) -> optional<string> {
@@ -80,10 +85,9 @@ auto DotVisitor::visit(const ast::AST& expr, const char* label) -> DotVisitor& {
   Loc location = expr.location();
   optional<string> type = {};
   if (const auto* val_ty = expr.val_ty(); val_ty != nullptr) {
-    type = val_ty->name();
+    type = xml_escape(val_ty->name());
   }
-  string kind_label;
-  xml_escape(llvm::raw_string_ostream(kind_label), expr.kind_name());
+  auto kind_label = xml_escape(expr.kind_name());
 
   auto& node = add_node(DotNode(m_index, location, type, kind_label), label);
 
@@ -101,10 +105,7 @@ auto DotVisitor::visit(const ast::AST& expr, const char* label) -> DotVisitor& {
 }
 
 auto DotVisitor::visit(const string& str, const char* label) -> DotVisitor& {
-  string content;
-  xml_escape(llvm::raw_string_ostream(content), str);
-
-  add_node(content, label);
+  add_node(xml_escape(str), label);
 
   return *this;
 }
