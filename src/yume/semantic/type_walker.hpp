@@ -58,7 +58,8 @@ private:
   auto with_saved_scope(auto&& callback) {
     // Save everything pertaining to the old context
     auto saved_scope = m_scope;
-    auto* saved_current = m_current_fn;
+    auto* saved_current_fn = m_current_fn;
+    auto* saved_current_struct = m_current_struct;
     auto saved_depth = m_in_depth;
 
     callback();
@@ -66,7 +67,8 @@ private:
     // Restore again
     m_in_depth = saved_depth;
     m_scope = saved_scope;
-    m_current_fn = saved_current;
+    m_current_fn = saved_current_fn;
+    m_current_struct = saved_current_struct;
   }
 
   template <typename T> void statement([[maybe_unused]] T& stat) {
