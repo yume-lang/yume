@@ -4,6 +4,8 @@ struct Array<T>(body T[], size I64)
 end
 
 def main() I32
-  let t = Array<I32>(I32:[], I64(0))
-  return 0
+  let t1 = Array<I32>(I32:[], I64(0))
+  let t2 = Array<U8>(U8:[?a], I64(2))
+  let t3 = Array<I32>(I32:[], I64(1))
+  return I32(!((t1.size + 2) == t2.size)) + I32(!((t3.size + 1) == t2.size))
 end
