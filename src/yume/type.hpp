@@ -1,6 +1,7 @@
 #pragma once
 
 #include "compatibility.hpp"
+#include "compiler/vals.hpp"
 #include "qualifier.hpp"
 #include "util.hpp"
 #include "llvm/Support/Casting.h"
@@ -70,6 +71,7 @@ public:
 
   [[nodiscard]] auto determine_generic_substitution(const Type& generic, Sub sub = Sub()) const -> Sub;
   [[nodiscard]] auto apply_generic_substitution(Sub sub) const -> const Type*;
+  [[nodiscard]] auto fully_apply_instantiation(const Instantiation& inst) const -> const Type*;
   [[nodiscard]] auto compatibility(const Type& other, Compat compat = Compat()) const -> Compat;
   /// The union of this and `other`. For example, the union of `T` and `T mut` is `T mut`.
   /// \returns `nullptr` if an union cannot be created.

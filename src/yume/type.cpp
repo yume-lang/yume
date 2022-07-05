@@ -114,7 +114,7 @@ auto Type::apply_generic_substitution(Sub sub) const -> const Type* {
   yume_assert(is_generic(), "Can't perform generic substitution without a generic type");
   yume_assert(sub.target != nullptr && sub.replace != nullptr,
               "Can't perform generic substitution without anything to substitute");
-  if (llvm::isa<Generic>(*this))
+  if (this == sub.target)
     return sub.replace;
 
   if (const auto* qual_this = llvm::dyn_cast<Qual>(this))
@@ -125,6 +125,20 @@ auto Type::apply_generic_substitution(Sub sub) const -> const Type* {
     return &ptr_base()->apply_generic_substitution(sub)->known_qual(ptr_this->qualifier());
 
   return nullptr;
+}
+
+auto Type::fully_apply_instantiation(const Instantiation& inst) const -> const Type* {
+  const auto* subbed = this;
+  for (const auto& [k, v] : inst.sub) {
+    if (!subbed->is_generic())
+      return subbed;
+
+    const auto* with_sub = apply_generic_substitution({k, v});
+    if (with_sub != nullptr)
+      subbed = with_sub;
+  }
+
+  return subbed;
 }
 
 auto Type::qual_base() const -> const Type* {
