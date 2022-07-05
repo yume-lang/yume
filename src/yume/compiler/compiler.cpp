@@ -149,7 +149,7 @@ auto Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* m
     }
     auto& st = m_structs.emplace_back(*s_decl, i_ty.first->second.get(), member, std::move(subs), std::move(type_args));
 
-    if (!type_args.empty())
+    if (type_args.empty())
       for (auto& f : s_decl->body().body())
         decl_statement(f, i_ty.first->second.get(), member);
 
