@@ -135,7 +135,7 @@ message(STATUS "Using LLVM include: ${LLVM_INCLUDE_DIRS}")
 message(STATUS "Using LLVM library: ${LLVM_LIBRARY_DIRS}")
 message(STATUS "Using LLVM tool dir: ${LLVM_TOOLS_BINARY_DIR}")
 
-target_compile_options(yume PUBLIC -Wno-error -W -Wall -Wimplicit-fallthrough -Wpedantic -Wno-gnu-zero-variadic-macro-arguments)
+target_compile_options(yume PUBLIC -Wno-error -W -Wall -Wimplicit-fallthrough -Wpedantic -Wno-gnu-zero-variadic-macro-arguments -Wno-unqualified-std-cast-call)
 include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag(-Wunused_template SUPPORTS_W_UNUSED_TEMPLATE)
 if(SUPPORTS_W_UNUSED_TEMPLATE)
