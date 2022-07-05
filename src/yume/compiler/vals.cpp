@@ -1,5 +1,7 @@
 #include "vals.hpp"
 #include "compiler.hpp"
+#include <algorithm>
+#include <type_traits>
 
 namespace yume {
 

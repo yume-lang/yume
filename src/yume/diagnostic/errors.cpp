@@ -4,9 +4,9 @@
 #include "token.hpp"
 #include "util.hpp"
 #include <filesystem>
-#include <limits>
 #include <llvm/ADT/StringExtras.h>
 #include <llvm/Support/Process.h>
+#include <llvm/Support/Signals.h>
 #include <llvm/Support/raw_ostream.h>
 #include <string_view>
 #include <utility>

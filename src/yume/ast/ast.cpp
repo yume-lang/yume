@@ -1,5 +1,6 @@
 #include "ast.hpp"
 
+#include "atom.hpp"
 #include "diagnostic/errors.hpp"
 #include "diagnostic/source_location.hpp"
 #include "qualifier.hpp"
@@ -10,7 +11,6 @@
 #include <array>
 #include <cctype>
 #include <cstddef>
-#include <functional>
 #include <llvm/Support/raw_ostream.h>
 #include <memory>
 

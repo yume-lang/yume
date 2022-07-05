@@ -5,6 +5,7 @@
 #include "visitor.hpp"
 #include <iosfwd>
 #include <llvm/Support/raw_ostream.h>
+#include <memory>
 #include <optional>
 #include <string>
 #include <utility>

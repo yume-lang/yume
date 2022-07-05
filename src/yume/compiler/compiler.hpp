@@ -5,7 +5,6 @@
 #include "type_holder.hpp"
 #include "util.hpp"
 #include "vals.hpp"
-#include <llvm/ADT/iterator_range.h>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>

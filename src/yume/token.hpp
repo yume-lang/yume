@@ -1,5 +1,6 @@
 #pragma once
 
+#include "atom.hpp"
 #include "util.hpp"
 #include <algorithm>
 #include <optional>

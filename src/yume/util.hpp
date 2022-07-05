@@ -9,15 +9,18 @@
 #include <ranges>
 #include <set>
 #include <span>
+#include <sstream>
 #include <utility>
 #include <variant>
 #include <vector>
 
 namespace yume {
 
+using namespace std::literals::string_literals;
 using std::optional;
 using std::span;
 using std::string;
+using std::stringstream;
 using std::unique_ptr;
 using std::variant;
 using std::vector;

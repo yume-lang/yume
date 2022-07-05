@@ -1,6 +1,7 @@
 #include "token.hpp"
 #include <algorithm>
 #include <cctype>
+#include <cstddef>
 #include <functional>
 #include <initializer_list>
 #include <iterator>
@@ -9,6 +10,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <tuple>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
