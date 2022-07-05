@@ -109,6 +109,8 @@ struct Struct {
   [[nodiscard]] auto create_instantiation(Instantiation& instantiate) -> Struct&;
 };
 
+using DeclLike = std::variant<std::monostate, Fn*, Struct*>;
+
 /// A value of a complied expression.
 /**
  * Note that this struct is mostly useless, it is a very thin wrapper around `llvm::Value`. It may be removed in the

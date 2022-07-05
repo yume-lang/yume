@@ -56,8 +56,6 @@ class Compiler : public CRTPWalker<Compiler> {
   friend CRTPWalker;
 
 public:
-  using DeclLike = std::variant<std::monostate, Fn*, Struct*>;
-
   [[nodiscard]] auto module() const -> const auto& { return m_module; }
 
   explicit Compiler(vector<SourceFile> source_files);
