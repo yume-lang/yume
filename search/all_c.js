@@ -20,7 +20,7 @@ var searchData=
   ['m_5fllvm_5fval_17',['m_llvm_val',['../structyume_1_1Val.html#ab776f75bcbf15be58b3f8b9c2b2b83a4',1,'yume::Val']]],
   ['m_5floc_18',['m_loc',['../structyume_1_1Token.html#a89443cf2c83ae14a72b61820720575c0',1,'yume::Token']]],
   ['m_5fmember_19',['m_member',['../structyume_1_1Fn.html#a173f2d16814d552fd117b50bca987dd8',1,'yume::Fn']]],
-  ['m_5fmessage_20',['m_message',['../structyume_1_1ASTStackTrace.html#a4d8298ad4ba1502135824df5bbda5fa2',1,'yume::ASTStackTrace']]],
+  ['m_5fmessage_20',['m_message',['../structyume_1_1ASTStackTrace.html#a4d8298ad4ba1502135824df5bbda5fa2',1,'yume::ASTStackTrace::m_message()'],['../structyume_1_1ParserStackTrace.html#a52228e867bfeb57bff499279c7a233e1',1,'yume::ParserStackTrace::m_message()']]],
   ['m_5fname_21',['m_name',['../structyume_1_1SourceFile.html#a458407e9a111e8feb8855927135b292d',1,'yume::SourceFile']]],
   ['m_5fparent_22',['m_parent',['../structyume_1_1Fn.html#accd25498e2bf79636f686e214682ba3b',1,'yume::Fn']]],
   ['m_5fpayload_23',['m_payload',['../structyume_1_1Token.html#acfc9792c2db9c24cc1167b46a6cb1c4e',1,'yume::Token']]],
