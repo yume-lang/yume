@@ -4,6 +4,6 @@ struct Array<T>(body T[], size I64)
 end
 
 def main() I32
-  let t = Array<I32>(I32[], I64(0))
+  let t = Array<I32>(I32:[], I64(0))
   return 0
 end
