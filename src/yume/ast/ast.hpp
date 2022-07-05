@@ -306,10 +306,10 @@ public:
 /// A type with explicit type parameters \e i.e. Foo<Bar,Baz>.
 class TemplatedType : public Type {
   unique_ptr<Type> m_base;
-  vector<string> m_type_args;
+  vector<unique_ptr<Type>> m_type_args;
 
 public:
-  TemplatedType(span<Token> tok, unique_ptr<Type> base, vector<string> type_args)
+  TemplatedType(span<Token> tok, unique_ptr<Type> base, vector<unique_ptr<Type>> type_args)
       : Type(K_TemplatedType, tok), m_base{move(base)}, m_type_args{move(type_args)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override {
@@ -319,13 +319,14 @@ public:
     for (const auto& i : m_type_args) {
       if (j++ > 0)
         ss << ",";
-      ss << i;
+      ss << i->describe();
     }
     ss << ">";
     return ss.str();
   }
 
-  [[nodiscard]] auto type_vars() const -> const vector<string>& { return m_type_args; }
+  [[nodiscard]] auto type_vars() const -> const vector<unique_ptr<Type>>& { return m_type_args; }
+  [[nodiscard]] auto type_vars() -> vector<unique_ptr<Type>>& { return m_type_args; }
   [[nodiscard]] auto base() const -> auto& { return *m_base; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_TemplatedType; }
   [[nodiscard]] auto clone() const -> TemplatedType* override;
