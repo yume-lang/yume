@@ -29,12 +29,13 @@ var searchData=
   ['conv_26',['conv',['../structyume_1_1ty_1_1Compat.html#acba0f7199e1b796c405c1d02b408f9aa',1,'yume::ty::Compat']]],
   ['conv_27',['Conv',['../structyume_1_1ty_1_1Conv.html',1,'yume::ty']]],
   ['conversion_28',['conversion',['../classyume_1_1ast_1_1ImplicitCastExpr.html#a147bf477a60571cfe0d1512dd5ee867a',1,'yume::ast::ImplicitCastExpr']]],
-  ['create_5finstantiation_29',['create_instantiation',['../structyume_1_1Fn.html#a5a2ab0fec7a6d03e383e8e17acae49a0',1,'yume::Fn']]],
-  ['crtp_5fwalker_2ehpp_30',['crtp_walker.hpp',['../crtp__walker_8hpp.html',1,'']]],
-  ['crtpwalker_31',['CRTPWalker',['../structyume_1_1semantic_1_1TypeWalker.html#a0e0e1d03919b2640bb3fc9d3b231aae6',1,'yume::semantic::TypeWalker::CRTPWalker()'],['../structyume_1_1CRTPWalker.html',1,'yume::CRTPWalker&lt; Derived, Const &gt;']]],
-  ['crtpwalker_3c_20compiler_20_3e_32',['CRTPWalker&lt; Compiler &gt;',['../structyume_1_1CRTPWalker.html',1,'yume']]],
-  ['crtpwalker_3c_20typewalker_2c_20false_20_3e_33',['CRTPWalker&lt; TypeWalker, false &gt;',['../structyume_1_1CRTPWalker.html',1,'yume']]],
-  ['ctorexpr_34',['CtorExpr',['../classyume_1_1ast_1_1CtorExpr.html#aed8d9bbacdcb3ebadd5ac506abe98ff6',1,'yume::ast::CtorExpr::CtorExpr()'],['../classyume_1_1ast_1_1CtorExpr.html',1,'yume::ast::CtorExpr']]],
-  ['current_35',['current',['../structyume_1_1source__location.html#ad108a54f98ee467385af98ca279fd95a',1,'yume::source_location']]],
-  ['current_5fexception_5fname_36',['current_exception_name',['../namespaceyume.html#a1acf150b712c5a16aabf66d01458d7b8',1,'yume']]]
+  ['create_5finstantiation_29',['create_instantiation',['../structyume_1_1Fn.html#a5a2ab0fec7a6d03e383e8e17acae49a0',1,'yume::Fn::create_instantiation()'],['../structyume_1_1Struct.html#ab2e5a9a53a20b8b790c9d8784bf7a853',1,'yume::Struct::create_instantiation()']]],
+  ['create_5fstruct_30',['create_struct',['../classyume_1_1Compiler.html#a0b8137f40d7ff32fb39d000fe1613c24',1,'yume::Compiler']]],
+  ['crtp_5fwalker_2ehpp_31',['crtp_walker.hpp',['../crtp__walker_8hpp.html',1,'']]],
+  ['crtpwalker_32',['CRTPWalker',['../structyume_1_1semantic_1_1TypeWalker.html#a0e0e1d03919b2640bb3fc9d3b231aae6',1,'yume::semantic::TypeWalker::CRTPWalker()'],['../structyume_1_1CRTPWalker.html',1,'yume::CRTPWalker&lt; Derived, Const &gt;']]],
+  ['crtpwalker_3c_20compiler_20_3e_33',['CRTPWalker&lt; Compiler &gt;',['../structyume_1_1CRTPWalker.html',1,'yume']]],
+  ['crtpwalker_3c_20typewalker_2c_20false_20_3e_34',['CRTPWalker&lt; TypeWalker, false &gt;',['../structyume_1_1CRTPWalker.html',1,'yume']]],
+  ['ctorexpr_35',['CtorExpr',['../classyume_1_1ast_1_1CtorExpr.html#aed8d9bbacdcb3ebadd5ac506abe98ff6',1,'yume::ast::CtorExpr::CtorExpr()'],['../classyume_1_1ast_1_1CtorExpr.html',1,'yume::ast::CtorExpr']]],
+  ['current_36',['current',['../structyume_1_1source__location.html#ad108a54f98ee467385af98ca279fd95a',1,'yume::source_location']]],
+  ['current_5fexception_5fname_37',['current_exception_name',['../namespaceyume.html#a1acf150b712c5a16aabf66d01458d7b8',1,'yume']]]
 ];

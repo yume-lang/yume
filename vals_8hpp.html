@@ -68,7 +68,8 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#namespaces">Namespaces</a>  </div>
+<a href="#namespaces">Namespaces</a> &#124;
+<a href="#typedef-members">Typedefs</a>  </div>
   <div class="headertitle"><div class="title">vals.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -126,15 +127,21 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="vals_8hpp__dep__incl.png" border="0" usemap="#asrc_2yume_2compiler_2vals_8hppdep" alt=""/></div>
 <map name="asrc_2yume_2compiler_2vals_8hppdep" id="asrc_2yume_2compiler_2vals_8hppdep">
-<area shape="rect" title=" " alt="" coords="197,5,377,32"/>
-<area shape="rect" href="compiler_8cpp.html" title=" " alt="" coords="210,326,415,353"/>
-<area shape="rect" href="compiler_8hpp.html" title=" " alt="" coords="207,244,413,271"/>
-<area shape="rect" href="vals_8cpp.html" title=" " alt="" coords="5,326,185,353"/>
-<area shape="rect" href="type__walker_8cpp.html" title=" " alt="" coords="439,319,599,360"/>
-<area shape="rect" href="yumec_8cpp.html" title=" " alt="" coords="654,326,761,353"/>
-<area shape="rect" href="overload_8hpp.html" title=" " alt="" coords="255,80,464,107"/>
-<area shape="rect" href="overload_8cpp.html" title=" " alt="" coords="439,162,648,189"/>
-<area shape="rect" href="type__walker_8hpp.html" title=" " alt="" coords="254,155,414,196"/>
+<area shape="rect" title=" " alt="" coords="152,5,332,32"/>
+<area shape="rect" href="compiler_8cpp.html" title=" " alt="" coords="353,341,558,367"/>
+<area shape="rect" href="compiler_8hpp.html" title=" " alt="" coords="229,251,434,278"/>
+<area shape="rect" href="vals_8cpp.html" title=" " alt="" coords="5,341,185,367"/>
+<area shape="rect" href="type__walker_8cpp.html" title=" " alt="" coords="682,333,842,375"/>
+<area shape="rect" href="yumec_8cpp.html" title=" " alt="" coords="218,341,325,367"/>
+<area shape="rect" href="overload_8hpp.html" title=" " alt="" coords="280,80,489,107"/>
+<area shape="rect" href="type_8hpp.html" title=" " alt="" coords="988,80,1115,107"/>
+<area shape="rect" href="overload_8cpp.html" title=" " alt="" coords="464,162,673,189"/>
+<area shape="rect" href="type__walker_8hpp.html" title=" " alt="" coords="279,155,439,196"/>
+<area shape="rect" href="ast_8cpp.html" title=" " alt="" coords="980,162,1123,189"/>
+<area shape="rect" href="type__holder_8cpp.html" title=" " alt="" coords="951,244,1107,285"/>
+<area shape="rect" href="type__holder_8hpp.html" title=" " alt="" coords="800,155,956,196"/>
+<area shape="rect" href="type_8cpp.html" title=" " alt="" coords="1249,162,1376,189"/>
+<area shape="rect" href="dot__visitor_8cpp.html" title=" " alt="" coords="1401,155,1537,196"/>
 </map>
 </div>
 </div>
@@ -147,6 +154,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html">yume::Fn</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A function declaration in the compiler.  <a href="structyume_1_1Fn.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Struct.html">yume::Struct</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Val.html">yume::Val</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A value of a complied expression.  <a href="structyume_1_1Val.html#details">More...</a><br /></td></tr>
@@ -163,6 +172,11 @@ Namespaces</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:namespaceyume_1_1ty"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ty.html">yume::ty</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:acb0a32c44860b0a89c32597e65e791b4"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#acb0a32c44860b0a89c32597e65e791b4">yume::DeclLike</a> = std::variant&lt; std::monostate, Fn *, Struct * &gt;</td></tr>
+<tr class="separator:acb0a32c44860b0a89c32597e65e791b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->

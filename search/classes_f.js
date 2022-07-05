@@ -7,7 +7,7 @@ var searchData=
   ['sourcefile_4',['SourceFile',['../structyume_1_1SourceFile.html',1,'yume']]],
   ['stmt_5',['Stmt',['../classyume_1_1ast_1_1Stmt.html',1,'yume::ast']]],
   ['stringexpr_6',['StringExpr',['../classyume_1_1ast_1_1StringExpr.html',1,'yume::ast']]],
-  ['struct_7',['Struct',['../classyume_1_1ty_1_1Struct.html',1,'yume::ty']]],
+  ['struct_7',['Struct',['../structyume_1_1Struct.html',1,'yume::Struct'],['../classyume_1_1ty_1_1Struct.html',1,'yume::ty::Struct']]],
   ['structdecl_8',['StructDecl',['../classyume_1_1ast_1_1StructDecl.html',1,'yume::ast']]],
   ['sub_9',['Sub',['../structyume_1_1ty_1_1Sub.html',1,'yume::ty']]]
 ];

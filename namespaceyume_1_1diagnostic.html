@@ -84,8 +84,8 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a541b3e41e02b6f7bdaf4d22538b708ed"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1diagnostic.html#a541b3e41e02b6f7bdaf4d22538b708ed">xml_escape</a> (llvm::raw_ostream &amp;&amp;stream, const string &amp;data)</td></tr>
-<tr class="separator:a541b3e41e02b6f7bdaf4d22538b708ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a52c8406462987511376ab26342a13a56"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1diagnostic.html#a52c8406462987511376ab26342a13a56">xml_escape</a> (std::string_view data) -&gt; std::string</td></tr>
+<tr class="separator:a52c8406462987511376ab26342a13a56"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6bb93ed2df026466464e0a1ca8fc7a60"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1diagnostic.html#a6bb93ed2df026466464e0a1ca8fc7a60">opt_str</a> (const char *ptr) -&gt; optional&lt; string &gt;</td></tr>
 <tr class="separator:a6bb93ed2df026466464e0a1ca8fc7a60"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -114,12 +114,12 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="dot__visitor_8cpp_source.html#l00025">25</a> of file <a class="el" href="dot__visitor_8cpp_source.html">dot_visitor.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dot__visitor_8cpp_source.html#l00030">30</a> of file <a class="el" href="dot__visitor_8cpp_source.html">dot_visitor.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a541b3e41e02b6f7bdaf4d22538b708ed" name="a541b3e41e02b6f7bdaf4d22538b708ed"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a541b3e41e02b6f7bdaf4d22538b708ed">&#9670;&nbsp;</a></span>xml_escape()</h2>
+<a id="a52c8406462987511376ab26342a13a56" name="a52c8406462987511376ab26342a13a56"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52c8406462987511376ab26342a13a56">&#9670;&nbsp;</a></span>xml_escape()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -128,21 +128,11 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static void yume::diagnostic::xml_escape </td>
+          <td class="memname">static auto yume::diagnostic::xml_escape </td>
           <td>(</td>
-          <td class="paramtype">llvm::raw_ostream &amp;&amp;&#160;</td>
-          <td class="paramname"><em>stream</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const string &amp;&#160;</td>
-          <td class="paramname"><em>data</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
+          <td class="paramtype">std::string_view&#160;</td>
+          <td class="paramname"><em>data</em></td><td>)</td>
+          <td> -&gt; std::string </td>
         </tr>
       </table>
   </td>
@@ -154,7 +144,7 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="dot__visitor_8cpp_source.html#l00011">11</a> of file <a class="el" href="dot__visitor_8cpp_source.html">dot_visitor.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="dot__visitor_8cpp_source.html#l00079">yume::diagnostic::DotVisitor::visit()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="dot__visitor_8cpp_source.html#l00084">yume::diagnostic::DotVisitor::visit()</a>.</p>
 
 </div>
 </div>
