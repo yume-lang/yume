@@ -93,7 +93,7 @@ void Compiler::run() {
       main_fn = &fn;
 
   if (main_fn == nullptr)
-    throw std::logic_error("Program is missing a `main` function!");
+    throw std::logic_error("Program is missing a `main` function!"); // Related: #10
   declare(*main_fn, false);
 
   while (!m_decl_queue.empty()) {
@@ -117,6 +117,15 @@ void Compiler::walk_types(DeclLike decl_like) {
   }
 }
 
+auto Compiler::create_struct(ast::StructDecl& s_decl, const optional<string>& name_override) -> unique_ptr<ty::Struct> {
+  auto fields = vector<const ast::TypeName*>();
+  fields.reserve(s_decl.fields().size());
+  for (const auto& f : s_decl.fields())
+    fields.push_back(&f);
+
+  return std::make_unique<ty::Struct>(name_override.value_or(s_decl.name()), fields);
+};
+
 auto Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* member) -> DeclLike {
   if (auto* fn_decl = dyn_cast<ast::FnDecl>(&stmt)) {
     vector<unique_ptr<ty::Generic>> type_args{};
@@ -130,24 +139,17 @@ auto Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* m
     return &fn;
   }
   if (auto* s_decl = dyn_cast<ast::StructDecl>(&stmt)) {
-    auto fields = vector<const ast::TypeName*>();
-    fields.reserve(s_decl->fields().size());
-    for (const auto& f : s_decl->fields())
-      fields.push_back(&f);
-
-    auto i_ty = m_types.known.insert({s_decl->name(), std::make_unique<ty::Struct>(s_decl->name(), fields)});
+    auto i_ty = m_types.known.insert({s_decl->name(), create_struct(*s_decl)});
 
     vector<unique_ptr<ty::Generic>> type_args{};
     std::map<string, const ty::Type*> subs{};
-    bool has_generics = false;
     for (auto& i : s_decl->type_args()) {
       auto& gen = type_args.emplace_back(std::make_unique<ty::Generic>(i));
       subs.try_emplace(i, gen.get());
-      has_generics = true;
     }
     auto& st = m_structs.emplace_back(*s_decl, i_ty.first->second.get(), member, std::move(subs), std::move(type_args));
 
-    if (!has_generics)
+    if (!type_args.empty())
       for (auto& f : s_decl->body().body())
         decl_statement(f, i_ty.first->second.get(), member);
 
