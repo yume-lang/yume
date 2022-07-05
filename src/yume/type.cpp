@@ -86,7 +86,7 @@ auto Type::compatibility(const Type& other, Compat compat) const -> Compat {
   if (const auto this_int = dyn_cast<Int>(this), other_int = dyn_cast<Int>(&other);
       (this_int != nullptr) && (other_int != nullptr)) {
     if ((this_int->is_signed() == other_int->is_signed() && this_int->size() <= other_int->size()) ||
-        (this_int->is_signed() && !other_int->is_signed() && this_int->size() * 2 >= other_int->size())) {
+        (!this_int->is_signed() && other_int->is_signed() && this_int->size() * 2 <= other_int->size())) {
       compat.valid = true;
       compat.conv.kind = Conv::Int;
       return compat;
