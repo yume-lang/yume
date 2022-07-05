@@ -93,14 +93,11 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
         body_statement(new_st.ast());
       });
 
-      // XXX: Duplicated from compiler.cpp
-      auto fields = vector<const ast::TypeName*>();
-      fields.reserve(new_st.ast().fields().size());
-      for (const auto& f : new_st.ast().fields())
-        fields.push_back(&f);
+      // TODO: the "describe" method is being abused here
+      std::string name_with_types = new_st.ast().name() + templated->describe();
 
       auto& i_ty = m_compiler.m_types.template_instantiations.emplace_back(
-          std::make_unique<ty::Struct>(new_st.ast().name() + templated->describe(), fields));
+          Compiler::create_struct(new_st.ast(), name_with_types));
 
       new_st.m_type = i_ty.get();
       m_decl_queue.push(&new_st);
