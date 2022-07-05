@@ -15,6 +15,7 @@ struct TypeHolder {
   array<IntTypePair, 4> int_types{};
   ty::Int* bool_type{};
   llvm::StringMap<unique_ptr<ty::Type>> known{};
+  std::vector<unique_ptr<ty::Type>> template_instantiations{};
 
   TypeHolder();
 

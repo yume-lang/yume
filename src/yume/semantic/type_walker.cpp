@@ -61,9 +61,65 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
   for (auto& i : expr.args()) {
     body_expression(i);
   }
-  expression(expr.type());
-  const auto& base_type = convert_type(expr.type());
-  expr.val_ty(&base_type);
+
+  if (auto* templated = dyn_cast<ast::TemplatedType>(&expr.type())) {
+    auto& template_base = templated->base();
+    expression(template_base);
+    const auto& base_type = convert_type(template_base);
+    auto struct_obj =
+        std::ranges::find_if(m_compiler.m_structs, [&](const Struct& st) { return st.m_type == &base_type; });
+
+    if (struct_obj == m_compiler.m_structs.end())
+      throw std::logic_error("Can't add template arguments to non-struct types");
+
+    for (auto& i : templated->type_vars())
+      expression(*i);
+
+    // XXX: Duplicated from function overload handling
+    Instantiation instantiation = {};
+    for (const auto& [gen, gen_sub] : llvm::zip(struct_obj->m_type_args, templated->type_vars()))
+      instantiation.sub.try_emplace(gen.get(), gen_sub->val_ty());
+
+    // XXX: Duplicated from CallExpr handling
+    auto [already_existed, inst_struct] = struct_obj->get_or_create_instantiation(instantiation);
+
+    if (!already_existed) {
+      auto& new_st = inst_struct;
+
+      with_saved_scope([&] {
+        m_in_depth = false;
+        m_current_fn = nullptr;
+        m_current_struct = &new_st;
+        body_statement(new_st.ast());
+      });
+
+      // XXX: Duplicated from compiler.cpp
+      auto fields = vector<const ast::TypeName*>();
+      fields.reserve(new_st.ast().fields().size());
+      for (const auto& f : new_st.ast().fields())
+        fields.push_back(&f);
+
+      auto& i_ty = m_compiler.m_types.template_instantiations.emplace_back(
+          std::make_unique<ty::Struct>(new_st.ast().name() + templated->describe(), fields));
+
+      new_st.m_type = i_ty.get();
+
+      // XXX: Two saved scopes? also duplicated from compiler.cpp
+      // XXX: Should probably be queued similar to function instantiations
+      with_saved_scope([&] {
+        for (auto& i : new_st.body().body()) {
+          auto decl = m_compiler.decl_statement(i, i_ty.get(), new_st.m_member);
+          m_compiler.walk_types(decl);
+        }
+      });
+    }
+
+    expr.val_ty(inst_struct.type());
+  } else {
+    expression(expr.type());
+    const auto& base_type = convert_type(expr.type());
+    expr.val_ty(&base_type);
+  }
 }
 
 template <> void TypeWalker::expression(ast::SliceExpr& expr) {
