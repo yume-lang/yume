@@ -44,7 +44,7 @@
 
 namespace yume {
 Compiler::Compiler(vector<SourceFile> source_files)
-    : m_sources(std::move(source_files)), m_walker(std::make_unique<semantic::TypeWalker>(*this)) {
+    : m_sources(move(source_files)), m_walker(std::make_unique<semantic::TypeWalker>(*this)) {
   m_context = std::make_unique<LLVMContext>();
   m_module = std::make_unique<Module>("yume", *m_context);
   m_builder = std::make_unique<IRBuilder<>>(*m_context);
@@ -116,7 +116,7 @@ void Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* m
       auto& gen = type_args.emplace_back(std::make_unique<ty::Generic>(i));
       subs.try_emplace(i, gen.get());
     }
-    m_fns.emplace_back(*fn_decl, parent, member, std::move(subs), std::move(type_args));
+    m_fns.emplace_back(*fn_decl, parent, member, move(subs), move(type_args));
   } else if (auto* s_decl = dyn_cast<ast::StructDecl>(&stmt)) {
     auto fields = vector<const ast::TypeName*>();
     fields.reserve(s_decl->fields().size());

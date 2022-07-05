@@ -21,6 +21,7 @@ namespace yume {
 using namespace std::literals::string_literals;
 using namespace std::literals::string_view_literals;
 using std::array;
+using std::move;
 using std::optional;
 using std::span;
 using std::string;
@@ -80,7 +81,7 @@ private:
     Iterator() requires std::default_initializable<Base_iter>
     = default;
 
-    constexpr Iterator(const Parent* parent, Base_iter current) : m_current(std::move(current)), m_parent(parent) {}
+    constexpr Iterator(const Parent* parent, Base_iter current) : m_current(move(current)), m_parent(parent) {}
 
     constexpr auto operator*() const -> decltype(auto) { return **m_current; }
 

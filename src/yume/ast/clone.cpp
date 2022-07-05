@@ -12,7 +12,7 @@
 namespace yume::ast {
 
 namespace {
-template <typename T> static auto dup(const vector<unique_ptr<T>>& items) {
+template <typename T> auto dup(const vector<unique_ptr<T>>& items) {
   auto dup = vector<unique_ptr<T>>();
   dup.reserve(items.size());
   for (auto& i : items)
@@ -21,26 +21,26 @@ template <typename T> static auto dup(const vector<unique_ptr<T>>& items) {
   return dup;
 }
 
-template <typename T> static auto dup(const vector<T>& items) {
+template <typename T> auto dup(const vector<T>& items) {
   auto dup = vector<T>();
   dup.reserve(items.size());
   for (auto& i : items) {
     auto* cloned = i.clone();
-    dup.push_back(std::move(*cloned));
+    dup.push_back(move(*cloned));
     delete cloned; // Need to free the cloned object even though it was moved from
   }
 
   return dup;
 }
 
-template <typename T> static auto dup(const unique_ptr<T>& ptr) { return unique_ptr<T>(ptr->clone()); }
+template <typename T> auto dup(const unique_ptr<T>& ptr) { return unique_ptr<T>(ptr->clone()); }
 
-template <typename T> static auto dup(const T& ast) -> T {
+template <typename T> auto dup(const T& ast) -> T {
   auto cloned = unique_ptr<T>(ast.clone());
-  return std::move(*cloned);
+  return move(*cloned);
 }
 
-template <typename T> static auto dup(const optional<T>& opt) {
+template <typename T> auto dup(const optional<T>& opt) {
   return opt.has_value() ? optional<T>{dup(opt.value())} : optional<T>{};
 }
 } // namespace

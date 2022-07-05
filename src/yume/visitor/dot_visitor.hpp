@@ -29,7 +29,7 @@ class DotVisitor : public Visitor {
     vector<DotConnection> children{};
 
     DotNode(int index_, Loc location_, optional<string> type_, string kind)
-        : index(index_), location(location_), type(std::move(type_)), content(std::move(kind)) {}
+        : index(index_), location(location_), type(move(type_)), content(move(kind)) {}
 
     [[nodiscard]] auto simple() const -> bool { return !location.valid(); }
 
@@ -40,8 +40,7 @@ class DotVisitor : public Visitor {
     optional<string> line_label;
     DotNode child;
 
-    DotConnection(optional<string> line_label_, DotNode child_)
-        : line_label(std::move(line_label_)), child(std::move(child_)) {}
+    DotConnection(optional<string> line_label_, DotNode child_) : line_label(move(line_label_)), child(move(child_)) {}
   };
 
   llvm::raw_ostream& m_stream;

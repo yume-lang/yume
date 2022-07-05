@@ -309,7 +309,7 @@ class TemplatedType : public Type {
 
 public:
   TemplatedType(span<Token> tok, unique_ptr<Type> base, vector<string> type_args)
-      : Type(K_TemplatedType, tok), m_base{move(base)}, m_type_args{std::move(type_args)} {}
+      : Type(K_TemplatedType, tok), m_base{move(base)}, m_type_args{move(type_args)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override {
     stringstream ss{};
@@ -370,9 +370,9 @@ public:
 
   template <size_t I> [[maybe_unused]] auto get() && -> auto&& {
     if constexpr (I == 0) {
-      return std::move(*m_type);
+      return move(*m_type);
     } else if constexpr (I == 1) {
-      return std::move(m_name);
+      return move(m_name);
     }
   }
   static auto classof(const AST* a) -> bool { return a->kind() == K_TypeName; }
@@ -601,7 +601,7 @@ public:
   FnDecl(span<Token> tok, string name, vector<TypeName> args, vector<string> type_args, optional<unique_ptr<Type>> ret,
          Compound body)
       : Stmt(K_FnDecl, tok), m_name{move(name)}, m_args{move(args)},
-        m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{std::move(body)} {}
+        m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(body)} {}
   FnDecl(span<Token> tok, string name, vector<TypeName> args, vector<string> type_args, optional<unique_ptr<Type>> ret,
          bool varargs, string primitive)
       : Stmt(K_FnDecl, tok), m_name{move(name)}, m_varargs{varargs}, m_args{move(args)},
@@ -632,7 +632,7 @@ class StructDecl : public Stmt {
 public:
   StructDecl(span<Token> tok, string name, vector<TypeName> fields, vector<string> type_args, Compound body)
       : Stmt(K_StructDecl, tok), m_name{move(name)}, m_fields{move(fields)}, m_type_args{move(type_args)},
-        m_body(std::move(body)) {}
+        m_body(move(body)) {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override { return m_name; }
 
@@ -671,7 +671,7 @@ class WhileStmt : public Stmt {
 
 public:
   WhileStmt(span<Token> tok, unique_ptr<Expr> cond, Compound body)
-      : Stmt(K_While, tok), m_cond{move(cond)}, m_body{std::move(body)} {}
+      : Stmt(K_While, tok), m_cond{move(cond)}, m_body{move(body)} {}
   void visit(Visitor& visitor) const override;
 
   [[nodiscard]] auto cond() const -> const auto& { return *m_cond; }
@@ -689,7 +689,7 @@ class IfClause : public AST {
 
 public:
   IfClause(span<Token> tok, unique_ptr<Expr> cond, Compound body)
-      : AST(K_IfClause, tok), m_cond{move(cond)}, m_body{std::move(body)} {}
+      : AST(K_IfClause, tok), m_cond{move(cond)}, m_body{move(body)} {}
   void visit(Visitor& visitor) const override;
 
   [[nodiscard]] auto cond() const -> const auto& { return *m_cond; }

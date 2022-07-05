@@ -343,7 +343,7 @@ struct Parser {
 
     consume(SYM_LPAREN);
     auto fields = vector<TypeName>{};
-    consume_with_commas_until(SYM_RPAREN, [&] { fields.push_back(std::move(*parse_type_name())); });
+    consume_with_commas_until(SYM_RPAREN, [&] { fields.push_back(move(*parse_type_name())); });
 
     auto body = vector<unique_ptr<Stmt>>{};
     auto body_begin = entry;
@@ -371,7 +371,7 @@ struct Parser {
     consume(SYM_LPAREN);
 
     auto args = vector<TypeName>{};
-    consume_with_commas_until(SYM_RPAREN, [&] { args.push_back(std::move(*parse_type_name())); });
+    consume_with_commas_until(SYM_RPAREN, [&] { args.push_back(move(*parse_type_name())); });
 
     auto ret_type = try_parse_type();
     auto body = vector<unique_ptr<Stmt>>{};
@@ -433,7 +433,7 @@ struct Parser {
 
     auto compound = make_ast<Compound>(body_begin, move(body));
 
-    return ast_ptr<WhileStmt>(entry, move(cond), std::move(compound));
+    return ast_ptr<WhileStmt>(entry, move(cond), move(compound));
   }
 
   auto parse_return_stmt() -> unique_ptr<ReturnStmt> {
@@ -720,7 +720,7 @@ auto Parser::parse_type(bool implicit_self) -> unique_ptr<Type> {
       auto type_args = vector<string>{};
       consume_with_commas_until(SYM_GT, [&] { type_args.push_back(consume_word()); });
 
-      base = ast_ptr<TemplatedType>(entry, move(base), std::move(type_args));
+      base = ast_ptr<TemplatedType>(entry, move(base), move(type_args));
     } else {
       break;
     }

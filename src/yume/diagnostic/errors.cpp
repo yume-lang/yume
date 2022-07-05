@@ -12,15 +12,15 @@
 #include <utility>
 
 namespace yume {
-ASTStackTrace::ASTStackTrace(string message) : m_message(std::move(message)) {}
+ASTStackTrace::ASTStackTrace(string message) : m_message(move(message)) {}
 
-ASTStackTrace::ASTStackTrace(string message, const ast::AST& ast) : m_message(std::move(message)) {
+ASTStackTrace::ASTStackTrace(string message, const ast::AST& ast) : m_message(move(message)) {
   m_message += " (" + ast.location().to_string() + ")";
 }
 
-ParserStackTrace::ParserStackTrace(string message) : m_message(std::move(message)) {}
+ParserStackTrace::ParserStackTrace(string message) : m_message(move(message)) {}
 
-ParserStackTrace::ParserStackTrace(string message, const Token& token) : m_message(std::move(message)) {
+ParserStackTrace::ParserStackTrace(string message, const Token& token) : m_message(move(message)) {
   m_message += " (" + token.m_loc.to_string() + ")";
 }
 

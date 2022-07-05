@@ -35,7 +35,7 @@ public:
   template <typename T> auto visit(const vector<T>& vector, const char* label = nullptr) -> Visitor& {
     Visitor& vis = *this;
     for (auto& i : vector) {
-      vis = std::move(vis.visit(i, label));
+      vis = move(vis.visit(i, label));
     }
     return vis;
   }

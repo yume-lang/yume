@@ -197,9 +197,9 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
       continue;
 
     const auto* target_type = target.type().val_ty();
-    auto cast_expr = std::make_unique<ast::ImplicitCastExpr>(expr_arg->token_range(), std::move(expr_arg), compat.conv);
+    auto cast_expr = std::make_unique<ast::ImplicitCastExpr>(expr_arg->token_range(), move(expr_arg), compat.conv);
     cast_expr->val_ty(target_type);
-    expr_arg = std::move(cast_expr);
+    expr_arg = move(cast_expr);
   }
 
   if (selected->ast().ret().has_value())

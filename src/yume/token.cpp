@@ -70,7 +70,7 @@ struct Characteristic {
           return b;
         }),
         type(type) {}
-  Characteristic(Token::Type type, char_fn fn) : fn(std::move(fn)), type(type) {}
+  Characteristic(Token::Type type, char_fn fn) : fn(move(fn)), type(type) {}
 };
 
 /// Contains the state while the tokenizer is running, such as the position within the file currently being read

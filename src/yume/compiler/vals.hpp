@@ -106,7 +106,7 @@ struct SourceFile {
   unique_ptr<ast::Program> m_program;
 
   SourceFile(std::istream& in, string name)
-      : m_name(std::move(name)), m_tokens(yume::tokenize(in, m_name)), m_iterator{m_tokens.begin(), m_tokens.end()} {
+      : m_name(move(name)), m_tokens(yume::tokenize(in, m_name)), m_iterator{m_tokens.begin(), m_tokens.end()} {
 #ifdef YUME_SPEW_LIST_TOKENS
     llvm::outs() << "tokens:\n";
     for (auto& i : m_tokens) {
