@@ -56,6 +56,8 @@ class Compiler : public CRTPWalker<Compiler> {
   friend CRTPWalker;
 
 public:
+  using DeclLike = std::variant<std::monostate, Fn*, Struct*>;
+
   [[nodiscard]] auto module() const -> const auto& { return m_module; }
 
   explicit Compiler(vector<SourceFile> source_files);
@@ -69,7 +71,7 @@ public:
   void define(Fn&);
 
   void body_statement(const ast::Stmt&);
-  void decl_statement(ast::Stmt&, ty::Type* parent = nullptr, ast::Program* member = nullptr);
+  auto decl_statement(ast::Stmt&, ty::Type* parent = nullptr, ast::Program* member = nullptr) -> DeclLike;
   auto body_expression(const ast::Expr& expr, bool mut = false) -> Val;
 
   void write_object(const char* filename, bool binary);
@@ -98,6 +100,6 @@ private:
 
   auto int_bin_primitive(const string& primitive, const vector<Val>& args) -> Val;
 
-  void walk_types();
+  void walk_types(DeclLike);
 };
 } // namespace yume

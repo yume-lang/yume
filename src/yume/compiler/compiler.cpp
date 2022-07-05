@@ -76,11 +76,25 @@ void Compiler::run() {
     for (auto& i : source.m_program->body())
       decl_statement(i, nullptr, source.m_program.get());
 
-  walk_types();
+  // First pass: only convert structs
+  for (auto& st : m_structs)
+    walk_types(&st);
 
+  // Second pass: only convert function parameters
+  for (auto& fn : m_fns)
+    walk_types(&fn);
+
+  // Third pass: convert everything else, but only when instantiated
+  m_walker->m_in_depth = true;
+
+  Fn* main_fn = nullptr;
   for (auto& fn : m_fns)
     if (fn.name() == "main")
-      declare(fn, false);
+      main_fn = &fn;
+
+  if (main_fn == nullptr)
+    throw std::logic_error("Program is missing a `main` function!");
+  declare(*main_fn, false);
 
   while (!m_decl_queue.empty()) {
     auto* next = m_decl_queue.front();
@@ -89,26 +103,21 @@ void Compiler::run() {
   }
 }
 
-void Compiler::walk_types() {
-  // First pass: only convert struct fields
-  for (auto& st : m_structs) {
-    m_walker->m_current_struct = &st;
-    m_walker->body_statement(st.ast());
+void Compiler::walk_types(DeclLike decl_like) {
+  if (auto** stp = std::get_if<Struct*>(&decl_like)) {
+    auto* st = *stp; // thanks c++
+    m_walker->m_current_struct = st;
+    m_walker->body_statement(st->ast());
+    m_walker->m_current_struct = nullptr;
+  } else if (auto** fnp = std::get_if<Fn*>(&decl_like)) {
+    auto* fn = *fnp; // thanks c++
+    m_walker->m_current_fn = fn;
+    m_walker->body_statement(fn->ast());
+    m_walker->m_current_fn = nullptr;
   }
-  m_walker->m_current_struct = nullptr;
-
-  // Second pass: only convert function parameters
-  for (auto& fn : m_fns) {
-    m_walker->m_current_fn = &fn;
-    m_walker->body_statement(fn.ast());
-  }
-  m_walker->m_current_fn = nullptr;
-
-  // Third pass: convert everything else, but only when instantiated
-  m_walker->m_in_depth = true;
 }
 
-void Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* member) {
+auto Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* member) -> DeclLike {
   if (auto* fn_decl = dyn_cast<ast::FnDecl>(&stmt)) {
     vector<unique_ptr<ty::Generic>> type_args{};
     std::map<string, const ty::Type*> subs{};
@@ -116,19 +125,36 @@ void Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* m
       auto& gen = type_args.emplace_back(std::make_unique<ty::Generic>(i));
       subs.try_emplace(i, gen.get());
     }
-    m_fns.emplace_back(*fn_decl, parent, member, move(subs), move(type_args));
-  } else if (auto* s_decl = dyn_cast<ast::StructDecl>(&stmt)) {
+    auto& fn = m_fns.emplace_back(*fn_decl, parent, member, move(subs), move(type_args));
+
+    return &fn;
+  }
+  if (auto* s_decl = dyn_cast<ast::StructDecl>(&stmt)) {
     auto fields = vector<const ast::TypeName*>();
     fields.reserve(s_decl->fields().size());
     for (const auto& f : s_decl->fields())
       fields.push_back(&f);
 
     auto i_ty = m_types.known.insert({s_decl->name(), std::make_unique<ty::Struct>(s_decl->name(), fields)});
-    m_structs.emplace_back(*s_decl, i_ty.first->second.get());
 
-    for (auto& f : s_decl->body().body())
-      decl_statement(f, i_ty.first->second.get());
+    vector<unique_ptr<ty::Generic>> type_args{};
+    std::map<string, const ty::Type*> subs{};
+    bool has_generics = false;
+    for (auto& i : s_decl->type_args()) {
+      auto& gen = type_args.emplace_back(std::make_unique<ty::Generic>(i));
+      subs.try_emplace(i, gen.get());
+      has_generics = true;
+    }
+    auto& st = m_structs.emplace_back(*s_decl, i_ty.first->second.get(), member, std::move(subs), std::move(type_args));
+
+    if (!has_generics)
+      for (auto& f : s_decl->body().body())
+        decl_statement(f, i_ty.first->second.get(), member);
+
+    return &st;
   }
+
+  return {};
 }
 
 auto Compiler::llvm_type(const ty::Type& type) -> llvm::Type* {
