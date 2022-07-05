@@ -214,8 +214,8 @@ template <> void TypeWalker::statement(ast::Compound& stat) {
 }
 
 template <> void TypeWalker::statement(ast::StructDecl& stat) {
-  // can't instantiate body of templated structs (currently no way to know which are substituted anyway)
-  if (!stat.type_args().empty())
+  // This decl still has unsubstituted generics, can't instantiate its body
+  if (std::ranges::any_of(m_current_struct->m_subs, [](const auto& sub) { return sub.second->is_generic(); }))
     return;
 
   for (auto& i : stat.fields())
@@ -235,10 +235,8 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
   }
 
   // This decl still has unsubstituted generics, can't instantiate its body
-  if (std::any_of(m_current_fn->m_subs.begin(), m_current_fn->m_subs.end(),
-                  [&](const auto& sub) { return sub.second->is_generic(); })) {
+  if (std::ranges::any_of(m_current_fn->m_subs, [](const auto& sub) { return sub.second->is_generic(); }))
     return;
-  }
 
   if (m_in_depth && stat.body().index() == 0)
     statement(get<0>(stat.body()));
@@ -287,13 +285,14 @@ void TypeWalker::body_expression(ast::Expr& expr) {
 
 auto TypeWalker::convert_type(const ast::Type& ast_type) -> const ty::Type& {
   const ty::Type* parent = m_current_fn == nullptr ? m_current_struct->type() : m_current_fn->parent();
-  Fn* context = m_current_fn;
+  auto* context = m_current_fn == nullptr ? m_current_struct == nullptr ? nullptr : &m_current_struct->m_subs
+                                          : &m_current_fn->m_subs;
 
   if (const auto* simple_type = dyn_cast<ast::SimpleType>(&ast_type)) {
     auto name = simple_type->name();
     if (context != nullptr) {
-      auto generic = context->m_subs.find(name);
-      if (generic != context->m_subs.end())
+      auto generic = context->find(name);
+      if (generic != context->end())
         return *generic->second;
     }
     auto val = m_compiler.m_types.known.find(name);
