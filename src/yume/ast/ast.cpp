@@ -738,12 +738,11 @@ auto Parser::try_parse_type() -> optional<unique_ptr<Type>> {
   if (make_atom(name) != std::get<Atom>(KWD_SELF_TYPE) && !is_uword(name))
     return {};
 
-  auto base = [&]() -> unique_ptr<Type> {
-    if (make_atom(name) == std::get<Atom>(KWD_SELF_TYPE))
-      return ast_ptr<SelfType>(entry);
-
-    return ast_ptr<SimpleType>(entry, name);
-  }();
+  unique_ptr<Type> base{};
+  if (make_atom(name) == std::get<Atom>(KWD_SELF_TYPE))
+    base = ast_ptr<SelfType>(entry);
+  else
+    base = ast_ptr<SimpleType>(entry, name);
 
   while (true) {
     if (try_consume(KWD_PTR)) {
@@ -755,6 +754,11 @@ auto Parser::try_parse_type() -> optional<unique_ptr<Type>> {
       consume(SYM_LBRACKET);
       consume(SYM_RBRACKET);
       base = ast_ptr<QualType>(entry, move(base), Qualifier::Slice);
+    } else if (try_consume(SYM_LT)) {
+      auto type_args = vector<unique_ptr<Type>>{};
+      consume_with_commas_until(SYM_GT, [&] { type_args.push_back(parse_type()); });
+
+      base = ast_ptr<TemplatedType>(entry, move(base), std::move(type_args));
     } else {
       break;
     }
