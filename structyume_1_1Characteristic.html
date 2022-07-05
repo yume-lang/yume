@@ -105,10 +105,10 @@ Public Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >A criterion for classifying a stream of characters as a specific type of token <a class="el" href="">Token::Type.</a></p>
 <p >TODO: requires doc update regarding <a class="el" href="structyume_1_1TokenState.html">TokenState</a> (and <a class="el" href="structyume_1_1TokenState.html">TokenState</a> itself needs docs)</p>
-<p >The criterion is a function taking three arguments: an <code>int</code> representing the current character being evaluated, a second <code>int</code> representing the index of this character relative to the current character sequence (that is, since the end of the previous token), and a <code>std::stringstream</code>, where matching characters should be written to. The function should return a <code>bool</code>, whether or not this character is viable as this type of token. As soon as <code>false</code> is returned, this token ends and the process is repeated.</p>
+<p >The criterion is a function taking three arguments: an <code>int</code> representing the current character being evaluated, a second <code>int</code> representing the index of this character relative to the current character sequence (that is, since the end of the previous token), and a <code>stringstream</code>, where matching characters should be written to. The function should return a <code>bool</code>, whether or not this character is viable as this type of token. As soon as <code>false</code> is returned, this token ends and the process is repeated.</p>
 <p >Note that while usually the same character (the first <code>int</code> argument) should be appended, tokens such as string literals may include escapes and thus output the corresponding unescaped value. </p>
 
-<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00057">57</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00059">59</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a104159afbc0289d51659dd51875d215d" name="a104159afbc0289d51659dd51875d215d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a104159afbc0289d51659dd51875d215d">&#9670;&nbsp;</a></span>Characteristic() <span class="overload">[1/2]</span></h2>
@@ -146,9 +146,9 @@ Public Attributes</h2></td></tr>
 
 <p>Criterion doesn't take a stringstream: if <code>true</code> is returned the same character is appended. This is usually preferred. </p>
 
-<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00063">63</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00065">65</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="token_8cpp_source.html#l00058">fn</a>.</p>
+<p class="reference">References <a class="el" href="token_8cpp_source.html#l00060">fn</a>.</p>
 
 </div>
 </div>
@@ -186,7 +186,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00071">71</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00073">73</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
 
 </div>
 </div>
@@ -203,9 +203,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00058">58</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00060">60</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="token_8cpp_source.html#l00063">Characteristic()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="token_8cpp_source.html#l00065">Characteristic()</a>.</p>
 
 </div>
 </div>
@@ -221,7 +221,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00059">59</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00061">61</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
 
 </div>
 </div>

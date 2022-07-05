@@ -71,44 +71,46 @@ $(function() {
 <div class="contents">
 <a href="vals_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#include &quot;<a class="code" href="vals_8hpp.html">vals.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &quot;<a class="code" href="compiler_8hpp.html">compiler.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceyume.html">yume</a> {</div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;algorithm&gt;</span></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;type_traits&gt;</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno"><a class="line" href="structyume_1_1Fn.html#a634fae505471c98a9a2aa528005f50cb">    6</a></span><span class="keyword">auto</span> <a class="code hl_function" href="structyume_1_1Fn.html#a634fae505471c98a9a2aa528005f50cb">Fn::declaration</a>(<a class="code hl_class" href="classyume_1_1Compiler.html">Compiler</a>&amp; compiler, <span class="keywordtype">bool</span> mangle) -&gt; llvm::Function* {</div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span>  <span class="keywordflow">if</span> (m_llvm_fn == <span class="keyword">nullptr</span>) {</div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>    m_llvm_fn = compiler.declare(*<span class="keyword">this</span>, mangle);</div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>  }</div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>  <span class="keywordflow">return</span> m_llvm_fn;</div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>}</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="structyume_1_1Fn.html#a5a2ab0fec7a6d03e383e8e17acae49a0">   13</a></span><span class="keyword">auto</span> <a class="code hl_function" href="structyume_1_1Fn.html#a5a2ab0fec7a6d03e383e8e17acae49a0">Fn::create_instantiation</a>(<a class="code hl_struct" href="structyume_1_1Instantiation.html">Instantiation</a>&amp; instantiate) -&gt; <a class="code hl_struct" href="structyume_1_1Fn.html">Fn</a>&amp; {</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>  <span class="keyword">auto</span>* decl_clone = m_ast_decl.clone();</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>  m_member-&gt;direct_body().emplace_back(decl_clone);</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>  std::map&lt;string, const ty::Type*&gt; subs{};</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; [k, v] : instantiate.sub)</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    subs.try_emplace(k-&gt;name(), v);</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>  <span class="keyword">auto</span> fn_ptr = std::make_unique&lt;Fn&gt;(*decl_clone, m_parent, m_member, move(subs));</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>  <span class="keyword">auto</span> new_emplace = m_instantiations.emplace(instantiate, move(fn_ptr));</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>  <span class="keywordflow">return</span> *new_emplace.first-&gt;second;</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>}</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="structyume_1_1Fn.html#ae3177ee1020d655cd9b7e894fc25ea1a">   26</a></span><span class="keyword">auto</span> <a class="code hl_function" href="structyume_1_1Fn.html#ae3177ee1020d655cd9b7e894fc25ea1a">Fn::get_or_create_instantiation</a>(<a class="code hl_struct" href="structyume_1_1Instantiation.html">Instantiation</a>&amp; instantiate) -&gt; std::pair&lt;bool, Fn&amp;&gt; {</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>  <span class="keyword">auto</span> existing_instantiation = m_instantiations.find(instantiate);</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>  <span class="keywordflow">if</span> (existing_instantiation == m_instantiations.end())</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    <span class="keywordflow">return</span> {<span class="keyword">false</span>, create_instantiation(instantiate)};</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>  <span class="keywordflow">return</span> {<span class="keyword">true</span>, *existing_instantiation-&gt;second};</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>};</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>} <span class="comment">// namespace yume</span></div>
-<div class="ttc" id="aclassyume_1_1Compiler_html"><div class="ttname"><a href="classyume_1_1Compiler.html">yume::Compiler</a></div><div class="ttdoc">The Compiler the the primary top-level type during compilation. A single instance is created during t...</div><div class="ttdef"><b>Definition:</b> <a href="compiler_8hpp_source.html#l00040">compiler.hpp:40</a></div></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceyume.html">yume</a> {</div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno"><a class="line" href="structyume_1_1Fn.html#a634fae505471c98a9a2aa528005f50cb">    8</a></span><span class="keyword">auto</span> <a class="code hl_function" href="structyume_1_1Fn.html#a634fae505471c98a9a2aa528005f50cb">Fn::declaration</a>(<a class="code hl_class" href="classyume_1_1Compiler.html">Compiler</a>&amp; compiler, <span class="keywordtype">bool</span> mangle) -&gt; llvm::Function* {</div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>  <span class="keywordflow">if</span> (m_llvm_fn == <span class="keyword">nullptr</span>) {</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>    m_llvm_fn = compiler.declare(*<span class="keyword">this</span>, mangle);</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>  }</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>  <span class="keywordflow">return</span> m_llvm_fn;</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>}</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno"><a class="line" href="structyume_1_1Fn.html#a5a2ab0fec7a6d03e383e8e17acae49a0">   15</a></span><span class="keyword">auto</span> <a class="code hl_function" href="structyume_1_1Fn.html#a5a2ab0fec7a6d03e383e8e17acae49a0">Fn::create_instantiation</a>(<a class="code hl_struct" href="structyume_1_1Instantiation.html">Instantiation</a>&amp; instantiate) -&gt; <a class="code hl_struct" href="structyume_1_1Fn.html">Fn</a>&amp; {</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>  <span class="keyword">auto</span>* decl_clone = m_ast_decl.clone();</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>  m_member-&gt;direct_body().emplace_back(decl_clone);</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>  std::map&lt;string, const ty::Type*&gt; subs{};</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; [k, v] : instantiate.sub)</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    subs.try_emplace(k-&gt;name(), v);</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>  <span class="keyword">auto</span> fn_ptr = std::make_unique&lt;Fn&gt;(*decl_clone, m_parent, m_member, move(subs));</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>  <span class="keyword">auto</span> new_emplace = m_instantiations.emplace(instantiate, move(fn_ptr));</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>  <span class="keywordflow">return</span> *new_emplace.first-&gt;second;</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>}</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="structyume_1_1Fn.html#ae3177ee1020d655cd9b7e894fc25ea1a">   28</a></span><span class="keyword">auto</span> <a class="code hl_function" href="structyume_1_1Fn.html#ae3177ee1020d655cd9b7e894fc25ea1a">Fn::get_or_create_instantiation</a>(<a class="code hl_struct" href="structyume_1_1Instantiation.html">Instantiation</a>&amp; instantiate) -&gt; std::pair&lt;bool, Fn&amp;&gt; {</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>  <span class="keyword">auto</span> existing_instantiation = m_instantiations.find(instantiate);</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>  <span class="keywordflow">if</span> (existing_instantiation == m_instantiations.end())</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <span class="keywordflow">return</span> {<span class="keyword">false</span>, create_instantiation(instantiate)};</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>  <span class="keywordflow">return</span> {<span class="keyword">true</span>, *existing_instantiation-&gt;second};</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>};</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>} <span class="comment">// namespace yume</span></div>
+<div class="ttc" id="aclassyume_1_1Compiler_html"><div class="ttname"><a href="classyume_1_1Compiler.html">yume::Compiler</a></div><div class="ttdoc">The Compiler the the primary top-level type during compilation. A single instance is created during t...</div><div class="ttdef"><b>Definition:</b> <a href="compiler_8hpp_source.html#l00039">compiler.hpp:39</a></div></div>
 <div class="ttc" id="acompiler_8hpp_html"><div class="ttname"><a href="compiler_8hpp.html">compiler.hpp</a></div></div>
 <div class="ttc" id="anamespaceyume_html"><div class="ttname"><a href="namespaceyume.html">yume</a></div><div class="ttdef"><b>Definition:</b> <a href="ast_8cpp_source.html#l00017">ast.cpp:17</a></div></div>
 <div class="ttc" id="astructyume_1_1Fn_html"><div class="ttname"><a href="structyume_1_1Fn.html">yume::Fn</a></div><div class="ttdoc">A function declaration in the compiler.</div><div class="ttdef"><b>Definition:</b> <a href="vals_8hpp_source.html#l00052">vals.hpp:52</a></div></div>
-<div class="ttc" id="astructyume_1_1Fn_html_a5a2ab0fec7a6d03e383e8e17acae49a0"><div class="ttname"><a href="structyume_1_1Fn.html#a5a2ab0fec7a6d03e383e8e17acae49a0">yume::Fn::create_instantiation</a></div><div class="ttdeci">auto create_instantiation(Instantiation &amp;instantiate) -&gt; Fn &amp;</div><div class="ttdef"><b>Definition:</b> <a href="vals_8cpp_source.html#l00013">vals.cpp:13</a></div></div>
-<div class="ttc" id="astructyume_1_1Fn_html_a634fae505471c98a9a2aa528005f50cb"><div class="ttname"><a href="structyume_1_1Fn.html#a634fae505471c98a9a2aa528005f50cb">yume::Fn::declaration</a></div><div class="ttdeci">auto declaration(Compiler &amp;compiler, bool mangle=true) -&gt; llvm::Function *</div><div class="ttdef"><b>Definition:</b> <a href="vals_8cpp_source.html#l00006">vals.cpp:6</a></div></div>
-<div class="ttc" id="astructyume_1_1Fn_html_ae3177ee1020d655cd9b7e894fc25ea1a"><div class="ttname"><a href="structyume_1_1Fn.html#ae3177ee1020d655cd9b7e894fc25ea1a">yume::Fn::get_or_create_instantiation</a></div><div class="ttdeci">auto get_or_create_instantiation(Instantiation &amp;instantiate) -&gt; std::pair&lt; bool, Fn &amp; &gt;</div><div class="ttdef"><b>Definition:</b> <a href="vals_8cpp_source.html#l00026">vals.cpp:26</a></div></div>
+<div class="ttc" id="astructyume_1_1Fn_html_a5a2ab0fec7a6d03e383e8e17acae49a0"><div class="ttname"><a href="structyume_1_1Fn.html#a5a2ab0fec7a6d03e383e8e17acae49a0">yume::Fn::create_instantiation</a></div><div class="ttdeci">auto create_instantiation(Instantiation &amp;instantiate) -&gt; Fn &amp;</div><div class="ttdef"><b>Definition:</b> <a href="vals_8cpp_source.html#l00015">vals.cpp:15</a></div></div>
+<div class="ttc" id="astructyume_1_1Fn_html_a634fae505471c98a9a2aa528005f50cb"><div class="ttname"><a href="structyume_1_1Fn.html#a634fae505471c98a9a2aa528005f50cb">yume::Fn::declaration</a></div><div class="ttdeci">auto declaration(Compiler &amp;compiler, bool mangle=true) -&gt; llvm::Function *</div><div class="ttdef"><b>Definition:</b> <a href="vals_8cpp_source.html#l00008">vals.cpp:8</a></div></div>
+<div class="ttc" id="astructyume_1_1Fn_html_ae3177ee1020d655cd9b7e894fc25ea1a"><div class="ttname"><a href="structyume_1_1Fn.html#ae3177ee1020d655cd9b7e894fc25ea1a">yume::Fn::get_or_create_instantiation</a></div><div class="ttdeci">auto get_or_create_instantiation(Instantiation &amp;instantiate) -&gt; std::pair&lt; bool, Fn &amp; &gt;</div><div class="ttdef"><b>Definition:</b> <a href="vals_8cpp_source.html#l00028">vals.cpp:28</a></div></div>
 <div class="ttc" id="astructyume_1_1Instantiation_html"><div class="ttname"><a href="structyume_1_1Instantiation.html">yume::Instantiation</a></div><div class="ttdoc">A mapping between type variables and substitutions for them.</div><div class="ttdef"><b>Definition:</b> <a href="vals_8hpp_source.html#l00029">vals.hpp:29</a></div></div>
 <div class="ttc" id="avals_8hpp_html"><div class="ttname"><a href="vals_8hpp.html">vals.hpp</a></div></div>
 </div><!-- fragment --></div><!-- contents -->

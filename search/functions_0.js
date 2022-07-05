@@ -8,6 +8,6 @@ var searchData=
   ['aststacktrace_5',['ASTStackTrace',['../structyume_1_1ASTStackTrace.html#adb8aee3865fbb9b54b96fcc03f51cce1',1,'yume::ASTStackTrace::ASTStackTrace(std::string message)'],['../structyume_1_1ASTStackTrace.html#a6eb5692a55802d2ff169e6efff58c546',1,'yume::ASTStackTrace::ASTStackTrace(std::string message, const ast::AST &amp;ast)']]],
   ['at_6',['at',['../namespaceyume.html#a415d2d716e647de03456fecc66d00722',1,'yume']]],
   ['at_5fend_7',['at_end',['../structyume_1_1ast_1_1TokenIterator.html#a81fd4667a2199a1ccdf19b6b9c15b3c7',1,'yume::ast::TokenIterator']]],
-  ['atom_8',['Atom',['../structyume_1_1Atom.html#a59c54f6386ba5f4246930aacbffe87b6',1,'yume::Atom::Atom()=delete'],['../structyume_1_1Atom.html#a5743ae1beb635f0431d09fba74f17d34',1,'yume::Atom::Atom(const string *str)']]],
+  ['atom_8',['Atom',['../structyume_1_1Atom.html#a59c54f6386ba5f4246930aacbffe87b6',1,'yume::Atom::Atom()=delete'],['../structyume_1_1Atom.html#a590c881ccfb6bf7930017033fb2dab83',1,'yume::Atom::Atom(const std::string *str)']]],
   ['attach_5fto_9',['attach_to',['../classyume_1_1ast_1_1AST.html#a3a2bd62bb23b5d1ae96eb5040e3de174',1,'yume::ast::AST']]]
 ];

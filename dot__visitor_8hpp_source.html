@@ -76,48 +76,48 @@ $(function() {
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="visitor_8hpp.html">visitor.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &lt;iosfwd&gt;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &lt;llvm/Support/raw_ostream.h&gt;</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;optional&gt;</span></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &lt;string&gt;</span></div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;utility&gt;</span></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceyume_1_1ast.html">yume::ast</a> {</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keyword">class </span>AST;</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>}</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceyume_1_1diagnostic.html">yume::diagnostic</a> {</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno"><a class="line" href="classyume_1_1diagnostic_1_1DotVisitor.html">   18</a></span><span class="keyword">class </span><a class="code hl_class" href="classyume_1_1diagnostic_1_1DotVisitor.html">DotVisitor</a> : <span class="keyword">public</span> <a class="code hl_class" href="classyume_1_1Visitor.html">Visitor</a> {</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">const</span> <span class="keywordtype">char</span>* AST_KEY = <span class="stringliteral">&quot;ym_ast_&quot;</span>;</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>  <span class="keyword">struct </span>DotConnection;</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>  <span class="keyword">struct </span>DotNode {</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keywordtype">int</span> index;</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <a class="code hl_struct" href="structyume_1_1Loc.html">Loc</a> location;</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    optional&lt;string&gt; type;</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    <span class="keywordtype">string</span> content;</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    vector&lt;DotConnection&gt; children{};</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    DotNode(<span class="keywordtype">int</span> index_, <a class="code hl_struct" href="structyume_1_1Loc.html">Loc</a> location_, optional&lt;string&gt; type_, <span class="keywordtype">string</span> kind)</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>        : index(index_), location(location_), type(std::move(type_)), content(std::move(kind)) {}</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    [[nodiscard]] <span class="keyword">auto</span> simple() <span class="keyword">const</span> -&gt; <span class="keywordtype">bool</span> { <span class="keywordflow">return</span> !location.<a class="code hl_function" href="structyume_1_1Loc.html#a5d7d786b093077b0f0ce213ce86023a8">valid</a>(); }</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <span class="keywordtype">void</span> write(llvm::raw_ostream&amp; stream) <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>  };</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>  <span class="keyword">struct </span>DotConnection {</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    optional&lt;string&gt; line_label;</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    DotNode child;</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    DotConnection(optional&lt;string&gt; line_label_, DotNode child_)</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>        : line_label(std::move(line_label_)), child(std::move(child_)) {}</div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;memory&gt;</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &lt;optional&gt;</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;utility&gt;</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceyume_1_1ast.html">yume::ast</a> {</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keyword">class </span>AST;</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>}</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceyume_1_1diagnostic.html">yume::diagnostic</a> {</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno"><a class="line" href="classyume_1_1diagnostic_1_1DotVisitor.html">   19</a></span><span class="keyword">class </span><a class="code hl_class" href="classyume_1_1diagnostic_1_1DotVisitor.html">DotVisitor</a> : <span class="keyword">public</span> <a class="code hl_class" href="classyume_1_1Visitor.html">Visitor</a> {</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">const</span> <span class="keywordtype">char</span>* AST_KEY = <span class="stringliteral">&quot;ym_ast_&quot;</span>;</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>  <span class="keyword">struct </span>DotConnection;</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>  <span class="keyword">struct </span>DotNode {</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <span class="keywordtype">int</span> index;</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <a class="code hl_struct" href="structyume_1_1Loc.html">Loc</a> location;</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    optional&lt;string&gt; type;</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <span class="keywordtype">string</span> content;</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    vector&lt;DotConnection&gt; children{};</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    DotNode(<span class="keywordtype">int</span> index_, <a class="code hl_struct" href="structyume_1_1Loc.html">Loc</a> location_, optional&lt;string&gt; type_, <span class="keywordtype">string</span> kind)</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>        : index(index_), location(location_), type(move(type_)), content(move(kind)) {}</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    [[nodiscard]] <span class="keyword">auto</span> simple() <span class="keyword">const</span> -&gt; <span class="keywordtype">bool</span> { <span class="keywordflow">return</span> !location.<a class="code hl_function" href="structyume_1_1Loc.html#a5d7d786b093077b0f0ce213ce86023a8">valid</a>(); }</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    <span class="keywordtype">void</span> write(llvm::raw_ostream&amp; stream) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>  };</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>  <span class="keyword">struct </span>DotConnection {</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    optional&lt;string&gt; line_label;</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    DotNode child;</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    DotConnection(optional&lt;string&gt; line_label_, DotNode child_) : line_label(move(line_label_)), child(move(child_)) {}</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>  };</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>  llvm::raw_ostream&amp; m_stream;</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>  <span class="keywordtype">int</span> m_index{};</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>  DotNode* m_parent{};</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>  std::unique_ptr&lt;DotNode&gt; m_root{};</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>  unique_ptr&lt;DotNode&gt; m_root{};</div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>  <span class="keyword">auto</span> add_node(<span class="keyword">const</span> <span class="keywordtype">string</span>&amp; content, <span class="keyword">const</span> <span class="keywordtype">char</span>* label) -&gt; DotNode&amp;;</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>  <span class="keyword">auto</span> add_node(DotNode&amp;&amp; node, <span class="keyword">const</span> <span class="keywordtype">char</span>* label) -&gt; DotNode&amp;;</div>
@@ -145,7 +145,7 @@ $(function() {
 <div class="ttc" id="aclassyume_1_1Visitor_html"><div class="ttname"><a href="classyume_1_1Visitor.html">yume::Visitor</a></div><div class="ttdef"><b>Definition:</b> <a href="visitor_8hpp_source.html#l00014">visitor.hpp:14</a></div></div>
 <div class="ttc" id="aclassyume_1_1Visitor_html_af2a46e015e60821dbc2e23a6920d9836"><div class="ttname"><a href="classyume_1_1Visitor.html#af2a46e015e60821dbc2e23a6920d9836">yume::Visitor::visit</a></div><div class="ttdeci">void visit()</div><div class="ttdef"><b>Definition:</b> <a href="visitor_8hpp_source.html#l00059">visitor.hpp:59</a></div></div>
 <div class="ttc" id="aclassyume_1_1ast_1_1AST_html"><div class="ttname"><a href="classyume_1_1ast_1_1AST.html">yume::ast::AST</a></div><div class="ttdoc">All nodes in the AST tree of the program inherit from this class.</div><div class="ttdef"><b>Definition:</b> <a href="ast_8hpp_source.html#l00172">ast.hpp:172</a></div></div>
-<div class="ttc" id="aclassyume_1_1diagnostic_1_1DotVisitor_html"><div class="ttname"><a href="classyume_1_1diagnostic_1_1DotVisitor.html">yume::diagnostic::DotVisitor</a></div><div class="ttdef"><b>Definition:</b> <a href="dot__visitor_8hpp_source.html#l00018">dot_visitor.hpp:18</a></div></div>
+<div class="ttc" id="aclassyume_1_1diagnostic_1_1DotVisitor_html"><div class="ttname"><a href="classyume_1_1diagnostic_1_1DotVisitor.html">yume::diagnostic::DotVisitor</a></div><div class="ttdef"><b>Definition:</b> <a href="dot__visitor_8hpp_source.html#l00019">dot_visitor.hpp:19</a></div></div>
 <div class="ttc" id="aclassyume_1_1diagnostic_1_1DotVisitor_html_a5f19da91fb20f179e6340ca69c506dd4"><div class="ttname"><a href="classyume_1_1diagnostic_1_1DotVisitor.html#a5f19da91fb20f179e6340ca69c506dd4">yume::diagnostic::DotVisitor::DotVisitor</a></div><div class="ttdeci">DotVisitor(DotVisitor &amp;&amp;)=delete</div></div>
 <div class="ttc" id="aclassyume_1_1diagnostic_1_1DotVisitor_html_a7f473d4bf82a6437d01230ffd3c8475b"><div class="ttname"><a href="classyume_1_1diagnostic_1_1DotVisitor.html#a7f473d4bf82a6437d01230ffd3c8475b">yume::diagnostic::DotVisitor::~DotVisitor</a></div><div class="ttdeci">~DotVisitor() override</div><div class="ttdef"><b>Definition:</b> <a href="dot__visitor_8hpp_source.html#l00058">dot_visitor.hpp:58</a></div></div>
 <div class="ttc" id="aclassyume_1_1diagnostic_1_1DotVisitor_html_a970c2c57970784989223005fcad3806e"><div class="ttname"><a href="classyume_1_1diagnostic_1_1DotVisitor.html#a970c2c57970784989223005fcad3806e">yume::diagnostic::DotVisitor::DotVisitor</a></div><div class="ttdeci">DotVisitor(const DotVisitor &amp;)=delete</div></div>
@@ -154,8 +154,8 @@ $(function() {
 <div class="ttc" id="aclassyume_1_1diagnostic_1_1DotVisitor_html_aebc82a0dd8cdd90b7c3fd7691b8936e2"><div class="ttname"><a href="classyume_1_1diagnostic_1_1DotVisitor.html#aebc82a0dd8cdd90b7c3fd7691b8936e2">yume::diagnostic::DotVisitor::operator=</a></div><div class="ttdeci">auto operator=(const DotVisitor &amp;) -&gt; DotVisitor &amp;=delete</div></div>
 <div class="ttc" id="anamespaceyume_1_1ast_html"><div class="ttname"><a href="namespaceyume_1_1ast.html">yume::ast</a></div><div class="ttdef"><b>Definition:</b> <a href="ast_8cpp_source.html#l00017">ast.cpp:17</a></div></div>
 <div class="ttc" id="anamespaceyume_1_1diagnostic_html"><div class="ttname"><a href="namespaceyume_1_1diagnostic.html">yume::diagnostic</a></div><div class="ttdef"><b>Definition:</b> <a href="dot__visitor_8cpp_source.html#l00010">dot_visitor.cpp:10</a></div></div>
-<div class="ttc" id="astructyume_1_1Loc_html"><div class="ttname"><a href="structyume_1_1Loc.html">yume::Loc</a></div><div class="ttdoc">Represents a location in source code, as a range starting at a line and column and ending at some oth...</div><div class="ttdef"><b>Definition:</b> <a href="token_8hpp_source.html#l00025">token.hpp:25</a></div></div>
-<div class="ttc" id="astructyume_1_1Loc_html_a5d7d786b093077b0f0ce213ce86023a8"><div class="ttname"><a href="structyume_1_1Loc.html#a5d7d786b093077b0f0ce213ce86023a8">yume::Loc::valid</a></div><div class="ttdeci">auto valid() const -&gt; bool</div><div class="ttdef"><b>Definition:</b> <a href="token_8hpp_source.html#l00065">token.hpp:65</a></div></div>
+<div class="ttc" id="astructyume_1_1Loc_html"><div class="ttname"><a href="structyume_1_1Loc.html">yume::Loc</a></div><div class="ttdoc">Represents a location in source code, as a range starting at a line and column and ending at some oth...</div><div class="ttdef"><b>Definition:</b> <a href="token_8hpp_source.html#l00026">token.hpp:26</a></div></div>
+<div class="ttc" id="astructyume_1_1Loc_html_a5d7d786b093077b0f0ce213ce86023a8"><div class="ttname"><a href="structyume_1_1Loc.html#a5d7d786b093077b0f0ce213ce86023a8">yume::Loc::valid</a></div><div class="ttdeci">auto valid() const -&gt; bool</div><div class="ttdef"><b>Definition:</b> <a href="token_8hpp_source.html#l00066">token.hpp:66</a></div></div>
 <div class="ttc" id="atoken_8hpp_html"><div class="ttname"><a href="token_8hpp.html">token.hpp</a></div></div>
 <div class="ttc" id="autil_8hpp_html"><div class="ttname"><a href="util_8hpp.html">util.hpp</a></div></div>
 <div class="ttc" id="avisitor_8hpp_html"><div class="ttname"><a href="visitor_8hpp.html">visitor.hpp</a></div></div>
