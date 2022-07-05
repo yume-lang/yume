@@ -1,6 +1,7 @@
 #pragma once
 
 #include "diagnostic/source_location.hpp"
+#include <array>
 #include <cstddef>
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/raw_ostream.h>
@@ -19,6 +20,7 @@ namespace yume {
 
 using namespace std::literals::string_literals;
 using namespace std::literals::string_view_literals;
+using std::array;
 using std::optional;
 using std::span;
 using std::string;

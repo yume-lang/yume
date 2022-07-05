@@ -197,7 +197,7 @@ auto OverloadSet::best_viable_overload() const -> Overload {
     throw std::logic_error(str);
   }
 
-  std::vector<const Overload*> ambiguous;
+  vector<const Overload*> ambiguous;
 
   for (const auto& candidate : overloads)
     if (candidate.viable && &candidate != best)

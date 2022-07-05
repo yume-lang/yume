@@ -45,7 +45,7 @@ enum Kind {
  * at the index `Qualifier::Ptr`.
  */
 class Type {
-  mutable std::array<unique_ptr<Type>, static_cast<int>(Qualifier::Q_END)> m_known_qual{};
+  mutable array<unique_ptr<Type>, static_cast<int>(Qualifier::Q_END)> m_known_qual{};
   const Kind m_kind;
   string m_name;
 

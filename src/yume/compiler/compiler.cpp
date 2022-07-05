@@ -43,7 +43,7 @@
 #include <variant>
 
 namespace yume {
-Compiler::Compiler(std::vector<SourceFile> source_files)
+Compiler::Compiler(vector<SourceFile> source_files)
     : m_sources(std::move(source_files)), m_walker(std::make_unique<semantic::TypeWalker>(*this)) {
   m_context = std::make_unique<LLVMContext>();
   m_module = std::make_unique<Module>("yume", *m_context);
@@ -394,7 +394,7 @@ template <> auto Compiler::expression(const ast::StringExpr& expr, bool mut) -> 
 
   auto val = expr.val();
 
-  std::vector<llvm::Constant*> chars(val.length());
+  vector<llvm::Constant*> chars(val.length());
   for (unsigned int i = 0; i < val.size(); i++)
     chars[i] = m_builder->getInt8(val[i]);
 
@@ -766,7 +766,7 @@ void Compiler::write_object(const char* filename, bool binary) {
 }
 
 auto Compiler::mangle_name(const Fn& fn) -> string {
-  std::stringstream ss{};
+  stringstream ss{};
   ss << "_Ym.";
   ss << fn.ast().name();
   ss << "(";
@@ -785,7 +785,7 @@ auto Compiler::mangle_name(const Fn& fn) -> string {
 }
 
 auto Compiler::mangle_name(const ty::Type& ast_type, const Fn& parent) -> string {
-  std::stringstream ss{};
+  stringstream ss{};
   if (const auto* qual_type = dyn_cast<ty::Qual>(&ast_type)) {
     ss << mangle_name(qual_type->base(), parent);
     if (qual_type->has_qualifier(Qualifier::Mut))

@@ -12,7 +12,7 @@ struct TypeHolder {
     ty::Int* u_ty;
   };
 
-  std::array<IntTypePair, 4> int_types{};
+  array<IntTypePair, 4> int_types{};
   ty::Int* bool_type{};
   llvm::StringMap<unique_ptr<ty::Type>> known{};
 

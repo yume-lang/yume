@@ -170,8 +170,7 @@ void stacktrace_ostream::set_color(llvm::raw_ostream::Colors color) {
 };
 
 void stacktrace_ostream::format_phase(string_view msg) {
-  using namespace std::literals;
-  static std::array skip_lines = {"yume::CRTPWalker<"sv, "__libc_start_"sv};
+  static array skip_lines = {"yume::CRTPWalker<"sv, "__libc_start_"sv};
   static string source_dir = YUME_SRC_DIR;
 
   switch (current_phase) {

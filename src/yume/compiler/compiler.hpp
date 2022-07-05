@@ -59,7 +59,7 @@ class Compiler : public CRTPWalker<Compiler> {
 public:
   [[nodiscard]] auto module() const -> const auto& { return m_module; }
 
-  explicit Compiler(std::vector<SourceFile> source_files);
+  explicit Compiler(vector<SourceFile> source_files);
   /// Begin compilation!
   void run();
 

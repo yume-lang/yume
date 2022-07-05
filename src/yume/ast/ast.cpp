@@ -116,7 +116,7 @@ struct Parser {
   [[nodiscard]] auto make_guard(const string& message) const -> ParserStackTrace { return {message, *tokens}; }
 
   static auto operators() {
-    const static std::array OPERATORS = {
+    const static array OPERATORS = {
         vector{SYM_EQ_EQ, SYM_NEQ, SYM_GT, SYM_LT},
         vector{SYM_PLUS, SYM_MINUS},
         vector{SYM_PERCENT, SYM_SLASH_SLASH, SYM_STAR},
