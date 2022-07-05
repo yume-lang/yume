@@ -258,7 +258,6 @@ void Compiler::define(Fn& fn) {
     llvm::Value* alloc = nullptr;
     if (const auto* qual_type = dyn_cast<ty::Qual>(&type)) {
       if (qual_type->is_mut()) {
-        alloc = &arg;
         m_scope.insert({name, &arg});
         continue;
       }
