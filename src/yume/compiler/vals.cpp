@@ -31,5 +31,26 @@ auto Fn::get_or_create_instantiation(Instantiation& instantiate) -> std::pair<bo
     return {false, create_instantiation(instantiate)};
 
   return {true, *existing_instantiation->second};
-};
+}
+
+auto Struct::create_instantiation(Instantiation& instantiate) -> Struct& {
+  auto* decl_clone = m_ast_decl.clone();
+  m_member->direct_body().emplace_back(decl_clone);
+
+  std::map<string, const ty::Type*> subs{};
+  for (const auto& [k, v] : instantiate.sub)
+    subs.try_emplace(k->name(), v);
+
+  auto st_ptr = std::make_unique<Struct>(*decl_clone, m_type, m_member, move(subs));
+  auto new_emplace = m_instantiations.emplace(instantiate, move(st_ptr));
+  return *new_emplace.first->second;
+}
+
+auto Struct::get_or_create_instantiation(Instantiation& instantiate) -> std::pair<bool, Struct&> {
+  auto existing_instantiation = m_instantiations.find(instantiate);
+  if (existing_instantiation == m_instantiations.end())
+    return {false, create_instantiation(instantiate)};
+
+  return {true, *existing_instantiation->second};
+}
 } // namespace yume

@@ -104,6 +104,9 @@ struct Struct {
 
   [[nodiscard]] auto ast() const -> auto& { return m_ast_decl; }
   [[nodiscard]] auto type() const -> ty::Type* { return m_type; }
+
+  [[nodiscard]] auto get_or_create_instantiation(Instantiation& instantiate) -> std::pair<bool, Struct&>;
+  [[nodiscard]] auto create_instantiation(Instantiation& instantiate) -> Struct&;
 };
 
 /// A value of a complied expression.
