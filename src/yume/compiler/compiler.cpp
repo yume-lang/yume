@@ -285,6 +285,43 @@ template <> void Compiler::statement(const ast::Compound& stat) {
     body_statement(i);
 }
 
+static inline auto is_trivially_destructible(const ty::Type* type) -> bool {
+  if (isa<ty::Int>(type))
+    return true;
+
+  if (isa<ty::Qual>(type))
+    return is_trivially_destructible(type->qual_base());
+
+  if (const auto* ptr_type = dyn_cast<ty::Ptr>(type))
+    return !ptr_type->has_qualifier(Qualifier::Slice);
+
+  if (const auto* struct_type = dyn_cast<ty::Struct>(type)) {
+    for (const auto& field : struct_type->fields()) {
+      if (is_trivially_destructible(field.val_ty()))
+        continue;
+
+      return false;
+    }
+
+    return true;
+  }
+
+  // A generic or something, shouldn't occur
+  throw std::logic_error("Cannot check if "s + type->name() + " is trivially destructible");
+}
+
+void Compiler::destruct_all_in_scope(ast::FnDecl& scope_parent) {
+  yume_assert(std::holds_alternative<ast::Compound>(scope_parent.body()), "Primitives don't have scope");
+
+  for (const auto& [k, v] : m_scope) {
+    if (isa<ast::VarDecl>(v.ast) && v.owning && !is_trivially_destructible(v.ast.val_ty())) {
+      llvm::errs() << "While exiting scope of " << scope_parent.name() << ", should destruct " << k << ": "
+                   << v.ast.val_ty()->name() << "\n";
+      destruct(v.value, *v.ast.val_ty());
+    }
+  }
+}
+
 void Compiler::define(Fn& fn) {
   m_current_fn = &fn;
   m_scope.clear();
@@ -300,20 +337,24 @@ void Compiler::define(Fn& fn) {
     llvm::Value* alloc = nullptr;
     if (const auto* qual_type = dyn_cast<ty::Qual>(&type)) {
       if (qual_type->is_mut()) {
-        m_scope.insert({name, &arg});
+        m_scope.insert({name, {.value = &arg, .ast = ast_arg, .owning = false}}); // We don't own parameters
         continue;
       }
     }
     alloc = m_builder->CreateAlloca(llvm_type(type), nullptr, name);
     m_builder->CreateStore(&arg, alloc);
-    m_scope.insert({name, alloc});
+    m_scope.insert({name, {.value = alloc, .ast = ast_arg, .owning = false}}); // We don't own parameters
   }
 
   if (const auto* body = get_if<ast::Compound>(&fn.body()); body != nullptr) {
     statement(*body);
   }
-  if (m_builder->GetInsertBlock()->getTerminator() == nullptr)
+
+  if (m_builder->GetInsertBlock()->getTerminator() == nullptr) {
+    destruct_all_in_scope(fn.ast());
     m_builder->CreateRetVoid();
+  }
+
   m_builder->SetInsertPoint(decl_bb);
   m_builder->CreateBr(bb);
   verifyFunction(*fn, &llvm::errs());
@@ -378,12 +419,29 @@ template <> void Compiler::statement(const ast::IfStmt& stat) {
 template <> void Compiler::statement(const ast::ReturnStmt& stat) {
   const auto* ret_ty = m_current_fn->ast().val_ty();
   bool returns_mut = ret_ty != nullptr && ret_ty->is_mut();
+  InScope* reset_owning = nullptr;
 
   if (stat.expr().has_value()) {
+    if (auto* var = dyn_cast<ast::VarExpr>(&stat.expr().value().get())) {
+      auto& in_scope = m_scope.at(var->name());
+      if (in_scope.owning) {
+        in_scope.owning = false; // Returning a local variable also gives up ownership of it
+        reset_owning = &in_scope;
+      }
+    }
+
+    destruct_all_in_scope(m_current_fn->ast());
+
+    if (reset_owning != nullptr)
+      reset_owning->owning = true; // The local variable may not be returned in all code paths, so reset its ownership
+
     auto val = body_expression(stat.expr().value(), returns_mut);
     m_builder->CreateRet(val);
+
     return;
   }
+
+  destruct_all_in_scope(m_current_fn->ast());
   m_builder->CreateRetVoid();
 }
 
@@ -400,7 +458,7 @@ template <> void Compiler::statement(const ast::VarDecl& stat) {
 
   auto expr_val = body_expression(stat.init());
   m_builder->CreateStore(expr_val, alloc);
-  m_scope.insert({stat.name(), alloc});
+  m_scope.insert({stat.name(), {.value = alloc, .ast = stat, .owning = true}});
 }
 
 /// Assert that this expression isn't asked to be mutable.
@@ -447,7 +505,7 @@ template <> auto Compiler::expression(const ast::StringExpr& expr, bool mut) -> 
 }
 
 template <> auto Compiler::expression(const ast::VarExpr& expr, bool mut) -> Val {
-  auto* val = m_scope.at(expr.name()).llvm();
+  auto* val = m_scope.at(expr.name()).value.llvm();
   // Function arguments can act as locals, but they can be immutable, but still behind a reference (alloca)
   if (!mut)
     return m_builder->CreateLoad(llvm_type(expr.val_ty()->without_qual()), val);
@@ -564,7 +622,7 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
 template <> auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> Val {
   if (const auto* target_var = dyn_cast<ast::VarExpr>(&expr.target())) {
     auto expr_val = body_expression(expr.value(), mut);
-    auto target_val = m_scope.at(target_var->name());
+    auto target_val = m_scope.at(target_var->name()).value;
     m_builder->CreateStore(expr_val, target_val);
     return expr_val;
   }
