@@ -193,6 +193,20 @@ auto Compiler::llvm_type(const ty::Type& type) -> llvm::Type* {
   return Type::getVoidTy(*m_context);
 }
 
+void Compiler::destruct(Val val, const ty::Type& type) {
+  if (type.is_mut()) {
+    const auto& deref_type = *type.qual_base();
+    return destruct(m_builder->CreateLoad(llvm_type(deref_type), val), deref_type);
+  }
+  if (const auto* ptr_type = dyn_cast<ty::Ptr>(&type)) {
+    if (ptr_type->has_qualifier(Qualifier::Slice)) {
+      auto* ptr = m_builder->CreateExtractValue(val, 0, "sl.ptr.free");
+      auto* free = llvm::CallInst::CreateFree(ptr, m_builder->GetInsertBlock());
+      m_builder->Insert(free);
+    }
+  }
+}
+
 auto Compiler::default_init(const ty::Type& type) -> Val {
   if (const auto* int_type = dyn_cast<ty::Int>(&type))
     return m_builder->getIntN(int_type->size(), 0);
