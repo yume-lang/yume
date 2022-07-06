@@ -731,8 +731,6 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
     auto* array_alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), m_builder->getInt32Ty(), base_type,
                                                      alloc_size, array_size, nullptr, "sl.ctor.malloc");
 
-    // TODO: the above `malloc` is literally never `free`d because the language doesn't yet have destructors.
-
     auto* data_ptr = m_builder->Insert(array_alloc);
     auto* data_size = m_builder->CreateSExtOrBitCast(slice_size, m_builder->getInt64Ty());
     llvm::Value* slice_inst = llvm::UndefValue::get(llvm_slice_type);
