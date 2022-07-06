@@ -8,11 +8,10 @@ option(YUME_COV "Coverage information" FALSE)
 
 find_package(Git)
 execute_process(
-    COMMAND           \"${GIT_EXECUTABLE}\" rev-parse --short HEAD
-    WORKING_DIRECTORY \"${CMAKE_SOURCE_DIR}\"
+    COMMAND           ${GIT_EXECUTABLE} describe --always --dirty --match=""
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     OUTPUT_VARIABLE   YUME_GIT_SHORTHASH
-    ERROR_QUIET
-    OUTPUT_STRIP_TRAILING_WHITESPACE)
+    ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/src/yumec-version.hpp.in"
