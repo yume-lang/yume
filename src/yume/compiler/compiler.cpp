@@ -7,6 +7,7 @@
 #include "util.hpp"
 #include "vals.hpp"
 #include <algorithm>
+#include <bits/ranges_algo.h>
 #include <exception>
 #include <functional>
 #include <llvm/ADT/Twine.h>
@@ -295,16 +296,8 @@ static inline auto is_trivially_destructible(const ty::Type* type) -> bool {
   if (const auto* ptr_type = dyn_cast<ty::Ptr>(type))
     return !ptr_type->has_qualifier(Qualifier::Slice);
 
-  if (const auto* struct_type = dyn_cast<ty::Struct>(type)) {
-    for (const auto& field : struct_type->fields()) {
-      if (is_trivially_destructible(field.val_ty()))
-        continue;
-
-      return false;
-    }
-
-    return true;
-  }
+  if (const auto* struct_type = dyn_cast<ty::Struct>(type))
+    return std::ranges::all_of(struct_type->fields(), &is_trivially_destructible, &ast::TypeName::get_val_ty);
 
   // A generic or something, shouldn't occur
   throw std::logic_error("Cannot check if "s + type->name() + " is trivially destructible");

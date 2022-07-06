@@ -202,6 +202,7 @@ public:
   virtual void visit(Visitor& visitor) const = 0;
 
   [[nodiscard]] auto val_ty() const noexcept -> const ty::Type* { return m_val_ty; }
+  [[nodiscard]] auto get_val_ty() const noexcept -> const ty::Type* { return m_val_ty; }
   void val_ty(const ty::Type* type) const {
     m_val_ty = type;
     for (const auto* i : m_attach->observers) {
