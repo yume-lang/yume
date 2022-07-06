@@ -53,6 +53,7 @@ enum Kind {
   /****/ K_Var,          ///< `VarExpr`
   /****/ K_Call,         ///< `CallExpr`
   /****/ K_Ctor,         ///< `CtorExpr`
+  /****/ K_Dtor,         ///< `DtorExpr`
   /****/ K_Slice,        ///< `SliceExpr`
   /****/ K_Assign,       ///< `AssignExpr`
   /****/ K_FieldAccess,  ///< `FieldAccessExpr`
@@ -91,6 +92,7 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case K_IfClause: return "if clause";
   case K_Call: return "call";
   case K_Ctor: return "constructor";
+  case K_Dtor: return "destructor";
   case K_Slice: return "slice";
   case K_Var: return "var";
   case K_Return: return "return statement";
@@ -503,6 +505,22 @@ public:
   [[nodiscard]] auto clone() const -> CtorExpr* override;
 };
 
+/// A destruction of an object upon leaving its scope.
+class DtorExpr : public Expr {
+  unique_ptr<Expr> m_base;
+
+public:
+  DtorExpr(span<Token> tok, unique_ptr<Expr> base) : Expr(K_Dtor, tok), m_base{move(base)} {}
+  void visit(Visitor& visitor) const override;
+  [[nodiscard]] auto describe() const -> string override { return m_base->describe(); }
+
+  [[nodiscard]] auto base() const -> const auto& { return *m_base; }
+  [[nodiscard]] auto base() -> auto& { return *m_base; }
+
+  static auto classof(const AST* a) -> bool { return a->kind() == K_Dtor; }
+  [[nodiscard]] auto clone() const -> DtorExpr* override;
+};
+
 /// A slice literal, i.e. an array.
 class SliceExpr : public Expr {
   unique_ptr<Type> m_type;
@@ -588,6 +606,7 @@ public:
   explicit Compound(span<Token> tok, vector<unique_ptr<Stmt>> body) : Stmt(K_Compound, tok), m_body{move(body)} {}
 
   [[nodiscard]] auto body() const { return dereference_view(m_body); }
+  [[nodiscard]] auto direct_body() -> auto& { return m_body; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_Compound; }
   [[nodiscard]] auto clone() const -> Compound* override;
 };

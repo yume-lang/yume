@@ -71,6 +71,7 @@ auto Compound::clone() const -> Compound* { return new Compound(tok(), dup(m_bod
 auto VarExpr::clone() const -> VarExpr* { return new VarExpr(tok(), m_name); }
 auto CallExpr::clone() const -> CallExpr* { return new CallExpr(tok(), m_name, dup(m_args)); }
 auto CtorExpr::clone() const -> CtorExpr* { return new CtorExpr(tok(), dup(m_type), dup(m_args)); }
+auto DtorExpr::clone() const -> DtorExpr* { return new DtorExpr(tok(), dup(m_base)); }
 auto SliceExpr::clone() const -> SliceExpr* { return new SliceExpr(tok(), dup(m_type), dup(m_args)); }
 auto AssignExpr::clone() const -> AssignExpr* { return new AssignExpr(tok(), dup(m_target), dup(m_value)); }
 auto FieldAccessExpr::clone() const -> FieldAccessExpr* { return new FieldAccessExpr(tok(), dup(m_base), m_field); }
