@@ -359,21 +359,19 @@ void TypeWalker::resolve_queue() {
     auto next = m_decl_queue.front();
     m_decl_queue.pop();
 
-    if (auto** fnp = std::get_if<Fn*>(&next)) {
-      with_saved_scope([&] {
-        m_in_depth = true;
-
-        m_compiler.declare(**fnp);
-      });
-    } else if (auto** stp = std::get_if<Struct*>(&next)) {
-      auto* next_st = *stp;
-      with_saved_scope([&] {
-        for (auto& i : next_st->body().body()) {
-          auto decl = m_compiler.decl_statement(i, next_st->m_type, next_st->m_member);
-          m_compiler.walk_types(decl);
-        }
-      });
-    }
+    with_saved_scope([&] {
+      std::visit(DeclLikeVisitor{[&](Fn* fn) {
+                                   m_in_depth = true;
+                                   m_compiler.declare(*fn);
+                                 },
+                                 [&](Struct* st) {
+                                   for (auto& i : st->body().body()) {
+                                     auto decl = m_compiler.decl_statement(i, st->m_type, st->m_member);
+                                     m_compiler.walk_types(decl);
+                                   }
+                                 }},
+                 next);
+    });
   }
 }
 } // namespace yume::semantic

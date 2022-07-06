@@ -104,17 +104,17 @@ void Compiler::run() {
 }
 
 void Compiler::walk_types(DeclLike decl_like) {
-  if (auto** stp = std::get_if<Struct*>(&decl_like)) {
-    auto* st = *stp; // thanks c++
-    m_walker->m_current_struct = st;
-    m_walker->body_statement(st->ast());
-    m_walker->m_current_struct = nullptr;
-  } else if (auto** fnp = std::get_if<Fn*>(&decl_like)) {
-    auto* fn = *fnp; // thanks c++
-    m_walker->m_current_fn = fn;
-    m_walker->body_statement(fn->ast());
-    m_walker->m_current_fn = nullptr;
-  }
+  std::visit(DeclLikeVisitor{[&](Fn* fn) {
+                               m_walker->m_current_fn = fn;
+                               m_walker->body_statement(fn->ast());
+                               m_walker->m_current_fn = nullptr;
+                             },
+                             [&](Struct* st) {
+                               m_walker->m_current_struct = st;
+                               m_walker->body_statement(st->ast());
+                               m_walker->m_current_struct = nullptr;
+                             }},
+             decl_like);
 }
 
 auto Compiler::create_struct(ast::StructDecl& s_decl, const optional<string>& name_override) -> unique_ptr<ty::Struct> {

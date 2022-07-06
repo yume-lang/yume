@@ -110,6 +110,14 @@ struct Struct {
 };
 
 using DeclLike = std::variant<std::monostate, Fn*, Struct*>;
+template <typename FnC, typename StC>
+requires std::invocable<FnC, Fn*> && std::invocable<StC, Struct*>
+struct DeclLikeVisitor : FnC, StC {
+  using FnC::operator();
+  using StC::operator();
+  void operator()(std::monostate /* ignored */){};
+};
+template<typename FnC, typename StC> DeclLikeVisitor(FnC, StC) -> DeclLikeVisitor<FnC, StC>;
 
 /// A value of a complied expression.
 /**
