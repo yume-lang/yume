@@ -799,14 +799,19 @@ template <> auto Compiler::expression(const ast::SliceExpr& expr, bool mut) -> V
   auto* array_type = ArrayType::get(base_type, slice_size);
   auto* array_alloc = m_builder->CreateAlloca(array_type);
 
+  // https://github.com/yume-lang/yume/actions/runs/2624329437
+#if 0
   if (all_const) {
     auto* array_value = llvm::ConstantArray::get(array_type, const_values);
     m_builder->CreateStore(array_value, array_alloc);
   } else {
+#endif
     unsigned j = 0;
     for (const auto& i : values)
       m_builder->CreateStore(i, m_builder->CreateConstInBoundsGEP2_32(array_type, array_alloc, 0, j++));
+#if 0
   }
+#endif
   auto* data_ptr = m_builder->CreateBitCast(array_alloc, base_type->getPointerTo());
   llvm::Value* slice_inst = llvm::UndefValue::get(slice_type);
   slice_inst = m_builder->CreateInsertValue(slice_inst, data_ptr, 0);
