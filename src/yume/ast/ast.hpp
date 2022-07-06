@@ -1,6 +1,7 @@
 #pragma once
 
 #include "qualifier.hpp"
+#include "stl_util.hpp"
 #include "token.hpp"
 #include "ty/compatibility.hpp"
 #include "util.hpp"
