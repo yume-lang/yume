@@ -512,6 +512,10 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
           return m_builder->CreateStructGEP(result_type, args.at(0), 0, "sl.ptr.mut");
         }
         return m_builder->CreateExtractValue(args.at(0), 0, "sl.ptr.x");
+      } else if (primitive == "slice_free") {
+        auto* ptr = m_builder->CreateExtractValue(args.at(0), 0, "sl.ptr.free");
+        auto* call = llvm::CallInst::CreateFree(ptr, m_builder->GetInsertBlock());
+        return m_builder->Insert(call);
       } else if (primitive == "slice_dup") {
         return m_builder->CreateInsertValue(
             args.at(0), m_builder->CreateAdd(m_builder->CreateExtractValue(args.at(0), 1), args.at(1)), 1);
