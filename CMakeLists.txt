@@ -6,65 +6,7 @@ option(YUME_SPEW "Verbose output (higher numbers mean more)" 0)
 option(YUME_IWYU "Check the project with include-what-you-use" FALSE)
 option(YUME_COV "Coverage information" FALSE)
 
-function (always_configure_file name source dest)
-  set(configure_script
-    "${CMAKE_CURRENT_BINARY_DIR}/configure.${name}.cmake")
-  set(configured_path
-    "${configure_script}.output")
-
-    file(WRITE "${configure_script}"
-    "# Configure script for \"${source}\" -> \"${dest}\"\n")
-
-  foreach (arg IN LISTS ARGN)
-    file(APPEND "${configure_script}"
-      "set(${arg} \"${${arg}}\")\n")
-  endforeach ()
-
-  file(APPEND "${configure_script}" "${configure_code}")
-
-  file(APPEND "${configure_script}" "
-configure_file(
-  \"${source}\"
-  \"${configured_path}\"
-  @ONLY)\n")
-
-  file(APPEND "${configure_script}" "
-configure_file(
-  \"${configured_path}\"
-  \"${dest}\"
-  COPYONLY)\n")
-
-  set(clean_files
-    "${dest}"
-    "${configured_path}"
-    "${configure_script}")
-
-  set_directory_properties(
-    PROPERTIES
-      ADDITIONAL_MAKE_CLEAN_FILES "${clean_files}")
-
-  add_custom_command(
-    OUTPUT  "${dest}"
-            "${dest}.noexist"
-    COMMAND "${CMAKE_COMMAND}"
-            -P "${configure_script}"
-    MAIN_DEPENDENCY
-            "${source}"
-    DEPENDS "${source}"
-            "${configure_script}"
-    WORKING_DIRECTORY
-            "${CMAKE_CURRENT_BINARY_DIR}"
-    COMMENT "Configuring ${name} file \"${source}\" -> \"${dest}\"")
-
-  add_custom_target(configure ALL
-    DEPENDS "${dest}"
-    SOURCES "${source}")
-  source_group("Configured Files"
-    FILES "${source}")
-endfunction ()
-
 find_package(Git)
-set(configure_code "
 execute_process(
     COMMAND           \"${GIT_EXECUTABLE}\" rev-parse --short HEAD
     WORKING_DIRECTORY \"${CMAKE_SOURCE_DIR}\"
@@ -72,14 +14,10 @@ execute_process(
     ERROR_QUIET
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-message(STATUS \"git hash: \${YUME_GIT_SHORTHASH}\")
-")
-
-always_configure_file(yumec-version.hpp
+configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/src/yumec-version.hpp.in"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/yumec-version.hpp"
-  YUME_GIT_SHORTHASH,
-  CMAKE_PROJECT_VERSION)
+  @ONLY)
 
 file(GLOB_RECURSE YUME_SRC CONFIGURE_DEPENDS src/yume/*.cpp src/yume/*.hpp)
 add_library(yume ${YUME_SRC})
@@ -135,7 +73,7 @@ message(STATUS "Using LLVM include: ${LLVM_INCLUDE_DIRS}")
 message(STATUS "Using LLVM library: ${LLVM_LIBRARY_DIRS}")
 message(STATUS "Using LLVM tool dir: ${LLVM_TOOLS_BINARY_DIR}")
 
-target_compile_options(yume PUBLIC -Wno-error -W -Wall -Wimplicit-fallthrough -Wpedantic -Wno-gnu-zero-variadic-macro-arguments -Wno-unqualified-std-cast-call)
+target_compile_options(yume PUBLIC -Wno-unknown-warning-option -W -Wall -Wimplicit-fallthrough -Wpedantic -Wno-gnu-zero-variadic-macro-arguments -Wno-unqualified-std-cast-call)
 include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag(-Wunused_template SUPPORTS_W_UNUSED_TEMPLATE)
 if(SUPPORTS_W_UNUSED_TEMPLATE)
