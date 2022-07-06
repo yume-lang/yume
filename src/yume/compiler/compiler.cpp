@@ -306,13 +306,9 @@ static inline auto is_trivially_destructible(const ty::Type* type) -> bool {
 void Compiler::destruct_all_in_scope(ast::FnDecl& scope_parent) {
   yume_assert(std::holds_alternative<ast::Compound>(scope_parent.body()), "Primitives don't have scope");
 
-  for (const auto& [k, v] : m_scope) {
-    if (isa<ast::VarDecl>(v.ast) && v.owning && !is_trivially_destructible(v.ast.val_ty())) {
-      llvm::errs() << "While exiting scope of " << scope_parent.name() << ", should destruct " << k << ": "
-                   << v.ast.val_ty()->name() << "\n";
+  for (const auto& [k, v] : m_scope)
+    if (isa<ast::VarDecl>(v.ast) && v.owning && !is_trivially_destructible(v.ast.val_ty()))
       destruct(v.value, *v.ast.val_ty());
-    }
-  }
 }
 
 void Compiler::define(Fn& fn) {
