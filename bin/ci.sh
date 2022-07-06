@@ -11,7 +11,7 @@ case $1 in
       echo "Running example ${i}"
       "${BUILD_DIR}"/yumec "${i}" || exit 1
       mv output.ll result-"$(basename "${i}")".ll
-      ./yume.out
+      ./yume.out || exit 1
     done;;
 
   "test" )
