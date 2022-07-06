@@ -518,7 +518,7 @@ static auto constexpr const_hash(char const* input) -> unsigned {
   return *input != 0 ? static_cast<unsigned int>(*input) + 33 * const_hash(input + 1) : 5381; // NOLINT
 }
 
-auto Compiler::int_bin_primitive(const string& primitive, const vector<Val>& args) -> Val {
+auto Compiler::int_bin_primitive(const string& primitive, const vector<llvm::Value*>& args) -> Val {
   const auto& a = args.at(0);
   const auto& b = args.at(1);
   auto hash = const_hash(primitive.data());
@@ -539,6 +539,49 @@ auto Compiler::int_bin_primitive(const string& primitive, const vector<Val>& arg
   default: throw std::runtime_error("Unknown binary integer primitive ib_"s + primitive);
   }
 }
+
+auto Compiler::primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<const ty::Type*>& types,
+                         const ty::Type* ret_ty) -> optional<Val> {
+  if (!fn->ast().primitive())
+    return {};
+
+  auto primitive = get<string>(fn->body());
+  bool returns_mut = ret_ty != nullptr && ret_ty->is_mut();
+
+  if (primitive == "libc")
+    return m_builder->CreateCall(fn->declaration(*this, false), args);
+  if (primitive == "ptrto")
+    return args.at(0);
+  if (primitive == "slice_size")
+    return m_builder->CreateExtractValue(args.at(0), 1);
+  if (primitive == "slice_ptr") {
+    if (returns_mut) {
+      llvm::Type* result_type = llvm_type(types[0]->without_qual());
+      return m_builder->CreateStructGEP(result_type, args.at(0), 0, "sl.ptr.mut");
+    }
+    return m_builder->CreateExtractValue(args.at(0), 0, "sl.ptr.x");
+  }
+  if (primitive == "slice_dup") {
+    return m_builder->CreateInsertValue(
+        args.at(0), m_builder->CreateAdd(m_builder->CreateExtractValue(args.at(0), 1), args.at(1)), 1);
+  }
+  if (primitive == "set_at") {
+    auto* result_type = llvm_type(*types[0]->without_qual().ptr_base());
+    llvm::Value* value = args.at(2);
+    llvm::Value* base = m_builder->CreateGEP(result_type, args.at(0), args.at(1), "p.set_at.gep");
+    m_builder->CreateStore(value, base);
+    return args.at(2);
+  }
+  if (primitive == "get_at") {
+    auto* result_type = llvm_type(*types[0]->without_qual().ptr_base());
+    llvm::Value* base = args.at(0);
+    base = m_builder->CreateGEP(result_type, base, args.at(1), "p.get_at.gep");
+    return base;
+  }
+  if (primitive.starts_with("ib_"))
+    return int_bin_primitive(primitive, args);
+  throw std::runtime_error("Unknown primitive "s + primitive);
+};
 
 template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Val {
   auto* selected = expr.selected_overload();
@@ -569,46 +612,15 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
     j++;
   }
 
-  auto val = [&]() -> yume::Val {
-    if (selected->ast().primitive()) {
-      auto primitive = get<string>(selected->body());
-      if (primitive == "libc") {
-        llvm_fn = selected->declaration(*this, false);
-      } else if (primitive == "ptrto") {
-        return args.at(0);
-      } else if (primitive == "slice_size") {
-        return m_builder->CreateExtractValue(args.at(0), 1);
-      } else if (primitive == "slice_ptr") {
-        if (returns_mut) {
-          llvm::Type* result_type = llvm_type(arg_types[0]->without_qual());
-          return m_builder->CreateStructGEP(result_type, args.at(0), 0, "sl.ptr.mut");
-        }
-        return m_builder->CreateExtractValue(args.at(0), 0, "sl.ptr.x");
-      } else if (primitive == "slice_dup") {
-        return m_builder->CreateInsertValue(
-            args.at(0), m_builder->CreateAdd(m_builder->CreateExtractValue(args.at(0), 1), args.at(1)), 1);
-      } else if (primitive == "set_at") {
-        auto* result_type = llvm_type(*arg_types[0]->without_qual().ptr_base());
-        llvm::Value* value = args.at(2);
-        llvm::Value* base = m_builder->CreateGEP(result_type, args.at(0), args.at(1).llvm(), "p.set_at.gep");
-        m_builder->CreateStore(value, base);
-        return args.at(2);
-      } else if (primitive == "get_at") {
-        auto* result_type = llvm_type(*arg_types[0]->without_qual().ptr_base());
-        llvm::Value* base = args.at(0);
-        base = m_builder->CreateGEP(result_type, base, args.at(1).llvm(), "p.get_at.gep");
-        return base;
-      } else if (primitive.starts_with("ib_")) {
-        return int_bin_primitive(primitive, args);
-      } else {
-        throw std::runtime_error("Unknown primitive "s + primitive);
-      }
-    } else {
-      llvm_fn = selected->declaration(*this);
-    }
+  Val val{nullptr};
 
-    return m_builder->CreateCall(llvm_fn, llvm_args);
-  }();
+  auto prim = primitive(selected, llvm_args, arg_types, ret_ty);
+  if (prim.has_value()) {
+    val = *prim;
+  } else {
+    llvm_fn = selected->declaration(*this);
+    val = m_builder->CreateCall(llvm_fn, llvm_args);
+  }
 
   if (returns_mut && !mut)
     return m_builder->CreateLoad(llvm_type(*ret_ty->qual_base()), val, "c.nmut.deref");
