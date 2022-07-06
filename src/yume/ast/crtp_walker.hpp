@@ -36,7 +36,7 @@ public:
     case ast::K_Var: return conv_expression<ast::VarExpr>(expr, args...);
     case ast::K_Assign: return conv_expression<ast::AssignExpr>(expr, args...);
     case ast::K_Ctor: return conv_expression<ast::CtorExpr>(expr, args...);
-    case ast::K_Dtor: return conv_expression<ast::DtorExpr>(expr, args...);
+    // case ast::K_Dtor: return conv_expression<ast::DtorExpr>(expr, args...);
     case ast::K_Slice: return conv_expression<ast::SliceExpr>(expr, args...);
     case ast::K_FieldAccess: return conv_expression<ast::FieldAccessExpr>(expr, args...);
     case ast::K_ImplicitCast: return conv_expression<ast::ImplicitCastExpr>(expr, args...);

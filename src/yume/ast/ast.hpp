@@ -506,7 +506,7 @@ public:
 };
 
 /// A destruction of an object upon leaving its scope.
-class DtorExpr : public Expr {
+class [[deprecated]] DtorExpr : public Expr {
   unique_ptr<Expr> m_base;
 
 public:
