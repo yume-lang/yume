@@ -20,6 +20,7 @@ var searchData=
   ['overload_2ehpp_17',['overload.hpp',['../overload_8hpp.html',1,'']]],
   ['overloads_18',['overloads',['../structyume_1_1semantic_1_1OverloadSet.html#a52f1c40db404db3f3c71b47573454550',1,'yume::semantic::OverloadSet']]],
   ['overloadset_19',['OverloadSet',['../structyume_1_1semantic_1_1OverloadSet.html',1,'yume::semantic']]],
-  ['string_20',['string',['../structyume_1_1Atom.html#a1d296c3ef3ebd32e645f9eed531a18d1',1,'yume::Atom']]],
-  ['value_20_2a_21',['Value *',['../structyume_1_1Val.html#a645d4983ee82011eb1a2a1018d0b2d9d',1,'yume::Val']]]
+  ['owning_20',['owning',['../structyume_1_1InScope.html#a8ddcc9d3da0ab6e89861d5544a05386d',1,'yume::InScope']]],
+  ['string_21',['string',['../structyume_1_1Atom.html#a1d296c3ef3ebd32e645f9eed531a18d1',1,'yume::Atom']]],
+  ['value_20_2a_22',['Value *',['../structyume_1_1Val.html#a645d4983ee82011eb1a2a1018d0b2d9d',1,'yume::Val']]]
 ];

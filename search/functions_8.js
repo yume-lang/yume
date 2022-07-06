@@ -15,5 +15,6 @@ var searchData=
   ['is_5fgeneric_12',['is_generic',['../classyume_1_1ty_1_1Type.html#af101ad944f46d691353cc061301e2d72',1,'yume::ty::Type']]],
   ['is_5fmut_13',['is_mut',['../classyume_1_1ty_1_1Type.html#a14e89718449e055ee8f9f192fda8b4fc',1,'yume::ty::Type']]],
   ['is_5fsigned_14',['is_signed',['../classyume_1_1ty_1_1Int.html#acb504b970d97dd2ebbd28de842b9f527',1,'yume::ty::Int']]],
-  ['is_5fvalid_5foverload_15',['is_valid_overload',['../structyume_1_1semantic_1_1OverloadSet.html#a2f5a6bae42553e5bd4311150280b080c',1,'yume::semantic::OverloadSet']]]
+  ['is_5ftrivially_5fdestructible_15',['is_trivially_destructible',['../namespaceyume.html#a651ecb6191ce83e072c33c695cd1a8d2',1,'yume']]],
+  ['is_5fvalid_5foverload_16',['is_valid_overload',['../structyume_1_1semantic_1_1OverloadSet.html#a2f5a6bae42553e5bd4311150280b080c',1,'yume::semantic::OverloadSet']]]
 ];

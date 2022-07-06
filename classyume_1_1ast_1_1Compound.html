@@ -106,6 +106,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a25dad3fcc098c0f21176c1e14f897c27"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a1d76f0e6c57e539f9cc85915b68ce5"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1Compound.html#a2a1d76f0e6c57e539f9cc85915b68ce5">body</a> () const</td></tr>
 <tr class="separator:a2a1d76f0e6c57e539f9cc85915b68ce5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a955c945484d4665f5f8187504c646bad"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1Compound.html#a955c945484d4665f5f8187504c646bad">direct_body</a> () -&gt; auto &amp;</td></tr>
+<tr class="separator:a955c945484d4665f5f8187504c646bad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5bfc25547b61c4aaa33e8081077e9a9d"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1Compound.html#a5bfc25547b61c4aaa33e8081077e9a9d">clone</a> () const -&gt; <a class="el" href="classyume_1_1ast_1_1Compound.html">Compound</a> *override</td></tr>
 <tr class="memdesc:a5bfc25547b61c4aaa33e8081077e9a9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deep copy, except for the type and attachments.  <a href="classyume_1_1ast_1_1Compound.html#a5bfc25547b61c4aaa33e8081077e9a9d">More...</a><br /></td></tr>
 <tr class="separator:a5bfc25547b61c4aaa33e8081077e9a9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -170,7 +172,7 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >A statement consisting of multiple other statements, i.e. the body of a function. </p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00583">583</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00601">601</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a25dad3fcc098c0f21176c1e14f897c27" name="a25dad3fcc098c0f21176c1e14f897c27"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a25dad3fcc098c0f21176c1e14f897c27">&#9670;&nbsp;</a></span>Compound()</h2>
@@ -206,7 +208,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00588">588</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00606">606</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="clone_8cpp_source.html#l00070">clone()</a>.</p>
 
@@ -236,9 +238,9 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00590">590</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00608">608</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00255">yume::semantic::TypeWalker::statement()</a>, and <a class="el" href="compiler_8cpp_source.html#l00269">yume::Compiler::statement()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00256">yume::semantic::TypeWalker::statement()</a>, and <a class="el" href="compiler_8cpp_source.html#l00283">yume::Compiler::statement()</a>.</p>
 
 </div>
 </div>
@@ -271,7 +273,34 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="clone_8cpp_source.html#l00070">70</a> of file <a class="el" href="clone_8cpp_source.html">clone.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00588">Compound()</a>, and <a class="el" href="ast_8hpp_source.html#l00188">yume::ast::AST::tok()</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00606">Compound()</a>, and <a class="el" href="ast_8hpp_source.html#l00190">yume::ast::AST::tok()</a>.</p>
+
+</div>
+</div>
+<a id="a955c945484d4665f5f8187504c646bad" name="a955c945484d4665f5f8187504c646bad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a955c945484d4665f5f8187504c646bad">&#9670;&nbsp;</a></span>direct_body()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto yume::ast::Compound::direct_body </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> -&gt; auto&amp; </td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00609">609</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
