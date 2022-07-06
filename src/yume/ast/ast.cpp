@@ -5,7 +5,7 @@
 #include "diagnostic/source_location.hpp"
 #include "qualifier.hpp"
 #include "token.hpp"
-#include "type.hpp"
+#include "ty/type.hpp"
 #include "util.hpp"
 #include <algorithm>
 #include <array>

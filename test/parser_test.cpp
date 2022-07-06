@@ -2,7 +2,7 @@
 #include "ast/ast.hpp"
 #include "token.hpp"
 #include "util.hpp"
-#include "visitor/hash_visitor.hpp"
+#include "diagnostic/visitor/hash_visitor.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <iterator>
 #include <utility>

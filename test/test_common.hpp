@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ast/ast.hpp"
-#include "visitor/print_visitor.hpp"
+#include "diagnostic/visitor/print_visitor.hpp"
 #include "token.hpp"
 #include <catch2/matchers/catch_matchers_templated.hpp>
 #include <llvm/Support/raw_os_ostream.h>

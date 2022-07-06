@@ -1,9 +1,9 @@
 #include "compiler.hpp"
 #include "ast/ast.hpp"
-#include "compatibility.hpp"
 #include "diagnostic/errors.hpp"
 #include "semantic/type_walker.hpp"
-#include "type.hpp"
+#include "ty/compatibility.hpp"
+#include "ty/type.hpp"
 #include "util.hpp"
 #include "vals.hpp"
 #include <algorithm>

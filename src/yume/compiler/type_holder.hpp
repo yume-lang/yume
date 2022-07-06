@@ -1,6 +1,6 @@
 #pragma once
 
-#include "type.hpp"
+#include "ty/type.hpp"
 #include <array>
 #include <llvm/ADT/StringMap.h>
 #include <memory>

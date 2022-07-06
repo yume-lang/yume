@@ -1,8 +1,8 @@
 #include "ast.hpp"
 
-#include "compatibility.hpp"
+#include "diagnostic/visitor/visitor.hpp"
+#include "ty/compatibility.hpp"
 #include "util.hpp"
-#include "visitor/visitor.hpp"
 #include <memory>
 #include <string>
 #include <utility>

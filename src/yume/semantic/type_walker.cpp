@@ -1,11 +1,11 @@
 #include "type_walker.hpp"
 #include "ast/ast.hpp"
-#include "compatibility.hpp"
 #include "compiler/compiler.hpp"
 #include "compiler/type_holder.hpp"
 #include "compiler/vals.hpp"
 #include "diagnostic/errors.hpp"
-#include "type.hpp"
+#include "ty/compatibility.hpp"
+#include "ty/type.hpp"
 #include <algorithm>
 #include <cstdint>
 #include <functional>

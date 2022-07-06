@@ -1,8 +1,8 @@
 #pragma once
 
-#include "compatibility.hpp"
 #include "qualifier.hpp"
 #include "token.hpp"
+#include "ty/compatibility.hpp"
 #include "util.hpp"
 #include <cstddef>
 #include <cstdint>
