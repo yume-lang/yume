@@ -267,6 +267,31 @@ template <> void TypeWalker::statement(ast::StructDecl& stat) {
     expression(i);
 }
 
+static inline auto is_trivially_destructible(const ty::Type* type) -> bool {
+  if (isa<ty::Int>(type))
+    return true;
+
+  if (isa<ty::Qual>(type))
+    return is_trivially_destructible(type->qual_base());
+
+  if (const auto* ptr_type = dyn_cast<ty::Ptr>(type))
+    return !ptr_type->has_qualifier(Qualifier::Slice);
+
+  if (const auto* struct_type = dyn_cast<ty::Struct>(type)) {
+    for (const auto& field : struct_type->fields()) {
+      if (is_trivially_destructible(field.val_ty()))
+        continue;
+
+      return false;
+    }
+
+    return true;
+  }
+
+  // A generic or something, shouldn't occur
+  throw std::logic_error("Cannot check if "s + type->name() + " is trivially destructible");
+}
+
 template <> void TypeWalker::statement(ast::FnDecl& stat) {
   m_scope.clear();
 
@@ -284,8 +309,13 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
   if (std::ranges::any_of(m_current_fn->m_subs, [](const auto& sub) { return sub.second->is_generic(); }))
     return;
 
-  if (m_in_depth && stat.body().index() == 0)
-    statement(get<0>(stat.body()));
+  if (m_in_depth && std::holds_alternative<ast::Compound>(stat.body()))
+    statement(get<ast::Compound>(stat.body()));
+
+  for (const auto& [k, v] : m_scope) {
+    if (v.owning && !is_trivially_destructible(v.value->val_ty()))
+      llvm::errs() << "While exiting scope of " << stat.name() << ", should destruct " << k << ": " << v.value->val_ty()->name() << "\n";
+  }
 }
 
 template <> void TypeWalker::statement(ast::ReturnStmt& stat) {
