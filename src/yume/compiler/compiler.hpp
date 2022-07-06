@@ -34,6 +34,12 @@ class Type;
 }
 using namespace llvm;
 
+struct InScope {
+  Val value;
+  const ast::AST& ast;
+  bool owning{};
+};
+
 /// The `Compiler` the the primary top-level type during compilation. A single instance is created during the
 /// compilation process.
 class Compiler : public CRTPWalker<Compiler> {
@@ -45,7 +51,7 @@ class Compiler : public CRTPWalker<Compiler> {
   unique_ptr<semantic::TypeWalker> m_walker;
 
   Fn* m_current_fn{};
-  std::map<string, Val> m_scope{};
+  std::map<string, InScope> m_scope{};
 
   unique_ptr<LLVMContext> m_context;
   unique_ptr<IRBuilder<>> m_builder;
@@ -96,6 +102,8 @@ private:
   template <typename T> auto expression(const T& expr, [[maybe_unused]] bool mut = false) -> Val {
     throw std::runtime_error("Unknown expression "s + expr.kind_name());
   }
+
+  void destruct_all_in_scope(ast::FnDecl& scope_parent);
 
   auto known_type(const string& str) -> ty::Type&;
 

@@ -26,11 +26,6 @@ class Type;
 
 namespace yume::semantic {
 
-struct InScope {
-  ast::AST* value;
-  bool owning;
-};
-
 /// Determine the type information of AST nodes.
 /// This makes up most of the "semantic" phase of the compiler.
 struct TypeWalker : public CRTPWalker<TypeWalker, false> {
@@ -40,7 +35,7 @@ public:
   Compiler& m_compiler;
   Struct* m_current_struct{};
   Fn* m_current_fn{};
-  std::map<string, InScope> m_scope{};
+  std::map<string, ast::AST*> m_scope{};
 
   std::queue<DeclLike> m_decl_queue{};
 
