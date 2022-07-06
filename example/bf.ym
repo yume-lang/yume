@@ -5,10 +5,10 @@ end
 
 def parse(input U8[]) Instruction[]
   let i = 0
-  let instructions = Instruction[](input.size) # `instructions` ALLOCATED
+  let instructions = Instruction[](input.size)
   # TODO
   # This should be dynamically sized...
-  let stack = I32[](512) # `stack` ALLOCATED
+  let stack = I32[](512)
   let stack_i = 0
   # TODO
   # This could be simplified if i had better iteration, i.e. something akin
@@ -40,12 +40,8 @@ def parse(input U8[]) Instruction[]
     i = i + 1
   end
 
-  free(stack) # `stack` SHOULD DEALLOCATE
-
-  return instructions # LIFETIME OF `instructions` PASSED ON
+  return instructions
 end
-
-def free<T>(arr T[]) = __primitive__(slice_free)
 
 def main(argc I32, argv U8 ptr ptr) I32
   # Hello world example function
@@ -57,14 +53,14 @@ def main(argc I32, argv U8 ptr ptr) I32
   # Perhaps this could be constructed from the same pointer, instead of
   # allocating a new one and copying it. It would probably require constructors
   # to be a real feature, but slice constructors are a special case anyway
-  let word = U8[](word_ptr.c_len) # `word` ALLOCATED
+  let word = U8[](word_ptr.c_len)
   copy(word_ptr, word.unsafe_ptr, word.size)
 
-  let instructions = parse(word) # RECEIVED `instructions` WITH RUNNING LIFETIME
+  let instructions = parse(word)
 
   let pc I32 = 0
   let ptr I32 = 0
-  let memory = U8[](65535) # `memory` ALLOCATED
+  let memory = U8[](65535)
 
   while pc < instructions.size
     let instr = instructions[pc]
@@ -95,10 +91,6 @@ def main(argc I32, argv U8 ptr ptr) I32
     end
     pc = pc + 1
   end
-
-  free(instructions) # `instructions` SHOULD DEALLOCATE
-  free(word) # `word` SHOULD DEALLOCATE
-  free(memory) # `memory` SHOULD DEALLOCATE
 
   return 0
 end
