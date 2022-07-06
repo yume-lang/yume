@@ -589,7 +589,7 @@ $(function() {
 <div class="line"><a id="l00518" name="l00518"></a><span class="lineno">  518</span>  <span class="keywordflow">return</span> *input != 0 ? <span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">int</span><span class="keyword">&gt;</span>(*input) + 33 * <a class="code hl_function" href="namespaceyume.html#a4d0b3ac909119ef64ef8a54f014993d9">const_hash</a>(input + 1) : 5381; <span class="comment">// NOLINT</span></div>
 <div class="line"><a id="l00519" name="l00519"></a><span class="lineno">  519</span>}</div>
 <div class="line"><a id="l00520" name="l00520"></a><span class="lineno">  520</span> </div>
-<div class="line"><a id="l00521" name="l00521"></a><span class="lineno">  521</span><span class="keyword">auto</span> Compiler::int_bin_primitive(<span class="keyword">const</span> <span class="keywordtype">string</span>&amp; primitive, <span class="keyword">const</span> vector&lt;Val&gt;&amp; args) -&gt; Val {</div>
+<div class="line"><a id="l00521" name="l00521"></a><span class="lineno">  521</span><span class="keyword">auto</span> Compiler::int_bin_primitive(<span class="keyword">const</span> <span class="keywordtype">string</span>&amp; primitive, <span class="keyword">const</span> vector&lt;llvm::Value*&gt;&amp; args) -&gt; Val {</div>
 <div class="line"><a id="l00522" name="l00522"></a><span class="lineno">  522</span>  <span class="keyword">const</span> <span class="keyword">auto</span>&amp; a = args.at(0);</div>
 <div class="line"><a id="l00523" name="l00523"></a><span class="lineno">  523</span>  <span class="keyword">const</span> <span class="keyword">auto</span>&amp; b = args.at(1);</div>
 <div class="line"><a id="l00524" name="l00524"></a><span class="lineno">  524</span>  <span class="keyword">auto</span> hash = <a class="code hl_function" href="namespaceyume.html#a4d0b3ac909119ef64ef8a54f014993d9">const_hash</a>(primitive.data());</div>
@@ -611,391 +611,403 @@ $(function() {
 <div class="line"><a id="l00540" name="l00540"></a><span class="lineno">  540</span>  }</div>
 <div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span>}</div>
 <div class="line"><a id="l00542" name="l00542"></a><span class="lineno">  542</span> </div>
-<div class="line"><a id="l00543" name="l00543"></a><span class="lineno"><a class="line" href="classyume_1_1Compiler.html#a61a21c96faa508a89d1b75c86d6155e6">  543</a></span><span class="keyword">template</span> &lt;&gt; <span class="keyword">auto</span> Compiler::expression(<span class="keyword">const</span> <a class="code hl_class" href="classyume_1_1ast_1_1CallExpr.html">ast::CallExpr</a>&amp; expr, <span class="keywordtype">bool</span> mut) -&gt; <a class="code hl_struct" href="structyume_1_1Val.html">Val</a> {</div>
-<div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>  <span class="keyword">auto</span>* selected = expr.selected_overload();</div>
-<div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span>  llvm::Function* llvm_fn = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span>  <span class="keyword">const</span> <span class="keyword">auto</span>* ret_ty = selected-&gt;ast().val_ty();</div>
-<div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span>  <span class="keywordtype">bool</span> returns_mut = ret_ty != <span class="keyword">nullptr</span> &amp;&amp; ret_ty-&gt;is_mut();</div>
-<div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span> </div>
-<div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span>  <span class="keywordflow">if</span> (!returns_mut)</div>
-<div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span>    <a class="code hl_function" href="namespaceyume.html#af154d75481867fbdec142c3e5171ea18">not_mut</a>(<span class="stringliteral">&quot;call returning by value&quot;</span>, mut);</div>
-<div class="line"><a id="l00551" name="l00551"></a><span class="lineno">  551</span> </div>
-<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span>  vector&lt;Val&gt; args{};</div>
-<div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span>  vector&lt;const ty::Type*&gt; arg_types{};</div>
-<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span>  vector&lt;llvm::Value*&gt; llvm_args{};</div>
-<div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span> </div>
-<div class="line"><a id="l00556" name="l00556"></a><span class="lineno">  556</span>  <span class="keywordtype">unsigned</span> j = 0;</div>
-<div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span>  <span class="keyword">const</span> <span class="keyword">auto</span>&amp; selected_args = selected-&gt;ast().args();</div>
-<div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; i : expr.args()) {</div>
-<div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span>    <span class="keyword">auto</span> should_pass_by_mut = [&amp;](<span class="keywordtype">unsigned</span> index) {</div>
-<div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span>      <span class="keywordflow">if</span> (index &gt;= selected_args.size())</div>
-<div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// varargs function, logic will probably change later but for now, always pass by value</span></div>
-<div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span>      <span class="keywordflow">return</span> selected_args[index].val_ty()-&gt;is_mut();</div>
-<div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span>    };</div>
-<div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span> </div>
-<div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span>    <span class="keyword">auto</span> arg = body_expression(i, should_pass_by_mut(j));</div>
-<div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span>    args.push_back(arg);</div>
-<div class="line"><a id="l00567" name="l00567"></a><span class="lineno">  567</span>    llvm_args.push_back(arg.llvm());</div>
-<div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span>    arg_types.push_back(i.val_ty());</div>
-<div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span>    j++;</div>
-<div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span>  }</div>
-<div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span> </div>
-<div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span>  <span class="keyword">auto</span> val = [&amp;]() -&gt; <a class="code hl_struct" href="structyume_1_1Val.html">yume::Val</a> {</div>
-<div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>    <span class="keywordflow">if</span> (selected-&gt;ast().primitive()) {</div>
-<div class="line"><a id="l00574" name="l00574"></a><span class="lineno">  574</span>      <span class="keyword">auto</span> primitive = get&lt;string&gt;(selected-&gt;body());</div>
-<div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span>      <span class="keywordflow">if</span> (primitive == <span class="stringliteral">&quot;libc&quot;</span>) {</div>
-<div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>        llvm_fn = selected-&gt;declaration(*<span class="keyword">this</span>, <span class="keyword">false</span>);</div>
-<div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span>      } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (primitive == <span class="stringliteral">&quot;ptrto&quot;</span>) {</div>
-<div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span>        <span class="keywordflow">return</span> args.at(0);</div>
-<div class="line"><a id="l00579" name="l00579"></a><span class="lineno">  579</span>      } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (primitive == <span class="stringliteral">&quot;slice_size&quot;</span>) {</div>
-<div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span>        <span class="keywordflow">return</span> m_builder-&gt;CreateExtractValue(args.at(0), 1);</div>
-<div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span>      } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (primitive == <span class="stringliteral">&quot;slice_ptr&quot;</span>) {</div>
-<div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span>        <span class="keywordflow">if</span> (returns_mut) {</div>
-<div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span>          llvm::Type* result_type = llvm_type(arg_types[0]-&gt;without_qual());</div>
-<div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span>          <span class="keywordflow">return</span> m_builder-&gt;CreateStructGEP(result_type, args.at(0), 0, <span class="stringliteral">&quot;sl.ptr.mut&quot;</span>);</div>
-<div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span>        }</div>
-<div class="line"><a id="l00586" name="l00586"></a><span class="lineno">  586</span>        <span class="keywordflow">return</span> m_builder-&gt;CreateExtractValue(args.at(0), 0, <span class="stringliteral">&quot;sl.ptr.x&quot;</span>);</div>
-<div class="line"><a id="l00587" name="l00587"></a><span class="lineno">  587</span>      } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (primitive == <span class="stringliteral">&quot;slice_dup&quot;</span>) {</div>
-<div class="line"><a id="l00588" name="l00588"></a><span class="lineno">  588</span>        <span class="keywordflow">return</span> m_builder-&gt;CreateInsertValue(</div>
-<div class="line"><a id="l00589" name="l00589"></a><span class="lineno">  589</span>            args.at(0), m_builder-&gt;CreateAdd(m_builder-&gt;CreateExtractValue(args.at(0), 1), args.at(1)), 1);</div>
-<div class="line"><a id="l00590" name="l00590"></a><span class="lineno">  590</span>      } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (primitive == <span class="stringliteral">&quot;set_at&quot;</span>) {</div>
-<div class="line"><a id="l00591" name="l00591"></a><span class="lineno">  591</span>        <span class="keyword">auto</span>* result_type = llvm_type(*arg_types[0]-&gt;without_qual().ptr_base());</div>
-<div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span>        llvm::Value* value = args.at(2);</div>
-<div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span>        llvm::Value* base = m_builder-&gt;CreateGEP(result_type, args.at(0), args.at(1).llvm(), <span class="stringliteral">&quot;p.set_at.gep&quot;</span>);</div>
-<div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span>        m_builder-&gt;CreateStore(value, base);</div>
-<div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span>        <span class="keywordflow">return</span> args.at(2);</div>
-<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>      } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (primitive == <span class="stringliteral">&quot;get_at&quot;</span>) {</div>
-<div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span>        <span class="keyword">auto</span>* result_type = llvm_type(*arg_types[0]-&gt;without_qual().ptr_base());</div>
-<div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span>        llvm::Value* base = args.at(0);</div>
-<div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span>        base = m_builder-&gt;CreateGEP(result_type, base, args.at(1).llvm(), <span class="stringliteral">&quot;p.get_at.gep&quot;</span>);</div>
-<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>        <span class="keywordflow">return</span> base;</div>
-<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>      } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (primitive.starts_with(<span class="stringliteral">&quot;ib_&quot;</span>)) {</div>
-<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span>        <span class="keywordflow">return</span> int_bin_primitive(primitive, args);</div>
-<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span>      } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span>        <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Unknown primitive &quot;</span>s + primitive);</div>
-<div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span>      }</div>
-<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span>      llvm_fn = selected-&gt;declaration(*<span class="keyword">this</span>);</div>
-<div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span>    }</div>
-<div class="line"><a id="l00609" name="l00609"></a><span class="lineno">  609</span> </div>
-<div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span>    <span class="keywordflow">return</span> m_builder-&gt;CreateCall(llvm_fn, llvm_args);</div>
-<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span>  }();</div>
-<div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span> </div>
-<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>  <span class="keywordflow">if</span> (returns_mut &amp;&amp; !mut)</div>
-<div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span>    <span class="keywordflow">return</span> m_builder-&gt;CreateLoad(llvm_type(*ret_ty-&gt;qual_base()), val, <span class="stringliteral">&quot;c.nmut.deref&quot;</span>);</div>
-<div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span>  <span class="keywordflow">return</span> val;</div>
-<div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span>}</div>
-<div class="line"><a id="l00617" name="l00617"></a><span class="lineno">  617</span> </div>
-<div class="line"><a id="l00618" name="l00618"></a><span class="lineno"><a class="line" href="classyume_1_1Compiler.html#a26dc9301b303ea47786da2202e2b3a9d">  618</a></span><span class="keyword">template</span> &lt;&gt; <span class="keyword">auto</span> Compiler::expression(<span class="keyword">const</span> <a class="code hl_class" href="classyume_1_1ast_1_1AssignExpr.html">ast::AssignExpr</a>&amp; expr, <span class="keywordtype">bool</span> mut) -&gt; <a class="code hl_struct" href="structyume_1_1Val.html">Val</a> {</div>
-<div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span>  <span class="keywordflow">if</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* target_var = dyn_cast&lt;ast::VarExpr&gt;(&amp;expr.target())) {</div>
-<div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span>    <span class="keyword">auto</span> expr_val = body_expression(expr.value(), mut);</div>
-<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span>    <span class="keyword">auto</span> target_val = m_scope.at(target_var-&gt;name()).value;</div>
-<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span>    m_builder-&gt;CreateStore(expr_val, target_val);</div>
-<div class="line"><a id="l00623" name="l00623"></a><span class="lineno">  623</span>    <span class="keywordflow">return</span> expr_val;</div>
-<div class="line"><a id="l00624" name="l00624"></a><span class="lineno">  624</span>  }</div>
-<div class="line"><a id="l00625" name="l00625"></a><span class="lineno">  625</span>  <span class="keywordflow">if</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* field_access = dyn_cast&lt;ast::FieldAccessExpr&gt;(&amp;expr.target())) {</div>
-<div class="line"><a id="l00626" name="l00626"></a><span class="lineno">  626</span>    <span class="keyword">auto</span> base = body_expression(field_access-&gt;base(), <span class="keyword">true</span>);</div>
-<div class="line"><a id="l00627" name="l00627"></a><span class="lineno">  627</span>    <span class="keyword">auto</span> base_name = field_access-&gt;field();</div>
-<div class="line"><a id="l00628" name="l00628"></a><span class="lineno">  628</span>    <span class="keywordtype">int</span> base_offset = field_access-&gt;offset();</div>
+<div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span><span class="keyword">auto</span> Compiler::primitive(Fn* fn, <span class="keyword">const</span> vector&lt;llvm::Value*&gt;&amp; args, <span class="keyword">const</span> vector&lt;const ty::Type*&gt;&amp; types,</div>
+<div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>                         <span class="keyword">const</span> ty::Type* ret_ty) -&gt; optional&lt;Val&gt; {</div>
+<div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span>  <span class="keywordflow">if</span> (!fn-&gt;ast().primitive())</div>
+<div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span>    <span class="keywordflow">return</span> {};</div>
+<div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span> </div>
+<div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span>  <span class="keyword">auto</span> primitive = get&lt;string&gt;(fn-&gt;body());</div>
+<div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span>  <span class="keywordtype">bool</span> returns_mut = ret_ty != <span class="keyword">nullptr</span> &amp;&amp; ret_ty-&gt;is_mut();</div>
+<div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span> </div>
+<div class="line"><a id="l00551" name="l00551"></a><span class="lineno">  551</span>  <span class="keywordflow">if</span> (primitive == <span class="stringliteral">&quot;libc&quot;</span>)</div>
+<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span>    <span class="keywordflow">return</span> m_builder-&gt;CreateCall(fn-&gt;declaration(*<span class="keyword">this</span>, <span class="keyword">false</span>), args);</div>
+<div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span>  <span class="keywordflow">if</span> (primitive == <span class="stringliteral">&quot;ptrto&quot;</span>)</div>
+<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span>    <span class="keywordflow">return</span> args.at(0);</div>
+<div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span>  <span class="keywordflow">if</span> (primitive == <span class="stringliteral">&quot;slice_size&quot;</span>)</div>
+<div class="line"><a id="l00556" name="l00556"></a><span class="lineno">  556</span>    <span class="keywordflow">return</span> m_builder-&gt;CreateExtractValue(args.at(0), 1);</div>
+<div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span>  <span class="keywordflow">if</span> (primitive == <span class="stringliteral">&quot;slice_ptr&quot;</span>) {</div>
+<div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span>    <span class="keywordflow">if</span> (returns_mut) {</div>
+<div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span>      llvm::Type* result_type = llvm_type(types[0]-&gt;without_qual());</div>
+<div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span>      <span class="keywordflow">return</span> m_builder-&gt;CreateStructGEP(result_type, args.at(0), 0, <span class="stringliteral">&quot;sl.ptr.mut&quot;</span>);</div>
+<div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span>    }</div>
+<div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span>    <span class="keywordflow">return</span> m_builder-&gt;CreateExtractValue(args.at(0), 0, <span class="stringliteral">&quot;sl.ptr.x&quot;</span>);</div>
+<div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span>  }</div>
+<div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span>  <span class="keywordflow">if</span> (primitive == <span class="stringliteral">&quot;slice_dup&quot;</span>) {</div>
+<div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span>    <span class="keywordflow">return</span> m_builder-&gt;CreateInsertValue(</div>
+<div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span>        args.at(0), m_builder-&gt;CreateAdd(m_builder-&gt;CreateExtractValue(args.at(0), 1), args.at(1)), 1);</div>
+<div class="line"><a id="l00567" name="l00567"></a><span class="lineno">  567</span>  }</div>
+<div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span>  <span class="keywordflow">if</span> (primitive == <span class="stringliteral">&quot;set_at&quot;</span>) {</div>
+<div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span>    <span class="keyword">auto</span>* result_type = llvm_type(*types[0]-&gt;without_qual().ptr_base());</div>
+<div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span>    llvm::Value* value = args.at(2);</div>
+<div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span>    llvm::Value* base = m_builder-&gt;CreateGEP(result_type, args.at(0), args.at(1), <span class="stringliteral">&quot;p.set_at.gep&quot;</span>);</div>
+<div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span>    m_builder-&gt;CreateStore(value, base);</div>
+<div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>    <span class="keywordflow">return</span> args.at(2);</div>
+<div class="line"><a id="l00574" name="l00574"></a><span class="lineno">  574</span>  }</div>
+<div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span>  <span class="keywordflow">if</span> (primitive == <span class="stringliteral">&quot;get_at&quot;</span>) {</div>
+<div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>    <span class="keyword">auto</span>* result_type = llvm_type(*types[0]-&gt;without_qual().ptr_base());</div>
+<div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span>    llvm::Value* base = args.at(0);</div>
+<div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span>    base = m_builder-&gt;CreateGEP(result_type, base, args.at(1), <span class="stringliteral">&quot;p.get_at.gep&quot;</span>);</div>
+<div class="line"><a id="l00579" name="l00579"></a><span class="lineno">  579</span>    <span class="keywordflow">return</span> base;</div>
+<div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span>  }</div>
+<div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span>  <span class="keywordflow">if</span> (primitive.starts_with(<span class="stringliteral">&quot;ib_&quot;</span>))</div>
+<div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span>    <span class="keywordflow">return</span> int_bin_primitive(primitive, args);</div>
+<div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span>  <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Unknown primitive &quot;</span>s + primitive);</div>
+<div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span>};</div>
+<div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span> </div>
+<div class="line"><a id="l00586" name="l00586"></a><span class="lineno"><a class="line" href="classyume_1_1Compiler.html#a61a21c96faa508a89d1b75c86d6155e6">  586</a></span><span class="keyword">template</span> &lt;&gt; <span class="keyword">auto</span> Compiler::expression(<span class="keyword">const</span> <a class="code hl_class" href="classyume_1_1ast_1_1CallExpr.html">ast::CallExpr</a>&amp; expr, <span class="keywordtype">bool</span> mut) -&gt; <a class="code hl_struct" href="structyume_1_1Val.html">Val</a> {</div>
+<div class="line"><a id="l00587" name="l00587"></a><span class="lineno">  587</span>  <span class="keyword">auto</span>* selected = expr.selected_overload();</div>
+<div class="line"><a id="l00588" name="l00588"></a><span class="lineno">  588</span>  llvm::Function* llvm_fn = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l00589" name="l00589"></a><span class="lineno">  589</span>  <span class="keyword">const</span> <span class="keyword">auto</span>* ret_ty = selected-&gt;ast().val_ty();</div>
+<div class="line"><a id="l00590" name="l00590"></a><span class="lineno">  590</span>  <span class="keywordtype">bool</span> returns_mut = ret_ty != <span class="keyword">nullptr</span> &amp;&amp; ret_ty-&gt;is_mut();</div>
+<div class="line"><a id="l00591" name="l00591"></a><span class="lineno">  591</span> </div>
+<div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span>  <span class="keywordflow">if</span> (!returns_mut)</div>
+<div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span>    <a class="code hl_function" href="namespaceyume.html#af154d75481867fbdec142c3e5171ea18">not_mut</a>(<span class="stringliteral">&quot;call returning by value&quot;</span>, mut);</div>
+<div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span> </div>
+<div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span>  vector&lt;Val&gt; args{};</div>
+<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>  vector&lt;const ty::Type*&gt; arg_types{};</div>
+<div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span>  vector&lt;llvm::Value*&gt; llvm_args{};</div>
+<div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span> </div>
+<div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span>  <span class="keywordtype">unsigned</span> j = 0;</div>
+<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>  <span class="keyword">const</span> <span class="keyword">auto</span>&amp; selected_args = selected-&gt;ast().args();</div>
+<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; i : expr.args()) {</div>
+<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span>    <span class="keyword">auto</span> should_pass_by_mut = [&amp;](<span class="keywordtype">unsigned</span> index) {</div>
+<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span>      <span class="keywordflow">if</span> (index &gt;= selected_args.size())</div>
+<div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// varargs function, logic will probably change later but for now, always pass by value</span></div>
+<div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span>      <span class="keywordflow">return</span> selected_args[index].val_ty()-&gt;is_mut();</div>
+<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span>    };</div>
+<div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span> </div>
+<div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span>    <span class="keyword">auto</span> arg = body_expression(i, should_pass_by_mut(j));</div>
+<div class="line"><a id="l00609" name="l00609"></a><span class="lineno">  609</span>    args.push_back(arg);</div>
+<div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span>    llvm_args.push_back(arg.llvm());</div>
+<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span>    arg_types.push_back(i.val_ty());</div>
+<div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span>    j++;</div>
+<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>  }</div>
+<div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span> </div>
+<div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span>  <a class="code hl_struct" href="structyume_1_1Val.html">Val</a> val{<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span> </div>
+<div class="line"><a id="l00617" name="l00617"></a><span class="lineno">  617</span>  <span class="keyword">auto</span> prim = primitive(selected, llvm_args, arg_types, ret_ty);</div>
+<div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span>  <span class="keywordflow">if</span> (prim.has_value()) {</div>
+<div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span>    val = *prim;</div>
+<div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span>  } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span>    llvm_fn = selected-&gt;declaration(*<span class="keyword">this</span>);</div>
+<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span>    val = m_builder-&gt;CreateCall(llvm_fn, llvm_args);</div>
+<div class="line"><a id="l00623" name="l00623"></a><span class="lineno">  623</span>  }</div>
+<div class="line"><a id="l00624" name="l00624"></a><span class="lineno">  624</span> </div>
+<div class="line"><a id="l00625" name="l00625"></a><span class="lineno">  625</span>  <span class="keywordflow">if</span> (returns_mut &amp;&amp; !mut)</div>
+<div class="line"><a id="l00626" name="l00626"></a><span class="lineno">  626</span>    <span class="keywordflow">return</span> m_builder-&gt;CreateLoad(llvm_type(*ret_ty-&gt;qual_base()), val, <span class="stringliteral">&quot;c.nmut.deref&quot;</span>);</div>
+<div class="line"><a id="l00627" name="l00627"></a><span class="lineno">  627</span>  <span class="keywordflow">return</span> val;</div>
+<div class="line"><a id="l00628" name="l00628"></a><span class="lineno">  628</span>}</div>
 <div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span> </div>
-<div class="line"><a id="l00630" name="l00630"></a><span class="lineno">  630</span>    <span class="keyword">auto</span> expr_val = body_expression(expr.value(), mut);</div>
-<div class="line"><a id="l00631" name="l00631"></a><span class="lineno">  631</span>    <span class="keyword">auto</span>* struct_type = llvm_type(cast&lt;ty::Struct&gt;(field_access-&gt;base().val_ty()-&gt;without_qual()));</div>
-<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span> </div>
-<div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span>    <span class="keyword">auto</span>* gep = m_builder-&gt;CreateStructGEP(struct_type, base, base_offset, <span class="stringliteral">&quot;s.sf.&quot;</span>s + base_name);</div>
-<div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span>    m_builder-&gt;CreateStore(expr_val, gep);</div>
+<div class="line"><a id="l00630" name="l00630"></a><span class="lineno"><a class="line" href="classyume_1_1Compiler.html#a26dc9301b303ea47786da2202e2b3a9d">  630</a></span><span class="keyword">template</span> &lt;&gt; <span class="keyword">auto</span> Compiler::expression(<span class="keyword">const</span> <a class="code hl_class" href="classyume_1_1ast_1_1AssignExpr.html">ast::AssignExpr</a>&amp; expr, <span class="keywordtype">bool</span> mut) -&gt; <a class="code hl_struct" href="structyume_1_1Val.html">Val</a> {</div>
+<div class="line"><a id="l00631" name="l00631"></a><span class="lineno">  631</span>  <span class="keywordflow">if</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* target_var = dyn_cast&lt;ast::VarExpr&gt;(&amp;expr.target())) {</div>
+<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span>    <span class="keyword">auto</span> expr_val = body_expression(expr.value(), mut);</div>
+<div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span>    <span class="keyword">auto</span> target_val = m_scope.at(target_var-&gt;name()).value;</div>
+<div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span>    m_builder-&gt;CreateStore(expr_val, target_val);</div>
 <div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span>    <span class="keywordflow">return</span> expr_val;</div>
 <div class="line"><a id="l00636" name="l00636"></a><span class="lineno">  636</span>  }</div>
-<div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span>  <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Can&#39;t assign to target &quot;</span>s + expr.target().kind_name());</div>
-<div class="line"><a id="l00638" name="l00638"></a><span class="lineno">  638</span>}</div>
-<div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span> </div>
-<div class="line"><a id="l00640" name="l00640"></a><span class="lineno"><a class="line" href="classyume_1_1Compiler.html#a4dd0cc2f165a5a1d8b16ba27b7f90ac3">  640</a></span><span class="keyword">template</span> &lt;&gt; <span class="keyword">auto</span> Compiler::expression(<span class="keyword">const</span> <a class="code hl_class" href="classyume_1_1ast_1_1CtorExpr.html">ast::CtorExpr</a>&amp; expr, <span class="keywordtype">bool</span> mut) -&gt; <a class="code hl_struct" href="structyume_1_1Val.html">Val</a> {</div>
-<div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span>  <span class="keyword">const</span> <span class="keyword">auto</span>&amp; type = *expr.val_ty();</div>
-<div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span>  <span class="keywordflow">if</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* struct_type = dyn_cast&lt;ty::Struct&gt;(&amp;type.without_qual())) {</div>
-<div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span>    <span class="keyword">auto</span>* llvm_struct_type = llvm_type(*struct_type);</div>
+<div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span>  <span class="keywordflow">if</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* field_access = dyn_cast&lt;ast::FieldAccessExpr&gt;(&amp;expr.target())) {</div>
+<div class="line"><a id="l00638" name="l00638"></a><span class="lineno">  638</span>    <span class="keyword">auto</span> base = body_expression(field_access-&gt;base(), <span class="keyword">true</span>);</div>
+<div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span>    <span class="keyword">auto</span> base_name = field_access-&gt;field();</div>
+<div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span>    <span class="keywordtype">int</span> base_offset = field_access-&gt;offset();</div>
+<div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span> </div>
+<div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span>    <span class="keyword">auto</span> expr_val = body_expression(expr.value(), mut);</div>
+<div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span>    <span class="keyword">auto</span>* struct_type = llvm_type(cast&lt;ty::Struct&gt;(field_access-&gt;base().val_ty()-&gt;without_qual()));</div>
 <div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span> </div>
-<div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span>    llvm::Value* alloc = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span>    <span class="comment">// TODO: #4 determine what kind of allocation must be done, and if at all. It&#39;ll probably require a complicated</span></div>
-<div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span>    <span class="comment">// semantic step to determine object lifetime, which would probably be evaluated before compilation of these</span></div>
-<div class="line"><a id="l00648" name="l00648"></a><span class="lineno">  648</span>    <span class="comment">// expressions. currently just using &quot;mut&quot; constraint, which probably won&#39;t be permanent and is probably</span></div>
-<div class="line"><a id="l00649" name="l00649"></a><span class="lineno">  649</span>    <span class="comment">// faulty, but, oh well</span></div>
-<div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span><span class="comment"></span> </div>
-<div class="line"><a id="l00651" name="l00651"></a><span class="lineno">  651</span><span class="comment">    //// Heap allocation</span></div>
-<div class="line"><a id="l00652" name="l00652"></a><span class="lineno">  652</span><span class="comment"></span>    <span class="keywordflow">if</span> (mut) {</div>
-<div class="line"><a id="l00653" name="l00653"></a><span class="lineno">  653</span>      <span class="keyword">auto</span>* alloc_size = ConstantExpr::getSizeOf(llvm_struct_type);</div>
-<div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span>      alloc_size = ConstantExpr::getTruncOrBitCast(alloc_size, m_builder-&gt;getInt32Ty());</div>
-<div class="line"><a id="l00655" name="l00655"></a><span class="lineno">  655</span>      alloc = llvm::CallInst::CreateMalloc(m_builder-&gt;GetInsertBlock(), m_builder-&gt;getInt32Ty(), llvm_struct_type,</div>
-<div class="line"><a id="l00656" name="l00656"></a><span class="lineno">  656</span>                                           alloc_size, <span class="keyword">nullptr</span>, <span class="keyword">nullptr</span>, <span class="stringliteral">&quot;s.ctor.malloc&quot;</span>);</div>
-<div class="line"><a id="l00657" name="l00657"></a><span class="lineno">  657</span>      alloc = m_builder-&gt;Insert(alloc);</div>
-<div class="line"><a id="l00658" name="l00658"></a><span class="lineno">  658</span>    }</div>
-<div class="line"><a id="l00659" name="l00659"></a><span class="lineno">  659</span><span class="comment"></span> </div>
-<div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span><span class="comment">    //// Stack allocation</span></div>
-<div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span><span class="comment"></span>    <span class="comment">// alloc = m_builder-&gt;CreateAlloca(llvm_struct_type, 0, nullptr, &quot;s.ctor.alloca&quot;);</span></div>
-<div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span> </div>
-<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span>    <span class="keyword">auto</span> i = 0;</div>
-<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>    llvm::Value* base_value = UndefValue::get(llvm_struct_type);</div>
-<div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span>    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; arg : expr.args()) {</div>
-<div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>      <span class="keyword">const</span> <span class="keyword">auto</span>&amp; [target_type, target_name] = struct_type-&gt;fields().begin()[i];</div>
-<div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span>      <span class="keyword">auto</span> field_value = body_expression(arg);</div>
-<div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span>      base_value = m_builder-&gt;CreateInsertValue(base_value, field_value, i, <span class="stringliteral">&quot;s.ctor.wf.&quot;</span> + target_name);</div>
-<div class="line"><a id="l00669" name="l00669"></a><span class="lineno">  669</span>      i++;</div>
+<div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span>    <span class="keyword">auto</span>* gep = m_builder-&gt;CreateStructGEP(struct_type, base, base_offset, <span class="stringliteral">&quot;s.sf.&quot;</span>s + base_name);</div>
+<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span>    m_builder-&gt;CreateStore(expr_val, gep);</div>
+<div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span>    <span class="keywordflow">return</span> expr_val;</div>
+<div class="line"><a id="l00648" name="l00648"></a><span class="lineno">  648</span>  }</div>
+<div class="line"><a id="l00649" name="l00649"></a><span class="lineno">  649</span>  <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Can&#39;t assign to target &quot;</span>s + expr.target().kind_name());</div>
+<div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span>}</div>
+<div class="line"><a id="l00651" name="l00651"></a><span class="lineno">  651</span> </div>
+<div class="line"><a id="l00652" name="l00652"></a><span class="lineno"><a class="line" href="classyume_1_1Compiler.html#a4dd0cc2f165a5a1d8b16ba27b7f90ac3">  652</a></span><span class="keyword">template</span> &lt;&gt; <span class="keyword">auto</span> Compiler::expression(<span class="keyword">const</span> <a class="code hl_class" href="classyume_1_1ast_1_1CtorExpr.html">ast::CtorExpr</a>&amp; expr, <span class="keywordtype">bool</span> mut) -&gt; <a class="code hl_struct" href="structyume_1_1Val.html">Val</a> {</div>
+<div class="line"><a id="l00653" name="l00653"></a><span class="lineno">  653</span>  <span class="keyword">const</span> <span class="keyword">auto</span>&amp; type = *expr.val_ty();</div>
+<div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span>  <span class="keywordflow">if</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* struct_type = dyn_cast&lt;ty::Struct&gt;(&amp;type.without_qual())) {</div>
+<div class="line"><a id="l00655" name="l00655"></a><span class="lineno">  655</span>    <span class="keyword">auto</span>* llvm_struct_type = llvm_type(*struct_type);</div>
+<div class="line"><a id="l00656" name="l00656"></a><span class="lineno">  656</span> </div>
+<div class="line"><a id="l00657" name="l00657"></a><span class="lineno">  657</span>    llvm::Value* alloc = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l00658" name="l00658"></a><span class="lineno">  658</span>    <span class="comment">// TODO: #4 determine what kind of allocation must be done, and if at all. It&#39;ll probably require a complicated</span></div>
+<div class="line"><a id="l00659" name="l00659"></a><span class="lineno">  659</span>    <span class="comment">// semantic step to determine object lifetime, which would probably be evaluated before compilation of these</span></div>
+<div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span>    <span class="comment">// expressions. currently just using &quot;mut&quot; constraint, which probably won&#39;t be permanent and is probably</span></div>
+<div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span>    <span class="comment">// faulty, but, oh well</span></div>
+<div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span><span class="comment"></span> </div>
+<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span><span class="comment">    //// Heap allocation</span></div>
+<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span><span class="comment"></span>    <span class="keywordflow">if</span> (mut) {</div>
+<div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span>      <span class="keyword">auto</span>* alloc_size = ConstantExpr::getSizeOf(llvm_struct_type);</div>
+<div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>      alloc_size = ConstantExpr::getTruncOrBitCast(alloc_size, m_builder-&gt;getInt32Ty());</div>
+<div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span>      alloc = llvm::CallInst::CreateMalloc(m_builder-&gt;GetInsertBlock(), m_builder-&gt;getInt32Ty(), llvm_struct_type,</div>
+<div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span>                                           alloc_size, <span class="keyword">nullptr</span>, <span class="keyword">nullptr</span>, <span class="stringliteral">&quot;s.ctor.malloc&quot;</span>);</div>
+<div class="line"><a id="l00669" name="l00669"></a><span class="lineno">  669</span>      alloc = m_builder-&gt;Insert(alloc);</div>
 <div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span>    }</div>
-<div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span> </div>
-<div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span>    <span class="keywordflow">if</span> (mut) {</div>
-<div class="line"><a id="l00673" name="l00673"></a><span class="lineno">  673</span>      m_builder-&gt;CreateStore(base_value, alloc);</div>
-<div class="line"><a id="l00674" name="l00674"></a><span class="lineno">  674</span>      base_value = alloc;</div>
-<div class="line"><a id="l00675" name="l00675"></a><span class="lineno">  675</span>    }</div>
-<div class="line"><a id="l00676" name="l00676"></a><span class="lineno">  676</span> </div>
-<div class="line"><a id="l00677" name="l00677"></a><span class="lineno">  677</span>    <span class="keywordflow">return</span> base_value;</div>
-<div class="line"><a id="l00678" name="l00678"></a><span class="lineno">  678</span>  }</div>
-<div class="line"><a id="l00679" name="l00679"></a><span class="lineno">  679</span>  <span class="keywordflow">if</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* int_type = dyn_cast&lt;ty::Int&gt;(&amp;type.without_qual())) {</div>
-<div class="line"><a id="l00680" name="l00680"></a><span class="lineno">  680</span>    <a class="code hl_function" href="namespaceyume.html#a64670ac9f02bffbee6be875e64e4e7f6">yume_assert</a>(expr.args().size() == 1, <span class="stringliteral">&quot;Numeric cast can only contain a single argument&quot;</span>);</div>
-<div class="line"><a id="l00681" name="l00681"></a><span class="lineno">  681</span>    <span class="keyword">auto</span>&amp; cast_from = expr.args()[0];</div>
-<div class="line"><a id="l00682" name="l00682"></a><span class="lineno">  682</span>    <a class="code hl_function" href="namespaceyume.html#a64670ac9f02bffbee6be875e64e4e7f6">yume_assert</a>(isa&lt;ty::Int&gt;(cast_from.val_ty()-&gt;without_qual()), <span class="stringliteral">&quot;Numeric cast must convert from int&quot;</span>);</div>
-<div class="line"><a id="l00683" name="l00683"></a><span class="lineno">  683</span>    <span class="keyword">auto</span> base = body_expression(cast_from);</div>
-<div class="line"><a id="l00684" name="l00684"></a><span class="lineno">  684</span>    <span class="keywordflow">if</span> (cast&lt;ty::Int&gt;(cast_from.val_ty()-&gt;without_qual()).is_signed()) {</div>
-<div class="line"><a id="l00685" name="l00685"></a><span class="lineno">  685</span>      <span class="keywordflow">return</span> m_builder-&gt;CreateSExtOrTrunc(base, llvm_type(*int_type));</div>
-<div class="line"><a id="l00686" name="l00686"></a><span class="lineno">  686</span>    }</div>
-<div class="line"><a id="l00687" name="l00687"></a><span class="lineno">  687</span>    <span class="keywordflow">return</span> m_builder-&gt;CreateZExtOrTrunc(base, llvm_type(*int_type));</div>
-<div class="line"><a id="l00688" name="l00688"></a><span class="lineno">  688</span>  }</div>
-<div class="line"><a id="l00689" name="l00689"></a><span class="lineno">  689</span>  <span class="keywordflow">if</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* slice_type = dyn_cast&lt;ty::Ptr&gt;(&amp;type.without_qual());</div>
-<div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span>      slice_type != <span class="keyword">nullptr</span> &amp;&amp; slice_type-&gt;has_qualifier(<a class="code hl_enumvalue" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706ad140d37ad98c12ccd8e1c432f548bcdb">Qualifier::Slice</a>)) {</div>
-<div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span>    <a class="code hl_function" href="namespaceyume.html#a64670ac9f02bffbee6be875e64e4e7f6">yume_assert</a>(expr.args().size() == 1, <span class="stringliteral">&quot;Slice constructor can only contain a single argument&quot;</span>);</div>
-<div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span>    <span class="keyword">auto</span>&amp; slice_size_expr = expr.args()[0];</div>
-<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span>    <a class="code hl_function" href="namespaceyume.html#a64670ac9f02bffbee6be875e64e4e7f6">yume_assert</a>(isa&lt;ty::Int&gt;(slice_size_expr.val_ty()-&gt;without_qual()), <span class="stringliteral">&quot;Slice constructor must convert from int&quot;</span>);</div>
-<div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span>    <span class="keyword">auto</span> slice_size = body_expression(slice_size_expr);</div>
-<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span> </div>
-<div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span>    <span class="keyword">auto</span>* llvm_slice_type = llvm_type(*slice_type);</div>
-<div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span>    <span class="keyword">const</span> <span class="keyword">auto</span>&amp; base_ty_type = *slice_type-&gt;ptr_base(); <span class="comment">// ???</span></div>
-<div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span>    <span class="keyword">auto</span>* base_type = llvm_type(base_ty_type);</div>
-<div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span><span class="comment"></span> </div>
-<div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span><span class="comment">    //// Stack allocation</span></div>
-<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span><span class="comment"></span>    <span class="comment">// if (auto* const_value = dyn_cast&lt;llvm::ConstantInt&gt;(slice_size.llvm())) {</span></div>
-<div class="line"><a id="l00702" name="l00702"></a><span class="lineno">  702</span>    <span class="comment">//   auto slice_size_val = const_value-&gt;getLimitedValue();</span></div>
-<div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span>    <span class="comment">//   auto* array_type = ArrayType::get(base_type, slice_size_val);</span></div>
-<div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span>    <span class="comment">//   auto* array_alloc = m_builder-&gt;CreateAlloca(array_type, nullptr, &quot;sl.ctor.alloc&quot;);</span></div>
-<div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span> </div>
-<div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span>    <span class="comment">//   auto* data_ptr = m_builder-&gt;CreateBitCast(array_alloc, base_type-&gt;getPointerTo(), &quot;sl.ctor.ptr&quot;);</span></div>
-<div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span>    <span class="comment">//   llvm::Value* slice_inst = llvm::UndefValue::get(llvm_slice_type);</span></div>
-<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span>    <span class="comment">//   slice_inst = m_builder-&gt;CreateInsertValue(slice_inst, data_ptr, 0);</span></div>
-<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span>    <span class="comment">//   slice_inst = m_builder-&gt;CreateInsertValue(slice_inst, m_builder-&gt;getInt64(slice_size_val), 1);</span></div>
-<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span>    <span class="comment">//   slice_inst-&gt;setName(&quot;sl.ctor.inst&quot;);</span></div>
-<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span> </div>
-<div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span>    <span class="comment">//   return slice_inst;</span></div>
-<div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span>    <span class="comment">// }</span></div>
-<div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span> </div>
-<div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span>    <span class="comment">// TODO: the commented-out block above stack-allocates a slice constructor if its size can be determined</span></div>
-<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span>    <span class="comment">// trivially. However, since it references stack memory, a slice allocated this way could never be feasibly</span></div>
-<div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span>    <span class="comment">// returned or passed into a function which stores a reference to it, etc. The compiler currently does nothing</span></div>
-<div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span>    <span class="comment">// resembling &quot;escape analysis&quot;, however something like that might be needed to perform an optimization like</span></div>
-<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span>    <span class="comment">// shown above.</span></div>
-<div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span>    <span class="comment">// TODO: Note that also a slice could be stack-allocated even if its size *wasn&#39;t* known at compile time,</span></div>
-<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span>    <span class="comment">// however, I simply didn&#39;t know how to do that when i wrote the above snipped. But, since its problematic</span></div>
-<div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span>    <span class="comment">// anyway, it remains unfixed (and commented out); revisit later.</span></div>
-<div class="line"><a id="l00723" name="l00723"></a><span class="lineno">  723</span>    <span class="comment">// TODO: A large slice may be unfeasible to be stack-allocated anyway, so in addition to the above points,</span></div>
-<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span>    <span class="comment">// slice size could also be a consideration. Perhaps we don&#39;t *want* to stack-allocate unknown-sized slices as</span></div>
-<div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span>    <span class="comment">// they may be absurdly huge in size and cause stack overflow.</span></div>
-<div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span>    <span class="comment">// Related: #4</span></div>
-<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span> </div>
-<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span>    <span class="keyword">auto</span>* alloc_size = ConstantExpr::getSizeOf(base_type);</div>
-<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span>    alloc_size = ConstantExpr::getTruncOrBitCast(alloc_size, m_builder-&gt;getInt32Ty());</div>
-<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span>    <span class="keyword">auto</span>* array_size = m_builder-&gt;CreateTruncOrBitCast(slice_size, m_builder-&gt;getInt32Ty(), <span class="stringliteral">&quot;sl.ctor.size&quot;</span>);</div>
-<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span>    <span class="keyword">auto</span>* array_alloc = llvm::CallInst::CreateMalloc(m_builder-&gt;GetInsertBlock(), m_builder-&gt;getInt32Ty(), base_type,</div>
-<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>                                                     alloc_size, array_size, <span class="keyword">nullptr</span>, <span class="stringliteral">&quot;sl.ctor.malloc&quot;</span>);</div>
-<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span> </div>
-<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span>    <span class="keyword">auto</span>* data_ptr = m_builder-&gt;Insert(array_alloc);</div>
-<div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span>    <span class="keyword">auto</span>* data_size = m_builder-&gt;CreateSExtOrBitCast(slice_size, m_builder-&gt;getInt64Ty());</div>
-<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span>    llvm::Value* slice_inst = llvm::UndefValue::get(llvm_slice_type);</div>
-<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span>    slice_inst = m_builder-&gt;CreateInsertValue(slice_inst, data_ptr, 0);</div>
-<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span>    slice_inst = m_builder-&gt;CreateInsertValue(slice_inst, data_size, 1);</div>
-<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span>    slice_inst-&gt;setName(<span class="stringliteral">&quot;sl.ctor.inst&quot;</span>);</div>
-<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span> </div>
-<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span>    <span class="keyword">auto</span>* current_block = m_builder-&gt;GetInsertBlock();</div>
-<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span>    m_builder-&gt;SetInsertPoint(m_current_fn-&gt;m_decl_bb);</div>
-<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>    <span class="keyword">auto</span>* iter_alloc = m_builder-&gt;CreateAlloca(m_builder-&gt;getInt64Ty(), <span class="keyword">nullptr</span>, <span class="stringliteral">&quot;sl.ctor.definit.iter&quot;</span>);</div>
-<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span>    m_builder-&gt;SetInsertPoint(current_block);</div>
-<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span>    m_builder-&gt;CreateStore(m_builder-&gt;getInt64(0), iter_alloc);</div>
-<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span> </div>
-<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>    <span class="keyword">auto</span>* iter_test = BasicBlock::Create(*m_context, <span class="stringliteral">&quot;sl.ctor.definit.test&quot;</span>, *m_current_fn);</div>
-<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span>    <span class="keyword">auto</span>* iter_body = BasicBlock::Create(*m_context, <span class="stringliteral">&quot;sl.ctor.definit.head&quot;</span>, *m_current_fn);</div>
-<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>    <span class="keyword">auto</span>* iter_merge = BasicBlock::Create(*m_context, <span class="stringliteral">&quot;sl.ctor.definit.merge&quot;</span>, *m_current_fn);</div>
-<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span> </div>
-<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>    m_builder-&gt;CreateBr(iter_test);</div>
-<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>    m_builder-&gt;SetInsertPoint(iter_test);</div>
-<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span> </div>
-<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span>    <span class="keyword">auto</span>* iter_less = m_builder-&gt;CreateICmpSLT(m_builder-&gt;CreateLoad(m_builder-&gt;getInt64Ty(), iter_alloc), data_size,</div>
-<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>                                               <span class="stringliteral">&quot;sl.ctor.definit.cmp&quot;</span>);</div>
-<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span>    m_builder-&gt;CreateCondBr(iter_less, iter_body, iter_merge);</div>
-<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span> </div>
-<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>    m_builder-&gt;SetInsertPoint(iter_body);</div>
-<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>    <span class="keyword">auto</span>* iter_next_addr = m_builder-&gt;CreateInBoundsGEP(</div>
-<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>        base_type, data_ptr, m_builder-&gt;CreateLoad(m_builder-&gt;getInt64Ty(), iter_alloc), <span class="stringliteral">&quot;sl.ctor.definit.gep&quot;</span>);</div>
-<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>    m_builder-&gt;CreateStore(default_init(base_ty_type), iter_next_addr);</div>
-<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span>    m_builder-&gt;CreateStore(</div>
-<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span>        m_builder-&gt;CreateAdd(m_builder-&gt;CreateLoad(m_builder-&gt;getInt64Ty(), iter_alloc), m_builder-&gt;getInt64(1)),</div>
-<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>        iter_alloc);</div>
-<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>    m_builder-&gt;CreateBr(iter_test);</div>
-<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span> </div>
-<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>    m_builder-&gt;SetInsertPoint(iter_merge);</div>
-<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span> </div>
-<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>    <span class="keywordflow">return</span> slice_inst;</div>
-<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>  }</div>
-<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span> </div>
-<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>  <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Can&#39;t construct non-struct, non-integer, non-slice type&quot;</span>);</div>
-<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>}</div>
-<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span> </div>
-<div class="line"><a id="l00775" name="l00775"></a><span class="lineno"><a class="line" href="classyume_1_1Compiler.html#adf99ffd10286e0e39022642f580d7442">  775</a></span><span class="keyword">template</span> &lt;&gt; <span class="keyword">auto</span> Compiler::expression(<span class="keyword">const</span> <a class="code hl_class" href="classyume_1_1ast_1_1SliceExpr.html">ast::SliceExpr</a>&amp; expr, <span class="keywordtype">bool</span> mut) -&gt; <a class="code hl_struct" href="structyume_1_1Val.html">Val</a> {</div>
-<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>  <a class="code hl_function" href="namespaceyume.html#af154d75481867fbdec142c3e5171ea18">not_mut</a>(<span class="stringliteral">&quot;slice literal&quot;</span>, mut);</div>
-<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span> </div>
-<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>  <span class="keyword">auto</span> values = vector&lt;Val&gt;();</div>
-<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>  <span class="keyword">auto</span> slice_size = expr.args().size();</div>
-<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>  values.reserve(slice_size);</div>
-<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; i : expr.args()) {</div>
-<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>    values.push_back(body_expression(i));</div>
-<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>  }</div>
-<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span> </div>
-<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>  <span class="comment">// Determine if all the operands are constant values instead, allowing us to use a constant array in LLVM</span></div>
-<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>  <span class="keyword">auto</span> const_values = vector&lt;llvm::Constant*&gt;();</div>
-<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>  const_values.reserve(slice_size);</div>
-<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>  <span class="keywordtype">bool</span> all_const = std::all_of(values.begin(), values.end(), [&amp;](<span class="keyword">const</span> <a class="code hl_struct" href="structyume_1_1Val.html">Val</a>&amp; i) {</div>
-<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span>    if (auto* const_value = dyn_cast&lt;llvm::Constant&gt;(i.llvm())) {</div>
-<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>      const_values.push_back(const_value);</div>
-<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>      return true;</div>
-<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>    }</div>
-<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>  });</div>
-<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span> </div>
-<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>  <span class="keyword">auto</span>* slice_type = llvm_type(*expr.val_ty());</div>
-<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>  <span class="keyword">auto</span>* base_type = llvm_type(*expr.val_ty()-&gt;ptr_base()); <span class="comment">// ???</span></div>
-<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>  <span class="keyword">auto</span>* array_type = ArrayType::get(base_type, slice_size);</div>
-<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span>  <span class="keyword">auto</span>* array_alloc = m_builder-&gt;CreateAlloca(array_type);</div>
-<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span> </div>
-<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span>  <span class="keywordflow">if</span> (all_const) {</div>
-<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>    <span class="keyword">auto</span>* array_value = llvm::ConstantArray::get(array_type, const_values);</div>
-<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span>    m_builder-&gt;CreateStore(array_value, array_alloc);</div>
-<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span>  } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>    <span class="keywordtype">unsigned</span> j = 0;</div>
-<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span>    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; i : values)</div>
-<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span>      m_builder-&gt;CreateStore(i, m_builder-&gt;CreateConstInBoundsGEP2_32(array_type, array_alloc, 0, j++));</div>
-<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span>  }</div>
-<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span>  <span class="keyword">auto</span>* data_ptr = m_builder-&gt;CreateBitCast(array_alloc, base_type-&gt;getPointerTo());</div>
-<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span>  llvm::Value* slice_inst = llvm::UndefValue::get(slice_type);</div>
-<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span>  slice_inst = m_builder-&gt;CreateInsertValue(slice_inst, data_ptr, 0);</div>
-<div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span>  slice_inst = m_builder-&gt;CreateInsertValue(slice_inst, m_builder-&gt;getInt64(slice_size), 1);</div>
-<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span> </div>
-<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span>  <span class="keywordflow">return</span> slice_inst;</div>
-<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>}</div>
-<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span> </div>
-<div class="line"><a id="l00817" name="l00817"></a><span class="lineno"><a class="line" href="classyume_1_1Compiler.html#a02b10b792c25ddbdbcb38e0334dd36d4">  817</a></span><span class="keyword">template</span> &lt;&gt; <span class="keyword">auto</span> Compiler::expression(<span class="keyword">const</span> <a class="code hl_class" href="classyume_1_1ast_1_1FieldAccessExpr.html">ast::FieldAccessExpr</a>&amp; expr, <span class="keywordtype">bool</span> mut) -&gt; <a class="code hl_struct" href="structyume_1_1Val.html">Val</a> {</div>
-<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span>  <span class="comment">// TODO: struct can only contain things by value, later this needs a condition</span></div>
-<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>  <a class="code hl_function" href="namespaceyume.html#af154d75481867fbdec142c3e5171ea18">not_mut</a>(<span class="stringliteral">&quot;immutable field&quot;</span>, mut);</div>
-<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span> </div>
-<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>  <span class="keyword">auto</span> base = body_expression(expr.base());</div>
-<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>  <span class="keyword">auto</span> base_name = expr.field();</div>
-<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>  <span class="keywordtype">int</span> base_offset = expr.offset();</div>
-<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span> </div>
-<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>  <span class="keywordflow">return</span> m_builder-&gt;CreateExtractValue(base, base_offset, <span class="stringliteral">&quot;s.field.&quot;</span>s + base_name);</div>
-<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>}</div>
-<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span> </div>
-<div class="line"><a id="l00828" name="l00828"></a><span class="lineno"><a class="line" href="classyume_1_1Compiler.html#a20be4445ccf3bffcc63aa4135357cfb4">  828</a></span><span class="keyword">template</span> &lt;&gt; <span class="keyword">auto</span> Compiler::expression(<span class="keyword">const</span> <a class="code hl_class" href="classyume_1_1ast_1_1ImplicitCastExpr.html">ast::ImplicitCastExpr</a>&amp; expr, <span class="keywordtype">bool</span> mut) -&gt; <a class="code hl_struct" href="structyume_1_1Val.html">Val</a> {</div>
-<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>  <span class="keyword">const</span> <span class="keyword">auto</span>* target_ty = expr.val_ty();</div>
-<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>  <span class="keyword">const</span> <span class="keyword">auto</span>* current_ty = expr.base().val_ty();</div>
-<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>  llvm::Value* base = body_expression(expr.base(), current_ty-&gt;is_mut());</div>
+<div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span><span class="comment"></span> </div>
+<div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span><span class="comment">    //// Stack allocation</span></div>
+<div class="line"><a id="l00673" name="l00673"></a><span class="lineno">  673</span><span class="comment"></span>    <span class="comment">// alloc = m_builder-&gt;CreateAlloca(llvm_struct_type, 0, nullptr, &quot;s.ctor.alloca&quot;);</span></div>
+<div class="line"><a id="l00674" name="l00674"></a><span class="lineno">  674</span> </div>
+<div class="line"><a id="l00675" name="l00675"></a><span class="lineno">  675</span>    <span class="keyword">auto</span> i = 0;</div>
+<div class="line"><a id="l00676" name="l00676"></a><span class="lineno">  676</span>    llvm::Value* base_value = UndefValue::get(llvm_struct_type);</div>
+<div class="line"><a id="l00677" name="l00677"></a><span class="lineno">  677</span>    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; arg : expr.args()) {</div>
+<div class="line"><a id="l00678" name="l00678"></a><span class="lineno">  678</span>      <span class="keyword">const</span> <span class="keyword">auto</span>&amp; [target_type, target_name] = struct_type-&gt;fields().begin()[i];</div>
+<div class="line"><a id="l00679" name="l00679"></a><span class="lineno">  679</span>      <span class="keyword">auto</span> field_value = body_expression(arg);</div>
+<div class="line"><a id="l00680" name="l00680"></a><span class="lineno">  680</span>      base_value = m_builder-&gt;CreateInsertValue(base_value, field_value, i, <span class="stringliteral">&quot;s.ctor.wf.&quot;</span> + target_name);</div>
+<div class="line"><a id="l00681" name="l00681"></a><span class="lineno">  681</span>      i++;</div>
+<div class="line"><a id="l00682" name="l00682"></a><span class="lineno">  682</span>    }</div>
+<div class="line"><a id="l00683" name="l00683"></a><span class="lineno">  683</span> </div>
+<div class="line"><a id="l00684" name="l00684"></a><span class="lineno">  684</span>    <span class="keywordflow">if</span> (mut) {</div>
+<div class="line"><a id="l00685" name="l00685"></a><span class="lineno">  685</span>      m_builder-&gt;CreateStore(base_value, alloc);</div>
+<div class="line"><a id="l00686" name="l00686"></a><span class="lineno">  686</span>      base_value = alloc;</div>
+<div class="line"><a id="l00687" name="l00687"></a><span class="lineno">  687</span>    }</div>
+<div class="line"><a id="l00688" name="l00688"></a><span class="lineno">  688</span> </div>
+<div class="line"><a id="l00689" name="l00689"></a><span class="lineno">  689</span>    <span class="keywordflow">return</span> base_value;</div>
+<div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span>  }</div>
+<div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span>  <span class="keywordflow">if</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* int_type = dyn_cast&lt;ty::Int&gt;(&amp;type.without_qual())) {</div>
+<div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span>    <a class="code hl_function" href="namespaceyume.html#a64670ac9f02bffbee6be875e64e4e7f6">yume_assert</a>(expr.args().size() == 1, <span class="stringliteral">&quot;Numeric cast can only contain a single argument&quot;</span>);</div>
+<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span>    <span class="keyword">auto</span>&amp; cast_from = expr.args()[0];</div>
+<div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span>    <a class="code hl_function" href="namespaceyume.html#a64670ac9f02bffbee6be875e64e4e7f6">yume_assert</a>(isa&lt;ty::Int&gt;(cast_from.val_ty()-&gt;without_qual()), <span class="stringliteral">&quot;Numeric cast must convert from int&quot;</span>);</div>
+<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span>    <span class="keyword">auto</span> base = body_expression(cast_from);</div>
+<div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span>    <span class="keywordflow">if</span> (cast&lt;ty::Int&gt;(cast_from.val_ty()-&gt;without_qual()).is_signed()) {</div>
+<div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span>      <span class="keywordflow">return</span> m_builder-&gt;CreateSExtOrTrunc(base, llvm_type(*int_type));</div>
+<div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span>    }</div>
+<div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span>    <span class="keywordflow">return</span> m_builder-&gt;CreateZExtOrTrunc(base, llvm_type(*int_type));</div>
+<div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span>  }</div>
+<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span>  <span class="keywordflow">if</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* slice_type = dyn_cast&lt;ty::Ptr&gt;(&amp;type.without_qual());</div>
+<div class="line"><a id="l00702" name="l00702"></a><span class="lineno">  702</span>      slice_type != <span class="keyword">nullptr</span> &amp;&amp; slice_type-&gt;has_qualifier(<a class="code hl_enumvalue" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706ad140d37ad98c12ccd8e1c432f548bcdb">Qualifier::Slice</a>)) {</div>
+<div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span>    <a class="code hl_function" href="namespaceyume.html#a64670ac9f02bffbee6be875e64e4e7f6">yume_assert</a>(expr.args().size() == 1, <span class="stringliteral">&quot;Slice constructor can only contain a single argument&quot;</span>);</div>
+<div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span>    <span class="keyword">auto</span>&amp; slice_size_expr = expr.args()[0];</div>
+<div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span>    <a class="code hl_function" href="namespaceyume.html#a64670ac9f02bffbee6be875e64e4e7f6">yume_assert</a>(isa&lt;ty::Int&gt;(slice_size_expr.val_ty()-&gt;without_qual()), <span class="stringliteral">&quot;Slice constructor must convert from int&quot;</span>);</div>
+<div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span>    <span class="keyword">auto</span> slice_size = body_expression(slice_size_expr);</div>
+<div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span> </div>
+<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span>    <span class="keyword">auto</span>* llvm_slice_type = llvm_type(*slice_type);</div>
+<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span>    <span class="keyword">const</span> <span class="keyword">auto</span>&amp; base_ty_type = *slice_type-&gt;ptr_base(); <span class="comment">// ???</span></div>
+<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span>    <span class="keyword">auto</span>* base_type = llvm_type(base_ty_type);</div>
+<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span><span class="comment"></span> </div>
+<div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span><span class="comment">    //// Stack allocation</span></div>
+<div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span><span class="comment"></span>    <span class="comment">// if (auto* const_value = dyn_cast&lt;llvm::ConstantInt&gt;(slice_size.llvm())) {</span></div>
+<div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span>    <span class="comment">//   auto slice_size_val = const_value-&gt;getLimitedValue();</span></div>
+<div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span>    <span class="comment">//   auto* array_type = ArrayType::get(base_type, slice_size_val);</span></div>
+<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span>    <span class="comment">//   auto* array_alloc = m_builder-&gt;CreateAlloca(array_type, nullptr, &quot;sl.ctor.alloc&quot;);</span></div>
+<div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span> </div>
+<div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span>    <span class="comment">//   auto* data_ptr = m_builder-&gt;CreateBitCast(array_alloc, base_type-&gt;getPointerTo(), &quot;sl.ctor.ptr&quot;);</span></div>
+<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span>    <span class="comment">//   llvm::Value* slice_inst = llvm::UndefValue::get(llvm_slice_type);</span></div>
+<div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span>    <span class="comment">//   slice_inst = m_builder-&gt;CreateInsertValue(slice_inst, data_ptr, 0);</span></div>
+<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span>    <span class="comment">//   slice_inst = m_builder-&gt;CreateInsertValue(slice_inst, m_builder-&gt;getInt64(slice_size_val), 1);</span></div>
+<div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span>    <span class="comment">//   slice_inst-&gt;setName(&quot;sl.ctor.inst&quot;);</span></div>
+<div class="line"><a id="l00723" name="l00723"></a><span class="lineno">  723</span> </div>
+<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span>    <span class="comment">//   return slice_inst;</span></div>
+<div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span>    <span class="comment">// }</span></div>
+<div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span> </div>
+<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span>    <span class="comment">// TODO: the commented-out block above stack-allocates a slice constructor if its size can be determined</span></div>
+<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span>    <span class="comment">// trivially. However, since it references stack memory, a slice allocated this way could never be feasibly</span></div>
+<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span>    <span class="comment">// returned or passed into a function which stores a reference to it, etc. The compiler currently does nothing</span></div>
+<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span>    <span class="comment">// resembling &quot;escape analysis&quot;, however something like that might be needed to perform an optimization like</span></div>
+<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span>    <span class="comment">// shown above.</span></div>
+<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>    <span class="comment">// TODO: Note that also a slice could be stack-allocated even if its size *wasn&#39;t* known at compile time,</span></div>
+<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span>    <span class="comment">// however, I simply didn&#39;t know how to do that when i wrote the above snipped. But, since its problematic</span></div>
+<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span>    <span class="comment">// anyway, it remains unfixed (and commented out); revisit later.</span></div>
+<div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span>    <span class="comment">// TODO: A large slice may be unfeasible to be stack-allocated anyway, so in addition to the above points,</span></div>
+<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span>    <span class="comment">// slice size could also be a consideration. Perhaps we don&#39;t *want* to stack-allocate unknown-sized slices as</span></div>
+<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span>    <span class="comment">// they may be absurdly huge in size and cause stack overflow.</span></div>
+<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span>    <span class="comment">// Related: #4</span></div>
+<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span> </div>
+<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span>    <span class="keyword">auto</span>* alloc_size = ConstantExpr::getSizeOf(base_type);</div>
+<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span>    alloc_size = ConstantExpr::getTruncOrBitCast(alloc_size, m_builder-&gt;getInt32Ty());</div>
+<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span>    <span class="keyword">auto</span>* array_size = m_builder-&gt;CreateTruncOrBitCast(slice_size, m_builder-&gt;getInt32Ty(), <span class="stringliteral">&quot;sl.ctor.size&quot;</span>);</div>
+<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>    <span class="keyword">auto</span>* array_alloc = llvm::CallInst::CreateMalloc(m_builder-&gt;GetInsertBlock(), m_builder-&gt;getInt32Ty(), base_type,</div>
+<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span>                                                     alloc_size, array_size, <span class="keyword">nullptr</span>, <span class="stringliteral">&quot;sl.ctor.malloc&quot;</span>);</div>
+<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span> </div>
+<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>    <span class="keyword">auto</span>* data_ptr = m_builder-&gt;Insert(array_alloc);</div>
+<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>    <span class="keyword">auto</span>* data_size = m_builder-&gt;CreateSExtOrBitCast(slice_size, m_builder-&gt;getInt64Ty());</div>
+<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span>    llvm::Value* slice_inst = llvm::UndefValue::get(llvm_slice_type);</div>
+<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>    slice_inst = m_builder-&gt;CreateInsertValue(slice_inst, data_ptr, 0);</div>
+<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>    slice_inst = m_builder-&gt;CreateInsertValue(slice_inst, data_size, 1);</div>
+<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>    slice_inst-&gt;setName(<span class="stringliteral">&quot;sl.ctor.inst&quot;</span>);</div>
+<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span> </div>
+<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>    <span class="keyword">auto</span>* current_block = m_builder-&gt;GetInsertBlock();</div>
+<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span>    m_builder-&gt;SetInsertPoint(m_current_fn-&gt;m_decl_bb);</div>
+<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>    <span class="keyword">auto</span>* iter_alloc = m_builder-&gt;CreateAlloca(m_builder-&gt;getInt64Ty(), <span class="keyword">nullptr</span>, <span class="stringliteral">&quot;sl.ctor.definit.iter&quot;</span>);</div>
+<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span>    m_builder-&gt;SetInsertPoint(current_block);</div>
+<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>    m_builder-&gt;CreateStore(m_builder-&gt;getInt64(0), iter_alloc);</div>
+<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span> </div>
+<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>    <span class="keyword">auto</span>* iter_test = BasicBlock::Create(*m_context, <span class="stringliteral">&quot;sl.ctor.definit.test&quot;</span>, *m_current_fn);</div>
+<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>    <span class="keyword">auto</span>* iter_body = BasicBlock::Create(*m_context, <span class="stringliteral">&quot;sl.ctor.definit.head&quot;</span>, *m_current_fn);</div>
+<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>    <span class="keyword">auto</span>* iter_merge = BasicBlock::Create(*m_context, <span class="stringliteral">&quot;sl.ctor.definit.merge&quot;</span>, *m_current_fn);</div>
+<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span> </div>
+<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span>    m_builder-&gt;CreateBr(iter_test);</div>
+<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>    m_builder-&gt;SetInsertPoint(iter_test);</div>
+<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span> </div>
+<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span>    <span class="keyword">auto</span>* iter_less = m_builder-&gt;CreateICmpSLT(m_builder-&gt;CreateLoad(m_builder-&gt;getInt64Ty(), iter_alloc), data_size,</div>
+<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>                                               <span class="stringliteral">&quot;sl.ctor.definit.cmp&quot;</span>);</div>
+<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>    m_builder-&gt;CreateCondBr(iter_less, iter_body, iter_merge);</div>
+<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span> </div>
+<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>    m_builder-&gt;SetInsertPoint(iter_body);</div>
+<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>    <span class="keyword">auto</span>* iter_next_addr = m_builder-&gt;CreateInBoundsGEP(</div>
+<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>        base_type, data_ptr, m_builder-&gt;CreateLoad(m_builder-&gt;getInt64Ty(), iter_alloc), <span class="stringliteral">&quot;sl.ctor.definit.gep&quot;</span>);</div>
+<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>    m_builder-&gt;CreateStore(default_init(base_ty_type), iter_next_addr);</div>
+<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>    m_builder-&gt;CreateStore(</div>
+<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span>        m_builder-&gt;CreateAdd(m_builder-&gt;CreateLoad(m_builder-&gt;getInt64Ty(), iter_alloc), m_builder-&gt;getInt64(1)),</div>
+<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>        iter_alloc);</div>
+<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>    m_builder-&gt;CreateBr(iter_test);</div>
+<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span> </div>
+<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>    m_builder-&gt;SetInsertPoint(iter_merge);</div>
+<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span> </div>
+<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>    <span class="keywordflow">return</span> slice_inst;</div>
+<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>  }</div>
+<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span> </div>
+<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>  <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Can&#39;t construct non-struct, non-integer, non-slice type&quot;</span>);</div>
+<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>}</div>
+<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span> </div>
+<div class="line"><a id="l00787" name="l00787"></a><span class="lineno"><a class="line" href="classyume_1_1Compiler.html#adf99ffd10286e0e39022642f580d7442">  787</a></span><span class="keyword">template</span> &lt;&gt; <span class="keyword">auto</span> Compiler::expression(<span class="keyword">const</span> <a class="code hl_class" href="classyume_1_1ast_1_1SliceExpr.html">ast::SliceExpr</a>&amp; expr, <span class="keywordtype">bool</span> mut) -&gt; <a class="code hl_struct" href="structyume_1_1Val.html">Val</a> {</div>
+<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>  <a class="code hl_function" href="namespaceyume.html#af154d75481867fbdec142c3e5171ea18">not_mut</a>(<span class="stringliteral">&quot;slice literal&quot;</span>, mut);</div>
+<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span> </div>
+<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>  <span class="keyword">auto</span> values = vector&lt;Val&gt;();</div>
+<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>  <span class="keyword">auto</span> slice_size = expr.args().size();</div>
+<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>  values.reserve(slice_size);</div>
+<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; i : expr.args()) {</div>
+<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>    values.push_back(body_expression(i));</div>
+<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span>  }</div>
+<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span> </div>
+<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>  <span class="comment">// Determine if all the operands are constant values instead, allowing us to use a constant array in LLVM</span></div>
+<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>  <span class="keyword">auto</span> const_values = vector&lt;llvm::Constant*&gt;();</div>
+<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span>  const_values.reserve(slice_size);</div>
+<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span>  <span class="keywordtype">bool</span> all_const = std::all_of(values.begin(), values.end(), [&amp;](<span class="keyword">const</span> <a class="code hl_struct" href="structyume_1_1Val.html">Val</a>&amp; i) {</div>
+<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span>    if (auto* const_value = dyn_cast&lt;llvm::Constant&gt;(i.llvm())) {</div>
+<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>      const_values.push_back(const_value);</div>
+<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span>      return true;</div>
+<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span>    }</div>
+<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span>  });</div>
+<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span> </div>
+<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span>  <span class="keyword">auto</span>* slice_type = llvm_type(*expr.val_ty());</div>
+<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span>  <span class="keyword">auto</span>* base_type = llvm_type(*expr.val_ty()-&gt;ptr_base()); <span class="comment">// ???</span></div>
+<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span>  <span class="keyword">auto</span>* array_type = ArrayType::get(base_type, slice_size);</div>
+<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span>  <span class="keyword">auto</span>* array_alloc = m_builder-&gt;CreateAlloca(array_type);</div>
+<div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span> </div>
+<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span>  <span class="keywordflow">if</span> (all_const) {</div>
+<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span>    <span class="keyword">auto</span>* array_value = llvm::ConstantArray::get(array_type, const_values);</div>
+<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>    m_builder-&gt;CreateStore(array_value, array_alloc);</div>
+<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span>  } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span>    <span class="keywordtype">unsigned</span> j = 0;</div>
+<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span>    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; i : values)</div>
+<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>      m_builder-&gt;CreateStore(i, m_builder-&gt;CreateConstInBoundsGEP2_32(array_type, array_alloc, 0, j++));</div>
+<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>  }</div>
+<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>  <span class="keyword">auto</span>* data_ptr = m_builder-&gt;CreateBitCast(array_alloc, base_type-&gt;getPointerTo());</div>
+<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>  llvm::Value* slice_inst = llvm::UndefValue::get(slice_type);</div>
+<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>  slice_inst = m_builder-&gt;CreateInsertValue(slice_inst, data_ptr, 0);</div>
+<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>  slice_inst = m_builder-&gt;CreateInsertValue(slice_inst, m_builder-&gt;getInt64(slice_size), 1);</div>
+<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span> </div>
+<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>  <span class="keywordflow">return</span> slice_inst;</div>
+<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>}</div>
+<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span> </div>
+<div class="line"><a id="l00829" name="l00829"></a><span class="lineno"><a class="line" href="classyume_1_1Compiler.html#a02b10b792c25ddbdbcb38e0334dd36d4">  829</a></span><span class="keyword">template</span> &lt;&gt; <span class="keyword">auto</span> Compiler::expression(<span class="keyword">const</span> <a class="code hl_class" href="classyume_1_1ast_1_1FieldAccessExpr.html">ast::FieldAccessExpr</a>&amp; expr, <span class="keywordtype">bool</span> mut) -&gt; <a class="code hl_struct" href="structyume_1_1Val.html">Val</a> {</div>
+<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>  <span class="comment">// TODO: struct can only contain things by value, later this needs a condition</span></div>
+<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>  <a class="code hl_function" href="namespaceyume.html#af154d75481867fbdec142c3e5171ea18">not_mut</a>(<span class="stringliteral">&quot;immutable field&quot;</span>, mut);</div>
 <div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span> </div>
-<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>  <span class="keywordflow">if</span> (mut != target_ty-&gt;is_mut()) {</div>
-<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>    <span class="keywordflow">throw</span> std::logic_error(<span class="stringliteral">&quot;Implicit cast target and expression mutability don&#39;t match!&quot;</span>);</div>
-<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>  }</div>
+<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>  <span class="keyword">auto</span> base = body_expression(expr.base());</div>
+<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>  <span class="keyword">auto</span> base_name = expr.field();</div>
+<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>  <span class="keywordtype">int</span> base_offset = expr.offset();</div>
 <div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span> </div>
-<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>  <span class="keywordflow">if</span> (expr.conversion().dereference) {</div>
-<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>    <a class="code hl_function" href="namespaceyume.html#a64670ac9f02bffbee6be875e64e4e7f6">yume_assert</a>(current_ty-&gt;is_mut(), <span class="stringliteral">&quot;Source type must be mutable when implicitly derefencing&quot;</span>);</div>
-<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span>    current_ty = current_ty-&gt;qual_base();</div>
-<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span>    base = m_builder-&gt;CreateLoad(llvm_type(*current_ty), base, <span class="stringliteral">&quot;ic.deref&quot;</span>);</div>
-<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>  }</div>
-<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span> </div>
-<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>  <span class="keywordflow">if</span> (expr.conversion().kind == ty::Conv::Int) {</div>
-<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span>    <span class="keywordflow">return</span> m_builder-&gt;CreateIntCast(base, llvm_type(*target_ty), cast&lt;ty::Int&gt;(current_ty)-&gt;is_signed(), <span class="stringliteral">&quot;ic.int&quot;</span>);</div>
-<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span>  }</div>
-<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span> </div>
-<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span>  <span class="keywordflow">return</span> base;</div>
-<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span>}</div>
-<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span> </div>
-<div class="line"><a id="l00850" name="l00850"></a><span class="lineno"><a class="line" href="classyume_1_1Compiler.html#ab95500c2f0ebe96d269de2e2e3619da2">  850</a></span><span class="keywordtype">void</span> Compiler::write_object(<span class="keyword">const</span> <span class="keywordtype">char</span>* filename, <span class="keywordtype">bool</span> binary) {</div>
-<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span>  <span class="keyword">auto</span> dest = <a class="code hl_function" href="namespaceyume.html#a3d99b01535a052186b0ff7127d6c80d3">open_file</a>(filename);</div>
-<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span> </div>
-<div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span>  legacy::PassManager pass;</div>
-<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span>  <span class="keyword">auto</span> fileType = binary ? CGFT_ObjectFile : CGFT_AssemblyFile;</div>
-<div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span> </div>
-<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span>  <span class="keywordflow">if</span> (m_targetMachine-&gt;addPassesToEmitFile(pass, *dest, <span class="keyword">nullptr</span>, fileType)) {</div>
-<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span>    errs() &lt;&lt; <span class="stringliteral">&quot;TargetMachine can&#39;t emit a file of this type&quot;</span>;</div>
-<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span>    <span class="keywordflow">throw</span> std::exception();</div>
-<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span>  }</div>
-<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span> </div>
-<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span>  pass.run(*m_module);</div>
-<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span>  dest-&gt;flush();</div>
-<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span>}</div>
+<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>  <span class="keywordflow">return</span> m_builder-&gt;CreateExtractValue(base, base_offset, <span class="stringliteral">&quot;s.field.&quot;</span>s + base_name);</div>
+<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>}</div>
+<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span> </div>
+<div class="line"><a id="l00840" name="l00840"></a><span class="lineno"><a class="line" href="classyume_1_1Compiler.html#a20be4445ccf3bffcc63aa4135357cfb4">  840</a></span><span class="keyword">template</span> &lt;&gt; <span class="keyword">auto</span> Compiler::expression(<span class="keyword">const</span> <a class="code hl_class" href="classyume_1_1ast_1_1ImplicitCastExpr.html">ast::ImplicitCastExpr</a>&amp; expr, <span class="keywordtype">bool</span> mut) -&gt; <a class="code hl_struct" href="structyume_1_1Val.html">Val</a> {</div>
+<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>  <span class="keyword">const</span> <span class="keyword">auto</span>* target_ty = expr.val_ty();</div>
+<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span>  <span class="keyword">const</span> <span class="keyword">auto</span>* current_ty = expr.base().val_ty();</div>
+<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>  llvm::Value* base = body_expression(expr.base(), current_ty-&gt;is_mut());</div>
+<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span> </div>
+<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span>  <span class="keywordflow">if</span> (mut != target_ty-&gt;is_mut()) {</div>
+<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span>    <span class="keywordflow">throw</span> std::logic_error(<span class="stringliteral">&quot;Implicit cast target and expression mutability don&#39;t match!&quot;</span>);</div>
+<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span>  }</div>
+<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span> </div>
+<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span>  <span class="keywordflow">if</span> (expr.conversion().dereference) {</div>
+<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span>    <a class="code hl_function" href="namespaceyume.html#a64670ac9f02bffbee6be875e64e4e7f6">yume_assert</a>(current_ty-&gt;is_mut(), <span class="stringliteral">&quot;Source type must be mutable when implicitly derefencing&quot;</span>);</div>
+<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span>    current_ty = current_ty-&gt;qual_base();</div>
+<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span>    base = m_builder-&gt;CreateLoad(llvm_type(*current_ty), base, <span class="stringliteral">&quot;ic.deref&quot;</span>);</div>
+<div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span>  }</div>
+<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span> </div>
+<div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span>  <span class="keywordflow">if</span> (expr.conversion().kind == ty::Conv::Int) {</div>
+<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span>    <span class="keywordflow">return</span> m_builder-&gt;CreateIntCast(base, llvm_type(*target_ty), cast&lt;ty::Int&gt;(current_ty)-&gt;is_signed(), <span class="stringliteral">&quot;ic.int&quot;</span>);</div>
+<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span>  }</div>
+<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span> </div>
+<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span>  <span class="keywordflow">return</span> base;</div>
+<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span>}</div>
+<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span> </div>
+<div class="line"><a id="l00862" name="l00862"></a><span class="lineno"><a class="line" href="classyume_1_1Compiler.html#ab95500c2f0ebe96d269de2e2e3619da2">  862</a></span><span class="keywordtype">void</span> Compiler::write_object(<span class="keyword">const</span> <span class="keywordtype">char</span>* filename, <span class="keywordtype">bool</span> binary) {</div>
+<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span>  <span class="keyword">auto</span> dest = <a class="code hl_function" href="namespaceyume.html#a3d99b01535a052186b0ff7127d6c80d3">open_file</a>(filename);</div>
 <div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span> </div>
-<div class="line"><a id="l00865" name="l00865"></a><span class="lineno"><a class="line" href="classyume_1_1Compiler.html#afcd1f55798eac5d3e7d6551fae8cb827">  865</a></span><span class="keyword">auto</span> Compiler::mangle_name(<span class="keyword">const</span> <a class="code hl_struct" href="structyume_1_1Fn.html">Fn</a>&amp; fn) -&gt; <span class="keywordtype">string</span> {</div>
-<div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span>  stringstream ss{};</div>
-<div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span>  ss &lt;&lt; <span class="stringliteral">&quot;_Ym.&quot;</span>;</div>
-<div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span>  ss &lt;&lt; fn.ast().name();</div>
-<div class="line"><a id="l00869" name="l00869"></a><span class="lineno">  869</span>  ss &lt;&lt; <span class="stringliteral">&quot;(&quot;</span>;</div>
-<div class="line"><a id="l00870" name="l00870"></a><span class="lineno">  870</span>  <span class="keywordtype">int</span> idx = 0;</div>
-<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; i : fn.ast().args()) {</div>
-<div class="line"><a id="l00872" name="l00872"></a><span class="lineno">  872</span>    <span class="keywordflow">if</span> (idx++ &gt; 0)</div>
-<div class="line"><a id="l00873" name="l00873"></a><span class="lineno">  873</span>      ss &lt;&lt; <span class="stringliteral">&quot;,&quot;</span>;</div>
-<div class="line"><a id="l00874" name="l00874"></a><span class="lineno">  874</span>    ss &lt;&lt; mangle_name(*i.type().val_ty(), fn);</div>
-<div class="line"><a id="l00875" name="l00875"></a><span class="lineno">  875</span>  }</div>
-<div class="line"><a id="l00876" name="l00876"></a><span class="lineno">  876</span>  ss &lt;&lt; <span class="stringliteral">&quot;)&quot;</span>;</div>
-<div class="line"><a id="l00877" name="l00877"></a><span class="lineno">  877</span>  <span class="comment">// TODO: should mangled names even contain the return type...?</span></div>
-<div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span>  <span class="keywordflow">if</span> (fn.ast().ret().has_value())</div>
-<div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span>    ss &lt;&lt; mangle_name(*fn.ast().ret()-&gt;get().val_ty(), fn); <span class="comment">// wtf</span></div>
-<div class="line"><a id="l00880" name="l00880"></a><span class="lineno">  880</span> </div>
-<div class="line"><a id="l00881" name="l00881"></a><span class="lineno">  881</span>  <span class="keywordflow">return</span> ss.str();</div>
-<div class="line"><a id="l00882" name="l00882"></a><span class="lineno">  882</span>}</div>
-<div class="line"><a id="l00883" name="l00883"></a><span class="lineno">  883</span> </div>
-<div class="line"><a id="l00884" name="l00884"></a><span class="lineno"><a class="line" href="classyume_1_1Compiler.html#a4b62b57eda222acba72d877196b643c2">  884</a></span><span class="keyword">auto</span> Compiler::mangle_name(<span class="keyword">const</span> <a class="code hl_class" href="classyume_1_1ty_1_1Type.html">ty::Type</a>&amp; ast_type, <span class="keyword">const</span> <a class="code hl_struct" href="structyume_1_1Fn.html">Fn</a>&amp; parent) -&gt; <span class="keywordtype">string</span> {</div>
-<div class="line"><a id="l00885" name="l00885"></a><span class="lineno">  885</span>  stringstream ss{};</div>
-<div class="line"><a id="l00886" name="l00886"></a><span class="lineno">  886</span>  <span class="keywordflow">if</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* qual_type = dyn_cast&lt;ty::Qual&gt;(&amp;ast_type)) {</div>
-<div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span>    ss &lt;&lt; mangle_name(qual_type-&gt;base(), parent);</div>
-<div class="line"><a id="l00888" name="l00888"></a><span class="lineno">  888</span>    <span class="keywordflow">if</span> (qual_type-&gt;has_qualifier(Qualifier::Mut))</div>
-<div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span>      ss &lt;&lt; <span class="stringliteral">&quot;&amp;&quot;</span>;</div>
-<div class="line"><a id="l00890" name="l00890"></a><span class="lineno">  890</span>    <span class="keywordflow">return</span> ss.str();</div>
-<div class="line"><a id="l00891" name="l00891"></a><span class="lineno">  891</span>  }</div>
-<div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span>  <span class="keywordflow">if</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* ptr_type = dyn_cast&lt;ty::Ptr&gt;(&amp;ast_type)) {</div>
-<div class="line"><a id="l00893" name="l00893"></a><span class="lineno">  893</span>    ss &lt;&lt; mangle_name(ptr_type-&gt;base(), parent);</div>
-<div class="line"><a id="l00894" name="l00894"></a><span class="lineno">  894</span>    <span class="keywordflow">if</span> (ptr_type-&gt;has_qualifier(Qualifier::Ptr))</div>
-<div class="line"><a id="l00895" name="l00895"></a><span class="lineno">  895</span>      ss &lt;&lt; <span class="stringliteral">&quot;*&quot;</span>;</div>
-<div class="line"><a id="l00896" name="l00896"></a><span class="lineno">  896</span>    <span class="keywordflow">if</span> (ptr_type-&gt;has_qualifier(Qualifier::Slice))</div>
-<div class="line"><a id="l00897" name="l00897"></a><span class="lineno">  897</span>      ss &lt;&lt; <span class="stringliteral">&quot;[&quot;</span>;</div>
-<div class="line"><a id="l00898" name="l00898"></a><span class="lineno">  898</span>    <span class="keywordflow">return</span> ss.str();</div>
-<div class="line"><a id="l00899" name="l00899"></a><span class="lineno">  899</span>  }</div>
-<div class="line"><a id="l00900" name="l00900"></a><span class="lineno">  900</span>  <span class="keywordflow">if</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* generic_type = dyn_cast&lt;ty::Generic&gt;(&amp;ast_type)) {</div>
-<div class="line"><a id="l00901" name="l00901"></a><span class="lineno">  901</span>    <span class="keyword">auto</span> match = parent.m_subs.find(generic_type-&gt;name());</div>
-<div class="line"><a id="l00902" name="l00902"></a><span class="lineno">  902</span>    <a class="code hl_function" href="namespaceyume.html#a64670ac9f02bffbee6be875e64e4e7f6">yume_assert</a>(match != parent.m_subs.end(), <span class="stringliteral">&quot;Cannot mangle unsubstituted generic&quot;</span>);</div>
-<div class="line"><a id="l00903" name="l00903"></a><span class="lineno">  903</span>    <span class="keywordflow">return</span> match-&gt;second-&gt;name();</div>
-<div class="line"><a id="l00904" name="l00904"></a><span class="lineno">  904</span>  }</div>
-<div class="line"><a id="l00905" name="l00905"></a><span class="lineno">  905</span>  <span class="keywordflow">return</span> ast_type.name();</div>
-<div class="line"><a id="l00906" name="l00906"></a><span class="lineno">  906</span>}</div>
-<div class="line"><a id="l00907" name="l00907"></a><span class="lineno">  907</span> </div>
-<div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span><span class="keyword">auto</span> Compiler::known_type(<span class="keyword">const</span> <span class="keywordtype">string</span>&amp; str) -&gt; <a class="code hl_class" href="classyume_1_1ty_1_1Type.html">ty::Type</a>&amp; { <span class="keywordflow">return</span> *m_types.known.find(str)-&gt;getValue(); }</div>
-<div class="line"><a id="l00909" name="l00909"></a><span class="lineno">  909</span> </div>
-<div class="line"><a id="l00910" name="l00910"></a><span class="lineno"><a class="line" href="classyume_1_1Compiler.html#a0dc1dec47ed60b3a014b0a34e91af742">  910</a></span><span class="keywordtype">void</span> Compiler::body_statement(<span class="keyword">const</span> <a class="code hl_class" href="classyume_1_1ast_1_1Stmt.html">ast::Stmt</a>&amp; stat) {</div>
-<div class="line"><a id="l00911" name="l00911"></a><span class="lineno">  911</span>  <span class="keyword">const</span> <a class="code hl_struct" href="structyume_1_1ASTStackTrace.html">ASTStackTrace</a> guard(<span class="stringliteral">&quot;Codegen: &quot;</span>s + stat.<a class="code hl_function" href="classyume_1_1ast_1_1AST.html#a35e3f20abd8401f7ac9b50dcc8cfff9e">kind_name</a>() + <span class="stringliteral">&quot; statement&quot;</span>, stat);</div>
-<div class="line"><a id="l00912" name="l00912"></a><span class="lineno">  912</span>  <span class="keywordflow">return</span> CRTPWalker::body_statement(stat);</div>
-<div class="line"><a id="l00913" name="l00913"></a><span class="lineno">  913</span>}</div>
-<div class="line"><a id="l00914" name="l00914"></a><span class="lineno">  914</span> </div>
-<div class="line"><a id="l00915" name="l00915"></a><span class="lineno">  915</span><span class="comment">// TODO: #3 once implicit conversion checking is added in the remaining locations (i.e. field assignment and return)</span></div>
-<div class="line"><a id="l00916" name="l00916"></a><span class="lineno">  916</span><span class="comment">// there is no real reason to keep the `mut` parameter on all expression compilation methods. All the mutability</span></div>
-<div class="line"><a id="l00917" name="l00917"></a><span class="lineno">  917</span><span class="comment">// information is in the type system and dereferences are handled by the TypeWalker.</span></div>
-<div class="line"><a id="l00918" name="l00918"></a><span class="lineno"><a class="line" href="classyume_1_1Compiler.html#a5ac36ca495ba8bf0c4d6f02f351fe09a">  918</a></span><span class="keyword">auto</span> Compiler::body_expression(<span class="keyword">const</span> <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">ast::Expr</a>&amp; expr, <span class="keywordtype">bool</span> mut) -&gt; <a class="code hl_struct" href="structyume_1_1Val.html">Val</a> {</div>
-<div class="line"><a id="l00919" name="l00919"></a><span class="lineno">  919</span>  <span class="keyword">const</span> <a class="code hl_struct" href="structyume_1_1ASTStackTrace.html">ASTStackTrace</a> guard(<span class="stringliteral">&quot;Codegen: &quot;</span>s + expr.kind_name() + <span class="stringliteral">&quot; expression&quot;</span>, expr);</div>
-<div class="line"><a id="l00920" name="l00920"></a><span class="lineno">  920</span>  <span class="keywordflow">return</span> CRTPWalker::body_expression(expr, mut);</div>
-<div class="line"><a id="l00921" name="l00921"></a><span class="lineno">  921</span>}</div>
-<div class="line"><a id="l00922" name="l00922"></a><span class="lineno">  922</span>} <span class="comment">// namespace yume</span></div>
+<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span>  legacy::PassManager pass;</div>
+<div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span>  <span class="keyword">auto</span> fileType = binary ? CGFT_ObjectFile : CGFT_AssemblyFile;</div>
+<div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span> </div>
+<div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span>  <span class="keywordflow">if</span> (m_targetMachine-&gt;addPassesToEmitFile(pass, *dest, <span class="keyword">nullptr</span>, fileType)) {</div>
+<div class="line"><a id="l00869" name="l00869"></a><span class="lineno">  869</span>    errs() &lt;&lt; <span class="stringliteral">&quot;TargetMachine can&#39;t emit a file of this type&quot;</span>;</div>
+<div class="line"><a id="l00870" name="l00870"></a><span class="lineno">  870</span>    <span class="keywordflow">throw</span> std::exception();</div>
+<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span>  }</div>
+<div class="line"><a id="l00872" name="l00872"></a><span class="lineno">  872</span> </div>
+<div class="line"><a id="l00873" name="l00873"></a><span class="lineno">  873</span>  pass.run(*m_module);</div>
+<div class="line"><a id="l00874" name="l00874"></a><span class="lineno">  874</span>  dest-&gt;flush();</div>
+<div class="line"><a id="l00875" name="l00875"></a><span class="lineno">  875</span>}</div>
+<div class="line"><a id="l00876" name="l00876"></a><span class="lineno">  876</span> </div>
+<div class="line"><a id="l00877" name="l00877"></a><span class="lineno"><a class="line" href="classyume_1_1Compiler.html#afcd1f55798eac5d3e7d6551fae8cb827">  877</a></span><span class="keyword">auto</span> Compiler::mangle_name(<span class="keyword">const</span> <a class="code hl_struct" href="structyume_1_1Fn.html">Fn</a>&amp; fn) -&gt; <span class="keywordtype">string</span> {</div>
+<div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span>  stringstream ss{};</div>
+<div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span>  ss &lt;&lt; <span class="stringliteral">&quot;_Ym.&quot;</span>;</div>
+<div class="line"><a id="l00880" name="l00880"></a><span class="lineno">  880</span>  ss &lt;&lt; fn.ast().name();</div>
+<div class="line"><a id="l00881" name="l00881"></a><span class="lineno">  881</span>  ss &lt;&lt; <span class="stringliteral">&quot;(&quot;</span>;</div>
+<div class="line"><a id="l00882" name="l00882"></a><span class="lineno">  882</span>  <span class="keywordtype">int</span> idx = 0;</div>
+<div class="line"><a id="l00883" name="l00883"></a><span class="lineno">  883</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; i : fn.ast().args()) {</div>
+<div class="line"><a id="l00884" name="l00884"></a><span class="lineno">  884</span>    <span class="keywordflow">if</span> (idx++ &gt; 0)</div>
+<div class="line"><a id="l00885" name="l00885"></a><span class="lineno">  885</span>      ss &lt;&lt; <span class="stringliteral">&quot;,&quot;</span>;</div>
+<div class="line"><a id="l00886" name="l00886"></a><span class="lineno">  886</span>    ss &lt;&lt; mangle_name(*i.type().val_ty(), fn);</div>
+<div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span>  }</div>
+<div class="line"><a id="l00888" name="l00888"></a><span class="lineno">  888</span>  ss &lt;&lt; <span class="stringliteral">&quot;)&quot;</span>;</div>
+<div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span>  <span class="comment">// TODO: should mangled names even contain the return type...?</span></div>
+<div class="line"><a id="l00890" name="l00890"></a><span class="lineno">  890</span>  <span class="keywordflow">if</span> (fn.ast().ret().has_value())</div>
+<div class="line"><a id="l00891" name="l00891"></a><span class="lineno">  891</span>    ss &lt;&lt; mangle_name(*fn.ast().ret()-&gt;get().val_ty(), fn); <span class="comment">// wtf</span></div>
+<div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span> </div>
+<div class="line"><a id="l00893" name="l00893"></a><span class="lineno">  893</span>  <span class="keywordflow">return</span> ss.str();</div>
+<div class="line"><a id="l00894" name="l00894"></a><span class="lineno">  894</span>}</div>
+<div class="line"><a id="l00895" name="l00895"></a><span class="lineno">  895</span> </div>
+<div class="line"><a id="l00896" name="l00896"></a><span class="lineno"><a class="line" href="classyume_1_1Compiler.html#a4b62b57eda222acba72d877196b643c2">  896</a></span><span class="keyword">auto</span> Compiler::mangle_name(<span class="keyword">const</span> <a class="code hl_class" href="classyume_1_1ty_1_1Type.html">ty::Type</a>&amp; ast_type, <span class="keyword">const</span> <a class="code hl_struct" href="structyume_1_1Fn.html">Fn</a>&amp; parent) -&gt; <span class="keywordtype">string</span> {</div>
+<div class="line"><a id="l00897" name="l00897"></a><span class="lineno">  897</span>  stringstream ss{};</div>
+<div class="line"><a id="l00898" name="l00898"></a><span class="lineno">  898</span>  <span class="keywordflow">if</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* qual_type = dyn_cast&lt;ty::Qual&gt;(&amp;ast_type)) {</div>
+<div class="line"><a id="l00899" name="l00899"></a><span class="lineno">  899</span>    ss &lt;&lt; mangle_name(qual_type-&gt;base(), parent);</div>
+<div class="line"><a id="l00900" name="l00900"></a><span class="lineno">  900</span>    <span class="keywordflow">if</span> (qual_type-&gt;has_qualifier(Qualifier::Mut))</div>
+<div class="line"><a id="l00901" name="l00901"></a><span class="lineno">  901</span>      ss &lt;&lt; <span class="stringliteral">&quot;&amp;&quot;</span>;</div>
+<div class="line"><a id="l00902" name="l00902"></a><span class="lineno">  902</span>    <span class="keywordflow">return</span> ss.str();</div>
+<div class="line"><a id="l00903" name="l00903"></a><span class="lineno">  903</span>  }</div>
+<div class="line"><a id="l00904" name="l00904"></a><span class="lineno">  904</span>  <span class="keywordflow">if</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* ptr_type = dyn_cast&lt;ty::Ptr&gt;(&amp;ast_type)) {</div>
+<div class="line"><a id="l00905" name="l00905"></a><span class="lineno">  905</span>    ss &lt;&lt; mangle_name(ptr_type-&gt;base(), parent);</div>
+<div class="line"><a id="l00906" name="l00906"></a><span class="lineno">  906</span>    <span class="keywordflow">if</span> (ptr_type-&gt;has_qualifier(Qualifier::Ptr))</div>
+<div class="line"><a id="l00907" name="l00907"></a><span class="lineno">  907</span>      ss &lt;&lt; <span class="stringliteral">&quot;*&quot;</span>;</div>
+<div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span>    <span class="keywordflow">if</span> (ptr_type-&gt;has_qualifier(Qualifier::Slice))</div>
+<div class="line"><a id="l00909" name="l00909"></a><span class="lineno">  909</span>      ss &lt;&lt; <span class="stringliteral">&quot;[&quot;</span>;</div>
+<div class="line"><a id="l00910" name="l00910"></a><span class="lineno">  910</span>    <span class="keywordflow">return</span> ss.str();</div>
+<div class="line"><a id="l00911" name="l00911"></a><span class="lineno">  911</span>  }</div>
+<div class="line"><a id="l00912" name="l00912"></a><span class="lineno">  912</span>  <span class="keywordflow">if</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* generic_type = dyn_cast&lt;ty::Generic&gt;(&amp;ast_type)) {</div>
+<div class="line"><a id="l00913" name="l00913"></a><span class="lineno">  913</span>    <span class="keyword">auto</span> match = parent.m_subs.find(generic_type-&gt;name());</div>
+<div class="line"><a id="l00914" name="l00914"></a><span class="lineno">  914</span>    <a class="code hl_function" href="namespaceyume.html#a64670ac9f02bffbee6be875e64e4e7f6">yume_assert</a>(match != parent.m_subs.end(), <span class="stringliteral">&quot;Cannot mangle unsubstituted generic&quot;</span>);</div>
+<div class="line"><a id="l00915" name="l00915"></a><span class="lineno">  915</span>    <span class="keywordflow">return</span> match-&gt;second-&gt;name();</div>
+<div class="line"><a id="l00916" name="l00916"></a><span class="lineno">  916</span>  }</div>
+<div class="line"><a id="l00917" name="l00917"></a><span class="lineno">  917</span>  <span class="keywordflow">return</span> ast_type.name();</div>
+<div class="line"><a id="l00918" name="l00918"></a><span class="lineno">  918</span>}</div>
+<div class="line"><a id="l00919" name="l00919"></a><span class="lineno">  919</span> </div>
+<div class="line"><a id="l00920" name="l00920"></a><span class="lineno">  920</span><span class="keyword">auto</span> Compiler::known_type(<span class="keyword">const</span> <span class="keywordtype">string</span>&amp; str) -&gt; <a class="code hl_class" href="classyume_1_1ty_1_1Type.html">ty::Type</a>&amp; { <span class="keywordflow">return</span> *m_types.known.find(str)-&gt;getValue(); }</div>
+<div class="line"><a id="l00921" name="l00921"></a><span class="lineno">  921</span> </div>
+<div class="line"><a id="l00922" name="l00922"></a><span class="lineno"><a class="line" href="classyume_1_1Compiler.html#a0dc1dec47ed60b3a014b0a34e91af742">  922</a></span><span class="keywordtype">void</span> Compiler::body_statement(<span class="keyword">const</span> <a class="code hl_class" href="classyume_1_1ast_1_1Stmt.html">ast::Stmt</a>&amp; stat) {</div>
+<div class="line"><a id="l00923" name="l00923"></a><span class="lineno">  923</span>  <span class="keyword">const</span> <a class="code hl_struct" href="structyume_1_1ASTStackTrace.html">ASTStackTrace</a> guard(<span class="stringliteral">&quot;Codegen: &quot;</span>s + stat.<a class="code hl_function" href="classyume_1_1ast_1_1AST.html#a35e3f20abd8401f7ac9b50dcc8cfff9e">kind_name</a>() + <span class="stringliteral">&quot; statement&quot;</span>, stat);</div>
+<div class="line"><a id="l00924" name="l00924"></a><span class="lineno">  924</span>  <span class="keywordflow">return</span> CRTPWalker::body_statement(stat);</div>
+<div class="line"><a id="l00925" name="l00925"></a><span class="lineno">  925</span>}</div>
+<div class="line"><a id="l00926" name="l00926"></a><span class="lineno">  926</span> </div>
+<div class="line"><a id="l00927" name="l00927"></a><span class="lineno">  927</span><span class="comment">// TODO: #3 once implicit conversion checking is added in the remaining locations (i.e. field assignment and return)</span></div>
+<div class="line"><a id="l00928" name="l00928"></a><span class="lineno">  928</span><span class="comment">// there is no real reason to keep the `mut` parameter on all expression compilation methods. All the mutability</span></div>
+<div class="line"><a id="l00929" name="l00929"></a><span class="lineno">  929</span><span class="comment">// information is in the type system and dereferences are handled by the TypeWalker.</span></div>
+<div class="line"><a id="l00930" name="l00930"></a><span class="lineno"><a class="line" href="classyume_1_1Compiler.html#a5ac36ca495ba8bf0c4d6f02f351fe09a">  930</a></span><span class="keyword">auto</span> Compiler::body_expression(<span class="keyword">const</span> <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">ast::Expr</a>&amp; expr, <span class="keywordtype">bool</span> mut) -&gt; <a class="code hl_struct" href="structyume_1_1Val.html">Val</a> {</div>
+<div class="line"><a id="l00931" name="l00931"></a><span class="lineno">  931</span>  <span class="keyword">const</span> <a class="code hl_struct" href="structyume_1_1ASTStackTrace.html">ASTStackTrace</a> guard(<span class="stringliteral">&quot;Codegen: &quot;</span>s + expr.kind_name() + <span class="stringliteral">&quot; expression&quot;</span>, expr);</div>
+<div class="line"><a id="l00932" name="l00932"></a><span class="lineno">  932</span>  <span class="keywordflow">return</span> CRTPWalker::body_expression(expr, mut);</div>
+<div class="line"><a id="l00933" name="l00933"></a><span class="lineno">  933</span>}</div>
+<div class="line"><a id="l00934" name="l00934"></a><span class="lineno">  934</span>} <span class="comment">// namespace yume</span></div>
 <div class="ttc" id="aast_8hpp_html"><div class="ttname"><a href="ast_8hpp.html">ast.hpp</a></div></div>
 <div class="ttc" id="aclassyume_1_1Compiler_html_a0b8137f40d7ff32fb39d000fe1613c24"><div class="ttname"><a href="classyume_1_1Compiler.html#a0b8137f40d7ff32fb39d000fe1613c24">yume::Compiler::create_struct</a></div><div class="ttdeci">static auto create_struct(ast::StructDecl &amp;, const optional&lt; string &gt; &amp;name_override={}) -&gt; unique_ptr&lt; ty::Struct &gt;</div><div class="ttdef"><b>Definition:</b> <a href="compiler_8cpp_source.html#l00120">compiler.cpp:120</a></div></div>
-<div class="ttc" id="aclassyume_1_1Compiler_html_a0dc1dec47ed60b3a014b0a34e91af742"><div class="ttname"><a href="classyume_1_1Compiler.html#a0dc1dec47ed60b3a014b0a34e91af742">yume::Compiler::body_statement</a></div><div class="ttdeci">void body_statement(const ast::Stmt &amp;)</div><div class="ttdef"><b>Definition:</b> <a href="compiler_8cpp_source.html#l00910">compiler.cpp:910</a></div></div>
+<div class="ttc" id="aclassyume_1_1Compiler_html_a0dc1dec47ed60b3a014b0a34e91af742"><div class="ttname"><a href="classyume_1_1Compiler.html#a0dc1dec47ed60b3a014b0a34e91af742">yume::Compiler::body_statement</a></div><div class="ttdeci">void body_statement(const ast::Stmt &amp;)</div><div class="ttdef"><b>Definition:</b> <a href="compiler_8cpp_source.html#l00922">compiler.cpp:922</a></div></div>
 <div class="ttc" id="aclassyume_1_1Compiler_html_a4ac25ae92890bd16b2000f3263cb4ad8"><div class="ttname"><a href="classyume_1_1Compiler.html#a4ac25ae92890bd16b2000f3263cb4ad8">yume::Compiler::Compiler</a></div><div class="ttdeci">Compiler(vector&lt; SourceFile &gt; source_files)</div><div class="ttdef"><b>Definition:</b> <a href="compiler_8cpp_source.html#l00046">compiler.cpp:46</a></div></div>
-<div class="ttc" id="aclassyume_1_1Compiler_html_a5ac36ca495ba8bf0c4d6f02f351fe09a"><div class="ttname"><a href="classyume_1_1Compiler.html#a5ac36ca495ba8bf0c4d6f02f351fe09a">yume::Compiler::body_expression</a></div><div class="ttdeci">auto body_expression(const ast::Expr &amp;expr, bool mut=false) -&gt; Val</div><div class="ttdef"><b>Definition:</b> <a href="compiler_8cpp_source.html#l00918">compiler.cpp:918</a></div></div>
+<div class="ttc" id="aclassyume_1_1Compiler_html_a5ac36ca495ba8bf0c4d6f02f351fe09a"><div class="ttname"><a href="classyume_1_1Compiler.html#a5ac36ca495ba8bf0c4d6f02f351fe09a">yume::Compiler::body_expression</a></div><div class="ttdeci">auto body_expression(const ast::Expr &amp;expr, bool mut=false) -&gt; Val</div><div class="ttdef"><b>Definition:</b> <a href="compiler_8cpp_source.html#l00930">compiler.cpp:930</a></div></div>
 <div class="ttc" id="aclassyume_1_1Compiler_html_a6fd65eec2d4cbabe487b14734f6085a6"><div class="ttname"><a href="classyume_1_1Compiler.html#a6fd65eec2d4cbabe487b14734f6085a6">yume::Compiler::destruct</a></div><div class="ttdeci">void destruct(Val val, const ty::Type &amp;type)</div><div class="ttdef"><b>Definition:</b> <a href="compiler_8cpp_source.html#l00196">compiler.cpp:196</a></div></div>
 <div class="ttc" id="aclassyume_1_1Compiler_html_a8038097f05fb0694b905808ec5f44da3"><div class="ttname"><a href="classyume_1_1Compiler.html#a8038097f05fb0694b905808ec5f44da3">yume::Compiler::run</a></div><div class="ttdeci">void run()</div><div class="ttdoc">Begin compilation!</div><div class="ttdef"><b>Definition:</b> <a href="compiler_8cpp_source.html#l00074">compiler.cpp:74</a></div></div>
 <div class="ttc" id="aclassyume_1_1Compiler_html_a92b7505ba643ea198ca3bb15169f2036"><div class="ttname"><a href="classyume_1_1Compiler.html#a92b7505ba643ea198ca3bb15169f2036">yume::Compiler::define</a></div><div class="ttdeci">void define(Fn &amp;)</div><div class="ttdoc">Compile the body of a function.</div><div class="ttdef"><b>Definition:</b> <a href="compiler_8cpp_source.html#l00325">compiler.cpp:325</a></div></div>
