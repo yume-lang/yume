@@ -81,6 +81,7 @@ public:
 
   /// Default-constructs an object of specified type
   auto default_init(const ty::Type& type) -> Val;
+  void destruct(Val val, const ty::Type& type);
 
   auto mangle_name(const Fn& fn_decl) -> string;
   auto mangle_name(const ty::Type& ast_type, const Fn& parent) -> string;
