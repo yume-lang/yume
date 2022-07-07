@@ -3,6 +3,7 @@
 #include "diagnostic/source_location.hpp"
 #include <array>
 #include <cstddef>
+#include <llvm/Support/Casting.h>
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/raw_ostream.h>
 #include <memory>
@@ -20,7 +21,6 @@ namespace yume {
 using namespace std::literals::string_literals;
 using namespace std::literals::string_view_literals;
 using std::array;
-using std::move;
 using std::optional;
 using std::span;
 using std::string;
@@ -29,6 +29,11 @@ using std::stringstream;
 using std::unique_ptr;
 using std::variant;
 using std::vector;
+
+using llvm::cast;
+using llvm::dyn_cast;
+using llvm::isa;
+using std::move;
 
 #ifdef NDEBUG
 constexpr bool ENABLE_ASSERT = false;

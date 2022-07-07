@@ -46,7 +46,7 @@ template <> void TypeWalker::expression(ast::BoolExpr& expr) { expr.val_ty(m_com
 template <> void TypeWalker::expression(ast::Type& expr) {
   const auto* resolved_type = &convert_type(expr);
   expr.val_ty(resolved_type);
-  if (auto* qual_type = llvm::dyn_cast<ast::QualType>(&expr))
+  if (auto* qual_type = dyn_cast<ast::QualType>(&expr))
     expression(qual_type->base());
 }
 
@@ -63,7 +63,7 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
     body_expression(i);
   }
 
-  if (auto* templated = llvm::dyn_cast<ast::TemplatedType>(&expr.type())) {
+  if (auto* templated = dyn_cast<ast::TemplatedType>(&expr.type())) {
     auto& template_base = templated->base();
     expression(template_base);
     const auto& base_type = convert_type(template_base);
@@ -335,7 +335,7 @@ auto TypeWalker::convert_type(const ast::Type& ast_type) -> const ty::Type& {
   auto* context = m_current_fn == nullptr ? m_current_struct == nullptr ? nullptr : &m_current_struct->m_subs
                                           : &m_current_fn->m_subs;
 
-  if (const auto* simple_type = llvm::dyn_cast<ast::SimpleType>(&ast_type)) {
+  if (const auto* simple_type = dyn_cast<ast::SimpleType>(&ast_type)) {
     auto name = simple_type->name();
     if (context != nullptr) {
       auto generic = context->find(name);
@@ -345,10 +345,10 @@ auto TypeWalker::convert_type(const ast::Type& ast_type) -> const ty::Type& {
     auto val = m_compiler.m_types.known.find(name);
     if (val != m_compiler.m_types.known.end())
       return *val->second;
-  } else if (const auto* qual_type = llvm::dyn_cast<ast::QualType>(&ast_type)) {
+  } else if (const auto* qual_type = dyn_cast<ast::QualType>(&ast_type)) {
     auto qualifier = qual_type->qualifier();
     return convert_type(qual_type->base()).known_qual(qualifier);
-  } else if (llvm::isa<ast::SelfType>(ast_type)) {
+  } else if (isa<ast::SelfType>(ast_type)) {
     if (parent != nullptr)
       return *parent;
   }

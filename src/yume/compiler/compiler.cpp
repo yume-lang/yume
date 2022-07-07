@@ -128,7 +128,7 @@ auto Compiler::create_struct(ast::StructDecl& s_decl, const optional<string>& na
 };
 
 auto Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* member) -> DeclLike {
-  if (auto* fn_decl = llvm::dyn_cast<ast::FnDecl>(&stmt)) {
+  if (auto* fn_decl = dyn_cast<ast::FnDecl>(&stmt)) {
     vector<unique_ptr<ty::Generic>> type_args{};
     std::map<string, const ty::Type*> subs{};
     for (auto& i : fn_decl->type_args()) {
@@ -139,7 +139,7 @@ auto Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* m
 
     return &fn;
   }
-  if (auto* s_decl = llvm::dyn_cast<ast::StructDecl>(&stmt)) {
+  if (auto* s_decl = dyn_cast<ast::StructDecl>(&stmt)) {
     auto i_ty = m_types.known.insert({s_decl->name(), create_struct(*s_decl)});
 
     vector<unique_ptr<ty::Generic>> type_args{};
@@ -307,7 +307,7 @@ void Compiler::destruct_all_in_scope(ast::FnDecl& scope_parent) {
   yume_assert(std::holds_alternative<ast::Compound>(scope_parent.body()), "Primitives don't have scope");
 
   for (const auto& [k, v] : m_scope)
-    if (llvm::isa<ast::VarDecl>(v.ast) && v.owning && !is_trivially_destructible(v.ast.val_ty()))
+    if (isa<ast::VarDecl>(v.ast) && v.owning && !is_trivially_destructible(v.ast.val_ty()))
       destruct(v.value, *v.ast.val_ty());
 }
 
@@ -411,7 +411,7 @@ template <> void Compiler::statement(const ast::ReturnStmt& stat) {
   InScope* reset_owning = nullptr;
 
   if (stat.expr().has_value()) {
-    if (auto* var = llvm::dyn_cast<ast::VarExpr>(&stat.expr().value().get())) {
+    if (auto* var = dyn_cast<ast::VarExpr>(&stat.expr().value().get())) {
       auto& in_scope = m_scope.at(var->name());
       if (in_scope.owning) {
         in_scope.owning = false; // Returning a local variable also gives up ownership of it
@@ -618,13 +618,13 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
 }
 
 template <> auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> Val {
-  if (const auto* target_var = llvm::dyn_cast<ast::VarExpr>(&expr.target())) {
+  if (const auto* target_var = dyn_cast<ast::VarExpr>(&expr.target())) {
     auto expr_val = body_expression(expr.value(), mut);
     auto target_val = m_scope.at(target_var->name()).value;
     m_builder->CreateStore(expr_val, target_val);
     return expr_val;
   }
-  if (const auto* field_access = llvm::dyn_cast<ast::FieldAccessExpr>(&expr.target())) {
+  if (const auto* field_access = dyn_cast<ast::FieldAccessExpr>(&expr.target())) {
     auto base = body_expression(field_access->base(), true);
     auto base_name = field_access->field();
     int base_offset = field_access->offset();

@@ -98,13 +98,13 @@ auto Type::compatibility(const Type& other, Compat compat) const -> Compat {
 auto Type::is_mut() const -> bool { return isa<Qual>(*this) && cast<Qual>(this)->has_qualifier(Qualifier::Mut); }
 
 auto Type::is_generic() const -> bool {
-  if (llvm::isa<Generic>(*this))
+  if (isa<Generic>(*this))
     return true;
 
-  if (llvm::isa<Qual>(*this))
+  if (isa<Qual>(*this))
     return qual_base()->is_generic();
 
-  if (llvm::isa<Ptr>(*this))
+  if (isa<Ptr>(*this))
     return ptr_base()->is_generic();
 
   return false;
@@ -117,11 +117,11 @@ auto Type::apply_generic_substitution(Sub sub) const -> const Type* {
   if (this == sub.target)
     return sub.replace;
 
-  if (const auto* qual_this = llvm::dyn_cast<Qual>(this))
+  if (const auto* qual_this = dyn_cast<Qual>(this))
     if (qual_this->m_mut)
       return &qual_base()->apply_generic_substitution(sub)->known_mut();
 
-  if (const auto* ptr_this = llvm::dyn_cast<Ptr>(this))
+  if (const auto* ptr_this = dyn_cast<Ptr>(this))
     return &ptr_base()->apply_generic_substitution(sub)->known_qual(ptr_this->qualifier());
 
   return nullptr;

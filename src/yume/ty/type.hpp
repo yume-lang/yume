@@ -25,10 +25,6 @@ class TypeName;
 } // namespace yume
 
 namespace yume::ty {
-using llvm::cast;
-using llvm::dyn_cast;
-using llvm::isa;
-
 enum Kind {
   K_Unknown, ///< `UnknownType`, default, zero value. Hopefully never encountered!
   K_Int,     ///< `Int`

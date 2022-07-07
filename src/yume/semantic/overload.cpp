@@ -85,9 +85,9 @@ static auto literal_cast(ast::AST& arg, const ty::Type* target_type) -> ty::Comp
   if (arg.val_ty() == target_type)
     return {.valid = true}; // Already the correct type
 
-  if (llvm::isa<ast::NumberExpr>(arg) && llvm::isa<ty::Int>(target_type)) {
-    auto& num_arg = llvm::cast<ast::NumberExpr>(arg);
-    const auto* int_type = llvm::cast<ty::Int>(target_type);
+  if (isa<ast::NumberExpr>(arg) && isa<ty::Int>(target_type)) {
+    auto& num_arg = cast<ast::NumberExpr>(arg);
+    const auto* int_type = cast<ty::Int>(target_type);
 
     if (int_type->size() == 1)
       return {}; // Can't implicitly cast to Bool
