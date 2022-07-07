@@ -92,6 +92,8 @@ Functions</h2></td></tr>
 <tr class="memitem:aa3da64b962ab7265b08ff4ac8145a7f9"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#aa3da64b962ab7265b08ff4ac8145a7f9">intersect_generics</a> (<a class="el" href="structyume_1_1Instantiation.html">Instantiation</a> &amp;instantiation, const <a class="el" href="classyume_1_1ty_1_1Generic.html">ty::Generic</a> *gen, const <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> *gen_sub) -&gt; const <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> *</td></tr>
 <tr class="memdesc:aa3da64b962ab7265b08ff4ac8145a7f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add the substitution <code>gen_sub</code> for the generic type variable <code>gen</code> in template instantiation <code>instantiation</code>. If a substitution already exists for the same type variable, the two substitutions are intersected.  <a href="namespaceyume_1_1semantic.html#aa3da64b962ab7265b08ff4ac8145a7f9">More...</a><br /></td></tr>
 <tr class="separator:aa3da64b962ab7265b08ff4ac8145a7f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1125faadc921de97975780f8f793d038"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a1125faadc921de97975780f8f793d038">literal_cast</a> (<a class="el" href="classyume_1_1ast_1_1AST.html">ast::AST</a> &amp;arg, const <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> *target_type) -&gt; <a class="el" href="structyume_1_1ty_1_1Compat.html">ty::Compat</a></td></tr>
+<tr class="separator:a1125faadc921de97975780f8f793d038"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a943175a1fef95d1b8291ff441ba3d0c7"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a943175a1fef95d1b8291ff441ba3d0c7">cmp</a> (bool a, bool b) -&gt; std::strong_ordering</td></tr>
 <tr class="separator:a943175a1fef95d1b8291ff441ba3d0c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a700bf29d9cab289a1b98803ca057ec52"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a700bf29d9cab289a1b98803ca057ec52">compare_implicit_conversions</a> (<a class="el" href="structyume_1_1ty_1_1Conv.html">ty::Conv</a> a, <a class="el" href="structyume_1_1ty_1_1Conv.html">ty::Conv</a> b) -&gt; std::weak_ordering</td></tr>
@@ -101,6 +103,8 @@ Functions</h2></td></tr>
 Variables</h2></td></tr>
 <tr class="memitem:a82101e8fa73ec4dd4046a13d5f821f35"><td class="memItemLeft" align="right" valign="top">static constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a82101e8fa73ec4dd4046a13d5f821f35">get_val_ty</a> = [](const <a class="el" href="classyume_1_1ast_1_1AST.html">ast::AST</a>&amp; ast) { return ast.val_ty(); }</td></tr>
 <tr class="separator:a82101e8fa73ec4dd4046a13d5f821f35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac954b2241ea31a38c7239573bc3f743d"><td class="memItemLeft" align="right" valign="top">static constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#ac954b2241ea31a38c7239573bc3f743d">get_val_ty_ptr</a> = [](const <a class="el" href="classyume_1_1ast_1_1AST.html">ast::AST</a>* ast) { return ast-&gt;val_ty(); }</td></tr>
+<tr class="separator:ac954b2241ea31a38c7239573bc3f743d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a943175a1fef95d1b8291ff441ba3d0c7" name="a943175a1fef95d1b8291ff441ba3d0c7"></a>
@@ -137,9 +141,9 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="overload_8cpp_source.html#l00144">144</a> of file <a class="el" href="overload_8cpp_source.html">overload.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="overload_8cpp_source.html#l00173">173</a> of file <a class="el" href="overload_8cpp_source.html">overload.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="overload_8cpp_source.html#l00146">compare_implicit_conversions()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="overload_8cpp_source.html#l00175">compare_implicit_conversions()</a>.</p>
 
 </div>
 </div>
@@ -177,11 +181,11 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="overload_8cpp_source.html#l00146">146</a> of file <a class="el" href="overload_8cpp_source.html">overload.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="overload_8cpp_source.html#l00175">175</a> of file <a class="el" href="overload_8cpp_source.html">overload.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="overload_8cpp_source.html#l00144">cmp()</a>.</p>
+<p class="reference">References <a class="el" href="overload_8cpp_source.html#l00173">cmp()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="overload_8cpp_source.html#l00161">yume::semantic::Overload::better_candidate_than()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="overload_8cpp_source.html#l00190">yume::semantic::Overload::better_candidate_than()</a>.</p>
 
 </div>
 </div>
@@ -228,11 +232,11 @@ Variables</h2></td></tr>
 <p>Add the substitution <code>gen_sub</code> for the generic type variable <code>gen</code> in template instantiation <code>instantiation</code>. If a substitution already exists for the same type variable, the two substitutions are intersected. </p>
 <dl class="section return"><dt>Returns</dt><dd>nullptr if substitution failed </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="overload_8cpp_source.html#l00031">31</a> of file <a class="el" href="overload_8cpp_source.html">overload.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="overload_8cpp_source.html#l00033">33</a> of file <a class="el" href="overload_8cpp_source.html">overload.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="type_8cpp_source.html#l00167">yume::ty::Type::intersect()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="overload_8cpp_source.html#l00081">yume::semantic::OverloadSet::is_valid_overload()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="overload_8cpp_source.html#l00104">yume::semantic::OverloadSet::is_valid_overload()</a>.</p>
 
 </div>
 </div>
@@ -278,9 +282,51 @@ template&lt;typename <a class="el" href="structyume_1_1Fn.html">Fn</a>  = std::i
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="overload_8cpp_source.html#l00019">19</a> of file <a class="el" href="overload_8cpp_source.html">overload.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="overload_8cpp_source.html#l00021">21</a> of file <a class="el" href="overload_8cpp_source.html">overload.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="overload_8cpp_source.html#l00184">yume::semantic::OverloadSet::best_viable_overload()</a>, <a class="el" href="overload_8cpp_source.html#l00052">yume::semantic::Overload::dump()</a>, and <a class="el" href="overload_8cpp_source.html#l00068">yume::semantic::OverloadSet::dump()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="overload_8cpp_source.html#l00213">yume::semantic::OverloadSet::best_viable_overload()</a>, <a class="el" href="overload_8cpp_source.html#l00055">yume::semantic::Overload::dump()</a>, and <a class="el" href="overload_8cpp_source.html#l00071">yume::semantic::OverloadSet::dump()</a>.</p>
+
+</div>
+</div>
+<a id="a1125faadc921de97975780f8f793d038" name="a1125faadc921de97975780f8f793d038"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1125faadc921de97975780f8f793d038">&#9670;&nbsp;</a></span>literal_cast()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static auto yume::semantic::literal_cast </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classyume_1_1ast_1_1AST.html">ast::AST</a> &amp;&#160;</td>
+          <td class="paramname"><em>arg</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> *&#160;</td>
+          <td class="paramname"><em>target_type</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> -&gt; <a class="el" href="structyume_1_1ty_1_1Compat.html">ty::Compat</a> </td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="overload_8cpp_source.html#l00084">84</a> of file <a class="el" href="overload_8cpp_source.html">overload.cpp</a>.</p>
+
+<p class="reference">References <a class="el" href="compatibility_8hpp_source.html#l00038">yume::ty::Compat::valid</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="overload_8cpp_source.html#l00104">yume::semantic::OverloadSet::is_valid_overload()</a>.</p>
 
 </div>
 </div>
@@ -305,9 +351,35 @@ template&lt;typename <a class="el" href="structyume_1_1Fn.html">Fn</a>  = std::i
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="overload_8cpp_source.html#l00050">50</a> of file <a class="el" href="overload_8cpp_source.html">overload.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="overload_8cpp_source.html#l00052">52</a> of file <a class="el" href="overload_8cpp_source.html">overload.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="overload_8cpp_source.html#l00052">yume::semantic::Overload::dump()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="overload_8cpp_source.html#l00055">yume::semantic::Overload::dump()</a>.</p>
+
+</div>
+</div>
+<a id="ac954b2241ea31a38c7239573bc3f743d" name="ac954b2241ea31a38c7239573bc3f743d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac954b2241ea31a38c7239573bc3f743d">&#9670;&nbsp;</a></span>get_val_ty_ptr</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr auto yume::semantic::get_val_ty_ptr = [](const <a class="el" href="classyume_1_1ast_1_1AST.html">ast::AST</a>* ast) { return ast-&gt;val_ty(); }</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="overload_8cpp_source.html#l00053">53</a> of file <a class="el" href="overload_8cpp_source.html">overload.cpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="overload_8cpp_source.html#l00213">yume::semantic::OverloadSet::best_viable_overload()</a>, and <a class="el" href="overload_8cpp_source.html#l00071">yume::semantic::OverloadSet::dump()</a>.</p>
 
 </div>
 </div>

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['numberexpr_0',['NumberExpr',['../classyume_1_1ast_1_1NumberExpr.html',1,'yume::ast']]]
+  ['minmax_0',['MinMax',['../structyume_1_1ty_1_1detail_1_1MinMax.html',1,'yume::ty::detail']]]
 ];

@@ -1,12 +1,14 @@
 var searchData=
 [
-  ['templatedtype_0',['TemplatedType',['../classyume_1_1ast_1_1TemplatedType.html',1,'yume::ast']]],
-  ['token_1',['Token',['../structyume_1_1Token.html',1,'yume']]],
-  ['tokeniterator_2',['TokenIterator',['../structyume_1_1ast_1_1TokenIterator.html',1,'yume::ast']]],
-  ['tokenizer_3',['Tokenizer',['../structyume_1_1Tokenizer.html',1,'yume']]],
-  ['tokenstate_4',['TokenState',['../structyume_1_1TokenState.html',1,'yume']]],
-  ['type_5',['Type',['../classyume_1_1ast_1_1Type.html',1,'yume::ast::Type'],['../classyume_1_1ty_1_1Type.html',1,'yume::ty::Type']]],
-  ['typeholder_6',['TypeHolder',['../structyume_1_1TypeHolder.html',1,'yume']]],
-  ['typename_7',['TypeName',['../classyume_1_1ast_1_1TypeName.html',1,'yume::ast']]],
-  ['typewalker_8',['TypeWalker',['../structyume_1_1semantic_1_1TypeWalker.html',1,'yume::semantic']]]
+  ['selftype_0',['SelfType',['../classyume_1_1ast_1_1SelfType.html',1,'yume::ast']]],
+  ['simpletype_1',['SimpleType',['../classyume_1_1ast_1_1SimpleType.html',1,'yume::ast']]],
+  ['sliceexpr_2',['SliceExpr',['../classyume_1_1ast_1_1SliceExpr.html',1,'yume::ast']]],
+  ['source_5flocation_3',['source_location',['../structyume_1_1source__location.html',1,'yume']]],
+  ['sourcefile_4',['SourceFile',['../structyume_1_1SourceFile.html',1,'yume']]],
+  ['stc_5',['StC',['../classStC.html',1,'']]],
+  ['stmt_6',['Stmt',['../classyume_1_1ast_1_1Stmt.html',1,'yume::ast']]],
+  ['stringexpr_7',['StringExpr',['../classyume_1_1ast_1_1StringExpr.html',1,'yume::ast']]],
+  ['struct_8',['Struct',['../structyume_1_1Struct.html',1,'yume::Struct'],['../classyume_1_1ty_1_1Struct.html',1,'yume::ty::Struct']]],
+  ['structdecl_9',['StructDecl',['../classyume_1_1ast_1_1StructDecl.html',1,'yume::ast']]],
+  ['sub_10',['Sub',['../structyume_1_1ty_1_1Sub.html',1,'yume::ty']]]
 ];
