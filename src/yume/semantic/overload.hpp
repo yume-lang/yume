@@ -32,7 +32,7 @@ struct Overload {
 struct OverloadSet {
   ast::CallExpr& call;
   vector<Overload> overloads;
-  vector<const ty::Type*> arg_types;
+  vector<ast::AST*> args;
 
   [[nodiscard]] auto empty() const -> bool { return overloads.empty(); }
   void dump(llvm::raw_ostream& stream, bool hide_invalid = false) const;

@@ -177,7 +177,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
 
   for (auto& i : expr.args()) {
     body_expression(i);
-    overload_set.arg_types.push_back(i.val_ty());
+    overload_set.args.push_back(&i);
   }
 
 #ifdef YUME_SPEW_OVERLOAD_SELECTION

@@ -48,6 +48,7 @@ static auto intersect_generics(Instantiation& instantiation, const ty::Generic* 
 }
 
 inline static constexpr auto get_val_ty = [](const ast::AST& ast) { return ast.val_ty(); };
+inline static constexpr auto get_val_ty_ptr = [](const ast::AST* ast) { return ast->val_ty(); };
 
 void Overload::dump(llvm::raw_ostream& stream) const {
   stream << fn->ast().location().to_string() << "\t" << fn->name() << "(";
@@ -67,7 +68,7 @@ void Overload::dump(llvm::raw_ostream& stream) const {
 
 void OverloadSet::dump(llvm::raw_ostream& stream, bool hide_invalid) const {
   stream << call.name() << "(";
-  join_args(arg_types, {}, stream);
+  join_args(args, get_val_ty_ptr, stream);
   stream << ")\n";
   for (const auto& i_s : overloads) {
     if (hide_invalid && !i_s.viable)
@@ -83,18 +84,19 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
 
   // The overload is only viable if the amount of arguments matches the amount of parameters.
   // Varargs functions may have more arguments that the amount of non-vararg parameters.
-  if (arg_types.size() != fn_ast.args().size())
-    if (!fn_ast.varargs() || arg_types.size() < fn_ast.args().size())
+  if (args.size() != fn_ast.args().size())
+    if (!fn_ast.varargs() || args.size() < fn_ast.args().size())
       return false;
 
-  overload.compatibilities.reserve(arg_types.size());
+  overload.compatibilities.reserve(args.size());
 
   // Determine the type compatibility of each argument individually. The performed conversions are also recorded for
   // each step.
   // As `llvm::zip` only iterates up to the size of the shorter argument, we don't try to determine type
   // compatibility of the "variadic" part of varargs functions. Currently, varargs methods can only be primitives and
   // carry no type information for their variadic part. This will change in the future.
-  for (const auto& [param, arg_type] : llvm::zip_first(fn_ast.args(), arg_types)) {
+  for (const auto& [param, arg] : llvm::zip_first(fn_ast.args(), args)) {
+    const auto* arg_type = arg->val_ty();
     const auto* param_type = param.val_ty();
 
     if (param_type->is_generic()) {
@@ -125,7 +127,7 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
   }
 
   // Add empty conversions for each argument which maps to a variadic
-  while (overload.compatibilities.size() < arg_types.size())
+  while (overload.compatibilities.size() < args.size())
     overload.compatibilities.emplace_back();
 
   // Must be valid!
@@ -133,7 +135,7 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
 }
 
 void OverloadSet::determine_valid_overloads() {
-  auto& [call_expr, overloads, arg_types] = *this;
+  auto& [call_expr, overloads, args] = *this;
 
   // All `Overload`s are determined to not be viable by default, so determine the ones which actually are
   // TODO: Actually keep track of *why* a type is not viable, for diagnostics.
@@ -193,7 +195,7 @@ auto OverloadSet::best_viable_overload() const -> Overload {
     string str{};
     llvm::raw_string_ostream ss{str};
     ss << "No viable overload for " << call.name() << " with argument types ";
-    join_args(arg_types, {}, ss);
+    join_args(args, get_val_ty_ptr, ss);
     throw std::logic_error(str);
   }
 
@@ -212,7 +214,7 @@ auto OverloadSet::best_viable_overload() const -> Overload {
   string str{};
   llvm::raw_string_ostream ss{str};
   ss << "Ambigious call for " << call.name() << " with argument types ";
-  join_args(arg_types, {}, ss);
+  join_args(args, get_val_ty_ptr, ss);
   ss << "\nCouldn't pick between the following overloads:\n";
   for (const auto* i : ambiguous) {
     i->dump(ss);
