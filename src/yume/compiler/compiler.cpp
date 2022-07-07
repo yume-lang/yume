@@ -776,46 +776,23 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
 template <> auto Compiler::expression(const ast::SliceExpr& expr, bool mut) -> Val {
   not_mut("slice literal", mut);
 
-  auto values = vector<Val>();
-  auto slice_size = expr.args().size();
-  values.reserve(slice_size);
-  for (const auto& i : expr.args()) {
-    values.push_back(body_expression(i));
-  }
-
-  // Determine if all the operands are constant values instead, allowing us to use a constant array in LLVM
-  auto const_values = vector<llvm::Constant*>();
-  const_values.reserve(slice_size);
-  bool all_const = std::all_of(values.begin(), values.end(), [&](const Val& i) {
-    if (auto* const_value = dyn_cast<llvm::Constant>(i.llvm())) {
-      const_values.push_back(const_value);
-      return true;
-    }
-    return false;
-  });
+  auto* slice_size = m_builder->getInt64(expr.args().size());
 
   auto* slice_type = llvm_type(*expr.val_ty());
   auto* base_type = llvm_type(*expr.val_ty()->ptr_base()); // ???
-  auto* array_type = ArrayType::get(base_type, slice_size);
-  auto* array_alloc = m_builder->CreateAlloca(array_type);
 
-  // https://github.com/yume-lang/yume/actions/runs/2624329437
-#if 0
-  if (all_const) {
-    auto* array_value = llvm::ConstantArray::get(array_type, const_values);
-    m_builder->CreateStore(array_value, array_alloc);
-  } else {
-#endif
-    unsigned j = 0;
-    for (const auto& i : values)
-      m_builder->CreateStore(i, m_builder->CreateConstInBoundsGEP2_32(array_type, array_alloc, 0, j++));
-#if 0
-  }
-#endif
-  auto* data_ptr = m_builder->CreateBitCast(array_alloc, base_type->getPointerTo());
+  auto* alloc_size = ConstantExpr::getSizeOf(base_type);
+  auto* ptr_alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), m_builder->getInt64Ty(), base_type,
+                                                 alloc_size, slice_size, nullptr, "sl.ctor.malloc");
+  auto* data_ptr = m_builder->Insert(ptr_alloc);
+
+  unsigned j = 0;
+  for (const auto& i : expr.args())
+    m_builder->CreateStore(body_expression(i), m_builder->CreateConstInBoundsGEP1_32(base_type, data_ptr, j++));
+
   llvm::Value* slice_inst = llvm::UndefValue::get(slice_type);
   slice_inst = m_builder->CreateInsertValue(slice_inst, data_ptr, 0);
-  slice_inst = m_builder->CreateInsertValue(slice_inst, m_builder->getInt64(slice_size), 1);
+  slice_inst = m_builder->CreateInsertValue(slice_inst, slice_size, 1);
 
   return slice_inst;
 }
