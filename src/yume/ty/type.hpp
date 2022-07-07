@@ -104,7 +104,7 @@ class Int : public Type {
   bool m_signed;
 
 public:
-  Int(string name, int size, bool signed_) : Type(K_Int, move(name)), m_size(size), m_signed(signed_) {}
+  Int(string name, int size, bool is_signed) : Type(K_Int, move(name)), m_size(size), m_signed(is_signed) {}
   [[nodiscard]] auto size() const -> int { return m_size; }
   [[nodiscard]] auto is_signed() const -> bool { return m_signed; }
   [[nodiscard]] auto in_range(int64_t num) const -> bool;
@@ -163,7 +163,7 @@ public:
  */
 class Generic : public Type {
 public:
-  Generic(string name) : Type(K_Generic, move(name)) {}
+  explicit Generic(string name) : Type(K_Generic, move(name)) {}
   static auto classof(const Type* a) -> bool { return a->kind() == K_Generic; }
 };
 } // namespace yume::ty

@@ -23,7 +23,7 @@ struct Overload {
   bool viable = false;
 
   Overload() = default;
-  explicit Overload(Fn* fn_) : fn{fn_} {}
+  explicit Overload(Fn* fn) : fn{fn} {}
 
   [[nodiscard]] auto better_candidate_than(Overload other) const -> bool;
   void dump(llvm::raw_ostream& stream) const;

@@ -28,8 +28,8 @@ class DotVisitor : public Visitor {
     string content;
     vector<DotConnection> children{};
 
-    DotNode(int index_, Loc location_, optional<string> type_, string kind)
-        : index(index_), location(location_), type(move(type_)), content(move(kind)) {}
+    DotNode(int index, Loc location, optional<string> type, string kind)
+        : index(index), location(location), type(move(type)), content(move(kind)) {}
 
     [[nodiscard]] auto simple() const -> bool { return !location.valid(); }
 
@@ -40,7 +40,7 @@ class DotVisitor : public Visitor {
     optional<string> line_label;
     DotNode child;
 
-    DotConnection(optional<string> line_label_, DotNode child_) : line_label(move(line_label_)), child(move(child_)) {}
+    DotConnection(optional<string> line_label, DotNode child) : line_label(move(line_label)), child(move(child)) {}
   };
 
   llvm::raw_ostream& m_stream;
@@ -52,7 +52,7 @@ class DotVisitor : public Visitor {
   auto add_node(DotNode&& node, const char* label) -> DotNode&;
 
 public:
-  explicit DotVisitor(llvm::raw_ostream& stream_) : m_stream{stream_} {
+  explicit DotVisitor(llvm::raw_ostream& stream) : m_stream{stream} {
     m_stream << "digraph \"yume\" {\nnode [shape=box, style=rounded];\n";
   }
   ~DotVisitor() override {

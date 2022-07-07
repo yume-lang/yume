@@ -13,8 +13,8 @@ auto Fn::declaration(Compiler& compiler, bool mangle) -> llvm::Function* {
 }
 
 auto Fn::create_instantiation(Instantiation& instantiate) -> Fn& {
-  auto* decl_clone = m_ast_decl.clone();
-  m_member->direct_body().emplace_back(decl_clone);
+  auto* decl_clone = ast.clone();
+  member->direct_body().emplace_back(decl_clone);
 
   std::map<string, const ty::Type*> subs{};
   for (const auto& [k, v] : instantiate.sub)

@@ -7,11 +7,32 @@ Checks: >-
   performance-*,
   bugprone-*,
   misc-*,
-
+  google-readibility-todo,
+  -bugprone-exception-escape,
   -cppcoreguidelines-macro-usage,
   -cppcoreguidelines-owning-memory,
   -readability-identifier-length,
   -readability-braces-around-statements,
   -misc-no-recursion,
-  -misc-non-private-member-variables-in-classes
+  -misc-non-private-member-variables-in-classes,
+  -misc-unused-using-decls
+CheckOptions:
+  - key:             readability-identifier-naming.ClassCase
+    value:           CamelCase
+  - key:             readability-identifier-naming.EnumCase
+    value:           CamelCase
+  - key:             readability-identifier-naming.FunctionCase
+    value:           lower_case
+  - key:             readability-identifier-naming.MemberCase
+    value:           lower_case
+  - key:             readability-identifier-naming.PrivateMemberPrefix
+    value:           m_
+  - key:             readability-identifier-naming.ParameterCase
+    value:           lower_case
+  - key:             readability-identifier-naming.LocalVariableCase
+    value:           lower_case
+  - key:             readability-identifier-naming.StaticConstantCase
+    value:           UPPER_CASE
+  - key:             readability-magic-numbers.IgnorePowersOf2IntegerValues
+    value:           true
 FormatStyle: file

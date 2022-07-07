@@ -54,8 +54,8 @@ Compiler::Compiler(vector<SourceFile> source_files)
   llvm::InitializeNativeTargetAsmParser();
   llvm::InitializeNativeTargetAsmPrinter();
   string error;
-  string targetTriple = llvm::sys::getDefaultTargetTriple();
-  const auto* target = llvm::TargetRegistry::lookupTarget(targetTriple, error);
+  string target_triple = llvm::sys::getDefaultTargetTriple();
+  const auto* target = llvm::TargetRegistry::lookupTarget(target_triple, error);
 
   if (target == nullptr) {
     llvm::errs() << error;
@@ -66,10 +66,10 @@ Compiler::Compiler(vector<SourceFile> source_files)
 
   llvm::TargetOptions opt;
   m_targetMachine = unique_ptr<llvm::TargetMachine>(
-      target->createTargetMachine(targetTriple, cpu, feat, opt, llvm::Reloc::Model::PIC_));
+      target->createTargetMachine(target_triple, cpu, feat, opt, llvm::Reloc::Model::PIC_));
 
   m_module->setDataLayout(m_targetMachine->createDataLayout());
-  m_module->setTargetTriple(targetTriple);
+  m_module->setTargetTriple(target_triple);
 }
 
 void Compiler::run() {
@@ -487,10 +487,10 @@ template <> auto Compiler::expression(const ast::StringExpr& expr, bool mut) -> 
     chars[i] = m_builder->getInt8(val[i]);
 
   chars.push_back(m_builder->getInt8(0));
-  auto* stringType = llvm::ArrayType::get(m_builder->getInt8Ty(), chars.size());
-  auto* init = llvm::ConstantArray::get(stringType, chars);
+  auto* string_type = llvm::ArrayType::get(m_builder->getInt8Ty(), chars.size());
+  auto* init = llvm::ConstantArray::get(string_type, chars);
   auto* global =
-      new llvm::GlobalVariable(*m_module, stringType, true, llvm::GlobalVariable::PrivateLinkage, init, ".str");
+      new llvm::GlobalVariable(*m_module, string_type, true, llvm::GlobalVariable::PrivateLinkage, init, ".str");
   return llvm::ConstantExpr::getBitCast(global, m_builder->getInt8PtrTy(0));
 }
 
@@ -833,9 +833,9 @@ void Compiler::write_object(const char* filename, bool binary) {
   auto dest = open_file(filename);
 
   llvm::legacy::PassManager pass;
-  auto fileType = binary ? llvm::CGFT_ObjectFile : llvm::CGFT_AssemblyFile;
+  auto file_type = binary ? llvm::CGFT_ObjectFile : llvm::CGFT_AssemblyFile;
 
-  if (m_targetMachine->addPassesToEmitFile(pass, *dest, nullptr, fileType)) {
+  if (m_targetMachine->addPassesToEmitFile(pass, *dest, nullptr, file_type)) {
     llvm::errs() << "TargetMachine can't emit a file of this type";
     throw std::exception();
   }

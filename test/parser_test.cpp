@@ -11,9 +11,9 @@ namespace {
 using namespace yume::ast;
 
 auto prog(const std::string& str) -> std::unique_ptr<Program> {
-  static const std::string test_filename = "<test>";
+  static const std::string TEST_FILENAME = "<test>";
   auto in_stream = std::stringstream(str);
-  auto tokens = yume::tokenize(in_stream, test_filename);
+  auto tokens = yume::tokenize(in_stream, TEST_FILENAME);
   auto iter = TokenIterator{tokens.begin(), tokens.end()};
   return Program::parse(iter);
 }
@@ -94,7 +94,7 @@ constexpr auto ast_comparison = [](const yume::ast::Program& a,
 
 constexpr auto deref = [](const auto& ptr_range) { return yume::dereference_view(ptr_range); };
 
-template <typename... Ts> auto EqualsAST(Ts&&... ts) {
+template <typename... Ts> auto equals_ast(Ts&&... ts) {
   std::vector<std::unique_ptr<yume::ast::AST>> vec{};
   vec.reserve(sizeof...(ts));
   (vec.emplace_back(std::forward<Ts>(ts)), ...);
@@ -106,7 +106,7 @@ namespace yume::ast {
 auto operator&(std::unique_ptr<Type> type, Qualifier qual) { return ::ast<QualType>(std::move(type), qual); }
 } // namespace yume::ast
 
-#define CHECK_PARSER(body, ...) CHECK_THAT(*prog(body), EqualsAST(__VA_ARGS__))
+#define CHECK_PARSER(body, ...) CHECK_THAT(*prog(body), equals_ast(__VA_ARGS__))
 #define CHECK_PARSER_THROWS(body) CHECK_THROWS(*prog(body))
 
 using namespace yume::ast;

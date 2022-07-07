@@ -12,31 +12,31 @@
 
 template <typename Range, typename Pred = std::ranges::equal_to>
 struct EqualsRangeMatcher : Catch::Matchers::MatcherGenericBase {
-  EqualsRangeMatcher(Range range) : range{std::move(range)} {}
+  EqualsRangeMatcher(Range range) : m_range{std::move(range)} {}
 
   template <typename OtherRange> auto match(OtherRange const& other) const -> bool {
     using std::begin;
     using std::end;
 
-    return std::equal(begin(range), end(range), begin(other), end(other), Pred{});
+    return std::equal(begin(m_range), end(m_range), begin(other), end(other), Pred{});
   }
 
-  auto describe() const -> std::string override { return "== " + ::Catch::rangeToString(range); }
+  auto describe() const -> std::string override { return "== " + ::Catch::rangeToString(m_range); }
 
 private:
-  Range range;
+  Range m_range;
 };
 
 template <typename T, typename Pred = std::ranges::equal_to, typename Str = std::identity>
 struct EqualsDirectMatcher : Catch::Matchers::MatcherGenericBase {
-  EqualsDirectMatcher(T base) : base{std::move(base)} {}
+  EqualsDirectMatcher(T base) : m_base{std::move(base)} {}
 
-  template <typename U> auto match(const U& other) const -> bool { return Pred{}(other, base); }
+  template <typename U> auto match(const U& other) const -> bool { return Pred{}(other, m_base); }
 
-  auto describe() const -> std::string override { return "== " + ::Catch::Detail::stringify(Str{}(base)); }
+  auto describe() const -> std::string override { return "== " + ::Catch::Detail::stringify(Str{}(m_base)); }
 
 private:
-  T base;
+  T m_base;
 };
 
 template <typename T>

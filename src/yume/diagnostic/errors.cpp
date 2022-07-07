@@ -37,18 +37,18 @@ struct DirectReplaceSimplify {
   string_view to;
 };
 
-class stacktrace_ostream : public llvm::raw_ostream {
+class stacktrace_ostream : public llvm::raw_ostream { // NOLINT(readability-identifier-naming): STL-like class
   using enum llvm::raw_ostream::Colors;
 
-  Phase current_phase{};
-  unsigned char template_depth{};
-  bool unknown{};
-  bool skip{};
-  uint64_t total_size{};
-  string direct_buffer{};
-  llvm::raw_string_ostream buffer;
+  Phase m_current_phase{};
+  unsigned char m_template_depth{};
+  bool m_unknown{};
+  bool m_skip{};
+  uint64_t m_total_size{};
+  string m_direct_buffer{};
+  llvm::raw_string_ostream m_buffer;
 
-  void write_impl(const char* Ptr, size_t Size) override;
+  void write_impl(const char* ptr, size_t size) override;
 
   void simplify(string_view msg);
   auto simplify(string_view msg, ContainerLikeSimplify s) -> bool;
@@ -57,23 +57,23 @@ class stacktrace_ostream : public llvm::raw_ostream {
   void format_phase(string_view msg);
   void set_color(llvm::raw_ostream::Colors color);
 
-  [[nodiscard]] auto current_pos() const -> uint64_t override { return total_size; }
+  [[nodiscard]] auto current_pos() const -> uint64_t override { return m_total_size; }
 
   static const std::size_t ALLOC_FOR_BUFFER = 128;
   static const bool use_color;
 
 public:
-  explicit stacktrace_ostream() : buffer(direct_buffer) {
+  explicit stacktrace_ostream() : m_buffer(m_direct_buffer) {
     SetUnbuffered();
-    direct_buffer.reserve(ALLOC_FOR_BUFFER);
+    m_direct_buffer.reserve(ALLOC_FOR_BUFFER);
   }
 
   void clean_buffer() {
-    if (!skip)
-      llvm::errs() << direct_buffer;
+    if (!m_skip)
+      llvm::errs() << m_direct_buffer;
 
-    skip = false;
-    direct_buffer.clear();
+    m_skip = false;
+    m_direct_buffer.clear();
   }
 };
 
@@ -91,8 +91,8 @@ constexpr DirectReplaceSimplify STRINGSTREAM_SIMPLIFY = {
 constexpr DirectReplaceSimplify ANONYMOUS_NS_SIMPLIFY = {"::(anonymous namespace)::", ":::"};
 
 auto stacktrace_ostream::simplify(string_view msg, ContainerLikeSimplify s) -> bool {
-  constexpr static const string_view middle_end = "> >";
-  constexpr static const string_view end = ">";
+  constexpr static const string_view MIDDLE_END = "> >";
+  constexpr static const string_view END = ">";
 
   auto uptr_start = msg.find(s.front);
   if (uptr_start == string::npos)
@@ -109,13 +109,13 @@ auto stacktrace_ostream::simplify(string_view msg, ContainerLikeSimplify s) -> b
   if (!from_deleter.starts_with(contained_typename))
     return false;
 
-  if (!from_deleter.substr(contained_typename.length()).starts_with(middle_end))
+  if (!from_deleter.substr(contained_typename.length()).starts_with(MIDDLE_END))
     return false;
 
-  auto uptr_end = uptr_delete_start + s.middle.length() + contained_typename.length() + middle_end.length();
+  auto uptr_end = uptr_delete_start + s.middle.length() + contained_typename.length() + MIDDLE_END.length();
 
   simplify(msg.substr(0, uptr_start));
-  buffer << s.front << contained_typename << end;
+  m_buffer << s.front << contained_typename << END;
   simplify(msg.substr(uptr_end));
 
   return true;
@@ -127,7 +127,7 @@ auto stacktrace_ostream::simplify(string_view msg, DirectReplaceSimplify s) -> b
     return false;
 
   simplify(msg.substr(0, start));
-  buffer << s.to;
+  m_buffer << s.to;
   simplify(msg.substr(start + s.from.size()));
 
   return true;
@@ -146,47 +146,47 @@ void stacktrace_ostream::simplify(string_view msg) {
     start_pos = msg.find_first_of("<>()", prev_pos);
     auto substr = msg.substr(prev_pos, start_pos == string::npos ? start_pos : start_pos - prev_pos);
 
-    if (template_depth == 0)
+    if (m_template_depth == 0)
       set_color(CYAN);
 
-    buffer << substr;
+    m_buffer << substr;
 
-    if (template_depth == 0 && use_color)
-      buffer << llvm::sys::Process::ResetColor();
+    if (m_template_depth == 0 && use_color)
+      m_buffer << llvm::sys::Process::ResetColor();
 
     if (start_pos == string::npos)
       break;
 
     auto angle = msg.at(start_pos);
-    template_depth += (angle == '<' || angle == '(') ? 1 : -1;
-    buffer << angle;
+    m_template_depth += (angle == '<' || angle == '(') ? 1 : -1;
+    m_buffer << angle;
     prev_pos = start_pos + 1;
   }
 }
 
 void stacktrace_ostream::set_color(llvm::raw_ostream::Colors color) {
   if (color != RESET && use_color)
-    buffer << llvm::sys::Process::OutputColor(static_cast<char>(color), false, false);
+    m_buffer << llvm::sys::Process::OutputColor(static_cast<char>(color), false, false);
 };
 
 void stacktrace_ostream::format_phase(string_view msg) {
   static array skip_lines = {"yume::CRTPWalker<"sv, "__libc_start_"sv};
   static string source_dir = YUME_SRC_DIR;
 
-  switch (current_phase) {
-  case Address: buffer << msg; break;
+  switch (m_current_phase) {
+  case Address: m_buffer << msg; break;
   case Index:
     set_color(GREEN);
-    buffer << msg;
+    m_buffer << msg;
     break;
   case Offset:
     set_color(RED);
-    buffer << msg;
+    m_buffer << msg;
     break;
   case Function:
     set_color(CYAN);
     if (std::ranges::any_of(skip_lines, [&](string_view s) { return msg.find(s) != string::npos; }))
-      skip = true;
+      m_skip = true;
     else
       simplify(msg);
     break;
@@ -194,48 +194,48 @@ void stacktrace_ostream::format_phase(string_view msg) {
     set_color(YELLOW);
     if (auto normal_path = std::filesystem::path(msg).lexically_normal().native();
         normal_path.starts_with(source_dir) && use_color) {
-      buffer << llvm::sys::Process::OutputBold(false);
-      buffer << static_cast<string_view>(normal_path).substr(source_dir.size());
+      m_buffer << llvm::sys::Process::OutputBold(false);
+      m_buffer << static_cast<string_view>(normal_path).substr(source_dir.size());
     } else {
-      buffer << normal_path;
+      m_buffer << normal_path;
     }
   };
 
   if (use_color)
-    buffer << llvm::sys::Process::ResetColor();
+    m_buffer << llvm::sys::Process::ResetColor();
 }
 
 void stacktrace_ostream::write_impl(const char* ptr, size_t size) {
   auto msg = string_view(ptr, size);
-  total_size += size;
+  m_total_size += size;
 
   if (size == 1 && llvm::isSpace(msg.at(0))) {
-    buffer << msg.at(0);
+    m_buffer << msg.at(0);
     return;
   }
 
-  if (unknown) {
-    unknown = msg.at(0) != ')';
+  if (m_unknown) {
+    m_unknown = msg.at(0) != ')';
   } else if (msg.at(0) == '(') {
-    skip = current_phase == Function;
-    unknown = true;
-    current_phase = Offset;
-  } else if (msg.at(0) == '/' && current_phase != Source) {
-    current_phase = Source;
+    m_skip = m_current_phase == Function;
+    m_unknown = true;
+    m_current_phase = Offset;
+  } else if (msg.at(0) == '/' && m_current_phase != Source) {
+    m_current_phase = Source;
   }
 
   format_phase(msg);
 
-  int counter = static_cast<int>(current_phase);
-  if (current_phase != Offset)
+  int counter = static_cast<int>(m_current_phase);
+  if (m_current_phase != Offset)
     counter = ++counter % 4;
 
   if (counter == 0)
     clean_buffer();
 
-  current_phase = static_cast<Phase>(counter);
-  if (current_phase == Offset && !unknown)
-    current_phase = Index;
+  m_current_phase = static_cast<Phase>(counter);
+  if (m_current_phase == Offset && !m_unknown)
+    m_current_phase = Index;
 }
 
 } // namespace
