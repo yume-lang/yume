@@ -652,8 +652,7 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
     //// Heap allocation
     if (mut) {
       auto* alloc_size = ConstantExpr::getSizeOf(llvm_struct_type);
-      alloc_size = ConstantExpr::getTruncOrBitCast(alloc_size, m_builder->getInt32Ty());
-      alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), m_builder->getInt32Ty(), llvm_struct_type,
+      alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), m_builder->getInt64Ty(), llvm_struct_type,
                                            alloc_size, nullptr, nullptr, "s.ctor.malloc");
       alloc = m_builder->Insert(alloc);
     }
@@ -727,9 +726,8 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
     // Related: #4
 
     auto* alloc_size = ConstantExpr::getSizeOf(base_type);
-    alloc_size = ConstantExpr::getTruncOrBitCast(alloc_size, m_builder->getInt32Ty());
-    auto* array_size = m_builder->CreateTruncOrBitCast(slice_size, m_builder->getInt32Ty(), "sl.ctor.size");
-    auto* array_alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), m_builder->getInt32Ty(), base_type,
+    auto* array_size = m_builder->CreateSExt(slice_size, m_builder->getInt64Ty(), "sl.ctor.size");
+    auto* array_alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), m_builder->getInt64Ty(), base_type,
                                                      alloc_size, array_size, nullptr, "sl.ctor.malloc");
 
     auto* data_ptr = m_builder->Insert(array_alloc);
