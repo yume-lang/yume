@@ -74,8 +74,8 @@ Compiler::Compiler(vector<SourceFile> source_files)
 
 void Compiler::run() {
   for (const auto& source : m_sources)
-    for (auto& i : source.m_program->body())
-      decl_statement(i, nullptr, source.m_program.get());
+    for (auto& i : source.program->body())
+      decl_statement(i, nullptr, source.program.get());
 
   // First pass: only convert structs
   for (auto& st : m_structs)
@@ -86,7 +86,7 @@ void Compiler::run() {
     walk_types(&fn);
 
   // Third pass: convert everything else, but only when instantiated
-  m_walker->m_in_depth = true;
+  m_walker->in_depth = true;
 
   Fn* main_fn = nullptr;
   for (auto& fn : m_fns)
@@ -106,14 +106,14 @@ void Compiler::run() {
 
 void Compiler::walk_types(DeclLike decl_like) {
   std::visit(DeclLikeVisitor{[&](Fn* fn) {
-                               m_walker->m_current_fn = fn;
-                               m_walker->body_statement(fn->ast());
-                               m_walker->m_current_fn = nullptr;
+                               m_walker->current_fn = fn;
+                               m_walker->body_statement(fn->ast);
+                               m_walker->current_fn = nullptr;
                              },
                              [&](Struct* st) {
-                               m_walker->m_current_struct = st;
-                               m_walker->body_statement(st->ast());
-                               m_walker->m_current_struct = nullptr;
+                               m_walker->current_struct = st;
+                               m_walker->body_statement(st->ast);
+                               m_walker->current_struct = nullptr;
                              }},
              decl_like);
 }
@@ -152,7 +152,7 @@ auto Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* m
 
     if (st.type_args.empty())
       for (auto& f : s_decl->body().body())
-        decl_statement(f, st.type(), member);
+        decl_statement(f, st.type, member);
 
     return &st;
   }
@@ -241,12 +241,12 @@ auto Compiler::default_init(const ty::Type& type) -> Val {
 }
 
 auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
-  if (fn.m_llvm_fn != nullptr)
-    return fn.m_llvm_fn;
+  if (fn.llvm != nullptr)
+    return fn.llvm;
   // Skip primitive definitions, unless they are actually external functions (i.e. printf)
-  if (fn.ast().primitive() && mangle)
+  if (fn.ast.primitive() && mangle)
     return nullptr;
-  const auto& fn_decl = fn.m_ast_decl;
+  const auto& fn_decl = fn.ast;
   auto* llvm_ret_type = llvm::Type::getVoidTy(*m_context);
   auto llvm_args = vector<llvm::Type*>{};
   if (fn_decl.ret())
@@ -263,7 +263,7 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
 
   auto linkage = mangle ? llvm::Function::InternalLinkage : llvm::Function::ExternalLinkage;
   auto* llvm_fn = llvm::Function::Create(fn_t, linkage, name, m_module.get());
-  fn.m_llvm_fn = llvm_fn;
+  fn.llvm = llvm_fn;
 
   int arg_i = 0;
   for (auto& arg : llvm_fn->args()) {
@@ -275,8 +275,8 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
   // body
   if (!fn_decl.primitive()) {
     m_decl_queue.push(&fn);
-    m_walker->m_current_fn = &fn;
-    m_walker->body_statement(fn.ast());
+    m_walker->current_fn = &fn;
+    m_walker->body_statement(fn.ast);
   }
   return llvm_fn;
 }
@@ -317,10 +317,10 @@ void Compiler::define(Fn& fn) {
   auto* decl_bb = llvm::BasicBlock::Create(*m_context, "decl", fn);
   auto* bb = llvm::BasicBlock::Create(*m_context, "entry", fn);
   m_builder->SetInsertPoint(bb);
-  m_current_fn->m_decl_bb = decl_bb;
+  m_current_fn->decl_bb = decl_bb;
 
   // Allocate local variables for each parameter
-  for (auto [arg, ast_arg] : llvm::zip(fn.llvm()->args(), fn.ast().args())) {
+  for (auto [arg, ast_arg] : llvm::zip(fn.llvm->args(), fn.ast.args())) {
     const auto& type = *ast_arg.val_ty();
     auto name = ast_arg.name();
     llvm::Value* alloc = nullptr;
@@ -340,7 +340,7 @@ void Compiler::define(Fn& fn) {
   }
 
   if (m_builder->GetInsertBlock()->getTerminator() == nullptr) {
-    destruct_all_in_scope(fn.ast());
+    destruct_all_in_scope(fn.ast);
     m_builder->CreateRetVoid();
   }
 
@@ -406,7 +406,7 @@ template <> void Compiler::statement(const ast::IfStmt& stat) {
 }
 
 template <> void Compiler::statement(const ast::ReturnStmt& stat) {
-  const auto* ret_ty = m_current_fn->ast().val_ty();
+  const auto* ret_ty = m_current_fn->ast.val_ty();
   bool returns_mut = ret_ty != nullptr && ret_ty->is_mut();
   InScope* reset_owning = nullptr;
 
@@ -419,7 +419,7 @@ template <> void Compiler::statement(const ast::ReturnStmt& stat) {
       }
     }
 
-    destruct_all_in_scope(m_current_fn->ast());
+    destruct_all_in_scope(m_current_fn->ast);
 
     if (reset_owning != nullptr)
       reset_owning->owning = true; // The local variable may not be returned in all code paths, so reset its ownership
@@ -430,7 +430,7 @@ template <> void Compiler::statement(const ast::ReturnStmt& stat) {
     return;
   }
 
-  destruct_all_in_scope(m_current_fn->ast());
+  destruct_all_in_scope(m_current_fn->ast);
   m_builder->CreateRetVoid();
 }
 
@@ -441,7 +441,7 @@ template <> void Compiler::statement(const ast::VarDecl& stat) {
 
   auto* current_block = m_builder->GetInsertBlock();
 
-  m_builder->SetInsertPoint(m_current_fn->m_decl_bb);
+  m_builder->SetInsertPoint(m_current_fn->decl_bb);
   auto* alloc = m_builder->CreateAlloca(var_type, nullptr, stat.name());
   m_builder->SetInsertPoint(current_block);
 
@@ -495,7 +495,7 @@ template <> auto Compiler::expression(const ast::StringExpr& expr, bool mut) -> 
 }
 
 template <> auto Compiler::expression(const ast::VarExpr& expr, bool mut) -> Val {
-  auto* val = m_scope.at(expr.name()).value.llvm();
+  auto* val = m_scope.at(expr.name()).value.llvm;
   // Function arguments can act as locals, but they can be immutable, but still behind a reference (alloca)
   if (!mut)
     return m_builder->CreateLoad(llvm_type(expr.val_ty()->without_qual()), val);
@@ -532,7 +532,7 @@ auto Compiler::int_bin_primitive(const string& primitive, const vector<llvm::Val
 
 auto Compiler::primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<const ty::Type*>& types,
                          const ty::Type* ret_ty) -> optional<Val> {
-  if (!fn->ast().primitive())
+  if (!fn->ast.primitive())
     return {};
 
   auto primitive = get<string>(fn->body());
@@ -576,7 +576,7 @@ auto Compiler::primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<
 template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Val {
   auto* selected = expr.selected_overload();
   llvm::Function* llvm_fn = nullptr;
-  const auto* ret_ty = selected->ast().val_ty();
+  const auto* ret_ty = selected->ast.val_ty();
   bool returns_mut = ret_ty != nullptr && ret_ty->is_mut();
 
   if (!returns_mut)
@@ -587,7 +587,7 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
   vector<llvm::Value*> llvm_args{};
 
   unsigned j = 0;
-  const auto& selected_args = selected->ast().args();
+  const auto& selected_args = selected->ast.args();
   for (const auto& i : expr.args()) {
     auto should_pass_by_mut = [&](unsigned index) {
       if (index >= selected_args.size())
@@ -597,7 +597,7 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
 
     auto arg = body_expression(i, should_pass_by_mut(j));
     args.push_back(arg);
-    llvm_args.push_back(arg.llvm());
+    llvm_args.push_back(arg.llvm);
     arg_types.push_back(i.val_ty());
     j++;
   }
@@ -739,7 +739,7 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
     slice_inst->setName("sl.ctor.inst");
 
     auto* current_block = m_builder->GetInsertBlock();
-    m_builder->SetInsertPoint(m_current_fn->m_decl_bb);
+    m_builder->SetInsertPoint(m_current_fn->decl_bb);
     auto* iter_alloc = m_builder->CreateAlloca(m_builder->getInt64Ty(), nullptr, "sl.ctor.definit.iter");
     m_builder->SetInsertPoint(current_block);
     m_builder->CreateStore(m_builder->getInt64(0), iter_alloc);
@@ -847,18 +847,18 @@ void Compiler::write_object(const char* filename, bool binary) {
 auto Compiler::mangle_name(const Fn& fn) -> string {
   stringstream ss{};
   ss << "_Ym.";
-  ss << fn.ast().name();
+  ss << fn.ast.name();
   ss << "(";
   int idx = 0;
-  for (const auto& i : fn.ast().args()) {
+  for (const auto& i : fn.ast.args()) {
     if (idx++ > 0)
       ss << ",";
     ss << mangle_name(*i.type().val_ty(), fn);
   }
   ss << ")";
   // TODO: should mangled names even contain the return type...?
-  if (fn.ast().ret().has_value())
-    ss << mangle_name(*fn.ast().ret()->get().val_ty(), fn); // wtf
+  if (fn.ast.ret().has_value())
+    ss << mangle_name(*fn.ast.ret()->get().val_ty(), fn); // wtf
 
   return ss.str();
 }
@@ -880,8 +880,8 @@ auto Compiler::mangle_name(const ty::Type& ast_type, const Fn& parent) -> string
     return ss.str();
   }
   if (const auto* generic_type = dyn_cast<ty::Generic>(&ast_type)) {
-    auto match = parent.m_subs.find(generic_type->name());
-    yume_assert(match != parent.m_subs.end(), "Cannot mangle unsubstituted generic");
+    auto match = parent.subs.find(generic_type->name());
+    yume_assert(match != parent.subs.end(), "Cannot mangle unsubstituted generic");
     return match->second->name();
   }
   return ast_type.name();

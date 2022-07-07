@@ -95,18 +95,18 @@ struct Token {
 
   using Payload = optional<Atom>;
 
-  Type m_type;
-  Payload m_payload;
-  int m_i = -1;
-  Loc m_loc{};
+  Type type;
+  Payload payload;
+  int index = -1;
+  Loc loc{};
 
   [[nodiscard]] auto is_a(const std::pair<Type, Atom>& type_atom) const -> bool {
-    return m_type == type_atom.first && m_payload == type_atom.second;
+    return type == type_atom.first && payload == type_atom.second;
   }
 
-  explicit constexpr Token(Type type) : m_type(type) {}
-  constexpr Token(Type type, Payload payload) : m_type(type), m_payload(payload) {}
-  constexpr Token(Type type, Payload payload, int i, Loc loc) : m_type(type), m_payload(payload), m_i{i}, m_loc{loc} {}
+  explicit constexpr Token(Type type) : type(type) {}
+  constexpr Token(Type type, Payload payload) : type(type), payload(payload) {}
+  constexpr Token(Type type, Payload payload, int i, Loc loc) : type(type), payload(payload), index{i}, loc{loc} {}
 
   friend auto operator<<(llvm::raw_ostream& os, const Token& token) -> llvm::raw_ostream&;
 };

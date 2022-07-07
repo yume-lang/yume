@@ -65,10 +65,10 @@ auto compile(std::span<const char*> args) -> int {
       auto src_stream = std::stringstream(std::string(src_input->getBufferStart(), src_input->getBufferSize()));
       auto& source = source_files.emplace_back(src_stream, src_name);
 #ifdef YUME_EMIT_DOT
-      visitor.visit(*source.m_program, nullptr);
+      visitor.visit(*source.program, nullptr);
 #endif
 
-      auto token_it = source.m_iterator;
+      auto token_it = source.iterator;
       if (!token_it.at_end()) {
         llvm::outs() << "unconsumed tokens:\n";
         while (!token_it.at_end()) {
@@ -87,10 +87,10 @@ auto compile(std::span<const char*> args) -> int {
 
 #ifdef YUME_EMIT_DOT
   for (const auto& i : compiler.source_files()) {
-    std::string full_name = "output_"s + std::string(yume::stem(i.m_name)) + ".dot";
+    std::string full_name = "output_"s + std::string(yume::stem(i.name)) + ".dot";
     auto dot = yume::open_file(full_name.c_str());
     auto visitor = yume::diagnostic::DotVisitor{*dot};
-    visitor.visit(*i.m_program, nullptr);
+    visitor.visit(*i.program, nullptr);
   }
 #endif
 

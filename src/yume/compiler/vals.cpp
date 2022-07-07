@@ -6,10 +6,10 @@
 namespace yume {
 
 auto Fn::declaration(Compiler& compiler, bool mangle) -> llvm::Function* {
-  if (m_llvm_fn == nullptr) {
-    m_llvm_fn = compiler.declare(*this, mangle);
+  if (llvm == nullptr) {
+    llvm = compiler.declare(*this, mangle);
   }
-  return m_llvm_fn;
+  return llvm;
 }
 
 auto Fn::create_instantiation(Instantiation& instantiate) -> Fn& {
@@ -20,35 +20,35 @@ auto Fn::create_instantiation(Instantiation& instantiate) -> Fn& {
   for (const auto& [k, v] : instantiate.sub)
     subs.try_emplace(k->name(), v);
 
-  auto fn_ptr = std::make_unique<Fn>(*decl_clone, m_parent, m_member, move(subs));
-  auto new_emplace = m_instantiations.emplace(instantiate, move(fn_ptr));
+  auto fn_ptr = std::make_unique<Fn>(*decl_clone, parent, member, move(subs));
+  auto new_emplace = instantiations.emplace(instantiate, move(fn_ptr));
   return *new_emplace.first->second;
 }
 
 auto Fn::get_or_create_instantiation(Instantiation& instantiate) -> std::pair<bool, Fn&> {
-  auto existing_instantiation = m_instantiations.find(instantiate);
-  if (existing_instantiation == m_instantiations.end())
+  auto existing_instantiation = instantiations.find(instantiate);
+  if (existing_instantiation == instantiations.end())
     return {false, create_instantiation(instantiate)};
 
   return {true, *existing_instantiation->second};
 }
 
 auto Struct::create_instantiation(Instantiation& instantiate) -> Struct& {
-  auto* decl_clone = m_ast_decl.clone();
-  m_member->direct_body().emplace_back(decl_clone);
+  auto* decl_clone = ast.clone();
+  member->direct_body().emplace_back(decl_clone);
 
   std::map<string, const ty::Type*> subs{};
   for (const auto& [k, v] : instantiate.sub)
     subs.try_emplace(k->name(), v);
 
-  auto st_ptr = std::make_unique<Struct>(*decl_clone, m_type, m_member, move(subs));
-  auto new_emplace = m_instantiations.emplace(instantiate, move(st_ptr));
+  auto st_ptr = std::make_unique<Struct>(*decl_clone, type, member, move(subs));
+  auto new_emplace = instantiations.emplace(instantiate, move(st_ptr));
   return *new_emplace.first->second;
 }
 
 auto Struct::get_or_create_instantiation(Instantiation& instantiate) -> std::pair<bool, Struct&> {
-  auto existing_instantiation = m_instantiations.find(instantiate);
-  if (existing_instantiation == m_instantiations.end())
+  auto existing_instantiation = instantiations.find(instantiate);
+  if (existing_instantiation == instantiations.end())
     return {false, create_instantiation(instantiate)};
 
   return {true, *existing_instantiation->second};

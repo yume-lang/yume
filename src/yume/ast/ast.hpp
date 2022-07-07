@@ -112,10 +112,11 @@ using VectorTokenIterator = vector<Token>::iterator;
  * iterators, where one is the end. This is to provide safe indexing (avoiding going past the end) without having to
  * pass the end iterator around as a separate parameter.
  */
-struct TokenIterator {
+class TokenIterator {
   VectorTokenIterator m_iterator;
   VectorTokenIterator m_end;
 
+public:
   constexpr TokenIterator(const VectorTokenIterator& iterator, const VectorTokenIterator& end)
       : m_iterator{iterator}, m_end{end} {}
 
@@ -228,9 +229,9 @@ public:
     if (m_tok.empty())
       return Loc{};
     if (m_tok.size() == 1)
-      return m_tok[0].m_loc;
+      return m_tok[0].loc;
 
-    return m_tok[0].m_loc + m_tok[m_tok.size() - 1].m_loc;
+    return m_tok[0].loc + m_tok[m_tok.size() - 1].loc;
   };
 
   /// A short, string representation for debugging.

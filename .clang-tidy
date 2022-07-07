@@ -27,6 +27,10 @@ CheckOptions:
     value:           lower_case
   - key:             readability-identifier-naming.PrivateMemberPrefix
     value:           m_
+  - key:             readability-identifier-naming.PublicMemberPrefix
+    value:           REMOVE_M_PREFIX
+  - key:             readability-identifier-naming.PublicMemberIgnoredRegexp
+    value:           '(.?$|[^m].+|m[^_].*)'
   - key:             readability-identifier-naming.ParameterCase
     value:           lower_case
   - key:             readability-identifier-naming.LocalVariableCase

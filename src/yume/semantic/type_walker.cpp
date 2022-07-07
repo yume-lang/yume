@@ -28,20 +28,20 @@ namespace yume::semantic {
 template <> void TypeWalker::expression(ast::NumberExpr& expr) {
   auto val = expr.val();
   if (val > std::numeric_limits<int32_t>::max()) {
-    expr.val_ty(m_compiler.m_types.int64().s_ty);
+    expr.val_ty(compiler.m_types.int64().s_ty);
   } else {
-    expr.val_ty(m_compiler.m_types.int32().s_ty);
+    expr.val_ty(compiler.m_types.int32().s_ty);
   }
 }
 
 template <> void TypeWalker::expression(ast::StringExpr& expr) {
   // TODO: String type
-  expr.val_ty(&m_compiler.m_types.int8().u_ty->known_ptr());
+  expr.val_ty(&compiler.m_types.int8().u_ty->known_ptr());
 }
 
-template <> void TypeWalker::expression(ast::CharExpr& expr) { expr.val_ty(m_compiler.m_types.int8().u_ty); }
+template <> void TypeWalker::expression(ast::CharExpr& expr) { expr.val_ty(compiler.m_types.int8().u_ty); }
 
-template <> void TypeWalker::expression(ast::BoolExpr& expr) { expr.val_ty(m_compiler.m_types.bool_type); }
+template <> void TypeWalker::expression(ast::BoolExpr& expr) { expr.val_ty(compiler.m_types.bool_type); }
 
 template <> void TypeWalker::expression(ast::Type& expr) {
   const auto* resolved_type = &convert_type(expr);
@@ -68,9 +68,9 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
     expression(template_base);
     const auto& base_type = convert_type(template_base);
     auto struct_obj =
-        std::ranges::find_if(m_compiler.m_structs, [&](const Struct& st) { return st.m_type == &base_type; });
+        std::ranges::find_if(compiler.m_structs, [&](const Struct& st) { return st.type == &base_type; });
 
-    if (struct_obj == m_compiler.m_structs.end())
+    if (struct_obj == compiler.m_structs.end())
       throw std::logic_error("Can't add template arguments to non-struct types");
 
     for (auto& i : templated->type_vars())
@@ -78,7 +78,7 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
 
     // XXX: Duplicated from function overload handling
     Instantiation instantiation = {};
-    for (const auto& [gen, gen_sub] : llvm::zip(struct_obj->m_type_args, templated->type_vars()))
+    for (const auto& [gen, gen_sub] : llvm::zip(struct_obj->type_args, templated->type_vars()))
       instantiation.sub.try_emplace(gen.get(), gen_sub->val_ty());
 
     auto [already_existed, inst_struct] = struct_obj->get_or_create_instantiation(instantiation);
@@ -87,23 +87,23 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
       auto& new_st = inst_struct;
 
       with_saved_scope([&] {
-        m_in_depth = false;
-        m_current_fn = nullptr;
-        m_current_struct = &new_st;
-        body_statement(new_st.ast());
+        in_depth = false;
+        current_fn = nullptr;
+        current_struct = &new_st;
+        body_statement(new_st.ast);
       });
 
       // TODO: the "describe" method is being abused here
-      std::string name_with_types = new_st.ast().name() + templated->describe();
+      std::string name_with_types = new_st.ast.name() + templated->describe();
 
-      auto& i_ty = m_compiler.m_types.template_instantiations.emplace_back(
-          Compiler::create_struct(new_st.ast(), name_with_types));
+      auto& i_ty = compiler.m_types.template_instantiations.emplace_back(
+          Compiler::create_struct(new_st.ast, name_with_types));
 
-      new_st.m_type = i_ty.get();
-      m_decl_queue.push(&new_st);
+      new_st.type = i_ty.get();
+      decl_queue.push(&new_st);
     }
 
-    expr.val_ty(inst_struct.type());
+    expr.val_ty(inst_struct.type);
   } else {
     expression(expr.type());
     const auto& base_type = convert_type(expr.type());
@@ -127,9 +127,9 @@ template <> void TypeWalker::expression(ast::AssignExpr& expr) {
 }
 
 template <> void TypeWalker::expression(ast::VarExpr& expr) {
-  if (!m_scope.contains(expr.name()))
+  if (!scope.contains(expr.name()))
     throw std::runtime_error("Scope doesn't contain variable called "s + expr.name());
-  expr.attach_to(m_scope.at(expr.name()));
+  expr.attach_to(scope.at(expr.name()));
 }
 
 template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
@@ -159,7 +159,7 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
 auto TypeWalker::all_overloads_by_name(ast::CallExpr& call) -> OverloadSet {
   auto fns_by_name = vector<Overload>();
 
-  for (auto& fn : m_compiler.m_fns)
+  for (auto& fn : compiler.m_fns)
     if (fn.name() == call.name())
       fns_by_name.emplace_back(&fn);
 
@@ -181,24 +181,24 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
   }
 
 #ifdef YUME_SPEW_OVERLOAD_SELECTION
-  errs() << "\n*** BEGIN OVERLOAD EVALUATION ***\n";
-  errs() << "Functions with matching names:\n";
-  overload_set.dump(errs());
+  llvm::errs() << "\n*** BEGIN OVERLOAD EVALUATION ***\n";
+  llvm::errs() << "Functions with matching names:\n";
+  overload_set.dump(llvm::errs());
 #endif
 
   overload_set.determine_valid_overloads();
 
 #ifdef YUME_SPEW_OVERLOAD_SELECTION
-  errs() << "\nViable overloads:\n";
-  overload_set.dump(errs(), true);
+  llvm::errs() << "\nViable overloads:\n";
+  overload_set.dump(llvm::errs(), true);
 #endif
 
   Overload best_overload = overload_set.best_viable_overload();
 
 #ifdef YUME_SPEW_OVERLOAD_SELECTION
-  errs() << "\nSelected overload:\n";
-  best_overload.dump(errs());
-  errs() << "\n*** END OVERLOAD EVALUATION ***\n\n";
+  llvm::errs() << "\nSelected overload:\n";
+  best_overload.dump(llvm::errs());
+  llvm::errs() << "\n*** END OVERLOAD EVALUATION ***\n\n";
 #endif
 
   auto& instantiate = best_overload.instantiation;
@@ -222,12 +222,12 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
       // solution
       // TODO: find a better solution other than the solution proposed above
       with_saved_scope([&] {
-        m_in_depth = false;
-        m_current_fn = &new_fn;
-        body_statement(new_fn.ast());
+        in_depth = false;
+        current_fn = &new_fn;
+        body_statement(new_fn.ast);
       });
 
-      m_decl_queue.push(&new_fn);
+      decl_queue.push(&new_fn);
 
       selected = &new_fn;
     } else {
@@ -236,7 +236,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
   }
 
   for (auto [target, expr_arg, compat] :
-       llvm::zip(selected->ast().args(), expr.direct_args(), best_overload.compatibilities)) {
+       llvm::zip(selected->ast.args(), expr.direct_args(), best_overload.compatibilities)) {
     yume_assert(compat.valid, "Invalid compatibility after overload already selected?????");
     if (compat.conv.empty())
       continue;
@@ -247,8 +247,8 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
     expr_arg = move(cast_expr);
   }
 
-  if (selected->ast().ret().has_value())
-    expr.attach_to(&selected->ast());
+  if (selected->ast.ret().has_value())
+    expr.attach_to(&selected->ast);
 
   expr.selected_overload(selected);
 }
@@ -260,7 +260,7 @@ template <> void TypeWalker::statement(ast::Compound& stat) {
 
 template <> void TypeWalker::statement(ast::StructDecl& stat) {
   // This decl still has unsubstituted generics, can't instantiate its body
-  if (std::ranges::any_of(m_current_struct->m_subs, [](const auto& sub) { return sub.second->is_generic(); }))
+  if (std::ranges::any_of(current_struct->subs, [](const auto& sub) { return sub.second->is_generic(); }))
     return;
 
   for (auto& i : stat.fields())
@@ -268,11 +268,11 @@ template <> void TypeWalker::statement(ast::StructDecl& stat) {
 }
 
 template <> void TypeWalker::statement(ast::FnDecl& stat) {
-  m_scope.clear();
+  scope.clear();
 
   for (auto& i : stat.args()) {
     expression(i);
-    m_scope.insert({i.name(), &i});
+    scope.insert({i.name(), &i});
   }
 
   if (stat.ret().has_value()) {
@@ -281,10 +281,10 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
   }
 
   // This decl still has unsubstituted generics, can't instantiate its body
-  if (std::ranges::any_of(m_current_fn->m_subs, [](const auto& sub) { return sub.second->is_generic(); }))
+  if (std::ranges::any_of(current_fn->subs, [](const auto& sub) { return sub.second->is_generic(); }))
     return;
 
-  if (m_in_depth && std::holds_alternative<ast::Compound>(stat.body()))
+  if (in_depth && std::holds_alternative<ast::Compound>(stat.body()))
     statement(get<ast::Compound>(stat.body()));
 }
 
@@ -292,7 +292,7 @@ template <> void TypeWalker::statement(ast::ReturnStmt& stat) {
   if (stat.expr().has_value()) {
     auto& returned = stat.expr()->get();
     body_expression(returned);
-    m_current_fn->m_ast_decl.attach_to(&returned);
+    current_fn->ast.attach_to(&returned);
   }
 }
 
@@ -304,7 +304,7 @@ template <> void TypeWalker::statement(ast::VarDecl& stat) {
   }
 
   stat.val_ty(&stat.init().val_ty()->known_mut());
-  m_scope.insert({stat.name(), &stat});
+  scope.insert({stat.name(), &stat});
 }
 
 template <> void TypeWalker::statement(ast::IfStmt& stat) {
@@ -331,9 +331,9 @@ void TypeWalker::body_expression(ast::Expr& expr) {
 }
 
 auto TypeWalker::convert_type(const ast::Type& ast_type) -> const ty::Type& {
-  const ty::Type* parent = m_current_fn == nullptr ? m_current_struct->type() : m_current_fn->parent();
-  auto* context = m_current_fn == nullptr ? m_current_struct == nullptr ? nullptr : &m_current_struct->m_subs
-                                          : &m_current_fn->m_subs;
+  const ty::Type* parent = current_fn == nullptr ? current_struct->type : current_fn->parent;
+  auto* context = current_fn == nullptr ? current_struct == nullptr ? nullptr : &current_struct->subs
+                                          : &current_fn->subs;
 
   if (const auto* simple_type = dyn_cast<ast::SimpleType>(&ast_type)) {
     auto name = simple_type->name();
@@ -342,8 +342,8 @@ auto TypeWalker::convert_type(const ast::Type& ast_type) -> const ty::Type& {
       if (generic != context->end())
         return *generic->second;
     }
-    auto val = m_compiler.m_types.known.find(name);
-    if (val != m_compiler.m_types.known.end())
+    auto val = compiler.m_types.known.find(name);
+    if (val != compiler.m_types.known.end())
       return *val->second;
   } else if (const auto* qual_type = dyn_cast<ast::QualType>(&ast_type)) {
     auto qualifier = qual_type->qualifier();
@@ -358,19 +358,19 @@ auto TypeWalker::convert_type(const ast::Type& ast_type) -> const ty::Type& {
 }
 
 void TypeWalker::resolve_queue() {
-  while (!m_decl_queue.empty()) {
-    auto next = m_decl_queue.front();
-    m_decl_queue.pop();
+  while (!decl_queue.empty()) {
+    auto next = decl_queue.front();
+    decl_queue.pop();
 
     with_saved_scope([&] {
       std::visit(DeclLikeVisitor{[&](Fn* fn) {
-                                   m_in_depth = true;
-                                   m_compiler.declare(*fn);
+                                   in_depth = true;
+                                   compiler.declare(*fn);
                                  },
                                  [&](Struct* st) {
                                    for (auto& i : st->body().body()) {
-                                     auto decl = m_compiler.decl_statement(i, st->m_type, st->m_member);
-                                     m_compiler.walk_types(decl);
+                                     auto decl = compiler.decl_statement(i, st->type, st->member);
+                                     compiler.walk_types(decl);
                                    }
                                  }},
                  next);

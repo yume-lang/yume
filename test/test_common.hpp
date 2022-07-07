@@ -60,10 +60,10 @@ namespace Catch {
     static auto convert(const yume::Token& token) -> std::string {
       std::string str = "(";
       llvm::raw_string_ostream ss(str);
-      ss << yume::Token::type_name(token.m_type);
-      if (token.m_payload.has_value()) {
+      ss << yume::Token::type_name(token.type);
+      if (token.payload.has_value()) {
         ss << " \"";
-        ss.write_escaped(std::string(*token.m_payload));
+        ss.write_escaped(std::string(*token.payload));
         ss << "\")";
       }
       return str;

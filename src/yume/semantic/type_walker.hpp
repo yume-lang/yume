@@ -32,18 +32,18 @@ struct TypeWalker : public CRTPWalker<TypeWalker, false> {
   friend CRTPWalker;
 
 public:
-  Compiler& m_compiler;
-  Struct* m_current_struct{};
-  Fn* m_current_fn{};
-  std::map<string, ast::AST*> m_scope{};
+  Compiler& compiler;
+  Struct* current_struct{};
+  Fn* current_fn{};
+  std::map<string, ast::AST*> scope{};
 
-  std::queue<DeclLike> m_decl_queue{};
+  std::queue<DeclLike> decl_queue{};
 
   /// Whether or not to compile the bodies of methods.  Initially, on the parameter types of methods are traversed and
   /// converted, then everything else in a second pass.
-  bool m_in_depth = false;
+  bool in_depth = false;
 
-  explicit TypeWalker(Compiler& compiler) : m_compiler(compiler) {}
+  explicit TypeWalker(Compiler& compiler) : compiler(compiler) {}
 
   void body_statement(ast::Stmt&);
   void body_expression(ast::Expr&);
@@ -58,18 +58,18 @@ private:
 
   auto with_saved_scope(auto&& callback) {
     // Save everything pertaining to the old context
-    auto saved_scope = m_scope;
-    auto* saved_current_fn = m_current_fn;
-    auto* saved_current_struct = m_current_struct;
-    auto saved_depth = m_in_depth;
+    auto saved_scope = scope;
+    auto* saved_current_fn = current_fn;
+    auto* saved_current_struct = current_struct;
+    auto saved_depth = in_depth;
 
     callback();
 
     // Restore again
-    m_in_depth = saved_depth;
-    m_scope = saved_scope;
-    m_current_fn = saved_current_fn;
-    m_current_struct = saved_current_struct;
+    in_depth = saved_depth;
+    scope = saved_scope;
+    current_fn = saved_current_fn;
+    current_struct = saved_current_struct;
   }
 
   template <typename T> void statement([[maybe_unused]] T& stat) {

@@ -74,7 +74,7 @@ struct Characteristic {
 };
 
 /// Contains the state while the tokenizer is running, such as the position within the file currently being read
-struct Tokenizer {
+class Tokenizer {
   vector<Token> m_tokens{};
   std::istream& m_in;
   char m_last;
@@ -83,6 +83,7 @@ struct Tokenizer {
   int m_col = 1;
   const char* m_source_file;
 
+public:
   /// Words consist of alphanumeric characters, or underscores, but *must* begin with a letter.
   constexpr static const auto is_word = [](int c, int i) {
     return (i == 0 && std::isalpha(c) != 0) || std::isalnum(c) != 0 || c == '_';
@@ -193,6 +194,8 @@ struct Tokenizer {
 
   Tokenizer(std::istream& in, const char* source_file) : m_in(in), m_last(next()), m_source_file(source_file) {}
 
+  [[nodiscard]] auto tokens() { return m_tokens; }
+
 private:
   auto next() -> char {
     m_in.get(m_last);
@@ -260,7 +263,7 @@ private:
 auto tokenize_preserve_skipped(std::istream& in, const string& source_file) -> vector<Token> {
   auto tokenizer = Tokenizer(in, source_file.data());
   tokenizer.tokenize();
-  return tokenizer.m_tokens;
+  return tokenizer.tokens();
 }
 
 auto tokenize(std::istream& in, const string& source_file) -> vector<Token> {
@@ -268,18 +271,18 @@ auto tokenize(std::istream& in, const string& source_file) -> vector<Token> {
   vector<Token> filtered{};
   filtered.reserve(original.size());
   std::copy_if(original.begin(), original.end(), std::back_inserter(filtered),
-               [](const Token& t) { return t.m_type != Token::Type::Skip; });
+               [](const Token& t) { return t.type != Token::Type::Skip; });
   return filtered;
 }
 
 auto operator<<(llvm::raw_ostream& os, const Token& token) -> llvm::raw_ostream& {
-  os << "Token" << llvm::format_decimal(token.m_i, 4) << '(';
-  const auto& loc = token.m_loc;
+  os << "Token" << llvm::format_decimal(token.index, 4) << '(';
+  const auto& loc = token.loc;
   os << loc.to_string() << ",";
-  os << Token::type_name(token.m_type);
-  if (token.m_payload.has_value()) {
+  os << Token::type_name(token.type);
+  if (token.payload.has_value()) {
     os << ",\"";
-    os.write_escaped(string(*token.m_payload));
+    os.write_escaped(string(*token.payload));
     os << '\"';
   }
   os << ")";

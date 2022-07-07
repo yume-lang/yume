@@ -54,20 +54,20 @@ inline void print_exception() {
 void backtrace(void* /*unused*/);
 
 struct ASTStackTrace : public llvm::PrettyStackTraceEntry {
-  std::string m_message;
+  std::string message;
 
   ASTStackTrace(std::string message);
   ASTStackTrace(std::string message, const ast::AST& ast);
 
-  void print(llvm::raw_ostream& OS) const override { OS << m_message << "\n"; };
+  void print(llvm::raw_ostream& stream) const override { stream << message << "\n"; };
 };
 
 struct ParserStackTrace : public llvm::PrettyStackTraceEntry {
-  std::string m_message;
+  std::string message;
 
   ParserStackTrace(std::string message);
   ParserStackTrace(std::string message, const Token& token);
 
-  void print(llvm::raw_ostream& OS) const override { OS << m_message << "\n"; };
+  void print(llvm::raw_ostream& stream) const override { stream << message << "\n"; };
 };
 } // namespace yume

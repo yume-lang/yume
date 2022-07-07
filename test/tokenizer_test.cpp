@@ -6,7 +6,7 @@
 
 namespace {
 constexpr auto token_comparison = [](const yume::Token& a, const yume::Token& b) -> bool {
-  return a.m_type == b.m_type && a.m_payload == b.m_payload;
+  return a.type == b.type && a.payload == b.payload;
 };
 
 template <typename... Ts> auto EqualsTokens(Ts... ts) {

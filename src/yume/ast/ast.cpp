@@ -76,9 +76,10 @@ void AST::unify_val_ty() const {
 }
 
 namespace {
-struct TokenRange {
+class TokenRange {
   span<Token> m_span;
 
+public:
   constexpr TokenRange(auto&& begin, int end) : m_span{begin.base(), static_cast<size_t>(end)} {}
   constexpr TokenRange(auto&& begin, auto&& end) : m_span{begin.base(), end.base()} {}
 
@@ -143,7 +144,7 @@ struct Parser {
   /// \returns true if a separator was encountered (and consumed)
   auto ignore_separator([[maybe_unused]] const source_location location = source_location::current()) -> bool {
     bool found_separator = false;
-    while (!tokens.at_end() && tokens->m_type == Separator) {
+    while (!tokens.at_end() && tokens->type == Separator) {
 #ifdef YUME_SPEW_CONSUMED_TOKENS
       llvm::errs() << "consumed " << *tokens << " at " << at(location) << "\n";
 #endif
@@ -158,7 +159,7 @@ struct Parser {
     if (tokens.at_end())
       throw std::runtime_error("Expected token type "s + Token::type_name(token_type) + ", got the end of the file");
 
-    if (tokens->m_type != token_type)
+    if (tokens->type != token_type)
       throw std::runtime_error("Expected token type "s + Token::type_name(token_type) + ", got " + to_string(*tokens) +
                                " at " + at(location));
   }
@@ -175,7 +176,7 @@ struct Parser {
     auto [token_type, payload] = token_atom;
     ignore_separator();
     expect(token_type, location);
-    if (tokens->m_payload != payload) {
+    if (tokens->payload != payload) {
       throw std::runtime_error("Expected payload atom "s + string(payload) + ", got " + to_string(*tokens) + " at " +
                                at(location));
     }
@@ -191,7 +192,7 @@ struct Parser {
   auto try_consume(TokenAtom token_atom, [[maybe_unused]] const source_location location = source_location::current())
       -> bool {
     auto [token_type, payload] = token_atom;
-    if (tokens.at_end() || tokens->m_type != token_type || tokens->m_payload != payload) {
+    if (tokens.at_end() || tokens->type != token_type || tokens->payload != payload) {
       return false;
     }
 
@@ -218,7 +219,7 @@ struct Parser {
                  << string(payload) << ", got " << *token << " at " << at(location) << "\n";
 #endif
 
-    return !(token->m_type != token_type || token->m_payload != payload);
+    return !(token->type != token_type || token->payload != payload);
   }
 
   /// Check if the token ahead by `ahead` is of type `token_type`.
@@ -234,7 +235,7 @@ struct Parser {
                  << " at " << at(location) << "\n";
 #endif
 
-    return token->m_type == token_type;
+    return token->type == token_type;
   }
 
   /// Consume tokens until a token of the given type and payload is encountered.
@@ -263,9 +264,9 @@ struct Parser {
   /// Return the payload of the next token. Throws if the next token isn't a `Word`.
   auto consume_word(const source_location location = source_location::current()) -> string {
     ignore_separator();
-    if (tokens->m_type != Word)
+    if (tokens->type != Word)
       throw std::runtime_error("Expected word, got the end of the file");
-    if (tokens->m_type != Word)
+    if (tokens->type != Word)
       throw std::runtime_error("Expected word, got "s + to_string(*tokens) + " at " + at(location));
 
     return *next(location).m_payload;
@@ -285,7 +286,7 @@ struct Parser {
                  << "\n";
 #endif
 
-    return token->m_type == Word && is_uword(token->m_payload.value());
+    return token->type == Word && is_uword(token->payload.value());
   }
 
   auto parse_stmt() -> unique_ptr<Stmt>;
@@ -296,9 +297,9 @@ struct Parser {
 
   auto parse_fn_name() -> string {
     string name{};
-    if (tokens->m_type == Word) {
+    if (tokens->type == Word) {
       name = consume_word();
-    } else if (tokens->m_type == Symbol) {
+    } else if (tokens->type == Symbol) {
       // Try to parse an operator name, as in `def +()`
       bool found_op = false;
       for (const auto& op_row : operators()) {
@@ -537,18 +538,18 @@ struct Parser {
       return val;
     }
 
-    if (tokens->m_type == Number)
+    if (tokens->type == Number)
       return parse_number_expr();
-    if (tokens->m_type == Token::Type::Literal)
+    if (tokens->type == Token::Type::Literal)
       return parse_string_expr();
-    if (tokens->m_type == Token::Type::Char)
+    if (tokens->type == Token::Type::Char)
       return parse_char_expr();
     if (try_consume(KWD_TRUE))
       return ast_ptr<BoolExpr>(entry, true);
     if (try_consume(KWD_FALSE))
       return ast_ptr<BoolExpr>(entry, false);
 
-    if (tokens->m_type == Word) {
+    if (tokens->type == Word) {
       if (try_peek_uword(0)) {
         auto type = parse_type();
         if (try_consume(SYM_LPAREN)) {
@@ -731,7 +732,7 @@ auto Parser::parse_type(bool implicit_self) -> unique_ptr<Type> {
 
 auto Parser::try_parse_type() -> optional<unique_ptr<Type>> {
   auto entry = tokens.begin();
-  if (tokens->m_type != Word || !tokens->m_payload.has_value())
+  if (tokens->type != Word || !tokens->payload.has_value())
     return {};
 
   const string name = consume_word();

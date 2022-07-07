@@ -53,8 +53,8 @@ inline static constexpr auto get_val_ty = [](const ast::AST& ast) { return ast.v
 inline static constexpr auto get_val_ty_ptr = [](const ast::AST* ast) { return ast->val_ty(); };
 
 void Overload::dump(llvm::raw_ostream& stream) const {
-  stream << fn->ast().location().to_string() << "\t" << fn->name() << "(";
-  join_args(fn->ast().args(), get_val_ty, stream);
+  stream << fn->ast.location().to_string() << "\t" << fn->name() << "(";
+  join_args(fn->ast.args(), get_val_ty, stream);
   stream << ")";
   if (!instantiation.sub.empty()) {
     stream << " with ";
@@ -102,7 +102,7 @@ static auto literal_cast(ast::AST& arg, const ty::Type* target_type) -> ty::Comp
 }
 
 auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
-  const auto& fn_ast = overload.fn->m_ast_decl;
+  const auto& fn_ast = overload.fn->ast;
 
   // The overload is only viable if the amount of arguments matches the amount of parameters.
   // Varargs functions may have more arguments that the amount of non-vararg parameters.

@@ -50,60 +50,53 @@ struct Instantiation {
  * All the instantiations of a template are stored in `m_instantiations`.
  */
 struct Fn {
-  ast::FnDecl& m_ast_decl;
+  ast::FnDecl& ast;
   /// If this function is in the body of a struct, this points to its type. Used for the `self` type.
-  ty::Type* m_parent{};
+  ty::Type* parent{};
   /// The program this declaration is a member of.
-  ast::Program* m_member{};
-  vector<unique_ptr<ty::Generic>> m_type_args{};
+  ast::Program* member{};
+  vector<unique_ptr<ty::Generic>> type_args{};
   /// If this is an instantiation of a template, a mapping between type variables and their substitutions.
-  std::map<string, const ty::Type*> m_subs{};
-  std::map<Instantiation, unique_ptr<Fn>> m_instantiations{};
-  llvm::Function* m_llvm_fn{};
+  std::map<string, const ty::Type*> subs{};
+  std::map<Instantiation, unique_ptr<Fn>> instantiations{};
+  llvm::Function* llvm{};
   /// A basic block where are allocations for local variables should go. It is placed \e before the "entrypoint".
-  llvm::BasicBlock* m_decl_bb{};
+  llvm::BasicBlock* decl_bb{};
 
   Fn(ast::FnDecl& ast_decl, ty::Type* parent = nullptr, ast::Program* member = nullptr,
      std::map<string, const ty::Type*> subs = {}, vector<unique_ptr<ty::Generic>> type_args = {})
-      : m_ast_decl(ast_decl), m_parent(parent), m_member(member), m_type_args(move(type_args)), m_subs(move(subs)) {}
+      : ast(ast_decl), parent(parent), member(member), type_args(move(type_args)), subs(move(subs)) {}
 
-  [[nodiscard]] auto body() const -> const auto& { return m_ast_decl.body(); }
+  [[nodiscard]] auto body() const -> const auto& { return ast.body(); }
 
-  [[nodiscard]] auto name() const { return m_ast_decl.name(); }
-
-  [[nodiscard]] auto ast() const -> auto& { return m_ast_decl; }
-  [[nodiscard]] auto llvm() const -> llvm::Function* { return m_llvm_fn; }
-  [[nodiscard]] auto parent() const -> ty::Type* { return m_parent; }
+  [[nodiscard]] auto name() const { return ast.name(); }
 
   [[nodiscard]] auto declaration(Compiler& compiler, bool mangle = true) -> llvm::Function*;
 
   [[nodiscard]] auto get_or_create_instantiation(Instantiation& instantiate) -> std::pair<bool, Fn&>;
   [[nodiscard]] auto create_instantiation(Instantiation& instantiate) -> Fn&;
 
-  operator llvm::Function*() const { return m_llvm_fn; }
+  operator llvm::Function*() const { return llvm; }
 };
 
 struct Struct {
-  ast::StructDecl& m_ast_decl;
+  ast::StructDecl& ast;
   /// The type of this struct. Used for the `self` type.
-  ty::Type* m_type{};
+  ty::Type* type{};
   /// The program this declaration is a member of.
-  ast::Program* m_member{};
-  vector<unique_ptr<ty::Generic>> m_type_args{};
+  ast::Program* member{};
+  vector<unique_ptr<ty::Generic>> type_args{};
   /// If this is an instantiation of a template, a mapping between type variables and their substitutions.
-  std::map<string, const ty::Type*> m_subs{};
-  std::map<Instantiation, unique_ptr<Struct>> m_instantiations{};
+  std::map<string, const ty::Type*> subs{};
+  std::map<Instantiation, unique_ptr<Struct>> instantiations{};
 
   Struct(ast::StructDecl& ast_decl, ty::Type* type = nullptr, ast::Program* member = nullptr,
          std::map<string, const ty::Type*> subs = {}, vector<unique_ptr<ty::Generic>> type_args = {})
-      : m_ast_decl(ast_decl), m_type(type), m_member(member), m_type_args(move(type_args)), m_subs(move(subs)) {}
+      : ast(ast_decl), type(type), member(member), type_args(move(type_args)), subs(move(subs)) {}
 
-  [[nodiscard]] auto body() const -> const auto& { return m_ast_decl.body(); }
+  [[nodiscard]] auto body() const -> const auto& { return ast.body(); }
 
-  [[nodiscard]] auto name() const { return m_ast_decl.name(); }
-
-  [[nodiscard]] auto ast() const -> auto& { return m_ast_decl; }
-  [[nodiscard]] auto type() const -> ty::Type* { return m_type; }
+  [[nodiscard]] auto name() const { return ast.name(); }
 
   [[nodiscard]] auto get_or_create_instantiation(Instantiation& instantiate) -> std::pair<bool, Struct&>;
   [[nodiscard]] auto create_instantiation(Instantiation& instantiate) -> Struct&;
@@ -117,7 +110,7 @@ struct DeclLikeVisitor : FnC, StC {
   using StC::operator();
   void operator()(std::monostate /* ignored */){};
 };
-template<typename FnC, typename StC> DeclLikeVisitor(FnC, StC) -> DeclLikeVisitor<FnC, StC>;
+template <typename FnC, typename StC> DeclLikeVisitor(FnC, StC) -> DeclLikeVisitor<FnC, StC>;
 
 /// A value of a complied expression.
 /**
@@ -125,33 +118,31 @@ template<typename FnC, typename StC> DeclLikeVisitor(FnC, StC) -> DeclLikeVisito
  * future.
  */
 struct Val {
-  llvm::Value* m_llvm_val{};
+  llvm::Value* llvm{};
 
-  /* implicit */ Val(llvm::Value* llvm_val) : m_llvm_val(llvm_val) {}
+  /* implicit */ Val(llvm::Value* llvm_val) : llvm(llvm_val) {}
 
-  [[nodiscard]] auto llvm() const -> llvm::Value* { return m_llvm_val; }
-
-  operator llvm::Value*() const { return m_llvm_val; }
+  /* implicit */ operator llvm::Value*() const { return llvm; }
 };
 
 /// A source file with its associated Syntax Tree.
 struct SourceFile {
-  const string m_name;
-  vector<yume::Token> m_tokens;
-  ast::TokenIterator m_iterator;
-  unique_ptr<ast::Program> m_program;
+  const string name;
+  vector<yume::Token> tokens;
+  ast::TokenIterator iterator;
+  unique_ptr<ast::Program> program;
 
   SourceFile(std::istream& in, string name)
-      : m_name(move(name)), m_tokens(yume::tokenize(in, m_name)), m_iterator{m_tokens.begin(), m_tokens.end()} {
+      : name(move(name)), tokens(yume::tokenize(in, this->name)), iterator{tokens.begin(), tokens.end()} {
 #ifdef YUME_SPEW_LIST_TOKENS
     llvm::outs() << "tokens:\n";
-    for (auto& i : m_tokens) {
+    for (auto& i : tokens) {
       llvm::outs() << "  " << i << "\n";
     }
     llvm::outs() << "\n";
     llvm::outs().flush();
 #endif
-    m_program = ast::Program::parse(m_iterator);
+    program = ast::Program::parse(iterator);
   }
 };
 } // namespace yume
