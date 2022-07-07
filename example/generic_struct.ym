@@ -4,6 +4,8 @@ struct Array<T>(body T[], size I64)
 end
 
 def main() I32
+  # TODO
+  # There should be a better way to write integer literals of a certain type
   let t1 = Array<I32>(I32:[], I64(0))
   let t2 = Array<U8>(U8:[?a], I64(2))
   let t3 = Array<I32>(I32:[], I64(1))

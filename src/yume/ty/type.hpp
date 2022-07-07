@@ -6,8 +6,11 @@
 #include "util.hpp"
 #include "llvm/Support/Casting.h"
 #include <array>
+#include <limits>
 #include <memory>
+#include <stdexcept>
 #include <string>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -108,6 +111,7 @@ public:
   Int(string name, int size, bool signed_) : Type(K_Int, move(name)), m_size(size), m_signed(signed_) {}
   [[nodiscard]] auto size() const -> int { return m_size; }
   [[nodiscard]] auto is_signed() const -> bool { return m_signed; }
+  [[nodiscard]] auto in_range(int64_t num) const -> bool;
   static auto classof(const Type* a) -> bool { return a->kind() == K_Int; }
 };
 

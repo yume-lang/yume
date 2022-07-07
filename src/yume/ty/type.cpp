@@ -178,4 +178,45 @@ auto Type::intersect(const Type& other) const -> const Type* {
 auto Type::without_qual() const -> const Type& { return *(isa<Qual>(*this) ? qual_base() : this); }
 
 auto Type::without_qual_kind() const -> Kind { return (isa<Qual>(*this) ? qual_base() : this)->kind(); }
+
+namespace detail {
+static constexpr size_t BITSIZE_8 = 8;
+static constexpr size_t BITSIZE_16 = 16;
+static constexpr size_t BITSIZE_32 = 32;
+static constexpr size_t BITSIZE_64 = 64;
+
+struct MinMax {
+  uint64_t u_min;
+  uint64_t u_max;
+  int64_t s_min;
+  int64_t s_max;
+};
+
+template <typename UIntType> consteval auto minmax_for_bits() -> MinMax {
+  using SIntType = typename std::make_signed<UIntType>::type;
+
+  return {std::numeric_limits<UIntType>::min(), std::numeric_limits<UIntType>::max(),
+          std::numeric_limits<SIntType>::min(), std::numeric_limits<SIntType>::max()};
+}
+
+constexpr auto minmax_for_bits(size_t bits) -> MinMax {
+  switch (bits) {
+  case BITSIZE_8: return minmax_for_bits<uint8_t>();
+  case BITSIZE_16: return minmax_for_bits<uint16_t>();
+  case BITSIZE_32: return minmax_for_bits<uint32_t>();
+  case BITSIZE_64: return minmax_for_bits<uint64_t>();
+  default: throw std::logic_error("Integer type must be 8, 16, 32, or 64 bits, not "s + std::to_string(bits));
+  };
+}
+} // namespace detail
+
+auto Int::in_range(int64_t num) const -> bool {
+  if (num < 0 && !m_signed)
+    return false;
+  auto min_max = detail::minmax_for_bits(m_size);
+  if (m_signed)
+    return num >= min_max.s_min && num <= min_max.s_max;
+  return static_cast<uint64_t>(num) >= min_max.u_min && static_cast<uint64_t>(num) <= min_max.u_max;
+}
+
 } // namespace yume::ty

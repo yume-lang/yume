@@ -63,7 +63,7 @@ def dup_append<T>(arr T[], last T) T[]
   return dup_t
 end
 
-# TODO: type inference should be able to cast U8 to I32, having determined I32 as the replacement for T
+# TODO: type inference should be able to cast I32 to U8, having determined U8 as the replacement for T
 def c_str(str U8[]) U8[] = str.dup_append(?\0)
 
 def c_len(ptr U8 ptr) I64

@@ -1,12 +1,14 @@
 #include "overload.hpp"
 #include "ast/ast.hpp"
 #include "token.hpp"
+#include "ty/compatibility.hpp"
 #include "ty/type.hpp"
 #include "util.hpp"
 #include <algorithm>
 #include <compare>
 #include <functional>
 #include <llvm/ADT/STLExtras.h>
+#include <llvm/Support/Casting.h>
 #include <llvm/Support/raw_ostream.h>
 #include <map>
 #include <stdexcept>
@@ -79,6 +81,23 @@ void OverloadSet::dump(llvm::raw_ostream& stream, bool hide_invalid) const {
   }
 };
 
+static auto literal_cast(ast::AST& arg, const ty::Type* target_type) -> ty::Compat {
+  if (llvm::isa<ast::NumberExpr>(arg) && llvm::isa<ty::Int>(target_type)) {
+    auto& num_arg = llvm::cast<ast::NumberExpr>(arg);
+    const auto* int_type = llvm::cast<ty::Int>(target_type);
+
+    if (int_type->size() == 1)
+      return {}; // Can't implicitly cast to Bool
+
+    auto in_range = int_type->in_range(num_arg.val());
+
+    if (in_range)
+      return {.valid = true, .conv = {.dereference = false, .kind = ty::Conv::Int}};
+  }
+
+  return {};
+}
+
 auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
   const auto& fn_ast = overload.fn->m_ast_decl;
 
@@ -117,8 +136,13 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
         return false;
     }
 
-    auto compat = arg_type->compatibility(*param_type);
-    // One invalid conversion disqualifies the function entirely
+    // Attempt to do a literal cast
+    auto compat = literal_cast(*arg, param_type);
+    // Couldn't perform a literal cast, try regular casts
+    if (!compat.valid)
+      compat = arg_type->compatibility(*param_type);
+
+    // Couldn't perform any kind of valid cast: one invalid conversion disqualifies the function entirely
     if (!compat.valid)
       return false;
 
