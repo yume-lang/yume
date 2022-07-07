@@ -82,6 +82,9 @@ void OverloadSet::dump(llvm::raw_ostream& stream, bool hide_invalid) const {
 };
 
 static auto literal_cast(ast::AST& arg, const ty::Type* target_type) -> ty::Compat {
+  if (arg.val_ty() == target_type)
+    return {.valid = true}; // Already the correct type
+
   if (llvm::isa<ast::NumberExpr>(arg) && llvm::isa<ty::Int>(target_type)) {
     auto& num_arg = llvm::cast<ast::NumberExpr>(arg);
     const auto* int_type = llvm::cast<ty::Int>(target_type);
