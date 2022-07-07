@@ -82,7 +82,7 @@ struct TokenRange {
   constexpr TokenRange(auto&& begin, int end) : m_span{begin.base(), static_cast<size_t>(end)} {}
   constexpr TokenRange(auto&& begin, auto&& end) : m_span{begin.base(), end.base()} {}
 
-  operator span<Token>() const { return m_span; }
+  /* implicit */ operator span<Token>() const { return m_span; }
 };
 
 struct Parser {
