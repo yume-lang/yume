@@ -48,10 +48,8 @@ jobs:
         id: cache-catch2
         uses: actions/cache@v3
         with:
-          path: |
-            /usr/local/lib/cmake/Catch2/
-            /usr/local/include/catch2/
-          key: catch2-${{ matrix.clang }}-${{ env.CATCH2_REF }}
+          path: ~/lib/
+          key: catch2-clang${{ matrix.clang }}-${{ env.CATCH2_REF }}
 
       - name: Build Catch2
         if: steps.cache-catch2.outputs.cache-hit != 'true'
@@ -59,11 +57,11 @@ jobs:
           git clone https://github.com/catchorg/Catch2.git
           cd Catch2
           git checkout ${{ env.CATCH2_REF }}
-          cmake -Bbuild -H. -DBUILD_TESTING=OFF
+          cmake -Bbuild -H. -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=~/lib
           sudo cmake --build build/ --target install
 
       - name: Configure CMake
-        run: cmake -B ${{env.BUILD_DIR}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DYUME_FORCE_LLVM_VERSION=${{ matrix.llvm }} -DYUME_COV=ON -DBUILD_TESTING=ON
+        run: cmake -B ${{env.BUILD_DIR}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DYUME_FORCE_LLVM_VERSION=${{ matrix.llvm }} -DYUME_COV=ON -DBUILD_TESTING=ON -DCMAKE_SYSTEM_PREFIX_PATH=~/lib
 
       - name: Build
         run: cmake --build ${{env.BUILD_DIR}} --config ${{env.BUILD_TYPE}}
