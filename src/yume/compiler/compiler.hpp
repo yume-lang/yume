@@ -32,7 +32,6 @@ class Stmt;
 namespace ty {
 class Type;
 }
-using namespace llvm;
 
 struct InScope {
   Val value;
@@ -53,10 +52,10 @@ class Compiler : public CRTPWalker<Compiler> {
   Fn* m_current_fn{};
   std::map<string, InScope> m_scope{};
 
-  unique_ptr<LLVMContext> m_context;
-  unique_ptr<IRBuilder<>> m_builder;
-  unique_ptr<Module> m_module;
-  unique_ptr<TargetMachine> m_targetMachine;
+  unique_ptr<llvm::LLVMContext> m_context;
+  unique_ptr<llvm::IRBuilder<>> m_builder;
+  unique_ptr<llvm::Module> m_module;
+  unique_ptr<llvm::TargetMachine> m_targetMachine;
 
   friend semantic::TypeWalker;
   friend CRTPWalker;

@@ -46,27 +46,27 @@
 namespace yume {
 Compiler::Compiler(vector<SourceFile> source_files)
     : m_sources(move(source_files)), m_walker(std::make_unique<semantic::TypeWalker>(*this)) {
-  m_context = std::make_unique<LLVMContext>();
-  m_module = std::make_unique<Module>("yume", *m_context);
-  m_builder = std::make_unique<IRBuilder<>>(*m_context);
+  m_context = std::make_unique<llvm::LLVMContext>();
+  m_module = std::make_unique<llvm::Module>("yume", *m_context);
+  m_builder = std::make_unique<llvm::IRBuilder<>>(*m_context);
 
-  InitializeNativeTarget();
-  InitializeNativeTargetAsmParser();
-  InitializeNativeTargetAsmPrinter();
+  llvm::InitializeNativeTarget();
+  llvm::InitializeNativeTargetAsmParser();
+  llvm::InitializeNativeTargetAsmPrinter();
   string error;
-  string targetTriple = sys::getDefaultTargetTriple();
-  const auto* target = TargetRegistry::lookupTarget(targetTriple, error);
+  string targetTriple = llvm::sys::getDefaultTargetTriple();
+  const auto* target = llvm::TargetRegistry::lookupTarget(targetTriple, error);
 
   if (target == nullptr) {
-    errs() << error;
+    llvm::errs() << error;
     throw std::exception();
   }
   const char* cpu = "generic";
   const char* feat = "";
 
-  TargetOptions opt;
-  m_targetMachine =
-      unique_ptr<TargetMachine>(target->createTargetMachine(targetTriple, cpu, feat, opt, Reloc::Model::PIC_));
+  llvm::TargetOptions opt;
+  m_targetMachine = unique_ptr<llvm::TargetMachine>(
+      target->createTargetMachine(targetTriple, cpu, feat, opt, llvm::Reloc::Model::PIC_));
 
   m_module->setDataLayout(m_targetMachine->createDataLayout());
   m_module->setTargetTriple(targetTriple);
@@ -128,7 +128,7 @@ auto Compiler::create_struct(ast::StructDecl& s_decl, const optional<string>& na
 };
 
 auto Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* member) -> DeclLike {
-  if (auto* fn_decl = dyn_cast<ast::FnDecl>(&stmt)) {
+  if (auto* fn_decl = llvm::dyn_cast<ast::FnDecl>(&stmt)) {
     vector<unique_ptr<ty::Generic>> type_args{};
     std::map<string, const ty::Type*> subs{};
     for (auto& i : fn_decl->type_args()) {
@@ -139,7 +139,7 @@ auto Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* m
 
     return &fn;
   }
-  if (auto* s_decl = dyn_cast<ast::StructDecl>(&stmt)) {
+  if (auto* s_decl = llvm::dyn_cast<ast::StructDecl>(&stmt)) {
     auto i_ty = m_types.known.insert({s_decl->name(), create_struct(*s_decl)});
 
     vector<unique_ptr<ty::Generic>> type_args{};
@@ -191,7 +191,7 @@ auto Compiler::llvm_type(const ty::Type& type) -> llvm::Type* {
     return memo;
   }
 
-  return Type::getVoidTy(*m_context);
+  return llvm::Type::getVoidTy(*m_context);
 }
 
 void Compiler::destruct(Val val, const ty::Type& type) {
@@ -261,8 +261,8 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
   if (mangle)
     name = mangle_name(fn);
 
-  auto linkage = mangle ? Function::InternalLinkage : Function::ExternalLinkage;
-  Function* llvm_fn = Function::Create(fn_t, linkage, name, m_module.get());
+  auto linkage = mangle ? llvm::Function::InternalLinkage : llvm::Function::ExternalLinkage;
+  auto* llvm_fn = llvm::Function::Create(fn_t, linkage, name, m_module.get());
   fn.m_llvm_fn = llvm_fn;
 
   int arg_i = 0;
@@ -307,15 +307,15 @@ void Compiler::destruct_all_in_scope(ast::FnDecl& scope_parent) {
   yume_assert(std::holds_alternative<ast::Compound>(scope_parent.body()), "Primitives don't have scope");
 
   for (const auto& [k, v] : m_scope)
-    if (isa<ast::VarDecl>(v.ast) && v.owning && !is_trivially_destructible(v.ast.val_ty()))
+    if (llvm::isa<ast::VarDecl>(v.ast) && v.owning && !is_trivially_destructible(v.ast.val_ty()))
       destruct(v.value, *v.ast.val_ty());
 }
 
 void Compiler::define(Fn& fn) {
   m_current_fn = &fn;
   m_scope.clear();
-  BasicBlock* decl_bb = BasicBlock::Create(*m_context, "decl", fn);
-  BasicBlock* bb = BasicBlock::Create(*m_context, "entry", fn);
+  auto* decl_bb = llvm::BasicBlock::Create(*m_context, "decl", fn);
+  auto* bb = llvm::BasicBlock::Create(*m_context, "entry", fn);
   m_builder->SetInsertPoint(bb);
   m_current_fn->m_decl_bb = decl_bb;
 
@@ -350,9 +350,9 @@ void Compiler::define(Fn& fn) {
 }
 
 template <> void Compiler::statement(const ast::WhileStmt& stat) {
-  auto* test_bb = BasicBlock::Create(*m_context, "while.test", *m_current_fn);
-  auto* head_bb = BasicBlock::Create(*m_context, "while.head", *m_current_fn);
-  auto* merge_bb = BasicBlock::Create(*m_context, "while.merge", *m_current_fn);
+  auto* test_bb = llvm::BasicBlock::Create(*m_context, "while.test", *m_current_fn);
+  auto* head_bb = llvm::BasicBlock::Create(*m_context, "while.head", *m_current_fn);
+  auto* merge_bb = llvm::BasicBlock::Create(*m_context, "while.merge", *m_current_fn);
   m_builder->CreateBr(test_bb);
   m_builder->SetInsertPoint(test_bb);
   auto cond_value = body_expression(stat.cond());
@@ -364,16 +364,16 @@ template <> void Compiler::statement(const ast::WhileStmt& stat) {
 }
 
 template <> void Compiler::statement(const ast::IfStmt& stat) {
-  auto* merge_bb = BasicBlock::Create(*m_context, "if.cont", *m_current_fn);
-  auto* next_test_bb = BasicBlock::Create(*m_context, "if.test", *m_current_fn, merge_bb);
+  auto* merge_bb = llvm::BasicBlock::Create(*m_context, "if.cont", *m_current_fn);
+  auto* next_test_bb = llvm::BasicBlock::Create(*m_context, "if.test", *m_current_fn, merge_bb);
   bool all_terminated = true;
   m_builder->CreateBr(next_test_bb);
 
   const auto& clauses = stat.clauses();
   for (const auto& clause : clauses) {
     m_builder->SetInsertPoint(next_test_bb);
-    auto* body_bb = BasicBlock::Create(*m_context, "if.then", *m_current_fn, merge_bb);
-    next_test_bb = BasicBlock::Create(*m_context, "if.test", *m_current_fn, merge_bb);
+    auto* body_bb = llvm::BasicBlock::Create(*m_context, "if.then", *m_current_fn, merge_bb);
+    next_test_bb = llvm::BasicBlock::Create(*m_context, "if.test", *m_current_fn, merge_bb);
     auto condition = body_expression(clause.cond());
     m_builder->CreateCondBr(condition, body_bb, next_test_bb);
     m_builder->SetInsertPoint(body_bb);
@@ -411,7 +411,7 @@ template <> void Compiler::statement(const ast::ReturnStmt& stat) {
   InScope* reset_owning = nullptr;
 
   if (stat.expr().has_value()) {
-    if (auto* var = dyn_cast<ast::VarExpr>(&stat.expr().value().get())) {
+    if (auto* var = llvm::dyn_cast<ast::VarExpr>(&stat.expr().value().get())) {
       auto& in_scope = m_scope.at(var->name());
       if (in_scope.owning) {
         in_scope.owning = false; // Returning a local variable also gives up ownership of it
@@ -489,8 +489,9 @@ template <> auto Compiler::expression(const ast::StringExpr& expr, bool mut) -> 
   chars.push_back(m_builder->getInt8(0));
   auto* stringType = llvm::ArrayType::get(m_builder->getInt8Ty(), chars.size());
   auto* init = llvm::ConstantArray::get(stringType, chars);
-  auto* global = new llvm::GlobalVariable(*m_module, stringType, true, GlobalVariable::PrivateLinkage, init, ".str");
-  return ConstantExpr::getBitCast(global, m_builder->getInt8PtrTy(0));
+  auto* global =
+      new llvm::GlobalVariable(*m_module, stringType, true, llvm::GlobalVariable::PrivateLinkage, init, ".str");
+  return llvm::ConstantExpr::getBitCast(global, m_builder->getInt8PtrTy(0));
 }
 
 template <> auto Compiler::expression(const ast::VarExpr& expr, bool mut) -> Val {
@@ -617,13 +618,13 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
 }
 
 template <> auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> Val {
-  if (const auto* target_var = dyn_cast<ast::VarExpr>(&expr.target())) {
+  if (const auto* target_var = llvm::dyn_cast<ast::VarExpr>(&expr.target())) {
     auto expr_val = body_expression(expr.value(), mut);
     auto target_val = m_scope.at(target_var->name()).value;
     m_builder->CreateStore(expr_val, target_val);
     return expr_val;
   }
-  if (const auto* field_access = dyn_cast<ast::FieldAccessExpr>(&expr.target())) {
+  if (const auto* field_access = llvm::dyn_cast<ast::FieldAccessExpr>(&expr.target())) {
     auto base = body_expression(field_access->base(), true);
     auto base_name = field_access->field();
     int base_offset = field_access->offset();
@@ -651,7 +652,7 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
 
     //// Heap allocation
     if (mut) {
-      auto* alloc_size = ConstantExpr::getSizeOf(llvm_struct_type);
+      auto* alloc_size = llvm::ConstantExpr::getSizeOf(llvm_struct_type);
       alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), m_builder->getInt64Ty(), llvm_struct_type,
                                            alloc_size, nullptr, nullptr, "s.ctor.malloc");
       alloc = m_builder->Insert(alloc);
@@ -661,7 +662,7 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
     // alloc = m_builder->CreateAlloca(llvm_struct_type, 0, nullptr, "s.ctor.alloca");
 
     auto i = 0;
-    llvm::Value* base_value = UndefValue::get(llvm_struct_type);
+    llvm::Value* base_value = llvm::UndefValue::get(llvm_struct_type);
     for (const auto& arg : expr.args()) {
       const auto& [target_type, target_name] = struct_type->fields().begin()[i];
       auto field_value = body_expression(arg);
@@ -725,7 +726,7 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
     // they may be absurdly huge in size and cause stack overflow.
     // Related: #4
 
-    auto* alloc_size = ConstantExpr::getSizeOf(base_type);
+    auto* alloc_size = llvm::ConstantExpr::getSizeOf(base_type);
     auto* array_size = m_builder->CreateSExt(slice_size, m_builder->getInt64Ty(), "sl.ctor.size");
     auto* array_alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), m_builder->getInt64Ty(), base_type,
                                                      alloc_size, array_size, nullptr, "sl.ctor.malloc");
@@ -743,9 +744,9 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
     m_builder->SetInsertPoint(current_block);
     m_builder->CreateStore(m_builder->getInt64(0), iter_alloc);
 
-    auto* iter_test = BasicBlock::Create(*m_context, "sl.ctor.definit.test", *m_current_fn);
-    auto* iter_body = BasicBlock::Create(*m_context, "sl.ctor.definit.head", *m_current_fn);
-    auto* iter_merge = BasicBlock::Create(*m_context, "sl.ctor.definit.merge", *m_current_fn);
+    auto* iter_test = llvm::BasicBlock::Create(*m_context, "sl.ctor.definit.test", *m_current_fn);
+    auto* iter_body = llvm::BasicBlock::Create(*m_context, "sl.ctor.definit.head", *m_current_fn);
+    auto* iter_merge = llvm::BasicBlock::Create(*m_context, "sl.ctor.definit.merge", *m_current_fn);
 
     m_builder->CreateBr(iter_test);
     m_builder->SetInsertPoint(iter_test);
@@ -779,7 +780,7 @@ template <> auto Compiler::expression(const ast::SliceExpr& expr, bool mut) -> V
   auto* slice_type = llvm_type(*expr.val_ty());
   auto* base_type = llvm_type(*expr.val_ty()->ptr_base()); // ???
 
-  auto* alloc_size = ConstantExpr::getSizeOf(base_type);
+  auto* alloc_size = llvm::ConstantExpr::getSizeOf(base_type);
   auto* ptr_alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), m_builder->getInt64Ty(), base_type,
                                                  alloc_size, slice_size, nullptr, "sl.ctor.malloc");
   auto* data_ptr = m_builder->Insert(ptr_alloc);
@@ -831,11 +832,11 @@ template <> auto Compiler::expression(const ast::ImplicitCastExpr& expr, bool mu
 void Compiler::write_object(const char* filename, bool binary) {
   auto dest = open_file(filename);
 
-  legacy::PassManager pass;
-  auto fileType = binary ? CGFT_ObjectFile : CGFT_AssemblyFile;
+  llvm::legacy::PassManager pass;
+  auto fileType = binary ? llvm::CGFT_ObjectFile : llvm::CGFT_AssemblyFile;
 
   if (m_targetMachine->addPassesToEmitFile(pass, *dest, nullptr, fileType)) {
-    errs() << "TargetMachine can't emit a file of this type";
+    llvm::errs() << "TargetMachine can't emit a file of this type";
     throw std::exception();
   }
 
