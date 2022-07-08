@@ -319,14 +319,14 @@ public:
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override {
     stringstream ss{};
-    ss << "<";
+    ss << "{";
     int j = 0;
     for (const auto& i : m_type_args) {
       if (j++ > 0)
         ss << ",";
       ss << i->describe();
     }
-    ss << ">";
+    ss << "}";
     return ss.str();
   }
 
