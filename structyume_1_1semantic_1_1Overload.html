@@ -116,8 +116,8 @@ Collaboration diagram for yume::semantic::Overload:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ae47fde67400f4b4638338fc18b8dad05"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1semantic_1_1Overload.html#ae47fde67400f4b4638338fc18b8dad05">Overload</a> ()=default</td></tr>
 <tr class="separator:ae47fde67400f4b4638338fc18b8dad05"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a377631aff7aea93e5e97a8dd83fddc73"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1semantic_1_1Overload.html#a377631aff7aea93e5e97a8dd83fddc73">Overload</a> (<a class="el" href="structyume_1_1Fn.html">Fn</a> *fn_)</td></tr>
-<tr class="separator:a377631aff7aea93e5e97a8dd83fddc73"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af773ac62d9f736875ffa2b57716ca9e0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1semantic_1_1Overload.html#af773ac62d9f736875ffa2b57716ca9e0">Overload</a> (<a class="el" href="structyume_1_1Fn.html">Fn</a> *<a class="el" href="structyume_1_1semantic_1_1Overload.html#a07105cd62d1c347def93df342ca31e54">fn</a>)</td></tr>
+<tr class="separator:af773ac62d9f736875ffa2b57716ca9e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af28c748c577015460be552b5e165e274"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1semantic_1_1Overload.html#af28c748c577015460be552b5e165e274">better_candidate_than</a> (<a class="el" href="structyume_1_1semantic_1_1Overload.html">Overload</a> other) const -&gt; bool</td></tr>
 <tr class="separator:af28c748c577015460be552b5e165e274"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adc639c8a626aa365a6b89a638215a446"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1semantic_1_1Overload.html#adc639c8a626aa365a6b89a638215a446">dump</a> (llvm::raw_ostream &amp;stream) const</td></tr>
@@ -163,8 +163,8 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a377631aff7aea93e5e97a8dd83fddc73" name="a377631aff7aea93e5e97a8dd83fddc73"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a377631aff7aea93e5e97a8dd83fddc73">&#9670;&nbsp;</a></span>Overload() <span class="overload">[2/2]</span></h2>
+<a id="af773ac62d9f736875ffa2b57716ca9e0" name="af773ac62d9f736875ffa2b57716ca9e0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af773ac62d9f736875ffa2b57716ca9e0">&#9670;&nbsp;</a></span>Overload() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -176,7 +176,7 @@ Public Attributes</h2></td></tr>
           <td class="memname">yume::semantic::Overload::Overload </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structyume_1_1Fn.html">Fn</a> *&#160;</td>
-          <td class="paramname"><em>fn_</em></td><td>)</td>
+          <td class="paramname"><em>fn</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -234,7 +234,7 @@ Public Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="overload_8cpp_source.html#l00055">55</a> of file <a class="el" href="overload_8cpp_source.html">overload.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00074">yume::Fn::ast()</a>, <a class="el" href="overload_8hpp_source.html#l00020">fn</a>, <a class="el" href="overload_8cpp_source.html#l00052">yume::semantic::get_val_ty</a>, <a class="el" href="overload_8hpp_source.html#l00022">instantiation</a>, <a class="el" href="overload_8cpp_source.html#l00021">yume::semantic::join_args()</a>, <a class="el" href="vals_8hpp_source.html#l00072">yume::Fn::name()</a>, and <a class="el" href="vals_8hpp_source.html#l00030">yume::Instantiation::sub</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00639">yume::ast::FnDecl::args()</a>, <a class="el" href="vals_8hpp_source.html#l00053">yume::Fn::ast</a>, <a class="el" href="overload_8hpp_source.html#l00020">fn</a>, <a class="el" href="overload_8cpp_source.html#l00052">yume::semantic::get_val_ty</a>, <a class="el" href="overload_8hpp_source.html#l00022">instantiation</a>, <a class="el" href="overload_8cpp_source.html#l00021">yume::semantic::join_args()</a>, <a class="el" href="ast_8hpp_source.html#l00228">yume::ast::AST::location()</a>, <a class="el" href="vals_8hpp_source.html#l00072">yume::Fn::name()</a>, and <a class="el" href="vals_8hpp_source.html#l00030">yume::Instantiation::sub</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00169">yume::semantic::TypeWalker::expression()</a>.</p>
 

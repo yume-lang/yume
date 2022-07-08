@@ -1,0 +1,4 @@
+<map id="yume::Tokenizer" name="yume::Tokenizer">
+<area shape="rect" id="node1" title="Contains the state while the tokenizer is running, such as the position within the file currently bei..." alt="" coords="36,183,151,209"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,5,181,32"/>
+</map>

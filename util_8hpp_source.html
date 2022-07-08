@@ -124,12 +124,12 @@ $(function() {
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="comment"></span> </div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="comment">/// Opens a writeable stream to a file with the given filename relative to the current working directory.</span></div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno"><a class="line" href="namespaceyume.html#a3d99b01535a052186b0ff7127d6c80d3">   55</a></span><span class="comment"></span><span class="keyword">auto</span> <span class="keyword">inline</span> <a class="code hl_function" href="namespaceyume.html#a3d99b01535a052186b0ff7127d6c80d3">open_file</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* filename) -&gt; unique_ptr&lt;llvm::raw_pwrite_stream&gt; {</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>  std::error_code errorCode;</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>  std::error_code error_code;</div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>  <span class="keyword">auto</span> dest =</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>      std::make_unique&lt;llvm::raw_fd_ostream&gt;(filename, errorCode, llvm::sys::fs::CreationDisposition::CD_CreateAlways);</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>      std::make_unique&lt;llvm::raw_fd_ostream&gt;(filename, error_code, llvm::sys::fs::CreationDisposition::CD_CreateAlways);</div>
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>  <span class="keywordflow">if</span> (errorCode) {</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    llvm::errs() &lt;&lt; <span class="stringliteral">&quot;Could not open file: &quot;</span> &lt;&lt; errorCode.message() &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>  <span class="keywordflow">if</span> (error_code) {</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    llvm::errs() &lt;&lt; <span class="stringliteral">&quot;Could not open file: &quot;</span> &lt;&lt; error_code.message() &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    <span class="keywordflow">throw</span>;</div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>  }</div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>

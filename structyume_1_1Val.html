@@ -92,21 +92,19 @@ Collaboration diagram for yume::Val:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a9fc3342cf3d703f8c6a4fb21c8e685a4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Val.html#a9fc3342cf3d703f8c6a4fb21c8e685a4">Val</a> (llvm::Value *llvm_val)</td></tr>
 <tr class="separator:a9fc3342cf3d703f8c6a4fb21c8e685a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a509f01a2cf9167a3b8ea4a7c1f816235"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Val.html#a509f01a2cf9167a3b8ea4a7c1f816235">llvm</a> () const -&gt; llvm::Value *</td></tr>
-<tr class="separator:a509f01a2cf9167a3b8ea4a7c1f816235"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a645d4983ee82011eb1a2a1018d0b2d9d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Val.html#a645d4983ee82011eb1a2a1018d0b2d9d">operator llvm::Value *</a> () const</td></tr>
 <tr class="separator:a645d4983ee82011eb1a2a1018d0b2d9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:ab776f75bcbf15be58b3f8b9c2b2b83a4"><td class="memItemLeft" align="right" valign="top">llvm::Value *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Val.html#ab776f75bcbf15be58b3f8b9c2b2b83a4">m_llvm_val</a> {}</td></tr>
-<tr class="separator:ab776f75bcbf15be58b3f8b9c2b2b83a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0705ca6b25ccfc5f449a5910411912fa"><td class="memItemLeft" align="right" valign="top">llvm::Value *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Val.html#a0705ca6b25ccfc5f449a5910411912fa">llvm</a> {}</td></tr>
+<tr class="separator:a0705ca6b25ccfc5f449a5910411912fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >A value of a complied expression. </p>
 <p >Note that this struct is mostly useless, it is a very thin wrapper around <code>llvm::Value</code>. It may be removed in the future. </p>
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00127">127</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00120">120</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a9fc3342cf3d703f8c6a4fb21c8e685a4" name="a9fc3342cf3d703f8c6a4fb21c8e685a4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9fc3342cf3d703f8c6a4fb21c8e685a4">&#9670;&nbsp;</a></span>Val()</h2>
@@ -132,42 +130,11 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00130">130</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00123">123</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a509f01a2cf9167a3b8ea4a7c1f816235" name="a509f01a2cf9167a3b8ea4a7c1f816235"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a509f01a2cf9167a3b8ea4a7c1f816235">&#9670;&nbsp;</a></span>llvm()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">auto yume::Val::llvm </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const -&gt; llvm::Value* </td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00132">132</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
-
-<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00128">m_llvm_val</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00497">yume::Compiler::expression()</a>.</p>
-
-</div>
-</div>
 <a id="a645d4983ee82011eb1a2a1018d0b2d9d" name="a645d4983ee82011eb1a2a1018d0b2d9d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a645d4983ee82011eb1a2a1018d0b2d9d">&#9670;&nbsp;</a></span>operator llvm::Value *()</h2>
 
@@ -191,28 +158,28 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00134">134</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00125">125</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00128">m_llvm_val</a>.</p>
+<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00121">llvm</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="ab776f75bcbf15be58b3f8b9c2b2b83a4" name="ab776f75bcbf15be58b3f8b9c2b2b83a4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab776f75bcbf15be58b3f8b9c2b2b83a4">&#9670;&nbsp;</a></span>m_llvm_val</h2>
+<a id="a0705ca6b25ccfc5f449a5910411912fa" name="a0705ca6b25ccfc5f449a5910411912fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0705ca6b25ccfc5f449a5910411912fa">&#9670;&nbsp;</a></span>llvm</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">llvm::Value* yume::Val::m_llvm_val {}</td>
+          <td class="memname">llvm::Value* yume::Val::llvm {}</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00128">128</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00121">121</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="vals_8hpp_source.html#l00132">llvm()</a>, and <a class="el" href="vals_8hpp_source.html#l00134">operator llvm::Value *()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00497">yume::Compiler::expression()</a>, and <a class="el" href="vals_8hpp_source.html#l00125">operator llvm::Value *()</a>.</p>
 
 </div>
 </div>

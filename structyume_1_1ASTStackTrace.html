@@ -98,17 +98,17 @@ Collaboration diagram for yume::ASTStackTrace:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:adb8aee3865fbb9b54b96fcc03f51cce1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ASTStackTrace.html#adb8aee3865fbb9b54b96fcc03f51cce1">ASTStackTrace</a> (std::string message)</td></tr>
+<tr class="memitem:adb8aee3865fbb9b54b96fcc03f51cce1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ASTStackTrace.html#adb8aee3865fbb9b54b96fcc03f51cce1">ASTStackTrace</a> (std::string <a class="el" href="structyume_1_1ASTStackTrace.html#a771a011b556f07af8dc0feb5bd6131de">message</a>)</td></tr>
 <tr class="separator:adb8aee3865fbb9b54b96fcc03f51cce1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6eb5692a55802d2ff169e6efff58c546"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ASTStackTrace.html#a6eb5692a55802d2ff169e6efff58c546">ASTStackTrace</a> (std::string message, const <a class="el" href="classyume_1_1ast_1_1AST.html">ast::AST</a> &amp;ast)</td></tr>
+<tr class="memitem:a6eb5692a55802d2ff169e6efff58c546"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ASTStackTrace.html#a6eb5692a55802d2ff169e6efff58c546">ASTStackTrace</a> (std::string <a class="el" href="structyume_1_1ASTStackTrace.html#a771a011b556f07af8dc0feb5bd6131de">message</a>, const <a class="el" href="classyume_1_1ast_1_1AST.html">ast::AST</a> &amp;ast)</td></tr>
 <tr class="separator:a6eb5692a55802d2ff169e6efff58c546"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a373ce096f438a1fafa77cf286f197779"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ASTStackTrace.html#a373ce096f438a1fafa77cf286f197779">print</a> (llvm::raw_ostream &amp;OS) const override</td></tr>
-<tr class="separator:a373ce096f438a1fafa77cf286f197779"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69eee472a88ba66ad849dc61fdbe03fe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ASTStackTrace.html#a69eee472a88ba66ad849dc61fdbe03fe">print</a> (llvm::raw_ostream &amp;stream) const override</td></tr>
+<tr class="separator:a69eee472a88ba66ad849dc61fdbe03fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a4d8298ad4ba1502135824df5bbda5fa2"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ASTStackTrace.html#a4d8298ad4ba1502135824df5bbda5fa2">m_message</a></td></tr>
-<tr class="separator:a4d8298ad4ba1502135824df5bbda5fa2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a771a011b556f07af8dc0feb5bd6131de"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ASTStackTrace.html#a771a011b556f07af8dc0feb5bd6131de">message</a></td></tr>
+<tr class="separator:a771a011b556f07af8dc0feb5bd6131de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
@@ -162,13 +162,13 @@ Public Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="errors_8cpp_source.html#l00017">17</a> of file <a class="el" href="errors_8cpp_source.html">errors.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00227">yume::ast::AST::location()</a>, and <a class="el" href="errors_8hpp_source.html#l00057">m_message</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00228">yume::ast::AST::location()</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a373ce096f438a1fafa77cf286f197779" name="a373ce096f438a1fafa77cf286f197779"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a373ce096f438a1fafa77cf286f197779">&#9670;&nbsp;</a></span>print()</h2>
+<a id="a69eee472a88ba66ad849dc61fdbe03fe" name="a69eee472a88ba66ad849dc61fdbe03fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a69eee472a88ba66ad849dc61fdbe03fe">&#9670;&nbsp;</a></span>print()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -180,7 +180,7 @@ Public Attributes</h2></td></tr>
           <td class="memname">void yume::ASTStackTrace::print </td>
           <td>(</td>
           <td class="paramtype">llvm::raw_ostream &amp;&#160;</td>
-          <td class="paramname"><em>OS</em></td><td>)</td>
+          <td class="paramname"><em>stream</em></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -193,26 +193,26 @@ Public Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="errors_8hpp_source.html#l00062">62</a> of file <a class="el" href="errors_8hpp_source.html">errors.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="errors_8hpp_source.html#l00057">m_message</a>.</p>
+<p class="reference">References <a class="el" href="errors_8hpp_source.html#l00057">message</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a4d8298ad4ba1502135824df5bbda5fa2" name="a4d8298ad4ba1502135824df5bbda5fa2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4d8298ad4ba1502135824df5bbda5fa2">&#9670;&nbsp;</a></span>m_message</h2>
+<a id="a771a011b556f07af8dc0feb5bd6131de" name="a771a011b556f07af8dc0feb5bd6131de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a771a011b556f07af8dc0feb5bd6131de">&#9670;&nbsp;</a></span>message</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::string yume::ASTStackTrace::m_message</td>
+          <td class="memname">std::string yume::ASTStackTrace::message</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="errors_8hpp_source.html#l00057">57</a> of file <a class="el" href="errors_8hpp_source.html">errors.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="errors_8cpp_source.html#l00017">ASTStackTrace()</a>, and <a class="el" href="errors_8hpp_source.html#l00062">print()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="errors_8hpp_source.html#l00062">print()</a>.</p>
 
 </div>
 </div>

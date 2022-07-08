@@ -1,30 +1,6 @@
 var searchData=
 [
-  ['s_5fmax_0',['s_max',['../structyume_1_1ty_1_1detail_1_1MinMax.html#acc99604a5fd34f96277f84601e6fa51e',1,'yume::ty::detail::MinMax']]],
-  ['s_5fmin_1',['s_min',['../structyume_1_1ty_1_1detail_1_1MinMax.html#a4854895ee087d8f3eae2e401c545f398',1,'yume::ty::detail::MinMax']]],
-  ['s_5fty_2',['s_ty',['../structyume_1_1TypeHolder_1_1IntTypePair.html#a331fcfe7d1928b01825b5a9df36b310c',1,'yume::TypeHolder::IntTypePair']]],
-  ['separator_3',['Separator',['../ast_8cpp.html#af82cb2449b409561cc3fdf65969b1d84',1,'ast.cpp']]],
-  ['stream_4',['stream',['../structyume_1_1TokenState.html#ae5a0ba67f1175cc37125f25ac9c9d1bb',1,'yume::TokenState']]],
-  ['sub_5',['sub',['../structyume_1_1Instantiation.html#a84b802f33e64ca3a14828caa98cfd794',1,'yume::Instantiation']]],
-  ['sym_5fbang_6',['SYM_BANG',['../namespaceyume_1_1ast.html#aa34667e0c61c41019b9ee95bd54fc9cb',1,'yume::ast']]],
-  ['sym_5fcolon_7',['SYM_COLON',['../namespaceyume_1_1ast.html#a2a883ab6c96ba565e699146fe5bb09da',1,'yume::ast']]],
-  ['sym_5fcomma_8',['SYM_COMMA',['../namespaceyume_1_1ast.html#a4d2cb5baf79cf2b9a7d3eb3670fcb51f',1,'yume::ast']]],
-  ['sym_5fdot_9',['SYM_DOT',['../namespaceyume_1_1ast.html#a3a5d61ffe69098d32b0c3727d9f174ff',1,'yume::ast']]],
-  ['sym_5feq_10',['SYM_EQ',['../namespaceyume_1_1ast.html#a76d8527815bcad8ee2bfcd38d7115865',1,'yume::ast']]],
-  ['sym_5feq_5feq_11',['SYM_EQ_EQ',['../namespaceyume_1_1ast.html#a2ba77eea7d55ed1f8b697695f8719131',1,'yume::ast']]],
-  ['sym_5fgt_12',['SYM_GT',['../namespaceyume_1_1ast.html#ab75168ac6710fd3fb8fb2fe51ce559a7',1,'yume::ast']]],
-  ['sym_5flbrace_13',['SYM_LBRACE',['../namespaceyume_1_1ast.html#a534a0cbc858ca0854a8671d31957baf9',1,'yume::ast']]],
-  ['sym_5flbracket_14',['SYM_LBRACKET',['../namespaceyume_1_1ast.html#a91d7d1b73b70d9bf989554a4399c4471',1,'yume::ast']]],
-  ['sym_5flparen_15',['SYM_LPAREN',['../namespaceyume_1_1ast.html#acdc7a1b54c42313017ba9c7477115bcc',1,'yume::ast']]],
-  ['sym_5flt_16',['SYM_LT',['../namespaceyume_1_1ast.html#a87fc60033920a0984c08b577f0218330',1,'yume::ast']]],
-  ['sym_5fminus_17',['SYM_MINUS',['../namespaceyume_1_1ast.html#af4cfc060cc78a1820c4ff68221eda66f',1,'yume::ast']]],
-  ['sym_5fneq_18',['SYM_NEQ',['../namespaceyume_1_1ast.html#a9ff6da77016e11160dea0b4a4ffb82f3',1,'yume::ast']]],
-  ['sym_5fpercent_19',['SYM_PERCENT',['../namespaceyume_1_1ast.html#a10e66b48204f1490adda7dfe3ee8db24',1,'yume::ast']]],
-  ['sym_5fplus_20',['SYM_PLUS',['../namespaceyume_1_1ast.html#a8efc480ac0aa67623587c295440241d1',1,'yume::ast']]],
-  ['sym_5frbrace_21',['SYM_RBRACE',['../namespaceyume_1_1ast.html#a1770f93249cfca9fbe4ba758bc0ce31a',1,'yume::ast']]],
-  ['sym_5frbracket_22',['SYM_RBRACKET',['../namespaceyume_1_1ast.html#aea34ccbde77aa608cf12dfefeb98b020',1,'yume::ast']]],
-  ['sym_5frparen_23',['SYM_RPAREN',['../namespaceyume_1_1ast.html#a0bd41b3a95054b518b425e35e0362634',1,'yume::ast']]],
-  ['sym_5fslash_5fslash_24',['SYM_SLASH_SLASH',['../namespaceyume_1_1ast.html#af431e25995cab3c7b826efab9fe58c75',1,'yume::ast']]],
-  ['sym_5fstar_25',['SYM_STAR',['../namespaceyume_1_1ast.html#a05e97031dbbc71143d3fa381b5e5c29d',1,'yume::ast']]],
-  ['symbol_26',['Symbol',['../ast_8cpp.html#abea2bfa46f91991375c735fce4a3cbfc',1,'ast.cpp']]]
+  ['parent_0',['parent',['../structyume_1_1Fn.html#a5a941480c1efc3e4c6eedebee0cb8c90',1,'yume::Fn']]],
+  ['payload_1',['payload',['../structyume_1_1Token.html#a39737a8e055ffb71b836f4e0b525f2fd',1,'yume::Token']]],
+  ['program_2',['program',['../structyume_1_1SourceFile.html#afc76a93b86868ed720f2de2c676e9b4c',1,'yume::SourceFile']]]
 ];

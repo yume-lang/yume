@@ -89,7 +89,7 @@ $(function() {
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="comment">/// element is a const T&amp;</span></div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="comment"></span><span class="keyword">template</span> &lt;std::ranges::input_range T&gt;</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">requires</span> <a class="code hl_concept" href="conceptyume_1_1pointer__like.html">pointer_like&lt;typename std::iterator_traits&lt;std::ranges::iterator_t&lt;T&gt;</a>&gt;::value_type&gt;</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno"><a class="line" href="classyume_1_1dereference__view.html">   21</a></span><span class="keyword">class </span><a class="code hl_class" href="classyume_1_1dereference__view.html">dereference_view</a> {</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno"><a class="line" href="classyume_1_1dereference__view.html">   21</a></span><span class="keyword">class </span><a class="code hl_class" href="classyume_1_1dereference__view.html">dereference_view</a> { <span class="comment">// NOLINT(readability-identifier-naming): STL-like class</span></div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="keyword">private</span>:</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>  <span class="keyword">using </span>Base = T;</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>

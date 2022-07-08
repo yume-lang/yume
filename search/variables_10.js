@@ -1,7 +1,9 @@
 var searchData=
 [
-  ['valid_0',['valid',['../structyume_1_1TokenState.html#addc1b36a0b814bba80a2c9c2be3f716c',1,'yume::TokenState::valid()'],['../structyume_1_1ty_1_1Compat.html#a7dd71f75b65a2c4b563d256fb3f15568',1,'yume::ty::Compat::valid()']]],
-  ['value_1',['value',['../structyume_1_1InScope.html#a29d994d0e660b25cf3c34511ede9f3fc',1,'yume::InScope']]],
-  ['version_2',['VERSION',['../namespaceyume.html#af4ae9d2f36afcdb09e5ea1eae1015e40',1,'yume']]],
-  ['viable_3',['viable',['../structyume_1_1semantic_1_1Overload.html#a9914e2a55fdcf5f73195b73ad00a3efd',1,'yume::semantic::Overload']]]
+  ['target_0',['target',['../structyume_1_1ty_1_1Sub.html#a7daa68b061e0110488076488ba6b39da',1,'yume::ty::Sub']]],
+  ['template_5finstantiations_1',['template_instantiations',['../structyume_1_1TypeHolder.html#a8ba99050c787fbfa9490529bae5b81c7',1,'yume::TypeHolder']]],
+  ['to_2',['to',['../errors_8cpp.html#adc41e61a11d96629b7da204423c670f5',1,'errors.cpp']]],
+  ['tokens_3',['tokens',['../structyume_1_1SourceFile.html#a06b57a9c3a7c2bb6f6b2b2b930378364',1,'yume::SourceFile::tokens()'],['../ast_8cpp.html#a4c555d5726bc20f71d1050728f059fb8',1,'tokens():&#160;ast.cpp']]],
+  ['type_4',['type',['../structyume_1_1Struct.html#af2af8221117fac1a145b9834275250e0',1,'yume::Struct::type()'],['../structyume_1_1Characteristic.html#a99634f24cd688bd4ee3e1fb0f1cb0ff8',1,'yume::Characteristic::type()'],['../structyume_1_1Token.html#a3a965da2283412be14ed9f0367393a54',1,'yume::Token::type()']]],
+  ['type_5fargs_5',['type_args',['../structyume_1_1Fn.html#a877b194a1c37eb0b43278824020efae6',1,'yume::Fn::type_args()'],['../structyume_1_1Struct.html#a3a15a03d2cb8b71f8b70b8795362ce94',1,'yume::Struct::type_args()']]]
 ];

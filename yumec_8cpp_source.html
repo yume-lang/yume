@@ -136,10 +136,10 @@ $(function() {
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>      <span class="keyword">auto</span> src_stream = std::stringstream(std::string(src_input-&gt;getBufferStart(), src_input-&gt;getBufferSize()));</div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>      <span class="keyword">auto</span>&amp; source = source_files.emplace_back(src_stream, src_name);</div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span><span class="preprocessor">#ifdef YUME_EMIT_DOT</span></div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>      visitor.visit(*source.m_program, <span class="keyword">nullptr</span>);</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>      visitor.visit(*source.program, <span class="keyword">nullptr</span>);</div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span> </div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>      <span class="keyword">auto</span> token_it = source.m_iterator;</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>      <span class="keyword">auto</span> token_it = source.iterator;</div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>      <span class="keywordflow">if</span> (!token_it.at_end()) {</div>
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        llvm::outs() &lt;&lt; <span class="stringliteral">&quot;unconsumed tokens:\n&quot;</span>;</div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>        <span class="keywordflow">while</span> (!token_it.at_end()) {</div>
@@ -158,10 +158,10 @@ $(function() {
 <div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
 <div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span><span class="preprocessor">#ifdef YUME_EMIT_DOT</span></div>
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; i : compiler.source_files()) {</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    std::string full_name = <span class="stringliteral">&quot;output_&quot;</span>s + std::string(<a class="code hl_function" href="namespaceyume.html#a84da801f2471cee6b1007cf0c0e98ce5">yume::stem</a>(i.m_name)) + <span class="stringliteral">&quot;.dot&quot;</span>;</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    std::string full_name = <span class="stringliteral">&quot;output_&quot;</span>s + std::string(<a class="code hl_function" href="namespaceyume.html#a84da801f2471cee6b1007cf0c0e98ce5">yume::stem</a>(i.name)) + <span class="stringliteral">&quot;.dot&quot;</span>;</div>
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    <span class="keyword">auto</span> dot = <a class="code hl_function" href="namespaceyume.html#a3d99b01535a052186b0ff7127d6c80d3">yume::open_file</a>(full_name.c_str());</div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    <span class="keyword">auto</span> visitor = <a class="code hl_class" href="classyume_1_1diagnostic_1_1DotVisitor.html">yume::diagnostic::DotVisitor</a>{*dot};</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    visitor.<a class="code hl_function" href="classyume_1_1diagnostic_1_1DotVisitor.html#a53823fe54c5a25d0d5febbe606922aca">visit</a>(*i.m_program, <span class="keyword">nullptr</span>);</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    visitor.<a class="code hl_function" href="classyume_1_1diagnostic_1_1DotVisitor.html#a53823fe54c5a25d0d5febbe606922aca">visit</a>(*i.program, <span class="keyword">nullptr</span>);</div>
 <div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>  }</div>
 <div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span> </div>
