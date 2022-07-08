@@ -1,4 +1,4 @@
-struct Array<T>(body T[], size I64)
+struct Array{T}(body T[], size I64)
   def capacity(self) I64 = self::body.size
   def size(self) I64 = self::size
 end
@@ -6,8 +6,8 @@ end
 def main() I32
   # TODO
   # There should be a better way to write integer literals of a certain type
-  let t1 = Array<I32>(I32:[], I64(0))
-  let t2 = Array<U8>(U8:[?a], I64(2))
-  let t3 = Array<I32>(I32:[], I64(1))
+  let t1 = Array{I32}(I32:[], I64(0))
+  let t2 = Array{U8}(U8:[?a], I64(2))
+  let t3 = Array{I32}(I32:[], I64(1))
   return I32(!((t1.size + 2) == t2.size)) + I32(!((t3.size + 1) == t2.size))
 end
