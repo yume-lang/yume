@@ -151,9 +151,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ab30cf0f1bcb19522b1a27a95098c4cc2 inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AST.html#ab30cf0f1bcb19522b1a27a95098c4cc2">location</a> () const -&gt; <a class="el" href="structyume_1_1Loc.html">Loc</a></td></tr>
 <tr class="memdesc:ab30cf0f1bcb19522b1a27a95098c4cc2 inherit pub_methods_classyume_1_1ast_1_1AST"><td class="mdescLeft">&#160;</td><td class="mdescRight">The union of the locations of the <code><a class="el" href="structyume_1_1Token.html" title="A categorized token in source code, created by the tokenizer. These tokens are consumed by the lexer.">Token</a></code>s making up this node.  <a href="classyume_1_1ast_1_1AST.html#ab30cf0f1bcb19522b1a27a95098c4cc2">More...</a><br /></td></tr>
 <tr class="separator:ab30cf0f1bcb19522b1a27a95098c4cc2 inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0153d189e4eb51e175b521493dfee487 inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memItemLeft" align="right" valign="top">virtual auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AST.html#a0153d189e4eb51e175b521493dfee487">describe</a> () const -&gt; string</td></tr>
-<tr class="memdesc:a0153d189e4eb51e175b521493dfee487 inherit pub_methods_classyume_1_1ast_1_1AST"><td class="mdescLeft">&#160;</td><td class="mdescRight">A short, string representation for debugging.  <a href="classyume_1_1ast_1_1AST.html#a0153d189e4eb51e175b521493dfee487">More...</a><br /></td></tr>
-<tr class="separator:a0153d189e4eb51e175b521493dfee487 inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5394f97a622923069b0e0e8b249bd8cd inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memItemLeft" align="right" valign="top">virtual auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AST.html#a5394f97a622923069b0e0e8b249bd8cd">describe</a> () const -&gt; string</td></tr>
+<tr class="memdesc:a5394f97a622923069b0e0e8b249bd8cd inherit pub_methods_classyume_1_1ast_1_1AST"><td class="mdescLeft">&#160;</td><td class="mdescRight">A short, string representation for debugging.  <a href="classyume_1_1ast_1_1AST.html#a5394f97a622923069b0e0e8b249bd8cd">More...</a><br /></td></tr>
+<tr class="separator:a5394f97a622923069b0e0e8b249bd8cd inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a46a1fa9de0d3c5d439bb467a29ded575 inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memItemLeft" align="right" valign="top">virtual auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AST.html#a46a1fa9de0d3c5d439bb467a29ded575">clone</a> () const -&gt; <a class="el" href="classyume_1_1ast_1_1AST.html">AST</a> *=0</td></tr>
 <tr class="memdesc:a46a1fa9de0d3c5d439bb467a29ded575 inherit pub_methods_classyume_1_1ast_1_1AST"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deep copy, except for the type and attachments.  <a href="classyume_1_1ast_1_1AST.html#a46a1fa9de0d3c5d439bb467a29ded575">More...</a><br /></td></tr>
 <tr class="separator:a46a1fa9de0d3c5d439bb467a29ded575 inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -180,7 +180,7 @@ Additional Inherited Members</h2></td></tr>
 <div class="textblock"><p >An assignment (<code>=</code>). </p>
 <p >Assignment has a specific target (the left-hand side), and the value (the right-hand-side). The target may be multiple things, such as a variable <code><a class="el" href="classyume_1_1ast_1_1VarExpr.html" title="A variable, i.e. just an identifier.">VarExpr</a></code> or field <code><a class="el" href="classyume_1_1ast_1_1FieldAccessExpr.html" title="Direct access of a field of a struct (::).">FieldAccessExpr</a></code>. Note that some things such as indexed assignment <code>[]=</code> become a <code><a class="el" href="classyume_1_1ast_1_1CallExpr.html" title="A function call or operator.">CallExpr</a></code> instead. </p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00551">551</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00526">526</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a4a551d60611331b2aa0699be8b66fdaf" name="a4a551d60611331b2aa0699be8b66fdaf"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4a551d60611331b2aa0699be8b66fdaf">&#9670;&nbsp;</a></span>AssignExpr()</h2>
@@ -222,7 +222,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00556">556</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00531">531</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="clone_8cpp_source.html#l00076">clone()</a>.</p>
 
@@ -258,7 +258,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="clone_8cpp_source.html#l00076">76</a> of file <a class="el" href="clone_8cpp_source.html">clone.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00556">AssignExpr()</a>, and <a class="el" href="ast_8hpp_source.html#l00192">yume::ast::AST::tok()</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00531">AssignExpr()</a>, and <a class="el" href="ast_8hpp_source.html#l00192">yume::ast::AST::tok()</a>.</p>
 
 </div>
 </div>
@@ -285,7 +285,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00560">560</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00535">535</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00123">yume::semantic::TypeWalker::expression()</a>.</p>
 
@@ -314,7 +314,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00561">561</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00536">536</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00123">yume::semantic::TypeWalker::expression()</a>.</p>
 
@@ -346,7 +346,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classyume_1_1ast_1_1AST.html#adb1376044bc6a064fd71a2ea7505e86f">yume::ast::AST</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="visit_8cpp_source.html#l00046">46</a> of file <a class="el" href="visit_8cpp_source.html">visit.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="visit_8cpp_source.html#l00045">45</a> of file <a class="el" href="visit_8cpp_source.html">visit.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classyume_1_1Visitor.html#ad5ec239921f8886dc40d71e148c28d27">yume::Visitor::visit()</a>.</p>
 
