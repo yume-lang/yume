@@ -103,6 +103,7 @@ TEST_CASE("Tokenize operators/symbols", "[token]") {
   }
 
   CHECK_TOKENIZER("[]", "["_Symbol, "]"_Symbol);
+  CHECK_TOKENIZER("{}", "{"_Symbol, "}"_Symbol);
 }
 
 TEST_CASE("Token stringification", "[token][str]") {
