@@ -1,4 +1,4 @@
-def larger<T>(a T, b T) T
+def larger{T}(a T, b T) T
   if a > b
     return a
   else
