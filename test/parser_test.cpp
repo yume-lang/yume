@@ -225,20 +225,20 @@ TEST_CASE("Parse short function declaration", "[parse][fn]") {
 }
 
 TEST_CASE("Parse templated function declaration", "[parse][fn]") {
-  CHECK_PARSER("def templated<T>()\nend", make_fn_decl("templated", {}, {"T"}, {}));
+  CHECK_PARSER("def templated{T}()\nend", make_fn_decl("templated", {}, {"T"}, {}));
 
-  CHECK_PARSER("def templated<T>(t T) T\nend", make_fn_decl("templated", {{"t", "T"_Type}}, {"T"}, "T"_Type));
+  CHECK_PARSER("def templated{T}(t T) T\nend", make_fn_decl("templated", {{"t", "T"_Type}}, {"T"}, "T"_Type));
 
-  CHECK_PARSER("def templated<T>(t T) T = t",
+  CHECK_PARSER("def templated{T}(t T) T = t",
                make_fn_decl("templated", {{"t", "T"_Type}}, {"T"}, "T"_Type, ast<ReturnStmt>("t"_Var)));
 
   CHECK_PARSER(
-      "def templated<T,U,V,X,Y,Z>(t T, u U, v V) X = Y() + Z()",
+      "def templated{T,U,V,X,Y,Z}(t T, u U, v V) X = Y() + Z()",
       make_fn_decl("templated", {{"t", "T"_Type}, {"u", "U"_Type}, {"v", "V"_Type}}, {"T", "U", "V", "X", "Y", "Z"},
                    "X"_Type,
                    ast<ReturnStmt>(make_call("+", make_call<CtorExpr>("Y"_Type), make_call<CtorExpr>("Z"_Type)))));
 
-  CHECK_PARSER("def templated<T>(slice T[], pointer T ptr, mutable T mut, mix T ptr[] mut)\nend",
+  CHECK_PARSER("def templated{T}(slice T[], pointer T ptr, mutable T mut, mix T ptr[] mut)\nend",
                make_fn_decl("templated",
                             {{"slice", "T"_Type & Slice},
                              {"pointer", "T"_Type & Ptr},
