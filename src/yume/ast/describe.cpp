@@ -21,11 +21,10 @@ auto QualType::describe() const -> string {
 auto TemplatedType::describe() const -> string {
   stringstream ss{};
   ss << "{";
-  int j = 0;
-  for (const auto& i : m_type_args) {
-    if (j++ > 0)
+  for (const auto& i : llvm::enumerate(m_type_args)) {
+    if (i.index() > 0)
       ss << ",";
-    ss << i->describe();
+    ss << i.value()->describe();
   }
   ss << "}";
   return ss.str();

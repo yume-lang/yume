@@ -19,11 +19,10 @@ namespace yume::semantic {
 
 template <typename Fn = std::identity>
 static auto join_args(const auto& iter, Fn fn = {}, llvm::raw_ostream& stream = llvm::errs()) {
-  int j = 0;
-  for (auto& i : iter) {
-    if (j++ != 0)
+  for (auto& i : llvm::enumerate(iter)) {
+    if (i.index() != 0)
       stream << ", ";
-    stream << fn(i)->name();
+    stream << fn(i.value())->name();
   }
 }
 

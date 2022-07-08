@@ -228,10 +228,9 @@ auto Compiler::default_init(const ty::Type& type) -> Val {
   if (const auto* struct_type = dyn_cast<ty::Struct>(&type)) {
     auto* llvm_ty = cast<llvm::StructType>(llvm_type(type));
     llvm::Value* val = llvm::UndefValue::get(llvm_ty);
-    int i = 0;
-    for (const auto& field : struct_type->fields()) {
-      val = m_builder->CreateInsertValue(val, default_init(*field.type().val_ty()), i++);
-    }
+
+    for (const auto& i : llvm::enumerate(struct_type->fields()))
+      val = m_builder->CreateInsertValue(val, default_init(*i.value().type().val_ty()), i.index());
 
     return val;
   }
@@ -848,11 +847,10 @@ auto Compiler::mangle_name(const Fn& fn) -> string {
   ss << "_Ym.";
   ss << fn.ast.name();
   ss << "(";
-  int idx = 0;
-  for (const auto& i : fn.ast.args()) {
-    if (idx++ > 0)
+  for (const auto& i : llvm::enumerate(fn.ast.args())) {
+    if (i.index() > 0)
       ss << ",";
-    ss << mangle_name(*i.type().val_ty(), fn);
+    ss << mangle_name(*i.value().type().val_ty(), fn);
   }
   ss << ")";
   // TODO: should mangled names even contain the return type...?
