@@ -9,5 +9,8 @@ def main() I32
   let t1 = Array{I32}(I32:[], I64(0))
   let t2 = Array{U8}(U8:[?a], I64(2))
   let t3 = Array{I32}(I32:[], I64(1))
-  return I32(!((t1.size + 2) == t2.size)) + I32(!((t3.size + 1) == t2.size))
+
+  assert((t1.size + 2) == t2.size)
+  assert((t3.size + 1) == t2.size)
+  return 0
 end

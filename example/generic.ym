@@ -7,5 +7,6 @@ def larger{T}(a T, b T) T
 end
 
 def main() I32
-  return I32(!(larger(3, 7) == 7))
+  assert(larger(3, 7) == 7)
+  return 0
 end

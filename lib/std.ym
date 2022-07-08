@@ -2,6 +2,13 @@ def printf(format U8 ptr) I32 = __primitive__(libc) __varargs__
 def puts(string U8 ptr) I32 = __primitive__(libc)
 def putchar(char I32) I32 = __primitive__(libc)
 
+def exit(status I32) = __primitive__(libc)
+def assert(condition Bool)
+  if !condition
+    exit(1)
+  end
+end
+
 def size{T}(arr T[]) I64 = __primitive__(slice_size)
 def unsafe_ptr{T}(arr T[]) T ptr = __primitive__(slice_ptr)
 def []{T}(ptr T ptr, offset I64) T mut = __primitive__(get_at)
