@@ -14,7 +14,7 @@
 #include <queue>
 #include <stdexcept>
 #include <string>
-#include <utility>
+#include <optional>
 #include <vector>
 
 namespace llvm {

@@ -1,16 +1,13 @@
 #pragma once
 
 #include "compatibility.hpp"
-#include "compiler/vals.hpp"
 #include "qualifier.hpp"
+#include "stl_util.hpp"
 #include "util.hpp"
-#include "llvm/Support/Casting.h"
 #include <array>
-#include <limits>
+#include <cstdint>
 #include <memory>
-#include <stdexcept>
 #include <string>
-#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -19,6 +16,7 @@ class StructType;
 }
 namespace yume {
 class Compiler;
+struct Instantiation;
 namespace ast {
 class TypeName;
 }

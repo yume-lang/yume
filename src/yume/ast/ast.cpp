@@ -75,6 +75,15 @@ void AST::unify_val_ty() const {
   }
 }
 
+auto AST::location() const -> Loc {
+  if (m_tok.empty())
+    return Loc{};
+  if (m_tok.size() == 1)
+    return m_tok[0].loc;
+
+  return m_tok[0].loc + m_tok[m_tok.size() - 1].loc;
+}
+
 namespace {
 class TokenRange {
   span<Token> m_span;

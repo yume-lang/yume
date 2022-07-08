@@ -225,17 +225,10 @@ public:
   [[nodiscard]] auto token_range() const -> const span<Token>& { return m_tok; };
 
   /// The union of the locations of the `Token`s making up this node.
-  [[nodiscard]] auto location() const -> Loc {
-    if (m_tok.empty())
-      return Loc{};
-    if (m_tok.size() == 1)
-      return m_tok[0].loc;
-
-    return m_tok[0].loc + m_tok[m_tok.size() - 1].loc;
-  };
+  [[nodiscard]] auto location() const -> Loc;
 
   /// A short, string representation for debugging.
-  [[nodiscard]] virtual auto describe() const -> string { return string{"unknown "} + kind_name(); }
+  [[nodiscard]] virtual auto describe() const -> string;
 
   /// Deep copy, except for the type and attachments.
   [[nodiscard]] virtual auto clone() const -> AST* = 0;
@@ -275,7 +268,7 @@ class SimpleType : public Type {
 public:
   explicit SimpleType(span<Token> tok, string name) : Type(K_SimpleType, tok), m_name{move(name)} {}
   void visit(Visitor& visitor) const override;
-  [[nodiscard]] auto describe() const -> string override { return m_name; }
+  [[nodiscard]] auto describe() const -> string override;
 
   [[nodiscard]] auto name() const -> string { return m_name; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_SimpleType; }
@@ -291,14 +284,7 @@ public:
   QualType(span<Token> tok, unique_ptr<Type> base, Qualifier qualifier)
       : Type(K_QualType, tok), m_base{move(base)}, m_qualifier{qualifier} {}
   void visit(Visitor& visitor) const override;
-  [[nodiscard]] auto describe() const -> string override {
-    switch (m_qualifier) {
-    case Qualifier::Ptr: return "ptr";
-    case Qualifier::Slice: return "slice";
-    case Qualifier::Mut: return "mut";
-    default: return "";
-    }
-  }
+  [[nodiscard]] auto describe() const -> string override;
 
   [[nodiscard]] constexpr auto qualifier() const -> Qualifier { return m_qualifier; }
   [[nodiscard]] auto base() const -> const auto& { return *m_base; }
@@ -317,18 +303,7 @@ public:
   TemplatedType(span<Token> tok, unique_ptr<Type> base, vector<unique_ptr<Type>> type_args)
       : Type(K_TemplatedType, tok), m_base{move(base)}, m_type_args{move(type_args)} {}
   void visit(Visitor& visitor) const override;
-  [[nodiscard]] auto describe() const -> string override {
-    stringstream ss{};
-    ss << "{";
-    int j = 0;
-    for (const auto& i : m_type_args) {
-      if (j++ > 0)
-        ss << ",";
-      ss << i->describe();
-    }
-    ss << "}";
-    return ss.str();
-  }
+  [[nodiscard]] auto describe() const -> string override;
 
   [[nodiscard]] auto type_vars() const -> const vector<unique_ptr<Type>>& { return m_type_args; }
   [[nodiscard]] auto type_vars() -> vector<unique_ptr<Type>>& { return m_type_args; }
@@ -342,7 +317,7 @@ class SelfType : public Type {
 public:
   explicit SelfType(span<Token> tok) : Type(K_SelfType, tok) {}
   void visit([[maybe_unused]] Visitor& visitor) const override {}
-  [[nodiscard]] auto describe() const -> string override { return "self"; }
+  [[nodiscard]] auto describe() const -> string override;
   static auto classof(const AST* a) -> bool { return a->kind() == K_SelfType; }
   [[nodiscard]] auto clone() const -> SelfType* override;
 };
@@ -356,7 +331,7 @@ public:
   TypeName(span<Token> tok, unique_ptr<Type> type, string name)
       : AST(K_TypeName, tok), m_type{move(type)}, m_name{move(name)} {}
   void visit(Visitor& visitor) const override;
-  [[nodiscard]] auto describe() const -> string override { return m_name; }
+  [[nodiscard]] auto describe() const -> string override;
 
   [[nodiscard]] auto type() const -> auto& { return *m_type; }
   [[nodiscard]] auto name() const -> string { return m_name; }
@@ -405,7 +380,7 @@ class NumberExpr : public Expr {
 public:
   explicit NumberExpr(span<Token> tok, int64_t val) : Expr(K_Number, tok), m_val(val) {}
   void visit(Visitor& visitor) const override;
-  [[nodiscard]] auto describe() const -> string override { return std::to_string(m_val); }
+  [[nodiscard]] auto describe() const -> string override;
 
   [[nodiscard]] auto val() const -> int64_t { return m_val; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_Number; }
@@ -419,7 +394,7 @@ class CharExpr : public Expr {
 public:
   explicit CharExpr(span<Token> tok, uint8_t val) : Expr(K_Char, tok), m_val(val) {}
   void visit(Visitor& visitor) const override;
-  [[nodiscard]] auto describe() const -> string override { return std::to_string(m_val); }
+  [[nodiscard]] auto describe() const -> string override;
 
   [[nodiscard]] auto val() const -> uint8_t { return m_val; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_Char; }
@@ -433,7 +408,7 @@ class BoolExpr : public Expr {
 public:
   explicit BoolExpr(span<Token> tok, bool val) : Expr(K_Bool, tok), m_val(val) {}
   void visit(Visitor& visitor) const override;
-  [[nodiscard]] auto describe() const -> string override { return m_val ? "true" : "false"; }
+  [[nodiscard]] auto describe() const -> string override;
 
   [[nodiscard]] auto val() const -> bool { return m_val; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_Bool; }
@@ -447,7 +422,7 @@ class StringExpr : public Expr {
 public:
   explicit StringExpr(span<Token> tok, string val) : Expr(K_String, tok), m_val(move(val)) {}
   void visit(Visitor& visitor) const override;
-  [[nodiscard]] auto describe() const -> string override { return m_val; }
+  [[nodiscard]] auto describe() const -> string override;
 
   [[nodiscard]] auto val() const -> string { return m_val; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_String; }
@@ -461,7 +436,7 @@ class VarExpr : public Expr {
 public:
   explicit VarExpr(span<Token> tok, string name) : Expr(K_Var, tok), m_name(move(name)) {}
   void visit(Visitor& visitor) const override;
-  [[nodiscard]] auto describe() const -> string override { return m_name; }
+  [[nodiscard]] auto describe() const -> string override;
 
   [[nodiscard]] auto name() const -> string { return m_name; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_Var; }
@@ -478,7 +453,7 @@ public:
   CallExpr(span<Token> tok, string name, vector<unique_ptr<Expr>> args)
       : Expr(K_Call, tok), m_name{move(name)}, m_args{move(args)} {}
   void visit(Visitor& visitor) const override;
-  [[nodiscard]] auto describe() const -> string override { return m_name; }
+  [[nodiscard]] auto describe() const -> string override;
 
   [[nodiscard]] auto name() const -> string { return m_name; }
   [[nodiscard]] auto args() const { return dereference_view(m_args); }
@@ -499,7 +474,7 @@ public:
   CtorExpr(span<Token> tok, unique_ptr<Type> type, vector<unique_ptr<Expr>> args)
       : Expr(K_Ctor, tok), m_type{move(type)}, m_args{move(args)} {}
   void visit(Visitor& visitor) const override;
-  [[nodiscard]] auto describe() const -> string override { return m_type->describe(); }
+  [[nodiscard]] auto describe() const -> string override;
 
   [[nodiscard]] auto type() const -> const auto& { return *m_type; }
   [[nodiscard]] auto type() -> auto& { return *m_type; }
@@ -515,7 +490,7 @@ class [[deprecated]] DtorExpr : public Expr {
 public:
   DtorExpr(span<Token> tok, unique_ptr<Expr> base) : Expr(K_Dtor, tok), m_base{move(base)} {}
   void visit(Visitor& visitor) const override;
-  [[nodiscard]] auto describe() const -> string override { return m_base->describe(); }
+  [[nodiscard]] auto describe() const -> string override;
 
   [[nodiscard]] auto base() const -> const auto& { return *m_base; }
   [[nodiscard]] auto base() -> auto& { return *m_base; }
@@ -533,7 +508,7 @@ public:
   SliceExpr(span<Token> tok, unique_ptr<Type> type, vector<unique_ptr<Expr>> args)
       : Expr(K_Slice, tok), m_type{move(type)}, m_args{move(args)} {}
   void visit(Visitor& visitor) const override;
-  [[nodiscard]] auto describe() const -> string override { return m_type->describe(); }
+  [[nodiscard]] auto describe() const -> string override;
 
   [[nodiscard]] auto type() const -> const auto& { return *m_type; }
   [[nodiscard]] auto type() -> auto& { return *m_type; }
@@ -633,7 +608,7 @@ public:
       : Stmt(K_FnDecl, tok), m_name{move(name)}, m_varargs{varargs}, m_args{move(args)},
         m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(primitive)} {}
   void visit(Visitor& visitor) const override;
-  [[nodiscard]] auto describe() const -> string override { return m_name; }
+  [[nodiscard]] auto describe() const -> string override;
 
   [[nodiscard]] auto name() const -> string { return m_name; }
   [[nodiscard]] auto args() const -> const auto& { return m_args; }
@@ -660,7 +635,7 @@ public:
       : Stmt(K_StructDecl, tok), m_name{move(name)}, m_fields{move(fields)}, m_type_args{move(type_args)},
         m_body(move(body)) {}
   void visit(Visitor& visitor) const override;
-  [[nodiscard]] auto describe() const -> string override { return m_name; }
+  [[nodiscard]] auto describe() const -> string override;
 
   [[nodiscard]] auto name() const -> string { return m_name; }
   [[nodiscard]] constexpr auto fields() const -> const auto& { return m_fields; }
@@ -681,7 +656,7 @@ public:
   VarDecl(span<Token> tok, string name, optional<unique_ptr<Type>> type, unique_ptr<Expr> init)
       : Stmt(K_VarDecl, tok), m_name{move(name)}, m_type{move(type)}, m_init(move(init)) {}
   void visit(Visitor& visitor) const override;
-  [[nodiscard]] auto describe() const -> string override { return m_name; }
+  [[nodiscard]] auto describe() const -> string override;
 
   [[nodiscard]] auto name() const -> string { return m_name; }
   [[nodiscard]] constexpr auto type() const { return try_dereference(m_type); }

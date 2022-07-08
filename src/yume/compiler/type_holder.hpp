@@ -4,6 +4,7 @@
 #include <array>
 #include <llvm/ADT/StringMap.h>
 #include <memory>
+#include <vector>
 
 namespace yume {
 struct TypeHolder {

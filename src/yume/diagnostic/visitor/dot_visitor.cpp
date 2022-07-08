@@ -5,6 +5,7 @@
 #include "util.hpp"
 #include "llvm/Support/raw_ostream.h"
 #include <algorithm>
+#include <string_view>
 #include <memory>
 
 namespace yume::diagnostic {
