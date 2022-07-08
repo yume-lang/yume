@@ -47,8 +47,8 @@ static const TokenAtom SYM_LBRACE = {Token::Type::Symbol, "{"_a};
 static const TokenAtom SYM_RBRACE = {Token::Type::Symbol, "}"_a};
 static const TokenAtom SYM_EQ_EQ = {Token::Type::Symbol, "=="_a};
 static const TokenAtom SYM_NEQ = {Token::Type::Symbol, "!="_a};
-static const TokenAtom SYM_GT = {Token::Type::Symbol, ">"_a};
 static const TokenAtom SYM_LT = {Token::Type::Symbol, "<"_a};
+static const TokenAtom SYM_GT = {Token::Type::Symbol, ">"_a};
 static const TokenAtom SYM_PLUS = {Token::Type::Symbol, "+"_a};
 static const TokenAtom SYM_MINUS = {Token::Type::Symbol, "-"_a};
 static const TokenAtom SYM_PERCENT = {Token::Type::Symbol, "%"_a};
@@ -339,8 +339,8 @@ struct Parser {
       throw std::runtime_error("Expected capitalized name for struct decl");
 
     auto type_args = vector<string>{};
-    if (try_consume(SYM_LT))
-      consume_with_commas_until(SYM_GT, [&] { type_args.push_back(consume_word()); });
+    if (try_consume(SYM_LBRACE))
+      consume_with_commas_until(SYM_RBRACE, [&] { type_args.push_back(consume_word()); });
 
     consume(SYM_LPAREN);
     auto fields = vector<TypeName>{};
@@ -366,8 +366,8 @@ struct Parser {
     consume(KWD_DEF);
     const string name = parse_fn_name();
     auto type_args = vector<string>{};
-    if (try_consume(SYM_LT))
-      consume_with_commas_until(SYM_GT, [&] { type_args.push_back(consume_word()); });
+    if (try_consume(SYM_LBRACE))
+      consume_with_commas_until(SYM_RBRACE, [&] { type_args.push_back(consume_word()); });
 
     consume(SYM_LPAREN);
 
@@ -717,9 +717,9 @@ auto Parser::parse_type(bool implicit_self) -> unique_ptr<Type> {
       consume(SYM_LBRACKET);
       consume(SYM_RBRACKET);
       base = ast_ptr<QualType>(entry, move(base), Qualifier::Slice);
-    } else if (try_consume(SYM_LT)) {
+    } else if (try_consume(SYM_LBRACE)) {
       auto type_args = vector<unique_ptr<Type>>{};
-      consume_with_commas_until(SYM_GT, [&] { type_args.push_back(parse_type()); });
+      consume_with_commas_until(SYM_RBRACE, [&] { type_args.push_back(parse_type()); });
 
       base = ast_ptr<TemplatedType>(entry, move(base), move(type_args));
     } else {
@@ -755,9 +755,9 @@ auto Parser::try_parse_type() -> optional<unique_ptr<Type>> {
       consume(SYM_LBRACKET);
       consume(SYM_RBRACKET);
       base = ast_ptr<QualType>(entry, move(base), Qualifier::Slice);
-    } else if (try_consume(SYM_LT)) {
+    } else if (try_consume(SYM_LBRACE)) {
       auto type_args = vector<unique_ptr<Type>>{};
-      consume_with_commas_until(SYM_GT, [&] { type_args.push_back(parse_type()); });
+      consume_with_commas_until(SYM_RBRACE, [&] { type_args.push_back(parse_type()); });
 
       base = ast_ptr<TemplatedType>(entry, move(base), std::move(type_args));
     } else {
