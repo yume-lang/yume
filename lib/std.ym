@@ -2,11 +2,11 @@ def printf(format U8 ptr) I32 = __primitive__(libc) __varargs__
 def puts(string U8 ptr) I32 = __primitive__(libc)
 def putchar(char I32) I32 = __primitive__(libc)
 
-def size<T>(arr T[]) I64 = __primitive__(slice_size)
-def unsafe_ptr<T>(arr T[]) T ptr = __primitive__(slice_ptr)
-def []<T>(ptr T ptr, offset I64) T mut = __primitive__(get_at)
-def []=<T>(ptr T ptr, offset I64, val T) T = __primitive__(set_at)
-def dup_internal<T>(arr T[], extra I64) T[] = __primitive__(slice_dup)
+def size{T}(arr T[]) I64 = __primitive__(slice_size)
+def unsafe_ptr{T}(arr T[]) T ptr = __primitive__(slice_ptr)
+def []{T}(ptr T ptr, offset I64) T mut = __primitive__(get_at)
+def []={T}(ptr T ptr, offset I64, val T) T = __primitive__(set_at)
+def dup_internal{T}(arr T[], extra I64) T[] = __primitive__(slice_dup)
 
 # TODO: most of these should be templated
 def +(a I32, b I32) I32 = __primitive__(ib_add)
@@ -35,14 +35,14 @@ def !(a Bool) Bool
   end
 end
 
-def []<T>(slice T[] mut, offset I64) T mut = slice.unsafe_ptr[offset]
-def []<T>(slice T[], offset I64) T = slice.unsafe_ptr[offset]
-def []=<T>(slice T[] mut, offset I64, val T) T
+def []{T}(slice T[] mut, offset I64) T mut = slice.unsafe_ptr[offset]
+def []{T}(slice T[], offset I64) T = slice.unsafe_ptr[offset]
+def []={T}(slice T[] mut, offset I64, val T) T
   slice.unsafe_ptr[offset] = val
   return val
 end
 
-def copy<T>(source T ptr, dest T ptr, amount I64)
+def copy{T}(source T ptr, dest T ptr, amount I64)
   let count I64 = amount
   while count > 0
     count = count - 1
@@ -50,13 +50,13 @@ def copy<T>(source T ptr, dest T ptr, amount I64)
   end
 end
 
-def dup<T>(arr T[], extra I64) T[]
+def dup{T}(arr T[], extra I64) T[]
   let dup_t T[] = arr.dup_internal(extra)
   copy(arr.unsafe_ptr, dup_t.unsafe_ptr, arr.size)
   return dup_t
 end
 
-def dup_append<T>(arr T[], last T) T[]
+def dup_append{T}(arr T[], last T) T[]
   let dup_t T[] = arr.dup_internal(1)
   copy(arr.unsafe_ptr, dup_t.unsafe_ptr, arr.size)
   dup_t[arr.size] = last
