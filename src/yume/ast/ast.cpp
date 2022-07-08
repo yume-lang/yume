@@ -269,11 +269,11 @@ struct Parser {
     if (tokens->type != Word)
       throw std::runtime_error("Expected word, got "s + to_string(*tokens) + " at " + at(location));
 
-    return *next(location).m_payload;
+    return string(*next(location).payload);
   }
 
   /// Check if the string begins with a capital letter. Used for types, as all types must be capitalized.
-  static auto is_uword(const string& word) -> bool { return isupper(word.front()) != 0; }
+  static auto is_uword(string_view word) -> bool { return isupper(word.front()) != 0; }
 
   /// Check if the ahead by `ahead` is a capitalized word.
   [[nodiscard]] auto try_peek_uword(int ahead,
@@ -507,7 +507,7 @@ struct Parser {
   auto parse_number_expr() -> unique_ptr<NumberExpr> {
     auto entry = tokens.begin();
     expect(Number);
-    auto value = stoll(*next().m_payload->m_str);
+    auto value = stoll(string(*next().payload));
 
     return ast_ptr<NumberExpr>({entry, 1}, value);
   }
@@ -515,7 +515,7 @@ struct Parser {
   auto parse_string_expr() -> unique_ptr<StringExpr> {
     auto entry = tokens.begin();
     expect(Token::Type::Literal);
-    auto value = *next().m_payload->m_str;
+    auto value = string(*next().payload);
 
     return ast_ptr<StringExpr>({entry, 1}, value);
   }
@@ -523,7 +523,7 @@ struct Parser {
   auto parse_char_expr() -> unique_ptr<CharExpr> {
     auto entry = tokens.begin();
     expect(Token::Type::Char);
-    auto value = (*next().m_payload->m_str)[0];
+    auto value = string(*next().payload)[0];
 
     return ast_ptr<CharExpr>({entry, 1}, value);
   }
@@ -637,7 +637,7 @@ struct Parser {
         auto value = parse_receiver();
         auto args = vector<unique_ptr<Expr>>{};
         args.push_back(move(value));
-        return ast_ptr<CallExpr>(entry, std::get<Atom>(un_op), move(args));
+        return ast_ptr<CallExpr>(entry, string(std::get<Atom>(un_op)), move(args));
       }
     }
     return parse_receiver();
@@ -659,7 +659,7 @@ struct Parser {
             auto args = vector<unique_ptr<Expr>>{};
             args.push_back(move(left));
             args.push_back(move(right));
-            left = ast_ptr<CallExpr>(entry, std::get<Atom>(op), move(args));
+            left = ast_ptr<CallExpr>(entry, string(std::get<Atom>(op)), move(args));
             found_operator = true;
             break;
           }

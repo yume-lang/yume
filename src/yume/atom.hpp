@@ -9,15 +9,14 @@ namespace yume {
  * identical pointers to that string. Thus, comparing `Atom`s is extremely cheap, as it only consists of a pointer
  * equality check.
  */
-struct Atom {
+class Atom {
   const std::string* m_str;
 
+public:
   constexpr Atom() = delete;
   explicit Atom(const std::string* str) : m_str{str} {}
 
-  operator std::string() const { // NOLINT(google-explicit-constructor)
-    return *m_str;
-  }
+  /* implicit */ operator std::string_view() const { return *m_str; }
   auto operator<=>(const Atom& other) const noexcept = default;
 
   static auto inline make_atom(const std::string& value) noexcept -> Atom {
