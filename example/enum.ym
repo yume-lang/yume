@@ -1,0 +1,29 @@
+# The following are examples of the goals of enum syntax
+
+enum Fruit
+  Apple
+  Orange
+  Kiwi
+end
+
+# enum Color(rgb U8 ptr)
+#   Red("#FF0000")
+#   Green("#00FF00")
+#   Blue("#0000FF")
+# end
+
+# enum Direction
+#   North
+#   South
+#   West
+#   East
+# end
+
+# def rotate(dir Direction) Direction
+#   return Direction((dir.to_i + 1) % 4)
+# end
+
+def main() I32
+  # let my_fruit = Fruit:Apple
+  return 0
+end
