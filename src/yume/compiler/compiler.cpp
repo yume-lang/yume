@@ -156,7 +156,7 @@ auto Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* m
     return &st;
   }
 
-  return {};
+  throw std::runtime_error("Invalid top-level statement: "s + stmt.kind_name());
 }
 
 auto Compiler::llvm_type(const ty::Type& type) -> llvm::Type* {
