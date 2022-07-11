@@ -11,7 +11,6 @@
 #include <memory>
 #include <optional>
 #include <span>
-#include <stdexcept>
 #include <string>
 #include <tuple>
 #include <type_traits>
@@ -39,6 +38,7 @@ enum Kind {
   /**/ K_Compound,   ///< `Compound`
   /**/ K_FnDecl,     ///< `FnDecl`
   /**/ K_StructDecl, ///< `StructDecl`
+  /**/ K_EnumDecl,   ///< `EnumDecl`
   /**/ K_VarDecl,    ///< `VarDecl`
   /**/ K_While,      ///< `WhileStmt`
   /**/ K_If,         ///< `IfStmt`
@@ -81,6 +81,7 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case K_FnDecl: return "fn decl";
   case K_VarDecl: return "var decl";
   case K_StructDecl: return "struct decl";
+  case K_EnumDecl: return "enum decl";
   case K_Program: return "program";
   case K_SimpleType: return "simple type";
   case K_QualType: return "qual type";
@@ -100,7 +101,13 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case K_Assign: return "assign";
   case K_FieldAccess: return "field access";
   case K_ImplicitCast: return "implicit cast";
-  default: return "?";
+
+  case K_Stmt:
+  case K_Expr:
+  case K_Type:
+  case K_END_Expr:
+  case K_END_Stmt:
+  case K_END_Type: llvm_unreachable("Invalid type name for ast node");
   }
 }
 
@@ -598,6 +605,27 @@ public:
   [[nodiscard]] auto type_args() const { return m_type_args; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_StructDecl; }
   [[nodiscard]] auto clone() const -> StructDecl* override;
+};
+
+/// A declaration of an enum (`enum`).
+class EnumDecl : public Stmt {
+  string m_name;
+  vector<TypeName> m_fields;
+  vector<string> m_entries;
+
+public:
+  EnumDecl(span<Token> tok, string name, vector<TypeName> fields, vector<string> entries)
+      : Stmt(K_EnumDecl, tok), m_name{move(name)}, m_fields{move(fields)}, m_entries{move(entries)} {}
+  void visit(Visitor& visitor) const override;
+  [[nodiscard]] auto describe() const -> string override;
+
+  [[nodiscard]] auto name() const -> string { return m_name; }
+  [[nodiscard]] constexpr auto fields() const -> const auto& { return m_fields; }
+  [[nodiscard]] constexpr auto fields() -> auto& { return m_fields; }
+  [[nodiscard]] auto entries() const -> const auto& { return m_entries; }
+
+  static auto classof(const AST* a) -> bool { return a->kind() == K_EnumDecl; }
+  [[nodiscard]] auto clone() const -> EnumDecl* override;
 };
 
 /// A declaration of a local variable (`let`).

@@ -32,6 +32,7 @@ void FnDecl::visit(Visitor& visitor) const {
 void StructDecl::visit(Visitor& visitor) const {
   visitor.visit(m_name).visit(m_fields, "field").visit(m_type_args, "type arg").visit(m_body);
 }
+void EnumDecl::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_fields, "field").visit(m_entries); }
 void SimpleType::visit(Visitor& visitor) const { visitor.visit(m_name); }
 void QualType::visit(Visitor& visitor) const { visitor.visit(m_base, describe().c_str()); }
 void TemplatedType::visit(Visitor& visitor) const { visitor.visit(m_base).visit(m_type_args, "type arg"); }

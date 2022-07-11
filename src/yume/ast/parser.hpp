@@ -1,8 +1,22 @@
 #pragma once
 
 #include "ast/ast.hpp"
+#include "atom.hpp"
 #include "diagnostic/errors.hpp"
+#include "diagnostic/source_location.hpp"
 #include "token.hpp"
+#include "util.hpp"
+#include <array>
+#include <cctype>
+#include <cstddef>
+#include <memory>
+#include <optional>
+#include <span>
+#include <stdexcept>
+#include <string>
+#include <string_view>
+#include <utility>
+#include <vector>
 
 namespace yume::ast {
 using VectorTokenIterator = vector<Token>::iterator;
@@ -67,6 +81,7 @@ static const TokenAtom KWD_ELSE = {Token::Type::Word, "else"_a};
 static const TokenAtom KWD_SELF_ITEM = {Token::Type::Word, "self"_a};
 static const TokenAtom KWD_SELF_TYPE = {Token::Type::Word, "Self"_a};
 static const TokenAtom KWD_THEN = {Token::Type::Word, "then"_a};
+static const TokenAtom KWD_ENUM = {Token::Type::Word, "enum"_a};
 static const TokenAtom KWD_TRUE = {Token::Type::Word, "true"_a};
 static const TokenAtom KWD_FALSE = {Token::Type::Word, "false"_a};
 static const TokenAtom KWD_WHILE = {Token::Type::Word, "while"_a};
@@ -226,6 +241,8 @@ struct Parser {
   auto parse_while_stmt() -> unique_ptr<WhileStmt>;
 
   auto parse_return_stmt() -> unique_ptr<ReturnStmt>;
+
+  auto parse_enum_stmt() -> unique_ptr<EnumDecl>;
 
   auto parse_if_stmt() -> unique_ptr<IfStmt>;
 

@@ -1,5 +1,10 @@
 #include "parser.hpp"
 
+#include "ast/ast.hpp"
+#include <llvm/Support/raw_ostream.h>
+#include <algorithm>
+#include "qualifier.hpp"
+
 namespace yume::ast::parser {
 auto Parser::ignore_separator([[maybe_unused]] const source_location location) -> bool {
   bool found_separator = false;
@@ -136,6 +141,8 @@ auto Parser::parse_stmt() -> unique_ptr<Stmt> {
     stat = parse_if_stmt();
   else if (tokens->is_a(KWD_RETURN))
     stat = parse_return_stmt();
+  else if (tokens->is_a(KWD_ENUM))
+    stat = parse_enum_stmt();
   else
     stat = parse_expr();
 
@@ -381,6 +388,23 @@ auto Parser::parse_return_stmt() -> unique_ptr<ReturnStmt> {
   auto expr = parse_expr();
 
   return ast_ptr<ReturnStmt>(entry, optional<unique_ptr<Expr>>{move(expr)});
+}
+
+auto Parser::parse_enum_stmt() -> unique_ptr<EnumDecl> {
+  auto entry = tokens.begin();
+
+  consume(KWD_ENUM);
+  const string name = consume_word();
+
+  ignore_separator();
+
+  auto body = vector<string>{};
+  while (!try_consume(KWD_END)) {
+    body.push_back(consume_word());
+    require_separator();
+  }
+
+  return ast_ptr<EnumDecl>(entry, name, vector<TypeName>{}, body); // TODO: parse enum fields, currently always empty
 }
 
 auto Parser::parse_if_stmt() -> unique_ptr<IfStmt> {

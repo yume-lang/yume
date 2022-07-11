@@ -62,6 +62,7 @@ auto FnDecl::clone() const -> FnDecl* {
 auto StructDecl::clone() const -> StructDecl* {
   return new StructDecl(tok(), m_name, dup(m_fields), m_type_args, dup(m_body));
 }
+auto EnumDecl::clone() const -> EnumDecl* { return new EnumDecl(tok(), m_name, dup(m_fields), m_entries); }
 auto SimpleType::clone() const -> SimpleType* { return new SimpleType(tok(), m_name); }
 auto QualType::clone() const -> QualType* { return new QualType(tok(), dup(m_base), m_qualifier); }
 auto TemplatedType::clone() const -> TemplatedType* { return new TemplatedType(tok(), dup(m_base), dup(m_type_args)); }
