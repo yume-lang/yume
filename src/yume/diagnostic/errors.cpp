@@ -32,6 +32,11 @@ struct ContainerLikeSimplify {
   string_view middle;
 };
 
+struct SpanLikeSimplify {
+  string_view front;
+  string_view end;
+};
+
 struct DirectReplaceSimplify {
   string_view from;
   string_view to;
@@ -52,6 +57,7 @@ class stacktrace_ostream : public llvm::raw_ostream { // NOLINT(readability-iden
 
   void simplify(string_view msg);
   auto simplify(string_view msg, ContainerLikeSimplify s) -> bool;
+  auto simplify(string_view msg, SpanLikeSimplify s) -> bool;
   auto simplify(string_view msg, DirectReplaceSimplify s) -> bool;
 
   void format_phase(string_view msg);
@@ -83,6 +89,9 @@ const bool stacktrace_ostream::use_color = llvm::errs().has_colors();
 constexpr ContainerLikeSimplify UPTR_SIMPLIFY = {"std::unique_ptr<", ", std::default_delete<"};
 // std::vector<$, std::allocator<$> >
 constexpr ContainerLikeSimplify VEC_SIMPLIFY = {"std::vector<", ", std::allocator<"};
+
+// std::span<$, 18446744073709551615ul>
+constexpr SpanLikeSimplify SPAN_SIMPLIFY = {"std::span<", ", 18446744073709551615ul>"};
 
 constexpr DirectReplaceSimplify STRING_SIMPLIFY = {
     "std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >", "std::string"};
@@ -121,6 +130,29 @@ auto stacktrace_ostream::simplify(string_view msg, ContainerLikeSimplify s) -> b
   return true;
 };
 
+auto stacktrace_ostream::simplify(string_view msg, SpanLikeSimplify s) -> bool {
+  constexpr static const string_view END = ">";
+
+  auto span_start = msg.find(s.front);
+  if (span_start == string::npos)
+    return false;
+
+  auto span_bound_start = msg.find(s.end, span_start);
+  if (span_bound_start == string::npos)
+    return false;
+
+  auto contained_start = span_start + s.front.length();
+  auto contained_typename = msg.substr(contained_start, span_bound_start - contained_start);
+
+  auto span_end = span_bound_start + s.end.length();
+
+  simplify(msg.substr(0, span_start));
+  m_buffer << s.front << contained_typename << END;
+  simplify(msg.substr(span_end));
+
+  return true;
+};
+
 auto stacktrace_ostream::simplify(string_view msg, DirectReplaceSimplify s) -> bool {
   auto start = msg.find(s.from);
   if (start == string::npos)
@@ -135,7 +167,8 @@ auto stacktrace_ostream::simplify(string_view msg, DirectReplaceSimplify s) -> b
 
 void stacktrace_ostream::simplify(string_view msg) {
   bool found_any = simplify(msg, UPTR_SIMPLIFY) || simplify(msg, VEC_SIMPLIFY) || simplify(msg, STRING_SIMPLIFY) ||
-                   simplify(msg, STRINGSTREAM_SIMPLIFY) || simplify(msg, ANONYMOUS_NS_SIMPLIFY);
+                   simplify(msg, STRINGSTREAM_SIMPLIFY) || simplify(msg, ANONYMOUS_NS_SIMPLIFY) ||
+                   simplify(msg, SPAN_SIMPLIFY);
 
   if (found_any)
     return;
