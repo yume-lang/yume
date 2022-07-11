@@ -219,6 +219,7 @@ void stacktrace_ostream::write_impl(const char* ptr, size_t size) {
   } else if (msg.at(0) == '(') {
     m_skip = m_current_phase == Function;
     m_unknown = true;
+    m_skip = true;
     m_current_phase = Offset;
   } else if (msg.at(0) == '/' && m_current_phase != Source) {
     m_current_phase = Source;
@@ -230,12 +231,12 @@ void stacktrace_ostream::write_impl(const char* ptr, size_t size) {
   if (m_current_phase != Offset)
     counter = ++counter % 4;
 
-  if (counter == 0)
-    clean_buffer();
-
   m_current_phase = static_cast<Phase>(counter);
   if (m_current_phase == Offset && !m_unknown)
     m_current_phase = Index;
+
+  if (m_current_phase == Index)
+    clean_buffer();
 }
 
 } // namespace
