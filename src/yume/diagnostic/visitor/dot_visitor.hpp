@@ -23,15 +23,15 @@ class DotVisitor : public Visitor {
 
   struct DotNode {
     int index;
-    Loc location;
+    optional<Loc> location;
     optional<string> type;
     string content;
     vector<DotConnection> children{};
 
-    DotNode(int index, Loc location, optional<string> type, string kind)
-        : index(index), location(location), type(move(type)), content(move(kind)) {}
+    DotNode(int index, optional<Loc> location, optional<string> type, string kind)
+        : index(index), location(move(location)), type(move(type)), content(move(kind)) {}
 
-    [[nodiscard]] auto simple() const -> bool { return !location.valid(); }
+    [[nodiscard]] auto simple() const -> bool { return !location.has_value(); }
 
     void write(llvm::raw_ostream& stream) const;
   };

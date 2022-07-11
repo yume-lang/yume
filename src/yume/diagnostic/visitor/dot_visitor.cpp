@@ -35,7 +35,7 @@ inline static auto opt_str(const char* ptr) -> optional<string> {
 }
 
 auto DotVisitor::add_node(const string& content, const char* label) -> DotNode& {
-  return add_node(DotNode(m_index, Loc{}, std::nullopt, content), label);
+  return add_node(DotNode(m_index, std::nullopt, std::nullopt, content), label);
 }
 
 auto DotVisitor::add_node(DotNode&& node, const char* label) -> DotNode& {
@@ -52,7 +52,7 @@ void DotVisitor::DotNode::write(llvm::raw_ostream& stream) const {
   if (simple()) {
     stream << "<I>" << content << "</I>";
   } else {
-    stream << "<FONT POINT-SIZE=\"9\">" << location.to_string() << "</FONT><BR/>";
+    stream << "<FONT POINT-SIZE=\"9\">" << location->to_string() << "</FONT><BR/>";
     if (type.has_value())
       stream << "<U>" << *type << "</U><BR/>";
     stream << "<B>" << content << "</B>";
