@@ -423,8 +423,8 @@ Static Public Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= [end = <span class="keyword">false</span>, escape = <span class="keyword">false</span>](TokenState&amp; state) <span class="keyword">mutable</span> {</div>
-<div class="line">    <span class="keywordflow">if</span> (end)</div>
+<b>Initial value:</b><div class="fragment"><div class="line">= [<a class="code hl_variable" href="errors_8cpp.html#a9504e6a1750bc612cef338ee187ee1f0">end</a> = <span class="keyword">false</span>, escape = <span class="keyword">false</span>](TokenState&amp; state) <span class="keyword">mutable</span> {</div>
+<div class="line">    <span class="keywordflow">if</span> (<a class="code hl_variable" href="errors_8cpp.html#a9504e6a1750bc612cef338ee187ee1f0">end</a>)</div>
 <div class="line">      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"> </div>
 <div class="line">    state.valid = <span class="keyword">false</span>;</div>
@@ -433,8 +433,8 @@ Static Public Attributes</h2></td></tr>
 <div class="line"> </div>
 <div class="line">    <span class="keywordflow">if</span> (state.c == <span class="charliteral">&#39;\\&#39;</span> &amp;&amp; !escape) {</div>
 <div class="line">      escape = <span class="keyword">true</span>;</div>
-<div class="line">    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (state.c == <span class="charliteral">&#39;&quot;&#39;</span> &amp;&amp; !escape &amp;&amp; !end) {</div>
-<div class="line">      end = <span class="keyword">true</span>;</div>
+<div class="line">    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (state.c == <span class="charliteral">&#39;&quot;&#39;</span> &amp;&amp; !escape &amp;&amp; !<a class="code hl_variable" href="errors_8cpp.html#a9504e6a1750bc612cef338ee187ee1f0">end</a>) {</div>
+<div class="line">      <a class="code hl_variable" href="errors_8cpp.html#a9504e6a1750bc612cef338ee187ee1f0">end</a> = <span class="keyword">true</span>;</div>
 <div class="line">      state.valid = <span class="keyword">true</span>;</div>
 <div class="line">    } <span class="keywordflow">else</span> {</div>
 <div class="line">      <span class="keywordflow">if</span> (escape &amp;&amp; state.c == <span class="charliteral">&#39;n&#39;</span>)</div>
@@ -446,6 +446,7 @@ Static Public Attributes</h2></td></tr>
 <div class="line">    }</div>
 <div class="line">    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line">  }</div>
+<div class="ttc" id="aerrors_8cpp_html_a9504e6a1750bc612cef338ee187ee1f0"><div class="ttname"><a href="errors_8cpp.html#a9504e6a1750bc612cef338ee187ee1f0">end</a></div><div class="ttdeci">string_view end</div><div class="ttdef"><b>Definition:</b> <a href="errors_8cpp_source.html#l00037">errors.cpp:37</a></div></div>
 </div><!-- fragment -->
 <p>Strings are delimited by double quotes <code>"</code> and may contain escapes. </p>
 
