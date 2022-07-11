@@ -4,6 +4,56 @@
 #include "diagnostic/errors.hpp"
 #include "token.hpp"
 
+namespace yume::ast {
+using VectorTokenIterator = vector<Token>::iterator;
+
+/// An iterator-like holding `Token`s, used when parsing.
+/**
+ * Every parse method usually takes this as the first parameter. This is its own struct as it actually holds two
+ * iterators, where one is the end. This is to provide safe indexing (avoiding going past the end) without having to
+ * pass the end iterator around as a separate parameter.
+ */
+class TokenIterator {
+  VectorTokenIterator m_iterator;
+  VectorTokenIterator m_end;
+
+public:
+  constexpr TokenIterator(const VectorTokenIterator& iterator, const VectorTokenIterator& end)
+      : m_iterator{iterator}, m_end{end} {}
+
+  /// Check if the iterator is at the end and no more `Token`s could possibly be read.
+  [[nodiscard]] constexpr auto at_end() const noexcept -> bool { return m_iterator == m_end; }
+  [[nodiscard]] auto constexpr operator->() const -> Token* {
+    if (at_end())
+      throw std::runtime_error("Can't dereference at end");
+    return m_iterator.operator->();
+  }
+  [[nodiscard]] constexpr auto operator*() const -> Token {
+    if (at_end())
+      throw std::runtime_error("Can't dereference at end");
+    return m_iterator.operator*();
+  }
+  [[nodiscard]] constexpr auto operator+(int i) const noexcept -> TokenIterator {
+    return TokenIterator{m_iterator + i, m_end};
+  }
+  constexpr auto operator++() -> TokenIterator& {
+    if (at_end())
+      throw std::runtime_error("Can't increment past end");
+
+    ++m_iterator;
+    return *this;
+  }
+  auto operator++(int) -> TokenIterator {
+    if (at_end())
+      throw std::runtime_error("Can't increment past end");
+
+    return TokenIterator{m_iterator++, m_end};
+  }
+  /// Returns the underlying iterator. This shouldn't really be needed but I'm too lazy to properly model an iterator.
+  [[nodiscard]] auto begin() const -> VectorTokenIterator { return m_iterator; }
+};
+} // namespace yume::ast
+
 namespace yume::ast::parser {
 using TokenAtom = std::pair<Token::Type, Atom>;
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ast/ast.hpp"
+#include "ast/parser.hpp"
 #include "token.hpp"
 #include "util.hpp"
 #include <compare>

@@ -1,5 +1,6 @@
 #include "./test_common.hpp"
 #include "ast/ast.hpp"
+#include "ast/parser.hpp"
 #include "token.hpp"
 #include "util.hpp"
 #include "diagnostic/visitor/hash_visitor.hpp"
