@@ -7,6 +7,7 @@
 #include "util.hpp"
 #include <cstddef>
 #include <cstdint>
+#include <list>
 #include <llvm/ADT/SmallPtrSet.h>
 #include <memory>
 #include <optional>
@@ -717,10 +718,10 @@ public:
 
 /// The top level structure of a file of source code.
 class Program : public Stmt {
-  vector<unique_ptr<Stmt>> m_body;
+  std::list<unique_ptr<Stmt>> m_body;
 
 public:
-  explicit Program(span<Token> tok, vector<unique_ptr<Stmt>> body) : Stmt(K_Program, tok), m_body{move(body)} {}
+  explicit Program(span<Token> tok, std::list<unique_ptr<Stmt>> body) : Stmt(K_Program, tok), m_body{move(body)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<Program>;
 

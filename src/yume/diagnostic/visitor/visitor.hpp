@@ -40,6 +40,14 @@ public:
     return vis;
   }
 
+  template <typename T> auto visit(const std::list<T>& list, const char* label = nullptr) -> Visitor& {
+    Visitor& vis = *this;
+    for (auto& i : list) {
+      vis = move(vis.visit(i, label));
+    }
+    return vis;
+  }
+
   template <typename T> auto visit(const unique_ptr<T>& ptr, const char* label = nullptr) -> Visitor& {
     if (ptr)
       return visit(*ptr, label);

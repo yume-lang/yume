@@ -21,6 +21,14 @@ template <typename T> auto dup(const vector<unique_ptr<T>>& items) {
   return dup;
 }
 
+template <typename T> auto dup(const std::list<unique_ptr<T>>& items) {
+  auto dup = std::list<unique_ptr<T>>();
+  for (auto& i : items)
+    dup.push_back(unique_ptr<T>(i->clone()));
+
+  return dup;
+}
+
 template <typename T> auto dup(const vector<T>& items) {
   auto dup = vector<T>();
   dup.reserve(items.size());

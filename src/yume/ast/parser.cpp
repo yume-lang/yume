@@ -608,7 +608,7 @@ auto Program::parse(TokenIterator& tokens) -> unique_ptr<Program> {
   parser.ignore_separator();
   auto entry = tokens.begin();
 
-  auto statements = vector<unique_ptr<Stmt>>{};
+  auto statements = std::list<unique_ptr<Stmt>>{};
   while (!tokens.at_end()) {
     statements.push_back(parser.parse_stmt());
   }
