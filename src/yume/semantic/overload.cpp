@@ -54,10 +54,10 @@ inline static constexpr auto get_val_ty<Ctor> =
     [](const auto& ast) { return std::visit([](const auto& t) { return t.val_ty()->name(); }, ast); };
 inline static constexpr auto get_val_ty_ptr = [](const ast::AST* ast) { return ast->val_ty()->name(); };
 
-template <typename T> auto overload_name(const T& fn) -> string { return fn.name(); };
+template <typename T> auto overload_name(const T& t) -> string { return t.name(); };
 // TODO: Named ctors
-template <> auto overload_name<Ctor>(const Ctor& /*ctor*/) -> string { return ":new"; }
-template <> auto overload_name<ast::CtorExpr>(const ast::CtorExpr& /*ctor*/) -> string { return ":new"; }
+template <> auto overload_name<Ctor>(const Ctor& t) -> string { return t.self_t->name() + ":new"; }
+template <> auto overload_name<ast::CtorExpr>(const ast::CtorExpr& t) -> string { return t.val_ty()->name() + ":new"; }
 
 template <typename T> void Overload<T>::dump(llvm::raw_ostream& stream) const {
   stream << fn->ast.location().to_string() << "\t" << overload_name(*fn) << "(";

@@ -61,10 +61,6 @@ template <> void TypeWalker::expression(ast::TypeName& expr) {
 template <> void TypeWalker::expression(ast::ImplicitCastExpr& expr) { body_expression(expr.base()); }
 
 template <> void TypeWalker::expression(ast::CtorExpr& expr) {
-  for (auto& i : expr.args()) {
-    body_expression(i);
-  }
-
   Struct* st = nullptr;
 
   if (auto* templated = dyn_cast<ast::TemplatedType>(&expr.type())) {
@@ -118,10 +114,19 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
     expr.val_ty(&base_type);
   }
 
-  if (st != nullptr) {
-    auto ctor_overloads = all_ctor_overloads_by_type(*st, expr);
-    ctor_overloads.dump(llvm::errs());
+  unique_ptr<OverloadSet<Ctor>> ctor_overloads{};
+
+  if (st != nullptr)
+    ctor_overloads = std::make_unique<OverloadSet<Ctor>>(all_ctor_overloads_by_type(*st, expr));
+
+  for (auto& i : expr.args()) {
+    body_expression(i);
+    if (ctor_overloads)
+      ctor_overloads->args.push_back(&i);
   }
+
+  if (ctor_overloads)
+    ctor_overloads->dump(llvm::errs());
 }
 
 template <> void TypeWalker::expression(ast::SliceExpr& expr) {
