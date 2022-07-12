@@ -5,8 +5,8 @@
 #include "util.hpp"
 #include "llvm/Support/raw_ostream.h"
 #include <algorithm>
-#include <string_view>
 #include <memory>
+#include <string_view>
 
 namespace yume::diagnostic {
 static auto xml_escape(std::string_view data) -> std::string {

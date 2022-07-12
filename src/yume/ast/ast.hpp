@@ -8,12 +8,11 @@
 #include <cstddef>
 #include <cstdint>
 #include <llvm/ADT/SmallPtrSet.h>
+#include <llvm/Support/ErrorHandling.h>
 #include <memory>
 #include <optional>
 #include <span>
-#include <stdexcept>
 #include <string>
-#include <tuple>
 #include <type_traits>
 #include <utility>
 #include <variant>

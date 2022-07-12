@@ -2,10 +2,10 @@
 
 #include "qualifier.hpp"
 #include "util.hpp"
+#include <llvm/ADT/STLExtras.h>
 #include <memory>
 #include <sstream>
 #include <string>
-#include <vector>
 
 namespace yume::ast {
 

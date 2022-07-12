@@ -1,13 +1,13 @@
 #include "type.hpp"
-#include <llvm/Support/Casting.h>
-#include <utility>
+#include "compiler/vals.hpp"
+#include "ty/compatibility.hpp"
 #include <cstddef>
 #include <limits>
+#include <llvm/Support/Casting.h>
 #include <map>
 #include <stdexcept>
 #include <type_traits>
-#include "compiler/vals.hpp"
-#include "ty/compatibility.hpp"
+#include <utility>
 
 namespace yume::ty {
 static auto qual_suffix(Qualifier qual) -> string {
