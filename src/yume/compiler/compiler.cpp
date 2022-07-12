@@ -1,6 +1,8 @@
 #include "compiler.hpp"
 #include "ast/ast.hpp"
+#include "compiler/transformation.hpp"
 #include "diagnostic/errors.hpp"
+#include "diagnostic/visitor/print_visitor.hpp"
 #include "semantic/type_walker.hpp"
 #include "ty/compatibility.hpp"
 #include "ty/type.hpp"
@@ -154,6 +156,11 @@ auto Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* m
         decl_statement(f, st.type, member);
 
     return &st;
+  }
+  if (auto* enum_decl = dyn_cast<ast::EnumDecl>(&stmt)) {
+    diagnostic::PrintVisitor{llvm::errs()}.visit(*enum_decl, nullptr); // XXX: debug
+    auto& enum_struct = member->direct_body().emplace_back(transform_enum(*enum_decl));
+    return decl_statement(*enum_struct, parent, member);
   }
 
   throw std::runtime_error("Invalid top-level statement: "s + stmt.kind_name());
