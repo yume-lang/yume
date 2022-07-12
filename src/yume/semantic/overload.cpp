@@ -17,12 +17,11 @@
 
 namespace yume::semantic {
 
-template <typename Fn = std::identity>
-static auto join_args(const auto& iter, Fn fn = {}, llvm::raw_ostream& stream = llvm::errs()) {
+static auto join_args(const auto& iter, auto fn, llvm::raw_ostream& stream = llvm::errs()) {
   for (auto& i : llvm::enumerate(iter)) {
     if (i.index() != 0)
       stream << ", ";
-    stream << fn(i.value())->name();
+    stream << fn(i.value());
   }
 }
 
@@ -48,12 +47,21 @@ static auto intersect_generics(Instantiation& instantiation, const ty::Generic* 
   return instantiation.sub.at(gen);
 }
 
-inline static constexpr auto get_val_ty = [](const ast::AST& ast) { return ast.val_ty(); };
-inline static constexpr auto get_val_ty_ptr = [](const ast::AST* ast) { return ast->val_ty(); };
+template <typename T>
+inline static constexpr auto get_val_ty = [](const ast::TypeName& ast) { return ast.val_ty()->name(); };
+template <>
+inline static constexpr auto get_val_ty<Ctor> =
+    [](const auto& ast) { return std::visit([](const auto& t) { return t.val_ty()->name(); }, ast); };
+inline static constexpr auto get_val_ty_ptr = [](const ast::AST* ast) { return ast->val_ty()->name(); };
 
-void Overload::dump(llvm::raw_ostream& stream) const {
-  stream << fn->ast.location().to_string() << "\t" << fn->name() << "(";
-  join_args(fn->ast.args(), get_val_ty, stream);
+template <typename T> auto overload_name(const T& fn) -> string { return fn.name(); };
+// TODO: Named ctors
+template <> auto overload_name<Ctor>(const Ctor& /*ctor*/) -> string { return ":new"; }
+template <> auto overload_name<ast::CtorExpr>(const ast::CtorExpr& /*ctor*/) -> string { return ":new"; }
+
+template <typename T> void Overload<T>::dump(llvm::raw_ostream& stream) const {
+  stream << fn->ast.location().to_string() << "\t" << overload_name(*fn) << "(";
+  join_args(fn->ast.args(), get_val_ty<T>, stream);
   stream << ")";
   if (!instantiation.sub.empty()) {
     stream << " with ";
@@ -67,8 +75,8 @@ void Overload::dump(llvm::raw_ostream& stream) const {
   }
 };
 
-void OverloadSet::dump(llvm::raw_ostream& stream, bool hide_invalid) const {
-  stream << call.name() << "(";
+template <typename T> void OverloadSet<T>::dump(llvm::raw_ostream& stream, bool hide_invalid) const {
+  stream << overload_name(call) << "(";
   join_args(args, get_val_ty_ptr, stream);
   stream << ")\n";
   for (const auto& i_s : overloads) {
@@ -79,6 +87,11 @@ void OverloadSet::dump(llvm::raw_ostream& stream, bool hide_invalid) const {
     stream << "\n";
   }
 };
+
+template struct Overload<Fn>;
+template struct Overload<Ctor>;
+template struct OverloadSet<Fn>;
+template struct OverloadSet<Ctor>;
 
 static auto literal_cast(ast::AST& arg, const ty::Type* target_type) -> ty::Compat {
   if (arg.val_ty() == target_type)
@@ -100,7 +113,7 @@ static auto literal_cast(ast::AST& arg, const ty::Type* target_type) -> ty::Comp
   return {};
 }
 
-auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
+template <> auto OverloadSet<Fn>::is_valid_overload(Overload<Fn>& overload) -> bool {
   const auto& fn_ast = overload.fn->ast;
 
   // The overload is only viable if the amount of arguments matches the amount of parameters.
@@ -160,7 +173,7 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
   return true;
 }
 
-void OverloadSet::determine_valid_overloads() {
+template <> void OverloadSet<Fn>::determine_valid_overloads() {
   auto& [call_expr, overloads, args] = *this;
 
   // All `Overload`s are determined to not be viable by default, so determine the ones which actually are
@@ -186,7 +199,7 @@ static auto compare_implicit_conversions(ty::Conv a, ty::Conv b) -> std::weak_or
   return equal;
 }
 
-auto Overload::better_candidate_than(Overload other) const -> bool {
+template <> auto Overload<Fn>::better_candidate_than(Overload other) const -> bool {
   // Viable candidates are always better than non-viable ones
   if (!other.viable)
     return viable;
@@ -209,8 +222,8 @@ auto Overload::better_candidate_than(Overload other) const -> bool {
   return false;
 }
 
-auto OverloadSet::best_viable_overload() const -> Overload {
-  const Overload* best = nullptr;
+template <> auto OverloadSet<Fn>::best_viable_overload() const -> Overload<Fn> {
+  const Overload<Fn>* best = nullptr;
 
   for (const auto& candidate : overloads)
     if (candidate.viable)
@@ -225,7 +238,7 @@ auto OverloadSet::best_viable_overload() const -> Overload {
     throw std::logic_error(str);
   }
 
-  vector<const Overload*> ambiguous;
+  vector<const Overload<Fn>*> ambiguous;
 
   for (const auto& candidate : overloads)
     if (candidate.viable && &candidate != best)
