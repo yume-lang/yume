@@ -80,6 +80,7 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case K_Char: return "char";
   case K_Bool: return "bool";
   case K_FnDecl: return "fn decl";
+  case K_CtorDecl: return "ctor decl";
   case K_VarDecl: return "var decl";
   case K_StructDecl: return "struct decl";
   case K_Program: return "program";
@@ -495,12 +496,12 @@ public:
 
 /// Direct access of a field of a struct (`::`).
 class FieldAccessExpr : public Expr {
-  unique_ptr<Expr> m_base;
+  optional<unique_ptr<Expr>> m_base;
   string m_field;
   mutable int m_offset = -1;
 
 public:
-  FieldAccessExpr(span<Token> tok, unique_ptr<Expr> base, string field)
+  FieldAccessExpr(span<Token> tok, optional<unique_ptr<Expr>> base, string field)
       : Expr(K_FieldAccess, tok), m_base{move(base)}, m_field{move(field)} {}
   void visit(Visitor& visitor) const override;
 

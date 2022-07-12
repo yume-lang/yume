@@ -133,8 +133,8 @@ template <> void TypeWalker::expression(ast::VarExpr& expr) {
 }
 
 template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
-  body_expression(expr.base());
-  const auto& type = *expr.base().val_ty();
+  body_expression(*expr.base());
+  const auto& type = *expr.base()->val_ty();
 
   const auto* struct_type = dyn_cast<ty::Struct>(&type.without_qual());
 
