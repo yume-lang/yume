@@ -311,6 +311,37 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
     statement(get<ast::Compound>(stat.body()));
 }
 
+template <> void TypeWalker::statement(ast::CtorDecl& stat) {
+  scope.clear();
+
+  const auto* struct_type = dyn_cast<ty::Struct>(&current_decl_self_t()->without_qual());
+
+  if (struct_type == nullptr)
+    throw std::runtime_error("Can't define constructor of non-struct type");
+
+  for (auto& i : stat.args()) {
+    if (auto* type_name = std::get_if<ast::TypeName>(&i)) {
+      expression(*type_name);
+      scope.insert({type_name->name(), type_name});
+    } else if (auto* direct_init = std::get_if<ast::VarExpr>(&i)) {
+      auto target_name = direct_init->name();
+      const ty::Type* target_type{};
+      for (const auto& field : struct_type->fields()) {
+        if (field.name() == target_name) {
+          target_type = field.type().val_ty();
+          break;
+        }
+      }
+
+      direct_init->val_ty(target_type);
+      scope.insert({target_name, direct_init});
+    }
+  }
+
+  if (in_depth)
+    statement(stat.body());
+}
+
 template <> void TypeWalker::statement(ast::ReturnStmt& stat) {
   if (stat.expr().has_value()) {
     auto& returned = stat.expr()->get();
@@ -367,8 +398,12 @@ auto TypeWalker::current_decl_ast() const -> ast::AST* {
   return visit_decl<ast::AST*>(current_decl, [](auto* decl) -> ast::AST* { return &decl->ast; });
 }
 
+auto TypeWalker::current_decl_self_t() const -> ty::Type* {
+  return visit_decl<ty::Type*>(current_decl, [](const auto& decl) { return decl->self_t; });
+}
+
 auto TypeWalker::convert_type(const ast::Type& ast_type) -> const ty::Type& {
-  const ty::Type* parent = visit_decl<ty::Type*>(current_decl, [](const auto& decl) { return decl->self_t; });
+  const ty::Type* parent = current_decl_self_t();
   auto* context = current_decl_subs();
 
   if (const auto* simple_type = dyn_cast<ast::SimpleType>(&ast_type)) {
