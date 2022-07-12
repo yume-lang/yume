@@ -29,6 +29,7 @@ void FnDecl::visit(Visitor& visitor) const {
   if (m_varargs)
     visitor.visit("varargs");
 }
+void CtorDecl::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_args, "arg").visit(m_body); }
 void StructDecl::visit(Visitor& visitor) const {
   visitor.visit(m_name).visit(m_fields, "field").visit(m_type_args, "type arg").visit(m_body);
 }

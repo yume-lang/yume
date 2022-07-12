@@ -59,6 +59,7 @@ auto FnDecl::clone() const -> FnDecl* {
     return new FnDecl(tok(), m_name, dup(m_args), m_type_args, dup(m_ret), m_varargs, *s);
   return new FnDecl(tok(), m_name, dup(m_args), m_type_args, dup(m_ret), dup(get<Compound>(m_body)));
 }
+auto CtorDecl::clone() const -> CtorDecl* { return new CtorDecl(tok(), m_name, dup(m_args), dup(m_body)); }
 auto StructDecl::clone() const -> StructDecl* {
   return new StructDecl(tok(), m_name, dup(m_fields), m_type_args, dup(m_body));
 }
