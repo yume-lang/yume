@@ -587,11 +587,11 @@ public:
 /// A declaration of a custom constructor (`def :`).
 class CtorDecl : public Stmt {
   string m_name;
-  vector<variant<TypeName, string>> m_args;
+  vector<variant<TypeName, VarExpr>> m_args;
   Compound m_body;
 
 public:
-  CtorDecl(span<Token> tok, string name, vector<variant<TypeName, string>> args, Compound body)
+  CtorDecl(span<Token> tok, string name, vector<variant<TypeName, VarExpr>> args, Compound body)
       : Stmt(K_CtorDecl, tok), m_name{move(name)}, m_args{move(args)}, m_body{move(body)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
