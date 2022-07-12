@@ -90,11 +90,15 @@ void Compiler::run() {
   for (auto& st : m_structs)
     walk_types(&st);
 
-  // Second pass: only convert function parameters
+  // Second pass: only convert user defined constructors
+  for (auto& ct : m_ctors)
+    walk_types(&ct);
+
+  // Third pass: only convert function parameters
   for (auto& fn : m_fns)
     walk_types(&fn);
 
-  // Third pass: convert everything else, but only when instantiated
+  // Fourth pass: convert everything else, but only when instantiated
   m_walker->in_depth = true;
 
   Fn* main_fn = nullptr;

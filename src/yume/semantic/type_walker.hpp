@@ -58,6 +58,7 @@ private:
   using context_t = std::map<string, const ty::Type*>;
   [[nodiscard]] auto current_decl_subs() const -> context_t*;
   [[nodiscard]] auto current_decl_ast() const -> ast::AST*;
+  [[nodiscard]] auto current_decl_self_t() const -> ty::Type*;
 
   auto with_saved_scope(auto&& callback) {
     // Save everything pertaining to the old context
