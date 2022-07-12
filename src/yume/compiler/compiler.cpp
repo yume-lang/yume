@@ -623,12 +623,12 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> 
     return expr_val;
   }
   if (const auto* field_access = dyn_cast<ast::FieldAccessExpr>(&expr.target())) {
-    auto base = body_expression(field_access->base(), true);
+    auto base = body_expression(*field_access->base(), true);
     auto base_name = field_access->field();
     int base_offset = field_access->offset();
 
     auto expr_val = body_expression(expr.value(), mut);
-    auto* struct_type = llvm_type(cast<ty::Struct>(field_access->base().val_ty()->without_qual()));
+    auto* struct_type = llvm_type(cast<ty::Struct>(field_access->base()->val_ty()->without_qual()));
 
     auto* gep = m_builder->CreateStructGEP(struct_type, base, base_offset, "s.sf."s + base_name);
     m_builder->CreateStore(expr_val, gep);
@@ -798,7 +798,7 @@ template <> auto Compiler::expression(const ast::FieldAccessExpr& expr, bool mut
   // TODO: struct can only contain things by value, later this needs a condition
   not_mut("immutable field", mut);
 
-  auto base = body_expression(expr.base());
+  auto base = body_expression(*expr.base());
   auto base_name = expr.field();
   int base_offset = expr.offset();
 

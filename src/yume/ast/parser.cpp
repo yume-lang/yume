@@ -521,6 +521,8 @@ auto Parser::parse_primary() -> unique_ptr<Expr> {
     return ast_ptr<BoolExpr>(entry, true);
   if (try_consume(KWD_FALSE))
     return ast_ptr<BoolExpr>(entry, false);
+  if (try_consume(SYM_COLON_COLON))
+    return ast_ptr<FieldAccessExpr>(entry, std::nullopt, consume_word());
 
   if (tokens->type == Word) {
     if (try_peek_uword(0)) {
