@@ -5,6 +5,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <type_traits>
 #include <utility>
 #include <variant>
 #include <vector>
@@ -21,27 +22,37 @@ template <typename T> auto dup(const vector<unique_ptr<T>>& items) {
   return dup;
 }
 
-template <typename T> auto dup(const vector<T>& items) {
-  auto dup = vector<T>();
-  dup.reserve(items.size());
-  for (auto& i : items) {
-    auto* cloned = i.clone();
-    dup.push_back(move(*cloned));
-    delete cloned; // Need to free the cloned object even though it was moved from
-  }
-
-  return dup;
-}
-
 template <typename T> auto dup(const unique_ptr<T>& ptr) { return unique_ptr<T>(ptr->clone()); }
 
-template <typename T> auto dup(const T& ast) -> T {
+template <typename T>
+requires std::is_base_of_v<ast::AST, T>
+auto dup(const T& ast) -> T {
   auto cloned = unique_ptr<T>(ast.clone());
   return move(*cloned);
 }
 
+template <typename T>
+requires std::is_copy_constructible_v<T>
+auto dup(const T& obj) -> T { return T(obj); }
+
+template <typename T, typename U> auto dup(const std::variant<T, U>& var) -> std::variant<T, U> {
+  if (std::holds_alternative<T>(var))
+    return dup(std::get<T>(var));
+  return dup(std::get<U>(var));
+}
+
 template <typename T> auto dup(const optional<T>& opt) {
   return opt.has_value() ? optional<T>{dup(opt.value())} : optional<T>{};
+}
+
+template <typename T> auto dup(const vector<T>& items) {
+  auto dup_vec = vector<T>();
+  dup_vec.reserve(items.size());
+  for (auto& i : items) {
+    dup_vec.push_back(move(dup(i)));
+  }
+
+  return dup_vec;
 }
 } // namespace
 
