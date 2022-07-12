@@ -46,6 +46,7 @@ class Compiler : public CRTPWalker<Compiler> {
   TypeHolder m_types;
   vector<Fn> m_fns{};
   vector<Struct> m_structs{};
+  vector<Ctor> m_ctors{};
   std::queue<Fn*> m_decl_queue{};
   unique_ptr<semantic::TypeWalker> m_walker;
 
