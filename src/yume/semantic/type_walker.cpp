@@ -363,17 +363,19 @@ void TypeWalker::resolve_queue() {
     decl_queue.pop();
 
     with_saved_scope([&] {
-      std::visit(DeclLikeVisitor{[&](Fn* fn) {
-                                   in_depth = true;
-                                   compiler.declare(*fn);
-                                 },
-                                 [&](Struct* st) {
-                                   for (auto& i : st->body().body()) {
-                                     auto decl = compiler.decl_statement(i, st->type, st->member);
-                                     compiler.walk_types(decl);
-                                   }
-                                 }},
-                 next);
+      visit_decl(
+          next,
+          [&](Fn* fn) {
+            in_depth = true;
+            compiler.declare(*fn);
+          },
+          [&](Struct* st) {
+            for (auto& i : st->body().body()) {
+              auto decl = compiler.decl_statement(i, st->type, st->member);
+              compiler.walk_types(decl);
+            }
+          },
+          [&](Ctor* /*ctor*/) { throw std::runtime_error("Unimplemented"); });
     });
   }
 }

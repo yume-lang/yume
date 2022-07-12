@@ -104,17 +104,19 @@ void Compiler::run() {
 }
 
 void Compiler::walk_types(DeclLike decl_like) {
-  std::visit(DeclLikeVisitor{[&](Fn* fn) {
-                               m_walker->current_fn = fn;
-                               m_walker->body_statement(fn->ast);
-                               m_walker->current_fn = nullptr;
-                             },
-                             [&](Struct* st) {
-                               m_walker->current_struct = st;
-                               m_walker->body_statement(st->ast);
-                               m_walker->current_struct = nullptr;
-                             }},
-             decl_like);
+  visit_decl(
+      decl_like,
+      [&](Fn* fn) {
+        m_walker->current_fn = fn;
+        m_walker->body_statement(fn->ast);
+        m_walker->current_fn = nullptr;
+      },
+      [&](Struct* st) {
+        m_walker->current_struct = st;
+        m_walker->body_statement(st->ast);
+        m_walker->current_struct = nullptr;
+      },
+      [&](Ctor* /*ctor*/) { throw std::runtime_error("Unimplemented"); });
 }
 
 auto Compiler::create_struct(ast::StructDecl& s_decl, const optional<string>& name_override) -> unique_ptr<ty::Struct> {
@@ -154,6 +156,11 @@ auto Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* m
         decl_statement(f, st.type, member);
 
     return &st;
+  }
+  if (auto* ctor_decl = dyn_cast<ast::CtorDecl>(&stmt)) {
+    auto& ctor = m_ctors.emplace_back(*ctor_decl, parent, member);
+
+    return &ctor;
   }
 
   throw std::runtime_error("Invalid top-level statement: "s + stmt.kind_name());

@@ -103,15 +103,30 @@ struct Struct {
   [[nodiscard]] auto create_instantiation(Instantiation& instantiate) -> Struct&;
 };
 
-using DeclLike = std::variant<std::monostate, Fn*, Struct*>;
-template <typename FnC, typename StC>
-requires std::invocable<FnC, Fn*> && std::invocable<StC, Struct*>
-struct DeclLikeVisitor : FnC, StC {
+struct Ctor {
+  ast::CtorDecl& ast;
+  ty::Type* parent{};
+  ast::Program* member{};
+
+  Ctor(ast::CtorDecl& ast_decl, ty::Type* type = nullptr, ast::Program* member = nullptr)
+      : ast(ast_decl), parent(type), member(member) {}
+};
+
+using DeclLike = std::variant<std::monostate, Fn*, Struct*, Ctor*>;
+template <typename FnC, typename StC, typename CtC>
+requires std::invocable<FnC, Fn*> && std::invocable<StC, Struct*> && std::invocable<CtC, Ctor*>
+struct DeclLikeVisitor : FnC, StC, CtC {
   using FnC::operator();
   using StC::operator();
+  using CtC::operator();
   void operator()(std::monostate /* ignored */){};
 };
-template <typename FnC, typename StC> DeclLikeVisitor(FnC, StC) -> DeclLikeVisitor<FnC, StC>;
+template <typename FnC, typename StC, typename CtC> DeclLikeVisitor(FnC, StC, CtC) -> DeclLikeVisitor<FnC, StC, CtC>;
+
+template <typename FnC, typename StC, typename CtC>
+auto visit_decl(DeclLike decl_like, FnC fn_c, StC st_c, CtC ct_c) {
+  return std::visit(DeclLikeVisitor{fn_c, st_c, ct_c}, decl_like);
+}
 
 /// A value of a complied expression.
 /**
