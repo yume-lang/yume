@@ -238,7 +238,7 @@ struct Parser {
   auto parse_fn_or_ctor_decl() -> unique_ptr<Stmt>;
   auto parse_fn_decl() -> unique_ptr<FnDecl>;
   auto parse_ctor_decl() -> unique_ptr<CtorDecl>;
-  auto parse_type_name_or_ctor_field() -> variant<TypeName, string>;
+  auto parse_type_name_or_ctor_field() -> variant<TypeName, VarExpr>;
 
   auto parse_var_decl() -> unique_ptr<VarDecl>;
 

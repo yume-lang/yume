@@ -347,9 +347,10 @@ auto Parser::parse_fn_decl() -> unique_ptr<FnDecl> {
                          make_ast<Compound>(body_begin, move(body)));
 }
 
-auto Parser::parse_type_name_or_ctor_field() -> variant<TypeName, string> {
+auto Parser::parse_type_name_or_ctor_field() -> variant<TypeName, VarExpr> {
+  auto entry = tokens.begin();
   if (try_consume(SYM_COLON_COLON))
-    return consume_word();
+    return make_ast<VarExpr>(entry, consume_word());
 
   return move(*parse_type_name());
 };
@@ -363,7 +364,7 @@ auto Parser::parse_ctor_decl() -> unique_ptr<CtorDecl> {
 
   consume(SYM_LPAREN);
 
-  auto args = vector<variant<TypeName, string>>{};
+  auto args = vector<variant<TypeName, VarExpr>>{};
   consume_with_commas_until(SYM_RPAREN, [&] { args.push_back(parse_type_name_or_ctor_field()); });
 
   auto body = vector<unique_ptr<Stmt>>{};
