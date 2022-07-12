@@ -65,11 +65,14 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
     body_expression(i);
   }
 
+  Struct* st = nullptr;
+
   if (auto* templated = dyn_cast<ast::TemplatedType>(&expr.type())) {
     auto& template_base = templated->base();
     expression(template_base);
     const auto& base_type = convert_type(template_base);
-    auto struct_obj = std::ranges::find_if(compiler.m_structs, [&](const Struct& st) { return st.type == &base_type; });
+    auto struct_obj =
+        std::ranges::find_if(compiler.m_structs, [&](const Struct& st) { return st.self_t == &base_type; });
 
     if (struct_obj == compiler.m_structs.end())
       throw std::logic_error("Can't add template arguments to non-struct types");
@@ -89,25 +92,29 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
 
       with_saved_scope([&] {
         in_depth = false;
-        current_fn = nullptr;
-        current_struct = &new_st;
+        current_decl = &new_st;
         body_statement(new_st.ast);
       });
 
-      // TODO: the "describe" method is being abused here
+      // HACK: the "describe" method is being abused here
       std::string name_with_types = new_st.ast.name() + templated->describe();
 
       auto& i_ty =
           compiler.m_types.template_instantiations.emplace_back(Compiler::create_struct(new_st.ast, name_with_types));
 
-      new_st.type = i_ty.get();
+      new_st.self_t = i_ty.get();
       decl_queue.push(&new_st);
     }
 
-    expr.val_ty(inst_struct.type);
+    expr.val_ty(inst_struct.self_t);
+    st = &inst_struct;
   } else {
     expression(expr.type());
     const auto& base_type = convert_type(expr.type());
+    auto struct_obj =
+        std::ranges::find_if(compiler.m_structs, [&](const Struct& st) { return st.self_t == &base_type; });
+    if (struct_obj != compiler.m_structs.end())
+      st = &*struct_obj;
     expr.val_ty(&base_type);
   }
 }
@@ -157,20 +164,30 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
   expr.val_ty(target_type);
 }
 
-auto TypeWalker::all_overloads_by_name(ast::CallExpr& call) -> OverloadSet {
-  auto fns_by_name = vector<Overload>();
+auto TypeWalker::all_fn_overloads_by_name(ast::CallExpr& call) -> OverloadSet<Fn> {
+  auto fns_by_name = vector<Overload<Fn>>();
 
   for (auto& fn : compiler.m_fns)
     if (fn.name() == call.name())
       fns_by_name.emplace_back(&fn);
 
-  return OverloadSet{call, fns_by_name, {}};
+  return OverloadSet<Fn>{call, fns_by_name, {}};
+}
+
+auto TypeWalker::all_ctor_overloads_by_type(Struct& st, ast::CtorExpr& call) -> OverloadSet<Ctor> {
+  auto ctors_by_type = vector<Overload<Ctor>>();
+
+  for (auto& ctor : compiler.m_ctors)
+    if (ctor.self_t == st.self_t)
+      ctors_by_type.emplace_back(&ctor);
+
+  return OverloadSet<Ctor>{call, ctors_by_type, {}};
 }
 
 template <> void TypeWalker::expression(ast::CallExpr& expr) {
   resolve_queue();
 
-  auto overload_set = all_overloads_by_name(expr);
+  auto overload_set = all_fn_overloads_by_name(expr);
   auto name = expr.name();
 
   if (overload_set.empty())
@@ -224,7 +241,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
       // TODO: find a better solution other than the solution proposed above
       with_saved_scope([&] {
         in_depth = false;
-        current_fn = &new_fn;
+        current_decl = &new_fn;
         body_statement(new_fn.ast);
       });
 
@@ -261,7 +278,7 @@ template <> void TypeWalker::statement(ast::Compound& stat) {
 
 template <> void TypeWalker::statement(ast::StructDecl& stat) {
   // This decl still has unsubstituted generics, can't instantiate its body
-  if (std::ranges::any_of(current_struct->subs, [](const auto& sub) { return sub.second->is_generic(); }))
+  if (std::ranges::any_of(*current_decl_subs(), [](const auto& sub) { return sub.second->is_generic(); }))
     return;
 
   for (auto& i : stat.fields())
@@ -282,7 +299,7 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
   }
 
   // This decl still has unsubstituted generics, can't instantiate its body
-  if (std::ranges::any_of(current_fn->subs, [](const auto& sub) { return sub.second->is_generic(); }))
+  if (std::ranges::any_of(*current_decl_subs(), [](const auto& sub) { return sub.second->is_generic(); }))
     return;
 
   if (in_depth && std::holds_alternative<ast::Compound>(stat.body()))
@@ -293,7 +310,7 @@ template <> void TypeWalker::statement(ast::ReturnStmt& stat) {
   if (stat.expr().has_value()) {
     auto& returned = stat.expr()->get();
     body_expression(returned);
-    current_fn->ast.attach_to(&returned);
+    current_decl_ast()->attach_to(&returned);
   }
 }
 
@@ -331,10 +348,23 @@ void TypeWalker::body_expression(ast::Expr& expr) {
   return CRTPWalker::body_expression(expr);
 }
 
+auto TypeWalker::current_decl_subs() const -> context_t* {
+  return visit_decl<context_t*>(
+      current_decl, [](Ctor* /*decl*/) -> context_t* { return nullptr; },
+      [](auto* decl) -> context_t* {
+        if (decl == nullptr)
+          return nullptr;
+        return &decl->subs;
+      });
+}
+
+auto TypeWalker::current_decl_ast() const -> ast::AST* {
+  return visit_decl<ast::AST*>(current_decl, [](auto* decl) -> ast::AST* { return &decl->ast; });
+}
+
 auto TypeWalker::convert_type(const ast::Type& ast_type) -> const ty::Type& {
-  const ty::Type* parent = current_fn == nullptr ? current_struct->type : current_fn->parent;
-  auto* context =
-      current_fn == nullptr ? current_struct == nullptr ? nullptr : &current_struct->subs : &current_fn->subs;
+  const ty::Type* parent = visit_decl<ty::Type*>(current_decl, [](const auto& decl) { return decl->self_t; });
+  auto* context = current_decl_subs();
 
   if (const auto* simple_type = dyn_cast<ast::SimpleType>(&ast_type)) {
     auto name = simple_type->name();
@@ -372,7 +402,7 @@ void TypeWalker::resolve_queue() {
           },
           [&](Struct* st) {
             for (auto& i : st->body().body()) {
-              auto decl = compiler.decl_statement(i, st->type, st->member);
+              auto decl = compiler.decl_statement(i, st->self_t, st->member);
               compiler.walk_types(decl);
             }
           },

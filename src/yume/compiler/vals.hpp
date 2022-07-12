@@ -55,7 +55,7 @@ struct Instantiation {
 struct Fn {
   ast::FnDecl& ast;
   /// If this function is in the body of a struct, this points to its type. Used for the `self` type.
-  ty::Type* parent{};
+  ty::Type* self_t{};
   /// The program this declaration is a member of.
   ast::Program* member{};
   vector<unique_ptr<ty::Generic>> type_args{};
@@ -68,7 +68,7 @@ struct Fn {
 
   Fn(ast::FnDecl& ast_decl, ty::Type* parent = nullptr, ast::Program* member = nullptr,
      std::map<string, const ty::Type*> subs = {}, vector<unique_ptr<ty::Generic>> type_args = {})
-      : ast(ast_decl), parent(parent), member(member), type_args(move(type_args)), subs(move(subs)) {}
+      : ast(ast_decl), self_t(parent), member(member), type_args(move(type_args)), subs(move(subs)) {}
 
   [[nodiscard]] auto body() const -> const auto& { return ast.body(); }
 
@@ -80,12 +80,15 @@ struct Fn {
   [[nodiscard]] auto create_instantiation(Instantiation& instantiate) -> Fn&;
 
   operator llvm::Function*() const { return llvm; }
+
+  using ast_t = ast::FnDecl;
+  using call_t = ast::CallExpr;
 };
 
 struct Struct {
   ast::StructDecl& ast;
   /// The type of this struct. Used for the `self` type.
-  ty::Type* type{};
+  ty::Type* self_t{};
   /// The program this declaration is a member of.
   ast::Program* member{};
   vector<unique_ptr<ty::Generic>> type_args{};
@@ -95,7 +98,7 @@ struct Struct {
 
   Struct(ast::StructDecl& ast_decl, ty::Type* type = nullptr, ast::Program* member = nullptr,
          std::map<string, const ty::Type*> subs = {}, vector<unique_ptr<ty::Generic>> type_args = {})
-      : ast(ast_decl), type(type), member(member), type_args(move(type_args)), subs(move(subs)) {}
+      : ast(ast_decl), self_t(type), member(member), type_args(move(type_args)), subs(move(subs)) {}
 
   [[nodiscard]] auto body() const -> const auto& { return ast.body(); }
 
@@ -103,30 +106,32 @@ struct Struct {
 
   [[nodiscard]] auto get_or_create_instantiation(Instantiation& instantiate) -> std::pair<bool, Struct&>;
   [[nodiscard]] auto create_instantiation(Instantiation& instantiate) -> Struct&;
+
+  using ast_t = ast::StructDecl;
 };
 
 struct Ctor {
   ast::CtorDecl& ast;
-  ty::Type* parent{};
+  ty::Type* self_t{};
   ast::Program* member{};
 
   Ctor(ast::CtorDecl& ast_decl, ty::Type* type = nullptr, ast::Program* member = nullptr)
-      : ast(ast_decl), parent(type), member(member) {}
+      : ast(ast_decl), self_t(type), member(member) {}
+
+  using ast_t = ast::CtorDecl;
+  using call_t = ast::CtorExpr;
 };
 
 using DeclLike = std::variant<std::monostate, Fn*, Struct*, Ctor*>;
-template <typename FnC, typename StC, typename CtC>
-requires std::invocable<FnC, Fn*> && std::invocable<StC, Struct*> && std::invocable<CtC, Ctor*>
-struct DeclLikeVisitor : FnC, StC, CtC {
-  using FnC::operator();
-  using StC::operator();
-  using CtC::operator();
-  void operator()(std::monostate /* ignored */){};
-};
-template <typename FnC, typename StC, typename CtC> DeclLikeVisitor(FnC, StC, CtC) -> DeclLikeVisitor<FnC, StC, CtC>;
 
-template <typename FnC, typename StC, typename CtC> auto visit_decl(DeclLike decl_like, FnC fn_c, StC st_c, CtC ct_c) {
-  return std::visit(DeclLikeVisitor{fn_c, st_c, ct_c}, decl_like);
+template <typename R, typename... Ts> struct DeclLikeVisitor : Ts... {
+  using Ts::operator()...;
+  auto operator()(std::monostate /* ignored */) -> R { return R(); };
+};
+template <typename R, typename... Ts> DeclLikeVisitor(R, Ts...) -> DeclLikeVisitor<R, Ts...>;
+
+template <typename R = void, typename... Ts> auto visit_decl(DeclLike decl_like, Ts... ts) {
+  return std::visit(DeclLikeVisitor<R, Ts...>{ts...}, decl_like);
 }
 
 /// A value of a complied expression.

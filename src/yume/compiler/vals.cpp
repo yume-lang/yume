@@ -20,7 +20,7 @@ auto Fn::create_instantiation(Instantiation& instantiate) -> Fn& {
   for (const auto& [k, v] : instantiate.sub)
     subs.try_emplace(k->name(), v);
 
-  auto fn_ptr = std::make_unique<Fn>(*decl_clone, parent, member, move(subs));
+  auto fn_ptr = std::make_unique<Fn>(*decl_clone, self_t, member, move(subs));
   auto new_emplace = instantiations.emplace(instantiate, move(fn_ptr));
   return *new_emplace.first->second;
 }
@@ -41,7 +41,7 @@ auto Struct::create_instantiation(Instantiation& instantiate) -> Struct& {
   for (const auto& [k, v] : instantiate.sub)
     subs.try_emplace(k->name(), v);
 
-  auto st_ptr = std::make_unique<Struct>(*decl_clone, type, member, move(subs));
+  auto st_ptr = std::make_unique<Struct>(*decl_clone, self_t, member, move(subs));
   auto new_emplace = instantiations.emplace(instantiate, move(st_ptr));
   return *new_emplace.first->second;
 }
