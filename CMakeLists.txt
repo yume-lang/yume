@@ -86,7 +86,7 @@ endif()
 
 if(YUME_IWYU)
   find_program(iwyu_path NAMES include-what-you-use iwyu REQUIRED)
-  set_property(TARGET yume PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path})
+  set_property(TARGET yume PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path};-Xiwyu;--max_line_length=120;-Xiwyu;--cxx17ns)
 endif()
 
 target_include_directories(yume BEFORE PUBLIC src/yume)
