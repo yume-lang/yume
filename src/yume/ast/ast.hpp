@@ -38,6 +38,7 @@ enum Kind {
   /**/ K_Stmt,       ///< `Stmt`
   /**/ K_Compound,   ///< `Compound`
   /**/ K_FnDecl,     ///< `FnDecl`
+  /**/ K_CtorDecl,   ///< `CtorDecl`
   /**/ K_StructDecl, ///< `StructDecl`
   /**/ K_VarDecl,    ///< `VarDecl`
   /**/ K_While,      ///< `WhileStmt`
@@ -581,6 +582,27 @@ public:
   [[nodiscard]] constexpr auto primitive() const -> bool { return holds_alternative<string>(m_body); }
   static auto classof(const AST* a) -> bool { return a->kind() == K_FnDecl; }
   [[nodiscard]] auto clone() const -> FnDecl* override;
+};
+
+/// A declaration of a custom constructor (`def :`).
+class CtorDecl : public Stmt {
+  string m_name;
+  vector<TypeName> m_args;
+  Compound m_body;
+
+public:
+  CtorDecl(span<Token> tok, string name, vector<TypeName> args, Compound body)
+      : Stmt(K_CtorDecl, tok), m_name{move(name)}, m_args{move(args)}, m_body{move(body)} {}
+  void visit(Visitor& visitor) const override;
+  [[nodiscard]] auto describe() const -> string override;
+
+  [[nodiscard]] auto name() const -> string { return m_name; }
+  [[nodiscard]] auto args() const -> const auto& { return m_args; }
+  [[nodiscard]] auto args() -> auto& { return m_args; }
+  [[nodiscard]] constexpr auto body() const -> const auto& { return m_body; }
+  [[nodiscard]] constexpr auto body() -> auto& { return m_body; }
+  static auto classof(const AST* a) -> bool { return a->kind() == K_CtorDecl; }
+  [[nodiscard]] auto clone() const -> CtorDecl* override;
 };
 
 /// A declaration of a struct (`struct`).

@@ -220,7 +220,9 @@ struct Parser {
 
   auto parse_struct_decl() -> unique_ptr<StructDecl>;
 
+  auto parse_fn_or_ctor_decl() -> unique_ptr<Stmt>;
   auto parse_fn_decl() -> unique_ptr<FnDecl>;
+  auto parse_ctor_decl() -> unique_ptr<CtorDecl>;
 
   auto parse_var_decl() -> unique_ptr<VarDecl>;
 
