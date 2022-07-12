@@ -11,10 +11,10 @@
 #include <llvm/Target/TargetMachine.h>
 #include <map>
 #include <memory>
+#include <optional>
 #include <queue>
 #include <stdexcept>
 #include <string>
-#include <optional>
 #include <vector>
 
 namespace llvm {
@@ -107,7 +107,8 @@ private:
 
   auto known_type(const string& str) -> ty::Type&;
 
-  auto primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<const ty::Type*>& types, const ty::Type* ret_ty) -> optional<Val>;
+  auto primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<const ty::Type*>& types, const ty::Type* ret_ty)
+      -> optional<Val>;
   auto int_bin_primitive(const string& primitive, const vector<llvm::Value*>& args) -> Val;
 
   void walk_types(DeclLike);

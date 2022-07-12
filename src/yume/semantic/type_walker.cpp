@@ -4,6 +4,7 @@
 #include "compiler/type_holder.hpp"
 #include "compiler/vals.hpp"
 #include "diagnostic/errors.hpp"
+#include "stl_util.hpp"
 #include "ty/compatibility.hpp"
 #include "ty/type.hpp"
 #include <algorithm>
@@ -18,6 +19,7 @@
 #include <llvm/Support/raw_ostream.h>
 #include <memory>
 #include <optional>
+#include <ranges>
 #include <stdexcept>
 #include <utility>
 #include <variant>
@@ -67,8 +69,7 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
     auto& template_base = templated->base();
     expression(template_base);
     const auto& base_type = convert_type(template_base);
-    auto struct_obj =
-        std::ranges::find_if(compiler.m_structs, [&](const Struct& st) { return st.type == &base_type; });
+    auto struct_obj = std::ranges::find_if(compiler.m_structs, [&](const Struct& st) { return st.type == &base_type; });
 
     if (struct_obj == compiler.m_structs.end())
       throw std::logic_error("Can't add template arguments to non-struct types");
@@ -96,8 +97,8 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
       // TODO: the "describe" method is being abused here
       std::string name_with_types = new_st.ast.name() + templated->describe();
 
-      auto& i_ty = compiler.m_types.template_instantiations.emplace_back(
-          Compiler::create_struct(new_st.ast, name_with_types));
+      auto& i_ty =
+          compiler.m_types.template_instantiations.emplace_back(Compiler::create_struct(new_st.ast, name_with_types));
 
       new_st.type = i_ty.get();
       decl_queue.push(&new_st);
@@ -332,8 +333,8 @@ void TypeWalker::body_expression(ast::Expr& expr) {
 
 auto TypeWalker::convert_type(const ast::Type& ast_type) -> const ty::Type& {
   const ty::Type* parent = current_fn == nullptr ? current_struct->type : current_fn->parent;
-  auto* context = current_fn == nullptr ? current_struct == nullptr ? nullptr : &current_struct->subs
-                                          : &current_fn->subs;
+  auto* context =
+      current_fn == nullptr ? current_struct == nullptr ? nullptr : &current_struct->subs : &current_fn->subs;
 
   if (const auto* simple_type = dyn_cast<ast::SimpleType>(&ast_type)) {
     auto name = simple_type->name();

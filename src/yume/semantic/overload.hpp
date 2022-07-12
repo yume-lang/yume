@@ -7,7 +7,7 @@
 namespace yume::ast {
 class CallExpr;
 class AST;
-}
+} // namespace yume::ast
 namespace llvm {
 class raw_ostream;
 }

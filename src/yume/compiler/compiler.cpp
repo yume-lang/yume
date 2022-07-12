@@ -1,7 +1,10 @@
 #include "compiler.hpp"
 #include "ast/ast.hpp"
+#include "compiler/type_holder.hpp"
 #include "diagnostic/errors.hpp"
+#include "qualifier.hpp"
 #include "semantic/type_walker.hpp"
+#include "stl_util.hpp"
 #include "ty/compatibility.hpp"
 #include "ty/type.hpp"
 #include "util.hpp"
@@ -9,7 +12,13 @@
 #include <algorithm>
 #include <exception>
 #include <functional>
+#include <llvm/ADT/STLExtras.h>
+#include <llvm/ADT/StringMap.h>
+#include <llvm/ADT/StringMapEntry.h>
+#include <llvm/ADT/StringRef.h>
 #include <llvm/ADT/Twine.h>
+#include <llvm/ADT/iterator.h>
+#include <llvm/ADT/iterator_range.h>
 #include <llvm/IR/Argument.h>
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/Constant.h>
@@ -39,6 +48,7 @@
 #include <optional>
 #include <sstream>
 #include <stdexcept>
+#include <type_traits>
 #include <utility>
 #include <variant>
 

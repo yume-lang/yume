@@ -6,10 +6,12 @@
 #include "util.hpp"
 #include <compare>
 #include <iosfwd>
+#include <llvm/Support/raw_ostream.h>
 #include <map>
 #include <memory>
 #include <string>
 #include <utility>
+#include <variant>
 #include <vector>
 
 namespace llvm {
@@ -123,8 +125,7 @@ struct DeclLikeVisitor : FnC, StC, CtC {
 };
 template <typename FnC, typename StC, typename CtC> DeclLikeVisitor(FnC, StC, CtC) -> DeclLikeVisitor<FnC, StC, CtC>;
 
-template <typename FnC, typename StC, typename CtC>
-auto visit_decl(DeclLike decl_like, FnC fn_c, StC st_c, CtC ct_c) {
+template <typename FnC, typename StC, typename CtC> auto visit_decl(DeclLike decl_like, FnC fn_c, StC st_c, CtC ct_c) {
   return std::visit(DeclLikeVisitor{fn_c, st_c, ct_c}, decl_like);
 }
 

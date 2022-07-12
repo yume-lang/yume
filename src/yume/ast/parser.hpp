@@ -1,8 +1,23 @@
 #pragma once
 
 #include "ast/ast.hpp"
+#include "atom.hpp"
 #include "diagnostic/errors.hpp"
+#include "diagnostic/source_location.hpp"
 #include "token.hpp"
+#include "util.hpp"
+#include <array>
+#include <cctype>
+#include <cstddef>
+#include <memory>
+#include <optional>
+#include <span>
+#include <stdexcept>
+#include <string>
+#include <string_view>
+#include <utility>
+#include <variant>
+#include <vector>
 
 namespace yume::ast {
 using VectorTokenIterator = vector<Token>::iterator;

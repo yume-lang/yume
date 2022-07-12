@@ -1,5 +1,9 @@
 #include "parser.hpp"
 
+#include "qualifier.hpp"
+#include <algorithm>
+#include <llvm/Support/raw_ostream.h>
+
 namespace yume::ast::parser {
 auto Parser::ignore_separator([[maybe_unused]] const source_location location) -> bool {
   bool found_separator = false;

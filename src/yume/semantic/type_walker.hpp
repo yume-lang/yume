@@ -3,7 +3,6 @@
 #include "ast/crtp_walker.hpp"
 #include "semantic/overload.hpp"
 #include "util.hpp"
-#include <llvm/Support/raw_ostream.h>
 #include <map>
 #include <queue>
 #include <stdexcept>

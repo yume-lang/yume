@@ -3,7 +3,12 @@
 #include "ast/ast.hpp"
 #include "token.hpp"
 #include "util.hpp"
+#include <algorithm>
+#include <array>
+#include <cstddef>
+#include <cstdint>
 #include <filesystem>
+#include <functional>
 #include <llvm/ADT/StringExtras.h>
 #include <llvm/Support/Process.h>
 #include <llvm/Support/Signals.h>
