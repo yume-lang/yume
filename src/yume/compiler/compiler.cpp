@@ -114,19 +114,11 @@ void Compiler::run() {
 }
 
 void Compiler::walk_types(DeclLike decl_like) {
-  visit_decl(
-      decl_like,
-      [&](Fn* fn) {
-        m_walker->current_fn = fn;
-        m_walker->body_statement(fn->ast);
-        m_walker->current_fn = nullptr;
-      },
-      [&](Struct* st) {
-        m_walker->current_struct = st;
-        m_walker->body_statement(st->ast);
-        m_walker->current_struct = nullptr;
-      },
-      [&](Ctor* /*ctor*/) { throw std::runtime_error("Unimplemented"); });
+  visit_decl(decl_like, [&](const auto& decl) {
+    m_walker->current_decl = decl;
+    m_walker->body_statement(decl->ast);
+    m_walker->current_decl = {};
+  });
 }
 
 auto Compiler::create_struct(ast::StructDecl& s_decl, const optional<string>& name_override) -> unique_ptr<ty::Struct> {
@@ -163,7 +155,7 @@ auto Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* m
 
     if (st.type_args.empty())
       for (auto& f : s_decl->body().body())
-        decl_statement(f, st.type, member);
+        decl_statement(f, st.self_t, member);
 
     return &st;
   }
@@ -290,7 +282,7 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
   // body
   if (!fn_decl.primitive()) {
     m_decl_queue.push(&fn);
-    m_walker->current_fn = &fn;
+    m_walker->current_decl = &fn;
     m_walker->body_statement(fn.ast);
   }
   return llvm_fn;

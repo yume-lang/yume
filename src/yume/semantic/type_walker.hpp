@@ -32,8 +32,7 @@ struct TypeWalker : public CRTPWalker<TypeWalker, false> {
 
 public:
   Compiler& compiler;
-  Struct* current_struct{};
-  Fn* current_fn{};
+  DeclLike current_decl{};
   std::map<string, ast::AST*> scope{};
 
   std::queue<DeclLike> decl_queue{};
@@ -53,13 +52,17 @@ private:
   /// Convert an ast type (`ast::Type`) into a type in the type system (`ty::Type`).
   auto convert_type(const ast::Type& ast_type) -> const ty::Type&;
 
-  auto all_overloads_by_name(ast::CallExpr& call) -> OverloadSet;
+  auto all_fn_overloads_by_name(ast::CallExpr& call) -> OverloadSet<Fn>;
+  auto all_ctor_overloads_by_type(Struct& st, ast::CtorExpr& call) -> OverloadSet<Ctor>;
+
+  using context_t = std::map<string, const ty::Type*>;
+  [[nodiscard]] auto current_decl_subs() const -> context_t*;
+  [[nodiscard]] auto current_decl_ast() const -> ast::AST*;
 
   auto with_saved_scope(auto&& callback) {
     // Save everything pertaining to the old context
     auto saved_scope = scope;
-    auto* saved_current_fn = current_fn;
-    auto* saved_current_struct = current_struct;
+    auto saved_current_decl = current_decl;
     auto saved_depth = in_depth;
 
     callback();
@@ -67,8 +70,7 @@ private:
     // Restore again
     in_depth = saved_depth;
     scope = saved_scope;
-    current_fn = saved_current_fn;
-    current_struct = saved_current_struct;
+    current_decl = saved_current_decl;
   }
 
   template <typename T> void statement([[maybe_unused]] T& stat) {
