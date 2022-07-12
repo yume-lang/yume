@@ -582,8 +582,7 @@ auto Parser::parse_receiver(unique_ptr<Expr> receiver, VectorTokenIterator recei
     auto call = ast_ptr<CallExpr>(entry, "[]", move(args));
     return parse_receiver(move(call), receiver_entry);
   }
-  if (try_consume(SYM_COLON)) {
-    consume(SYM_COLON);
+  if (try_consume(SYM_COLON_COLON)) {
     auto field = consume_word();
     auto access = ast_ptr<FieldAccessExpr>(receiver_entry, move(receiver), field);
     return parse_receiver(move(access), receiver_entry);

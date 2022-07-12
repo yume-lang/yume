@@ -182,6 +182,7 @@ public:
               {Token::Type::Symbol, is_exactly("==")},
               {Token::Type::Symbol, is_exactly("!=")},
               {Token::Type::Symbol, is_exactly("//")},
+              {Token::Type::Symbol, is_exactly("::")},
               {Token::Type::Symbol, is_any_of(R"(()[]{}<>=:#%-+.,!/*\)")},
           })) {
         string message = "Tokenizer didn't recognize ";

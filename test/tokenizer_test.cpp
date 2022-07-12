@@ -9,7 +9,7 @@ constexpr auto token_comparison = [](const yume::Token& a, const yume::Token& b)
   return a.type == b.type && a.payload == b.payload;
 };
 
-template <typename... Ts> auto EqualsTokens(Ts... ts) {
+template <typename... Ts> auto equals_tokens(Ts... ts) {
   return EqualsRangeMatcher<std::vector<yume::Token>, decltype(token_comparison)>{{ts...}};
 }
 
@@ -28,17 +28,17 @@ auto operator""_Symbol(const char* str, size_t size) -> Token { return {Symbol, 
 auto operator""_Word(const char* str, size_t size) -> Token { return {Word, make_atom({str, size})}; }
 
 template <bool FilterSkip> auto tkn(const std::string& str) -> std::vector<Token> {
-  static const std::string test_filename = "<test>";
+  static const std::string TEST_FILENAME = "<test>";
   auto in_stream = std::stringstream(str);
   if (FilterSkip)
-    return tokenize(in_stream, test_filename);
-  return tokenize_preserve_skipped(in_stream, test_filename);
+    return tokenize(in_stream, TEST_FILENAME);
+  return tokenize_preserve_skipped(in_stream, TEST_FILENAME);
 }
 } // namespace
 
-#define CHECK_TOKENIZER(body, ...) CHECK_THAT(tkn<true>(body), EqualsTokens(__VA_ARGS__))
+#define CHECK_TOKENIZER(body, ...) CHECK_THAT(tkn<true>(body), equals_tokens(__VA_ARGS__))
 #define CHECK_TOKENIZER_THROWS(body) CHECK_THROWS(tkn<true>(body))
-#define CHECK_TOKENIZER_PRESERVED(body, ...) CHECK_THAT(tkn<false>(body), EqualsTokens(__VA_ARGS__))
+#define CHECK_TOKENIZER_PRESERVED(body, ...) CHECK_THAT(tkn<false>(body), equals_tokens(__VA_ARGS__))
 
 using enum yume::Token::Type;
 using namespace std::string_literals;
@@ -98,12 +98,14 @@ TEST_CASE("Tokenize string literals", "[token]") {
 
 TEST_CASE("Tokenize operators/symbols", "[token]") {
   for (std::string i :
-       {"=", "<", ">", "+", "-", "*", "/", "//", "(", ")", "==", "!=", "!", ",", ".", ":", "%", "[", "]"}) {
+       {"=", "<", ">", "+", "-", "*", "/", "//", "(", ")", "==", "!=", "!", ",", ".", ":", "::", "%", "[", "]"}) {
     CHECK_TOKENIZER(i, Token(Symbol, make_atom(i)));
   }
 
   CHECK_TOKENIZER("[]", "["_Symbol, "]"_Symbol);
   CHECK_TOKENIZER("{}", "{"_Symbol, "}"_Symbol);
+  CHECK_TOKENIZER(": :", ":"_Symbol, ":"_Symbol);
+  CHECK_TOKENIZER("foo::bar", "foo"_Word, "::"_Symbol, "bar"_Word);
 }
 
 TEST_CASE("Token stringification", "[token][str]") {
