@@ -125,7 +125,7 @@ auto Parser::parse_stmt() -> unique_ptr<Stmt> {
   auto stat = unique_ptr<Stmt>();
 
   if (tokens->is_a(KWD_DEF))
-    stat = parse_fn_decl();
+    stat = parse_fn_or_ctor_decl();
   else if (tokens->is_a(KWD_STRUCT))
     stat = parse_struct_decl();
   else if (tokens->is_a(KWD_LET))
@@ -294,6 +294,12 @@ auto Parser::parse_struct_decl() -> unique_ptr<StructDecl> {
   return ast_ptr<StructDecl>(entry, name, move(fields), type_args, make_ast<Compound>(body_begin, move(body)));
 }
 
+auto Parser::parse_fn_or_ctor_decl() -> unique_ptr<Stmt> {
+  if (try_peek(1, SYM_COLON))
+    return parse_ctor_decl();
+  return parse_fn_decl();
+}
+
 auto Parser::parse_fn_decl() -> unique_ptr<FnDecl> {
   auto entry = tokens.begin();
 
@@ -335,6 +341,32 @@ auto Parser::parse_fn_decl() -> unique_ptr<FnDecl> {
 
   return ast_ptr<FnDecl>(entry, name, move(args), type_args, move(ret_type),
                          make_ast<Compound>(body_begin, move(body)));
+}
+
+auto Parser::parse_ctor_decl() -> unique_ptr<CtorDecl> {
+  auto entry = tokens.begin();
+
+  consume(KWD_DEF);
+  consume(SYM_COLON);
+  const string name = parse_fn_name();
+
+  consume(SYM_LPAREN);
+
+  auto args = vector<TypeName>{};
+  consume_with_commas_until(SYM_RPAREN, [&] { args.push_back(move(*parse_type_name())); });
+
+  auto body = vector<unique_ptr<Stmt>>{};
+  auto body_begin = entry;
+
+  require_separator();
+
+  body_begin = tokens.begin();
+  while (!try_consume(KWD_END)) {
+    body.push_back(parse_stmt());
+    ignore_separator();
+  }
+
+  return ast_ptr<CtorDecl>(entry, name, move(args), make_ast<Compound>(body_begin, move(body)));
 }
 
 auto Parser::parse_var_decl() -> unique_ptr<VarDecl> {
