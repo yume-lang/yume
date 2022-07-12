@@ -117,6 +117,11 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
       st = &*struct_obj;
     expr.val_ty(&base_type);
   }
+
+  if (st != nullptr) {
+    auto ctor_overloads = all_ctor_overloads_by_type(*st, expr);
+    ctor_overloads.dump(llvm::errs());
+  }
 }
 
 template <> void TypeWalker::expression(ast::SliceExpr& expr) {
