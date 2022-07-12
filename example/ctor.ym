@@ -1,0 +1,17 @@
+struct Rect(w I32, h I32)
+  def :new(::w, ::h)
+  end
+
+  def :new(size I32)
+    ::w = size
+    ::h = size
+  end
+end
+
+def main() I32
+  let rect = Rect(2, 3)
+  let square = Rect(5)
+  printf("a %d x %d\n", rect::w, rect::h)
+  printf("b %d x %d\n", square::w, square::h)
+  return 0
+end
