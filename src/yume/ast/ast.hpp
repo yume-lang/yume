@@ -100,7 +100,13 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case K_Assign: return "assign";
   case K_FieldAccess: return "field access";
   case K_ImplicitCast: return "implicit cast";
-  default: return "?";
+
+  case K_Stmt:
+  case K_Expr:
+  case K_Type:
+  case K_END_Expr:
+  case K_END_Stmt:
+  case K_END_Type: llvm_unreachable("Invalid type name for ast node");
   }
 }
 
