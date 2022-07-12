@@ -103,7 +103,7 @@ auto Parser::next([[maybe_unused]] const source_location location) -> Token {
 
 auto Parser::consume_word(const source_location location) -> string {
   ignore_separator();
-  if (tokens->type != Word)
+  if (tokens.at_end())
     throw std::runtime_error("Expected word, got the end of the file");
   if (tokens->type != Word)
     throw std::runtime_error("Expected word, got "s + to_string(*tokens) + " at " + at(location));
