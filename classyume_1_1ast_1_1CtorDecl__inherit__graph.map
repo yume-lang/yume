@@ -1,0 +1,5 @@
+<map id="yume::ast::CtorDecl" name="yume::ast::CtorDecl">
+<area shape="rect" id="node1" title="A declaration of a custom constructor (def :)." alt="" coords="5,155,139,181"/>
+<area shape="rect" id="node2" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="17,80,127,107"/>
+<area shape="rect" id="node3" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="17,5,127,32"/>
+</map>

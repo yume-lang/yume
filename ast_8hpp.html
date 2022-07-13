@@ -82,12 +82,11 @@ $(function() {
 <code>#include &lt;cstddef&gt;</code><br />
 <code>#include &lt;cstdint&gt;</code><br />
 <code>#include &lt;llvm/ADT/SmallPtrSet.h&gt;</code><br />
+<code>#include &lt;llvm/Support/ErrorHandling.h&gt;</code><br />
 <code>#include &lt;memory&gt;</code><br />
 <code>#include &lt;optional&gt;</code><br />
 <code>#include &lt;span&gt;</code><br />
-<code>#include &lt;stdexcept&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
-<code>#include &lt;tuple&gt;</code><br />
 <code>#include &lt;type_traits&gt;</code><br />
 <code>#include &lt;utility&gt;</code><br />
 <code>#include &lt;variant&gt;</code><br />
@@ -97,36 +96,36 @@ Include dependency graph for ast.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="ast_8hpp__incl.png" border="0" usemap="#asrc_2yume_2ast_2ast_8hpp" alt=""/></div>
 <map name="asrc_2yume_2ast_2ast_8hpp" id="asrc_2yume_2ast_2ast_8hpp">
-<area shape="rect" title=" " alt="" coords="1034,5,1177,32"/>
+<area shape="rect" title=" " alt="" coords="977,5,1119,32"/>
 <area shape="rect" href="qualifier_8hpp.html" title=" " alt="" coords="5,80,96,107"/>
-<area shape="rect" href="stl__util_8hpp.html" title=" " alt="" coords="329,80,413,107"/>
-<area shape="rect" title=" " alt="" coords="201,229,269,256"/>
+<area shape="rect" href="stl__util_8hpp.html" title=" " alt="" coords="311,80,395,107"/>
+<area shape="rect" title=" " alt="" coords="186,229,254,256"/>
 <area shape="rect" title=" " alt="" coords="408,155,491,181"/>
-<area shape="rect" title=" " alt="" coords="487,229,545,256"/>
-<area shape="rect" href="token_8hpp.html" title=" " alt="" coords="866,80,945,107"/>
-<area shape="rect" title=" " alt="" coords="619,304,674,331"/>
-<area shape="rect" href="util_8hpp.html" title=" " alt="" coords="1118,155,1181,181"/>
-<area shape="rect" title=" " alt="" coords="1991,229,2057,256"/>
-<area shape="rect" title=" " alt="" coords="924,229,991,256"/>
-<area shape="rect" title=" " alt="" coords="2081,229,2132,256"/>
-<area shape="rect" title=" " alt="" coords="621,229,673,256"/>
-<area shape="rect" title=" " alt="" coords="2156,229,2217,256"/>
-<area shape="rect" href="compatibility_8hpp.html" title=" " alt="" coords="1169,80,1301,107"/>
+<area shape="rect" title=" " alt="" coords="279,229,337,256"/>
+<area shape="rect" href="token_8hpp.html" title=" " alt="" coords="850,80,929,107"/>
+<area shape="rect" title=" " alt="" coords="373,304,427,331"/>
+<area shape="rect" href="util_8hpp.html" title=" " alt="" coords="1017,155,1079,181"/>
+<area shape="rect" title=" " alt="" coords="1857,229,1922,256"/>
+<area shape="rect" title=" " alt="" coords="1672,229,1739,256"/>
+<area shape="rect" title=" " alt="" coords="1947,229,1997,256"/>
+<area shape="rect" title=" " alt="" coords="639,229,691,256"/>
+<area shape="rect" title=" " alt="" coords="2021,229,2083,256"/>
+<area shape="rect" href="compatibility_8hpp.html" title=" " alt="" coords="1185,80,1317,107"/>
 <area shape="rect" title=" " alt="" coords="1307,155,1368,181"/>
 <area shape="rect" title=" " alt="" coords="1544,80,1704,107"/>
-<area shape="rect" title=" " alt="" coords="1729,80,1807,107"/>
-<area shape="rect" title=" " alt="" coords="1832,80,1883,107"/>
-<area shape="rect" title=" " alt="" coords="272,155,333,181"/>
-<area shape="rect" href="atom_8hpp.html" title=" " alt="" coords="917,155,992,181"/>
-<area shape="rect" title=" " alt="" coords="1897,229,1967,256"/>
-<area shape="rect" title=" " alt="" coords="748,229,836,256"/>
-<area shape="rect" title=" " alt="" coords="819,155,893,181"/>
-<area shape="rect" title=" " alt="" coords="860,229,900,256"/>
-<area shape="rect" href="source__location_8hpp.html" title=" " alt="" coords="1015,229,1215,256"/>
-<area shape="rect" title=" " alt="" coords="1823,229,1873,256"/>
-<area shape="rect" title=" " alt="" coords="1238,229,1391,256"/>
-<area shape="rect" title=" " alt="" coords="1415,229,1590,256"/>
-<area shape="rect" title=" " alt="" coords="1615,229,1799,256"/>
+<area shape="rect" title=" " alt="" coords="1728,80,1915,107"/>
+<area shape="rect" title=" " alt="" coords="323,155,384,181"/>
+<area shape="rect" href="atom_8hpp.html" title=" " alt="" coords="616,155,691,181"/>
+<area shape="rect" title=" " alt="" coords="1763,229,1832,256"/>
+<area shape="rect" title=" " alt="" coords="527,229,615,256"/>
+<area shape="rect" title=" " alt="" coords="765,155,840,181"/>
+<area shape="rect" title=" " alt="" coords="463,229,503,256"/>
+<area shape="rect" href="source__location_8hpp.html" title=" " alt="" coords="715,229,915,256"/>
+<area shape="rect" title=" " alt="" coords="1597,229,1648,256"/>
+<area shape="rect" title=" " alt="" coords="938,229,1091,256"/>
+<area shape="rect" title=" " alt="" coords="1115,229,1290,256"/>
+<area shape="rect" title=" " alt="" coords="1315,229,1499,256"/>
+<area shape="rect" title=" " alt="" coords="1523,229,1573,256"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -237,6 +236,9 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1FnDecl.html">yume::ast::FnDecl</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A declaration of a function (<code>def</code>).  <a href="classyume_1_1ast_1_1FnDecl.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1CtorDecl.html">yume::ast::CtorDecl</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A declaration of a custom constructor (<code>def :</code>).  <a href="classyume_1_1ast_1_1CtorDecl.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1StructDecl.html">yume::ast::StructDecl</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A declaration of a struct (<code>struct</code>).  <a href="classyume_1_1ast_1_1StructDecl.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -278,40 +280,41 @@ Enumerations</h2></td></tr>
 , <br />
 &#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a78a2b8d19c590b942b3cd61d523e68c5">yume::ast::K_Compound</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406ac933ad0429b446af9ba62e8822a54379">yume::ast::K_FnDecl</a>
+, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406ac9529156c362f79e943e62732d12c1f1">yume::ast::K_CtorDecl</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406af369edc2068d114686cf488435a34ffb">yume::ast::K_StructDecl</a>
-, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a946bdf8ff3e75cdaf555ca2e32bcb2aa">yume::ast::K_VarDecl</a>
 , <br />
-&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406adbc49daadf28bb31b8a248d249196015">yume::ast::K_While</a>
+&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a946bdf8ff3e75cdaf555ca2e32bcb2aa">yume::ast::K_VarDecl</a>
+, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406adbc49daadf28bb31b8a248d249196015">yume::ast::K_While</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a08c0eff289a386052629c4bb4d7fa2eb">yume::ast::K_If</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406aae08564531ad67aa7fc1359d891f2937">yume::ast::K_Return</a>
-, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a878eecc09bda24ff7909d7a166662ac6">yume::ast::K_Program</a>
 , <br />
-&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a4c09262bfdea3066b7ec37889f7a4377">yume::ast::K_Expr</a>
+&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a878eecc09bda24ff7909d7a166662ac6">yume::ast::K_Program</a>
+, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a4c09262bfdea3066b7ec37889f7a4377">yume::ast::K_Expr</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a3163923250c16d41300da2e0ba00da9d">yume::ast::K_Number</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a9f5bdd2df82c5de3eb02926ad86fa44c">yume::ast::K_Char</a>
-, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a020ee52d01f56aecf0b4be3cadea3bc7">yume::ast::K_Bool</a>
 , <br />
-&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a04140bbad212603506fc382a2d3d81a5">yume::ast::K_String</a>
+&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a020ee52d01f56aecf0b4be3cadea3bc7">yume::ast::K_Bool</a>
+, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a04140bbad212603506fc382a2d3d81a5">yume::ast::K_String</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a5bd1845d5247253184d0fc9ec0627611">yume::ast::K_Var</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a725d5805359046b94634996276d35b29">yume::ast::K_Call</a>
-, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406affbe8ac10c90f57aeefdf6b190308d56">yume::ast::K_Ctor</a>
 , <br />
-&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a1d139dc28bf472f6091c749830ca5d07">yume::ast::K_Dtor</a>
+&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406affbe8ac10c90f57aeefdf6b190308d56">yume::ast::K_Ctor</a>
+, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a1d139dc28bf472f6091c749830ca5d07">yume::ast::K_Dtor</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a50d806f5bf631e958002cc257d257d70">yume::ast::K_Slice</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a1026a7cd3d739e73716b6a5e19fe06b5">yume::ast::K_Assign</a>
-, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a57e69957d24d6a173fa460b59e03cee6">yume::ast::K_FieldAccess</a>
 , <br />
-&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a46d6f0de014831d0e4403caf1aeb67eb">yume::ast::K_ImplicitCast</a>
+&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a57e69957d24d6a173fa460b59e03cee6">yume::ast::K_FieldAccess</a>
+, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a46d6f0de014831d0e4403caf1aeb67eb">yume::ast::K_ImplicitCast</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a2307bd6b4d1a28171ee71c082ff26068">yume::ast::K_END_Expr</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406acea44ee55acceb084545a22e9c544e06">yume::ast::K_END_Stmt</a>
-, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a59e9625693ebd150640e6ea809dbe880">yume::ast::K_Type</a>
 , <br />
-&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406ab0fa7ff866aa3d6b6a48364da9a18729">yume::ast::K_SimpleType</a>
+&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a59e9625693ebd150640e6ea809dbe880">yume::ast::K_Type</a>
+, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406ab0fa7ff866aa3d6b6a48364da9a18729">yume::ast::K_SimpleType</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a548d359a0e552680a68ba7f0e99a469f">yume::ast::K_QualType</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a3ee321004266cc8caae4081094acdcd4">yume::ast::K_TemplatedType</a>
-, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a99beb458aa18de10514d9e4a6a8f2e98">yume::ast::K_SelfType</a>
 , <br />
-&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406ad9d288944a156bf921fc6213308b308f">yume::ast::K_END_Type</a>
+&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a99beb458aa18de10514d9e4a6a8f2e98">yume::ast::K_SelfType</a>
+, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406ad9d288944a156bf921fc6213308b308f">yume::ast::K_END_Type</a>
 <br />
  }</td></tr>
 <tr class="separator:a39181752a224556ace8d0e9f43ac0406"><td class="memSeparator" colspan="2">&#160;</td></tr>

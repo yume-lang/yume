@@ -10,5 +10,7 @@ var searchData=
   ['crtpwalker_7',['CRTPWalker',['../structyume_1_1CRTPWalker.html',1,'yume']]],
   ['crtpwalker_3c_20compiler_20_3e_8',['CRTPWalker&lt; Compiler &gt;',['../structyume_1_1CRTPWalker.html',1,'yume']]],
   ['crtpwalker_3c_20typewalker_2c_20false_20_3e_9',['CRTPWalker&lt; TypeWalker, false &gt;',['../structyume_1_1CRTPWalker.html',1,'yume']]],
-  ['ctorexpr_10',['CtorExpr',['../classyume_1_1ast_1_1CtorExpr.html',1,'yume::ast']]]
+  ['ctor_10',['Ctor',['../structyume_1_1Ctor.html',1,'yume']]],
+  ['ctordecl_11',['CtorDecl',['../classyume_1_1ast_1_1CtorDecl.html',1,'yume::ast']]],
+  ['ctorexpr_12',['CtorExpr',['../classyume_1_1ast_1_1CtorExpr.html',1,'yume::ast']]]
 ];

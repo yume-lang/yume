@@ -1,5 +1,4 @@
-<map id="yume::DeclLikeVisitor&lt; FnC, StC &gt;" name="yume::DeclLikeVisitor&lt; FnC, StC &gt;">
+<map id="yume::DeclLikeVisitor&lt; R, Ts &gt;" name="yume::DeclLikeVisitor&lt; R, Ts &gt;">
 <area shape="rect" id="node1" title=" " alt="" coords="5,80,152,121"/>
-<area shape="rect" id="node2" href="$classFnC.html" title=" " alt="" coords="21,5,67,32"/>
-<area shape="rect" id="node3" href="$classStC.html" title=" " alt="" coords="91,5,135,32"/>
+<area shape="rect" id="node2" href="$classyume_1_1Ts.html" title=" " alt="" coords="59,5,98,32"/>
 </map>

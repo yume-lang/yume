@@ -2,7 +2,7 @@ var searchData=
 [
   ['else_5fclause_0',['else_clause',['../classyume_1_1ast_1_1IfStmt.html#a0b3ce4a9e25f99db90529bd7d702c3e4',1,'yume::ast::IfStmt::else_clause() -&gt; auto &amp;'],['../classyume_1_1ast_1_1IfStmt.html#a5d99c5ca273fa78badf11b8f85ce64a3',1,'yume::ast::IfStmt::else_clause() const -&gt; const auto &amp;']]],
   ['emit_5fversion_1',['emit_version',['../yumec_8cpp.html#a7a8e321a3310f5f588c8e2105b00d53e',1,'yumec.cpp']]],
-  ['empty_2',['empty',['../structyume_1_1ty_1_1Conv.html#a0bef44fe30563f4e207f656d75bb0906',1,'yume::ty::Conv::empty()'],['../structyume_1_1semantic_1_1OverloadSet.html#ad59b27dd3a3dae43e5488cc44c856a27',1,'yume::semantic::OverloadSet::empty()']]],
+  ['empty_2',['empty',['../structyume_1_1ty_1_1Conv.html#a0bef44fe30563f4e207f656d75bb0906',1,'yume::ty::Conv::empty()'],['../structyume_1_1semantic_1_1OverloadSet.html#a57900e60e282c55c941f1890317be63c',1,'yume::semantic::OverloadSet::empty()']]],
   ['end_3',['end',['../classyume_1_1dereference__view.html#a593c0058516f28cdd74db9f569dd6554',1,'yume::dereference_view']]],
   ['expect_4',['expect',['../structyume_1_1ast_1_1parser_1_1Parser.html#a16c5e1d0ffc9d13faa6ab3b654f8f8e2',1,'yume::ast::parser::Parser']]],
   ['expr_5',['expr',['../classyume_1_1ast_1_1ReturnStmt.html#a1541a7f3f1a0bf2fb4da66d36de35897',1,'yume::ast::ReturnStmt']]],

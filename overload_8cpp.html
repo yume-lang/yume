@@ -81,7 +81,6 @@ $(function() {
 <code>#include &quot;<a class="el" href="util_8hpp_source.html">util.hpp</a>&quot;</code><br />
 <code>#include &lt;algorithm&gt;</code><br />
 <code>#include &lt;compare&gt;</code><br />
-<code>#include &lt;functional&gt;</code><br />
 <code>#include &lt;llvm/ADT/STLExtras.h&gt;</code><br />
 <code>#include &lt;llvm/Support/Casting.h&gt;</code><br />
 <code>#include &lt;llvm/Support/raw_ostream.h&gt;</code><br />
@@ -94,51 +93,52 @@ Include dependency graph for overload.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="overload_8cpp__incl.png" border="0" usemap="#asrc_2yume_2semantic_2overload_8cpp" alt=""/></div>
 <map name="asrc_2yume_2semantic_2overload_8cpp" id="asrc_2yume_2semantic_2overload_8cpp">
-<area shape="rect" title=" " alt="" coords="1926,5,2135,32"/>
-<area shape="rect" href="overload_8hpp.html" title=" " alt="" coords="1050,80,1145,107"/>
-<area shape="rect" href="ast_8hpp.html" title=" " alt="" coords="1226,304,1313,331"/>
-<area shape="rect" href="token_8hpp.html" title=" " alt="" coords="1697,379,1775,405"/>
-<area shape="rect" title=" " alt="" coords="1777,617,1831,644"/>
-<area shape="rect" href="util_8hpp.html" title=" " alt="" coords="1310,453,1373,480"/>
-<area shape="rect" title=" " alt="" coords="1710,535,1863,562"/>
-<area shape="rect" title=" " alt="" coords="2051,535,2235,562"/>
-<area shape="rect" title=" " alt="" coords="1634,535,1686,562"/>
-<area shape="rect" title=" " alt="" coords="2045,453,2120,480"/>
-<area shape="rect" href="compatibility_8hpp.html" title=" " alt="" coords="723,379,855,405"/>
-<area shape="rect" title=" " alt="" coords="1946,379,2025,405"/>
-<area shape="rect" title=" " alt="" coords="1773,229,1845,256"/>
-<area shape="rect" title=" " alt="" coords="1870,229,1917,256"/>
-<area shape="rect" href="type_8hpp.html" title=" " alt="" coords="166,304,250,331"/>
-<area shape="rect" title=" " alt="" coords="2887,80,2966,107"/>
-<area shape="rect" title=" " alt="" coords="2990,80,3141,107"/>
-<area shape="rect" href="vals_8hpp.html" title=" " alt="" coords="1420,155,1543,181"/>
-<area shape="rect" title=" " alt="" coords="504,535,563,562"/>
-<area shape="rect" title=" " alt="" coords="287,535,355,562"/>
-<area shape="rect" href="parser_8hpp.html" title=" " alt="" coords="1544,229,1648,256"/>
-<area shape="rect" title=" " alt="" coords="1307,229,1367,256"/>
-<area shape="rect" href="qualifier_8hpp.html" title=" " alt="" coords="245,379,336,405"/>
-<area shape="rect" href="stl__util_8hpp.html" title=" " alt="" coords="513,379,597,405"/>
-<area shape="rect" title=" " alt="" coords="732,453,815,480"/>
-<area shape="rect" title=" " alt="" coords="1338,535,1403,562"/>
-<area shape="rect" title=" " alt="" coords="1428,535,1495,562"/>
-<area shape="rect" title=" " alt="" coords="755,535,805,562"/>
-<area shape="rect" title=" " alt="" coords="829,535,891,562"/>
-<area shape="rect" title=" " alt="" coords="359,453,420,480"/>
-<area shape="rect" title=" " alt="" coords="1083,379,1243,405"/>
-<area shape="rect" title=" " alt="" coords="1267,379,1317,405"/>
-<area shape="rect" title=" " alt="" coords="545,453,607,480"/>
-<area shape="rect" href="atom_8hpp.html" title=" " alt="" coords="1549,453,1624,480"/>
-<area shape="rect" title=" " alt="" coords="661,535,731,562"/>
-<area shape="rect" title=" " alt="" coords="1888,535,1976,562"/>
-<area shape="rect" title=" " alt="" coords="1519,535,1559,562"/>
-<area shape="rect" href="source__location_8hpp.html" title=" " alt="" coords="915,535,1115,562"/>
-<area shape="rect" title=" " alt="" coords="587,535,637,562"/>
-<area shape="rect" title=" " alt="" coords="1139,535,1314,562"/>
-<area shape="rect" href="errors_8hpp.html" title=" " alt="" coords="2347,453,2490,480"/>
-<area shape="rect" title=" " alt="" coords="2401,535,2469,562"/>
-<area shape="rect" title=" " alt="" coords="2493,535,2571,562"/>
-<area shape="rect" title=" " alt="" coords="2594,528,2761,569"/>
-<area shape="rect" title=" " alt="" coords="2309,535,2376,562"/>
+<area shape="rect" title=" " alt="" coords="2757,5,2966,32"/>
+<area shape="rect" href="overload_8hpp.html" title=" " alt="" coords="1494,80,1589,107"/>
+<area shape="rect" href="ast_8hpp.html" title=" " alt="" coords="1174,304,1261,331"/>
+<area shape="rect" href="token_8hpp.html" title=" " alt="" coords="2390,379,2469,405"/>
+<area shape="rect" title=" " alt="" coords="2379,617,2434,644"/>
+<area shape="rect" href="util_8hpp.html" title=" " alt="" coords="1801,453,1863,480"/>
+<area shape="rect" title=" " alt="" coords="2445,535,2598,562"/>
+<area shape="rect" title=" " alt="" coords="3313,535,3497,562"/>
+<area shape="rect" title=" " alt="" coords="2317,535,2369,562"/>
+<area shape="rect" title=" " alt="" coords="2645,453,2720,480"/>
+<area shape="rect" href="compatibility_8hpp.html" title=" " alt="" coords="673,379,805,405"/>
+<area shape="rect" title=" " alt="" coords="2694,304,2773,331"/>
+<area shape="rect" title=" " alt="" coords="2680,229,2752,256"/>
+<area shape="rect" title=" " alt="" coords="2777,229,2823,256"/>
+<area shape="rect" href="type_8hpp.html" title=" " alt="" coords="198,304,282,331"/>
+<area shape="rect" title=" " alt="" coords="3623,80,3774,107"/>
+<area shape="rect" href="vals_8hpp.html" title=" " alt="" coords="1995,155,2117,181"/>
+<area shape="rect" title=" " alt="" coords="652,535,711,562"/>
+<area shape="rect" title=" " alt="" coords="130,535,198,562"/>
+<area shape="rect" title=" " alt="" coords="1228,535,1289,562"/>
+<area shape="rect" href="parser_8hpp.html" title=" " alt="" coords="2148,229,2252,256"/>
+<area shape="rect" title=" " alt="" coords="1814,229,1874,256"/>
+<area shape="rect" href="qualifier_8hpp.html" title=" " alt="" coords="195,379,285,405"/>
+<area shape="rect" href="stl__util_8hpp.html" title=" " alt="" coords="411,379,495,405"/>
+<area shape="rect" title=" " alt="" coords="639,453,721,480"/>
+<area shape="rect" title=" " alt="" coords="2022,535,2087,562"/>
+<area shape="rect" title=" " alt="" coords="2175,535,2241,562"/>
+<area shape="rect" title=" " alt="" coords="1356,535,1407,562"/>
+<area shape="rect" title=" " alt="" coords="309,453,371,480"/>
+<area shape="rect" title=" " alt="" coords="1184,379,1344,405"/>
+<area shape="rect" title=" " alt="" coords="1368,379,1555,405"/>
+<area shape="rect" title=" " alt="" coords="496,453,557,480"/>
+<area shape="rect" href="atom_8hpp.html" title=" " alt="" coords="2293,453,2368,480"/>
+<area shape="rect" title=" " alt="" coords="1631,535,1700,562"/>
+<area shape="rect" title=" " alt="" coords="2623,535,2711,562"/>
+<area shape="rect" title=" " alt="" coords="2111,535,2151,562"/>
+<area shape="rect" href="source__location_8hpp.html" title=" " alt="" coords="1799,535,1999,562"/>
+<area shape="rect" title=" " alt="" coords="868,535,919,562"/>
+<area shape="rect" title=" " alt="" coords="1431,535,1606,562"/>
+<area shape="rect" title=" " alt="" coords="1724,535,1775,562"/>
+<area shape="rect" href="errors_8hpp.html" title=" " alt="" coords="2998,453,3141,480"/>
+<area shape="rect" title=" " alt="" coords="2051,304,2111,331"/>
+<area shape="rect" title=" " alt="" coords="3119,535,3187,562"/>
+<area shape="rect" title=" " alt="" coords="3212,535,3289,562"/>
+<area shape="rect" title=" " alt="" coords="2837,528,3003,569"/>
+<area shape="rect" title=" " alt="" coords="3028,535,3095,562"/>
 </map>
 </div>
 </div>
@@ -153,14 +153,22 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:aaa00470c088e37f5fb46be5b84b68e74"><td class="memTemplParams" colspan="2">template&lt;typename Fn  = std::identity&gt; </td></tr>
-<tr class="memitem:aaa00470c088e37f5fb46be5b84b68e74"><td class="memTemplItemLeft" align="right" valign="top">static auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#aaa00470c088e37f5fb46be5b84b68e74">yume::semantic::join_args</a> (const auto &amp;iter, Fn fn={}, llvm::raw_ostream &amp;stream=llvm::errs())</td></tr>
-<tr class="separator:aaa00470c088e37f5fb46be5b84b68e74"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab07e423c958cd26b937becbe0a456316"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#ab07e423c958cd26b937becbe0a456316">yume::semantic::join_args</a> (const auto &amp;iter, auto fn, llvm::raw_ostream &amp;stream=llvm::errs())</td></tr>
+<tr class="separator:ab07e423c958cd26b937becbe0a456316"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa3da64b962ab7265b08ff4ac8145a7f9"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#aa3da64b962ab7265b08ff4ac8145a7f9">yume::semantic::intersect_generics</a> (Instantiation &amp;instantiation, const ty::Generic *gen, const ty::Type *gen_sub) -&gt; const ty::Type *</td></tr>
 <tr class="memdesc:aa3da64b962ab7265b08ff4ac8145a7f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add the substitution <code>gen_sub</code> for the generic type variable <code>gen</code> in template instantiation <code>instantiation</code>. If a substitution already exists for the same type variable, the two substitutions are intersected.  <a href="namespaceyume_1_1semantic.html#aa3da64b962ab7265b08ff4ac8145a7f9">More...</a><br /></td></tr>
 <tr class="separator:aa3da64b962ab7265b08ff4ac8145a7f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1125faadc921de97975780f8f793d038"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a1125faadc921de97975780f8f793d038">yume::semantic::literal_cast</a> (ast::AST &amp;arg, const ty::Type *target_type) -&gt; ty::Compat</td></tr>
 <tr class="separator:a1125faadc921de97975780f8f793d038"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d0cb5e803e893778e33e129eddd2849"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a7d0cb5e803e893778e33e129eddd2849"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a7d0cb5e803e893778e33e129eddd2849">yume::semantic::parameter_count_matches</a> (const vector&lt; ast::AST * &gt; &amp;args, const T &amp;fn_ast) -&gt; bool</td></tr>
+<tr class="separator:a7d0cb5e803e893778e33e129eddd2849"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47d3b8eb4e4c4fab44262d2e2eaaa189"><td class="memItemLeft" align="right" valign="top">template&lt;&gt; </td></tr>
+<tr class="memitem:a47d3b8eb4e4c4fab44262d2e2eaaa189"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a47d3b8eb4e4c4fab44262d2e2eaaa189">yume::semantic::parameter_count_matches</a> (const vector&lt; ast::AST * &gt; &amp;args, const ast::FnDecl &amp;fn_ast) -&gt; bool</td></tr>
+<tr class="separator:a47d3b8eb4e4c4fab44262d2e2eaaa189"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb77d2cf69bdb72a884e2684919851ae"><td class="memItemLeft" align="right" valign="top">template&lt;&gt; </td></tr>
+<tr class="memitem:aeb77d2cf69bdb72a884e2684919851ae"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#aeb77d2cf69bdb72a884e2684919851ae">yume::semantic::parameter_count_matches</a> (const vector&lt; ast::AST * &gt; &amp;args, const ast::CtorDecl &amp;fn_ast) -&gt; bool</td></tr>
+<tr class="separator:aeb77d2cf69bdb72a884e2684919851ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a943175a1fef95d1b8291ff441ba3d0c7"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a943175a1fef95d1b8291ff441ba3d0c7">yume::semantic::cmp</a> (bool a, bool b) -&gt; std::strong_ordering</td></tr>
 <tr class="separator:a943175a1fef95d1b8291ff441ba3d0c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a700bf29d9cab289a1b98803ca057ec52"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a700bf29d9cab289a1b98803ca057ec52">yume::semantic::compare_implicit_conversions</a> (ty::Conv a, ty::Conv b) -&gt; std::weak_ordering</td></tr>
@@ -168,10 +176,8 @@ Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a82101e8fa73ec4dd4046a13d5f821f35"><td class="memItemLeft" align="right" valign="top">static constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a82101e8fa73ec4dd4046a13d5f821f35">yume::semantic::get_val_ty</a> = [](const ast::AST&amp; ast) { return ast.val_ty(); }</td></tr>
+<tr class="memitem:a82101e8fa73ec4dd4046a13d5f821f35"><td class="memItemLeft" align="right" valign="top">static constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a82101e8fa73ec4dd4046a13d5f821f35">yume::semantic::get_val_ty</a> = [](const ast::AST* ast) { return ast-&gt;val_ty(); }</td></tr>
 <tr class="separator:a82101e8fa73ec4dd4046a13d5f821f35"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac954b2241ea31a38c7239573bc3f743d"><td class="memItemLeft" align="right" valign="top">static constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#ac954b2241ea31a38c7239573bc3f743d">yume::semantic::get_val_ty_ptr</a> = [](const ast::AST* ast) { return ast-&gt;val_ty(); }</td></tr>
-<tr class="separator:ac954b2241ea31a38c7239573bc3f743d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->
