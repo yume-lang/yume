@@ -2,10 +2,10 @@
 
 #include "compiler/vals.hpp"
 #include "ty/compatibility.hpp"
+#include "util.hpp"
 #include <vector>
 
 namespace yume::ast {
-class CallExpr;
 class AST;
 } // namespace yume::ast
 namespace llvm {
@@ -29,7 +29,7 @@ template <typename T> struct Overload {
 
 template <typename T> struct OverloadSet {
   using call_t = typename T::call_t;
-  call_t& call;
+  call_t* call;
   vector<Overload<T>> overloads;
   vector<ast::AST*> args;
 

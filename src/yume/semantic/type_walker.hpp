@@ -14,6 +14,7 @@ struct Fn;
 namespace ast {
 class AST;
 class CallExpr;
+class CtorExpr;
 class Expr;
 class Stmt;
 class Type;
