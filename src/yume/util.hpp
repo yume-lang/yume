@@ -12,6 +12,7 @@
 #include <span>
 #include <sstream>
 #include <string_view>
+#include <tuple>
 #include <utility>
 #include <variant>
 #include <vector>
@@ -26,6 +27,7 @@ using std::span;
 using std::string;
 using std::string_view;
 using std::stringstream;
+using std::tuple;
 using std::unique_ptr;
 using std::variant;
 using std::vector;

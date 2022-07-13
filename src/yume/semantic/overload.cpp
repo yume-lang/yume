@@ -49,8 +49,8 @@ static auto intersect_generics(Instantiation& instantiation, const ty::Generic* 
 }
 
 template <typename T> void Overload<T>::dump(llvm::raw_ostream& stream) const {
-  stream << fn->ast.location().to_string() << "\t" << fn->name() << "(";
-  join_args(fn->ast.args(), T::arg_type, stream);
+  stream << fn->ast().location().to_string() << "\t" << fn->name() << "(";
+  join_args(fn->ast().args(), T::arg_type, stream);
   stream << ")";
   if (!instantiation.sub.empty()) {
     stream << " with ";
@@ -110,7 +110,7 @@ template <> auto parameter_count_matches(const vector<ast::AST*>& args, const as
 }
 
 template <typename T> auto OverloadSet<T>::is_valid_overload(Overload<T>& overload) -> bool {
-  const auto& fn_ast = overload.fn->ast;
+  const auto& fn_ast = overload.fn->ast();
 
   // The overload is only viable if the amount of arguments matches the amount of parameters.
   if (!parameter_count_matches(args, fn_ast))
