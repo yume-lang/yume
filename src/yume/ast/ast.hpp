@@ -515,8 +515,7 @@ public:
       : Expr(K_FieldAccess, tok), m_base{move(base)}, m_field{move(field)} {}
   void visit(Visitor& visitor) const override;
 
-  [[nodiscard]] auto base() const -> const auto& { return *m_base; }
-  [[nodiscard]] auto base() -> auto& { return *m_base; }
+  [[nodiscard]] auto base() const { return try_dereference(m_base); }
   [[nodiscard]] auto field() const -> string { return m_field; }
   void offset(int offset) const { m_offset = offset; }
   [[nodiscard]] auto offset() const -> int { return m_offset; }
