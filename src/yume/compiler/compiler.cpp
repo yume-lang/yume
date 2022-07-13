@@ -18,7 +18,6 @@
 #include <llvm/ADT/StringRef.h>
 #include <llvm/ADT/Twine.h>
 #include <llvm/ADT/iterator.h>
-#include <llvm/ADT/iterator_range.h>
 #include <llvm/IR/Argument.h>
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/Constant.h>

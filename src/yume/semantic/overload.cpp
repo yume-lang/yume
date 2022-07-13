@@ -13,7 +13,6 @@
 #include <stdexcept>
 #include <string>
 #include <utility>
-#include <variant>
 
 namespace yume::semantic {
 
@@ -217,13 +216,19 @@ template <typename T> auto Overload<T>::better_candidate_than(Overload other) co
   return false;
 }
 
-template <typename T> auto OverloadSet<T>::best_viable_overload() const -> Overload<T> {
+template <typename T> auto OverloadSet<T>::try_best_viable_overload() const -> const Overload<T>* {
   const Overload<T>* best = nullptr;
 
   for (const auto& candidate : overloads)
     if (candidate.viable)
       if (best == nullptr || candidate.better_candidate_than(*best))
         best = &candidate;
+
+  return best;
+}
+
+template <typename T> auto OverloadSet<T>::best_viable_overload() const -> Overload<T> {
+  const auto* best = try_best_viable_overload();
 
   if (best == nullptr) {
     string str{};

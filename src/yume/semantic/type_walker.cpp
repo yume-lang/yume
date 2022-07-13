@@ -140,16 +140,18 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
     ctor_overloads.dump(llvm::errs(), true);
 #endif
 
-    Overload best_overload = ctor_overloads.best_viable_overload();
+    const auto* best_overload = ctor_overloads.try_best_viable_overload();
+    if (best_overload == nullptr)
+      return; // TODO(rymiel): The implicitly defined ctors should be real ctors, so this could be an error
 
 #ifdef YUME_SPEW_OVERLOAD_SELECTION
     llvm::errs() << "\nSelected overload:\n";
-    best_overload.dump(llvm::errs());
+    best_overload->dump(llvm::errs());
     llvm::errs() << "\n*** END CTOR OVERLOAD EVALUATION ***\n\n";
 #endif
 
-    auto& instantiate = best_overload.instantiation;
-    auto* selected = best_overload.fn;
+    const auto& instantiate = best_overload->instantiation;
+    auto* selected = best_overload->fn;
     yume_assert(instantiate.sub.empty(), "Constructors cannot be generic"); // TODO(rymiel): revisit?
 
     expr.selected_overload(selected);

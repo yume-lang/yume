@@ -37,6 +37,7 @@ template <typename T> struct OverloadSet {
   void dump(llvm::raw_ostream& stream, bool hide_invalid = false) const;
   void determine_valid_overloads();
   [[nodiscard]] auto is_valid_overload(Overload<T>& overload) -> bool;
+  [[nodiscard]] auto try_best_viable_overload() const -> const Overload<T>*;
   [[nodiscard]] auto best_viable_overload() const -> Overload<T>;
 };
 
