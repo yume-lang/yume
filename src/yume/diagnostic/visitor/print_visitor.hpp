@@ -20,7 +20,7 @@ class PrintVisitor : public Visitor {
   void header(const char* label);
 
 public:
-  explicit PrintVisitor(llvm::raw_ostream& stream_) : m_stream{stream_} {}
+  explicit PrintVisitor(llvm::raw_ostream& stream) : m_stream{stream} {}
   ~PrintVisitor() override = default;
 
   PrintVisitor(const PrintVisitor&) = delete;

@@ -29,6 +29,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Install libstdc++-12
+        run: sudo apt update && sudo apt install libstdc++-12-dev
+
       - if: matrix.clang == 15 || matrix.llvm == 15
         name: Add LLVM 15 Repo
         run: |
