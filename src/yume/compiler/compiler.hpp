@@ -90,8 +90,9 @@ public:
   auto default_init(const ty::Type& type) -> Val;
   void destruct(Val val, const ty::Type& type);
 
-  auto mangle_name(const Fn& fn_decl) -> string;
-  auto mangle_name(const ty::Type& ast_type, const Fn& parent) -> string;
+  auto mangle_name(Fn& fn) -> string;
+  auto mangle_name(Ctor& ctor) -> string;
+  auto mangle_name(const ty::Type& ast_type, DeclLike parent) -> string;
 
   [[nodiscard]] auto source_files() -> const auto& { return m_sources; }
 

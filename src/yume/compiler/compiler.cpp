@@ -303,7 +303,6 @@ auto Compiler::declare(Ctor& ctor) -> llvm::Function* {
   llvm::FunctionType* fn_t = llvm::FunctionType::get(llvm_ret_type, llvm_args, false);
 
   string name = mangle_name(ctor);
-  // name = mangle_name(ctor); // TODO(rymiel)
 
   auto linkage = llvm::Function::InternalLinkage;
   auto* llvm_fn = llvm::Function::Create(fn_t, linkage, name, m_module.get());
@@ -895,7 +894,7 @@ void Compiler::write_object(const char* filename, bool binary) {
   dest->flush();
 }
 
-auto Compiler::mangle_name(const Fn& fn) -> string {
+auto Compiler::mangle_name(Fn& fn) -> string {
   stringstream ss{};
   ss << "_Ym.";
   ss << fn.ast.name();
@@ -903,17 +902,32 @@ auto Compiler::mangle_name(const Fn& fn) -> string {
   for (const auto& i : llvm::enumerate(fn.ast.args())) {
     if (i.index() > 0)
       ss << ",";
-    ss << mangle_name(*i.value().type().val_ty(), fn);
+    ss << mangle_name(*i.value().type().val_ty(), &fn);
   }
   ss << ")";
   // TODO: should mangled names even contain the return type...?
   if (fn.ast.ret().has_value())
-    ss << mangle_name(*fn.ast.ret()->get().val_ty(), fn); // wtf
+    ss << mangle_name(*fn.ast.ret()->get().val_ty(), &fn); // wtf
 
   return ss.str();
 }
 
-auto Compiler::mangle_name(const ty::Type& ast_type, const Fn& parent) -> string {
+auto Compiler::mangle_name(Ctor& ctor) -> string {
+  stringstream ss{};
+  ss << "_Ym.";
+  ss << ctor.name();
+  ss << "(";
+  for (const auto& i : llvm::enumerate(ctor.ast.args())) {
+    if (i.index() > 0)
+      ss << ",";
+    ss << mangle_name(*Ctor::arg_type(i.value()), &ctor);
+  }
+  ss << ")";
+
+  return ss.str();
+}
+
+auto Compiler::mangle_name(const ty::Type& ast_type, DeclLike parent) -> string {
   stringstream ss{};
   if (const auto* qual_type = dyn_cast<ty::Qual>(&ast_type)) {
     ss << mangle_name(qual_type->base(), parent);
@@ -930,8 +944,8 @@ auto Compiler::mangle_name(const ty::Type& ast_type, const Fn& parent) -> string
     return ss.str();
   }
   if (const auto* generic_type = dyn_cast<ty::Generic>(&ast_type)) {
-    auto match = parent.subs.find(generic_type->name());
-    yume_assert(match != parent.subs.end(), "Cannot mangle unsubstituted generic");
+    auto match = parent.subs()->find(generic_type->name());
+    yume_assert(match != parent.subs()->end(), "Cannot mangle unsubstituted generic");
     return match->second->name();
   }
   return ast_type.name();
