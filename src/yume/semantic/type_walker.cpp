@@ -178,8 +178,11 @@ template <> void TypeWalker::expression(ast::VarExpr& expr) {
 }
 
 template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
+  if (!expr.base().has_value())
+    return; // TODO: Only valid inside constructors
+
   body_expression(*expr.base());
-  const auto& type = *expr.base()->val_ty();
+  const auto& type = *expr.base()->get().val_ty();
 
   const auto* struct_type = dyn_cast<ty::Struct>(&type.without_qual());
 

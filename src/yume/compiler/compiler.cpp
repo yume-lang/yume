@@ -641,7 +641,7 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> 
     int base_offset = field_access->offset();
 
     auto expr_val = body_expression(expr.value(), mut);
-    auto* struct_type = llvm_type(cast<ty::Struct>(field_access->base()->val_ty()->without_qual()));
+    auto* struct_type = llvm_type(cast<ty::Struct>(field_access->base()->get().val_ty()->without_qual()));
 
     auto* gep = m_builder->CreateStructGEP(struct_type, base, base_offset, "s.sf."s + base_name);
     m_builder->CreateStore(expr_val, gep);
