@@ -6,7 +6,6 @@
 #include "util.hpp"
 #include <algorithm>
 #include <compare>
-#include <functional>
 #include <llvm/ADT/STLExtras.h>
 #include <llvm/Support/Casting.h>
 #include <llvm/Support/raw_ostream.h>
@@ -14,6 +13,7 @@
 #include <stdexcept>
 #include <string>
 #include <utility>
+#include <variant>
 
 namespace yume::semantic {
 
@@ -21,7 +21,7 @@ static auto join_args(const auto& iter, auto fn, llvm::raw_ostream& stream = llv
   for (auto& i : llvm::enumerate(iter)) {
     if (i.index() != 0)
       stream << ", ";
-    stream << fn(i.value());
+    stream << fn(i.value())->name();
   }
 }
 
@@ -47,20 +47,8 @@ static auto intersect_generics(Instantiation& instantiation, const ty::Generic* 
   return instantiation.sub.at(gen);
 }
 
-template <typename T>
-inline static constexpr auto get_val_ty = [](const ast::TypeName& ast) { return ast.val_ty()->name(); };
-template <>
-inline static constexpr auto get_val_ty<Ctor> =
-    [](const auto& ast) { return std::visit([](const auto& t) { return t.val_ty()->name(); }, ast); };
-inline static constexpr auto get_val_ty_ptr = [](const ast::AST* ast) { return ast->val_ty()->name(); };
-
-template <typename T> auto overload_name(const T& t) -> string { return t.name(); };
-// TODO: Named ctors
-template <> auto overload_name<Ctor>(const Ctor& t) -> string { return t.self_t->name() + ":new"; }
-template <> auto overload_name<ast::CtorExpr>(const ast::CtorExpr& t) -> string { return t.val_ty()->name() + ":new"; }
-
 template <typename T> void Overload<T>::dump(llvm::raw_ostream& stream) const {
-  stream << fn->ast.location().to_string() << "\t" << overload_name(*fn) << "(";
+  stream << fn->ast.location().to_string() << "\t" << fn->name() << "(";
   join_args(fn->ast.args(), get_val_ty<T>, stream);
   stream << ")";
   if (!instantiation.sub.empty()) {
@@ -76,8 +64,8 @@ template <typename T> void Overload<T>::dump(llvm::raw_ostream& stream) const {
 };
 
 template <typename T> void OverloadSet<T>::dump(llvm::raw_ostream& stream, bool hide_invalid) const {
-  stream << overload_name(call) << "(";
-  join_args(args, get_val_ty_ptr, stream);
+  stream << T::overload_name(*call) << "(";
+  join_args(args, get_val_ty<ast::AST>, stream);
   stream << ")\n";
   for (const auto& i_s : overloads) {
     if (hide_invalid && !i_s.viable)
@@ -238,7 +226,7 @@ template <typename T> auto OverloadSet<T>::best_viable_overload() const -> Overl
   if (best == nullptr) {
     string str{};
     llvm::raw_string_ostream ss{str};
-    ss << "No viable overload for " << call.name() << " with argument types ";
+    ss << "No viable overload for " << T::overload_name(*call) << " with argument types ";
     join_args(args, get_val_ty<ast::AST>, ss);
     throw std::logic_error(str);
   }
@@ -257,7 +245,7 @@ template <typename T> auto OverloadSet<T>::best_viable_overload() const -> Overl
 
   string str{};
   llvm::raw_string_ostream ss{str};
-  ss << "Ambigious call for " << call.name() << " with argument types ";
+  ss << "Ambigious call for " << T::overload_name(*call) << " with argument types ";
   join_args(args, get_val_ty<ast::AST>, ss);
   ss << "\nCouldn't pick between the following overloads:\n";
   for (const auto* i : ambiguous) {

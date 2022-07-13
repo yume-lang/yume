@@ -70,6 +70,7 @@ public:
 
   /// Declare a function in bytecode, or get an existing declaration.
   auto declare(Fn&, bool mangle = true) -> llvm::Function*;
+  auto declare(Ctor&) -> llvm::Function*;
 
   static auto create_struct(ast::StructDecl&, const optional<string>& name_override = {}) -> unique_ptr<ty::Struct>;
 
