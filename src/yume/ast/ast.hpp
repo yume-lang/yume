@@ -21,6 +21,7 @@
 namespace yume {
 class Visitor;
 struct Fn;
+struct Ctor;
 namespace ty {
 class Type;
 }
@@ -420,8 +421,8 @@ public:
   [[nodiscard]] auto args() const { return dereference_view(m_args); }
   [[nodiscard]] auto direct_args() -> auto& { return m_args; }
 
-  void selected_overload(Fn* fn) const { m_selected_overload = fn; }
-  [[nodiscard]] auto selected_overload() const -> Fn* { return m_selected_overload; }
+  void selected_overload(Fn* fn) const;
+  [[nodiscard]] auto selected_overload() const -> Fn*;
   static auto classof(const AST* a) -> bool { return a->kind() == K_Call; }
   [[nodiscard]] auto clone() const -> CallExpr* override;
 };
@@ -430,6 +431,7 @@ public:
 class CtorExpr : public Expr {
   unique_ptr<Type> m_type;
   vector<unique_ptr<Expr>> m_args;
+  mutable Ctor* m_selected_overload{};
 
 public:
   CtorExpr(span<Token> tok, unique_ptr<Type> type, vector<unique_ptr<Expr>> args)
@@ -440,6 +442,9 @@ public:
   [[nodiscard]] auto type() const -> const auto& { return *m_type; }
   [[nodiscard]] auto type() -> auto& { return *m_type; }
   [[nodiscard]] constexpr auto args() const { return dereference_view(m_args); }
+
+  void selected_overload(Ctor* fn) const;
+  [[nodiscard]] auto selected_overload() const -> Ctor*;
   static auto classof(const AST* a) -> bool { return a->kind() == K_Ctor; }
   [[nodiscard]] auto clone() const -> CtorExpr* override;
 };

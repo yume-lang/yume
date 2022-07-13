@@ -88,11 +88,6 @@ template <typename T> void OverloadSet<T>::dump(llvm::raw_ostream& stream, bool 
   }
 };
 
-template struct Overload<Fn>;
-template struct Overload<Ctor>;
-template struct OverloadSet<Fn>;
-template struct OverloadSet<Ctor>;
-
 static auto literal_cast(ast::AST& arg, const ty::Type* target_type) -> ty::Compat {
   if (arg.val_ty() == target_type)
     return {.valid = true}; // Already the correct type
@@ -113,14 +108,24 @@ static auto literal_cast(ast::AST& arg, const ty::Type* target_type) -> ty::Comp
   return {};
 }
 
-template <> auto OverloadSet<Fn>::is_valid_overload(Overload<Fn>& overload) -> bool {
-  const auto& fn_ast = overload.fn->ast;
-
-  // The overload is only viable if the amount of arguments matches the amount of parameters.
+template <typename T> auto parameter_count_matches(const vector<ast::AST*>& args, const T& fn_ast) -> bool;
+template <> auto parameter_count_matches(const vector<ast::AST*>& args, const ast::FnDecl& fn_ast) -> bool {
   // Varargs functions may have more arguments that the amount of non-vararg parameters.
   if (args.size() != fn_ast.args().size())
     if (!fn_ast.varargs() || args.size() < fn_ast.args().size())
       return false;
+  return true;
+}
+template <> auto parameter_count_matches(const vector<ast::AST*>& args, const ast::CtorDecl& fn_ast) -> bool {
+  return args.size() == fn_ast.args().size();
+}
+
+template <typename T> auto OverloadSet<T>::is_valid_overload(Overload<T>& overload) -> bool {
+  const auto& fn_ast = overload.fn->ast;
+
+  // The overload is only viable if the amount of arguments matches the amount of parameters.
+  if (!parameter_count_matches(args, fn_ast))
+    return false;
 
   overload.compatibilities.reserve(args.size());
 
@@ -131,7 +136,7 @@ template <> auto OverloadSet<Fn>::is_valid_overload(Overload<Fn>& overload) -> b
   // carry no type information for their variadic part. This will change in the future.
   for (const auto& [param, arg] : llvm::zip_first(fn_ast.args(), args)) {
     const auto* arg_type = arg->val_ty();
-    const auto* param_type = param.val_ty();
+    const auto* param_type = get_val_ty<T>(param);
 
     if (param_type->is_generic()) {
       auto sub = arg_type->determine_generic_substitution(*param_type);
@@ -173,7 +178,7 @@ template <> auto OverloadSet<Fn>::is_valid_overload(Overload<Fn>& overload) -> b
   return true;
 }
 
-template <> void OverloadSet<Fn>::determine_valid_overloads() {
+template <typename T> void OverloadSet<T>::determine_valid_overloads() {
   auto& [call_expr, overloads, args] = *this;
 
   // All `Overload`s are determined to not be viable by default, so determine the ones which actually are
@@ -199,7 +204,7 @@ static auto compare_implicit_conversions(ty::Conv a, ty::Conv b) -> std::weak_or
   return equal;
 }
 
-template <> auto Overload<Fn>::better_candidate_than(Overload other) const -> bool {
+template <typename T> auto Overload<T>::better_candidate_than(Overload other) const -> bool {
   // Viable candidates are always better than non-viable ones
   if (!other.viable)
     return viable;
@@ -222,8 +227,8 @@ template <> auto Overload<Fn>::better_candidate_than(Overload other) const -> bo
   return false;
 }
 
-template <> auto OverloadSet<Fn>::best_viable_overload() const -> Overload<Fn> {
-  const Overload<Fn>* best = nullptr;
+template <typename T> auto OverloadSet<T>::best_viable_overload() const -> Overload<T> {
+  const Overload<T>* best = nullptr;
 
   for (const auto& candidate : overloads)
     if (candidate.viable)
@@ -234,11 +239,11 @@ template <> auto OverloadSet<Fn>::best_viable_overload() const -> Overload<Fn> {
     string str{};
     llvm::raw_string_ostream ss{str};
     ss << "No viable overload for " << call.name() << " with argument types ";
-    join_args(args, get_val_ty_ptr, ss);
+    join_args(args, get_val_ty<ast::AST>, ss);
     throw std::logic_error(str);
   }
 
-  vector<const Overload<Fn>*> ambiguous;
+  vector<const Overload<T>*> ambiguous;
 
   for (const auto& candidate : overloads)
     if (candidate.viable && &candidate != best)
@@ -253,7 +258,7 @@ template <> auto OverloadSet<Fn>::best_viable_overload() const -> Overload<Fn> {
   string str{};
   llvm::raw_string_ostream ss{str};
   ss << "Ambigious call for " << call.name() << " with argument types ";
-  join_args(args, get_val_ty_ptr, ss);
+  join_args(args, get_val_ty<ast::AST>, ss);
   ss << "\nCouldn't pick between the following overloads:\n";
   for (const auto* i : ambiguous) {
     i->dump(ss);
@@ -262,4 +267,10 @@ template <> auto OverloadSet<Fn>::best_viable_overload() const -> Overload<Fn> {
 
   throw std::logic_error(str);
 }
+
+template struct Overload<Fn>;
+template struct Overload<Ctor>;
+template struct OverloadSet<Fn>;
+template struct OverloadSet<Ctor>;
+
 } // namespace yume::semantic

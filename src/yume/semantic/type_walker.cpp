@@ -114,19 +114,46 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
     expr.val_ty(&base_type);
   }
 
-  unique_ptr<OverloadSet<Ctor>> ctor_overloads{};
+  bool consider_ctor_overloads = st != nullptr;
+  OverloadSet<Ctor> ctor_overloads{};
 
-  if (st != nullptr)
-    ctor_overloads = std::make_unique<OverloadSet<Ctor>>(all_ctor_overloads_by_type(*st, expr));
+  // XXX: Duplicated from function overload handling
+  if (consider_ctor_overloads)
+    ctor_overloads = all_ctor_overloads_by_type(*st, expr);
 
   for (auto& i : expr.args()) {
     body_expression(i);
-    if (ctor_overloads)
-      ctor_overloads->args.push_back(&i);
+    ctor_overloads.args.push_back(&i);
   }
 
-  if (ctor_overloads)
-    ctor_overloads->dump(llvm::errs());
+  if (consider_ctor_overloads) {
+#ifdef YUME_SPEW_OVERLOAD_SELECTION
+    llvm::errs() << "\n*** BEGIN CTOR OVERLOAD EVALUATION ***\n";
+    llvm::errs() << "Constructors with matching names:\n";
+    ctor_overloads.dump(llvm::errs());
+#endif
+
+    ctor_overloads.determine_valid_overloads();
+
+#ifdef YUME_SPEW_OVERLOAD_SELECTION
+    llvm::errs() << "\nViable overloads:\n";
+    ctor_overloads.dump(llvm::errs(), true);
+#endif
+
+    Overload best_overload = ctor_overloads.best_viable_overload();
+
+#ifdef YUME_SPEW_OVERLOAD_SELECTION
+    llvm::errs() << "\nSelected overload:\n";
+    best_overload.dump(llvm::errs());
+    llvm::errs() << "\n*** END CTOR OVERLOAD EVALUATION ***\n\n";
+#endif
+
+    auto& instantiate = best_overload.instantiation;
+    auto* selected = best_overload.fn;
+    yume_assert(instantiate.sub.empty(), "Constructors cannot be generic"); // TODO(rymiel): revisit?
+
+    expr.selected_overload(selected);
+  }
 }
 
 template <> void TypeWalker::expression(ast::SliceExpr& expr) {
@@ -181,7 +208,7 @@ auto TypeWalker::all_fn_overloads_by_name(ast::CallExpr& call) -> OverloadSet<Fn
     if (fn.name() == call.name())
       fns_by_name.emplace_back(&fn);
 
-  return OverloadSet<Fn>{call, fns_by_name, {}};
+  return OverloadSet<Fn>{&call, fns_by_name, {}};
 }
 
 auto TypeWalker::all_ctor_overloads_by_type(Struct& st, ast::CtorExpr& call) -> OverloadSet<Ctor> {
@@ -191,7 +218,7 @@ auto TypeWalker::all_ctor_overloads_by_type(Struct& st, ast::CtorExpr& call) -> 
     if (ctor.self_t == st.self_t)
       ctors_by_type.emplace_back(&ctor);
 
-  return OverloadSet<Ctor>{call, ctors_by_type, {}};
+  return OverloadSet<Ctor>{&call, ctors_by_type, {}};
 }
 
 template <> void TypeWalker::expression(ast::CallExpr& expr) {
@@ -209,7 +236,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
   }
 
 #ifdef YUME_SPEW_OVERLOAD_SELECTION
-  llvm::errs() << "\n*** BEGIN OVERLOAD EVALUATION ***\n";
+  llvm::errs() << "\n*** BEGIN FN OVERLOAD EVALUATION ***\n";
   llvm::errs() << "Functions with matching names:\n";
   overload_set.dump(llvm::errs());
 #endif
@@ -226,11 +253,11 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
 #ifdef YUME_SPEW_OVERLOAD_SELECTION
   llvm::errs() << "\nSelected overload:\n";
   best_overload.dump(llvm::errs());
-  llvm::errs() << "\n*** END OVERLOAD EVALUATION ***\n\n";
+  llvm::errs() << "\n*** END FN OVERLOAD EVALUATION ***\n\n";
 #endif
 
   auto& instantiate = best_overload.instantiation;
-  auto& selected = best_overload.fn;
+  auto* selected = best_overload.fn;
 
   // It is an instantiation of a function template
   if (!instantiate.sub.empty()) {
