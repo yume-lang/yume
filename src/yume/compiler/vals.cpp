@@ -83,6 +83,14 @@ auto Ctor::common_ast(const decl_t::arg_t& ast) -> const ast::AST& {
 
 auto Fn::arg_name(const decl_t::arg_t& ast) -> string { return ast.name(); };
 auto Ctor::arg_name(const decl_t::arg_t& ast) -> string {
-  return std::visit([](const auto& t) { return t.name(); }, ast);
+  return std::visit(
+      []<typename T>(const T& t) {
+        if constexpr (std::is_same_v<T, ast::TypeName>) {
+          return t.name();
+        } else {
+          return t.field();
+        }
+      },
+      ast);
 };
 } // namespace yume

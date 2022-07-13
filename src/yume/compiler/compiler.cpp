@@ -355,6 +355,11 @@ template <typename T> auto Compiler::setup_fn_base(T& fn) -> tuple<llvm::BasicBl
   // TODO(rymiel): Find a better solution to replace the "decl_bb"
   m_current_fn->decl_bb = decl_bb;
 
+  if constexpr (std::is_same_v<T, Ctor>) {
+    if (fn.ast().body().direct_body().empty()) {
+      return {decl_bb, bb}; // Tiny optimization: A constructor with no body doesn't need to allocate its parameters
+    }
+  }
   // Allocate local variables for each parameter
   for (auto [arg, ast_arg] : llvm::zip(fn.base.llvm->args(), fn.ast().args())) {
     const auto& type = *T::arg_type(ast_arg);
@@ -396,10 +401,21 @@ void Compiler::define(Ctor& ctor) {
   auto [decl_bb, bb] = setup_fn_base(ctor);
 
   auto* ctor_type = llvm_type(*ctor.base.self_ty);
+  Val base_value = llvm::UndefValue::get(ctor_type);
 
-  auto* base_value = llvm::UndefValue::get(ctor_type);
+  // Initialize fields for short `::x` constructor syntax
+  for (auto [arg, ast_arg] : llvm::zip(ctor.base.llvm->args(), ctor.ast().args())) {
+    if (const auto* field_access = std::get_if<ast::FieldAccessExpr>(&ast_arg)) {
+      auto base_name = field_access->field();
+      int base_offset = field_access->offset();
+      yume_assert(base_offset >= 0, "Field access has unknown offset into struct");
+
+      base_value = m_builder->CreateInsertValue(base_value, &arg, base_offset, "ctor.wf."s + base_name);
+    }
+  }
   auto* base_alloc = m_builder->CreateAlloca(ctor_type, nullptr, "ctor.base");
   m_builder->CreateStore(base_value, base_alloc);
+
   // Act as if we don't own the object being constructed so it won't get destructed
   m_scope.insert({"", {.value = base_alloc, .ast = ctor.ast(), .owning = false}});
 

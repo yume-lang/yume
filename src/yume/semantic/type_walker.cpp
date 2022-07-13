@@ -364,16 +364,20 @@ template <> void TypeWalker::statement(ast::CtorDecl& stat) {
     if (auto* type_name = std::get_if<ast::TypeName>(&i)) {
       expression(*type_name);
       scope.insert({type_name->name(), type_name});
-    } else if (auto* direct_init = std::get_if<ast::VarExpr>(&i)) {
-      auto target_name = direct_init->name();
+    } else if (auto* direct_init = std::get_if<ast::FieldAccessExpr>(&i)) {
+      auto target_name = direct_init->field();
+      // XXX: duplicated from FieldAccessExpr handling
       const ty::Type* target_type{};
+      int j = 0;
       for (const auto& field : struct_type->fields()) {
         if (field.name() == target_name) {
           target_type = field.type().val_ty();
           break;
         }
+        j++;
       }
 
+      direct_init->offset(j);
       direct_init->val_ty(target_type);
       scope.insert({target_name, direct_init});
     }
