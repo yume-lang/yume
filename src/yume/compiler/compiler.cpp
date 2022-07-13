@@ -118,7 +118,7 @@ void Compiler::run() {
 }
 
 void Compiler::walk_types(DeclLike decl_like) {
-  visit_decl(decl_like, [&](const auto& decl) {
+  decl_like.visit_decl([&](const auto& decl) {
     m_walker->current_decl = decl;
     m_walker->body_statement(decl->ast);
     m_walker->current_decl = {};
@@ -298,11 +298,11 @@ auto Compiler::declare(Ctor& ctor) -> llvm::Function* {
   auto llvm_args = vector<llvm::Type*>{};
 
   for (const auto& i : ctor_decl.args())
-    llvm_args.push_back(llvm_type(*get_val_ty<Ctor>(i)));
+    llvm_args.push_back(llvm_type(*Ctor::arg_type(i)));
 
   llvm::FunctionType* fn_t = llvm::FunctionType::get(llvm_ret_type, llvm_args, false);
 
-  string name = ctor.name();
+  string name = mangle_name(ctor);
   // name = mangle_name(ctor); // TODO(rymiel)
 
   auto linkage = llvm::Function::InternalLinkage;

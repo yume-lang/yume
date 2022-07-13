@@ -45,6 +45,8 @@ struct Instantiation {
 #endif
 };
 
+using substitution_t = std::map<string, const ty::Type*>;
+
 /// A function declaration in the compiler.
 /**
  * The primary use of this struct is to bind together the AST declaration of a function (`ast::FnDecl`) and the bytecode
@@ -53,7 +55,7 @@ struct Instantiation {
  * All the instantiations of a template are stored in `m_instantiations`.
  */
 struct Fn {
-  using ast_t = ast::FnDecl;
+  using decl_t = ast::FnDecl;
   using call_t = ast::CallExpr;
 
   ast::FnDecl& ast;
@@ -63,20 +65,21 @@ struct Fn {
   ast::Program* member{};
   vector<unique_ptr<ty::Generic>> type_args{};
   /// If this is an instantiation of a template, a mapping between type variables and their substitutions.
-  std::map<string, const ty::Type*> subs{};
+  substitution_t subs{};
   std::map<Instantiation, unique_ptr<Fn>> instantiations{};
   llvm::Function* llvm{};
   /// A basic block where are allocations for local variables should go. It is placed \e before the "entrypoint".
   llvm::BasicBlock* decl_bb{};
 
-  Fn(ast::FnDecl& ast_decl, ty::Type* parent = nullptr, ast::Program* member = nullptr,
-     std::map<string, const ty::Type*> subs = {}, vector<unique_ptr<ty::Generic>> type_args = {})
+  Fn(ast::FnDecl& ast_decl, ty::Type* parent = nullptr, ast::Program* member = nullptr, substitution_t subs = {},
+     vector<unique_ptr<ty::Generic>> type_args = {})
       : ast(ast_decl), self_t(parent), member(member), type_args(move(type_args)), subs(move(subs)) {}
 
   [[nodiscard]] auto body() const -> const auto& { return ast.body(); }
 
   [[nodiscard]] auto name() const -> string;
   [[nodiscard]] static auto overload_name(const call_t& ast) -> string;
+  [[nodiscard]] static auto arg_type(const decl_t::arg_t& ast) -> const ty::Type*;
 
   [[nodiscard]] auto declaration(Compiler& compiler, bool mangle = true) -> llvm::Function*;
 
@@ -87,7 +90,7 @@ struct Fn {
 };
 
 struct Struct {
-  using ast_t = ast::StructDecl;
+  using decl_t = ast::StructDecl;
 
   ast::StructDecl& ast;
   /// The type of this struct. Used for the `self` type.
@@ -96,11 +99,11 @@ struct Struct {
   ast::Program* member{};
   vector<unique_ptr<ty::Generic>> type_args{};
   /// If this is an instantiation of a template, a mapping between type variables and their substitutions.
-  std::map<string, const ty::Type*> subs{};
+  substitution_t subs{};
   std::map<Instantiation, unique_ptr<Struct>> instantiations{};
 
-  Struct(ast::StructDecl& ast_decl, ty::Type* type = nullptr, ast::Program* member = nullptr,
-         std::map<string, const ty::Type*> subs = {}, vector<unique_ptr<ty::Generic>> type_args = {})
+  Struct(ast::StructDecl& ast_decl, ty::Type* type = nullptr, ast::Program* member = nullptr, substitution_t subs = {},
+         vector<unique_ptr<ty::Generic>> type_args = {})
       : ast(ast_decl), self_t(type), member(member), type_args(move(type_args)), subs(move(subs)) {}
 
   [[nodiscard]] auto body() const -> const auto& { return ast.body(); }
@@ -112,7 +115,7 @@ struct Struct {
 };
 
 struct Ctor {
-  using ast_t = ast::CtorDecl;
+  using decl_t = ast::CtorDecl;
   using call_t = ast::CtorExpr;
 
   ast::CtorDecl& ast;
@@ -127,9 +130,8 @@ struct Ctor {
 
   [[nodiscard]] auto name() const -> string;
   [[nodiscard]] static auto overload_name(const call_t& ast) -> string;
+  [[nodiscard]] static auto arg_type(const decl_t::arg_t& ast) -> const ty::Type*;
 };
-
-using DeclLike = std::variant<std::monostate, Fn*, Struct*, Ctor*>;
 
 template <typename R, typename... Ts> struct DeclLikeVisitor : Ts... {
   using Ts::operator()...;
@@ -137,15 +139,39 @@ template <typename R, typename... Ts> struct DeclLikeVisitor : Ts... {
 };
 template <typename R, typename... Ts> DeclLikeVisitor(R, Ts...) -> DeclLikeVisitor<R, Ts...>;
 
-template <typename R = void, typename... Ts> auto visit_decl(DeclLike decl_like, Ts... ts) {
+using DeclLike_t = std::variant<std::monostate, Fn*, Struct*, Ctor*>;
+
+struct DeclLike : public DeclLike_t {
+  using DeclLike_t::DeclLike_t;
+
+  template <typename R = void, typename... Ts> auto visit_decl(Ts... ts) {
+    return std::visit(DeclLikeVisitor<R, Ts...>{ts...}, *this);
+  }
+  template <typename R = void, typename... Ts> [[nodiscard]] auto visit_decl(Ts... ts) const {
+    return std::visit(DeclLikeVisitor<R, Ts...>{ts...}, *this);
+  }
+
+  [[nodiscard]] auto subs() const -> const substitution_t* {
+    return visit_decl<substitution_t*>([](Ctor* /*decl*/) -> substitution_t* { return nullptr; },
+                                       [](auto* decl) -> substitution_t* {
+                                         if (decl == nullptr)
+                                           return nullptr;
+                                         return &decl->subs;
+                                       });
+  };
+
+  [[nodiscard]] auto ast() const -> const ast::AST* {
+    return visit_decl<ast::AST*>([](auto* decl) -> ast::AST* { return &decl->ast; });
+  };
+
+  [[nodiscard]] auto self_t() const -> const ty::Type* {
+    return visit_decl<ty::Type*>([](const auto& decl) { return decl->self_t; });
+  };
+};
+
+template <typename R = void, typename... Ts> [[deprecated]] auto visit_decl(DeclLike decl_like, Ts... ts) {
   return std::visit(DeclLikeVisitor<R, Ts...>{ts...}, decl_like);
 }
-
-template <typename T> inline static constexpr auto get_val_ty = [](const ast::TypeName& ast) { return ast.val_ty(); };
-template <>
-inline static constexpr auto get_val_ty<Ctor> =
-    [](const auto& ast) { return std::visit([](const auto& t) { return t.val_ty(); }, ast); };
-template <> inline static constexpr auto get_val_ty<ast::AST> = [](const ast::AST* ast) { return ast->val_ty(); };
 
 /// A value of a complied expression.
 /**
