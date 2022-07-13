@@ -545,8 +545,8 @@ $(function() {
 <div class="line"><a id="l00474" name="l00474"></a><span class="lineno">  474</span>      m_builder-&gt;CreateBr(merge_bb);</div>
 <div class="line"><a id="l00475" name="l00475"></a><span class="lineno">  475</span>    }</div>
 <div class="line"><a id="l00476" name="l00476"></a><span class="lineno">  476</span>  } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00477" name="l00477"></a><span class="lineno">  477</span>    <span class="comment">// HACK:  For if statements with no else clause, it creates an empty `if.test` block which only contains a single</span></div>
-<div class="line"><a id="l00478" name="l00478"></a><span class="lineno">  478</span>    <span class="comment">// `br` instruction to the merge point.</span></div>
+<div class="line"><a id="l00477" name="l00477"></a><span class="lineno">  477</span>    <span class="comment">// HACK: #15  For if statements with no else clause, it creates an empty `if.test` block which only contains a</span></div>
+<div class="line"><a id="l00478" name="l00478"></a><span class="lineno">  478</span>    <span class="comment">// single `br` instruction to the merge point.</span></div>
 <div class="line"><a id="l00479" name="l00479"></a><span class="lineno">  479</span>    m_builder-&gt;SetInsertPoint(next_test_bb);</div>
 <div class="line"><a id="l00480" name="l00480"></a><span class="lineno">  480</span>    m_builder-&gt;CreateBr(merge_bb);</div>
 <div class="line"><a id="l00481" name="l00481"></a><span class="lineno">  481</span>  }</div>
@@ -588,7 +588,7 @@ $(function() {
 <div class="line"><a id="l00517" name="l00517"></a><span class="lineno">  517</span> </div>
 <div class="line"><a id="l00518" name="l00518"></a><span class="lineno"><a class="line" href="classyume_1_1Compiler.html#a341d914f90ba6b2a99be9e66b1beeecb">  518</a></span><span class="keyword">template</span> &lt;&gt; <span class="keywordtype">void</span> Compiler::statement(<span class="keyword">const</span> <a class="code hl_class" href="classyume_1_1ast_1_1VarDecl.html">ast::VarDecl</a>&amp; stat) {</div>
 <div class="line"><a id="l00519" name="l00519"></a><span class="lineno">  519</span>  <span class="comment">// Locals are currently always mut, get the base type instead</span></div>
-<div class="line"><a id="l00520" name="l00520"></a><span class="lineno">  520</span>  <span class="comment">// TODO: revisit, probably extract logic</span></div>
+<div class="line"><a id="l00520" name="l00520"></a><span class="lineno">  520</span>  <span class="comment">// TODO(rymiel): revisit, probably extract logic</span></div>
 <div class="line"><a id="l00521" name="l00521"></a><span class="lineno">  521</span>  <span class="keyword">auto</span>* var_type = <a class="code hl_function" href="classyume_1_1Compiler.html#aa6892ec045b49e3d62fcd7c3745f2d2b">llvm_type</a>(*stat.<a class="code hl_function" href="classyume_1_1ast_1_1AST.html#a8437174337ab610fd2968b6aa133028e">val_ty</a>()-&gt;qual_base());</div>
 <div class="line"><a id="l00522" name="l00522"></a><span class="lineno">  522</span> </div>
 <div class="line"><a id="l00523" name="l00523"></a><span class="lineno">  523</span>  <span class="keyword">auto</span>* current_block = m_builder-&gt;GetInsertBlock();</div>
@@ -814,9 +814,9 @@ $(function() {
 <div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>    <span class="keyword">auto</span>* llvm_struct_type = llvm_type(*struct_type);</div>
 <div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span> </div>
 <div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span>    llvm::Value* alloc = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>    <span class="comment">// TODO: #4 determine what kind of allocation must be done, and if at all. It&#39;ll probably require a complicated</span></div>
-<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>    <span class="comment">// semantic step to determine object lifetime, which would probably be evaluated before compilation of these</span></div>
-<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span>    <span class="comment">// expressions. currently just using &quot;mut&quot; constraint, which probably won&#39;t be permanent and is probably</span></div>
+<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>    <span class="comment">// TODO(rymiel): #4 determine what kind of allocation must be done, and if at all. It&#39;ll probably require a</span></div>
+<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>    <span class="comment">// complicated semantic step to determine object lifetime, which would probably be evaluated before compilation of</span></div>
+<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span>    <span class="comment">// these expressions. currently just using &quot;mut&quot; constraint, which probably won&#39;t be permanent and is probably</span></div>
 <div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>    <span class="comment">// faulty, but, oh well</span></div>
 <div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span><span class="comment"></span> </div>
 <div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span><span class="comment">    //// Heap allocation</span></div>
@@ -834,7 +834,7 @@ $(function() {
 <div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span><span class="comment"></span>    llvm::Value* base_value = llvm::UndefValue::get(llvm_struct_type);</div>
 <div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>    <span class="keyword">auto</span>* selected_ctor_overload = expr.selected_overload();</div>
 <div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span> </div>
-<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span>    <span class="keywordflow">if</span> (selected_ctor_overload == <span class="keyword">nullptr</span>) { <span class="comment">// TODO(rymiel): The implicit constructor should be an actual ctor</span></div>
+<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span>    <span class="keywordflow">if</span> (selected_ctor_overload == <span class="keyword">nullptr</span>) { <span class="comment">// TODO(rymiel): #16 The implicit constructor should be an actual ctor</span></div>
 <div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>      <span class="keyword">auto</span> i = 0;</div>
 <div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>      <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; arg : llvm::enumerate(expr.args())) {</div>
 <div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>        <span class="keyword">const</span> <span class="keyword">auto</span>&amp; [target_type, target_name] = struct_type-&gt;fields()[i];</div>
@@ -895,15 +895,15 @@ $(function() {
 <div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>    <span class="comment">//   return slice_inst;</span></div>
 <div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>    <span class="comment">// }</span></div>
 <div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span> </div>
-<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>    <span class="comment">// TODO: the commented-out block above stack-allocates a slice constructor if its size can be determined</span></div>
+<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>    <span class="comment">// TODO(rymiel): the commented-out block above stack-allocates a slice constructor if its size can be determined</span></div>
 <div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>    <span class="comment">// trivially. However, since it references stack memory, a slice allocated this way could never be feasibly</span></div>
 <div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>    <span class="comment">// returned or passed into a function which stores a reference to it, etc. The compiler currently does nothing</span></div>
 <div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>    <span class="comment">// resembling &quot;escape analysis&quot;, however something like that might be needed to perform an optimization like</span></div>
 <div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>    <span class="comment">// shown above.</span></div>
-<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>    <span class="comment">// TODO: Note that also a slice could be stack-allocated even if its size *wasn&#39;t* known at compile time,</span></div>
+<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>    <span class="comment">// TODO(rymiel): Note that also a slice could be stack-allocated even if its size *wasn&#39;t* known at compile time,</span></div>
 <div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>    <span class="comment">// however, I simply didn&#39;t know how to do that when i wrote the above snipped. But, since its problematic</span></div>
 <div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>    <span class="comment">// anyway, it remains unfixed (and commented out); revisit later.</span></div>
-<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>    <span class="comment">// TODO: A large slice may be unfeasible to be stack-allocated anyway, so in addition to the above points,</span></div>
+<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>    <span class="comment">// TODO(rymiel): A large slice may be unfeasible to be stack-allocated anyway, so in addition to the above points,</span></div>
 <div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span>    <span class="comment">// slice size could also be a consideration. Perhaps we don&#39;t *want* to stack-allocate unknown-sized slices as</span></div>
 <div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>    <span class="comment">// they may be absurdly huge in size and cause stack overflow.</span></div>
 <div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>    <span class="comment">// Related: #4</span></div>
@@ -979,7 +979,7 @@ $(function() {
 <div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span>}</div>
 <div class="line"><a id="l00909" name="l00909"></a><span class="lineno">  909</span> </div>
 <div class="line"><a id="l00910" name="l00910"></a><span class="lineno"><a class="line" href="classyume_1_1Compiler.html#a02b10b792c25ddbdbcb38e0334dd36d4">  910</a></span><span class="keyword">template</span> &lt;&gt; <span class="keyword">auto</span> Compiler::expression(<span class="keyword">const</span> <a class="code hl_class" href="classyume_1_1ast_1_1FieldAccessExpr.html">ast::FieldAccessExpr</a>&amp; expr, <span class="keywordtype">bool</span> mut) -&gt; <a class="code hl_struct" href="structyume_1_1Val.html">Val</a> {</div>
-<div class="line"><a id="l00911" name="l00911"></a><span class="lineno">  911</span>  <span class="comment">// TODO: struct can only contain things by value, later this needs a condition</span></div>
+<div class="line"><a id="l00911" name="l00911"></a><span class="lineno">  911</span>  <span class="comment">// TODO(rymiel): struct can only contain things by value, later this needs a condition</span></div>
 <div class="line"><a id="l00912" name="l00912"></a><span class="lineno">  912</span>  <a class="code hl_function" href="namespaceyume.html#af154d75481867fbdec142c3e5171ea18">not_mut</a>(<span class="stringliteral">&quot;immutable field&quot;</span>, mut);</div>
 <div class="line"><a id="l00913" name="l00913"></a><span class="lineno">  913</span> </div>
 <div class="line"><a id="l00914" name="l00914"></a><span class="lineno">  914</span>  <span class="keyword">auto</span> base = body_expression(*expr.base());</div>
@@ -1037,7 +1037,7 @@ $(function() {
 <div class="line"><a id="l00966" name="l00966"></a><span class="lineno">  966</span>    ss &lt;&lt; mangle_name(*i.value().type().val_ty(), &amp;fn);</div>
 <div class="line"><a id="l00967" name="l00967"></a><span class="lineno">  967</span>  }</div>
 <div class="line"><a id="l00968" name="l00968"></a><span class="lineno">  968</span>  ss &lt;&lt; <span class="stringliteral">&quot;)&quot;</span>;</div>
-<div class="line"><a id="l00969" name="l00969"></a><span class="lineno">  969</span>  <span class="comment">// TODO: should mangled names even contain the return type...?</span></div>
+<div class="line"><a id="l00969" name="l00969"></a><span class="lineno">  969</span>  <span class="comment">// TODO(rymiel): should mangled names even contain the return type...?</span></div>
 <div class="line"><a id="l00970" name="l00970"></a><span class="lineno">  970</span>  <span class="keywordflow">if</span> (fn.ast().ret().has_value())</div>
 <div class="line"><a id="l00971" name="l00971"></a><span class="lineno">  971</span>    ss &lt;&lt; mangle_name(*fn.ast().ret()-&gt;get().val_ty(), &amp;fn); <span class="comment">// wtf</span></div>
 <div class="line"><a id="l00972" name="l00972"></a><span class="lineno">  972</span> </div>
@@ -1090,8 +1090,8 @@ $(function() {
 <div class="line"><a id="l01019" name="l01019"></a><span class="lineno"> 1019</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="structyume_1_1CRTPWalker.html#a037030a6c092206efef3dac8a8d4c787">CRTPWalker::body_statement</a>(stat);</div>
 <div class="line"><a id="l01020" name="l01020"></a><span class="lineno"> 1020</span>}</div>
 <div class="line"><a id="l01021" name="l01021"></a><span class="lineno"> 1021</span> </div>
-<div class="line"><a id="l01022" name="l01022"></a><span class="lineno"> 1022</span><span class="comment">// TODO: #3 once implicit conversion checking is added in the remaining locations (i.e. field assignment and return)</span></div>
-<div class="line"><a id="l01023" name="l01023"></a><span class="lineno"> 1023</span><span class="comment">// there is no real reason to keep the `mut` parameter on all expression compilation methods. All the mutability</span></div>
+<div class="line"><a id="l01022" name="l01022"></a><span class="lineno"> 1022</span><span class="comment">// TODO(rymiel): #3 once implicit conversion checking is added in the remaining locations (i.e. field assignment and</span></div>
+<div class="line"><a id="l01023" name="l01023"></a><span class="lineno"> 1023</span><span class="comment">// return) there is no real reason to keep the `mut` parameter on all expression compilation methods. All the mutability</span></div>
 <div class="line"><a id="l01024" name="l01024"></a><span class="lineno"> 1024</span><span class="comment">// information is in the type system and dereferences are handled by the TypeWalker.</span></div>
 <div class="line"><a id="l01025" name="l01025"></a><span class="lineno"><a class="line" href="classyume_1_1Compiler.html#a5ac36ca495ba8bf0c4d6f02f351fe09a"> 1025</a></span><span class="keyword">auto</span> <a class="code hl_function" href="classyume_1_1Compiler.html#a5ac36ca495ba8bf0c4d6f02f351fe09a">Compiler::body_expression</a>(<span class="keyword">const</span> <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">ast::Expr</a>&amp; expr, <span class="keywordtype">bool</span> mut) -&gt; <a class="code hl_struct" href="structyume_1_1Val.html">Val</a> {</div>
 <div class="line"><a id="l01026" name="l01026"></a><span class="lineno"> 1026</span>  <span class="keyword">const</span> <a class="code hl_struct" href="structyume_1_1ASTStackTrace.html">ASTStackTrace</a> guard(<span class="stringliteral">&quot;Codegen: &quot;</span>s + expr.kind_name() + <span class="stringliteral">&quot; expression&quot;</span>, expr);</div>
