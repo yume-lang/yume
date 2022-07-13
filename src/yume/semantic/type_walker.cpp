@@ -318,7 +318,7 @@ template <> void TypeWalker::statement(ast::Compound& stat) {
 
 template <> void TypeWalker::statement(ast::StructDecl& stat) {
   // This decl still has unsubstituted generics, can't instantiate its body
-  if (std::ranges::any_of(*current_decl_subs(), [](const auto& sub) { return sub.second->is_generic(); }))
+  if (std::ranges::any_of(*current_decl.subs(), [](const auto& sub) { return sub.second->is_generic(); }))
     return;
 
   for (auto& i : stat.fields())
@@ -339,7 +339,7 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
   }
 
   // This decl still has unsubstituted generics, can't instantiate its body
-  if (std::ranges::any_of(*current_decl_subs(), [](const auto& sub) { return sub.second->is_generic(); }))
+  if (std::ranges::any_of(*current_decl.subs(), [](const auto& sub) { return sub.second->is_generic(); }))
     return;
 
   if (in_depth && std::holds_alternative<ast::Compound>(stat.body()))
@@ -349,7 +349,7 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
 template <> void TypeWalker::statement(ast::CtorDecl& stat) {
   scope.clear();
 
-  const auto* struct_type = dyn_cast<ty::Struct>(&current_decl_self_t()->without_qual());
+  const auto* struct_type = dyn_cast<ty::Struct>(&current_decl.self_t()->without_qual());
 
   if (struct_type == nullptr)
     throw std::runtime_error("Can't define constructor of non-struct type");
@@ -381,7 +381,7 @@ template <> void TypeWalker::statement(ast::ReturnStmt& stat) {
   if (stat.expr().has_value()) {
     auto& returned = stat.expr()->get();
     body_expression(returned);
-    current_decl_ast()->attach_to(&returned);
+    current_decl.ast()->attach_to(&returned);
   }
 }
 
@@ -419,27 +419,9 @@ void TypeWalker::body_expression(ast::Expr& expr) {
   return CRTPWalker::body_expression(expr);
 }
 
-auto TypeWalker::current_decl_subs() const -> context_t* {
-  return visit_decl<context_t*>(
-      current_decl, [](Ctor* /*decl*/) -> context_t* { return nullptr; },
-      [](auto* decl) -> context_t* {
-        if (decl == nullptr)
-          return nullptr;
-        return &decl->subs;
-      });
-}
-
-auto TypeWalker::current_decl_ast() const -> ast::AST* {
-  return visit_decl<ast::AST*>(current_decl, [](auto* decl) -> ast::AST* { return &decl->ast; });
-}
-
-auto TypeWalker::current_decl_self_t() const -> ty::Type* {
-  return visit_decl<ty::Type*>(current_decl, [](const auto& decl) { return decl->self_t; });
-}
-
 auto TypeWalker::convert_type(const ast::Type& ast_type) -> const ty::Type& {
-  const ty::Type* parent = current_decl_self_t();
-  auto* context = current_decl_subs();
+  const ty::Type* parent = current_decl.self_t();
+  const auto* context = current_decl.subs();
 
   if (const auto* simple_type = dyn_cast<ast::SimpleType>(&ast_type)) {
     auto name = simple_type->name();
@@ -469,8 +451,7 @@ void TypeWalker::resolve_queue() {
     decl_queue.pop();
 
     with_saved_scope([&] {
-      visit_decl(
-          next,
+      next.visit_decl(
           [&](Fn* fn) {
             in_depth = true;
             compiler.declare(*fn);

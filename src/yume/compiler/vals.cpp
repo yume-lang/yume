@@ -70,4 +70,9 @@ auto Struct::name() const -> string { return ast.name(); }
 
 auto Fn::overload_name(const call_t& ast) -> string { return ast.name(); };
 auto Ctor::overload_name(const call_t& ast) -> string { return ast.val_ty()->name() + ":new"; };
+
+auto Fn::arg_type(const decl_t::arg_t& ast) -> const ty::Type* { return ast.val_ty(); };
+auto Ctor::arg_type(const decl_t::arg_t& ast) -> const ty::Type* {
+  return std::visit([](const auto& t) { return t.val_ty(); }, ast);
+};
 } // namespace yume

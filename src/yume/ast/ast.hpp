@@ -556,19 +556,23 @@ public:
 
 /// A declaration of a function (`def`).
 class FnDecl : public Stmt {
+public:
+  using arg_t = TypeName;
+
+private:
   string m_name;
   bool m_varargs{};
-  vector<TypeName> m_args;
+  vector<arg_t> m_args;
   vector<string> m_type_args;
   optional<unique_ptr<Type>> m_ret;
   variant<Compound, string> m_body;
 
 public:
-  FnDecl(span<Token> tok, string name, vector<TypeName> args, vector<string> type_args, optional<unique_ptr<Type>> ret,
+  FnDecl(span<Token> tok, string name, vector<arg_t> args, vector<string> type_args, optional<unique_ptr<Type>> ret,
          Compound body)
       : Stmt(K_FnDecl, tok), m_name{move(name)}, m_args{move(args)},
         m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(body)} {}
-  FnDecl(span<Token> tok, string name, vector<TypeName> args, vector<string> type_args, optional<unique_ptr<Type>> ret,
+  FnDecl(span<Token> tok, string name, vector<arg_t> args, vector<string> type_args, optional<unique_ptr<Type>> ret,
          bool varargs, string primitive)
       : Stmt(K_FnDecl, tok), m_name{move(name)}, m_varargs{varargs}, m_args{move(args)},
         m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(primitive)} {}
@@ -590,12 +594,16 @@ public:
 
 /// A declaration of a custom constructor (`def :`).
 class CtorDecl : public Stmt {
+public:
+  using arg_t = variant<TypeName, VarExpr>;
+
+private:
   string m_name;
-  vector<variant<TypeName, VarExpr>> m_args;
+  vector<arg_t> m_args;
   Compound m_body;
 
 public:
-  CtorDecl(span<Token> tok, string name, vector<variant<TypeName, VarExpr>> args, Compound body)
+  CtorDecl(span<Token> tok, string name, vector<arg_t> args, Compound body)
       : Stmt(K_CtorDecl, tok), m_name{move(name)}, m_args{move(args)}, m_body{move(body)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
