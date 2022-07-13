@@ -2,10 +2,14 @@
 
 #include <string>
 
-#if __has_include(<source_location>) && __has_builtin(__builtin_source_location)
-#include <source_location>
-#define yume_has_source_location 1
-#elif __has_include(<experimental/source_location>)
+// Commented out due to libstdc++ bug 105128
+
+// if __has_include(<source_location>) && __has_builtin(__builtin_source_location)
+// #include <source_location>
+// #define yume_has_source_location 1
+// #elif __has_include(<experimental/source_location>)
+
+#if __has_include(<experimental/source_location>)
 #include <experimental/source_location>
 #define yume_has_source_location -1
 #else
