@@ -95,8 +95,8 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
       // HACK: the "describe" method is being abused here
       std::string name_with_types = new_st.st_ast.name() + templated->describe();
 
-      auto& i_ty =
-          compiler.m_types.template_instantiations.emplace_back(Compiler::create_struct(new_st.st_ast, name_with_types));
+      auto& i_ty = compiler.m_types.template_instantiations.emplace_back(
+          Compiler::create_struct(new_st.st_ast, name_with_types));
 
       new_st.self_ty = i_ty.get();
       decl_queue.push(&new_st);
@@ -180,13 +180,16 @@ template <> void TypeWalker::expression(ast::VarExpr& expr) {
 }
 
 template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
-  if (!expr.base().has_value())
-    return; // TODO: Only valid inside constructors
+  const ty::Type* type = nullptr;
 
-  body_expression(*expr.base());
-  const auto& type = *expr.base()->get().val_ty();
+  if (!expr.base().has_value()) {
+    type = current_decl.self_ty();
+  } else {
+    body_expression(*expr.base());
+    type = expr.base()->get().val_ty();
+  }
 
-  const auto* struct_type = dyn_cast<ty::Struct>(&type.without_qual());
+  const auto* struct_type = dyn_cast<ty::Struct>(&type->without_qual());
 
   if (struct_type == nullptr)
     throw std::runtime_error("Can't access field of expression with non-struct type");
@@ -356,6 +359,7 @@ template <> void TypeWalker::statement(ast::CtorDecl& stat) {
   if (struct_type == nullptr)
     throw std::runtime_error("Can't define constructor of non-struct type");
 
+  stat.val_ty(struct_type);
   for (auto& i : stat.args()) {
     if (auto* type_name = std::get_if<ast::TypeName>(&i)) {
       expression(*type_name);
