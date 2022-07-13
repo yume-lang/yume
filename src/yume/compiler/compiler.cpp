@@ -110,16 +110,18 @@ void Compiler::run() {
   declare(*main_fn, false);
 
   while (!m_decl_queue.empty()) {
-    auto* next = m_decl_queue.front();
+    auto next = m_decl_queue.front();
     m_decl_queue.pop();
-    define(*next);
+    next.visit_decl([&](Fn* fn) { define(*fn); }, //
+                    [&](Ctor* ct) { define(*ct); },
+                    [&](Struct* /*st*/) { throw std::logic_error("Cannot declare a struct"); });
   }
 }
 
 void Compiler::walk_types(DeclLike decl_like) {
-  decl_like.visit_decl([&](const auto& decl) {
+  decl_like.visit_decl([&](auto& decl) {
     m_walker->current_decl = decl;
-    m_walker->body_statement(decl->ast);
+    m_walker->body_statement(decl->ast());
     m_walker->current_decl = {};
   });
 }
@@ -158,7 +160,7 @@ auto Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* m
 
     if (st.type_args.empty())
       for (auto& f : s_decl->body().body())
-        decl_statement(f, st.self_t, member);
+        decl_statement(f, st.self_ty, member);
 
     return &st;
   }
@@ -251,12 +253,12 @@ auto Compiler::default_init(const ty::Type& type) -> Val {
 }
 
 auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
-  if (fn.llvm != nullptr)
-    return fn.llvm;
+  if (fn.base.llvm != nullptr)
+    return fn.base.llvm;
   // Skip primitive definitions, unless they are actually external functions (i.e. printf)
-  if (fn.ast.primitive() && mangle)
+  if (fn.ast().primitive() && mangle)
     return nullptr;
-  const auto& fn_decl = fn.ast;
+  const auto& fn_decl = fn.ast();
   auto* llvm_ret_type = llvm::Type::getVoidTy(*m_context);
   auto llvm_args = vector<llvm::Type*>{};
   if (fn_decl.ret())
@@ -273,7 +275,7 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
 
   auto linkage = mangle ? llvm::Function::InternalLinkage : llvm::Function::ExternalLinkage;
   auto* llvm_fn = llvm::Function::Create(fn_t, linkage, name, m_module.get());
-  fn.llvm = llvm_fn;
+  fn.base.llvm = llvm_fn;
 
   for (auto [llvm_arg, decl_arg] : llvm::zip(llvm_fn->args(), fn_decl.args()))
     llvm_arg.setName("arg."s + decl_arg.name());
@@ -283,17 +285,17 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
   if (!fn_decl.primitive()) {
     m_decl_queue.push(&fn);
     m_walker->current_decl = &fn;
-    m_walker->body_statement(fn.ast);
+    m_walker->body_statement(fn.ast());
   }
   return llvm_fn;
 }
 
 auto Compiler::declare(Ctor& ctor) -> llvm::Function* {
-  if (ctor.llvm != nullptr)
-    return ctor.llvm;
+  if (ctor.base.llvm != nullptr)
+    return ctor.base.llvm;
 
-  const auto& ctor_decl = ctor.ast;
-  auto* llvm_ret_type = llvm_type(*ctor.self_t);
+  const auto& ctor_decl = ctor.ast();
+  auto* llvm_ret_type = llvm_type(*ctor.base.self_ty);
   auto llvm_args = vector<llvm::Type*>{};
 
   for (const auto& i : ctor_decl.args())
@@ -305,15 +307,14 @@ auto Compiler::declare(Ctor& ctor) -> llvm::Function* {
 
   auto linkage = llvm::Function::InternalLinkage;
   auto* llvm_fn = llvm::Function::Create(fn_t, linkage, name, m_module.get());
-  ctor.llvm = llvm_fn;
+  ctor.base.llvm = llvm_fn;
 
-  // TODO(rymiel)
-  // for (auto [llvm_arg, decl_arg] : llvm::zip(llvm_fn->args(), ctor_decl.args()))
-  //   llvm_arg.setName("arg."s + decl_arg.name());
+  for (auto [llvm_arg, decl_arg] : llvm::zip(llvm_fn->args(), ctor_decl.args()))
+    llvm_arg.setName("arg."s + Ctor::arg_name(decl_arg));
 
-  // m_decl_queue.push(&ctor); // TODO(rymiel)
+  m_decl_queue.push(&ctor);
   m_walker->current_decl = &ctor;
-  m_walker->body_statement(ctor.ast);
+  m_walker->body_statement(ctor.ast());
   return llvm_fn;
 }
 
@@ -339,50 +340,79 @@ static inline auto is_trivially_destructible(const ty::Type* type) -> bool {
   throw std::logic_error("Cannot check if "s + type->name() + " is trivially destructible");
 }
 
-void Compiler::destruct_all_in_scope(ast::FnDecl& scope_parent) {
-  yume_assert(std::holds_alternative<ast::Compound>(scope_parent.body()), "Primitives don't have scope");
-
+void Compiler::destruct_all_in_scope() {
   for (const auto& [k, v] : m_scope)
     if (isa<ast::VarDecl>(v.ast) && v.owning && !is_trivially_destructible(v.ast.val_ty()))
       destruct(v.value, *v.ast.val_ty());
 }
 
-void Compiler::define(Fn& fn) {
-  m_current_fn = &fn;
+template <typename T>
+auto Compiler::setup_fn_base(T& fn) -> tuple<llvm::BasicBlock*, llvm::BasicBlock*> {
+  m_current_fn = &fn.base;
   m_scope.clear();
-  auto* decl_bb = llvm::BasicBlock::Create(*m_context, "decl", fn);
-  auto* bb = llvm::BasicBlock::Create(*m_context, "entry", fn);
+  auto* decl_bb = llvm::BasicBlock::Create(*m_context, "decl", fn.base);
+  auto* bb = llvm::BasicBlock::Create(*m_context, "entry", fn.base);
   m_builder->SetInsertPoint(bb);
+  // TODO(rymiel): Find a better solution to replace the "decl_bb"
   m_current_fn->decl_bb = decl_bb;
 
   // Allocate local variables for each parameter
-  for (auto [arg, ast_arg] : llvm::zip(fn.llvm->args(), fn.ast.args())) {
-    const auto& type = *ast_arg.val_ty();
-    auto name = ast_arg.name();
+  for (auto [arg, ast_arg] : llvm::zip(fn.base.llvm->args(), fn.ast().args())) {
+    const auto& type = *T::arg_type(ast_arg);
+    auto name = T::arg_name(ast_arg);
+    auto& val = T::common_ast(ast_arg);
     llvm::Value* alloc = nullptr;
     if (const auto* qual_type = dyn_cast<ty::Qual>(&type)) {
       if (qual_type->is_mut()) {
-        m_scope.insert({name, {.value = &arg, .ast = ast_arg, .owning = false}}); // We don't own parameters
+        m_scope.insert({name, {.value = &arg, .ast = val, .owning = false}}); // We don't own parameters
         continue;
       }
     }
     alloc = m_builder->CreateAlloca(llvm_type(type), nullptr, name);
     m_builder->CreateStore(&arg, alloc);
-    m_scope.insert({name, {.value = alloc, .ast = ast_arg, .owning = false}}); // We don't own parameters
+    m_scope.insert({name, {.value = alloc, .ast = val, .owning = false}}); // We don't own parameters
   }
+
+  return {decl_bb, bb};
+}
+
+void Compiler::define(Fn& fn) {
+  auto [decl_bb, bb] = setup_fn_base(fn);
 
   if (const auto* body = get_if<ast::Compound>(&fn.body()); body != nullptr) {
     statement(*body);
   }
 
   if (m_builder->GetInsertBlock()->getTerminator() == nullptr) {
-    destruct_all_in_scope(fn.ast);
+    destruct_all_in_scope();
     m_builder->CreateRetVoid();
   }
 
   m_builder->SetInsertPoint(decl_bb);
   m_builder->CreateBr(bb);
-  verifyFunction(*fn, &llvm::errs());
+  verifyFunction(*fn.base.llvm, &llvm::errs());
+}
+
+void Compiler::define(Ctor& ctor) {
+  auto [decl_bb, bb] = setup_fn_base(ctor);
+
+  auto* ctor_type = llvm_type(*ctor.base.self_ty);
+
+  auto* base_value = llvm::UndefValue::get(ctor_type);
+  auto* base_alloc = m_builder->CreateAlloca(ctor_type, nullptr, "ctor.base");
+  m_builder->CreateStore(base_value, base_alloc);
+  // Act as if we don't own the object being constructed so it won't get destructed
+  m_scope.insert({"", {.value = base_alloc, .ast = ctor.ast(), .owning = false}});
+
+  // statement(ctor.ast.body()); // TODO
+
+  destruct_all_in_scope();
+  auto* finalized_value = m_builder->CreateLoad(ctor_type, base_alloc);
+  m_builder->CreateRet(finalized_value);
+
+  m_builder->SetInsertPoint(decl_bb);
+  m_builder->CreateBr(bb);
+  verifyFunction(*ctor.base.llvm, &llvm::errs());
 }
 
 template <> void Compiler::statement(const ast::WhileStmt& stat) {
@@ -455,7 +485,7 @@ template <> void Compiler::statement(const ast::ReturnStmt& stat) {
       }
     }
 
-    destruct_all_in_scope(m_current_fn->ast);
+    destruct_all_in_scope();
 
     if (reset_owning != nullptr)
       reset_owning->owning = true; // The local variable may not be returned in all code paths, so reset its ownership
@@ -466,7 +496,7 @@ template <> void Compiler::statement(const ast::ReturnStmt& stat) {
     return;
   }
 
-  destruct_all_in_scope(m_current_fn->ast);
+  destruct_all_in_scope();
   m_builder->CreateRetVoid();
 }
 
@@ -568,7 +598,7 @@ auto Compiler::int_bin_primitive(const string& primitive, const vector<llvm::Val
 
 auto Compiler::primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<const ty::Type*>& types,
                          const ty::Type* ret_ty) -> optional<Val> {
-  if (!fn->ast.primitive())
+  if (!fn->ast().primitive())
     return {};
 
   auto primitive = get<string>(fn->body());
@@ -612,7 +642,7 @@ auto Compiler::primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<
 template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Val {
   auto* selected = expr.selected_overload();
   llvm::Function* llvm_fn = nullptr;
-  const auto* ret_ty = selected->ast.val_ty();
+  const auto* ret_ty = selected->ast().val_ty();
   bool returns_mut = ret_ty != nullptr && ret_ty->is_mut();
 
   if (!returns_mut)
@@ -623,7 +653,7 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
   vector<llvm::Value*> llvm_args{};
 
   unsigned j = 0;
-  const auto& selected_args = selected->ast.args();
+  const auto& selected_args = selected->ast().args();
   for (const auto& i : expr.args()) {
     auto should_pass_by_mut = [&](unsigned index) {
       if (index >= selected_args.size())
@@ -896,17 +926,17 @@ void Compiler::write_object(const char* filename, bool binary) {
 auto Compiler::mangle_name(Fn& fn) -> string {
   stringstream ss{};
   ss << "_Ym.";
-  ss << fn.ast.name();
+  ss << fn.ast().name();
   ss << "(";
-  for (const auto& i : llvm::enumerate(fn.ast.args())) {
+  for (const auto& i : llvm::enumerate(fn.ast().args())) {
     if (i.index() > 0)
       ss << ",";
     ss << mangle_name(*i.value().type().val_ty(), &fn);
   }
   ss << ")";
   // TODO: should mangled names even contain the return type...?
-  if (fn.ast.ret().has_value())
-    ss << mangle_name(*fn.ast.ret()->get().val_ty(), &fn); // wtf
+  if (fn.ast().ret().has_value())
+    ss << mangle_name(*fn.ast().ret()->get().val_ty(), &fn); // wtf
 
   return ss.str();
 }
@@ -916,7 +946,7 @@ auto Compiler::mangle_name(Ctor& ctor) -> string {
   ss << "_Ym.";
   ss << ctor.name();
   ss << "(";
-  for (const auto& i : llvm::enumerate(ctor.ast.args())) {
+  for (const auto& i : llvm::enumerate(ctor.ast().args())) {
     if (i.index() > 0)
       ss << ",";
     ss << mangle_name(*Ctor::arg_type(i.value()), &ctor);

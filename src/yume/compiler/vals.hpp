@@ -47,6 +47,19 @@ struct Instantiation {
 
 using substitution_t = std::map<string, const ty::Type*>;
 
+struct FnBase {
+  ast::AST& ast;
+  /// If this function is in the body of a struct, this points to its type. Used for the `self` type.
+  ty::Type* self_ty{};
+  /// The program this declaration is a member of.
+  ast::Program* member{};
+  llvm::Function* llvm{};
+  /// A basic block where are allocations for local variables should go. It is placed \e before the "entrypoint".
+  llvm::BasicBlock* decl_bb{};
+
+  operator llvm::Function*() const { return llvm; }
+};
+
 /// A function declaration in the compiler.
 /**
  * The primary use of this struct is to bind together the AST declaration of a function (`ast::FnDecl`) and the bytecode
@@ -58,43 +71,39 @@ struct Fn {
   using decl_t = ast::FnDecl;
   using call_t = ast::CallExpr;
 
-  ast::FnDecl& ast;
-  /// If this function is in the body of a struct, this points to its type. Used for the `self` type.
-  ty::Type* self_t{};
-  /// The program this declaration is a member of.
-  ast::Program* member{};
+  FnBase base;
   vector<unique_ptr<ty::Generic>> type_args{};
   /// If this is an instantiation of a template, a mapping between type variables and their substitutions.
   substitution_t subs{};
   std::map<Instantiation, unique_ptr<Fn>> instantiations{};
-  llvm::Function* llvm{};
-  /// A basic block where are allocations for local variables should go. It is placed \e before the "entrypoint".
-  llvm::BasicBlock* decl_bb{};
 
   Fn(ast::FnDecl& ast_decl, ty::Type* parent = nullptr, ast::Program* member = nullptr, substitution_t subs = {},
      vector<unique_ptr<ty::Generic>> type_args = {})
-      : ast(ast_decl), self_t(parent), member(member), type_args(move(type_args)), subs(move(subs)) {}
+      : base{ast_decl, parent, member}, type_args(move(type_args)), subs(move(subs)) {}
 
-  [[nodiscard]] auto body() const -> const auto& { return ast.body(); }
+  [[nodiscard]] auto ast() const -> const auto& { return cast<decl_t>(base.ast); }
+  [[nodiscard]] auto ast() -> auto& { return cast<decl_t>(base.ast); }
+  [[nodiscard]] auto body() const -> const auto& { return ast().body(); }
+  [[nodiscard]] auto get_self_ty() const -> ty::Type* { return base.self_ty; };
 
   [[nodiscard]] auto name() const -> string;
   [[nodiscard]] static auto overload_name(const call_t& ast) -> string;
   [[nodiscard]] static auto arg_type(const decl_t::arg_t& ast) -> const ty::Type*;
+  [[nodiscard]] static auto arg_name(const decl_t::arg_t& ast) -> string;
+  [[nodiscard]] static auto common_ast(const decl_t::arg_t& ast) -> const ast::AST&;
 
   [[nodiscard]] auto declaration(Compiler& compiler, bool mangle = true) -> llvm::Function*;
 
   [[nodiscard]] auto get_or_create_instantiation(Instantiation& instantiate) -> std::pair<bool, Fn&>;
   [[nodiscard]] auto create_instantiation(Instantiation& instantiate) -> Fn&;
-
-  operator llvm::Function*() const { return llvm; }
 };
 
 struct Struct {
   using decl_t = ast::StructDecl;
 
-  ast::StructDecl& ast;
+  ast::StructDecl& st_ast;
   /// The type of this struct. Used for the `self` type.
-  ty::Type* self_t{};
+  ty::Type* self_ty{};
   /// The program this declaration is a member of.
   ast::Program* member{};
   vector<unique_ptr<ty::Generic>> type_args{};
@@ -104,9 +113,12 @@ struct Struct {
 
   Struct(ast::StructDecl& ast_decl, ty::Type* type = nullptr, ast::Program* member = nullptr, substitution_t subs = {},
          vector<unique_ptr<ty::Generic>> type_args = {})
-      : ast(ast_decl), self_t(type), member(member), type_args(move(type_args)), subs(move(subs)) {}
+      : st_ast(ast_decl), self_ty(type), member(member), type_args(move(type_args)), subs(move(subs)) {}
 
-  [[nodiscard]] auto body() const -> const auto& { return ast.body(); }
+  [[nodiscard]] auto ast() const -> const auto& { return st_ast; }
+  [[nodiscard]] auto ast() -> auto& { return st_ast; }
+  [[nodiscard]] auto body() const -> const auto& { return st_ast.body(); }
+  [[nodiscard]] auto get_self_ty() const -> ty::Type* { return self_ty; };
 
   [[nodiscard]] auto name() const -> string;
 
@@ -118,19 +130,21 @@ struct Ctor {
   using decl_t = ast::CtorDecl;
   using call_t = ast::CtorExpr;
 
-  ast::CtorDecl& ast;
-  ty::Type* self_t{};
-  ast::Program* member{};
-  llvm::Function* llvm{};
+  FnBase base;
 
   Ctor(ast::CtorDecl& ast_decl, ty::Type* type = nullptr, ast::Program* member = nullptr)
-      : ast(ast_decl), self_t(type), member(member) {}
+      : base{ast_decl, type, member} {}
 
   [[nodiscard]] auto declaration(Compiler& compiler) -> llvm::Function*;
+  [[nodiscard]] auto ast() const -> const auto& { return cast<decl_t>(base.ast); }
+  [[nodiscard]] auto ast() -> auto& { return cast<decl_t>(base.ast); }
+  [[nodiscard]] auto get_self_ty() const -> ty::Type* { return base.self_ty; };
 
   [[nodiscard]] auto name() const -> string;
   [[nodiscard]] static auto overload_name(const call_t& ast) -> string;
   [[nodiscard]] static auto arg_type(const decl_t::arg_t& ast) -> const ty::Type*;
+  [[nodiscard]] static auto arg_name(const decl_t::arg_t& ast) -> string;
+  [[nodiscard]] static auto common_ast(const decl_t::arg_t& ast) -> const ast::AST&;
 };
 
 template <typename R, typename... Ts> struct DeclLikeVisitor : Ts... {
@@ -161,11 +175,11 @@ struct DeclLike : public DeclLike_t {
   };
 
   [[nodiscard]] auto ast() const -> const ast::AST* {
-    return visit_decl<ast::AST*>([](auto* decl) -> ast::AST* { return &decl->ast; });
+    return visit_decl<const ast::AST*>([](const auto* decl) -> const ast::AST* { return &decl->ast(); });
   };
 
-  [[nodiscard]] auto self_t() const -> const ty::Type* {
-    return visit_decl<ty::Type*>([](const auto& decl) { return decl->self_t; });
+  [[nodiscard]] auto self_ty() const -> const ty::Type* {
+    return visit_decl<ty::Type*>([](const auto* decl) { return decl->get_self_ty(); });
   };
 };
 

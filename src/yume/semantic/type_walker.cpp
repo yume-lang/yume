@@ -68,7 +68,7 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
     expression(template_base);
     const auto& base_type = convert_type(template_base);
     auto struct_obj =
-        std::ranges::find_if(compiler.m_structs, [&](const Struct& st) { return st.self_t == &base_type; });
+        std::ranges::find_if(compiler.m_structs, [&](const Struct& st) { return st.self_ty == &base_type; });
 
     if (struct_obj == compiler.m_structs.end())
       throw std::logic_error("Can't add template arguments to non-struct types");
@@ -89,26 +89,26 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
       with_saved_scope([&] {
         in_depth = false;
         current_decl = &new_st;
-        body_statement(new_st.ast);
+        body_statement(new_st.st_ast);
       });
 
       // HACK: the "describe" method is being abused here
-      std::string name_with_types = new_st.ast.name() + templated->describe();
+      std::string name_with_types = new_st.st_ast.name() + templated->describe();
 
       auto& i_ty =
-          compiler.m_types.template_instantiations.emplace_back(Compiler::create_struct(new_st.ast, name_with_types));
+          compiler.m_types.template_instantiations.emplace_back(Compiler::create_struct(new_st.st_ast, name_with_types));
 
-      new_st.self_t = i_ty.get();
+      new_st.self_ty = i_ty.get();
       decl_queue.push(&new_st);
     }
 
-    expr.val_ty(inst_struct.self_t);
+    expr.val_ty(inst_struct.self_ty);
     st = &inst_struct;
   } else {
     expression(expr.type());
     const auto& base_type = convert_type(expr.type());
     auto struct_obj =
-        std::ranges::find_if(compiler.m_structs, [&](const Struct& st) { return st.self_t == &base_type; });
+        std::ranges::find_if(compiler.m_structs, [&](const Struct& st) { return st.self_ty == &base_type; });
     if (struct_obj != compiler.m_structs.end())
       st = &*struct_obj;
     expr.val_ty(&base_type);
@@ -220,7 +220,7 @@ auto TypeWalker::all_ctor_overloads_by_type(Struct& st, ast::CtorExpr& call) -> 
   auto ctors_by_type = vector<Overload<Ctor>>();
 
   for (auto& ctor : compiler.m_ctors)
-    if (ctor.self_t == st.self_t)
+    if (ctor.base.self_ty == st.self_ty)
       ctors_by_type.emplace_back(&ctor);
 
   return OverloadSet<Ctor>{&call, ctors_by_type, {}};
@@ -284,7 +284,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
       with_saved_scope([&] {
         in_depth = false;
         current_decl = &new_fn;
-        body_statement(new_fn.ast);
+        body_statement(new_fn.ast());
       });
 
       decl_queue.push(&new_fn);
@@ -296,7 +296,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
   }
 
   for (auto [target, expr_arg, compat] :
-       llvm::zip(selected->ast.args(), expr.direct_args(), best_overload.compatibilities)) {
+       llvm::zip(selected->ast().args(), expr.direct_args(), best_overload.compatibilities)) {
     yume_assert(compat.valid, "Invalid compatibility after overload already selected?????");
     if (compat.conv.empty())
       continue;
@@ -307,8 +307,8 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
     expr_arg = move(cast_expr);
   }
 
-  if (selected->ast.ret().has_value())
-    expr.attach_to(&selected->ast);
+  if (selected->ast().ret().has_value())
+    expr.attach_to(&selected->ast());
 
   expr.selected_overload(selected);
 }
@@ -351,7 +351,7 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
 template <> void TypeWalker::statement(ast::CtorDecl& stat) {
   scope.clear();
 
-  const auto* struct_type = dyn_cast<ty::Struct>(&current_decl.self_t()->without_qual());
+  const auto* struct_type = dyn_cast<ty::Struct>(&current_decl.self_ty()->without_qual());
 
   if (struct_type == nullptr)
     throw std::runtime_error("Can't define constructor of non-struct type");
@@ -422,7 +422,7 @@ void TypeWalker::body_expression(ast::Expr& expr) {
 }
 
 auto TypeWalker::convert_type(const ast::Type& ast_type) -> const ty::Type& {
-  const ty::Type* parent = current_decl.self_t();
+  const ty::Type* parent = current_decl.self_ty();
   const auto* context = current_decl.subs();
 
   if (const auto* simple_type = dyn_cast<ast::SimpleType>(&ast_type)) {
@@ -460,7 +460,7 @@ void TypeWalker::resolve_queue() {
           },
           [&](Struct* st) {
             for (auto& i : st->body().body()) {
-              auto decl = compiler.decl_statement(i, st->self_t, st->member);
+              auto decl = compiler.decl_statement(i, st->self_ty, st->member);
               compiler.walk_types(decl);
             }
           },

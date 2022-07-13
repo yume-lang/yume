@@ -47,10 +47,10 @@ class Compiler : public CRTPWalker<Compiler> {
   vector<Fn> m_fns{};
   vector<Struct> m_structs{};
   vector<Ctor> m_ctors{};
-  std::queue<Fn*> m_decl_queue{};
+  std::queue<DeclLike> m_decl_queue{};
   unique_ptr<semantic::TypeWalker> m_walker;
 
-  Fn* m_current_fn{};
+  FnBase* m_current_fn{};
   std::map<string, InScope> m_scope{};
 
   unique_ptr<llvm::LLVMContext> m_context;
@@ -76,6 +76,7 @@ public:
 
   /// Compile the body of a function.
   void define(Fn&);
+  void define(Ctor&);
 
   void body_statement(const ast::Stmt&);
   auto decl_statement(ast::Stmt&, ty::Type* parent = nullptr, ast::Program* member = nullptr) -> DeclLike;
@@ -105,7 +106,9 @@ private:
     throw std::runtime_error("Unknown expression "s + expr.kind_name());
   }
 
-  void destruct_all_in_scope(ast::FnDecl& scope_parent);
+  template <typename T> auto setup_fn_base(T&) -> tuple<llvm::BasicBlock*, llvm::BasicBlock*>;
+
+  void destruct_all_in_scope();
 
   auto known_type(const string& str) -> ty::Type&;
 
