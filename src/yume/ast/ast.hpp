@@ -595,7 +595,7 @@ public:
 /// A declaration of a custom constructor (`def :`).
 class CtorDecl : public Stmt {
 public:
-  using arg_t = variant<TypeName, VarExpr>;
+  using arg_t = variant<TypeName, FieldAccessExpr>;
 
 private:
   string m_name;
