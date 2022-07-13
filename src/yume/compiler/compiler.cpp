@@ -346,8 +346,7 @@ void Compiler::destruct_all_in_scope() {
       destruct(v.value, *v.ast.val_ty());
 }
 
-template <typename T>
-auto Compiler::setup_fn_base(T& fn) -> tuple<llvm::BasicBlock*, llvm::BasicBlock*> {
+template <typename T> auto Compiler::setup_fn_base(T& fn) -> tuple<llvm::BasicBlock*, llvm::BasicBlock*> {
   m_current_fn = &fn.base;
   m_scope.clear();
   auto* decl_bb = llvm::BasicBlock::Create(*m_context, "decl", fn.base);
@@ -404,7 +403,7 @@ void Compiler::define(Ctor& ctor) {
   // Act as if we don't own the object being constructed so it won't get destructed
   m_scope.insert({"", {.value = base_alloc, .ast = ctor.ast(), .owning = false}});
 
-  // statement(ctor.ast.body()); // TODO
+  statement(ctor.ast().body());
 
   destruct_all_in_scope();
   auto* finalized_value = m_builder->CreateLoad(ctor_type, base_alloc);
@@ -691,12 +690,29 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> 
     return expr_val;
   }
   if (const auto* field_access = dyn_cast<ast::FieldAccessExpr>(&expr.target())) {
-    auto base = body_expression(*field_access->base(), true);
+    auto field_base = field_access->base();
+    const ty::Type* struct_base{nullptr};
+    Val base{nullptr};
+    if (field_base.has_value()) {
+      base = body_expression(*field_base, true);
+      struct_base = &field_access->base()->get().val_ty()->without_qual();
+    } else {
+      // TODO(rymiel): revisit
+      if (!isa<ast::CtorDecl>(m_current_fn->ast))
+        throw std::logic_error("Field access without a base is only available in constructors");
+
+      auto [value, ast, owning] = m_scope.at(""); // TODO(rymiel): Sort of a magic value
+      base = value;
+      struct_base = &ast.val_ty()->without_qual();
+    }
+
     auto base_name = field_access->field();
     int base_offset = field_access->offset();
 
     auto expr_val = body_expression(expr.value(), mut);
-    auto* struct_type = llvm_type(cast<ty::Struct>(field_access->base()->get().val_ty()->without_qual()));
+    auto* struct_type = llvm_type(cast<ty::Struct>(*struct_base));
+
+    yume_assert(base_offset >= 0, "Field access has unknown offset into struct");
 
     auto* gep = m_builder->CreateStructGEP(struct_type, base, base_offset, "s.sf."s + base_name);
     m_builder->CreateStore(expr_val, gep);
