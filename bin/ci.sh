@@ -6,13 +6,15 @@ declare LLVM_COV
 
 case $1 in
   "examples" )
+    status=0
     for i in example/*; do
       [[ -f "${i}" ]] || continue
       echo "Running example ${i}"
-      "${BUILD_DIR}"/yumec "${i}" || exit 1
+      "${BUILD_DIR}"/yumec "${i}" || { status=1; continue; }
       mv output.ll result-"$(basename "${i}")".ll
-      ./yume.out || exit 1
-    done;;
+      ./yume.out || { status=1; continue; }
+    done
+    exit "${status}";;
 
   "test" )
     cd "${BUILD_DIR}" || exit
