@@ -53,6 +53,9 @@ struct Instantiation {
  * All the instantiations of a template are stored in `m_instantiations`.
  */
 struct Fn {
+  using ast_t = ast::FnDecl;
+  using call_t = ast::CallExpr;
+
   ast::FnDecl& ast;
   /// If this function is in the body of a struct, this points to its type. Used for the `self` type.
   ty::Type* self_t{};
@@ -72,7 +75,8 @@ struct Fn {
 
   [[nodiscard]] auto body() const -> const auto& { return ast.body(); }
 
-  [[nodiscard]] auto name() const { return ast.name(); }
+  [[nodiscard]] auto name() const -> string;
+  [[nodiscard]] static auto overload_name(const call_t& ast) -> string;
 
   [[nodiscard]] auto declaration(Compiler& compiler, bool mangle = true) -> llvm::Function*;
 
@@ -80,12 +84,11 @@ struct Fn {
   [[nodiscard]] auto create_instantiation(Instantiation& instantiate) -> Fn&;
 
   operator llvm::Function*() const { return llvm; }
-
-  using ast_t = ast::FnDecl;
-  using call_t = ast::CallExpr;
 };
 
 struct Struct {
+  using ast_t = ast::StructDecl;
+
   ast::StructDecl& ast;
   /// The type of this struct. Used for the `self` type.
   ty::Type* self_t{};
@@ -102,24 +105,28 @@ struct Struct {
 
   [[nodiscard]] auto body() const -> const auto& { return ast.body(); }
 
-  [[nodiscard]] auto name() const { return ast.name(); }
+  [[nodiscard]] auto name() const -> string;
 
   [[nodiscard]] auto get_or_create_instantiation(Instantiation& instantiate) -> std::pair<bool, Struct&>;
   [[nodiscard]] auto create_instantiation(Instantiation& instantiate) -> Struct&;
-
-  using ast_t = ast::StructDecl;
 };
 
 struct Ctor {
+  using ast_t = ast::CtorDecl;
+  using call_t = ast::CtorExpr;
+
   ast::CtorDecl& ast;
   ty::Type* self_t{};
   ast::Program* member{};
+  llvm::Function* llvm{};
 
   Ctor(ast::CtorDecl& ast_decl, ty::Type* type = nullptr, ast::Program* member = nullptr)
       : ast(ast_decl), self_t(type), member(member) {}
 
-  using ast_t = ast::CtorDecl;
-  using call_t = ast::CtorExpr;
+  [[nodiscard]] auto declaration(Compiler& compiler) -> llvm::Function*;
+
+  [[nodiscard]] auto name() const -> string;
+  [[nodiscard]] static auto overload_name(const call_t& ast) -> string;
 };
 
 using DeclLike = std::variant<std::monostate, Fn*, Struct*, Ctor*>;
@@ -133,6 +140,12 @@ template <typename R, typename... Ts> DeclLikeVisitor(R, Ts...) -> DeclLikeVisit
 template <typename R = void, typename... Ts> auto visit_decl(DeclLike decl_like, Ts... ts) {
   return std::visit(DeclLikeVisitor<R, Ts...>{ts...}, decl_like);
 }
+
+template <typename T> inline static constexpr auto get_val_ty = [](const ast::TypeName& ast) { return ast.val_ty(); };
+template <>
+inline static constexpr auto get_val_ty<Ctor> =
+    [](const auto& ast) { return std::visit([](const auto& t) { return t.val_ty(); }, ast); };
+template <> inline static constexpr auto get_val_ty<ast::AST> = [](const ast::AST* ast) { return ast->val_ty(); };
 
 /// A value of a complied expression.
 /**

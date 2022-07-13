@@ -5,9 +5,18 @@
 
 namespace yume {
 
+// XXX: This is worthless. The memoization check is already done within `declare`
 auto Fn::declaration(Compiler& compiler, bool mangle) -> llvm::Function* {
   if (llvm == nullptr) {
     llvm = compiler.declare(*this, mangle);
+  }
+  return llvm;
+}
+
+// XXX: This is worthless. The memoization check is already done within `declare`
+auto Ctor::declaration(Compiler& compiler) -> llvm::Function* {
+  if (llvm == nullptr) {
+    llvm = compiler.declare(*this);
   }
   return llvm;
 }
@@ -53,4 +62,12 @@ auto Struct::get_or_create_instantiation(Instantiation& instantiate) -> std::pai
 
   return {true, *existing_instantiation->second};
 }
+
+auto Fn::name() const -> string { return ast.name(); }
+// TODO: Named ctors
+auto Ctor::name() const -> string { return self_t->name() + ":new"; }
+auto Struct::name() const -> string { return ast.name(); }
+
+auto Fn::overload_name(const call_t& ast) -> string { return ast.name(); };
+auto Ctor::overload_name(const call_t& ast) -> string { return ast.val_ty()->name() + ":new"; };
 } // namespace yume

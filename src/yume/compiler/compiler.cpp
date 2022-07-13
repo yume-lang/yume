@@ -276,11 +276,8 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
   auto* llvm_fn = llvm::Function::Create(fn_t, linkage, name, m_module.get());
   fn.llvm = llvm_fn;
 
-  int arg_i = 0;
-  for (auto& arg : llvm_fn->args()) {
-    arg.setName("arg."s + fn_decl.args()[arg_i].name());
-    arg_i++;
-  }
+  for (auto [llvm_arg, decl_arg] : llvm::zip(llvm_fn->args(), fn_decl.args()))
+    llvm_arg.setName("arg."s + decl_arg.name());
 
   // Primitive definitions that got this far are actually external functions; declare its prototype but not its
   // body
@@ -289,6 +286,36 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
     m_walker->current_decl = &fn;
     m_walker->body_statement(fn.ast);
   }
+  return llvm_fn;
+}
+
+auto Compiler::declare(Ctor& ctor) -> llvm::Function* {
+  if (ctor.llvm != nullptr)
+    return ctor.llvm;
+
+  const auto& ctor_decl = ctor.ast;
+  auto* llvm_ret_type = llvm_type(*ctor.self_t);
+  auto llvm_args = vector<llvm::Type*>{};
+
+  for (const auto& i : ctor_decl.args())
+    llvm_args.push_back(llvm_type(*get_val_ty<Ctor>(i)));
+
+  llvm::FunctionType* fn_t = llvm::FunctionType::get(llvm_ret_type, llvm_args, false);
+
+  string name = ctor.name();
+  // name = mangle_name(ctor); // TODO(rymiel)
+
+  auto linkage = llvm::Function::InternalLinkage;
+  auto* llvm_fn = llvm::Function::Create(fn_t, linkage, name, m_module.get());
+  ctor.llvm = llvm_fn;
+
+  // TODO(rymiel)
+  // for (auto [llvm_arg, decl_arg] : llvm::zip(llvm_fn->args(), ctor_decl.args()))
+  //   llvm_arg.setName("arg."s + decl_arg.name());
+
+  // m_decl_queue.push(&ctor); // TODO(rymiel)
+  m_walker->current_decl = &ctor;
+  m_walker->body_statement(ctor.ast);
   return llvm_fn;
 }
 
@@ -672,13 +699,26 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
     //// Stack allocation
     // alloc = m_builder->CreateAlloca(llvm_struct_type, 0, nullptr, "s.ctor.alloca");
 
-    auto i = 0;
+    //// Value allocation
     llvm::Value* base_value = llvm::UndefValue::get(llvm_struct_type);
-    for (const auto& arg : expr.args()) {
-      const auto& [target_type, target_name] = struct_type->fields().begin()[i];
-      auto field_value = body_expression(arg);
-      base_value = m_builder->CreateInsertValue(base_value, field_value, i, "s.ctor.wf." + target_name);
-      i++;
+    auto* selected_ctor_overload = expr.selected_overload();
+
+    if (selected_ctor_overload == nullptr) { // TODO(rymiel): The implicit constructor should be an actual ctor
+      auto i = 0;
+      for (const auto& arg : llvm::enumerate(expr.args())) {
+        const auto& [target_type, target_name] = struct_type->fields()[i];
+        auto field_value = body_expression(arg.value());
+        base_value = m_builder->CreateInsertValue(base_value, field_value, i, "s.ctor.wf." + target_name);
+        i++;
+      }
+    } else {
+      auto* llvm_fn = selected_ctor_overload->declaration(*this);
+      vector<llvm::Value*> llvm_args{};
+      for (const auto& i : expr.args()) {
+        auto arg = body_expression(i);
+        llvm_args.push_back(arg.llvm);
+      }
+      base_value = m_builder->CreateCall(llvm_fn, llvm_args);
     }
 
     if (mut) {
