@@ -31,7 +31,7 @@ static auto join_args(const auto& iter, auto fn, llvm::raw_ostream& stream = llv
 /// \returns nullptr if substitution failed
 static auto intersect_generics(Instantiation& instantiation, const ty::Generic* gen, const ty::Type* gen_sub)
     -> const ty::Type* {
-  // TODO: this logic should be in the Type compatibility checker algorithm itself
+  // TODO(rymiel): this logic should be in the Type compatibility checker algorithm itself
   auto existing = instantiation.sub.find(gen);
   // The substitution must have an intersection with an already deduced value for the same type variable
   if (existing != instantiation.sub.end()) {
@@ -171,7 +171,7 @@ template <typename T> void OverloadSet<T>::determine_valid_overloads() {
   auto& [call_expr, overloads, args] = *this;
 
   // All `Overload`s are determined to not be viable by default, so determine the ones which actually are
-  // TODO: Actually keep track of *why* a type is not viable, for diagnostics.
+  // TODO(rymiel): #17 Actually keep track of *why* a type is not viable, for diagnostics.
   for (auto& i : overloads)
     i.viable = is_valid_overload(i);
 }

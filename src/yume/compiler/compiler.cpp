@@ -474,8 +474,8 @@ template <> void Compiler::statement(const ast::IfStmt& stat) {
       m_builder->CreateBr(merge_bb);
     }
   } else {
-    // HACK:  For if statements with no else clause, it creates an empty `if.test` block which only contains a single
-    // `br` instruction to the merge point.
+    // HACK: #15  For if statements with no else clause, it creates an empty `if.test` block which only contains a
+    // single `br` instruction to the merge point.
     m_builder->SetInsertPoint(next_test_bb);
     m_builder->CreateBr(merge_bb);
   }
@@ -517,7 +517,7 @@ template <> void Compiler::statement(const ast::ReturnStmt& stat) {
 
 template <> void Compiler::statement(const ast::VarDecl& stat) {
   // Locals are currently always mut, get the base type instead
-  // TODO: revisit, probably extract logic
+  // TODO(rymiel): revisit, probably extract logic
   auto* var_type = llvm_type(*stat.val_ty()->qual_base());
 
   auto* current_block = m_builder->GetInsertBlock();
@@ -743,9 +743,9 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
     auto* llvm_struct_type = llvm_type(*struct_type);
 
     llvm::Value* alloc = nullptr;
-    // TODO: #4 determine what kind of allocation must be done, and if at all. It'll probably require a complicated
-    // semantic step to determine object lifetime, which would probably be evaluated before compilation of these
-    // expressions. currently just using "mut" constraint, which probably won't be permanent and is probably
+    // TODO(rymiel): #4 determine what kind of allocation must be done, and if at all. It'll probably require a
+    // complicated semantic step to determine object lifetime, which would probably be evaluated before compilation of
+    // these expressions. currently just using "mut" constraint, which probably won't be permanent and is probably
     // faulty, but, oh well
 
     //// Heap allocation
@@ -763,7 +763,7 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
     llvm::Value* base_value = llvm::UndefValue::get(llvm_struct_type);
     auto* selected_ctor_overload = expr.selected_overload();
 
-    if (selected_ctor_overload == nullptr) { // TODO(rymiel): The implicit constructor should be an actual ctor
+    if (selected_ctor_overload == nullptr) { // TODO(rymiel): #16 The implicit constructor should be an actual ctor
       auto i = 0;
       for (const auto& arg : llvm::enumerate(expr.args())) {
         const auto& [target_type, target_name] = struct_type->fields()[i];
@@ -824,15 +824,15 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
     //   return slice_inst;
     // }
 
-    // TODO: the commented-out block above stack-allocates a slice constructor if its size can be determined
+    // TODO(rymiel): the commented-out block above stack-allocates a slice constructor if its size can be determined
     // trivially. However, since it references stack memory, a slice allocated this way could never be feasibly
     // returned or passed into a function which stores a reference to it, etc. The compiler currently does nothing
     // resembling "escape analysis", however something like that might be needed to perform an optimization like
     // shown above.
-    // TODO: Note that also a slice could be stack-allocated even if its size *wasn't* known at compile time,
+    // TODO(rymiel): Note that also a slice could be stack-allocated even if its size *wasn't* known at compile time,
     // however, I simply didn't know how to do that when i wrote the above snipped. But, since its problematic
     // anyway, it remains unfixed (and commented out); revisit later.
-    // TODO: A large slice may be unfeasible to be stack-allocated anyway, so in addition to the above points,
+    // TODO(rymiel): A large slice may be unfeasible to be stack-allocated anyway, so in addition to the above points,
     // slice size could also be a consideration. Perhaps we don't *want* to stack-allocate unknown-sized slices as
     // they may be absurdly huge in size and cause stack overflow.
     // Related: #4
@@ -908,7 +908,7 @@ template <> auto Compiler::expression(const ast::SliceExpr& expr, bool mut) -> V
 }
 
 template <> auto Compiler::expression(const ast::FieldAccessExpr& expr, bool mut) -> Val {
-  // TODO: struct can only contain things by value, later this needs a condition
+  // TODO(rymiel): struct can only contain things by value, later this needs a condition
   not_mut("immutable field", mut);
 
   auto base = body_expression(*expr.base());
@@ -966,7 +966,7 @@ auto Compiler::mangle_name(Fn& fn) -> string {
     ss << mangle_name(*i.value().type().val_ty(), &fn);
   }
   ss << ")";
-  // TODO: should mangled names even contain the return type...?
+  // TODO(rymiel): should mangled names even contain the return type...?
   if (fn.ast().ret().has_value())
     ss << mangle_name(*fn.ast().ret()->get().val_ty(), &fn); // wtf
 
@@ -1019,8 +1019,8 @@ void Compiler::body_statement(const ast::Stmt& stat) {
   return CRTPWalker::body_statement(stat);
 }
 
-// TODO: #3 once implicit conversion checking is added in the remaining locations (i.e. field assignment and return)
-// there is no real reason to keep the `mut` parameter on all expression compilation methods. All the mutability
+// TODO(rymiel): #3 once implicit conversion checking is added in the remaining locations (i.e. field assignment and
+// return) there is no real reason to keep the `mut` parameter on all expression compilation methods. All the mutability
 // information is in the type system and dereferences are handled by the TypeWalker.
 auto Compiler::body_expression(const ast::Expr& expr, bool mut) -> Val {
   const ASTStackTrace guard("Codegen: "s + expr.kind_name() + " expression", expr);

@@ -37,7 +37,7 @@ template <> void TypeWalker::expression(ast::NumberExpr& expr) {
 }
 
 template <> void TypeWalker::expression(ast::StringExpr& expr) {
-  // TODO: String type
+  // TODO(rymiel): #18 String type
   expr.val_ty(&compiler.m_types.int8().u_ty->known_ptr());
 }
 
@@ -142,7 +142,7 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
 
     const auto* best_overload = ctor_overloads.try_best_viable_overload();
     if (best_overload == nullptr)
-      return; // TODO(rymiel): The implicitly defined ctors should be real ctors, so this could be an error
+      return; // TODO(rymiel): #16 The implicitly defined ctors should be real ctors, so this could be an error
 
 #ifdef YUME_SPEW_OVERLOAD_SELECTION
     llvm::errs() << "\nSelected overload:\n";
@@ -279,11 +279,11 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
       // The types of the instantiated function must be set immediately (i.e. with in_depth = false)
       // This is because the implicit cast logic below depends on the direct type being set here and bound type
       // information doesn't propagate across ImplicitCastExpr...
-      // TODO: Find a better solution; such as moving cast logic also into queue?
+      // TODO(rymiel): Find a better solution; such as moving cast logic also into queue?
       // However that would require evaluation of the queue very eagerly (i.e. immediately when the function is used,
       // which kinda defeats the purpose of the queue). So I guess we'll just keep this until I think of a better
       // solution
-      // TODO: find a better solution other than the solution proposed above
+      // TODO(rymiel): find a better solution other than the solution proposed above
       with_saved_scope([&] {
         in_depth = false;
         current_decl = &new_fn;

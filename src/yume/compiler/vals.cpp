@@ -64,7 +64,7 @@ auto Struct::get_or_create_instantiation(Instantiation& instantiate) -> std::pai
 }
 
 auto Fn::name() const -> string { return ast().name(); }
-// TODO: Named ctors
+// TODO(rymiel): Named ctors
 auto Ctor::name() const -> string { return base.self_ty->name() + ":new"; }
 auto Struct::name() const -> string { return st_ast.name(); }
 

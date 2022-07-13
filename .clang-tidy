@@ -7,7 +7,7 @@ Checks: >-
   performance-*,
   bugprone-*,
   misc-*,
-  google-readibility-todo,
+  google-readability-todo,
   -bugprone-exception-escape,
   -cppcoreguidelines-macro-usage,
   -cppcoreguidelines-owning-memory,
