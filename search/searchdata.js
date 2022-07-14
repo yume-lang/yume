@@ -10,8 +10,7 @@ var indexSectionsWithContent =
   7: "kqt",
   8: "ciklmnpqsw",
   9: "o",
-  10: "y",
-  11: "y"
+  10: "y"
 };
 
 var indexSectionNames =
@@ -26,8 +25,7 @@ var indexSectionNames =
   7: "enums",
   8: "enumvalues",
   9: "related",
-  10: "defines",
-  11: "concepts"
+  10: "defines"
 };
 
 var indexSectionLabels =
@@ -42,7 +40,6 @@ var indexSectionLabels =
   7: "Enumerations",
   8: "Enumerator",
   9: "Friends",
-  10: "Macros",
-  11: "Concepts"
+  10: "Macros"
 };
 

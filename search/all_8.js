@@ -1,13 +1,13 @@
 var searchData=
 [
-  ['ifclause_0',['IfClause',['../classyume_1_1ast_1_1IfClause.html#a7cbcd2e8e73bd3659bc075f4a32f9c17',1,'yume::ast::IfClause::IfClause()'],['../classyume_1_1ast_1_1IfClause.html',1,'yume::ast::IfClause']]],
+  ['ifclause_0',['IfClause',['../classyume_1_1ast_1_1IfClause.html#ab5f216bef493d76716a5cbb58b831037',1,'yume::ast::IfClause::IfClause()'],['../classyume_1_1ast_1_1IfClause.html',1,'yume::ast::IfClause']]],
   ['ifstmt_1',['IfStmt',['../classyume_1_1ast_1_1IfStmt.html#aff3e68fd555b42344a02ecf2c1853706',1,'yume::ast::IfStmt::IfStmt()'],['../classyume_1_1ast_1_1IfStmt.html',1,'yume::ast::IfStmt']]],
   ['ignore_5fseparator_2',['ignore_separator',['../structyume_1_1ast_1_1parser_1_1Parser.html#aacd1e11cee01f73b61b3a297fcf1d4a5',1,'yume::ast::parser::Parser']]],
-  ['implicitcastexpr_3',['ImplicitCastExpr',['../classyume_1_1ast_1_1ImplicitCastExpr.html#a5d48497d7d7bf8d3b4f77222ee6119c6',1,'yume::ast::ImplicitCastExpr::ImplicitCastExpr()'],['../classyume_1_1ast_1_1ImplicitCastExpr.html',1,'yume::ast::ImplicitCastExpr']]],
+  ['implicitcastexpr_3',['ImplicitCastExpr',['../classyume_1_1ast_1_1ImplicitCastExpr.html#ade65477b7bbd34aa3135b9e4ff861a67',1,'yume::ast::ImplicitCastExpr::ImplicitCastExpr()'],['../classyume_1_1ast_1_1ImplicitCastExpr.html',1,'yume::ast::ImplicitCastExpr']]],
   ['in_5fdepth_4',['in_depth',['../structyume_1_1semantic_1_1TypeWalker.html#af9a74becf44b236bec8bf38365735c59',1,'yume::semantic::TypeWalker']]],
   ['in_5frange_5',['in_range',['../classyume_1_1ty_1_1Int.html#aa6b55d0d47254db19fdff7428f4e0f07',1,'yume::ty::Int']]],
   ['index_6',['index',['../structyume_1_1TokenState.html#ae28aa12a65948f99f52c4c0708bd0103',1,'yume::TokenState::index()'],['../structyume_1_1Token.html#a559dd11a57e8fcb30382803050da5d24',1,'yume::Token::index()']]],
-  ['init_7',['init',['../classyume_1_1ast_1_1VarDecl.html#aea016f1021489abcacb7a9d285ee36d9',1,'yume::ast::VarDecl::init() -&gt; auto &amp;'],['../classyume_1_1ast_1_1VarDecl.html#a0eaf4af7253aa8a94f1ef53b8f792c0f',1,'yume::ast::VarDecl::init() const -&gt; const auto &amp;']]],
+  ['init_7',['init',['../classyume_1_1ast_1_1VarDecl.html#a0eaf4af7253aa8a94f1ef53b8f792c0f',1,'yume::ast::VarDecl::init() const -&gt; const auto &amp;'],['../classyume_1_1ast_1_1VarDecl.html#aea016f1021489abcacb7a9d285ee36d9',1,'yume::ast::VarDecl::init() -&gt; auto &amp;']]],
   ['inscope_8',['InScope',['../structyume_1_1InScope.html',1,'yume']]],
   ['instantiation_9',['instantiation',['../structyume_1_1semantic_1_1Overload.html#a337c1afd1bcf9cc606ef34e016671213',1,'yume::semantic::Overload']]],
   ['instantiation_10',['Instantiation',['../structyume_1_1Instantiation.html',1,'yume']]],

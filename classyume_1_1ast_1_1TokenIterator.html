@@ -103,7 +103,7 @@ Public Member Functions</h2></td></tr>
 <div class="textblock"><p >An iterator-like holding <code><a class="el" href="structyume_1_1Token.html" title="A categorized token in source code, created by the tokenizer. These tokens are consumed by the lexer.">Token</a></code>s, used when parsing. </p>
 <p >Every parse method usually takes this as the first parameter. This is its own struct as it actually holds two iterators, where one is the end. This is to provide safe indexing (avoiding going past the end) without having to pass the end iterator around as a separate parameter. </p>
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00031">31</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00030">30</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a30a8a8edd0acd2b99ef7579e86bff268" name="a30a8a8edd0acd2b99ef7579e86bff268"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a30a8a8edd0acd2b99ef7579e86bff268">&#9670;&nbsp;</a></span>TokenIterator()</h2>
@@ -139,7 +139,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00036">36</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00035">35</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
 </div>
 </div>
@@ -169,9 +169,9 @@ Public Member Functions</h2></td></tr>
 
 <p>Check if the iterator is at the end and no more <code><a class="el" href="structyume_1_1Token.html" title="A categorized token in source code, created by the tokenizer. These tokens are consumed by the lexer.">Token</a></code>s could possibly be read. </p>
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00040">40</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00039">39</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00020">yume::ast::parser::Parser::expect()</a>, <a class="el" href="parser_8hpp_source.html#l00046">operator*()</a>, <a class="el" href="parser_8hpp_source.html#l00054">operator++()</a>, <a class="el" href="parser_8hpp_source.html#l00041">operator-&gt;()</a>, and <a class="el" href="parser_8cpp_source.html#l00029">yume::ast::parser::Parser::require_separator()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00020">yume::ast::parser::Parser::expect()</a>, <a class="el" href="parser_8hpp_source.html#l00045">operator*()</a>, <a class="el" href="parser_8hpp_source.html#l00053">operator++()</a>, <a class="el" href="parser_8hpp_source.html#l00040">operator-&gt;()</a>, and <a class="el" href="parser_8cpp_source.html#l00029">yume::ast::parser::Parser::require_separator()</a>.</p>
 
 </div>
 </div>
@@ -200,9 +200,9 @@ Public Member Functions</h2></td></tr>
 
 <p>Returns the underlying iterator. This shouldn't really be needed but I'm too lazy to properly model an iterator. </p>
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00068">68</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00067">67</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00138">yume::ast::parser::Parser::ast_ptr()</a>, <a class="el" href="parser_8hpp_source.html#l00146">yume::ast::parser::Parser::make_ast()</a>, <a class="el" href="parser_8hpp_source.html#l00267">yume::ast::parser::Parser::parse_operator()</a>, and <a class="el" href="parser_8hpp_source.html#l00134">yume::ast::parser::Parser::ts()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00137">yume::ast::parser::Parser::ast_ptr()</a>, <a class="el" href="parser_8hpp_source.html#l00145">yume::ast::parser::Parser::make_ast()</a>, <a class="el" href="parser_8hpp_source.html#l00266">yume::ast::parser::Parser::parse_operator()</a>, and <a class="el" href="parser_8hpp_source.html#l00133">yume::ast::parser::Parser::ts()</a>.</p>
 
 </div>
 </div>
@@ -229,9 +229,9 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00046">46</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00045">45</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="parser_8hpp_source.html#l00040">at_end()</a>.</p>
+<p class="reference">References <a class="el" href="parser_8hpp_source.html#l00039">at_end()</a>.</p>
 
 </div>
 </div>
@@ -259,7 +259,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00051">51</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00050">50</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
 </div>
 </div>
@@ -286,9 +286,9 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00054">54</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00053">53</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="parser_8hpp_source.html#l00040">at_end()</a>.</p>
+<p class="reference">References <a class="el" href="parser_8hpp_source.html#l00039">at_end()</a>.</p>
 
 </div>
 </div>
@@ -316,9 +316,9 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00061">61</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00060">60</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="parser_8hpp_source.html#l00040">at_end()</a>.</p>
+<p class="reference">References <a class="el" href="parser_8hpp_source.html#l00039">at_end()</a>.</p>
 
 </div>
 </div>
@@ -345,9 +345,9 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00041">41</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00040">40</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="parser_8hpp_source.html#l00040">at_end()</a>.</p>
+<p class="reference">References <a class="el" href="parser_8hpp_source.html#l00039">at_end()</a>.</p>
 
 </div>
 </div>

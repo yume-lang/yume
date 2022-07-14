@@ -157,7 +157,7 @@ Protected Member Functions</h2></td></tr>
 <p >Similar to <code>AST</code> nodes, <code><a class="el" href="classyume_1_1ty_1_1Type.html" title="Represents a type in the type system. All types inherit from this class.">Type</a></code>s cannot be copied or moved as all special member functions (aside from the destructor) are <code>delete</code>d. There will always be one instance of a <code><a class="el" href="classyume_1_1ty_1_1Type.html" title="Represents a type in the type system. All types inherit from this class.">Type</a></code> object for a specific type. This means that comparing if two types are the same type is simply a pointer equality check. The single instance of most types is located in <code><a class="el" href="structyume_1_1TypeHolder.html">TypeHolder</a></code>, except for "qualified" types, which are located in their base type.</p>
 <p >This means that a type such as <code>I32 ptr</code>, which is a <code><a class="el" href="classyume_1_1ty_1_1Ptr.html" title="A &quot;qualified&quot; type, with a stackable qualifier, i.e. ptr.">Ptr</a></code>, is stored in the <code>m_known_qual</code> array of the <code>I32</code> type, at the index <code><a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a165d3d525f6d0cbd55e42cc3058cafcc" title="ptr">Qualifier::Ptr</a></code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00045">45</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00044">44</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a8ffc2423e45f2499b6de5b2c64784a21" name="a8ffc2423e45f2499b6de5b2c64784a21"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8ffc2423e45f2499b6de5b2c64784a21">&#9670;&nbsp;</a></span>Type() <span class="overload">[1/3]</span></h2>
@@ -270,7 +270,7 @@ Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00096">96</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00095">95</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
 
 </div>
 </div>
@@ -293,7 +293,7 @@ Protected Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00120">120</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="util_8hpp_source.html#l00048">yume::yume_assert()</a>.</p>
+<p class="reference">References <a class="el" href="util_8hpp_source.html#l00050">yume::yume_assert()</a>.</p>
 
 </div>
 </div>
@@ -382,7 +382,7 @@ Protected Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00050">50</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="util_8hpp_source.html#l00048">yume::yume_assert()</a>.</p>
+<p class="reference">References <a class="el" href="util_8hpp_source.html#l00050">yume::yume_assert()</a>.</p>
 
 </div>
 </div>
@@ -470,7 +470,7 @@ Protected Member Functions</h2></td></tr>
 
 <p class="reference">References <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00210">yume::Compiler::destruct()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00208">yume::Compiler::destruct()</a>.</p>
 
 </div>
 </div>
@@ -497,7 +497,7 @@ Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00056">56</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00055">55</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
 
 </div>
 </div>
@@ -524,7 +524,7 @@ Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00066">66</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00065">65</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="type_8cpp_source.html#l00022">known_qual()</a>, and <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>.</p>
 
@@ -553,7 +553,7 @@ Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00065">65</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00064">64</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="type_8cpp_source.html#l00022">known_qual()</a>, and <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a165d3d525f6d0cbd55e42cc3058cafcc">yume::Ptr</a>.</p>
 
@@ -582,7 +582,7 @@ Protected Member Functions</h2></td></tr>
 
 <p class="reference">References <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>, and <a class="el" href="type_8cpp_source.html#l00013">yume::ty::qual_suffix()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type_8hpp_source.html#l00066">known_mut()</a>, <a class="el" href="type_8hpp_source.html#l00065">known_ptr()</a>, and <a class="el" href="type_8hpp_source.html#l00067">known_slice()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type_8hpp_source.html#l00065">known_mut()</a>, <a class="el" href="type_8hpp_source.html#l00064">known_ptr()</a>, and <a class="el" href="type_8hpp_source.html#l00066">known_slice()</a>.</p>
 
 </div>
 </div>
@@ -609,7 +609,7 @@ Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00067">67</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00066">66</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="type_8cpp_source.html#l00022">known_qual()</a>, and <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706ad140d37ad98c12ccd8e1c432f548bcdb">yume::Slice</a>.</p>
 
@@ -638,7 +638,7 @@ Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00057">57</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00056">56</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00010">yume::ast::AST::unify_val_ty()</a>.</p>
 
@@ -740,7 +740,7 @@ Protected Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00151">151</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00210">yume::Compiler::destruct()</a>, <a class="el" href="type_8cpp_source.html#l00107">is_generic()</a>, <a class="el" href="type_8cpp_source.html#l00185">without_qual()</a>, and <a class="el" href="type_8cpp_source.html#l00187">without_qual_kind()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00208">yume::Compiler::destruct()</a>, <a class="el" href="type_8cpp_source.html#l00107">is_generic()</a>, <a class="el" href="type_8cpp_source.html#l00185">without_qual()</a>, and <a class="el" href="type_8cpp_source.html#l00187">without_qual_kind()</a>.</p>
 
 </div>
 </div>
@@ -765,7 +765,7 @@ Protected Member Functions</h2></td></tr>
 
 <p class="reference">References <a class="el" href="type_8cpp_source.html#l00151">qual_base()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00182">yume::semantic::TypeWalker::expression()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00181">yume::semantic::TypeWalker::expression()</a>.</p>
 
 </div>
 </div>
