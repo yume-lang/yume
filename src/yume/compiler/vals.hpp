@@ -173,10 +173,6 @@ struct DeclLike : public DeclLike_t {
   };
 };
 
-template <typename R = void, typename... Ts> [[deprecated]] auto visit_decl(DeclLike decl_like, Ts... ts) {
-  return std::visit(DeclLikeVisitor<R, Ts...>{ts...}, decl_like);
-}
-
 /// A value of a complied expression.
 /**
  * Note that this struct is mostly useless, it is a very thin wrapper around `llvm::Value`. It may be removed in the
