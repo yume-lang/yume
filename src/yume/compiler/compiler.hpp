@@ -15,13 +15,11 @@
 #include <queue>
 #include <stdexcept>
 #include <string>
-#include <tuple>
 #include <vector>
 
 namespace llvm {
 class Function;
 class Type;
-class BasicBlock;
 class Value;
 } // namespace llvm
 

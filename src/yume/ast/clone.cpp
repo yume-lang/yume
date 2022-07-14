@@ -12,7 +12,16 @@
 namespace yume::ast {
 
 namespace {
-template <typename T> auto dup(const vector<unique_ptr<T>>& items) {
+template <typename T> auto dup(const vector<AnyBase<T>>& items) {
+  auto dup = vector<AnyBase<T>>();
+  dup.reserve(items.size());
+  for (auto& i : items)
+    dup.emplace_back(unique_ptr<T>(i->clone()));
+
+  return dup;
+}
+
+template <typename T> [[deprecated]] auto dup(const vector<unique_ptr<T>>& items) {
   auto dup = vector<unique_ptr<T>>();
   dup.reserve(items.size());
   for (auto& i : items)
@@ -21,7 +30,9 @@ template <typename T> auto dup(const vector<unique_ptr<T>>& items) {
   return dup;
 }
 
-template <typename T> auto dup(const unique_ptr<T>& ptr) { return unique_ptr<T>(ptr->clone()); }
+template <typename T> [[deprecated]] auto dup(const unique_ptr<T>& ptr) { return unique_ptr<T>(ptr->clone()); }
+
+template <typename T> auto dup(const AnyBase<T>& ptr) -> AnyBase<T> { return unique_ptr<T>(ptr->clone()); }
 
 template <typename T>
 requires std::is_base_of_v<ast::AST, T>

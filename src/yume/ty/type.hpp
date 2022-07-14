@@ -2,7 +2,6 @@
 
 #include "compatibility.hpp"
 #include "qualifier.hpp"
-#include "stl_util.hpp"
 #include "util.hpp"
 #include <array>
 #include <cstdint>
@@ -150,7 +149,8 @@ class Struct : public Type {
 
 public:
   Struct(string name, vector<const ast::TypeName*> fields) : Type(K_Struct, move(name)), m_fields(move(fields)) {}
-  [[nodiscard]] auto fields() const { return dereference_view(m_fields); }
+  [[nodiscard]] auto fields() const -> const auto& { return m_fields; }
+  [[nodiscard]] auto fields() -> auto& { return m_fields; }
   [[nodiscard]] auto memo() const -> auto* { return m_memo; }
   static auto classof(const Type* a) -> bool { return a->kind() == K_Struct; }
 };

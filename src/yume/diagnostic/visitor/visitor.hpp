@@ -32,6 +32,14 @@ public:
 
   virtual auto visit(const string& str) -> Visitor& { return visit(str, (const char*)nullptr); }
 
+  template <typename T> auto visit(const vector<ast::AnyBase<T>>& vector, const char* label = nullptr) -> Visitor& {
+    Visitor& vis = *this;
+    for (auto& i : vector) {
+      vis = move(vis.visit(*i, label));
+    }
+    return vis;
+  }
+
   template <typename T> auto visit(const vector<T>& vector, const char* label = nullptr) -> Visitor& {
     Visitor& vis = *this;
     for (auto& i : vector) {
@@ -40,9 +48,15 @@ public:
     return vis;
   }
 
-  template <typename T> auto visit(const unique_ptr<T>& ptr, const char* label = nullptr) -> Visitor& {
+  template <typename T> [[deprecated]] auto visit(const unique_ptr<T>& ptr, const char* label = nullptr) -> Visitor& {
     if (ptr)
       return visit(*ptr, label);
+    return visit(nullptr, label);
+  }
+
+  template <typename T> auto visit(const ast::AnyBase<T>& any_base, const char* label = nullptr) -> Visitor& {
+    if (any_base.val)
+      return visit(*any_base, label);
     return visit(nullptr, label);
   }
 

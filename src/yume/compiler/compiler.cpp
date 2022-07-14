@@ -4,14 +4,12 @@
 #include "diagnostic/errors.hpp"
 #include "qualifier.hpp"
 #include "semantic/type_walker.hpp"
-#include "stl_util.hpp"
 #include "ty/compatibility.hpp"
 #include "ty/type.hpp"
 #include "util.hpp"
 #include "vals.hpp"
 #include <algorithm>
 #include <exception>
-#include <functional>
 #include <llvm/ADT/STLExtras.h>
 #include <llvm/ADT/StringMap.h>
 #include <llvm/ADT/StringMapEntry.h>
@@ -83,7 +81,7 @@ Compiler::Compiler(vector<SourceFile> source_files)
 void Compiler::run() {
   for (const auto& source : m_sources)
     for (auto& i : source.program->body())
-      decl_statement(i, nullptr, source.program.get());
+      decl_statement(*i, nullptr, source.program.get());
 
   // First pass: only convert structs
   for (auto& st : m_structs)
@@ -160,7 +158,7 @@ auto Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* m
 
     if (st.type_args.empty())
       for (auto& f : s_decl->body().body())
-        decl_statement(f, st.self_ty, member);
+        decl_statement(*f, st.self_ty, member);
 
     return &st;
   }
@@ -194,8 +192,8 @@ auto Compiler::llvm_type(const ty::Type& type) -> llvm::Type* {
     auto* memo = struct_type->memo();
     if (memo == nullptr) {
       auto fields = vector<llvm::Type*>{};
-      for (const auto& i : struct_type->fields())
-        fields.push_back(llvm_type(*i.type().val_ty()));
+      for (const auto* i : struct_type->fields())
+        fields.push_back(llvm_type(*i->type().val_ty()));
 
       memo = llvm::StructType::create(*m_context, fields, "_"s + struct_type->name());
       struct_type->memo(memo);
@@ -244,7 +242,7 @@ auto Compiler::default_init(const ty::Type& type) -> Val {
     llvm::Value* val = llvm::UndefValue::get(llvm_ty);
 
     for (const auto& i : llvm::enumerate(struct_type->fields()))
-      val = m_builder->CreateInsertValue(val, default_init(*i.value().type().val_ty()), i.index());
+      val = m_builder->CreateInsertValue(val, default_init(*i.value()->type().val_ty()), i.index());
 
     return val;
   }
@@ -262,7 +260,7 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
   auto* llvm_ret_type = llvm::Type::getVoidTy(*m_context);
   auto llvm_args = vector<llvm::Type*>{};
   if (fn_decl.ret())
-    llvm_ret_type = llvm_type(*fn_decl.ret()->get().val_ty());
+    llvm_ret_type = llvm_type(*fn_decl.ret().value()->val_ty());
 
   for (const auto& i : fn_decl.args())
     llvm_args.push_back(llvm_type(*i.val_ty()));
@@ -320,7 +318,7 @@ auto Compiler::declare(Ctor& ctor) -> llvm::Function* {
 
 template <> void Compiler::statement(const ast::Compound& stat) {
   for (const auto& i : stat.body())
-    body_statement(i);
+    body_statement(*i);
 }
 
 static inline auto is_trivially_destructible(const ty::Type* type) -> bool {
@@ -353,7 +351,7 @@ template <typename T> void Compiler::setup_fn_base(T& fn) {
   m_builder->SetInsertPoint(bb);
 
   if constexpr (std::is_same_v<T, Ctor>) {
-    if (fn.ast().body().direct_body().empty())
+    if (fn.ast().body().body().empty())
       return; // Tiny optimization: A constructor with no body doesn't need to allocate its parameters
   }
   // Allocate local variables for each parameter
@@ -482,7 +480,7 @@ template <> void Compiler::statement(const ast::ReturnStmt& stat) {
   InScope* reset_owning = nullptr;
 
   if (stat.expr().has_value()) {
-    if (auto* var = dyn_cast<ast::VarExpr>(&stat.expr().value().get())) {
+    if (const auto* var = dyn_cast<ast::VarExpr>(&*stat.expr().value())) {
       auto& in_scope = m_scope.at(var->name());
       if (in_scope.owning) {
         in_scope.owning = false; // Returning a local variable also gives up ownership of it
@@ -495,7 +493,7 @@ template <> void Compiler::statement(const ast::ReturnStmt& stat) {
     if (reset_owning != nullptr)
       reset_owning->owning = true; // The local variable may not be returned in all code paths, so reset its ownership
 
-    auto val = body_expression(stat.expr().value(), returns_mut);
+    auto val = body_expression(*stat.expr().value(), returns_mut);
     m_builder->CreateRet(val);
 
     return;
@@ -666,10 +664,10 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
       return selected_args[index].val_ty()->is_mut();
     };
 
-    auto arg = body_expression(i, should_pass_by_mut(j));
+    auto arg = body_expression(*i, should_pass_by_mut(j));
     args.push_back(arg);
     llvm_args.push_back(arg.llvm);
-    arg_types.push_back(i.val_ty());
+    arg_types.push_back(i->val_ty());
     j++;
   }
 
@@ -696,12 +694,12 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> 
     return expr_val;
   }
   if (const auto* field_access = dyn_cast<ast::FieldAccessExpr>(&expr.target())) {
-    auto field_base = field_access->base();
+    const auto& field_base = field_access->base();
     const ty::Type* struct_base{nullptr};
     Val base{nullptr};
     if (field_base.has_value()) {
-      base = body_expression(*field_base, true);
-      struct_base = &field_access->base()->get().val_ty()->without_qual();
+      base = body_expression(**field_base, true);
+      struct_base = &field_access->base().value()->val_ty()->without_qual();
     } else {
       // TODO(rymiel): revisit
       if (!isa<ast::CtorDecl>(m_current_fn->ast))
@@ -756,8 +754,8 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
     if (selected_ctor_overload == nullptr) { // TODO(rymiel): #16 The implicit constructor should be an actual ctor
       auto i = 0;
       for (const auto& arg : llvm::enumerate(expr.args())) {
-        const auto& [target_type, target_name] = struct_type->fields()[i];
-        auto field_value = body_expression(arg.value());
+        const auto& [target_type, target_name] = *struct_type->fields()[i];
+        auto field_value = body_expression(*arg.value());
         base_value = m_builder->CreateInsertValue(base_value, field_value, i, "s.ctor.wf." + target_name);
         i++;
       }
@@ -765,7 +763,7 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
       auto* llvm_fn = declare(*selected_ctor_overload);
       vector<llvm::Value*> llvm_args{};
       for (const auto& i : expr.args()) {
-        auto arg = body_expression(i);
+        auto arg = body_expression(*i);
         llvm_args.push_back(arg.llvm);
       }
       base_value = m_builder->CreateCall(llvm_fn, llvm_args);
@@ -780,10 +778,10 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
   }
   if (const auto* int_type = dyn_cast<ty::Int>(&type.without_qual())) {
     yume_assert(expr.args().size() == 1, "Numeric cast can only contain a single argument");
-    auto& cast_from = expr.args()[0];
-    yume_assert(isa<ty::Int>(cast_from.val_ty()->without_qual()), "Numeric cast must convert from int");
-    auto base = body_expression(cast_from);
-    if (cast<ty::Int>(cast_from.val_ty()->without_qual()).is_signed()) {
+    const auto& cast_from = expr.args()[0];
+    yume_assert(isa<ty::Int>(cast_from->val_ty()->without_qual()), "Numeric cast must convert from int");
+    auto base = body_expression(*cast_from);
+    if (cast<ty::Int>(cast_from->val_ty()->without_qual()).is_signed()) {
       return m_builder->CreateSExtOrTrunc(base, llvm_type(*int_type));
     }
     return m_builder->CreateZExtOrTrunc(base, llvm_type(*int_type));
@@ -791,9 +789,9 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
   if (const auto* slice_type = dyn_cast<ty::Ptr>(&type.without_qual());
       slice_type != nullptr && slice_type->has_qualifier(Qualifier::Slice)) {
     yume_assert(expr.args().size() == 1, "Slice constructor can only contain a single argument");
-    auto& slice_size_expr = expr.args()[0];
-    yume_assert(isa<ty::Int>(slice_size_expr.val_ty()->without_qual()), "Slice constructor must convert from int");
-    auto slice_size = body_expression(slice_size_expr);
+    const auto& slice_size_expr = expr.args()[0];
+    yume_assert(isa<ty::Int>(slice_size_expr->val_ty()->without_qual()), "Slice constructor must convert from int");
+    auto slice_size = body_expression(*slice_size_expr);
 
     auto* llvm_slice_type = llvm_type(*slice_type);
     const auto& base_ty_type = *slice_type->ptr_base(); // ???
@@ -888,7 +886,7 @@ template <> auto Compiler::expression(const ast::SliceExpr& expr, bool mut) -> V
 
   unsigned j = 0;
   for (const auto& i : expr.args())
-    m_builder->CreateStore(body_expression(i), m_builder->CreateConstInBoundsGEP1_32(base_type, data_ptr, j++));
+    m_builder->CreateStore(body_expression(*i), m_builder->CreateConstInBoundsGEP1_32(base_type, data_ptr, j++));
 
   llvm::Value* slice_inst = llvm::UndefValue::get(slice_type);
   slice_inst = m_builder->CreateInsertValue(slice_inst, data_ptr, 0);
@@ -901,7 +899,7 @@ template <> auto Compiler::expression(const ast::FieldAccessExpr& expr, bool mut
   // TODO(rymiel): struct can only contain things by value, later this needs a condition
   not_mut("immutable field", mut);
 
-  auto base = body_expression(*expr.base());
+  auto base = body_expression(**expr.base());
   auto base_name = expr.field();
   int base_offset = expr.offset();
 
@@ -958,7 +956,7 @@ auto Compiler::mangle_name(Fn& fn) -> string {
   ss << ")";
   // TODO(rymiel): should mangled names even contain the return type...?
   if (fn.ast().ret().has_value())
-    ss << mangle_name(*fn.ast().ret()->get().val_ty(), &fn); // wtf
+    ss << mangle_name(*fn.ast().ret().value()->val_ty(), &fn); // wtf
 
   return ss.str();
 }

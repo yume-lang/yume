@@ -3,6 +3,7 @@
 #include "diagnostic/source_location.hpp"
 #include <array>
 #include <cstddef>
+#include <experimental/memory>
 #include <llvm/Support/Casting.h>
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/raw_ostream.h>
@@ -31,6 +32,7 @@ using std::tuple;
 using std::unique_ptr;
 using std::variant;
 using std::vector;
+using std::experimental::observer_ptr;
 
 using llvm::cast;
 using llvm::dyn_cast;

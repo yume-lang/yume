@@ -6,7 +6,7 @@ namespace yume {
 
 auto Fn::create_instantiation(Instantiation& instantiate) -> Fn& {
   auto* decl_clone = ast().clone();
-  base.member->direct_body().emplace_back(decl_clone);
+  base.member->body().emplace_back(decl_clone);
 
   std::map<string, const ty::Type*> subs{};
   for (const auto& [k, v] : instantiate.sub)
@@ -27,7 +27,7 @@ auto Fn::get_or_create_instantiation(Instantiation& instantiate) -> std::pair<bo
 
 auto Struct::create_instantiation(Instantiation& instantiate) -> Struct& {
   auto* decl_clone = st_ast.clone();
-  member->direct_body().emplace_back(decl_clone);
+  member->body().emplace_back(ast::AnyStmt{decl_clone});
 
   std::map<string, const ty::Type*> subs{};
   for (const auto& [k, v] : instantiate.sub)

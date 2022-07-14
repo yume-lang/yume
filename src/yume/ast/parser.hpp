@@ -16,7 +16,6 @@
 #include <string>
 #include <string_view>
 #include <utility>
-#include <variant>
 #include <vector>
 
 namespace yume::ast {
@@ -276,9 +275,9 @@ struct Parser {
         for (const auto& op : ops[N]) {
           if (try_consume(op)) {
             auto right = parse_operator<N + 1>();
-            auto args = vector<unique_ptr<Expr>>{};
-            args.push_back(move(left));
-            args.push_back(move(right));
+            auto args = vector<AnyExpr>{};
+            args.emplace_back(move(left));
+            args.emplace_back(move(right));
             left = ast_ptr<CallExpr>(entry, string(std::get<Atom>(op)), move(args));
             found_operator = true;
             break;

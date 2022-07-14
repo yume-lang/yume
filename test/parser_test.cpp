@@ -24,7 +24,7 @@ template <typename T, typename... Ts> auto ast(Ts&&... ts) -> std::unique_ptr<T>
 }
 
 template <typename T, typename... Ts> auto ptr_vec(Ts&&... ts) {
-  std::vector<std::unique_ptr<T>> vec{};
+  std::vector<yume::ast::AnyBase<T>> vec{};
   vec.reserve(sizeof...(ts));
   (vec.emplace_back(std::forward<Ts>(ts)), ...);
   return vec;
@@ -36,8 +36,8 @@ auto make_call(N&& name, Ts&&... ts) -> std::unique_ptr<T> {
 }
 
 template <typename E = Expr, typename N, typename... Ts>
-auto make_ctor(N&& type, std::string name, Ts&&... ts) -> std::unique_ptr<CtorExpr> {
-  return ast<CtorExpr>(std::forward<N>(type), name, ptr_vec<E>(std::forward<Ts>(ts)...));
+auto make_ctor(N type, std::string name, Ts&&... ts) -> std::unique_ptr<CtorExpr> {
+  return ast<CtorExpr>(AnyType(std::move(type)), name, ptr_vec<E>(std::forward<Ts>(ts)...));
 }
 
 template <typename... Ts> auto make_compound(Ts&&... ts) -> Compound {
@@ -88,7 +88,7 @@ constexpr auto ast_comparison = [](const yume::ast::Program& a,
   {
     yume::diagnostic::HashVisitor visitor(expected_seed);
     for (const auto& i : a.body())
-      visitor.visit(i, nullptr);
+      visitor.visit(*i, nullptr);
   }
   {
     yume::diagnostic::HashVisitor visitor(actual_seed);
@@ -98,13 +98,11 @@ constexpr auto ast_comparison = [](const yume::ast::Program& a,
   return expected_seed == actual_seed;
 };
 
-constexpr auto deref = [](const auto& ptr_range) { return yume::dereference_view(ptr_range); };
-
 template <typename... Ts> auto equals_ast(Ts&&... ts) {
   std::vector<std::unique_ptr<yume::ast::AST>> vec{};
   vec.reserve(sizeof...(ts));
   (vec.emplace_back(std::forward<Ts>(ts)), ...);
-  return EqualsDirectMatcher<decltype(vec), decltype(ast_comparison), decltype(deref)>{std::move(vec)};
+  return EqualsDirectMatcher<decltype(vec), decltype(ast_comparison)>{std::move(vec)};
 }
 } // namespace
 

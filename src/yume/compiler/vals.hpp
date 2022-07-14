@@ -108,6 +108,7 @@ struct Struct {
   [[nodiscard]] auto ast() const -> const auto& { return st_ast; }
   [[nodiscard]] auto ast() -> auto& { return st_ast; }
   [[nodiscard]] auto body() const -> const auto& { return st_ast.body(); }
+  [[nodiscard]] auto body() -> auto& { return st_ast.body(); }
   [[nodiscard]] auto get_self_ty() const -> ty::Type* { return self_ty; };
 
   [[nodiscard]] auto name() const -> string;

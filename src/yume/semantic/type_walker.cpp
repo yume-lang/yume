@@ -4,7 +4,6 @@
 #include "compiler/type_holder.hpp"
 #include "compiler/vals.hpp"
 #include "diagnostic/errors.hpp"
-#include "stl_util.hpp"
 #include "ty/compatibility.hpp"
 #include "ty/type.hpp"
 #include <algorithm>
@@ -64,7 +63,7 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
   Struct* st = nullptr;
 
   if (auto* templated = dyn_cast<ast::TemplatedType>(&expr.type())) {
-    auto& template_base = templated->base();
+    const auto& template_base = templated->base();
     expression(template_base);
     const auto& base_type = convert_type(template_base);
     auto struct_obj =
@@ -122,8 +121,8 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
     ctor_overloads = all_ctor_overloads_by_name(*st, expr);
 
   for (auto& i : expr.args()) {
-    body_expression(i);
-    ctor_overloads.args.push_back(&i);
+    body_expression(*i);
+    ctor_overloads.args.push_back(&*i);
   }
 
   if (consider_ctor_overloads) {
@@ -160,7 +159,7 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
 
 template <> void TypeWalker::expression(ast::SliceExpr& expr) {
   for (auto& i : expr.args()) {
-    body_expression(i);
+    body_expression(*i);
   }
   expression(expr.type());
   const auto& base_type = convert_type(expr.type());
@@ -185,8 +184,8 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
   if (!expr.base().has_value()) {
     type = current_decl.self_ty();
   } else {
-    body_expression(*expr.base());
-    type = expr.base()->get().val_ty();
+    body_expression(**expr.base());
+    type = expr.base().value()->val_ty();
   }
 
   const auto* struct_type = dyn_cast<ty::Struct>(&type->without_qual());
@@ -197,9 +196,9 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
   auto target_name = expr.field();
   const ty::Type* target_type{};
   int j = 0;
-  for (const auto& field : struct_type->fields()) {
-    if (field.name() == target_name) {
-      target_type = field.type().val_ty();
+  for (const auto* field : struct_type->fields()) {
+    if (field->name() == target_name) {
+      target_type = field->type().val_ty();
       break;
     }
     j++;
@@ -239,8 +238,8 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
     throw std::logic_error("No function overload named "s + name);
 
   for (auto& i : expr.args()) {
-    body_expression(i);
-    overload_set.args.push_back(&i);
+    body_expression(*i);
+    overload_set.args.push_back(&*i);
   }
 
 #ifdef YUME_SPEW_OVERLOAD_SELECTION
@@ -307,7 +306,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
     const auto* target_type = target.type().val_ty();
     auto cast_expr = std::make_unique<ast::ImplicitCastExpr>(expr_arg->token_range(), move(expr_arg), compat.conv);
     cast_expr->val_ty(target_type);
-    expr_arg = move(cast_expr);
+    expr_arg = ast::AnyExpr(move(cast_expr));
   }
 
   if (selected->ast().ret().has_value())
@@ -318,7 +317,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
 
 template <> void TypeWalker::statement(ast::Compound& stat) {
   for (auto& i : stat.body())
-    body_statement(i);
+    body_statement(*i);
 }
 
 template <> void TypeWalker::statement(ast::StructDecl& stat) {
@@ -339,8 +338,8 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
   }
 
   if (stat.ret().has_value()) {
-    expression(stat.ret()->get());
-    stat.attach_to(&stat.ret()->get());
+    expression(*stat.ret().value());
+    stat.attach_to(&*stat.ret().value());
   }
 
   // This decl still has unsubstituted generics, can't instantiate its body
@@ -369,9 +368,9 @@ template <> void TypeWalker::statement(ast::CtorDecl& stat) {
       // XXX: duplicated from FieldAccessExpr handling
       const ty::Type* target_type{};
       int j = 0;
-      for (const auto& field : struct_type->fields()) {
-        if (field.name() == target_name) {
-          target_type = field.type().val_ty();
+      for (const auto* field : struct_type->fields()) {
+        if (field->name() == target_name) {
+          target_type = field->type().val_ty();
           break;
         }
         j++;
@@ -389,7 +388,7 @@ template <> void TypeWalker::statement(ast::CtorDecl& stat) {
 
 template <> void TypeWalker::statement(ast::ReturnStmt& stat) {
   if (stat.expr().has_value()) {
-    auto& returned = stat.expr()->get();
+    auto& returned = **stat.expr();
     body_expression(returned);
     current_decl.ast()->attach_to(&returned);
   }
@@ -398,8 +397,8 @@ template <> void TypeWalker::statement(ast::ReturnStmt& stat) {
 template <> void TypeWalker::statement(ast::VarDecl& stat) {
   body_expression(stat.init());
   if (stat.type().has_value()) {
-    expression(stat.type()->get());
-    stat.init().attach_to(&stat.type()->get());
+    expression(**stat.type());
+    stat.init().attach_to(&**stat.type());
   }
 
   stat.val_ty(&stat.init().val_ty()->known_mut());
@@ -468,7 +467,7 @@ void TypeWalker::resolve_queue() {
           },
           [&](Struct* st) {
             for (auto& i : st->body().body()) {
-              auto decl = compiler.decl_statement(i, st->self_ty, st->member);
+              auto decl = compiler.decl_statement(*i, st->self_ty, st->member);
               compiler.walk_types(decl);
             }
           },

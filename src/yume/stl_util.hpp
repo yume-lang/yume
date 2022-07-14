@@ -121,7 +121,7 @@ private:
   };
 
 public:
-  constexpr explicit dereference_view(const T& base) : m_base(base) {}
+  [[deprecated]] constexpr explicit dereference_view(const T& base) : m_base(base) {}
 
   [[nodiscard]] constexpr auto begin() const -> Iterator { return Iterator{this, std::ranges::begin(m_base)}; }
 
