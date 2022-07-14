@@ -115,41 +115,49 @@ class TokenIterator;
 
 class AST;
 
-template <typename T> struct AnyBase {
-  unique_ptr<T> val;
+template <typename T> class AnyBase {
+  unique_ptr<T> m_val;
 
+public:
   AnyBase() = delete;
-  explicit AnyBase(T* raw_ptr) : val{raw_ptr} { yume_assert(raw_ptr != nullptr, "AnyBase should never be null"); }
-  AnyBase(unique_ptr<T> uptr) : val{move(uptr)} { yume_assert(val.get() != nullptr, "AnyBase should never be null"); }
+  explicit AnyBase(T* raw_ptr) : m_val{raw_ptr} { yume_assert(raw_ptr != nullptr, "AnyBase should never be null"); }
+  AnyBase(unique_ptr<T> uptr) : m_val{move(uptr)} {
+    yume_assert(m_val.get() != nullptr, "AnyBase should never be null");
+  }
   template <typename U>
-  requires std::is_base_of_v<T, U> AnyBase(unique_ptr<U> uptr) : val{move(uptr)} {
-    yume_assert(val.get() != nullptr, "AnyBase should never be null");
+  requires std::is_base_of_v<T, U> AnyBase(unique_ptr<U> uptr) : m_val{move(uptr)} {
+    yume_assert(m_val.get() != nullptr, "AnyBase should never be null");
   }
 
-  [[nodiscard]] auto operator->() const -> const T* { return val.operator->(); }
-  [[nodiscard]] auto operator*() const -> const T& { return *val; }
-  [[nodiscard]] auto operator->() -> T* { return val.operator->(); }
-  [[nodiscard]] auto operator*() -> T& { return *val; }
+  [[nodiscard]] auto operator->() const -> const T* { return m_val.operator->(); }
+  [[nodiscard]] auto operator*() const -> const T& { return *m_val; }
+  [[nodiscard]] auto operator->() -> T* { return m_val.operator->(); }
+  [[nodiscard]] auto operator*() -> T& { return *m_val; }
+
+  [[nodiscard]] auto raw_ptr() const -> const T* { return m_val.get(); }
 };
 
-template <typename T> struct OptionalAnyBase {
-  unique_ptr<T> val;
+template <typename T> class OptionalAnyBase {
+  unique_ptr<T> m_val;
 
-  OptionalAnyBase() : val{} {}
-  explicit OptionalAnyBase(T* raw_ptr) : val{raw_ptr} {}
-  OptionalAnyBase(unique_ptr<T> uptr) : val{move(uptr)} {}
+public:
+  OptionalAnyBase() : m_val{} {}
+  explicit OptionalAnyBase(T* raw_ptr) : m_val{raw_ptr} {}
+  OptionalAnyBase(unique_ptr<T> uptr) : m_val{move(uptr)} {}
   template <typename U>
-  requires std::is_base_of_v<T, U> OptionalAnyBase(unique_ptr<U> uptr) : val{move(uptr)} {}
-  OptionalAnyBase(std::nullopt_t /* tag */) : val{} {}
-  explicit OptionalAnyBase(optional<unique_ptr<T>> opt_uptr) : val{opt_uptr.has_value() ? move(*opt_uptr) : nullptr} {}
+  requires std::is_base_of_v<T, U> OptionalAnyBase(unique_ptr<U> uptr) : m_val{move(uptr)} {}
+  OptionalAnyBase(std::nullopt_t /* tag */) : m_val{} {}
+  explicit OptionalAnyBase(optional<unique_ptr<T>> opt_uptr)
+      : m_val{opt_uptr.has_value() ? move(*opt_uptr) : nullptr} {}
 
-  [[nodiscard]] auto operator->() const -> const T* { return val.operator->(); }
-  [[nodiscard]] auto operator*() const -> const T& { return *val; }
-  [[nodiscard]] auto operator->() -> T* { return val.operator->(); }
-  [[nodiscard]] auto operator*() -> T& { return *val; }
+  [[nodiscard]] auto operator->() const -> const T* { return m_val.operator->(); }
+  [[nodiscard]] auto operator*() const -> const T& { return *m_val; }
+  [[nodiscard]] auto operator->() -> T* { return m_val.operator->(); }
+  [[nodiscard]] auto operator*() -> T& { return *m_val; }
 
-  [[nodiscard]] operator bool() const { return static_cast<bool>(val); }
-  [[nodiscard]] auto has_value() const -> bool { return static_cast<bool>(val); }
+  [[nodiscard]] operator bool() const { return static_cast<bool>(m_val); }
+  [[nodiscard]] auto has_value() const -> bool { return static_cast<bool>(m_val); }
+  [[nodiscard]] auto raw_ptr() const -> const T* { return m_val.get(); }
 };
 
 /// Represents the relationship between multiple `AST` nodes.
