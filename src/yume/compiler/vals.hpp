@@ -92,8 +92,6 @@ struct Fn {
   [[nodiscard]] static auto arg_name(const decl_t::arg_t& ast) -> string;
   [[nodiscard]] static auto common_ast(const decl_t::arg_t& ast) -> const ast::AST&;
 
-  [[nodiscard]] auto declaration(Compiler& compiler, bool mangle = true) -> llvm::Function*;
-
   [[nodiscard]] auto get_or_create_instantiation(Instantiation& instantiate) -> std::pair<bool, Fn&>;
   [[nodiscard]] auto create_instantiation(Instantiation& instantiate) -> Fn&;
 };
@@ -135,7 +133,6 @@ struct Ctor {
   Ctor(ast::CtorDecl& ast_decl, ty::Type* type = nullptr, ast::Program* member = nullptr)
       : base{ast_decl, type, member} {}
 
-  [[nodiscard]] auto declaration(Compiler& compiler) -> llvm::Function*;
   [[nodiscard]] auto ast() const -> const auto& { return cast<decl_t>(base.ast); }
   [[nodiscard]] auto ast() -> auto& { return cast<decl_t>(base.ast); }
   [[nodiscard]] auto get_self_ty() const -> ty::Type* { return base.self_ty; };

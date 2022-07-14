@@ -1,25 +1,8 @@
 #include "vals.hpp"
-#include "compiler.hpp"
 #include <algorithm>
 #include <type_traits>
 
 namespace yume {
-
-// XXX: This is worthless. The memoization check is already done within `declare`
-auto Fn::declaration(Compiler& compiler, bool mangle) -> llvm::Function* {
-  if (base.llvm == nullptr) {
-    base.llvm = compiler.declare(*this, mangle);
-  }
-  return base.llvm;
-}
-
-// XXX: This is worthless. The memoization check is already done within `declare`
-auto Ctor::declaration(Compiler& compiler) -> llvm::Function* {
-  if (base.llvm == nullptr) {
-    base.llvm = compiler.declare(*this);
-  }
-  return base.llvm;
-}
 
 auto Fn::create_instantiation(Instantiation& instantiate) -> Fn& {
   auto* decl_clone = ast().clone();

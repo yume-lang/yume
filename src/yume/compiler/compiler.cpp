@@ -133,7 +133,7 @@ auto Compiler::create_struct(ast::StructDecl& s_decl, const optional<string>& na
     fields.push_back(&f);
 
   return std::make_unique<ty::Struct>(name_override.value_or(s_decl.name()), fields);
-};
+}
 
 auto Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* member) -> DeclLike {
   if (auto* fn_decl = dyn_cast<ast::FnDecl>(&stmt)) {
@@ -620,7 +620,7 @@ auto Compiler::primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<
   bool returns_mut = ret_ty != nullptr && ret_ty->is_mut();
 
   if (primitive == "libc")
-    return m_builder->CreateCall(fn->declaration(*this, false), args);
+    return m_builder->CreateCall(declare(*fn, false), args);
   if (primitive == "ptrto")
     return args.at(0);
   if (primitive == "slice_size")
@@ -652,7 +652,7 @@ auto Compiler::primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<
   if (primitive.starts_with("ib_"))
     return int_bin_primitive(primitive, args);
   throw std::runtime_error("Unknown primitive "s + primitive);
-};
+}
 
 template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Val {
   auto* selected = expr.selected_overload();
@@ -689,7 +689,7 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
   if (prim.has_value()) {
     val = *prim;
   } else {
-    llvm_fn = selected->declaration(*this);
+    llvm_fn = declare(*selected);
     val = m_builder->CreateCall(llvm_fn, llvm_args);
   }
 
@@ -772,7 +772,7 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
         i++;
       }
     } else {
-      auto* llvm_fn = selected_ctor_overload->declaration(*this);
+      auto* llvm_fn = declare(*selected_ctor_overload);
       vector<llvm::Value*> llvm_args{};
       for (const auto& i : expr.args()) {
         auto arg = body_expression(i);
@@ -1011,8 +1011,6 @@ auto Compiler::mangle_name(const ty::Type& ast_type, DeclLike parent) -> string 
   }
   return ast_type.name();
 }
-
-auto Compiler::known_type(const string& str) -> ty::Type& { return *m_types.known.find(str)->getValue(); }
 
 void Compiler::body_statement(const ast::Stmt& stat) {
   const ASTStackTrace guard("Codegen: "s + stat.kind_name() + " statement", stat);
