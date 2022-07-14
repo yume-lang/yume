@@ -101,6 +101,7 @@ add_executable(yumec src/yumec.cpp)
 
 set_property(TARGET yumec PROPERTY CXX_STANDARD 20)
 set_property(TARGET yumec PROPERTY EXPORT_COMPILE_COMMANDS TRUE)
+set_property(TARGET yumec PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
 target_link_libraries(yumec PRIVATE yume)
 
 if(BUILD_TESTING)
