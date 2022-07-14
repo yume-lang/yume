@@ -111,7 +111,9 @@ private:
     throw std::runtime_error("Unknown expression "s + expr.kind_name());
   }
 
-  template <typename T> auto setup_fn_base(T&) -> tuple<llvm::BasicBlock*, llvm::BasicBlock*>;
+  auto entrypoint_builder() -> llvm::IRBuilder<>;
+
+  template <typename T> void setup_fn_base(T&);
 
   void destruct_all_in_scope();
 

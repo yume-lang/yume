@@ -19,7 +19,6 @@
 namespace llvm {
 class Function;
 class Value;
-class BasicBlock;
 } // namespace llvm
 
 namespace yume {
@@ -49,8 +48,6 @@ struct FnBase {
   /// The program this declaration is a member of.
   ast::Program* member{};
   llvm::Function* llvm{};
-  /// A basic block where are allocations for local variables should go. It is placed \e before the "entrypoint".
-  llvm::BasicBlock* decl_bb{};
 
   operator llvm::Function*() const { return llvm; }
 };

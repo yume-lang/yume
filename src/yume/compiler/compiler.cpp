@@ -346,19 +346,15 @@ void Compiler::destruct_all_in_scope() {
       destruct(v.value, *v.ast.val_ty());
 }
 
-template <typename T> auto Compiler::setup_fn_base(T& fn) -> tuple<llvm::BasicBlock*, llvm::BasicBlock*> {
+template <typename T> void Compiler::setup_fn_base(T& fn) {
   m_current_fn = &fn.base;
   m_scope.clear();
-  auto* decl_bb = llvm::BasicBlock::Create(*m_context, "decl", fn.base);
   auto* bb = llvm::BasicBlock::Create(*m_context, "entry", fn.base);
   m_builder->SetInsertPoint(bb);
-  // TODO(rymiel): Find a better solution to replace the "decl_bb"
-  m_current_fn->decl_bb = decl_bb;
 
   if constexpr (std::is_same_v<T, Ctor>) {
-    if (fn.ast().body().direct_body().empty()) {
-      return {decl_bb, bb}; // Tiny optimization: A constructor with no body doesn't need to allocate its parameters
-    }
+    if (fn.ast().body().direct_body().empty())
+      return; // Tiny optimization: A constructor with no body doesn't need to allocate its parameters
   }
   // Allocate local variables for each parameter
   for (auto [arg, ast_arg] : llvm::zip(fn.base.llvm->args(), fn.ast().args())) {
@@ -376,12 +372,10 @@ template <typename T> auto Compiler::setup_fn_base(T& fn) -> tuple<llvm::BasicBl
     m_builder->CreateStore(&arg, alloc);
     m_scope.insert({name, {.value = alloc, .ast = val, .owning = false}}); // We don't own parameters
   }
-
-  return {decl_bb, bb};
 }
 
 void Compiler::define(Fn& fn) {
-  auto [decl_bb, bb] = setup_fn_base(fn);
+  setup_fn_base(fn);
 
   if (const auto* body = get_if<ast::Compound>(&fn.body()); body != nullptr) {
     statement(*body);
@@ -392,13 +386,11 @@ void Compiler::define(Fn& fn) {
     m_builder->CreateRetVoid();
   }
 
-  m_builder->SetInsertPoint(decl_bb);
-  m_builder->CreateBr(bb);
   verifyFunction(*fn.base.llvm, &errs());
 }
 
 void Compiler::define(Ctor& ctor) {
-  auto [decl_bb, bb] = setup_fn_base(ctor);
+  setup_fn_base(ctor);
 
   auto* ctor_type = llvm_type(*ctor.base.self_ty);
   Val base_value = llvm::UndefValue::get(ctor_type);
@@ -425,8 +417,6 @@ void Compiler::define(Ctor& ctor) {
   auto* finalized_value = m_builder->CreateLoad(ctor_type, base_alloc);
   m_builder->CreateRet(finalized_value);
 
-  m_builder->SetInsertPoint(decl_bb);
-  m_builder->CreateBr(bb);
   verifyFunction(*ctor.base.llvm, &errs());
 }
 
@@ -515,16 +505,16 @@ template <> void Compiler::statement(const ast::ReturnStmt& stat) {
   m_builder->CreateRetVoid();
 }
 
+auto Compiler::entrypoint_builder() -> llvm::IRBuilder<> {
+  return {&m_current_fn->llvm->getEntryBlock(), m_current_fn->llvm->getEntryBlock().begin()};
+}
+
 template <> void Compiler::statement(const ast::VarDecl& stat) {
   // Locals are currently always mut, get the base type instead
   // TODO(rymiel): revisit, probably extract logic
   auto* var_type = llvm_type(*stat.val_ty()->qual_base());
 
-  auto* current_block = m_builder->GetInsertBlock();
-
-  m_builder->SetInsertPoint(m_current_fn->decl_bb);
-  auto* alloc = m_builder->CreateAlloca(var_type, nullptr, stat.name());
-  m_builder->SetInsertPoint(current_block);
+  auto* alloc = entrypoint_builder().CreateAlloca(var_type, nullptr, "vdecl."s + stat.name());
 
   auto expr_val = body_expression(stat.init());
   m_builder->CreateStore(expr_val, alloc);
@@ -849,10 +839,10 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
     slice_inst = m_builder->CreateInsertValue(slice_inst, data_size, 1);
     slice_inst->setName("sl.ctor.inst");
 
-    auto* current_block = m_builder->GetInsertBlock();
-    m_builder->SetInsertPoint(m_current_fn->decl_bb);
-    auto* iter_alloc = m_builder->CreateAlloca(m_builder->getInt64Ty(), nullptr, "sl.ctor.definit.iter");
-    m_builder->SetInsertPoint(current_block);
+    // TODO(rymiel): This is literally implementing a while loop in llvm IR. This could be implemented directly in yume
+    // as a library function, or at least utilize llvm instrinsics such as memset. LLVM will probably optimize to those
+    // intrinsics anyway, but we could do it ourselves too!
+    auto* iter_alloc = entrypoint_builder().CreateAlloca(m_builder->getInt64Ty(), nullptr, "sl.ctor.definit.iter");
     m_builder->CreateStore(m_builder->getInt64(0), iter_alloc);
 
     auto* iter_test = llvm::BasicBlock::Create(*m_context, "sl.ctor.definit.test", *m_current_fn);
