@@ -63,7 +63,7 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
   Struct* st = nullptr;
 
   if (auto* templated = dyn_cast<ast::TemplatedType>(&expr.type())) {
-    const auto& template_base = templated->base();
+    auto& template_base = templated->base();
     expression(template_base);
     const auto& base_type = convert_type(template_base);
     auto struct_obj =

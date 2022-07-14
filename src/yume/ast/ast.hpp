@@ -285,7 +285,8 @@ public:
 
   [[nodiscard]] auto type_vars() const -> const auto& { return m_type_args; }
   [[nodiscard]] auto type_vars() -> auto& { return m_type_args; }
-  [[nodiscard]] auto base() const -> auto& { return *m_base; }
+  [[nodiscard]] auto base() const -> const auto& { return *m_base; }
+  [[nodiscard]] auto base() -> auto& { return *m_base; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_TemplatedType; }
   [[nodiscard]] auto clone() const -> TemplatedType* override;
 };
