@@ -128,16 +128,16 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
 
   if (consider_ctor_overloads) {
 #ifdef YUME_SPEW_OVERLOAD_SELECTION
-    llvm::errs() << "\n*** BEGIN CTOR OVERLOAD EVALUATION ***\n";
-    llvm::errs() << "Constructors with matching names:\n";
-    ctor_overloads.dump(llvm::errs());
+    errs() << "\n*** BEGIN CTOR OVERLOAD EVALUATION ***\n";
+    errs() << "Constructors with matching names:\n";
+    ctor_overloads.dump(errs());
 #endif
 
     ctor_overloads.determine_valid_overloads();
 
 #ifdef YUME_SPEW_OVERLOAD_SELECTION
-    llvm::errs() << "\nViable overloads:\n";
-    ctor_overloads.dump(llvm::errs(), true);
+    errs() << "\nViable overloads:\n";
+    ctor_overloads.dump(errs(), true);
 #endif
 
     const auto* best_overload = ctor_overloads.try_best_viable_overload();
@@ -145,9 +145,9 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
       return; // TODO(rymiel): #16 The implicitly defined ctors should be real ctors, so this could be an error
 
 #ifdef YUME_SPEW_OVERLOAD_SELECTION
-    llvm::errs() << "\nSelected overload:\n";
-    best_overload->dump(llvm::errs());
-    llvm::errs() << "\n*** END CTOR OVERLOAD EVALUATION ***\n\n";
+    errs() << "\nSelected overload:\n";
+    best_overload->dump(errs());
+    errs() << "\n*** END CTOR OVERLOAD EVALUATION ***\n\n";
 #endif
 
     const auto& instantiate = best_overload->instantiation;
@@ -244,24 +244,24 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
   }
 
 #ifdef YUME_SPEW_OVERLOAD_SELECTION
-  llvm::errs() << "\n*** BEGIN FN OVERLOAD EVALUATION ***\n";
-  llvm::errs() << "Functions with matching names:\n";
-  overload_set.dump(llvm::errs());
+  errs() << "\n*** BEGIN FN OVERLOAD EVALUATION ***\n";
+  errs() << "Functions with matching names:\n";
+  overload_set.dump(errs());
 #endif
 
   overload_set.determine_valid_overloads();
 
 #ifdef YUME_SPEW_OVERLOAD_SELECTION
-  llvm::errs() << "\nViable overloads:\n";
-  overload_set.dump(llvm::errs(), true);
+  errs() << "\nViable overloads:\n";
+  overload_set.dump(errs(), true);
 #endif
 
   Overload best_overload = overload_set.best_viable_overload();
 
 #ifdef YUME_SPEW_OVERLOAD_SELECTION
-  llvm::errs() << "\nSelected overload:\n";
-  best_overload.dump(llvm::errs());
-  llvm::errs() << "\n*** END FN OVERLOAD EVALUATION ***\n\n";
+  errs() << "\nSelected overload:\n";
+  best_overload.dump(errs());
+  errs() << "\n*** END FN OVERLOAD EVALUATION ***\n\n";
 #endif
 
   auto& instantiate = best_overload.instantiation;

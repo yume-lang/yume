@@ -9,7 +9,7 @@ auto Parser::ignore_separator([[maybe_unused]] const source_location location) -
   bool found_separator = false;
   while (!tokens.at_end() && tokens->type == Separator) {
 #ifdef YUME_SPEW_CONSUMED_TOKENS
-    llvm::errs() << "consumed " << *tokens << " at " << at(location) << "\n";
+    errs() << "consumed " << *tokens << " at " << at(location) << "\n";
 #endif
     ++tokens;
     found_separator = true;
@@ -48,7 +48,7 @@ void Parser::consume(TokenAtom token_atom, const source_location location) {
   }
 
 #ifdef YUME_SPEW_CONSUMED_TOKENS
-  llvm::errs() << "consume: " << *tokens << " at " << at(location) << "\n";
+  errs() << "consume: " << *tokens << " at " << at(location) << "\n";
 #endif
 
   tokens++;
@@ -61,7 +61,7 @@ auto Parser::try_consume(TokenAtom token_atom, [[maybe_unused]] const source_loc
   }
 
 #ifdef YUME_SPEW_CONSUMED_TOKENS
-  llvm::errs() << "try_consume: " << *tokens << " at " << at(location) << "\n";
+  errs() << "try_consume: " << *tokens << " at " << at(location) << "\n";
 #endif
 
   tokens++;
@@ -76,8 +76,8 @@ auto Parser::try_peek(int ahead, TokenAtom token_atom, [[maybe_unused]] const so
   auto token = tokens + ahead;
 
 #ifdef YUME_SPEW_CONSUMED_TOKENS
-  llvm::errs() << "try_peek ahead by " << ahead << ": expected " << Token::type_name(token_type) << " "
-               << string(payload) << ", got " << *token << " at " << at(location) << "\n";
+  errs() << "try_peek ahead by " << ahead << ": expected " << Token::type_name(token_type) << " " << string(payload)
+         << ", got " << *token << " at " << at(location) << "\n";
 #endif
 
   return !(token->type != token_type || token->payload != payload);
@@ -90,8 +90,8 @@ auto Parser::try_peek(int ahead, Token::Type token_type, [[maybe_unused]] const 
   auto token = tokens + ahead;
 
 #ifdef YUME_SPEW_CONSUMED_TOKENS
-  llvm::errs() << "try_peek ahead by " << ahead << ": expected " << Token::type_name(token_type) << ", got " << *token
-               << " at " << at(location) << "\n";
+  errs() << "try_peek ahead by " << ahead << ": expected " << Token::type_name(token_type) << ", got " << *token
+         << " at " << at(location) << "\n";
 #endif
 
   return token->type == token_type;
@@ -100,7 +100,7 @@ auto Parser::try_peek(int ahead, Token::Type token_type, [[maybe_unused]] const 
 auto Parser::next([[maybe_unused]] const source_location location) -> Token {
   auto tok = *tokens++;
 #ifdef YUME_SPEW_CONSUMED_TOKENS
-  llvm::errs() << "next: " << tok << " at " << at(location) << "\n";
+  errs() << "next: " << tok << " at " << at(location) << "\n";
 #endif
   return tok;
 }
@@ -119,7 +119,7 @@ auto Parser::try_peek_uword(int ahead, [[maybe_unused]] const source_location lo
   auto token = tokens + ahead;
 
 #ifdef YUME_SPEW_CONSUMED_TOKENS
-  llvm::errs() << "try_peek ahead by " << ahead << ": expected uword, got " << *token << " at " << at(location) << "\n";
+  errs() << "try_peek ahead by " << ahead << ": expected uword, got " << *token << " at " << at(location) << "\n";
 #endif
 
   return token->type == Word && is_uword(token->payload.value());

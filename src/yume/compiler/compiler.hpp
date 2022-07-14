@@ -15,23 +15,28 @@
 #include <queue>
 #include <stdexcept>
 #include <string>
+#include <tuple>
 #include <vector>
 
 namespace llvm {
 class Function;
 class Type;
+class BasicBlock;
+class Value;
 } // namespace llvm
 
 namespace yume {
 namespace ast {
+class AST;
 class Expr;
 class Program;
 class StructDecl;
 class Stmt;
 } // namespace ast
 namespace ty {
+class Struct;
 class Type;
-}
+} // namespace ty
 
 struct InScope {
   Val value;

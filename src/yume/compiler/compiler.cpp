@@ -66,7 +66,7 @@ Compiler::Compiler(vector<SourceFile> source_files)
   const auto* target = llvm::TargetRegistry::lookupTarget(target_triple, error);
 
   if (target == nullptr) {
-    llvm::errs() << error;
+    errs() << error;
     throw std::exception();
   }
   const char* cpu = "generic";
@@ -394,7 +394,7 @@ void Compiler::define(Fn& fn) {
 
   m_builder->SetInsertPoint(decl_bb);
   m_builder->CreateBr(bb);
-  verifyFunction(*fn.base.llvm, &llvm::errs());
+  verifyFunction(*fn.base.llvm, &errs());
 }
 
 void Compiler::define(Ctor& ctor) {
@@ -427,7 +427,7 @@ void Compiler::define(Ctor& ctor) {
 
   m_builder->SetInsertPoint(decl_bb);
   m_builder->CreateBr(bb);
-  verifyFunction(*ctor.base.llvm, &llvm::errs());
+  verifyFunction(*ctor.base.llvm, &errs());
 }
 
 template <> void Compiler::statement(const ast::WhileStmt& stat) {
@@ -947,7 +947,7 @@ void Compiler::write_object(const char* filename, bool binary) {
   auto file_type = binary ? llvm::CGFT_ObjectFile : llvm::CGFT_AssemblyFile;
 
   if (m_targetMachine->addPassesToEmitFile(pass, *dest, nullptr, file_type)) {
-    llvm::errs() << "TargetMachine can't emit a file of this type";
+    errs() << "TargetMachine can't emit a file of this type";
     throw std::exception();
   }
 

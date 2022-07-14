@@ -81,14 +81,14 @@ public:
 
   void clean_buffer() {
     if (!m_skip)
-      llvm::errs() << m_direct_buffer;
+      errs() << m_direct_buffer;
 
     m_skip = false;
     m_direct_buffer.clear();
   }
 };
 
-const bool stacktrace_ostream::use_color = llvm::errs().has_colors();
+const bool stacktrace_ostream::use_color = errs().has_colors();
 
 // std::unique_ptr<$, std::default_delete<$> >
 constexpr ContainerLikeSimplify UPTR_SIMPLIFY = {"std::unique_ptr<", ", std::default_delete<"};

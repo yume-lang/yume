@@ -34,6 +34,7 @@ using std::vector;
 
 using llvm::cast;
 using llvm::dyn_cast;
+using llvm::errs;
 using llvm::isa;
 using std::move;
 

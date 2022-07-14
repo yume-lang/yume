@@ -18,7 +18,7 @@ namespace yume::semantic {
 
 inline static constexpr auto get_val_ty = [](const ast::AST* ast) { return ast->val_ty(); };
 
-static auto join_args(const auto& iter, auto fn, llvm::raw_ostream& stream = llvm::errs()) {
+static auto join_args(const auto& iter, auto fn, llvm::raw_ostream& stream = errs()) {
   for (auto& i : llvm::enumerate(iter)) {
     if (i.index() != 0)
       stream << ", ";
