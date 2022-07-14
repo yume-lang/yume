@@ -118,11 +118,13 @@ class AST;
 template <typename T> struct AnyBase {
   unique_ptr<T> val;
 
-  AnyBase() : val{} {}
-  explicit AnyBase(T* raw_ptr) : val{raw_ptr} {}
-  AnyBase(unique_ptr<T> uptr) : val{move(uptr)} {}
+  AnyBase() = delete;
+  explicit AnyBase(T* raw_ptr) : val{raw_ptr} { yume_assert(raw_ptr != nullptr, "AnyBase should never be null"); }
+  AnyBase(unique_ptr<T> uptr) : val{move(uptr)} { yume_assert(val.get() != nullptr, "AnyBase should never be null"); }
   template <typename U>
-  requires std::is_base_of_v<T, U> AnyBase(unique_ptr<U> uptr) : val{move(uptr)} {}
+  requires std::is_base_of_v<T, U> AnyBase(unique_ptr<U> uptr) : val{move(uptr)} {
+    yume_assert(val.get() != nullptr, "AnyBase should never be null");
+  }
 
   [[nodiscard]] auto operator->() const -> const T* { return val.operator->(); }
   [[nodiscard]] auto operator*() const -> const T& { return *val; }
@@ -130,7 +132,7 @@ template <typename T> struct AnyBase {
   [[nodiscard]] auto operator*() -> T& { return *val; }
 };
 
-template <typename T> struct OptionalAnyBase : public AnyBase<T> {
+template <typename T> struct OptionalAnyBase {
   unique_ptr<T> val;
 
   OptionalAnyBase() : val{} {}
