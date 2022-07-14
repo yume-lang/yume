@@ -20,6 +20,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Install coverxygen
+        run: pip install coverxygen
+      - name: Install LCOV
+        run: sudo apt update && sudo apt install lcov
+
       - name: Download coverage
         uses: dawidd6/action-download-artifact@v2
         with:
@@ -32,6 +41,11 @@ jobs:
         uses: mattnotmitt/doxygen-action@v1.9.4
         with:
           doxyfile-path: "Doxygen"
+
+      - name: Coverxygen
+        run: python -m coverxygen --xml-dir docs/xml/ --src-dir ./ --output docs/doc-cov.info
+      - name: Docs coverage
+        run: genhtml --no-function-coverage --no-branch-coverage docs/doc-cov.info -o docs/html/doc-coverage
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4.3.3
