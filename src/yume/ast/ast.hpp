@@ -474,10 +474,10 @@ public:
 
 /// A destruction of an object upon leaving its scope.
 class [[deprecated]] DtorExpr : public Expr {
-  unique_ptr<Expr> m_base;
+  AnyExpr m_base;
 
 public:
-  DtorExpr(span<Token> tok, unique_ptr<Expr> base) : Expr(K_Dtor, tok), m_base{move(base)} {}
+  DtorExpr(span<Token> tok, AnyExpr base) : Expr(K_Dtor, tok), m_base{move(base)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
