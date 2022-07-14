@@ -1,9 +1,4 @@
 <map id="yume::Instantiation" name="yume::Instantiation">
-<area shape="rect" id="node1" title="A mapping between type variables and substitutions for them." alt="" coords="73,317,204,344"/>
-<area shape="rect" id="node2" title=" " alt="" coords="65,199,213,255"/>
-<area shape="rect" id="node3" href="$classyume_1_1ty_1_1Generic.html" title="An unsubstituted generic type variable, usually something like T." alt="" coords="79,95,199,121"/>
-<area shape="rect" id="node4" href="$classyume_1_1ty_1_1Type.html" title="Represents a type in the type system. All types inherit from this class." alt="" coords="51,5,154,32"/>
-<area shape="rect" id="node5" title=" " alt="" coords="223,95,340,121"/>
-<area shape="rect" id="node6" title=" " alt="" coords="227,5,266,32"/>
-<area shape="rect" id="node7" title=" " alt="" coords="290,5,329,32"/>
+<area shape="rect" id="node1" title="A mapping between type variables and substitutions for them." alt="" coords="17,124,148,151"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,5,160,61"/>
 </map>

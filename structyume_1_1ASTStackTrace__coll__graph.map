@@ -1,6 +1,5 @@
 <map id="yume::ASTStackTrace" name="yume::ASTStackTrace">
-<area shape="rect" id="node1" title=" " alt="" coords="70,185,222,212"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,96,188,123"/>
-<area shape="rect" id="node3" title=" " alt="" coords="212,96,291,123"/>
-<area shape="rect" id="node4" title=" " alt="" coords="189,5,313,47"/>
+<area shape="rect" id="node1" title=" " alt="" coords="91,95,243,121"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,5,188,32"/>
+<area shape="rect" id="node3" title=" " alt="" coords="212,5,267,32"/>
 </map>
