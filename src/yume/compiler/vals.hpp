@@ -3,9 +3,11 @@
 #include "ast/ast.hpp"
 #include "ast/parser.hpp"
 #include "token.hpp"
+#include "ty/type.hpp"
 #include "util.hpp"
 #include <compare>
 #include <iosfwd>
+#include <llvm/Support/Casting.h>
 #include <llvm/Support/raw_ostream.h>
 #include <map>
 #include <memory>
@@ -21,13 +23,6 @@ class BasicBlock;
 } // namespace llvm
 
 namespace yume {
-class Compiler;
-
-namespace ty {
-class Generic;
-class Type;
-} // namespace ty
-
 /// A mapping between type variables and substitutions for them.
 struct Instantiation {
   std::map<const ty::Generic*, const ty::Type*> sub{};
