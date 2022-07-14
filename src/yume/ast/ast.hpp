@@ -116,6 +116,17 @@ class TokenIterator;
 
 class AST;
 
+namespace {
+template <typename T> struct AnyBase {
+  unique_ptr<T> val;
+
+  AnyBase(unique_ptr<T> expr) : val{move(expr)} {}
+
+  [[nodiscard]] auto operator->() const -> const T* { return val.operator->(); }
+  [[nodiscard]] auto operator*() const -> const T& { return *val; }
+};
+} // namespace
+
 /// Represents the relationship between multiple `AST` nodes.
 /**
  * `AST` nodes can be attached to propagate type information between them.
@@ -213,6 +224,8 @@ public:
   [[nodiscard]] auto clone() const -> Stmt* override = 0;
 };
 
+using AnyStmt = AnyBase<Stmt>;
+
 /// A type **annotation**. This (`ast::Type`) is distinct from the actual type of a value (`ty::Type`).
 class Type : public AST {
 protected:
@@ -222,6 +235,8 @@ public:
   static auto classof(const AST* a) -> bool { return a->kind() >= K_Type && a->kind() <= K_END_Type; }
   [[nodiscard]] auto clone() const -> Type* override = 0;
 };
+
+using AnyType = AnyBase<Type>;
 
 /// Just the name of a type, always capitalized.
 class SimpleType : public Type {
@@ -334,6 +349,8 @@ public:
   static auto classof(const AST* a) -> bool { return a->kind() >= K_Expr && a->kind() <= K_END_Expr; }
   [[nodiscard]] auto clone() const -> Expr* override = 0;
 };
+
+using AnyExpr = AnyBase<Expr>;
 
 /// Number literals.
 class NumberExpr : public Expr {

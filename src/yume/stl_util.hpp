@@ -18,7 +18,7 @@ concept pointer_like = requires(T t) {
 /// element is a const T&
 template <std::ranges::input_range T>
 requires pointer_like<typename std::iterator_traits<std::ranges::iterator_t<T>>::value_type>
-class dereference_view { // NOLINT(readability-identifier-naming): STL-like class
+class [[deprecated]] dereference_view { // NOLINT(readability-identifier-naming): STL-like class
 private:
   using Base = T;
 
@@ -134,13 +134,6 @@ public:
 
   [[nodiscard]] constexpr auto end() const -> Iterator { return Iterator{this, std::ranges::end(m_base)}; }
 };
-
-namespace {
-using dview = dereference_view<std::vector<std::unique_ptr<int>>>;
-static_assert(std::ranges::range<dview>);
-static_assert(std::ranges::input_range<dview>);
-static_assert(std::is_same_v<decltype(std::declval<dview>().begin())::value_type, int>);
-} // namespace
 
 /// Dereference an `optional` holding a pointer-like value, if it is holding a value
 /**
