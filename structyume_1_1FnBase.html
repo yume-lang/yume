@@ -80,13 +80,12 @@ Collaboration diagram for yume::FnBase:</div>
 <div class="dyncontent">
 <div class="center"><img src="structyume_1_1FnBase__coll__graph.png" border="0" usemap="#ayume_1_1FnBase_coll__map" alt="Collaboration graph"/></div>
 <map name="ayume_1_1FnBase_coll__map" id="ayume_1_1FnBase_coll__map">
-<area shape="rect" title=" " alt="" coords="237,260,341,287"/>
+<area shape="rect" title=" " alt="" coords="196,260,300,287"/>
 <area shape="rect" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,5,115,32"/>
 <area shape="rect" href="classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="87,81,198,108"/>
 <area shape="rect" href="classyume_1_1ty_1_1Type.html" title="Represents a type in the type system. All types inherit from this class." alt="" coords="238,171,341,197"/>
 <area shape="rect" href="classyume_1_1ast_1_1Program.html" title="The top level structure of a file of source code." alt="" coords="82,171,214,197"/>
 <area shape="rect" title=" " alt="" coords="365,171,445,197"/>
-<area shape="rect" title=" " alt="" coords="469,171,565,197"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -107,13 +106,10 @@ Public Attributes</h2></td></tr>
 <tr class="separator:ad0f09e98d811792b09b9918917b04a31"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3b763ae9a08c2e9d23baaff880f4b7a6"><td class="memItemLeft" align="right" valign="top">llvm::Function *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1FnBase.html#a3b763ae9a08c2e9d23baaff880f4b7a6">llvm</a> {}</td></tr>
 <tr class="separator:a3b763ae9a08c2e9d23baaff880f4b7a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab1f0cb42b02d8e5a930054a74f53b0ff"><td class="memItemLeft" align="right" valign="top">llvm::BasicBlock *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1FnBase.html#ab1f0cb42b02d8e5a930054a74f53b0ff">decl_bb</a> {}</td></tr>
-<tr class="memdesc:ab1f0cb42b02d8e5a930054a74f53b0ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">A basic block where are allocations for local variables should go. It is placed <em>before</em> the "entrypoint".  <a href="structyume_1_1FnBase.html#ab1f0cb42b02d8e5a930054a74f53b0ff">More...</a><br /></td></tr>
-<tr class="separator:ab1f0cb42b02d8e5a930054a74f53b0ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00045">45</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00044">44</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a9a5b5f8e265b7e8b1bf2b53c3534a5f5" name="a9a5b5f8e265b7e8b1bf2b53c3534a5f5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9a5b5f8e265b7e8b1bf2b53c3534a5f5">&#9670;&nbsp;</a></span>operator llvm::Function *()</h2>
@@ -138,9 +134,9 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00055">55</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00052">52</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00051">llvm</a>.</p>
+<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00050">llvm</a>.</p>
 
 </div>
 </div>
@@ -157,29 +153,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00046">46</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00045">45</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="vals_8hpp_source.html#l00079">yume::Fn::ast()</a>, <a class="el" href="vals_8hpp_source.html#l00131">yume::Ctor::ast()</a>, and <a class="el" href="compiler_8cpp_source.html#l00489">yume::Compiler::statement()</a>.</p>
-
-</div>
-</div>
-<a id="ab1f0cb42b02d8e5a930054a74f53b0ff" name="ab1f0cb42b02d8e5a930054a74f53b0ff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab1f0cb42b02d8e5a930054a74f53b0ff">&#9670;&nbsp;</a></span>decl_bb</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">llvm::BasicBlock* yume::FnBase::decl_bb {}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A basic block where are allocations for local variables should go. It is placed <em>before</em> the "entrypoint". </p>
-
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00053">53</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00518">yume::Compiler::statement()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="vals_8hpp_source.html#l00076">yume::Fn::ast()</a>, <a class="el" href="vals_8hpp_source.html#l00128">yume::Ctor::ast()</a>, and <a class="el" href="compiler_8cpp_source.html#l00479">yume::Compiler::statement()</a>.</p>
 
 </div>
 </div>
@@ -195,9 +171,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00051">51</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00050">50</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00383">yume::Compiler::define()</a>, and <a class="el" href="vals_8hpp_source.html#l00055">operator llvm::Function *()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00377">yume::Compiler::define()</a>, and <a class="el" href="vals_8hpp_source.html#l00052">operator llvm::Function *()</a>.</p>
 
 </div>
 </div>
@@ -215,7 +191,7 @@ Public Attributes</h2></td></tr>
 
 <p>The program this declaration is a member of. </p>
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00050">50</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00049">49</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
 </div>
 </div>
@@ -233,9 +209,9 @@ Public Attributes</h2></td></tr>
 
 <p>If this function is in the body of a struct, this points to its type. Used for the <code>self</code> type. </p>
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00048">48</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00047">47</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00400">yume::Compiler::define()</a>, <a class="el" href="vals_8hpp_source.html#l00082">yume::Fn::get_self_ty()</a>, and <a class="el" href="vals_8hpp_source.html#l00133">yume::Ctor::get_self_ty()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00392">yume::Compiler::define()</a>, <a class="el" href="vals_8hpp_source.html#l00079">yume::Fn::get_self_ty()</a>, and <a class="el" href="vals_8hpp_source.html#l00130">yume::Ctor::get_self_ty()</a>.</p>
 
 </div>
 </div>
