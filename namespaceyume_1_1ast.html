@@ -83,7 +83,7 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1AnyBase.html">AnyBase</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AnyBase.html">AnyBase</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AssignExpr.html">AssignExpr</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An assignment (<code>=</code>).  <a href="classyume_1_1ast_1_1AssignExpr.html#details">More...</a><br /></td></tr>
@@ -134,6 +134,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1NumberExpr.html">NumberExpr</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number literals.  <a href="classyume_1_1ast_1_1NumberExpr.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1OptionalAnyBase.html">OptionalAnyBase</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1Program.html">Program</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The top level structure of a file of source code.  <a href="classyume_1_1ast_1_1Program.html#details">More...</a><br /></td></tr>
@@ -186,12 +188,16 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a54c5c0ff22ac40c873cc98ba974dea57"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a54c5c0ff22ac40c873cc98ba974dea57">AnyStmt</a> = <a class="el" href="structyume_1_1ast_1_1AnyBase.html">AnyBase</a>&lt; <a class="el" href="classyume_1_1ast_1_1Stmt.html">Stmt</a> &gt;</td></tr>
+<tr class="memitem:a54c5c0ff22ac40c873cc98ba974dea57"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#a54c5c0ff22ac40c873cc98ba974dea57">AnyStmt</a> = <a class="el" href="classyume_1_1ast_1_1AnyBase.html">AnyBase</a>&lt; <a class="el" href="classyume_1_1ast_1_1Stmt.html">Stmt</a> &gt;</td></tr>
 <tr class="separator:a54c5c0ff22ac40c873cc98ba974dea57"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af834ef71cbc1b3437912ea086c06c7c3"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#af834ef71cbc1b3437912ea086c06c7c3">AnyType</a> = <a class="el" href="structyume_1_1ast_1_1AnyBase.html">AnyBase</a>&lt; <a class="el" href="classyume_1_1ast_1_1Type.html">Type</a> &gt;</td></tr>
+<tr class="memitem:af834ef71cbc1b3437912ea086c06c7c3"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#af834ef71cbc1b3437912ea086c06c7c3">AnyType</a> = <a class="el" href="classyume_1_1ast_1_1AnyBase.html">AnyBase</a>&lt; <a class="el" href="classyume_1_1ast_1_1Type.html">Type</a> &gt;</td></tr>
 <tr class="separator:af834ef71cbc1b3437912ea086c06c7c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab6c3df64a07a2568e43a0876a910b0d2"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#ab6c3df64a07a2568e43a0876a910b0d2">AnyExpr</a> = <a class="el" href="structyume_1_1ast_1_1AnyBase.html">AnyBase</a>&lt; <a class="el" href="classyume_1_1ast_1_1Expr.html">Expr</a> &gt;</td></tr>
+<tr class="memitem:abbe8370067fd80e7639b21ac03c4c7f1"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#abbe8370067fd80e7639b21ac03c4c7f1">OptionalType</a> = <a class="el" href="classyume_1_1ast_1_1OptionalAnyBase.html">OptionalAnyBase</a>&lt; <a class="el" href="classyume_1_1ast_1_1Type.html">Type</a> &gt;</td></tr>
+<tr class="separator:abbe8370067fd80e7639b21ac03c4c7f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6c3df64a07a2568e43a0876a910b0d2"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#ab6c3df64a07a2568e43a0876a910b0d2">AnyExpr</a> = <a class="el" href="classyume_1_1ast_1_1AnyBase.html">AnyBase</a>&lt; <a class="el" href="classyume_1_1ast_1_1Expr.html">Expr</a> &gt;</td></tr>
 <tr class="separator:ab6c3df64a07a2568e43a0876a910b0d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4e6788ee8c32918650276c689d849a2"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#af4e6788ee8c32918650276c689d849a2">OptionalExpr</a> = <a class="el" href="classyume_1_1ast_1_1OptionalAnyBase.html">OptionalAnyBase</a>&lt; <a class="el" href="classyume_1_1ast_1_1Expr.html">Expr</a> &gt;</td></tr>
+<tr class="separator:af4e6788ee8c32918650276c689d849a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb273ed3fe6a9f254028a283e103c8df"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast.html#aeb273ed3fe6a9f254028a283e103c8df">VectorTokenIterator</a> = vector&lt; <a class="el" href="structyume_1_1Token.html">Token</a> &gt;::iterator</td></tr>
 <tr class="separator:aeb273ed3fe6a9f254028a283e103c8df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -257,12 +263,12 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="namespaceyume_1_1ast.html#ab6c3df64a07a2568e43a0876a910b0d2">yume::ast::AnyExpr</a> = typedef <a class="el" href="structyume_1_1ast_1_1AnyBase.html">AnyBase</a>&lt;<a class="el" href="classyume_1_1ast_1_1Expr.html">Expr</a>&gt;</td>
+          <td class="memname">using <a class="el" href="namespaceyume_1_1ast.html#ab6c3df64a07a2568e43a0876a910b0d2">yume::ast::AnyExpr</a> = typedef <a class="el" href="classyume_1_1ast_1_1AnyBase.html">AnyBase</a>&lt;<a class="el" href="classyume_1_1ast_1_1Expr.html">Expr</a>&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00356">356</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00387">387</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -273,12 +279,12 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="namespaceyume_1_1ast.html#a54c5c0ff22ac40c873cc98ba974dea57">yume::ast::AnyStmt</a> = typedef <a class="el" href="structyume_1_1ast_1_1AnyBase.html">AnyBase</a>&lt;<a class="el" href="classyume_1_1ast_1_1Stmt.html">Stmt</a>&gt;</td>
+          <td class="memname">using <a class="el" href="namespaceyume_1_1ast.html#a54c5c0ff22ac40c873cc98ba974dea57">yume::ast::AnyStmt</a> = typedef <a class="el" href="classyume_1_1ast_1_1AnyBase.html">AnyBase</a>&lt;<a class="el" href="classyume_1_1ast_1_1Stmt.html">Stmt</a>&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00229">229</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00260">260</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -289,12 +295,44 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="namespaceyume_1_1ast.html#af834ef71cbc1b3437912ea086c06c7c3">yume::ast::AnyType</a> = typedef <a class="el" href="structyume_1_1ast_1_1AnyBase.html">AnyBase</a>&lt;<a class="el" href="classyume_1_1ast_1_1Type.html">Type</a>&gt;</td>
+          <td class="memname">using <a class="el" href="namespaceyume_1_1ast.html#af834ef71cbc1b3437912ea086c06c7c3">yume::ast::AnyType</a> = typedef <a class="el" href="classyume_1_1ast_1_1AnyBase.html">AnyBase</a>&lt;<a class="el" href="classyume_1_1ast_1_1Type.html">Type</a>&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00241">241</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00272">272</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+
+</div>
+</div>
+<a id="af4e6788ee8c32918650276c689d849a2" name="af4e6788ee8c32918650276c689d849a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af4e6788ee8c32918650276c689d849a2">&#9670;&nbsp;</a></span>OptionalExpr</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespaceyume_1_1ast.html#af4e6788ee8c32918650276c689d849a2">yume::ast::OptionalExpr</a> = typedef <a class="el" href="classyume_1_1ast_1_1OptionalAnyBase.html">OptionalAnyBase</a>&lt;<a class="el" href="classyume_1_1ast_1_1Expr.html">Expr</a>&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00388">388</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+
+</div>
+</div>
+<a id="abbe8370067fd80e7639b21ac03c4c7f1" name="abbe8370067fd80e7639b21ac03c4c7f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abbe8370067fd80e7639b21ac03c4c7f1">&#9670;&nbsp;</a></span>OptionalType</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespaceyume_1_1ast.html#abbe8370067fd80e7639b21ac03c4c7f1">yume::ast::OptionalType</a> = typedef <a class="el" href="classyume_1_1ast_1_1OptionalAnyBase.html">OptionalAnyBase</a>&lt;<a class="el" href="classyume_1_1ast_1_1Type.html">Type</a>&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00273">273</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -429,7 +467,7 @@ Functions</h2></td></tr>
 
 <p class="reference">References <a class="el" href="ast_8hpp_source.html#l00059">K_Assign</a>, <a class="el" href="ast_8hpp_source.html#l00052">K_Bool</a>, <a class="el" href="ast_8hpp_source.html#l00055">K_Call</a>, <a class="el" href="ast_8hpp_source.html#l00051">K_Char</a>, <a class="el" href="ast_8hpp_source.html#l00038">K_Compound</a>, <a class="el" href="ast_8hpp_source.html#l00056">K_Ctor</a>, <a class="el" href="ast_8hpp_source.html#l00040">K_CtorDecl</a>, <a class="el" href="ast_8hpp_source.html#l00057">K_Dtor</a>, <a class="el" href="ast_8hpp_source.html#l00062">K_END_Expr</a>, <a class="el" href="ast_8hpp_source.html#l00063">K_END_Stmt</a>, <a class="el" href="ast_8hpp_source.html#l00071">K_END_Type</a>, <a class="el" href="ast_8hpp_source.html#l00049">K_Expr</a>, <a class="el" href="ast_8hpp_source.html#l00060">K_FieldAccess</a>, <a class="el" href="ast_8hpp_source.html#l00039">K_FnDecl</a>, <a class="el" href="ast_8hpp_source.html#l00044">K_If</a>, <a class="el" href="ast_8hpp_source.html#l00033">K_IfClause</a>, <a class="el" href="ast_8hpp_source.html#l00061">K_ImplicitCast</a>, <a class="el" href="ast_8hpp_source.html#l00050">K_Number</a>, <a class="el" href="ast_8hpp_source.html#l00046">K_Program</a>, <a class="el" href="ast_8hpp_source.html#l00068">K_QualType</a>, <a class="el" href="ast_8hpp_source.html#l00045">K_Return</a>, <a class="el" href="ast_8hpp_source.html#l00070">K_SelfType</a>, <a class="el" href="ast_8hpp_source.html#l00067">K_SimpleType</a>, <a class="el" href="ast_8hpp_source.html#l00058">K_Slice</a>, <a class="el" href="ast_8hpp_source.html#l00037">K_Stmt</a>, <a class="el" href="ast_8hpp_source.html#l00053">K_String</a>, <a class="el" href="ast_8hpp_source.html#l00041">K_StructDecl</a>, <a class="el" href="ast_8hpp_source.html#l00069">K_TemplatedType</a>, <a class="el" href="ast_8hpp_source.html#l00066">K_Type</a>, <a class="el" href="ast_8hpp_source.html#l00034">K_TypeName</a>, <a class="el" href="ast_8hpp_source.html#l00032">K_Unknown</a>, <a class="el" href="ast_8hpp_source.html#l00054">K_Var</a>, <a class="el" href="ast_8hpp_source.html#l00042">K_VarDecl</a>, and <a class="el" href="ast_8hpp_source.html#l00043">K_While</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8hpp_source.html#l00199">yume::ast::AST::kind_name()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8hpp_source.html#l00230">yume::ast::AST::kind_name()</a>.</p>
 
 </div>
 </div>

@@ -389,7 +389,7 @@ $(function() {
 <div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>  <span class="keyword">auto</span> args = vector&lt;TypeName&gt;{};</div>
 <div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>  consume_with_commas_until(<a class="code hl_variable" href="namespaceyume_1_1ast_1_1parser.html#a95f3f93bf48235c16b24354354038afc">SYM_RPAREN</a>, [&amp;] { args.push_back(move(*parse_type_name())); });</div>
 <div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span> </div>
-<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>  <span class="keyword">auto</span> ret_type = try_parse_type();</div>
+<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>  <span class="keyword">auto</span> ret_type = <a class="code hl_class" href="classyume_1_1ast_1_1OptionalAnyBase.html">OptionalType</a>{try_parse_type()};</div>
 <div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>  <span class="keyword">auto</span> body = vector&lt;AnyStmt&gt;{};</div>
 <div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span>  <span class="keyword">auto</span> body_begin = entry;</div>
 <div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span> </div>
@@ -457,7 +457,7 @@ $(function() {
 <div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span> </div>
 <div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>  consume(<a class="code hl_variable" href="namespaceyume_1_1ast_1_1parser.html#a5d5de78a1611ef6cc6cf20bd5847f5be">KWD_LET</a>);</div>
 <div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span>  <span class="keyword">const</span> <span class="keywordtype">string</span> name = consume_word();</div>
-<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>  <span class="keyword">auto</span> type = try_parse_type();</div>
+<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>  <span class="keyword">auto</span> type = <a class="code hl_class" href="classyume_1_1ast_1_1OptionalAnyBase.html">OptionalType</a>{try_parse_type()};</div>
 <div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span> </div>
 <div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>  consume(<a class="code hl_variable" href="namespaceyume_1_1ast_1_1parser.html#acb010b8cf020a2b8c1422210df7d2d50">SYM_EQ</a>);</div>
 <div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span> </div>
@@ -491,11 +491,11 @@ $(function() {
 <div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span> </div>
 <div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span>  consume(<a class="code hl_variable" href="namespaceyume_1_1ast_1_1parser.html#aebe74a863fb886e7e7680bbb8408a075">KWD_RETURN</a>);</div>
 <div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span>  <span class="keywordflow">if</span> (!tokens.at_end() &amp;&amp; try_peek(0, Separator))</div>
-<div class="line"><a id="l00423" name="l00423"></a><span class="lineno">  423</span>    <span class="keywordflow">return</span> ast_ptr&lt;ReturnStmt&gt;(entry, optional&lt;unique_ptr&lt;Expr&gt;&gt;{});</div>
+<div class="line"><a id="l00423" name="l00423"></a><span class="lineno">  423</span>    <span class="keywordflow">return</span> ast_ptr&lt;ReturnStmt&gt;(entry, std::nullopt);</div>
 <div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span> </div>
 <div class="line"><a id="l00425" name="l00425"></a><span class="lineno">  425</span>  <span class="keyword">auto</span> expr = parse_expr();</div>
 <div class="line"><a id="l00426" name="l00426"></a><span class="lineno">  426</span> </div>
-<div class="line"><a id="l00427" name="l00427"></a><span class="lineno">  427</span>  <span class="keywordflow">return</span> ast_ptr&lt;ReturnStmt&gt;(entry, optional&lt;unique_ptr&lt;Expr&gt;&gt;{move(expr)});</div>
+<div class="line"><a id="l00427" name="l00427"></a><span class="lineno">  427</span>  <span class="keywordflow">return</span> ast_ptr&lt;ReturnStmt&gt;(entry, move(expr));</div>
 <div class="line"><a id="l00428" name="l00428"></a><span class="lineno">  428</span>}</div>
 <div class="line"><a id="l00429" name="l00429"></a><span class="lineno">  429</span> </div>
 <div class="line"><a id="l00430" name="l00430"></a><span class="lineno"><a class="line" href="structyume_1_1ast_1_1parser_1_1Parser.html#a66a5273076167125796466fae703f8c0">  430</a></span><span class="keyword">auto</span> <a class="code hl_function" href="structyume_1_1ast_1_1parser_1_1Parser.html#a66a5273076167125796466fae703f8c0">Parser::parse_if_stmt</a>() -&gt; unique_ptr&lt;IfStmt&gt; {</div>
@@ -713,8 +713,9 @@ $(function() {
 <div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span>  <span class="keywordflow">return</span> make_unique&lt;Program&gt;(parser.ts(entry), move(statements));</div>
 <div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span>}</div>
 <div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span>} <span class="comment">// namespace yume::ast</span></div>
-<div class="ttc" id="aclassyume_1_1ast_1_1Compound_html"><div class="ttname"><a href="classyume_1_1ast_1_1Compound.html">yume::ast::Compound</a></div><div class="ttdoc">A statement consisting of multiple other statements, i.e. the body of a function.</div><div class="ttdef"><b>Definition:</b> <a href="ast_8hpp_source.html#l00572">ast.hpp:572</a></div></div>
-<div class="ttc" id="aclassyume_1_1ast_1_1CtorDecl_html_a2aaa38aa7ab2e32a6690c5e0cea1ba13"><div class="ttname"><a href="classyume_1_1ast_1_1CtorDecl.html#a2aaa38aa7ab2e32a6690c5e0cea1ba13">yume::ast::CtorDecl::arg_t</a></div><div class="ttdeci">variant&lt; TypeName, FieldAccessExpr &gt; arg_t</div><div class="ttdef"><b>Definition:</b> <a href="ast_8hpp_source.html#l00627">ast.hpp:627</a></div></div>
+<div class="ttc" id="aclassyume_1_1ast_1_1Compound_html"><div class="ttname"><a href="classyume_1_1ast_1_1Compound.html">yume::ast::Compound</a></div><div class="ttdoc">A statement consisting of multiple other statements, i.e. the body of a function.</div><div class="ttdef"><b>Definition:</b> <a href="ast_8hpp_source.html#l00604">ast.hpp:604</a></div></div>
+<div class="ttc" id="aclassyume_1_1ast_1_1CtorDecl_html_a2aaa38aa7ab2e32a6690c5e0cea1ba13"><div class="ttname"><a href="classyume_1_1ast_1_1CtorDecl.html#a2aaa38aa7ab2e32a6690c5e0cea1ba13">yume::ast::CtorDecl::arg_t</a></div><div class="ttdeci">variant&lt; TypeName, FieldAccessExpr &gt; arg_t</div><div class="ttdef"><b>Definition:</b> <a href="ast_8hpp_source.html#l00658">ast.hpp:658</a></div></div>
+<div class="ttc" id="aclassyume_1_1ast_1_1OptionalAnyBase_html"><div class="ttname"><a href="classyume_1_1ast_1_1OptionalAnyBase.html">yume::ast::OptionalAnyBase&lt; Type &gt;</a></div></div>
 <div class="ttc" id="aclassyume_1_1ast_1_1Program_html_ab3090a617ad1dc4ce9396ec367c69f4c"><div class="ttname"><a href="classyume_1_1ast_1_1Program.html#ab3090a617ad1dc4ce9396ec367c69f4c">yume::ast::Program::parse</a></div><div class="ttdeci">static auto parse(TokenIterator &amp;tokens) -&gt; unique_ptr&lt; Program &gt;</div><div class="ttdef"><b>Definition:</b> <a href="parser_8cpp_source.html#l00633">parser.cpp:633</a></div></div>
 <div class="ttc" id="aclassyume_1_1ast_1_1TokenIterator_html"><div class="ttname"><a href="classyume_1_1ast_1_1TokenIterator.html">yume::ast::TokenIterator</a></div><div class="ttdoc">An iterator-like holding Tokens, used when parsing.</div><div class="ttdef"><b>Definition:</b> <a href="parser_8hpp_source.html#l00030">parser.hpp:30</a></div></div>
 <div class="ttc" id="aclassyume_1_1ast_1_1TokenIterator_html_a81fd4667a2199a1ccdf19b6b9c15b3c7"><div class="ttname"><a href="classyume_1_1ast_1_1TokenIterator.html#a81fd4667a2199a1ccdf19b6b9c15b3c7">yume::ast::TokenIterator::at_end</a></div><div class="ttdeci">constexpr auto at_end() const noexcept -&gt; bool</div><div class="ttdoc">Check if the iterator is at the end and no more Tokens could possibly be read.</div><div class="ttdef"><b>Definition:</b> <a href="parser_8hpp_source.html#l00039">parser.hpp:39</a></div></div>

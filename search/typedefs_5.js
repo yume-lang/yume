@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['substitution_5ft_0',['substitution_t',['../namespaceyume.html#a1924a086f31b4d5cbd5e5a9fcacf1150',1,'yume']]]
+  ['payload_0',['Payload',['../structyume_1_1Token.html#a45fbde9023f1f51b4d48b9b14470685e',1,'yume::Token']]]
 ];

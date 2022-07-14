@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['tokenatom_0',['TokenAtom',['../namespaceyume_1_1ast_1_1parser.html#af2bb5ecccc83c997bd6403d5cc0dd3e0',1,'yume::ast::parser']]]
+  ['substitution_5ft_0',['substitution_t',['../namespaceyume.html#a1924a086f31b4d5cbd5e5a9fcacf1150',1,'yume']]]
 ];
