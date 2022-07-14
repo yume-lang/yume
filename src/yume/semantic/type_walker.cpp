@@ -184,8 +184,8 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
   if (!expr.base().has_value()) {
     type = current_decl.self_ty();
   } else {
-    body_expression(**expr.base());
-    type = expr.base().value()->val_ty();
+    body_expression(*expr.base());
+    type = expr.base()->val_ty();
   }
 
   const auto* struct_type = dyn_cast<ty::Struct>(&type->without_qual());
@@ -338,8 +338,8 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
   }
 
   if (stat.ret().has_value()) {
-    expression(*stat.ret().value());
-    stat.attach_to(&*stat.ret().value());
+    expression(*stat.ret());
+    stat.attach_to(&*stat.ret());
   }
 
   // This decl still has unsubstituted generics, can't instantiate its body
@@ -388,7 +388,7 @@ template <> void TypeWalker::statement(ast::CtorDecl& stat) {
 
 template <> void TypeWalker::statement(ast::ReturnStmt& stat) {
   if (stat.expr().has_value()) {
-    auto& returned = **stat.expr();
+    auto& returned = *stat.expr();
     body_expression(returned);
     current_decl.ast()->attach_to(&returned);
   }
@@ -397,8 +397,8 @@ template <> void TypeWalker::statement(ast::ReturnStmt& stat) {
 template <> void TypeWalker::statement(ast::VarDecl& stat) {
   body_expression(stat.init());
   if (stat.type().has_value()) {
-    expression(**stat.type());
-    stat.init().attach_to(&**stat.type());
+    expression(*stat.type());
+    stat.init().attach_to(&*stat.type());
   }
 
   stat.val_ty(&stat.init().val_ty()->known_mut());

@@ -21,6 +21,9 @@ template <typename T> auto dup(const vector<AnyBase<T>>& items) {
   return dup;
 }
 
+template <typename T> auto dup(const OptionalAnyBase<T>& ptr) -> OptionalAnyBase<T> {
+  return unique_ptr<T>(ptr->clone());
+}
 template <typename T> auto dup(const AnyBase<T>& ptr) -> AnyBase<T> { return unique_ptr<T>(ptr->clone()); }
 
 template <typename T>

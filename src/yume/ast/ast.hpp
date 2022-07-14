@@ -118,6 +118,7 @@ class AST;
 template <typename T> struct AnyBase {
   unique_ptr<T> val;
 
+  AnyBase() : val{} {}
   explicit AnyBase(T* raw_ptr) : val{raw_ptr} {}
   AnyBase(unique_ptr<T> uptr) : val{move(uptr)} {}
   template <typename U>
@@ -127,6 +128,26 @@ template <typename T> struct AnyBase {
   [[nodiscard]] auto operator*() const -> const T& { return *val; }
   [[nodiscard]] auto operator->() -> T* { return val.operator->(); }
   [[nodiscard]] auto operator*() -> T& { return *val; }
+};
+
+template <typename T> struct OptionalAnyBase : public AnyBase<T> {
+  unique_ptr<T> val;
+
+  OptionalAnyBase() : val{} {}
+  explicit OptionalAnyBase(T* raw_ptr) : val{raw_ptr} {}
+  OptionalAnyBase(unique_ptr<T> uptr) : val{move(uptr)} {}
+  template <typename U>
+  requires std::is_base_of_v<T, U> OptionalAnyBase(unique_ptr<U> uptr) : val{move(uptr)} {}
+  OptionalAnyBase(std::nullopt_t /* tag */) : val{} {}
+  explicit OptionalAnyBase(optional<unique_ptr<T>> opt_uptr) : val{opt_uptr.has_value() ? move(*opt_uptr) : nullptr} {}
+
+  [[nodiscard]] auto operator->() const -> const T* { return val.operator->(); }
+  [[nodiscard]] auto operator*() const -> const T& { return *val; }
+  [[nodiscard]] auto operator->() -> T* { return val.operator->(); }
+  [[nodiscard]] auto operator*() -> T& { return *val; }
+
+  [[nodiscard]] operator bool() const { return static_cast<bool>(val); }
+  [[nodiscard]] auto has_value() const -> bool { return static_cast<bool>(val); }
 };
 
 /// Represents the relationship between multiple `AST` nodes.
@@ -239,6 +260,7 @@ public:
 };
 
 using AnyType = AnyBase<Type>;
+using OptionalType = OptionalAnyBase<Type>;
 
 /// Just the name of a type, always capitalized.
 class SimpleType : public Type {
@@ -307,8 +329,7 @@ class TypeName : public AST {
   string m_name;
 
 public:
-  TypeName(span<Token> tok, AnyType type, string name)
-      : AST(K_TypeName, tok), m_type{move(type)}, m_name{move(name)} {}
+  TypeName(span<Token> tok, AnyType type, string name) : AST(K_TypeName, tok), m_type{move(type)}, m_name{move(name)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
@@ -354,6 +375,7 @@ public:
 };
 
 using AnyExpr = AnyBase<Expr>;
+using OptionalExpr = OptionalAnyBase<Expr>;
 
 /// Number literals.
 class NumberExpr : public Expr {
@@ -533,12 +555,12 @@ public:
 
 /// Direct access of a field of a struct (`::`).
 class FieldAccessExpr : public Expr {
-  optional<AnyExpr> m_base;
+  OptionalExpr m_base;
   string m_field;
   mutable int m_offset = -1;
 
 public:
-  FieldAccessExpr(span<Token> tok, optional<AnyExpr> base, string field)
+  FieldAccessExpr(span<Token> tok, OptionalExpr base, string field)
       : Expr(K_FieldAccess, tok), m_base{move(base)}, m_field{move(field)} {}
   void visit(Visitor& visitor) const override;
 
@@ -592,16 +614,15 @@ private:
   bool m_varargs{};
   vector<arg_t> m_args;
   vector<string> m_type_args;
-  optional<AnyType> m_ret;
+  OptionalType m_ret;
   variant<Compound, string> m_body;
 
 public:
-  FnDecl(span<Token> tok, string name, vector<arg_t> args, vector<string> type_args, optional<AnyType> ret,
-         Compound body)
+  FnDecl(span<Token> tok, string name, vector<arg_t> args, vector<string> type_args, OptionalType ret, Compound body)
       : Stmt(K_FnDecl, tok), m_name{move(name)}, m_args{move(args)},
         m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(body)} {}
-  FnDecl(span<Token> tok, string name, vector<arg_t> args, vector<string> type_args, optional<AnyType> ret,
-         bool varargs, string primitive)
+  FnDecl(span<Token> tok, string name, vector<arg_t> args, vector<string> type_args, OptionalType ret, bool varargs,
+         string primitive)
       : Stmt(K_FnDecl, tok), m_name{move(name)}, m_varargs{varargs}, m_args{move(args)},
         m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(primitive)} {}
   void visit(Visitor& visitor) const override;
@@ -673,11 +694,11 @@ public:
 /// A declaration of a local variable (`let`).
 class VarDecl : public Stmt {
   string m_name;
-  optional<AnyType> m_type;
+  OptionalType m_type;
   AnyExpr m_init;
 
 public:
-  VarDecl(span<Token> tok, string name, optional<AnyType> type, AnyExpr init)
+  VarDecl(span<Token> tok, string name, OptionalType type, AnyExpr init)
       : Stmt(K_VarDecl, tok), m_name{move(name)}, m_type{move(type)}, m_init(move(init)) {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
@@ -747,10 +768,10 @@ public:
 
 /// Return from a function body.
 class ReturnStmt : public Stmt {
-  optional<AnyExpr> m_expr;
+  OptionalExpr m_expr;
 
 public:
-  explicit ReturnStmt(span<Token> tok, optional<AnyExpr> expr) : Stmt(K_Return, tok), m_expr{move(expr)} {}
+  explicit ReturnStmt(span<Token> tok, OptionalExpr expr) : Stmt(K_Return, tok), m_expr{move(expr)} {}
   void visit(Visitor& visitor) const override;
 
   [[nodiscard]] auto expr() const -> const auto& { return m_expr; }

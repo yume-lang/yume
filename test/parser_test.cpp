@@ -56,7 +56,7 @@ struct TName {
 
 template <typename... Ts>
 auto make_fn_decl(const std::string& name, std::initializer_list<TName> args = {},
-                  std::vector<std::string> type_args = {}, std::optional<std::unique_ptr<Type>> ret = std::nullopt,
+                  std::vector<std::string> type_args = {}, OptionalType ret = std::nullopt,
                   Ts&&... ts) -> std::unique_ptr<FnDecl> {
   auto ast_args = std::vector<TypeName>();
   ast_args.reserve(args.size());
@@ -66,7 +66,7 @@ auto make_fn_decl(const std::string& name, std::initializer_list<TName> args = {
                      make_compound(std::forward<Ts>(ts)...));
 }
 
-auto make_fn_decl(const std::string& name, std::initializer_list<TName> args, std::optional<std::unique_ptr<Type>> ret,
+auto make_fn_decl(const std::string& name, std::initializer_list<TName> args, OptionalType ret,
                   const std::string& primitive, bool varargs = false) -> std::unique_ptr<FnDecl> {
   auto ast_args = std::vector<TypeName>();
   ast_args.reserve(args.size());

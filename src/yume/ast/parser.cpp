@@ -318,7 +318,7 @@ auto Parser::parse_fn_decl() -> unique_ptr<FnDecl> {
   auto args = vector<TypeName>{};
   consume_with_commas_until(SYM_RPAREN, [&] { args.push_back(move(*parse_type_name())); });
 
-  auto ret_type = try_parse_type();
+  auto ret_type = OptionalType{try_parse_type()};
   auto body = vector<AnyStmt>{};
   auto body_begin = entry;
 
@@ -386,7 +386,7 @@ auto Parser::parse_var_decl() -> unique_ptr<VarDecl> {
 
   consume(KWD_LET);
   const string name = consume_word();
-  auto type = try_parse_type();
+  auto type = OptionalType{try_parse_type()};
 
   consume(SYM_EQ);
 
@@ -420,11 +420,11 @@ auto Parser::parse_return_stmt() -> unique_ptr<ReturnStmt> {
 
   consume(KWD_RETURN);
   if (!tokens.at_end() && try_peek(0, Separator))
-    return ast_ptr<ReturnStmt>(entry, optional<unique_ptr<Expr>>{});
+    return ast_ptr<ReturnStmt>(entry, std::nullopt);
 
   auto expr = parse_expr();
 
-  return ast_ptr<ReturnStmt>(entry, optional<unique_ptr<Expr>>{move(expr)});
+  return ast_ptr<ReturnStmt>(entry, move(expr));
 }
 
 auto Parser::parse_if_stmt() -> unique_ptr<IfStmt> {

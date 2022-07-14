@@ -260,7 +260,7 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
   auto* llvm_ret_type = llvm::Type::getVoidTy(*m_context);
   auto llvm_args = vector<llvm::Type*>{};
   if (fn_decl.ret())
-    llvm_ret_type = llvm_type(*fn_decl.ret().value()->val_ty());
+    llvm_ret_type = llvm_type(*fn_decl.ret()->val_ty());
 
   for (const auto& i : fn_decl.args())
     llvm_args.push_back(llvm_type(*i.val_ty()));
@@ -480,7 +480,7 @@ template <> void Compiler::statement(const ast::ReturnStmt& stat) {
   InScope* reset_owning = nullptr;
 
   if (stat.expr().has_value()) {
-    if (const auto* var = dyn_cast<ast::VarExpr>(&*stat.expr().value())) {
+    if (const auto* var = dyn_cast<ast::VarExpr>(&*stat.expr())) {
       auto& in_scope = m_scope.at(var->name());
       if (in_scope.owning) {
         in_scope.owning = false; // Returning a local variable also gives up ownership of it
@@ -493,7 +493,7 @@ template <> void Compiler::statement(const ast::ReturnStmt& stat) {
     if (reset_owning != nullptr)
       reset_owning->owning = true; // The local variable may not be returned in all code paths, so reset its ownership
 
-    auto val = body_expression(*stat.expr().value(), returns_mut);
+    auto val = body_expression(*stat.expr(), returns_mut);
     m_builder->CreateRet(val);
 
     return;
@@ -698,8 +698,8 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> 
     const ty::Type* struct_base{nullptr};
     Val base{nullptr};
     if (field_base.has_value()) {
-      base = body_expression(**field_base, true);
-      struct_base = &field_access->base().value()->val_ty()->without_qual();
+      base = body_expression(*field_base, true);
+      struct_base = &field_access->base()->val_ty()->without_qual();
     } else {
       // TODO(rymiel): revisit
       if (!isa<ast::CtorDecl>(m_current_fn->ast))
@@ -899,7 +899,7 @@ template <> auto Compiler::expression(const ast::FieldAccessExpr& expr, bool mut
   // TODO(rymiel): struct can only contain things by value, later this needs a condition
   not_mut("immutable field", mut);
 
-  auto base = body_expression(**expr.base());
+  auto base = body_expression(*expr.base());
   auto base_name = expr.field();
   int base_offset = expr.offset();
 
@@ -956,7 +956,7 @@ auto Compiler::mangle_name(Fn& fn) -> string {
   ss << ")";
   // TODO(rymiel): should mangled names even contain the return type...?
   if (fn.ast().ret().has_value())
-    ss << mangle_name(*fn.ast().ret().value()->val_ty(), &fn); // wtf
+    ss << mangle_name(*fn.ast().ret()->val_ty(), &fn);
 
   return ss.str();
 }
