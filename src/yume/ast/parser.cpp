@@ -535,13 +535,19 @@ auto Parser::parse_primary() -> unique_ptr<Expr> {
       if (try_consume(SYM_LPAREN)) {
         auto call_args = vector<unique_ptr<Expr>>{};
         consume_with_commas_until(SYM_RPAREN, [&] { call_args.push_back(parse_expr()); });
-        return ast_ptr<CtorExpr>(entry, move(type), move(call_args));
+        return ast_ptr<CtorExpr>(entry, move(type), DEFAULT_CTOR_NAME, move(call_args));
       }
       if (try_consume(SYM_COLON)) {
-        consume(SYM_LBRACKET);
-        auto slice_members = vector<unique_ptr<Expr>>{};
-        consume_with_commas_until(SYM_RBRACKET, [&] { slice_members.push_back(parse_expr()); });
-        return ast_ptr<SliceExpr>(entry, move(type), move(slice_members));
+        if (try_consume(SYM_LBRACKET)) {
+          auto slice_members = vector<unique_ptr<Expr>>{};
+          consume_with_commas_until(SYM_RBRACKET, [&] { slice_members.push_back(parse_expr()); });
+          return ast_ptr<SliceExpr>(entry, move(type), move(slice_members));
+        }
+        auto ctor_name = consume_word();
+        consume(SYM_LPAREN);
+        auto call_args = vector<unique_ptr<Expr>>{};
+        consume_with_commas_until(SYM_RPAREN, [&] { call_args.push_back(parse_expr()); });
+        return ast_ptr<CtorExpr>(entry, move(type), ctor_name, move(call_args));
       }
 
       throw std::runtime_error("Couldn't make an expression from here with a type");

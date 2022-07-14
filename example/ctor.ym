@@ -6,12 +6,17 @@ struct Rect(w I32, h I32)
     ::w = size
     ::h = size
   end
+
+  def :reversed(::h, ::w)
+  end
 end
 
 def main() I32
   let rect = Rect(2, 3)
   let square = Rect(5)
+  let confusing = Rect:reversed(7, 1)
   printf("a %d x %d\n", rect::w, rect::h)
   printf("b %d x %d\n", square::w, square::h)
+  printf("c %d x %d\n", confusing::w, confusing::h)
   return 0
 end

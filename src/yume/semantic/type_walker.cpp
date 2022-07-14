@@ -119,7 +119,7 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
 
   // XXX: Duplicated from function overload handling
   if (consider_ctor_overloads)
-    ctor_overloads = all_ctor_overloads_by_type(*st, expr);
+    ctor_overloads = all_ctor_overloads_by_name(*st, expr);
 
   for (auto& i : expr.args()) {
     body_expression(i);
@@ -219,11 +219,11 @@ auto TypeWalker::all_fn_overloads_by_name(ast::CallExpr& call) -> OverloadSet<Fn
   return OverloadSet<Fn>{&call, fns_by_name, {}};
 }
 
-auto TypeWalker::all_ctor_overloads_by_type(Struct& st, ast::CtorExpr& call) -> OverloadSet<Ctor> {
+auto TypeWalker::all_ctor_overloads_by_name(Struct& st, ast::CtorExpr& call) -> OverloadSet<Ctor> {
   auto ctors_by_type = vector<Overload<Ctor>>();
 
   for (auto& ctor : compiler.m_ctors)
-    if (ctor.base.self_ty == st.self_ty)
+    if (ctor.base.self_ty == st.self_ty && ctor.name() == call.name())
       ctors_by_type.emplace_back(&ctor);
 
   return OverloadSet<Ctor>{&call, ctors_by_type, {}};

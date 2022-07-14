@@ -112,6 +112,8 @@ static const TokenAtom SYM_BANG = {Token::Type::Symbol, "!"_a};
 static const TokenAtom SYM_COLON = {Token::Type::Symbol, ":"_a};
 static const TokenAtom SYM_COLON_COLON = {Token::Type::Symbol, "::"_a};
 
+static const string DEFAULT_CTOR_NAME = "new";
+
 class TokenRange {
   span<Token> m_span;
 

@@ -64,12 +64,11 @@ auto Struct::get_or_create_instantiation(Instantiation& instantiate) -> std::pai
 }
 
 auto Fn::name() const -> string { return ast().name(); }
-// TODO(rymiel): Named ctors
-auto Ctor::name() const -> string { return base.self_ty->name() + ":new"; }
+auto Ctor::name() const -> string { return ast().name(); }
 auto Struct::name() const -> string { return st_ast.name(); }
 
 auto Fn::overload_name(const call_t& ast) -> string { return ast.name(); };
-auto Ctor::overload_name(const call_t& ast) -> string { return ast.val_ty()->name() + ":new"; };
+auto Ctor::overload_name(const call_t& ast) -> string { return ast.val_ty()->name() + ":" + ast.name(); };
 
 auto Fn::arg_type(const decl_t::arg_t& ast) -> const ty::Type* { return ast.val_ty(); };
 auto Ctor::arg_type(const decl_t::arg_t& ast) -> const ty::Type* {

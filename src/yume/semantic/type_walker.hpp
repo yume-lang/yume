@@ -54,7 +54,7 @@ private:
   auto convert_type(const ast::Type& ast_type) -> const ty::Type&;
 
   auto all_fn_overloads_by_name(ast::CallExpr& call) -> OverloadSet<Fn>;
-  auto all_ctor_overloads_by_type(Struct& st, ast::CtorExpr& call) -> OverloadSet<Ctor>;
+  auto all_ctor_overloads_by_name(Struct& st, ast::CtorExpr& call) -> OverloadSet<Ctor>;
 
   auto with_saved_scope(auto&& callback) {
     // Save everything pertaining to the old context

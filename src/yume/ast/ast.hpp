@@ -430,17 +430,19 @@ public:
 /// A construction of a struct or cast of a primitive.
 class CtorExpr : public Expr {
   unique_ptr<Type> m_type;
+  string m_name;
   vector<unique_ptr<Expr>> m_args;
   mutable Ctor* m_selected_overload{};
 
 public:
-  CtorExpr(span<Token> tok, unique_ptr<Type> type, vector<unique_ptr<Expr>> args)
-      : Expr(K_Ctor, tok), m_type{move(type)}, m_args{move(args)} {}
+  CtorExpr(span<Token> tok, unique_ptr<Type> type, string name, vector<unique_ptr<Expr>> args)
+      : Expr(K_Ctor, tok), m_type{move(type)}, m_name{move(name)}, m_args{move(args)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
   [[nodiscard]] auto type() const -> const auto& { return *m_type; }
   [[nodiscard]] auto type() -> auto& { return *m_type; }
+  [[nodiscard]] auto name() const -> string { return m_name; }
   [[nodiscard]] constexpr auto args() const { return dereference_view(m_args); }
 
   void selected_overload(Ctor* fn) const;
