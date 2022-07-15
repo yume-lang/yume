@@ -28,7 +28,7 @@ void FnDecl::visit(Visitor& visitor) const {
   if (m_varargs)
     visitor.visit("varargs");
 }
-void CtorDecl::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_args, "arg").visit(m_body); }
+void CtorDecl::visit(Visitor& visitor) const { visitor.visit(m_args, "arg").visit(m_body); }
 void StructDecl::visit(Visitor& visitor) const {
   visitor.visit(m_name).visit(m_fields, "field").visit(m_type_args, "type arg").visit(m_body);
 }
@@ -39,7 +39,7 @@ void TypeName::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_typ
 void Compound::visit(Visitor& visitor) const { visitor.visit(m_body); }
 void VarExpr::visit(Visitor& visitor) const { visitor.visit(m_name); }
 void CallExpr::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_args); }
-void CtorExpr::visit(Visitor& visitor) const { visitor.visit(m_type).visit(m_name).visit(m_args); }
+void CtorExpr::visit(Visitor& visitor) const { visitor.visit(m_type).visit(m_args); }
 void DtorExpr::visit(Visitor& visitor) const { visitor.visit(m_base); }
 void SliceExpr::visit(Visitor& visitor) const { visitor.visit(m_type).visit(m_args); }
 void AssignExpr::visit(Visitor& visitor) const { visitor.visit(m_target).visit(m_value); }

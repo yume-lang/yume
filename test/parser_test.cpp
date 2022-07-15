@@ -36,8 +36,8 @@ auto make_call(N&& name, Ts&&... ts) -> std::unique_ptr<T> {
 }
 
 template <typename E = Expr, typename N, typename... Ts>
-auto make_ctor(N type, std::string name, Ts&&... ts) -> std::unique_ptr<CtorExpr> {
-  return ast<CtorExpr>(AnyType(std::move(type)), name, ptr_vec<E>(std::forward<Ts>(ts)...));
+auto make_ctor(N type, Ts&&... ts) -> std::unique_ptr<CtorExpr> {
+  return ast<CtorExpr>(AnyType(std::move(type)), ptr_vec<E>(std::forward<Ts>(ts)...));
 }
 
 template <typename... Ts> auto make_compound(Ts&&... ts) -> Compound {
@@ -56,8 +56,8 @@ struct TName {
 
 template <typename... Ts>
 auto make_fn_decl(const std::string& name, std::initializer_list<TName> args = {},
-                  std::vector<std::string> type_args = {}, OptionalType ret = std::nullopt,
-                  Ts&&... ts) -> std::unique_ptr<FnDecl> {
+                  std::vector<std::string> type_args = {}, OptionalType ret = std::nullopt, Ts&&... ts)
+    -> std::unique_ptr<FnDecl> {
   auto ast_args = std::vector<TypeName>();
   ast_args.reserve(args.size());
   std::transform(args.begin(), args.end(), std::back_inserter(ast_args),
@@ -176,14 +176,11 @@ TEST_CASE("Parse direct field access", "[parse]") {
 }
 
 TEST_CASE("Parse constructor calling", "[parse]") {
-  CHECK_PARSER("Type()", make_ctor("Type"_Type, "new"));
-  CHECK_PARSER("Type(a)", make_ctor("Type"_Type, "new", "a"_Var));
+  CHECK_PARSER("Type()", make_ctor("Type"_Type));
+  CHECK_PARSER("Type(a)", make_ctor("Type"_Type, "a"_Var));
 
-  CHECK_PARSER("Type:custom()", make_ctor("Type"_Type, "custom"));
-  CHECK_PARSER("Type:Custom(a)", make_ctor("Type"_Type, "Custom", "a"_Var));
-
-  CHECK_PARSER("Type[]()", make_ctor("Type"_Type & Slice, "new"));
-  CHECK_PARSER("Type[](a)", make_ctor("Type"_Type & Slice, "new", "a"_Var));
+  CHECK_PARSER("Type[]()", make_ctor("Type"_Type & Slice));
+  CHECK_PARSER("Type[](a)", make_ctor("Type"_Type & Slice, "a"_Var));
 }
 
 TEST_CASE("Parse slice literal", "[parse]") {
@@ -239,10 +236,10 @@ TEST_CASE("Parse templated function declaration", "[parse][fn]") {
   CHECK_PARSER("def templated{T}(t T) T = t",
                make_fn_decl("templated", {{"t", "T"_Type}}, {"T"}, "T"_Type, ast<ReturnStmt>("t"_Var)));
 
-  CHECK_PARSER("def templated{T,U,V,X,Y,Z}(t T, u U, v V) X = Y() + Z:z()",
+  CHECK_PARSER("def templated{T,U,V,X,Y,Z}(t T, u U, v V) X = Y() + Z()",
                make_fn_decl("templated", {{"t", "T"_Type}, {"u", "U"_Type}, {"v", "V"_Type}},
                             {"T", "U", "V", "X", "Y", "Z"}, "X"_Type,
-                            ast<ReturnStmt>(make_call("+", make_ctor("Y"_Type, "new"), make_ctor("Z"_Type, "z")))));
+                            ast<ReturnStmt>(make_call("+", make_ctor("Y"_Type), make_ctor("Z"_Type)))));
 
   CHECK_PARSER("def templated{T}(slice T[], pointer T ptr, mutable T mut, mix T ptr[] mut)\nend",
                make_fn_decl("templated",

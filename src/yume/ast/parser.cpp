@@ -360,8 +360,7 @@ auto Parser::parse_ctor_decl() -> unique_ptr<CtorDecl> {
 
   consume(KWD_DEF);
   consume(SYM_COLON);
-  const string name = parse_fn_name();
-
+  consume(KWD_NEW);
   consume(SYM_LPAREN);
 
   auto args = vector<CtorDecl::arg_t>{};
@@ -378,7 +377,7 @@ auto Parser::parse_ctor_decl() -> unique_ptr<CtorDecl> {
     ignore_separator();
   }
 
-  return ast_ptr<CtorDecl>(entry, name, move(args), make_ast<Compound>(body_begin, move(body)));
+  return ast_ptr<CtorDecl>(entry, move(args), make_ast<Compound>(body_begin, move(body)));
 }
 
 auto Parser::parse_var_decl() -> unique_ptr<VarDecl> {
@@ -535,7 +534,7 @@ auto Parser::parse_primary() -> unique_ptr<Expr> {
       if (try_consume(SYM_LPAREN)) {
         auto call_args = vector<AnyExpr>{};
         consume_with_commas_until(SYM_RPAREN, [&] { call_args.emplace_back(parse_expr()); });
-        return ast_ptr<CtorExpr>(entry, move(type), DEFAULT_CTOR_NAME, move(call_args));
+        return ast_ptr<CtorExpr>(entry, move(type), move(call_args));
       }
       if (try_consume(SYM_COLON)) {
         if (try_consume(SYM_LBRACKET)) {
@@ -543,11 +542,6 @@ auto Parser::parse_primary() -> unique_ptr<Expr> {
           consume_with_commas_until(SYM_RBRACKET, [&] { slice_members.emplace_back(parse_expr()); });
           return ast_ptr<SliceExpr>(entry, move(type), move(slice_members));
         }
-        auto ctor_name = consume_word();
-        consume(SYM_LPAREN);
-        auto call_args = vector<AnyExpr>{};
-        consume_with_commas_until(SYM_RPAREN, [&] { call_args.emplace_back(parse_expr()); });
-        return ast_ptr<CtorExpr>(entry, move(type), ctor_name, move(call_args));
       }
 
       throw std::runtime_error("Couldn't make an expression from here with a type");

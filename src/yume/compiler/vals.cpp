@@ -47,11 +47,11 @@ auto Struct::get_or_create_instantiation(Instantiation& instantiate) -> std::pai
 }
 
 auto Fn::name() const -> string { return ast().name(); }
-auto Ctor::name() const -> string { return ast().name(); }
+auto Ctor::name() const -> string { return get_self_ty()->name() + ":new"; }
 auto Struct::name() const -> string { return st_ast.name(); }
 
 auto Fn::overload_name(const call_t& ast) -> string { return ast.name(); };
-auto Ctor::overload_name(const call_t& ast) -> string { return ast.val_ty()->name() + ":" + ast.name(); };
+auto Ctor::overload_name(const call_t& ast) -> string { return ast.val_ty()->name() + ":new"; };
 
 auto Fn::arg_type(const decl_t::arg_t& ast) -> const ty::Type* { return ast.val_ty(); };
 auto Ctor::arg_type(const decl_t::arg_t& ast) -> const ty::Type* {

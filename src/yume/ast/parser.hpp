@@ -77,6 +77,7 @@ static const TokenAtom KWD_END = {Token::Type::Word, "end"_a};
 static const TokenAtom KWD_LET = {Token::Type::Word, "let"_a};
 static const TokenAtom KWD_PTR = {Token::Type::Word, "ptr"_a};
 static const TokenAtom KWD_MUT = {Token::Type::Word, "mut"_a};
+static const TokenAtom KWD_NEW = {Token::Type::Word, "new"_a};
 static const TokenAtom KWD_ELSE = {Token::Type::Word, "else"_a};
 static const TokenAtom KWD_SELF_ITEM = {Token::Type::Word, "self"_a};
 static const TokenAtom KWD_SELF_TYPE = {Token::Type::Word, "Self"_a};
@@ -110,8 +111,6 @@ static const TokenAtom SYM_STAR = {Token::Type::Symbol, "*"_a};
 static const TokenAtom SYM_BANG = {Token::Type::Symbol, "!"_a};
 static const TokenAtom SYM_COLON = {Token::Type::Symbol, ":"_a};
 static const TokenAtom SYM_COLON_COLON = {Token::Type::Symbol, "::"_a};
-
-static const string DEFAULT_CTOR_NAME = "new";
 
 class TokenRange {
   span<Token> m_span;

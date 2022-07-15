@@ -483,19 +483,17 @@ public:
 /// A construction of a struct or cast of a primitive.
 class CtorExpr : public Expr {
   AnyType m_type;
-  string m_name;
   vector<AnyExpr> m_args;
   mutable Ctor* m_selected_overload{};
 
 public:
-  CtorExpr(span<Token> tok, AnyType type, string name, vector<AnyExpr> args)
-      : Expr(K_Ctor, tok), m_type{move(type)}, m_name{move(name)}, m_args{move(args)} {}
+  CtorExpr(span<Token> tok, AnyType type, vector<AnyExpr> args)
+      : Expr(K_Ctor, tok), m_type{move(type)}, m_args{move(args)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
   [[nodiscard]] auto type() const -> const auto& { return *m_type; }
   [[nodiscard]] auto type() -> auto& { return *m_type; }
-  [[nodiscard]] auto name() const -> string { return m_name; }
   [[nodiscard]] auto args() const -> const auto& { return m_args; }
   [[nodiscard]] auto args() -> auto& { return m_args; }
 
@@ -642,12 +640,12 @@ public:
   [[nodiscard]] auto args() const -> const auto& { return m_args; }
   [[nodiscard]] auto args() -> auto& { return m_args; }
   [[nodiscard]] auto type_args() const { return m_type_args; }
-  [[nodiscard]] constexpr auto ret() const -> const auto& { return m_ret; }
-  [[nodiscard]] constexpr auto ret() -> auto& { return m_ret; }
-  [[nodiscard]] constexpr auto body() const -> const auto& { return m_body; }
-  [[nodiscard]] constexpr auto body() -> auto& { return m_body; }
-  [[nodiscard]] constexpr auto varargs() const -> bool { return m_varargs; }
-  [[nodiscard]] constexpr auto primitive() const -> bool { return holds_alternative<string>(m_body); }
+  [[nodiscard]] auto ret() const -> const auto& { return m_ret; }
+  [[nodiscard]] auto ret() -> auto& { return m_ret; }
+  [[nodiscard]] auto body() const -> const auto& { return m_body; }
+  [[nodiscard]] auto body() -> auto& { return m_body; }
+  [[nodiscard]] auto varargs() const -> bool { return m_varargs; }
+  [[nodiscard]] auto primitive() const -> bool { return holds_alternative<string>(m_body); }
   static auto classof(const AST* a) -> bool { return a->kind() == K_FnDecl; }
   [[nodiscard]] auto clone() const -> FnDecl* override;
 };
@@ -658,21 +656,19 @@ public:
   using arg_t = variant<TypeName, FieldAccessExpr>;
 
 private:
-  string m_name;
   vector<arg_t> m_args;
   Compound m_body;
 
 public:
-  CtorDecl(span<Token> tok, string name, vector<arg_t> args, Compound body)
-      : Stmt(K_CtorDecl, tok), m_name{move(name)}, m_args{move(args)}, m_body{move(body)} {}
+  CtorDecl(span<Token> tok, vector<arg_t> args, Compound body)
+      : Stmt(K_CtorDecl, tok), m_args{move(args)}, m_body{move(body)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] auto name() const -> string { return m_name; }
   [[nodiscard]] auto args() const -> const auto& { return m_args; }
   [[nodiscard]] auto args() -> auto& { return m_args; }
-  [[nodiscard]] constexpr auto body() const -> const auto& { return m_body; }
-  [[nodiscard]] constexpr auto body() -> auto& { return m_body; }
+  [[nodiscard]] auto body() const -> const auto& { return m_body; }
+  [[nodiscard]] auto body() -> auto& { return m_body; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_CtorDecl; }
   [[nodiscard]] auto clone() const -> CtorDecl* override;
 };

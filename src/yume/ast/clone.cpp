@@ -74,7 +74,7 @@ auto FnDecl::clone() const -> FnDecl* {
     return new FnDecl(tok(), m_name, dup(m_args), m_type_args, dup(m_ret), m_varargs, *s);
   return new FnDecl(tok(), m_name, dup(m_args), m_type_args, dup(m_ret), dup(get<Compound>(m_body)));
 }
-auto CtorDecl::clone() const -> CtorDecl* { return new CtorDecl(tok(), m_name, dup(m_args), dup(m_body)); }
+auto CtorDecl::clone() const -> CtorDecl* { return new CtorDecl(tok(), dup(m_args), dup(m_body)); }
 auto StructDecl::clone() const -> StructDecl* {
   return new StructDecl(tok(), m_name, dup(m_fields), m_type_args, dup(m_body));
 }
@@ -86,7 +86,7 @@ auto TypeName::clone() const -> TypeName* { return new TypeName(tok(), dup(m_typ
 auto Compound::clone() const -> Compound* { return new Compound(tok(), dup(m_body)); }
 auto VarExpr::clone() const -> VarExpr* { return new VarExpr(tok(), m_name); }
 auto CallExpr::clone() const -> CallExpr* { return new CallExpr(tok(), m_name, dup(m_args)); }
-auto CtorExpr::clone() const -> CtorExpr* { return new CtorExpr(tok(), dup(m_type), m_name, dup(m_args)); }
+auto CtorExpr::clone() const -> CtorExpr* { return new CtorExpr(tok(), dup(m_type), dup(m_args)); }
 auto DtorExpr::clone() const -> DtorExpr* { return new DtorExpr(tok(), dup(m_base)); }
 auto SliceExpr::clone() const -> SliceExpr* { return new SliceExpr(tok(), dup(m_type), dup(m_args)); }
 auto AssignExpr::clone() const -> AssignExpr* { return new AssignExpr(tok(), dup(m_target), dup(m_value)); }
