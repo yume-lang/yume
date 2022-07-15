@@ -28,16 +28,12 @@ template <typename T> auto dup(const OptionalAnyBase<T>& ptr) -> OptionalAnyBase
 }
 template <typename T> auto dup(const AnyBase<T>& ptr) -> AnyBase<T> { return unique_ptr<T>(ptr->clone()); }
 
-template <typename T>
-requires std::is_base_of_v<ast::AST, T>
-auto dup(const T& ast) -> T {
+template <std::derived_from<ast::AST> T> auto dup(const T& ast) -> T {
   auto cloned = unique_ptr<T>(ast.clone());
   return move(*cloned);
 }
 
-template <typename T>
-requires std::is_copy_constructible_v<T>
-auto dup(const T& obj) -> T { return T(obj); }
+template <std::copy_constructible T> auto dup(const T& obj) -> T { return T(obj); }
 
 template <typename T, typename U> auto dup(const std::variant<T, U>& var) -> std::variant<T, U> {
   if (std::holds_alternative<T>(var))

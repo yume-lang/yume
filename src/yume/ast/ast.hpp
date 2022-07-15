@@ -124,8 +124,7 @@ public:
   AnyBase(unique_ptr<T> uptr) : m_val{move(uptr)} {
     yume_assert(m_val.get() != nullptr, "AnyBase should never be null");
   }
-  template <typename U>
-  requires std::is_base_of_v<T, U> AnyBase(unique_ptr<U> uptr) : m_val{move(uptr)} {
+  template <std::convertible_to<unique_ptr<T>> U> AnyBase(U uptr) : m_val{move(uptr)} {
     yume_assert(m_val.get() != nullptr, "AnyBase should never be null");
   }
 
@@ -143,9 +142,8 @@ template <typename T> class OptionalAnyBase {
 public:
   OptionalAnyBase() : m_val{} {}
   explicit OptionalAnyBase(T* raw_ptr) : m_val{raw_ptr} {}
-  OptionalAnyBase(unique_ptr<T> uptr) : m_val{move(uptr)} {}
-  template <typename U>
-  requires std::is_base_of_v<T, U> OptionalAnyBase(unique_ptr<U> uptr) : m_val{move(uptr)} {}
+  // OptionalAnyBase(unique_ptr<T> uptr) : m_val{move(uptr)} {}
+  template <std::convertible_to<unique_ptr<T>> U> OptionalAnyBase(U uptr) : m_val{move(uptr)} {}
   OptionalAnyBase(std::nullopt_t /* tag */) : m_val{} {}
   explicit OptionalAnyBase(optional<unique_ptr<T>> opt_uptr)
       : m_val{opt_uptr.has_value() ? move(*opt_uptr) : nullptr} {}

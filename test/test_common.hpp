@@ -45,40 +45,36 @@ concept os_adaptable = requires(llvm::raw_ostream& t_os, const T& t_obj) {
 };
 
 namespace Catch {
-  template <typename T>
-  requires os_adaptable<T>
-  struct StringMaker<T> {
-    static auto convert(const T& value) -> std::string {
-      std::string str;
-      llvm::raw_string_ostream ss(str);
-      ss << value;
-      return str;
-    }
-  };
+template <os_adaptable T> struct StringMaker<T> {
+  static auto convert(const T& value) -> std::string {
+    std::string str;
+    llvm::raw_string_ostream ss(str);
+    ss << value;
+    return str;
+  }
+};
 
-  template <> struct StringMaker<yume::Token> {
-    static auto convert(const yume::Token& token) -> std::string {
-      std::string str = "(";
-      llvm::raw_string_ostream ss(str);
-      ss << yume::Token::type_name(token.type);
-      if (token.payload.has_value()) {
-        ss << " \"";
-        ss.write_escaped(std::string(*token.payload));
-        ss << "\")";
-      }
-      return str;
+template <> struct StringMaker<yume::Token> {
+  static auto convert(const yume::Token& token) -> std::string {
+    std::string str = "(";
+    llvm::raw_string_ostream ss(str);
+    ss << yume::Token::type_name(token.type);
+    if (token.payload.has_value()) {
+      ss << " \"";
+      ss.write_escaped(std::string(*token.payload));
+      ss << "\")";
     }
-  };
+    return str;
+  }
+};
 
-  template <typename T>
-  requires std::derived_from<T, yume::ast::AST>
-  struct StringMaker<T> {
-    static auto convert(const T& token) -> std::string {
-      std::string str;
-      llvm::raw_string_ostream ss(str);
-      yume::diagnostic::PrintVisitor visitor(ss);
-      visitor.visit(token, nullptr);
-      return str;
-    }
-  };
+template <std::derived_from<yume::ast::AST> T> struct StringMaker<T> {
+  static auto convert(const T& token) -> std::string {
+    std::string str;
+    llvm::raw_string_ostream ss(str);
+    yume::diagnostic::PrintVisitor visitor(ss);
+    visitor.visit(token, nullptr);
+    return str;
+  }
+};
 } // namespace Catch

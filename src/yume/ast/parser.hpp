@@ -198,9 +198,7 @@ struct Parser {
 
   /// Consume tokens until a token of the given type and payload is encountered.
   /// `action` (a no-arg function) is called every time. Between each call, a comma is expected.
-  template <typename T>
-  requires std::invocable<T>
-  void consume_with_commas_until(TokenAtom token_atom, T action,
+  void consume_with_commas_until(TokenAtom token_atom, std::invocable auto action,
                                  const source_location location = source_location::current()) {
     int i = 0;
     while (!try_consume(token_atom, location)) {

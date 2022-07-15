@@ -6,6 +6,9 @@
 
 namespace yume {
 
+template <typename T>
+concept OnlyStmt = std::derived_from<T, ast::Stmt> && !std::derived_from<T, ast::Expr>;
+
 template <bool Bool, typename Base> using maybe_const_t = std::conditional_t<Bool, std::add_const_t<Base>, Base>;
 
 template <typename Derived, bool Const = true> struct CRTPWalker {
@@ -46,15 +49,11 @@ public:
   }
 
 private:
-  template <typename T>
-  requires std::is_base_of_v<ast::Expr, T>
-  auto conv_expression(maybe_const_t<Const, ast::Expr>& expr, auto... args) {
+  template <std::derived_from<ast::Expr> T> auto conv_expression(maybe_const_t<Const, ast::Expr>& expr, auto... args) {
     return (static_cast<Derived*>(this))->expression(llvm::cast<T>(expr), args...);
   }
 
-  template <typename T>
-  requires std::conjunction_v<std::is_base_of<ast::Stmt, T>, std::negation<std::is_base_of<ast::Expr, T>>>
-  void conv_statement(maybe_const_t<Const, ast::Stmt>& stat, auto... args) {
+  template <OnlyStmt T> void conv_statement(maybe_const_t<Const, ast::Stmt>& stat, auto... args) {
     return (static_cast<Derived*>(this))->statement(llvm::cast<T>(stat), args...);
   }
 };
