@@ -29,7 +29,7 @@ var searchData=
   ['parserstacktrace_26',['ParserStackTrace',['../structyume_1_1ParserStackTrace.html#a0090a3f21b11288655c3d445214563a5',1,'yume::ParserStackTrace::ParserStackTrace(std::string message, const Token &amp;token)'],['../structyume_1_1ParserStackTrace.html#ae4ec708dc3f5c960db303f8f3f35608e',1,'yume::ParserStackTrace::ParserStackTrace(std::string message)'],['../structyume_1_1ParserStackTrace.html',1,'yume::ParserStackTrace']]],
   ['payload_27',['payload',['../structyume_1_1Token.html#a39737a8e055ffb71b836f4e0b525f2fd',1,'yume::Token']]],
   ['payload_28',['Payload',['../structyume_1_1Token.html#a45fbde9023f1f51b4d48b9b14470685e',1,'yume::Token']]],
-  ['primitive_29',['primitive',['../classyume_1_1ast_1_1FnDecl.html#a10e42d77f00ffed58abc218ae5b66a8f',1,'yume::ast::FnDecl']]],
+  ['primitive_29',['primitive',['../classyume_1_1ast_1_1FnDecl.html#ae500b35d72b0d514f1820cdd4f99fb13',1,'yume::ast::FnDecl']]],
   ['print_30',['print',['../structyume_1_1ASTStackTrace.html#a69eee472a88ba66ad849dc61fdbe03fe',1,'yume::ASTStackTrace::print()'],['../structyume_1_1ParserStackTrace.html#aff18a3c32efe4bbf6e1875a99e23b78a',1,'yume::ParserStackTrace::print()']]],
   ['print_5fexception_31',['print_exception',['../namespaceyume.html#a7de1358eba94e89e7140221cfe4cd0ab',1,'yume']]],
   ['print_5fvisitor_2ehpp_32',['print_visitor.hpp',['../print__visitor_8hpp.html',1,'']]],

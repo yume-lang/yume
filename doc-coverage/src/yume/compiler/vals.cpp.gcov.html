@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-07-14 10:24:04</td>
+            <td class="headerValue">2022-07-15 09:41:59</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -105,11 +105,11 @@
 <a name="47"><span class="lineNum">      47 </span>            : }</a>
 <a name="48"><span class="lineNum">      48 </span>            : </a>
 <a name="49"><span class="lineNum">      49 </span>            : auto Fn::name() const -&gt; string { return ast().name(); }</a>
-<a name="50"><span class="lineNum">      50 </span>            : auto Ctor::name() const -&gt; string { return ast().name(); }</a>
+<a name="50"><span class="lineNum">      50 </span>            : auto Ctor::name() const -&gt; string { return get_self_ty()-&gt;name() + &quot;:new&quot;; }</a>
 <a name="51"><span class="lineNum">      51 </span>            : auto Struct::name() const -&gt; string { return st_ast.name(); }</a>
 <a name="52"><span class="lineNum">      52 </span>            : </a>
 <a name="53"><span class="lineNum">      53 </span>            : auto Fn::overload_name(const call_t&amp; ast) -&gt; string { return ast.name(); };</a>
-<a name="54"><span class="lineNum">      54 </span>            : auto Ctor::overload_name(const call_t&amp; ast) -&gt; string { return ast.val_ty()-&gt;name() + &quot;:&quot; + ast.name(); };</a>
+<a name="54"><span class="lineNum">      54 </span>            : auto Ctor::overload_name(const call_t&amp; ast) -&gt; string { return ast.val_ty()-&gt;name() + &quot;:new&quot;; };</a>
 <a name="55"><span class="lineNum">      55 </span>            : </a>
 <a name="56"><span class="lineNum">      56 </span>            : auto Fn::arg_type(const decl_t::arg_t&amp; ast) -&gt; const ty::Type* { return ast.val_ty(); };</a>
 <a name="57"><span class="lineNum">      57 </span>            : auto Ctor::arg_type(const decl_t::arg_t&amp; ast) -&gt; const ty::Type* {</a>

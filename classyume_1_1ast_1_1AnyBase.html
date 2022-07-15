@@ -93,10 +93,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a6b542480e824ef57bfee3a58cfb63503"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abba133bafff2924df706a05c7fb58bd6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AnyBase.html#abba133bafff2924df706a05c7fb58bd6">AnyBase</a> (unique_ptr&lt; T &gt; uptr)</td></tr>
 <tr class="separator:abba133bafff2924df706a05c7fb58bd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae14e23fcbebf9dabc027ad13e12cb7ab"><td class="memTemplParams" colspan="2">template&lt;typename U &gt; <br />
-requires std::is_base_of_v&lt;T, U&gt;</td></tr>
-<tr class="memitem:ae14e23fcbebf9dabc027ad13e12cb7ab"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AnyBase.html#ae14e23fcbebf9dabc027ad13e12cb7ab">AnyBase</a> (unique_ptr&lt; U &gt; uptr)</td></tr>
-<tr class="separator:ae14e23fcbebf9dabc027ad13e12cb7ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83c3b14b14288e79aa9478accd818cd3"><td class="memTemplParams" colspan="2">template&lt;std::convertible_to&lt; unique_ptr&lt; T &gt; &gt; U&gt; </td></tr>
+<tr class="memitem:a83c3b14b14288e79aa9478accd818cd3"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AnyBase.html#a83c3b14b14288e79aa9478accd818cd3">AnyBase</a> (U uptr)</td></tr>
+<tr class="separator:a83c3b14b14288e79aa9478accd818cd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a67a288644aa285674a01cca4dd083e84"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AnyBase.html#a67a288644aa285674a01cca4dd083e84">operator-&gt;</a> () const -&gt; const T *</td></tr>
 <tr class="separator:a67a288644aa285674a01cca4dd083e84"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a01de6e365d4b58529bc4270f540cea95"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AnyBase.html#a01de6e365d4b58529bc4270f540cea95">operator*</a> () const -&gt; const T &amp;</td></tr>
@@ -168,7 +167,7 @@ template&lt;typename T &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00123">123</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00137">yume::ast::AnyBase&lt; T &gt;::raw_ptr()</a>, and <a class="el" href="util_8hpp_source.html#l00050">yume::yume_assert()</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00136">yume::ast::AnyBase&lt; T &gt;::raw_ptr()</a>, and <a class="el" href="util_8hpp_source.html#l00050">yume::yume_assert()</a>.</p>
 
 </div>
 </div>
@@ -204,16 +203,15 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="ae14e23fcbebf9dabc027ad13e12cb7ab" name="ae14e23fcbebf9dabc027ad13e12cb7ab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae14e23fcbebf9dabc027ad13e12cb7ab">&#9670;&nbsp;</a></span>AnyBase() <span class="overload">[4/4]</span></h2>
+<a id="a83c3b14b14288e79aa9478accd818cd3" name="a83c3b14b14288e79aa9478accd818cd3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a83c3b14b14288e79aa9478accd818cd3">&#9670;&nbsp;</a></span>AnyBase() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename T &gt; </div>
 <div class="memtemplate">
-template&lt;typename U &gt; <br />
-requires std::is_base_of_v&lt;T, U&gt;</div>
+template&lt;std::convertible_to&lt; unique_ptr&lt; T &gt; &gt; U&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -221,7 +219,7 @@ requires std::is_base_of_v&lt;T, U&gt;</div>
         <tr>
           <td class="memname"><a class="el" href="classyume_1_1ast_1_1AnyBase.html">yume::ast::AnyBase</a>&lt; T &gt;::AnyBase </td>
           <td>(</td>
-          <td class="paramtype">unique_ptr&lt; U &gt;&#160;</td>
+          <td class="paramtype">U&#160;</td>
           <td class="paramname"><em>uptr</em></td><td>)</td>
           <td></td>
         </tr>
@@ -233,7 +231,7 @@ requires std::is_base_of_v&lt;T, U&gt;</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00128">128</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00127">127</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="util_8hpp_source.html#l00050">yume::yume_assert()</a>.</p>
 
@@ -265,7 +263,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00135">135</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00134">134</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -294,7 +292,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00133">133</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00132">132</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -323,7 +321,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00134">134</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00133">133</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -352,7 +350,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00132">132</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00131">131</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -381,7 +379,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00137">137</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00136">136</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ast_8hpp_source.html#l00123">yume::ast::AnyBase&lt; T &gt;::AnyBase()</a>.</p>
 

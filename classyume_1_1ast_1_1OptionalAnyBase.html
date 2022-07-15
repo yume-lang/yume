@@ -91,12 +91,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a714b1c1e318f851640c698eb43a54847"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c7fc52ec7adb1c33bc032aa8aa8ae1f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1OptionalAnyBase.html#a7c7fc52ec7adb1c33bc032aa8aa8ae1f">OptionalAnyBase</a> (T *<a class="el" href="classyume_1_1ast_1_1OptionalAnyBase.html#a5c702f16d479793b102c5505b6ffa52f">raw_ptr</a>)</td></tr>
 <tr class="separator:a7c7fc52ec7adb1c33bc032aa8aa8ae1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a23a43080457b2e7579645f75a9519cfc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1OptionalAnyBase.html#a23a43080457b2e7579645f75a9519cfc">OptionalAnyBase</a> (unique_ptr&lt; T &gt; uptr)</td></tr>
-<tr class="separator:a23a43080457b2e7579645f75a9519cfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5831cd6e2a9f652b0784ecb80c1e2f8b"><td class="memTemplParams" colspan="2">template&lt;typename U &gt; <br />
-requires std::is_base_of_v&lt;T, U&gt;</td></tr>
-<tr class="memitem:a5831cd6e2a9f652b0784ecb80c1e2f8b"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1OptionalAnyBase.html#a5831cd6e2a9f652b0784ecb80c1e2f8b">OptionalAnyBase</a> (unique_ptr&lt; U &gt; uptr)</td></tr>
-<tr class="separator:a5831cd6e2a9f652b0784ecb80c1e2f8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac805c04986ad760f06c24b2767bd8c72"><td class="memTemplParams" colspan="2">template&lt;std::convertible_to&lt; unique_ptr&lt; T &gt; &gt; U&gt; </td></tr>
+<tr class="memitem:ac805c04986ad760f06c24b2767bd8c72"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1OptionalAnyBase.html#ac805c04986ad760f06c24b2767bd8c72">OptionalAnyBase</a> (U uptr)</td></tr>
+<tr class="separator:ac805c04986ad760f06c24b2767bd8c72"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a609b8aad004edf7d88132b09af1584f2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1OptionalAnyBase.html#a609b8aad004edf7d88132b09af1584f2">OptionalAnyBase</a> (std::nullopt_t)</td></tr>
 <tr class="separator:a609b8aad004edf7d88132b09af1584f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3ff3fb6f31ab98fa59860ed98d5a36b8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1OptionalAnyBase.html#a3ff3fb6f31ab98fa59860ed98d5a36b8">OptionalAnyBase</a> (optional&lt; unique_ptr&lt; T &gt; &gt; opt_uptr)</td></tr>
@@ -119,10 +116,10 @@ requires std::is_base_of_v&lt;T, U&gt;</td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename T&gt;<br />
 class yume::ast::OptionalAnyBase&lt; T &gt;</div>
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00140">140</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00139">139</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a714b1c1e318f851640c698eb43a54847" name="a714b1c1e318f851640c698eb43a54847"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a714b1c1e318f851640c698eb43a54847">&#9670;&nbsp;</a></span>OptionalAnyBase() <span class="overload">[1/6]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a714b1c1e318f851640c698eb43a54847">&#9670;&nbsp;</a></span>OptionalAnyBase() <span class="overload">[1/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -146,12 +143,12 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00144">144</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00143">143</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
 <a id="a7c7fc52ec7adb1c33bc032aa8aa8ae1f" name="a7c7fc52ec7adb1c33bc032aa8aa8ae1f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7c7fc52ec7adb1c33bc032aa8aa8ae1f">&#9670;&nbsp;</a></span>OptionalAnyBase() <span class="overload">[2/6]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a7c7fc52ec7adb1c33bc032aa8aa8ae1f">&#9670;&nbsp;</a></span>OptionalAnyBase() <span class="overload">[2/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -176,17 +173,19 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00145">145</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00144">144</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
-<a id="a23a43080457b2e7579645f75a9519cfc" name="a23a43080457b2e7579645f75a9519cfc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a23a43080457b2e7579645f75a9519cfc">&#9670;&nbsp;</a></span>OptionalAnyBase() <span class="overload">[3/6]</span></h2>
+<a id="ac805c04986ad760f06c24b2767bd8c72" name="ac805c04986ad760f06c24b2767bd8c72"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac805c04986ad760f06c24b2767bd8c72">&#9670;&nbsp;</a></span>OptionalAnyBase() <span class="overload">[3/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename T &gt; </div>
+<div class="memtemplate">
+template&lt;std::convertible_to&lt; unique_ptr&lt; T &gt; &gt; U&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -194,7 +193,7 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classyume_1_1ast_1_1OptionalAnyBase.html">yume::ast::OptionalAnyBase</a>&lt; T &gt;::OptionalAnyBase </td>
           <td>(</td>
-          <td class="paramtype">unique_ptr&lt; T &gt;&#160;</td>
+          <td class="paramtype">U&#160;</td>
           <td class="paramname"><em>uptr</em></td><td>)</td>
           <td></td>
         </tr>
@@ -210,41 +209,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="a5831cd6e2a9f652b0784ecb80c1e2f8b" name="a5831cd6e2a9f652b0784ecb80c1e2f8b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5831cd6e2a9f652b0784ecb80c1e2f8b">&#9670;&nbsp;</a></span>OptionalAnyBase() <span class="overload">[4/6]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T &gt; </div>
-<div class="memtemplate">
-template&lt;typename U &gt; <br />
-requires std::is_base_of_v&lt;T, U&gt;</div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classyume_1_1ast_1_1OptionalAnyBase.html">yume::ast::OptionalAnyBase</a>&lt; T &gt;::OptionalAnyBase </td>
-          <td>(</td>
-          <td class="paramtype">unique_ptr&lt; U &gt;&#160;</td>
-          <td class="paramname"><em>uptr</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00148">148</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
-
-</div>
-</div>
 <a id="a609b8aad004edf7d88132b09af1584f2" name="a609b8aad004edf7d88132b09af1584f2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a609b8aad004edf7d88132b09af1584f2">&#9670;&nbsp;</a></span>OptionalAnyBase() <span class="overload">[5/6]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a609b8aad004edf7d88132b09af1584f2">&#9670;&nbsp;</a></span>OptionalAnyBase() <span class="overload">[4/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -269,12 +235,12 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00149">149</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00147">147</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
 <a id="a3ff3fb6f31ab98fa59860ed98d5a36b8" name="a3ff3fb6f31ab98fa59860ed98d5a36b8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3ff3fb6f31ab98fa59860ed98d5a36b8">&#9670;&nbsp;</a></span>OptionalAnyBase() <span class="overload">[6/6]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a3ff3fb6f31ab98fa59860ed98d5a36b8">&#9670;&nbsp;</a></span>OptionalAnyBase() <span class="overload">[5/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -299,7 +265,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00150">150</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00148">148</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -329,7 +295,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00159">159</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00157">157</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -358,7 +324,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00158">158</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00156">156</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -387,7 +353,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00156">156</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00154">154</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -416,7 +382,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00154">154</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00152">152</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -445,7 +411,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00155">155</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00153">153</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -474,7 +440,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00153">153</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00151">151</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -503,7 +469,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00160">160</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00158">158</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>

@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-07-14 10:24:04</td>
+            <td class="headerValue">2022-07-15 09:41:59</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -176,7 +176,7 @@
 <a name="118"><span class="lineNum">     118 </span>            : </a>
 <a name="119"><span class="lineNum">     119 </span>            :   // XXX: Duplicated from function overload handling</a>
 <a name="120"><span class="lineNum">     120 </span>            :   if (consider_ctor_overloads)</a>
-<a name="121"><span class="lineNum">     121 </span>            :     ctor_overloads = all_ctor_overloads_by_name(*st, expr);</a>
+<a name="121"><span class="lineNum">     121 </span>            :     ctor_overloads = all_ctor_overloads_by_type(*st, expr);</a>
 <a name="122"><span class="lineNum">     122 </span>            : </a>
 <a name="123"><span class="lineNum">     123 </span>            :   for (auto&amp; i : expr.args()) {</a>
 <a name="124"><span class="lineNum">     124 </span>            :     body_expression(*i);</a>
@@ -276,11 +276,11 @@
 <a name="218"><span class="lineNum">     218 </span>            :   return OverloadSet&lt;Fn&gt;{&amp;call, fns_by_name, {}};</a>
 <a name="219"><span class="lineNum">     219 </span>            : }</a>
 <a name="220"><span class="lineNum">     220 </span>            : </a>
-<a name="221"><span class="lineNum">     221 </span>            : auto TypeWalker::all_ctor_overloads_by_name(Struct&amp; st, ast::CtorExpr&amp; call) -&gt; OverloadSet&lt;Ctor&gt; {</a>
+<a name="221"><span class="lineNum">     221 </span>            : auto TypeWalker::all_ctor_overloads_by_type(Struct&amp; st, ast::CtorExpr&amp; call) -&gt; OverloadSet&lt;Ctor&gt; {</a>
 <a name="222"><span class="lineNum">     222 </span>            :   auto ctors_by_type = vector&lt;Overload&lt;Ctor&gt;&gt;();</a>
 <a name="223"><span class="lineNum">     223 </span>            : </a>
 <a name="224"><span class="lineNum">     224 </span>            :   for (auto&amp; ctor : compiler.m_ctors)</a>
-<a name="225"><span class="lineNum">     225 </span>            :     if (ctor.base.self_ty == st.self_ty &amp;&amp; ctor.name() == call.name())</a>
+<a name="225"><span class="lineNum">     225 </span>            :     if (ctor.base.self_ty == st.self_ty)</a>
 <a name="226"><span class="lineNum">     226 </span>            :       ctors_by_type.emplace_back(&amp;ctor);</a>
 <a name="227"><span class="lineNum">     227 </span>            : </a>
 <a name="228"><span class="lineNum">     228 </span>            :   return OverloadSet&lt;Ctor&gt;{&amp;call, ctors_by_type, {}};</a>
