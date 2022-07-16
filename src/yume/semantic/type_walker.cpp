@@ -192,6 +192,7 @@ template <> void TypeWalker::expression(ast::AssignExpr& expr) {
   try_implicit_conversion(expr.value().unwrap(), expr.target()->val_ty()->qual_base());
 
   expr.target()->attach_to(expr.value().raw_ptr());
+  expr.attach_to(expr.value().raw_ptr());
 }
 
 template <> void TypeWalker::expression(ast::VarExpr& expr) {
