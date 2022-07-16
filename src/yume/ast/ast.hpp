@@ -138,6 +138,7 @@ public:
   [[nodiscard]] auto operator*() -> T& { return *m_val; }
 
   [[nodiscard]] auto raw_ptr() const -> const T* { return m_val.get(); }
+  [[nodiscard]] auto unwrap() -> unique_ptr<T>& { return m_val; }
 };
 
 /// Represents "any" kind of ast node of type `T`, or the absence of one. See `OptionalExpr` and `OptionalType`.
@@ -169,6 +170,7 @@ public:
   [[nodiscard]] operator bool() const { return static_cast<bool>(m_val); }
   [[nodiscard]] auto has_value() const -> bool { return static_cast<bool>(m_val); }
   [[nodiscard]] auto raw_ptr() const -> const T* { return m_val.get(); }
+  [[nodiscard]] auto unwrap() -> unique_ptr<T>& { return m_val; }
 };
 
 /// Represents the relationship between multiple `AST` nodes.
@@ -492,7 +494,6 @@ public:
   [[nodiscard]] auto name() const -> string { return m_name; }
   [[nodiscard]] auto args() const -> const auto& { return m_args; }
   [[nodiscard]] auto args() -> auto& { return m_args; }
-  [[nodiscard]] auto direct_args() -> auto& { return m_args; }
 
   void selected_overload(Fn* fn) const;
   [[nodiscard]] auto selected_overload() const -> Fn*;
