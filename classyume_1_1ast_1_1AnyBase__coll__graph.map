@@ -1,0 +1,4 @@
+<map id="yume::ast::AnyBase&lt; T &gt;" name="yume::ast::AnyBase&lt; T &gt;">
+<area shape="rect" id="node1" title="Represents &quot;any&quot; kind of ast node of type T. See AnyExpr, AnyStmt and AnyType." alt="" coords="29,80,195,107"/>
+<area shape="rect" id="node2" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T, or the absence of one. See OptionalExpr and OptionalType..." alt="" coords="5,5,219,32"/>
+</map>

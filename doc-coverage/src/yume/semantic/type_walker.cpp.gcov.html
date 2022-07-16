@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-07-16 19:22:08</td>
+            <td class="headerValue">2022-07-16 19:51:13</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -224,13 +224,13 @@
 <a name="166"><span class="lineNum">     166 </span>            :   expr.val_ty(&amp;base_type.known_slice());</a>
 <a name="167"><span class="lineNum">     167 </span>            : }</a>
 <a name="168"><span class="lineNum">     168 </span>            : </a>
-<a name="169"><span class="lineNum">     169 </span><span class="lineNoCov">          0 : inline void wrap_in_implicit_cast(unique_ptr&lt;ast::Expr&gt;&amp; expr, ty::Conv conv, const ty::Type* target_type) {</span></a>
-<a name="170"><span class="lineNum">     170 </span>            :   auto cast_expr = std::make_unique&lt;ast::ImplicitCastExpr&gt;(expr-&gt;token_range(), ast::AnyExpr(move(expr)), conv);</a>
+<a name="169"><span class="lineNum">     169 </span><span class="lineNoCov">          0 : inline void wrap_in_implicit_cast(ast::OptionalExpr&amp; expr, ty::Conv conv, const ty::Type* target_type) {</span></a>
+<a name="170"><span class="lineNum">     170 </span>            :   auto cast_expr = std::make_unique&lt;ast::ImplicitCastExpr&gt;(expr-&gt;token_range(), move(expr), conv);</a>
 <a name="171"><span class="lineNum">     171 </span>            :   cast_expr-&gt;val_ty(target_type);</a>
 <a name="172"><span class="lineNum">     172 </span>            :   expr = move(cast_expr);</a>
 <a name="173"><span class="lineNum">     173 </span>            : }</a>
 <a name="174"><span class="lineNum">     174 </span>            : </a>
-<a name="175"><span class="lineNum">     175 </span><span class="lineNoCov">          0 : inline void try_implicit_conversion(unique_ptr&lt;ast::Expr&gt;&amp; expr, const ty::Type* target_type) {</span></a>
+<a name="175"><span class="lineNum">     175 </span><span class="lineNoCov">          0 : inline void try_implicit_conversion(ast::OptionalExpr&amp; expr, const ty::Type* target_type) {</span></a>
 <a name="176"><span class="lineNum">     176 </span>            :   if (target_type == nullptr)</a>
 <a name="177"><span class="lineNum">     177 </span>            :     return;</a>
 <a name="178"><span class="lineNum">     178 </span>            : </a>
@@ -247,7 +247,7 @@
 <a name="189"><span class="lineNum">     189 </span>            :   body_expression(*expr.target());</a>
 <a name="190"><span class="lineNum">     190 </span>            :   body_expression(*expr.value());</a>
 <a name="191"><span class="lineNum">     191 </span>            : </a>
-<a name="192"><span class="lineNum">     192 </span>            :   try_implicit_conversion(expr.value().unwrap(), expr.target()-&gt;val_ty()-&gt;qual_base());</a>
+<a name="192"><span class="lineNum">     192 </span>            :   try_implicit_conversion(expr.value(), expr.target()-&gt;val_ty()-&gt;qual_base());</a>
 <a name="193"><span class="lineNum">     193 </span>            : </a>
 <a name="194"><span class="lineNum">     194 </span>            :   expr.target()-&gt;attach_to(expr.value().raw_ptr());</a>
 <a name="195"><span class="lineNum">     195 </span>            :   expr.attach_to(expr.value().raw_ptr());</a>
@@ -390,7 +390,7 @@
 <a name="332"><span class="lineNum">     332 </span>            :     if (compat.conv.empty())</a>
 <a name="333"><span class="lineNum">     333 </span>            :       continue;</a>
 <a name="334"><span class="lineNum">     334 </span>            : </a>
-<a name="335"><span class="lineNum">     335 </span>            :     wrap_in_implicit_cast(expr_arg.unwrap(), compat.conv, target.type().val_ty());</a>
+<a name="335"><span class="lineNum">     335 </span>            :     wrap_in_implicit_cast(expr_arg, compat.conv, target.type().val_ty());</a>
 <a name="336"><span class="lineNum">     336 </span>            :   }</a>
 <a name="337"><span class="lineNum">     337 </span>            : </a>
 <a name="338"><span class="lineNum">     338 </span>            :   // Find excess variadic arguments. Logic will probably change later, but for now, always pass by value</a>
@@ -398,7 +398,7 @@
 <a name="340"><span class="lineNum">     340 </span>            :   for (const auto&amp; expr_arg : llvm::enumerate(expr.args())) {</a>
 <a name="341"><span class="lineNum">     341 </span>            :     if (expr_arg.index() &gt;= selected-&gt;ast().args().size() &amp;&amp; expr_arg.value()-&gt;val_ty()-&gt;is_mut()) {</a>
 <a name="342"><span class="lineNum">     342 </span>            :       const auto* target_type = expr_arg.value()-&gt;val_ty()-&gt;qual_base();</a>
-<a name="343"><span class="lineNum">     343 </span>            :       wrap_in_implicit_cast(expr_arg.value().unwrap(), ty::Conv{.dereference = true}, target_type);</a>
+<a name="343"><span class="lineNum">     343 </span>            :       wrap_in_implicit_cast(expr_arg.value(), ty::Conv{.dereference = true}, target_type);</a>
 <a name="344"><span class="lineNum">     344 </span>            :     }</a>
 <a name="345"><span class="lineNum">     345 </span>            :   }</a>
 <a name="346"><span class="lineNum">     346 </span>            : </a>
@@ -487,7 +487,7 @@
 <a name="429"><span class="lineNum">     429 </span>            :       if (auto* var_decl = dyn_cast&lt;ast::VarDecl&gt;(scope.at(var_expr-&gt;name())))</a>
 <a name="430"><span class="lineNum">     430 </span>            :         stat.extend_lifetime_of(var_decl);</a>
 <a name="431"><span class="lineNum">     431 </span>            : </a>
-<a name="432"><span class="lineNum">     432 </span>            :     try_implicit_conversion(stat.expr().unwrap(), current_decl.ast()-&gt;val_ty());</a>
+<a name="432"><span class="lineNum">     432 </span>            :     try_implicit_conversion(stat.expr(), current_decl.ast()-&gt;val_ty());</a>
 <a name="433"><span class="lineNum">     433 </span>            :     current_decl.ast()-&gt;attach_to(stat.expr().raw_ptr());</a>
 <a name="434"><span class="lineNum">     434 </span>            :     // TODO(rymiel): Once return type deduction exists, make sure to not return `mut` unless there is an _explicit_ type</a>
 <a name="435"><span class="lineNum">     435 </span>            :     // annotation saying so</a>
@@ -498,7 +498,7 @@
 <a name="440"><span class="lineNum">     440 </span>            :   body_expression(*stat.init());</a>
 <a name="441"><span class="lineNum">     441 </span>            :   if (stat.type().has_value()) {</a>
 <a name="442"><span class="lineNum">     442 </span>            :     expression(*stat.type());</a>
-<a name="443"><span class="lineNum">     443 </span>            :     try_implicit_conversion(stat.init().unwrap(), stat.type()-&gt;val_ty());</a>
+<a name="443"><span class="lineNum">     443 </span>            :     try_implicit_conversion(stat.init(), stat.type()-&gt;val_ty());</a>
 <a name="444"><span class="lineNum">     444 </span>            :     stat.init()-&gt;attach_to(stat.type().raw_ptr());</a>
 <a name="445"><span class="lineNum">     445 </span>            :   }</a>
 <a name="446"><span class="lineNum">     446 </span>            : </a>

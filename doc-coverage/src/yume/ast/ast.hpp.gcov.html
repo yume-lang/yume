@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-07-16 19:22:08</td>
+            <td class="headerValue">2022-07-16 19:51:13</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -170,65 +170,65 @@
 <a name="112"><span class="lineNum">     112 </span>            : }</a>
 <a name="113"><span class="lineNum">     113 </span>            : </a>
 <a name="114"><span class="lineNum">     114 </span>            : class TokenIterator;</a>
-<a name="115"><span class="lineNum">     115 </span>            : </a>
-<a name="116"><span class="lineNum">     116 </span>            : class AST;</a>
+<a name="115"><span class="lineNum">     115 </span>            : class AST;</a>
+<a name="116"><span class="lineNum">     116 </span>            : template &lt;typename T&gt; class AnyBase;</a>
 <a name="117"><span class="lineNum">     117 </span>            : </a>
-<a name="118"><span class="lineNum">     118 </span>            : /// Represents &quot;any&quot; kind of ast node of type `T`. See `AnyExpr`, `AnyStmt` and `AnyType`.</a>
+<a name="118"><span class="lineNum">     118 </span>            : /// Represents &quot;any&quot; kind of ast node of type `T`, or the absence of one. See `OptionalExpr` and `OptionalType`.</a>
 <a name="119"><span class="lineNum">     119 </span>            : /**</a>
 <a name="120"><span class="lineNum">     120 </span>            :  * This template exists to avoid passing around `unique_ptr&lt;T&gt;`s around in code that deals with AST nodes containing</a>
 <a name="121"><span class="lineNum">     121 </span>            :  * other generic nodes, such as `Compound`.</a>
-<a name="122"><span class="lineNum">     122 </span>            :  * This class also has strict nullptr checks when constructing, and cannot be default constructed. See</a>
-<a name="123"><span class="lineNum">     123 </span>            :  * `OptionalAnyBase` for a similar class which may be null.</a>
-<a name="124"><span class="lineNum">     124 </span>            :  */</a>
-<a name="125"><span class="lineNum">     125 </span><span class="lineCov">          1 : template &lt;typename T&gt; class AnyBase {</span></a>
-<a name="126"><span class="lineNum">     126 </span><span class="lineNoCov">          0 :   unique_ptr&lt;T&gt; m_val;</span></a>
-<a name="127"><span class="lineNum">     127 </span>            : </a>
-<a name="128"><span class="lineNum">     128 </span>            : public:</a>
-<a name="129"><span class="lineNum">     129 </span><span class="lineNoCov">          0 :   AnyBase() = delete;</span></a>
-<a name="130"><span class="lineNum">     130 </span><span class="lineNoCov">          0 :   explicit AnyBase(T* raw_ptr) : m_val{raw_ptr} { yume_assert(raw_ptr != nullptr, &quot;AnyBase should never be null&quot;); }</span></a>
-<a name="131"><span class="lineNum">     131 </span><span class="lineNoCov">          0 :   template &lt;std::convertible_to&lt;unique_ptr&lt;T&gt;&gt; U&gt; AnyBase(U uptr) : m_val{move(uptr)} {</span></a>
-<a name="132"><span class="lineNum">     132 </span>            :     yume_assert(m_val.get() != nullptr, &quot;AnyBase should never be null&quot;);</a>
-<a name="133"><span class="lineNum">     133 </span>            :   }</a>
-<a name="134"><span class="lineNum">     134 </span>            : </a>
-<a name="135"><span class="lineNum">     135 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto operator-&gt;() const -&gt; const T* { return m_val.operator-&gt;(); }</span></a>
-<a name="136"><span class="lineNum">     136 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto operator*() const -&gt; const T&amp; { return *m_val; }</span></a>
-<a name="137"><span class="lineNum">     137 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto operator-&gt;() -&gt; T* { return m_val.operator-&gt;(); }</span></a>
-<a name="138"><span class="lineNum">     138 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto operator*() -&gt; T&amp; { return *m_val; }</span></a>
+<a name="122"><span class="lineNum">     122 </span>            :  * This class has the exact same layout at `AnyBase`, but is nominally explicit in its semantics, in that it may be</a>
+<a name="123"><span class="lineNum">     123 </span>            :  * null. It replaces the earlier usages of `optional&lt;unique_ptr&lt;T&gt;&gt;` which in theory wastes memory for the &quot;optional&quot;</a>
+<a name="124"><span class="lineNum">     124 </span>            :  * part when a nullptr already expresses the desired semantics.</a>
+<a name="125"><span class="lineNum">     125 </span>            :  * Unlike `AnyBase`, this class does not perform null pointer checks, and may be default constructed, or constructed</a>
+<a name="126"><span class="lineNum">     126 </span>            :  * from a `nullptr`.</a>
+<a name="127"><span class="lineNum">     127 </span>            :  */</a>
+<a name="128"><span class="lineNum">     128 </span><span class="lineCov">          1 : template &lt;typename T&gt; class OptionalAnyBase {</span></a>
+<a name="129"><span class="lineNum">     129 </span><span class="lineNoCov">          0 :   unique_ptr&lt;T&gt; m_val;</span></a>
+<a name="130"><span class="lineNum">     130 </span><span class="lineNoCov">          0 :   friend AnyBase&lt;T&gt;;</span></a>
+<a name="131"><span class="lineNum">     131 </span>            : </a>
+<a name="132"><span class="lineNum">     132 </span>            : public:</a>
+<a name="133"><span class="lineNum">     133 </span><span class="lineNoCov">          0 :   OptionalAnyBase() : m_val() {}</span></a>
+<a name="134"><span class="lineNum">     134 </span><span class="lineNoCov">          0 :   explicit OptionalAnyBase(T* raw_ptr) : m_val{raw_ptr} {}</span></a>
+<a name="135"><span class="lineNum">     135 </span><span class="lineNoCov">          0 :   template &lt;std::convertible_to&lt;unique_ptr&lt;T&gt;&gt; U&gt; OptionalAnyBase(U uptr) : m_val{move(uptr)} {}</span></a>
+<a name="136"><span class="lineNum">     136 </span><span class="lineNoCov">          0 :   OptionalAnyBase(std::nullopt_t /* tag */) : m_val{} {}</span></a>
+<a name="137"><span class="lineNum">     137 </span><span class="lineNoCov">          0 :   explicit OptionalAnyBase(optional&lt;unique_ptr&lt;T&gt;&gt; opt_uptr)</span></a>
+<a name="138"><span class="lineNum">     138 </span>            :       : m_val{opt_uptr.has_value() ? move(*opt_uptr) : nullptr} {}</a>
 <a name="139"><span class="lineNum">     139 </span>            : </a>
-<a name="140"><span class="lineNum">     140 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto raw_ptr() const -&gt; const T* { return m_val.get(); }</span></a>
-<a name="141"><span class="lineNum">     141 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto unwrap() -&gt; unique_ptr&lt;T&gt;&amp; { return m_val; }</span></a>
-<a name="142"><span class="lineNum">     142 </span>            : };</a>
-<a name="143"><span class="lineNum">     143 </span>            : </a>
-<a name="144"><span class="lineNum">     144 </span>            : /// Represents &quot;any&quot; kind of ast node of type `T`, or the absence of one. See `OptionalExpr` and `OptionalType`.</a>
-<a name="145"><span class="lineNum">     145 </span>            : /**</a>
-<a name="146"><span class="lineNum">     146 </span>            :  * This template exists to avoid passing around `unique_ptr&lt;T&gt;`s around in code that deals with AST nodes containing</a>
-<a name="147"><span class="lineNum">     147 </span>            :  * other generic nodes, such as `Compound`.</a>
-<a name="148"><span class="lineNum">     148 </span>            :  * This class has the exact same layout at `AnyBase`, but is nominally explicit in its semantics, in that it may be</a>
-<a name="149"><span class="lineNum">     149 </span>            :  * null. It replaces the earlier usages of `optional&lt;unique_ptr&lt;T&gt;&gt;` which in theory wastes memory for the &quot;optional&quot;</a>
-<a name="150"><span class="lineNum">     150 </span>            :  * part when a nullptr already expresses the desired semantics.</a>
-<a name="151"><span class="lineNum">     151 </span>            :  * Unlike `AnyBase`, this class does not perform null pointer checks, and may be default constructed, or constructed</a>
-<a name="152"><span class="lineNum">     152 </span>            :  * from a `nullptr`.</a>
-<a name="153"><span class="lineNum">     153 </span>            :  */</a>
-<a name="154"><span class="lineNum">     154 </span><span class="lineCov">          1 : template &lt;typename T&gt; class OptionalAnyBase {</span></a>
-<a name="155"><span class="lineNum">     155 </span><span class="lineNoCov">          0 :   unique_ptr&lt;T&gt; m_val;</span></a>
-<a name="156"><span class="lineNum">     156 </span>            : </a>
-<a name="157"><span class="lineNum">     157 </span>            : public:</a>
-<a name="158"><span class="lineNum">     158 </span><span class="lineNoCov">          0 :   OptionalAnyBase() : m_val{} {}</span></a>
-<a name="159"><span class="lineNum">     159 </span><span class="lineNoCov">          0 :   explicit OptionalAnyBase(T* raw_ptr) : m_val{raw_ptr} {}</span></a>
-<a name="160"><span class="lineNum">     160 </span><span class="lineNoCov">          0 :   template &lt;std::convertible_to&lt;unique_ptr&lt;T&gt;&gt; U&gt; OptionalAnyBase(U uptr) : m_val{move(uptr)} {}</span></a>
-<a name="161"><span class="lineNum">     161 </span><span class="lineNoCov">          0 :   OptionalAnyBase(std::nullopt_t /* tag */) : m_val{} {}</span></a>
-<a name="162"><span class="lineNum">     162 </span><span class="lineNoCov">          0 :   explicit OptionalAnyBase(optional&lt;unique_ptr&lt;T&gt;&gt; opt_uptr)</span></a>
-<a name="163"><span class="lineNum">     163 </span>            :       : m_val{opt_uptr.has_value() ? move(*opt_uptr) : nullptr} {}</a>
-<a name="164"><span class="lineNum">     164 </span>            : </a>
-<a name="165"><span class="lineNum">     165 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto operator-&gt;() const -&gt; const T* { return m_val.operator-&gt;(); }</span></a>
-<a name="166"><span class="lineNum">     166 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto operator*() const -&gt; const T&amp; { return *m_val; }</span></a>
-<a name="167"><span class="lineNum">     167 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto operator-&gt;() -&gt; T* { return m_val.operator-&gt;(); }</span></a>
-<a name="168"><span class="lineNum">     168 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto operator*() -&gt; T&amp; { return *m_val; }</span></a>
-<a name="169"><span class="lineNum">     169 </span>            : </a>
-<a name="170"><span class="lineNum">     170 </span><span class="lineNoCov">          0 :   [[nodiscard]] operator bool() const { return static_cast&lt;bool&gt;(m_val); }</span></a>
-<a name="171"><span class="lineNum">     171 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto has_value() const -&gt; bool { return static_cast&lt;bool&gt;(m_val); }</span></a>
-<a name="172"><span class="lineNum">     172 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto raw_ptr() const -&gt; const T* { return m_val.get(); }</span></a>
-<a name="173"><span class="lineNum">     173 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto unwrap() -&gt; unique_ptr&lt;T&gt;&amp; { return m_val; }</span></a>
+<a name="140"><span class="lineNum">     140 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto operator-&gt;() const -&gt; const T* { return m_val.operator-&gt;(); }</span></a>
+<a name="141"><span class="lineNum">     141 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto operator*() const -&gt; const T&amp; { return *m_val; }</span></a>
+<a name="142"><span class="lineNum">     142 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto operator-&gt;() -&gt; T* { return m_val.operator-&gt;(); }</span></a>
+<a name="143"><span class="lineNum">     143 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto operator*() -&gt; T&amp; { return *m_val; }</span></a>
+<a name="144"><span class="lineNum">     144 </span>            : </a>
+<a name="145"><span class="lineNum">     145 </span><span class="lineNoCov">          0 :   [[nodiscard]] operator bool() const { return static_cast&lt;bool&gt;(m_val); }</span></a>
+<a name="146"><span class="lineNum">     146 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto has_value() const -&gt; bool { return static_cast&lt;bool&gt;(m_val); }</span></a>
+<a name="147"><span class="lineNum">     147 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto raw_ptr() const -&gt; const T* { return m_val.get(); }</span></a>
+<a name="148"><span class="lineNum">     148 </span>            : };</a>
+<a name="149"><span class="lineNum">     149 </span>            : </a>
+<a name="150"><span class="lineNum">     150 </span>            : /// Represents &quot;any&quot; kind of ast node of type `T`. See `AnyExpr`, `AnyStmt` and `AnyType`.</a>
+<a name="151"><span class="lineNum">     151 </span>            : /**</a>
+<a name="152"><span class="lineNum">     152 </span>            :  * This template exists to avoid passing around `unique_ptr&lt;T&gt;`s around in code that deals with AST nodes containing</a>
+<a name="153"><span class="lineNum">     153 </span>            :  * other generic nodes, such as `Compound`.</a>
+<a name="154"><span class="lineNum">     154 </span>            :  * This class also has strict nullptr checks when constructing, and cannot be default constructed. See</a>
+<a name="155"><span class="lineNum">     155 </span>            :  * `OptionalAnyBase` for a similar class which may be null.</a>
+<a name="156"><span class="lineNum">     156 </span>            :  */</a>
+<a name="157"><span class="lineNum">     157 </span><span class="lineCov">          1 : template &lt;typename T&gt; class AnyBase : public OptionalAnyBase&lt;T&gt; {</span></a>
+<a name="158"><span class="lineNum">     158 </span><span class="lineNoCov">          0 :   using Super = OptionalAnyBase&lt;T&gt;;</span></a>
+<a name="159"><span class="lineNum">     159 </span>            : </a>
+<a name="160"><span class="lineNum">     160 </span>            : public:</a>
+<a name="161"><span class="lineNum">     161 </span><span class="lineNoCov">          0 :   AnyBase() = delete;</span></a>
+<a name="162"><span class="lineNum">     162 </span><span class="lineNoCov">          0 :   explicit AnyBase(T* raw_ptr) : Super{raw_ptr} { yume_assert(raw_ptr != nullptr, &quot;AnyBase should never be null&quot;); }</span></a>
+<a name="163"><span class="lineNum">     163 </span><span class="lineNoCov">          0 :   template &lt;std::convertible_to&lt;unique_ptr&lt;T&gt;&gt; U&gt; AnyBase(U uptr) : Super{move(uptr)} {</span></a>
+<a name="164"><span class="lineNum">     164 </span>            :     yume_assert(Super::m_val.get() != nullptr, &quot;AnyBase should never be null&quot;);</a>
+<a name="165"><span class="lineNum">     165 </span>            :   }</a>
+<a name="166"><span class="lineNum">     166 </span><span class="lineNoCov">          0 :   AnyBase(OptionalAnyBase&lt;T&gt;&amp;&amp; other) : Super(move(other.m_val)) {}</span></a>
+<a name="167"><span class="lineNum">     167 </span>            : </a>
+<a name="168"><span class="lineNum">     168 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto operator-&gt;() const -&gt; const T* { return Super::m_val.operator-&gt;(); }</span></a>
+<a name="169"><span class="lineNum">     169 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto operator*() const -&gt; const T&amp; { return *Super::m_val; }</span></a>
+<a name="170"><span class="lineNum">     170 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto operator-&gt;() -&gt; T* { return Super::m_val.operator-&gt;(); }</span></a>
+<a name="171"><span class="lineNum">     171 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto operator*() -&gt; T&amp; { return *Super::m_val; }</span></a>
+<a name="172"><span class="lineNum">     172 </span>            : </a>
+<a name="173"><span class="lineNum">     173 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto raw_ptr() const -&gt; const T* { return Super::m_val.get(); }</span></a>
 <a name="174"><span class="lineNum">     174 </span>            : };</a>
 <a name="175"><span class="lineNum">     175 </span>            : </a>
 <a name="176"><span class="lineNum">     176 </span>            : /// Represents the relationship between multiple `AST` nodes.</a>

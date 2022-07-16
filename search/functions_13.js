@@ -14,7 +14,7 @@ var searchData=
   ['tokens_11',['tokens',['../classyume_1_1Tokenizer.html#a72b459b3ad960df15412cf5a7f9bd2c0',1,'yume::Tokenizer']]],
   ['try_5fbest_5fviable_5foverload_12',['try_best_viable_overload',['../structyume_1_1semantic_1_1OverloadSet.html#af85f63ce6c9857345102b46ab3b711f9',1,'yume::semantic::OverloadSet']]],
   ['try_5fconsume_13',['try_consume',['../structyume_1_1ast_1_1parser_1_1Parser.html#a6284b99bb4a1236e43c03bce08e9da58',1,'yume::ast::parser::Parser']]],
-  ['try_5fimplicit_5fconversion_14',['try_implicit_conversion',['../namespaceyume_1_1semantic.html#a582c474da0538c88381f9b58bfb7a736',1,'yume::semantic']]],
+  ['try_5fimplicit_5fconversion_14',['try_implicit_conversion',['../namespaceyume_1_1semantic.html#a5f46bc3665e961bffb3c6664b0ab7008',1,'yume::semantic']]],
   ['try_5fparse_5ftype_15',['try_parse_type',['../structyume_1_1ast_1_1parser_1_1Parser.html#a5395a4bce412b8f14e3fdbc76ae51cdb',1,'yume::ast::parser::Parser']]],
   ['try_5fpeek_16',['try_peek',['../structyume_1_1ast_1_1parser_1_1Parser.html#a8eae45afdb4e463e5202f93d35318661',1,'yume::ast::parser::Parser::try_peek(int ahead, TokenAtom token_atom, source_location location=source_location::current()) const -&gt; bool'],['../structyume_1_1ast_1_1parser_1_1Parser.html#aa2c08351233ab7af82b284b2f8744d1a',1,'yume::ast::parser::Parser::try_peek(int ahead, Token::Type token_type, source_location location=source_location::current()) const -&gt; bool']]],
   ['try_5fpeek_5fuword_17',['try_peek_uword',['../structyume_1_1ast_1_1parser_1_1Parser.html#adcca7d42f93ad3a5b3835b582a70ac10',1,'yume::ast::parser::Parser']]],

@@ -106,10 +106,10 @@ Functions</h2></td></tr>
 <tr class="separator:a943175a1fef95d1b8291ff441ba3d0c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a700bf29d9cab289a1b98803ca057ec52"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a700bf29d9cab289a1b98803ca057ec52">compare_implicit_conversions</a> (<a class="el" href="structyume_1_1ty_1_1Conv.html">ty::Conv</a> a, <a class="el" href="structyume_1_1ty_1_1Conv.html">ty::Conv</a> b) -&gt; std::weak_ordering</td></tr>
 <tr class="separator:a700bf29d9cab289a1b98803ca057ec52"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5ca5463c688f0abf6fbb6c14d1ba81e5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a5ca5463c688f0abf6fbb6c14d1ba81e5">wrap_in_implicit_cast</a> (unique_ptr&lt; <a class="el" href="classyume_1_1ast_1_1Expr.html">ast::Expr</a> &gt; &amp;expr, <a class="el" href="structyume_1_1ty_1_1Conv.html">ty::Conv</a> conv, const <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> *target_type)</td></tr>
-<tr class="separator:a5ca5463c688f0abf6fbb6c14d1ba81e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a582c474da0538c88381f9b58bfb7a736"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a582c474da0538c88381f9b58bfb7a736">try_implicit_conversion</a> (unique_ptr&lt; <a class="el" href="classyume_1_1ast_1_1Expr.html">ast::Expr</a> &gt; &amp;expr, const <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> *target_type)</td></tr>
-<tr class="separator:a582c474da0538c88381f9b58bfb7a736"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a18e0ec59b5de8abe884312c112ef58c9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a18e0ec59b5de8abe884312c112ef58c9">wrap_in_implicit_cast</a> (<a class="el" href="namespaceyume_1_1ast.html#af4e6788ee8c32918650276c689d849a2">ast::OptionalExpr</a> &amp;expr, <a class="el" href="structyume_1_1ty_1_1Conv.html">ty::Conv</a> conv, const <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> *target_type)</td></tr>
+<tr class="separator:a18e0ec59b5de8abe884312c112ef58c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f46bc3665e961bffb3c6664b0ab7008"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a5f46bc3665e961bffb3c6664b0ab7008">try_implicit_conversion</a> (<a class="el" href="namespaceyume_1_1ast.html#af4e6788ee8c32918650276c689d849a2">ast::OptionalExpr</a> &amp;expr, const <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> *target_type)</td></tr>
+<tr class="separator:a5f46bc3665e961bffb3c6664b0ab7008"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
@@ -434,8 +434,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="a582c474da0538c88381f9b58bfb7a736" name="a582c474da0538c88381f9b58bfb7a736"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a582c474da0538c88381f9b58bfb7a736">&#9670;&nbsp;</a></span>try_implicit_conversion()</h2>
+<a id="a5f46bc3665e961bffb3c6664b0ab7008" name="a5f46bc3665e961bffb3c6664b0ab7008"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f46bc3665e961bffb3c6664b0ab7008">&#9670;&nbsp;</a></span>try_implicit_conversion()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -446,7 +446,7 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="memname">void yume::semantic::try_implicit_conversion </td>
           <td>(</td>
-          <td class="paramtype">unique_ptr&lt; <a class="el" href="classyume_1_1ast_1_1Expr.html">ast::Expr</a> &gt; &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="namespaceyume_1_1ast.html#af4e6788ee8c32918650276c689d849a2">ast::OptionalExpr</a> &amp;&#160;</td>
           <td class="paramname"><em>expr</em>, </td>
         </tr>
         <tr>
@@ -476,8 +476,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="a5ca5463c688f0abf6fbb6c14d1ba81e5" name="a5ca5463c688f0abf6fbb6c14d1ba81e5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5ca5463c688f0abf6fbb6c14d1ba81e5">&#9670;&nbsp;</a></span>wrap_in_implicit_cast()</h2>
+<a id="a18e0ec59b5de8abe884312c112ef58c9" name="a18e0ec59b5de8abe884312c112ef58c9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a18e0ec59b5de8abe884312c112ef58c9">&#9670;&nbsp;</a></span>wrap_in_implicit_cast()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -488,7 +488,7 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="memname">void yume::semantic::wrap_in_implicit_cast </td>
           <td>(</td>
-          <td class="paramtype">unique_ptr&lt; <a class="el" href="classyume_1_1ast_1_1Expr.html">ast::Expr</a> &gt; &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="namespaceyume_1_1ast.html#af4e6788ee8c32918650276c689d849a2">ast::OptionalExpr</a> &amp;&#160;</td>
           <td class="paramname"><em>expr</em>, </td>
         </tr>
         <tr>
