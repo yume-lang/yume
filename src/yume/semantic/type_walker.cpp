@@ -192,9 +192,15 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
   } else {
     body_expression(*expr.base());
     type = expr.base()->val_ty();
-  }
 
-  const auto* struct_type = dyn_cast<ty::Struct>(&type->without_qual());
+    // TODO(rymiel): currently all struct fields are created from an immutable reference, later this needs extra logic
+    // (i.e. accessing a field from a mut struct should probably give a mut field).
+    if (type->is_mut()) {
+      type = type->qual_base();
+      wrap_in_implicit_cast(expr.base().unwrap(), ty::Conv{.dereference = true}, type);
+    };
+  }
+  const auto* struct_type = dyn_cast<ty::Struct>(type);
 
   if (struct_type == nullptr)
     throw std::runtime_error("Can't access field of expression with non-struct type");
