@@ -173,6 +173,9 @@ inline void wrap_in_implicit_cast(unique_ptr<ast::Expr>& expr, ty::Conv conv, co
 }
 
 inline void try_implicit_conversion(unique_ptr<ast::Expr>& expr, const ty::Type* target_type) {
+  if (target_type == nullptr)
+    return;
+
   auto compat = expr->val_ty()->compatibility(*target_type);
   if (!compat.valid)
     throw std::runtime_error("Invalid implicit conversion ('"s + expr->val_ty()->name() + "' -> '" +
@@ -186,7 +189,7 @@ template <> void TypeWalker::expression(ast::AssignExpr& expr) {
   body_expression(*expr.target());
   body_expression(*expr.value());
 
-  // try_implicit_conversion(expr.value().unwrap(), expr.target()->val_ty());
+  try_implicit_conversion(expr.value().unwrap(), expr.target()->val_ty()->qual_base());
 
   expr.target()->attach_to(expr.value().raw_ptr());
 }
