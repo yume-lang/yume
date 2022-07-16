@@ -864,7 +864,11 @@ template <> auto Compiler::expression(const ast::FieldAccessExpr& expr) -> Val {
   auto base_name = expr.field();
   int base_offset = expr.offset();
 
-  return m_builder->CreateExtractValue(base, base_offset, "s.field."s + base_name);
+  if (!expr.val_ty()->is_mut())
+    return m_builder->CreateExtractValue(base, base_offset, "s.field.nm."s + base_name);
+
+  return m_builder->CreateStructGEP(llvm_type(*expr.base()->val_ty()->qual_base()), base, base_offset,
+                                    "s.field.m."s + base_name);
 }
 
 template <> auto Compiler::expression(const ast::ImplicitCastExpr& expr) -> Val {
