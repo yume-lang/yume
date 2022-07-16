@@ -28,7 +28,6 @@ struct Conv {
       ss << "deref ";
     if (kind == Int)
       ss << "int ";
-    ss << "conv";
     return ss.str();
   }
 };
