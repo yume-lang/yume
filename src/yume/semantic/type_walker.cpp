@@ -437,13 +437,14 @@ template <> void TypeWalker::statement(ast::ReturnStmt& stat) {
 }
 
 template <> void TypeWalker::statement(ast::VarDecl& stat) {
-  body_expression(stat.init());
+  body_expression(*stat.init());
   if (stat.type().has_value()) {
     expression(*stat.type());
-    stat.init().attach_to(&*stat.type());
+    try_implicit_conversion(stat.init().unwrap(), stat.type()->val_ty());
+    stat.init()->attach_to(stat.type().raw_ptr());
   }
 
-  stat.val_ty(&stat.init().val_ty()->known_mut());
+  stat.val_ty(&stat.init()->val_ty()->known_mut());
   scope.insert({stat.name(), &stat});
 }
 

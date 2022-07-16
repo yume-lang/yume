@@ -75,8 +75,7 @@ def c_str(str U8[]) U8[] = str.dup_append(?\0)
 
 def c_len(ptr U8 ptr) I64
   let terminated Bool = false
-  # TODO: the left and right sides of this declaration are attached, but should be able to merge into the bigger int type, investigate why this isn't happening
-  let idx I64 = I64(0)
+  let idx I64 = 0
   while !terminated
     let chr U8 = ptr[idx]
     if chr == ?\0

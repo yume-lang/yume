@@ -764,8 +764,8 @@ public:
   [[nodiscard]] auto name() const -> string { return m_name; }
   [[nodiscard]] auto type() const -> const auto& { return m_type; }
   [[nodiscard]] auto type() -> auto& { return m_type; }
-  [[nodiscard]] auto init() const -> const auto& { return *m_init; }
-  [[nodiscard]] auto init() -> auto& { return *m_init; }
+  [[nodiscard]] auto init() const -> const auto& { return m_init; }
+  [[nodiscard]] auto init() -> auto& { return m_init; }
 
   static auto classof(const AST* a) -> bool { return a->kind() == K_VarDecl; }
   [[nodiscard]] auto clone() const -> VarDecl* override;

@@ -513,15 +513,15 @@ template <> void Compiler::statement(const ast::VarDecl& stat) {
   // TODO(rymiel): revisit, probably extract logic
   auto* var_type = llvm_type(*stat.val_ty()->qual_base());
 
-  if (stat.init().val_ty()->is_mut()) {
-    auto expr_val = body_expression(stat.init());
+  if (stat.init()->val_ty()->is_mut()) {
+    auto expr_val = body_expression(*stat.init());
     m_scope.insert({stat.name(), {.value = expr_val, .ast = stat, .owning = false}});
     return;
   }
 
   auto* alloc = entrypoint_builder().CreateAlloca(var_type, nullptr, "vdecl."s + stat.name());
 
-  auto expr_val = body_expression(stat.init());
+  auto expr_val = body_expression(*stat.init());
   m_builder->CreateStore(expr_val, alloc);
   m_scope.insert({stat.name(), {.value = alloc, .ast = stat, .owning = true}});
 }
