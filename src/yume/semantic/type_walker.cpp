@@ -166,6 +166,22 @@ template <> void TypeWalker::expression(ast::SliceExpr& expr) {
   expr.val_ty(&base_type.known_slice());
 }
 
+inline void wrap_in_implicit_cast(unique_ptr<ast::Expr>& expr, ty::Conv conv, const ty::Type* target_type) {
+  auto cast_expr = std::make_unique<ast::ImplicitCastExpr>(expr->token_range(), ast::AnyExpr(move(expr)), conv);
+  cast_expr->val_ty(target_type);
+  expr = move(cast_expr);
+}
+
+inline void try_implicit_conversion(unique_ptr<ast::Expr>& expr, const ty::Type* target_type) {
+  auto compat = expr->val_ty()->compatibility(*target_type);
+  if (!compat.valid)
+    throw std::runtime_error("Invalid implicit conversion ('"s + expr->val_ty()->name() + "' -> '" +
+                             target_type->name() + "')");
+
+  if (!compat.conv.empty())
+    wrap_in_implicit_cast(expr, compat.conv, target_type);
+}
+
 template <> void TypeWalker::expression(ast::AssignExpr& expr) {
   body_expression(*expr.target());
   body_expression(*expr.value());
@@ -179,12 +195,6 @@ template <> void TypeWalker::expression(ast::VarExpr& expr) {
   if (!scope.contains(expr.name()))
     throw std::runtime_error("Scope doesn't contain variable called "s + expr.name());
   expr.attach_to(scope.at(expr.name()));
-}
-
-inline void wrap_in_implicit_cast(unique_ptr<ast::Expr>& expr, ty::Conv conv, const ty::Type* target_type) {
-  auto cast_expr = std::make_unique<ast::ImplicitCastExpr>(expr->token_range(), ast::AnyExpr(move(expr)), conv);
-  cast_expr->val_ty(target_type);
-  expr = move(cast_expr);
 }
 
 template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
