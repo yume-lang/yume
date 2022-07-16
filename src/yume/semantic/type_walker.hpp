@@ -66,8 +66,8 @@ private:
 
     // Restore again
     in_depth = saved_depth;
-    scope = saved_scope;
     current_decl = saved_current_decl;
+    scope = saved_scope;
   }
 
   template <typename T> void statement([[maybe_unused]] T& stat) {

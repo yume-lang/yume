@@ -766,6 +766,7 @@ public:
   [[nodiscard]] auto type() -> auto& { return m_type; }
   [[nodiscard]] auto init() const -> const auto& { return *m_init; }
   [[nodiscard]] auto init() -> auto& { return *m_init; }
+
   static auto classof(const AST* a) -> bool { return a->kind() == K_VarDecl; }
   [[nodiscard]] auto clone() const -> VarDecl* override;
 };
@@ -827,6 +828,7 @@ public:
 /// Return from a function body.
 class ReturnStmt : public Stmt {
   OptionalExpr m_expr;
+  VarDecl* m_extends_lifetime{};
 
 public:
   explicit ReturnStmt(span<Token> tok, OptionalExpr expr) : Stmt(K_Return, tok), m_expr{move(expr)} {}
@@ -834,6 +836,10 @@ public:
 
   [[nodiscard]] auto expr() const -> const auto& { return m_expr; }
   [[nodiscard]] auto expr() -> auto& { return m_expr; }
+
+  [[nodiscard]] auto extends_lifetime() const -> const auto* { return m_extends_lifetime; }
+  auto extend_lifetime_of(VarDecl* decl) { m_extends_lifetime = decl; }
+
   static auto classof(const AST* a) -> bool { return a->kind() == K_Return; }
   [[nodiscard]] auto clone() const -> ReturnStmt* override;
 };

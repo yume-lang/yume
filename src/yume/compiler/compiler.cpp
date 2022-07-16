@@ -478,11 +478,14 @@ template <> void Compiler::statement(const ast::ReturnStmt& stat) {
   InScope* reset_owning = nullptr;
 
   if (stat.expr().has_value()) {
-    if (const auto* var = dyn_cast<ast::VarExpr>(stat.expr().raw_ptr())) {
-      auto& in_scope = m_scope.at(var->name());
-      if (in_scope.owning) {
-        in_scope.owning = false; // Returning a local variable also gives up ownership of it
-        reset_owning = &in_scope;
+    // Returning a local variable also gives up ownership of it
+    if (stat.extends_lifetime() != nullptr) {
+      for (auto& [k, v] : m_scope) {
+        if (&v.ast == stat.extends_lifetime()) {
+          v.owning = false;
+          reset_owning = &v;
+          break;
+        }
       }
     }
 
