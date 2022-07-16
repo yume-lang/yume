@@ -475,8 +475,6 @@ template <> void Compiler::statement(const ast::IfStmt& stat) {
 }
 
 template <> void Compiler::statement(const ast::ReturnStmt& stat) {
-  const auto* ret_ty = m_current_fn->ast.val_ty();
-  bool returns_mut = ret_ty != nullptr && ret_ty->is_mut();
   InScope* reset_owning = nullptr;
 
   if (stat.expr().has_value()) {
@@ -493,7 +491,7 @@ template <> void Compiler::statement(const ast::ReturnStmt& stat) {
     if (reset_owning != nullptr)
       reset_owning->owning = true; // The local variable may not be returned in all code paths, so reset its ownership
 
-    auto val = body_expression(*stat.expr(), returns_mut);
+    auto val = body_expression(*stat.expr());
     m_builder->CreateRet(val);
 
     return;
@@ -519,36 +517,22 @@ template <> void Compiler::statement(const ast::VarDecl& stat) {
   m_scope.insert({stat.name(), {.value = alloc, .ast = stat, .owning = true}});
 }
 
-/// Assert that this expression isn't asked to be mutable.
-static void not_mut(const string& message, bool mut) {
-  if (mut)
-    throw std::runtime_error(message + " cannot be mutable!");
-}
-
-template <> auto Compiler::expression(const ast::NumberExpr& expr, bool mut) -> Val {
-  not_mut("number constant", mut);
-
+template <> auto Compiler::expression(const ast::NumberExpr& expr) -> Val {
   auto val = expr.val();
   if (expr.val_ty() == m_types.int64().s_ty)
     return m_builder->getInt64(val);
   return m_builder->getInt32(val);
 }
 
-template <> auto Compiler::expression(const ast::CharExpr& expr, bool mut) -> Val {
-  not_mut("character constant", mut);
-
+template <> auto Compiler::expression(const ast::CharExpr& expr) -> Val {
   return m_builder->getInt8(expr.val());
 }
 
-template <> auto Compiler::expression(const ast::BoolExpr& expr, bool mut) -> Val {
-  not_mut("boolean constant", mut);
-
+template <> auto Compiler::expression(const ast::BoolExpr& expr) -> Val {
   return m_builder->getInt1(expr.val());
 }
 
-template <> auto Compiler::expression(const ast::StringExpr& expr, bool mut) -> Val {
-  not_mut("string constant", mut);
-
+template <> auto Compiler::expression(const ast::StringExpr& expr) -> Val {
   auto val = expr.val();
 
   vector<llvm::Constant*> chars(val.length());
@@ -563,13 +547,8 @@ template <> auto Compiler::expression(const ast::StringExpr& expr, bool mut) -> 
   return llvm::ConstantExpr::getBitCast(global, m_builder->getInt8PtrTy(0));
 }
 
-template <> auto Compiler::expression(const ast::VarExpr& expr, bool mut) -> Val {
-  auto* val = m_scope.at(expr.name()).value.llvm;
-  // Function arguments can act as locals, but they can be immutable, but still behind a reference (alloca)
-  if (!mut)
-    return m_builder->CreateLoad(llvm_type(expr.val_ty()->without_qual()), val);
-
-  return val;
+template <> auto Compiler::expression(const ast::VarExpr& expr) -> Val {
+  return m_scope.at(expr.name()).value.llvm;
 }
 
 /// A constexpr-friendly simple string hash, for simple switches with string cases
@@ -642,29 +621,18 @@ auto Compiler::primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<
   throw std::runtime_error("Unknown primitive "s + primitive);
 }
 
-template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Val {
+template <> auto Compiler::expression(const ast::CallExpr& expr) -> Val {
   auto* selected = expr.selected_overload();
   llvm::Function* llvm_fn = nullptr;
   const auto* ret_ty = selected->ast().val_ty();
-  bool returns_mut = ret_ty != nullptr && ret_ty->is_mut();
-
-  if (!returns_mut)
-    not_mut("call returning by value", mut);
 
   vector<Val> args{};
   vector<const ty::Type*> arg_types{};
   vector<llvm::Value*> llvm_args{};
 
   unsigned j = 0;
-  const auto& selected_args = selected->ast().args();
   for (const auto& i : expr.args()) {
-    auto should_pass_by_mut = [&](unsigned index) {
-      if (index >= selected_args.size())
-        return false; // varargs function, logic will probably change later but for now, always pass by value
-      return selected_args[index].val_ty()->is_mut();
-    };
-
-    auto arg = body_expression(*i, should_pass_by_mut(j));
+    auto arg = body_expression(*i);
     args.push_back(arg);
     llvm_args.push_back(arg.llvm);
     arg_types.push_back(i->val_ty());
@@ -681,14 +649,12 @@ template <> auto Compiler::expression(const ast::CallExpr& expr, bool mut) -> Va
     val = m_builder->CreateCall(llvm_fn, llvm_args);
   }
 
-  if (returns_mut && !mut)
-    return m_builder->CreateLoad(llvm_type(*ret_ty->qual_base()), val, "c.nmut.deref");
   return val;
 }
 
-template <> auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> Val {
+template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
   if (const auto* target_var = dyn_cast<ast::VarExpr>(&expr.target())) {
-    auto expr_val = body_expression(expr.value(), mut);
+    auto expr_val = body_expression(expr.value());
     auto target_val = m_scope.at(target_var->name()).value;
     m_builder->CreateStore(expr_val, target_val);
     return expr_val;
@@ -698,7 +664,7 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> 
     const ty::Type* struct_base{nullptr};
     Val base{nullptr};
     if (field_base.has_value()) {
-      base = body_expression(*field_base, true);
+      base = body_expression(*field_base);
       struct_base = &field_access->base()->val_ty()->without_qual();
     } else {
       // TODO(rymiel): revisit
@@ -713,7 +679,7 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> 
     auto base_name = field_access->field();
     int base_offset = field_access->offset();
 
-    auto expr_val = body_expression(expr.value(), mut);
+    auto expr_val = body_expression(expr.value());
     auto* struct_type = llvm_type(cast<ty::Struct>(*struct_base));
 
     yume_assert(base_offset >= 0, "Field access has unknown offset into struct");
@@ -725,24 +691,21 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr, bool mut) -> 
   throw std::runtime_error("Can't assign to target "s + expr.target().kind_name());
 }
 
-template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Val {
+template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {
   const auto& type = *expr.val_ty();
   if (const auto* struct_type = dyn_cast<ty::Struct>(&type.without_qual())) {
     auto* llvm_struct_type = llvm_type(*struct_type);
 
-    llvm::Value* alloc = nullptr;
     // TODO(rymiel): #4 determine what kind of allocation must be done, and if at all. It'll probably require a
     // complicated semantic step to determine object lifetime, which would probably be evaluated before compilation of
-    // these expressions. currently just using "mut" constraint, which probably won't be permanent and is probably
-    // faulty, but, oh well
+    // these expressions.
 
     //// Heap allocation
-    if (mut) {
-      auto* alloc_size = llvm::ConstantExpr::getSizeOf(llvm_struct_type);
-      alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), m_builder->getInt64Ty(), llvm_struct_type,
-                                           alloc_size, nullptr, nullptr, "s.ctor.malloc");
-      alloc = m_builder->Insert(alloc);
-    }
+    // llvm::Value* alloc = nullptr;
+    // auto* alloc_size = llvm::ConstantExpr::getSizeOf(llvm_struct_type);
+    // alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), m_builder->getInt64Ty(), llvm_struct_type,
+    //                                      alloc_size, nullptr, nullptr, "s.ctor.malloc");
+    // alloc = m_builder->Insert(alloc);
 
     //// Stack allocation
     // alloc = m_builder->CreateAlloca(llvm_struct_type, 0, nullptr, "s.ctor.alloca");
@@ -769,10 +732,11 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
       base_value = m_builder->CreateCall(llvm_fn, llvm_args);
     }
 
-    if (mut) {
-      m_builder->CreateStore(base_value, alloc);
-      base_value = alloc;
-    }
+    //// Heap allocation
+    // if (mut) {
+    //   m_builder->CreateStore(base_value, alloc);
+    //   base_value = alloc;
+    // }
 
     return base_value;
   }
@@ -871,9 +835,7 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr, bool mut) -> Va
   throw std::runtime_error("Can't construct non-struct, non-integer, non-slice type");
 }
 
-template <> auto Compiler::expression(const ast::SliceExpr& expr, bool mut) -> Val {
-  not_mut("slice literal", mut);
-
+template <> auto Compiler::expression(const ast::SliceExpr& expr) -> Val {
   auto* slice_size = m_builder->getInt64(expr.args().size());
 
   auto* slice_type = llvm_type(*expr.val_ty());
@@ -895,10 +857,7 @@ template <> auto Compiler::expression(const ast::SliceExpr& expr, bool mut) -> V
   return slice_inst;
 }
 
-template <> auto Compiler::expression(const ast::FieldAccessExpr& expr, bool mut) -> Val {
-  // TODO(rymiel): struct can only contain things by value, later this needs a condition
-  not_mut("immutable field", mut);
-
+template <> auto Compiler::expression(const ast::FieldAccessExpr& expr) -> Val {
   auto base = body_expression(*expr.base());
   auto base_name = expr.field();
   int base_offset = expr.offset();
@@ -906,14 +865,10 @@ template <> auto Compiler::expression(const ast::FieldAccessExpr& expr, bool mut
   return m_builder->CreateExtractValue(base, base_offset, "s.field."s + base_name);
 }
 
-template <> auto Compiler::expression(const ast::ImplicitCastExpr& expr, bool mut) -> Val {
+template <> auto Compiler::expression(const ast::ImplicitCastExpr& expr) -> Val {
   const auto* target_ty = expr.val_ty();
   const auto* current_ty = expr.base().val_ty();
-  llvm::Value* base = body_expression(expr.base(), current_ty->is_mut());
-
-  if (mut != target_ty->is_mut()) {
-    throw std::logic_error("Implicit cast target and expression mutability don't match!");
-  }
+  llvm::Value* base = body_expression(expr.base());
 
   if (expr.conversion().dereference) {
     yume_assert(current_ty->is_mut(), "Source type must be mutable when implicitly derefencing");
@@ -1005,11 +960,8 @@ void Compiler::body_statement(const ast::Stmt& stat) {
   return CRTPWalker::body_statement(stat);
 }
 
-// TODO(rymiel): #3 once implicit conversion checking is added in the remaining locations (i.e. field assignment and
-// return) there is no real reason to keep the `mut` parameter on all expression compilation methods. All the mutability
-// information is in the type system and dereferences are handled by the TypeWalker.
-auto Compiler::body_expression(const ast::Expr& expr, bool mut) -> Val {
+auto Compiler::body_expression(const ast::Expr& expr) -> Val {
   const ASTStackTrace guard("Codegen: "s + expr.kind_name() + " expression", expr);
-  return CRTPWalker::body_expression(expr, mut);
+  return CRTPWalker::body_expression(expr);
 }
 } // namespace yume
