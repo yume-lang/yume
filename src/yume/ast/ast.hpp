@@ -112,34 +112,8 @@ auto inline constexpr kind_name(Kind type) -> const char* {
 }
 
 class TokenIterator;
-
 class AST;
-
-/// Represents "any" kind of ast node of type `T`. See `AnyExpr`, `AnyStmt` and `AnyType`.
-/**
- * This template exists to avoid passing around `unique_ptr<T>`s around in code that deals with AST nodes containing
- * other generic nodes, such as `Compound`.
- * This class also has strict nullptr checks when constructing, and cannot be default constructed. See
- * `OptionalAnyBase` for a similar class which may be null.
- */
-template <typename T> class AnyBase {
-  unique_ptr<T> m_val;
-
-public:
-  AnyBase() = delete;
-  explicit AnyBase(T* raw_ptr) : m_val{raw_ptr} { yume_assert(raw_ptr != nullptr, "AnyBase should never be null"); }
-  template <std::convertible_to<unique_ptr<T>> U> AnyBase(U uptr) : m_val{move(uptr)} {
-    yume_assert(m_val.get() != nullptr, "AnyBase should never be null");
-  }
-
-  [[nodiscard]] auto operator->() const -> const T* { return m_val.operator->(); }
-  [[nodiscard]] auto operator*() const -> const T& { return *m_val; }
-  [[nodiscard]] auto operator->() -> T* { return m_val.operator->(); }
-  [[nodiscard]] auto operator*() -> T& { return *m_val; }
-
-  [[nodiscard]] auto raw_ptr() const -> const T* { return m_val.get(); }
-  [[nodiscard]] auto unwrap() -> unique_ptr<T>& { return m_val; }
-};
+template <typename T> class AnyBase;
 
 /// Represents "any" kind of ast node of type `T`, or the absence of one. See `OptionalExpr` and `OptionalType`.
 /**
@@ -153,9 +127,10 @@ public:
  */
 template <typename T> class OptionalAnyBase {
   unique_ptr<T> m_val;
+  friend AnyBase<T>;
 
 public:
-  OptionalAnyBase() : m_val{} {}
+  OptionalAnyBase() : m_val() {}
   explicit OptionalAnyBase(T* raw_ptr) : m_val{raw_ptr} {}
   template <std::convertible_to<unique_ptr<T>> U> OptionalAnyBase(U uptr) : m_val{move(uptr)} {}
   OptionalAnyBase(std::nullopt_t /* tag */) : m_val{} {}
@@ -170,7 +145,32 @@ public:
   [[nodiscard]] operator bool() const { return static_cast<bool>(m_val); }
   [[nodiscard]] auto has_value() const -> bool { return static_cast<bool>(m_val); }
   [[nodiscard]] auto raw_ptr() const -> const T* { return m_val.get(); }
-  [[nodiscard]] auto unwrap() -> unique_ptr<T>& { return m_val; }
+};
+
+/// Represents "any" kind of ast node of type `T`. See `AnyExpr`, `AnyStmt` and `AnyType`.
+/**
+ * This template exists to avoid passing around `unique_ptr<T>`s around in code that deals with AST nodes containing
+ * other generic nodes, such as `Compound`.
+ * This class also has strict nullptr checks when constructing, and cannot be default constructed. See
+ * `OptionalAnyBase` for a similar class which may be null.
+ */
+template <typename T> class AnyBase : public OptionalAnyBase<T> {
+  using Super = OptionalAnyBase<T>;
+
+public:
+  AnyBase() = delete;
+  explicit AnyBase(T* raw_ptr) : Super{raw_ptr} { yume_assert(raw_ptr != nullptr, "AnyBase should never be null"); }
+  template <std::convertible_to<unique_ptr<T>> U> AnyBase(U uptr) : Super{move(uptr)} {
+    yume_assert(Super::m_val.get() != nullptr, "AnyBase should never be null");
+  }
+  AnyBase(OptionalAnyBase<T>&& other) : Super(move(other.m_val)) {}
+
+  [[nodiscard]] auto operator->() const -> const T* { return Super::m_val.operator->(); }
+  [[nodiscard]] auto operator*() const -> const T& { return *Super::m_val; }
+  [[nodiscard]] auto operator->() -> T* { return Super::m_val.operator->(); }
+  [[nodiscard]] auto operator*() -> T& { return *Super::m_val; }
+
+  [[nodiscard]] auto raw_ptr() const -> const T* { return Super::m_val.get(); }
 };
 
 /// Represents the relationship between multiple `AST` nodes.

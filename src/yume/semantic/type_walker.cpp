@@ -166,13 +166,13 @@ template <> void TypeWalker::expression(ast::SliceExpr& expr) {
   expr.val_ty(&base_type.known_slice());
 }
 
-inline void wrap_in_implicit_cast(unique_ptr<ast::Expr>& expr, ty::Conv conv, const ty::Type* target_type) {
-  auto cast_expr = std::make_unique<ast::ImplicitCastExpr>(expr->token_range(), ast::AnyExpr(move(expr)), conv);
+inline void wrap_in_implicit_cast(ast::OptionalExpr& expr, ty::Conv conv, const ty::Type* target_type) {
+  auto cast_expr = std::make_unique<ast::ImplicitCastExpr>(expr->token_range(), move(expr), conv);
   cast_expr->val_ty(target_type);
   expr = move(cast_expr);
 }
 
-inline void try_implicit_conversion(unique_ptr<ast::Expr>& expr, const ty::Type* target_type) {
+inline void try_implicit_conversion(ast::OptionalExpr& expr, const ty::Type* target_type) {
   if (target_type == nullptr)
     return;
 
@@ -189,7 +189,7 @@ template <> void TypeWalker::expression(ast::AssignExpr& expr) {
   body_expression(*expr.target());
   body_expression(*expr.value());
 
-  try_implicit_conversion(expr.value().unwrap(), expr.target()->val_ty()->qual_base());
+  try_implicit_conversion(expr.value(), expr.target()->val_ty()->qual_base());
 
   expr.target()->attach_to(expr.value().raw_ptr());
   expr.attach_to(expr.value().raw_ptr());
@@ -332,7 +332,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
     if (compat.conv.empty())
       continue;
 
-    wrap_in_implicit_cast(expr_arg.unwrap(), compat.conv, target.type().val_ty());
+    wrap_in_implicit_cast(expr_arg, compat.conv, target.type().val_ty());
   }
 
   // Find excess variadic arguments. Logic will probably change later, but for now, always pass by value
@@ -340,7 +340,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
   for (const auto& expr_arg : llvm::enumerate(expr.args())) {
     if (expr_arg.index() >= selected->ast().args().size() && expr_arg.value()->val_ty()->is_mut()) {
       const auto* target_type = expr_arg.value()->val_ty()->qual_base();
-      wrap_in_implicit_cast(expr_arg.value().unwrap(), ty::Conv{.dereference = true}, target_type);
+      wrap_in_implicit_cast(expr_arg.value(), ty::Conv{.dereference = true}, target_type);
     }
   }
 
@@ -429,7 +429,7 @@ template <> void TypeWalker::statement(ast::ReturnStmt& stat) {
       if (auto* var_decl = dyn_cast<ast::VarDecl>(scope.at(var_expr->name())))
         stat.extend_lifetime_of(var_decl);
 
-    try_implicit_conversion(stat.expr().unwrap(), current_decl.ast()->val_ty());
+    try_implicit_conversion(stat.expr(), current_decl.ast()->val_ty());
     current_decl.ast()->attach_to(stat.expr().raw_ptr());
     // TODO(rymiel): Once return type deduction exists, make sure to not return `mut` unless there is an _explicit_ type
     // annotation saying so
@@ -440,7 +440,7 @@ template <> void TypeWalker::statement(ast::VarDecl& stat) {
   body_expression(*stat.init());
   if (stat.type().has_value()) {
     expression(*stat.type());
-    try_implicit_conversion(stat.init().unwrap(), stat.type()->val_ty());
+    try_implicit_conversion(stat.init(), stat.type()->val_ty());
     stat.init()->attach_to(stat.type().raw_ptr());
   }
 
