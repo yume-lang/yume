@@ -136,8 +136,10 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
   OverloadSet<Ctor> ctor_overloads{};
 
   // XXX: Duplicated from function overload handling
-  if (consider_ctor_overloads)
+  if (consider_ctor_overloads) {
+    resolve_queue();
     ctor_overloads = all_ctor_overloads_by_type(*st, expr);
+  }
 
   for (auto& i : expr.args()) {
     body_expression(*i);

@@ -49,9 +49,9 @@ struct InScope {
 class Compiler : public CRTPWalker<Compiler> {
   vector<SourceFile> m_sources;
   TypeHolder m_types;
-  vector<Fn> m_fns{};
-  vector<Struct> m_structs{};
-  vector<Ctor> m_ctors{};
+  std::list<Fn> m_fns{};
+  std::list<Struct> m_structs{};
+  std::list<Ctor> m_ctors{};
   std::queue<DeclLike> m_decl_queue{};
   unique_ptr<semantic::TypeWalker> m_walker;
 
