@@ -36,9 +36,11 @@ class Struct;
 class Type;
 } // namespace ty
 
+/// A local variable in function scope. Used to track destructing when the scope ends.
 struct InScope {
   Val value;
   const ast::AST& ast;
+  /// Whether or not the local scope "owns" the variable. Unowned variables are not destructed at the end of the scope.
   bool owning{};
 };
 
@@ -73,12 +75,14 @@ public:
 
   /// Declare a function in bytecode, or get an existing declaration.
   auto declare(Fn&, bool mangle = true) -> llvm::Function*;
+  /// Declare a constructor in bytecode, or get an existing declaration.
   auto declare(Ctor&) -> llvm::Function*;
 
   static auto create_struct(ast::StructDecl&, const optional<string>& name_override = {}) -> unique_ptr<ty::Struct>;
 
   /// Compile the body of a function.
   void define(Fn&);
+  /// Compile the body of a constructor.
   void define(Ctor&);
 
   void body_statement(const ast::Stmt&);
@@ -90,8 +94,9 @@ public:
   /// Convert a type into its corresponding llvm type
   auto llvm_type(const ty::Type& type) -> llvm::Type*;
 
-  /// Default-constructs an object of specified type
+  /// Default-constructs an object of specified type \p type .
   auto default_init(const ty::Type& type) -> Val;
+  /// Destructs an object \p val of specified type \p type .
   void destruct(Val val, const ty::Type& type);
 
   auto mangle_name(Fn& fn) -> string;
@@ -109,16 +114,24 @@ private:
     throw std::runtime_error("Unknown expression "s + expr.kind_name());
   }
 
+  /// Create a temporary `IRBuilder` which points to the entrypoint of the current function being compiled. This is used
+  /// for variable declarations, which are always at the entrypoint, as to not cause a stack overflow with locals.
   auto entrypoint_builder() -> llvm::IRBuilder<>;
 
+  /// Common code between defining functions and constructors. \see define .
   template <typename T> void setup_fn_base(T&);
 
+  /// Run the destructors for every owned local variable in the current scope. Should be run when returning from a
+  /// function in any way.
   void destruct_all_in_scope();
 
+  /// Handle all primitive, built-in functions
   auto primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<const ty::Type*>& types, const ty::Type* ret_ty)
       -> optional<Val>;
+  /// Handle primitive functions taking two integral values, such as most arithmetic operations (add, multiply, etc).
   auto int_bin_primitive(const string& primitive, const vector<llvm::Value*>& args) -> Val;
 
+  /// Instruct the `TypeWalker` to perform semantic analysis and infer types for the given declaration.
   void walk_types(DeclLike);
 };
 } // namespace yume

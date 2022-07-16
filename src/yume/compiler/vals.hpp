@@ -41,12 +41,16 @@ struct Instantiation {
 
 using substitution_t = std::map<string, const ty::Type*>;
 
+/// Common values between function declarations (`Fn`) and constructors (`Ctor`), which behave very similarly.
 struct FnBase {
+  /// The ast node that defines this declaration, being `ast::FnDecl` for `Fn` and `ast::CtorDecl` for `Ctor`. Should
+  /// not be accessed directly, instead \see ast() on `Fn` and `Ctor`.
   ast::AST& ast;
   /// If this function is in the body of a struct, this points to its type. Used for the `self` type.
   ty::Type* self_ty{};
   /// The program this declaration is a member of.
   ast::Program* member{};
+  /// The LLVM function definition corresponding to this function or constructor.
   llvm::Function* llvm{};
 
   operator llvm::Function*() const { return llvm; }
@@ -54,10 +58,10 @@ struct FnBase {
 
 /// A function declaration in the compiler.
 /**
- * The primary use of this struct is to bind together the AST declaration of a function (`ast::FnDecl`) and the bytecode
- * body of a function (`llvm::Function`).
+ * The primary use of this structure is to bind together the AST declaration of a function (`ast::FnDecl`) and the
+ * bytecode body of a function (`llvm::Function`).
  * A function template may also be a `Fn`. Since a template doesn't actually have a body, its `m_llvm_fn` is `nullptr`.
- * All the instantiations of a template are stored in `m_instantiations`.
+ * All the instantiations of a template are stored in `instantiations`.
  */
 struct Fn {
   using decl_t = ast::FnDecl;
@@ -88,6 +92,12 @@ struct Fn {
   [[nodiscard]] auto create_instantiation(Instantiation& instantiate) -> Fn&;
 };
 
+/// A struct declaration in the compiler.
+/**
+ * Very similar to `Fn`, the primary use of this structure is to bind together the AST declaration of a struct
+ * (`ast::StructDecl`) and the type this struct defines. A struct template may also be a `Struct`. All the
+ * instantiations of a template are stored in `instantiations`.
+ */
 struct Struct {
   using decl_t = ast::StructDecl;
 
@@ -117,6 +127,11 @@ struct Struct {
   [[nodiscard]] auto create_instantiation(Instantiation& instantiate) -> Struct&;
 };
 
+/// A constructor declaration in the compiler.
+/**
+ * Very similar to `Fn`, the primary use of this structure is to bind together the AST declaration of a struct
+ * (`ast::CtorDecl`) and the bytecode body of a function (`llvm::Function`).
+ */
 struct Ctor {
   using decl_t = ast::CtorDecl;
   using call_t = ast::CtorExpr;
@@ -137,15 +152,19 @@ struct Ctor {
   [[nodiscard]] static auto common_ast(const decl_t::arg_t& ast) -> const ast::AST&;
 };
 
-template <typename R, typename... Ts> struct DeclLikeVisitor : Ts... {
-  using Ts::operator()...;
-  auto operator()(std::monostate /* ignored */) -> R { return R(); };
-};
-template <typename R, typename... Ts> DeclLikeVisitor(R, Ts...) -> DeclLikeVisitor<R, Ts...>;
-
 using DeclLike_t = std::variant<std::monostate, Fn*, Struct*, Ctor*>;
 
+/// A common base between declarations in the compiler: `Fn`, `Struct`, and `Ctor`. Its value may also be absent
+/// (`std::monostate`).
 struct DeclLike : public DeclLike_t {
+private:
+  template <typename R, typename... Ts> struct DeclLikeVisitor : Ts... {
+    using Ts::operator()...;
+    auto operator()(std::monostate /* ignored */) -> R { return R(); };
+  };
+  template <typename R, typename... Ts> DeclLikeVisitor(R, Ts...) -> DeclLikeVisitor<R, Ts...>;
+
+public:
   using DeclLike_t::DeclLike_t;
 
   template <typename R = void, typename... Ts> auto visit_decl(Ts... ts) {

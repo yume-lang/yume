@@ -115,15 +115,19 @@ class TokenIterator;
 
 class AST;
 
+/// Represents "any" kind of ast node of type `T`. See `AnyExpr`, `AnyStmt` and `AnyType`.
+/**
+ * This template exists to avoid passing around `unique_ptr<T>`s around in code that deals with AST nodes containing
+ * other generic nodes, such as `Compound`.
+ * This class also has strict nullptr checks when constructing, and cannot be default constructed. See
+ * `OptionalAnyBase` for a similar class which may be null.
+ */
 template <typename T> class AnyBase {
   unique_ptr<T> m_val;
 
 public:
   AnyBase() = delete;
   explicit AnyBase(T* raw_ptr) : m_val{raw_ptr} { yume_assert(raw_ptr != nullptr, "AnyBase should never be null"); }
-  AnyBase(unique_ptr<T> uptr) : m_val{move(uptr)} {
-    yume_assert(m_val.get() != nullptr, "AnyBase should never be null");
-  }
   template <std::convertible_to<unique_ptr<T>> U> AnyBase(U uptr) : m_val{move(uptr)} {
     yume_assert(m_val.get() != nullptr, "AnyBase should never be null");
   }
@@ -136,13 +140,22 @@ public:
   [[nodiscard]] auto raw_ptr() const -> const T* { return m_val.get(); }
 };
 
+/// Represents "any" kind of ast node of type `T`, or the absence of one. See `OptionalExpr` and `OptionalType`.
+/**
+ * This template exists to avoid passing around `unique_ptr<T>`s around in code that deals with AST nodes containing
+ * other generic nodes, such as `Compound`.
+ * This class has the exact same layout at `AnyBase`, but is nominally explicit in its semantics, in that it may be
+ * null. It replaces the earlier usages of `optional<unique_ptr<T>>` which in theory wastes memory for the "optional"
+ * part when a nullptr already expresses the desired semantics.
+ * Unlike `AnyBase`, this class does not perform null pointer checks, and may be default constructed, or constructed
+ * from a `nullptr`.
+ */
 template <typename T> class OptionalAnyBase {
   unique_ptr<T> m_val;
 
 public:
   OptionalAnyBase() : m_val{} {}
   explicit OptionalAnyBase(T* raw_ptr) : m_val{raw_ptr} {}
-  // OptionalAnyBase(unique_ptr<T> uptr) : m_val{move(uptr)} {}
   template <std::convertible_to<unique_ptr<T>> U> OptionalAnyBase(U uptr) : m_val{move(uptr)} {}
   OptionalAnyBase(std::nullopt_t /* tag */) : m_val{} {}
   explicit OptionalAnyBase(optional<unique_ptr<T>> opt_uptr)
@@ -204,6 +217,7 @@ public:
   auto operator=(AST&&) -> AST& = delete;
   virtual ~AST() = default;
 
+  /// Recursively visit this ast node and all its constituents. \see Visitor
   virtual void visit(Visitor& visitor) const = 0;
 
   [[nodiscard]] auto val_ty() const noexcept -> const ty::Type* { return m_val_ty; }
@@ -255,6 +269,7 @@ public:
   [[nodiscard]] auto clone() const -> Stmt* override = 0;
 };
 
+/// \see AnyBase
 using AnyStmt = AnyBase<Stmt>;
 
 /// A type **annotation**. This (`ast::Type`) is distinct from the actual type of a value (`ty::Type`).
@@ -267,7 +282,10 @@ public:
   [[nodiscard]] auto clone() const -> Type* override = 0;
 };
 
+/// \see AnyBase
 using AnyType = AnyBase<Type>;
+
+/// \see OptionalAnyBase
 using OptionalType = OptionalAnyBase<Type>;
 
 /// Just the name of a type, always capitalized.
@@ -302,7 +320,7 @@ public:
   [[nodiscard]] auto clone() const -> QualType* override;
 };
 
-/// A type with explicit type parameters \e i.e. Foo<Bar,Baz>.
+/// A type with explicit type parameters \e i.e. `Foo<Bar,Baz>`.
 class TemplatedType : public Type {
   AnyType m_base;
   vector<AnyType> m_type_args;
@@ -382,7 +400,9 @@ public:
   [[nodiscard]] auto clone() const -> Expr* override = 0;
 };
 
+/// \see AnyBase
 using AnyExpr = AnyBase<Expr>;
+/// \see OptionalAnyBase
 using OptionalExpr = OptionalAnyBase<Expr>;
 
 /// Number literals.
@@ -459,6 +479,8 @@ public:
 class CallExpr : public Expr {
   string m_name;
   vector<AnyExpr> m_args;
+  /// During semantic analysis, the `TypeWalker` performs overload selection and saves the function declaration or
+  /// instantiation that this call refers to directly in the AST node, in this field.
   mutable Fn* m_selected_overload{};
 
 public:
@@ -482,6 +504,8 @@ public:
 class CtorExpr : public Expr {
   AnyType m_type;
   vector<AnyExpr> m_args;
+  /// During semantic analysis, the `TypeWalker` performs overload selection and saves the constructor declaration that
+  /// this call refers to directly in the AST node, in this field.
   mutable Ctor* m_selected_overload{};
 
 public:
@@ -502,6 +526,10 @@ public:
 };
 
 /// A destruction of an object upon leaving its scope.
+/**
+ * This is currently marked deprecated as it is unused, however it is likely to be used again in the future, thus its
+ * logic remains here to avoid redeclaring it in the future.
+ */
 class [[deprecated]] DtorExpr : public Expr {
   AnyExpr m_base;
 
@@ -517,7 +545,7 @@ public:
   [[nodiscard]] auto clone() const -> DtorExpr* override;
 };
 
-/// A slice literal, i.e. an array.
+/// A slice literal, \e i.e. an array.
 class SliceExpr : public Expr {
   AnyType m_type;
   vector<AnyExpr> m_args;
@@ -579,8 +607,14 @@ public:
   [[nodiscard]] auto clone() const -> FieldAccessExpr* override;
 };
 
+/// Represents an implicit cast to a different type, performed during semantic analysis
+/**
+ * Note that implicit casts have no direct "textual" representation in actual source code, they are only materialized
+ * during semantic analysis.
+ */
 class ImplicitCastExpr : public Expr {
   AnyExpr m_base;
+  /// The conversion steps performed during this cast.
   ty::Conv m_conversion;
 
 public:
@@ -596,7 +630,7 @@ public:
   [[nodiscard]] auto clone() const -> ImplicitCastExpr* override;
 };
 
-/// A statement consisting of multiple other statements, i.e. the body of a function.
+/// A statement consisting of multiple other statements, \e i.e. the body of a function.
 class Compound : public Stmt {
   vector<AnyStmt> m_body;
 
@@ -617,10 +651,13 @@ public:
 
 private:
   string m_name;
+  /// Can only be set if this function declaration is a primitive
   bool m_varargs{};
   vector<arg_t> m_args;
   vector<string> m_type_args;
   OptionalType m_ret;
+  /// If this function declaration refers to a primitive, this field is a string representing the name of the primitive.
+  /// Otherise, this function declaration refers to a regular function and this field holds the body of that function.
   variant<Compound, string> m_body;
 
 public:
@@ -648,7 +685,23 @@ public:
   [[nodiscard]] auto clone() const -> FnDecl* override;
 };
 
-/// A declaration of a custom constructor (`def :`).
+/// A declaration of a custom constructor (`def :new`).
+/**
+ * The arguments of a constructor may be regular `TypeName`s, just as in regular function declarations, but they also
+ * may be a `FieldAccessExpr` without a base (such as `::x`), representing a shorthand where the field is set
+ * immediately, and the type is deduced to be that of the field.
+ * Essentially the following two declarations are identical:
+ * \code
+ * struct Foo(data I32)
+ *   def :new(::data)
+ *   end
+ *
+ *   def :new(data I32)
+ *     ::data = data
+ *   end
+ * end
+ * \endcode
+ */
 class CtorDecl : public Stmt {
 public:
   using arg_t = variant<TypeName, FieldAccessExpr>;

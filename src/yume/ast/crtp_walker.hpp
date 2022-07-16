@@ -11,6 +11,17 @@ concept OnlyStmt = std::derived_from<T, ast::Stmt> && !std::derived_from<T, ast:
 
 template <bool Bool, typename Base> using maybe_const_t = std::conditional_t<Bool, std::add_const_t<Base>, Base>;
 
+/// A helper template to walk the Abstract Syntax Tree (AST), utilizing the Curiously Recurring Template Pattern (CRTP).
+/**
+ * A class inheriting from `CRTPWalker` must declare the methods `body_expression` and `body_statement`, which take the
+ * base classes `Expr` and `Stmt` respectively. Those methods should delegate to the same methods defined in the
+ * `CRTPWalker`.
+ * Then, the class must define any number of template methods named `expression` and `statement`, which take a subclass
+ * of `Expr` and `Stmt` respectively. The way this is done in `Compiler` and `TypeWalker` is to define a template base
+ * in the header, with a fallback implementation (which should usually throw) for any cases that are unhandled. Then,
+ * for each AST node subclass that the deriving class knows how to handle, define a template specialization taking that
+ * specific subclass in the implementation file.
+ */
 template <typename Derived, bool Const = true> struct CRTPWalker {
 
 public:
