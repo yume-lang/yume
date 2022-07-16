@@ -189,6 +189,7 @@ inline void wrap_in_implicit_cast(unique_ptr<ast::Expr>& expr, ty::Conv conv, co
 
 template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
   const ty::Type* type = nullptr;
+  bool base_is_mut = false;
 
   if (!expr.base().has_value()) {
     type = current_decl.self_ty();
@@ -196,13 +197,12 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
     body_expression(*expr.base());
     type = expr.base()->val_ty();
 
-    // TODO(rymiel): currently all struct fields are created from an immutable reference, later this needs extra logic
-    // (i.e. accessing a field from a mut struct should probably give a mut field).
     if (type->is_mut()) {
       type = type->qual_base();
-      wrap_in_implicit_cast(expr.base().unwrap(), ty::Conv{.dereference = true}, type);
+      base_is_mut = true;
     };
   }
+
   const auto* struct_type = dyn_cast<ty::Struct>(type);
 
   if (struct_type == nullptr)
@@ -220,7 +220,7 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
   }
 
   expr.offset(j);
-  expr.val_ty(target_type);
+  expr.val_ty(base_is_mut ? &target_type->known_mut() : target_type);
 }
 
 auto TypeWalker::all_fn_overloads_by_name(ast::CallExpr& call) -> OverloadSet<Fn> {
