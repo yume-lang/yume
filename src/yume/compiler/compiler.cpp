@@ -78,6 +78,23 @@ Compiler::Compiler(vector<SourceFile> source_files)
   m_module->setTargetTriple(target_triple);
 }
 
+void Compiler::declare_default_ctor(Struct& st) {
+  bool no_ctors_declared =
+      std::ranges::none_of(m_ctors, [&](const Ctor& ct) { return ct.get_self_ty() == st.get_self_ty(); });
+
+  if (!no_ctors_declared)
+    return; // Don't declare implicit ctors if at least one user-defined one exists
+
+  vector<ast::CtorDecl::arg_t> ctor_args;
+  for (auto& field : st.ast().fields())
+    ctor_args.emplace_back(ast::FieldAccessExpr(field.token_range(), std::nullopt, field.name()));
+  // TODO(rymiel): Give these things sensible locations?
+  auto& new_ct = st.body().body().emplace_back(
+      std::make_unique<ast::CtorDecl>(span<Token>{}, move(ctor_args), ast::Compound({}, {})));
+
+  walk_types(decl_statement(*new_ct, st.get_self_ty(), st.member));
+}
+
 void Compiler::run() {
   for (const auto& source : m_sources)
     for (auto& i : source.program->body())
@@ -90,6 +107,11 @@ void Compiler::run() {
   // Second pass: only convert user defined constructors
   for (auto& ct : m_ctors)
     walk_types(&ct);
+
+  // At this point, all _user defined_ constructors have been declared, so we can add implicitly defined constructors to
+  // structs which haven't declared any.
+  for (auto& st : m_structs)
+    declare_default_ctor(st);
 
   // Third pass: only convert function parameters
   for (auto& fn : m_fns)
@@ -727,25 +749,13 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {
     llvm::Value* base_value = llvm::UndefValue::get(llvm_struct_type);
     auto* selected_ctor_overload = expr.selected_overload();
 
-    if (selected_ctor_overload == nullptr) { // TODO(rymiel): #16 The implicit constructor should be an actual ctor
-      auto i = 0;
-      for (const auto& arg : llvm::enumerate(expr.args())) {
-        const auto& [target_type, target_name] = *struct_type->fields()[i];
-        auto field_value = body_expression(*arg.value());
-        if (arg.value()->val_ty()->is_mut()) // XXX: This is a hacky workaround caused by technical debt. See #16
-          field_value = m_builder->CreateLoad(llvm_type(*arg.value()->val_ty()->qual_base()), field_value);
-        base_value = m_builder->CreateInsertValue(base_value, field_value, i, "s.ctor.wf." + target_name);
-        i++;
-      }
-    } else {
-      auto* llvm_fn = declare(*selected_ctor_overload);
-      vector<llvm::Value*> llvm_args{};
-      for (const auto& i : expr.args()) {
-        auto arg = body_expression(*i);
-        llvm_args.push_back(arg.llvm);
-      }
-      base_value = m_builder->CreateCall(llvm_fn, llvm_args);
+    auto* llvm_fn = declare(*selected_ctor_overload);
+    vector<llvm::Value*> llvm_args{};
+    for (const auto& i : expr.args()) {
+      auto arg = body_expression(*i);
+      llvm_args.push_back(arg.llvm);
     }
+    base_value = m_builder->CreateCall(llvm_fn, llvm_args);
 
     //// Heap allocation
     // if (mut) {

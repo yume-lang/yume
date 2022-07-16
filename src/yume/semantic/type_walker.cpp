@@ -158,19 +158,27 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
     ctor_overloads.dump(errs(), true);
 #endif
 
-    const auto* best_overload = ctor_overloads.try_best_viable_overload();
-    if (best_overload == nullptr)
-      return; // TODO(rymiel): #16 The implicitly defined ctors should be real ctors, so this could be an error
+    auto best_overload = ctor_overloads.best_viable_overload();
 
 #ifdef YUME_SPEW_OVERLOAD_SELECTION
     errs() << "\nSelected overload:\n";
-    best_overload->dump(errs());
+    best_overload.dump(errs());
     errs() << "\n*** END CTOR OVERLOAD EVALUATION ***\n\n";
 #endif
 
-    const auto& instantiate = best_overload->instantiation;
-    auto* selected = best_overload->fn;
+    const auto& instantiate = best_overload.instantiation;
+    auto* selected = best_overload.fn;
     yume_assert(instantiate.sub.empty(), "Constructors cannot be generic"); // TODO(rymiel): revisit?
+
+    // XXX: STILL Duplicated from function overload handling
+    for (auto [target, expr_arg, compat] :
+         llvm::zip(selected->ast().args(), expr.args(), best_overload.compatibilities)) {
+      yume_assert(compat.valid, "Invalid compatibility after overload already selected?????");
+      if (compat.conv.empty())
+        continue;
+
+      wrap_in_implicit_cast(expr_arg, compat.conv, Ctor::arg_type(target));
+    }
 
     expr.selected_overload(selected);
   }
