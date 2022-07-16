@@ -678,14 +678,16 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
 
       auto [value, ast, owning] = m_scope.at(""); // TODO(rymiel): Sort of a magic value
       base = value;
-      struct_base = &ast.val_ty()->without_qual();
+      struct_base = &ast.val_ty()->known_mut();
     }
+
+    yume_assert(struct_base->is_mut(), "Cannot assign into field of immutable structure");
 
     auto base_name = field_access->field();
     int base_offset = field_access->offset();
 
     auto expr_val = body_expression(*expr.value());
-    auto* struct_type = llvm_type(cast<ty::Struct>(*struct_base));
+    auto* struct_type = llvm_type(cast<ty::Struct>(*struct_base->qual_base()));
 
     yume_assert(base_offset >= 0, "Field access has unknown offset into struct");
 
