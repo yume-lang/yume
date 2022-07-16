@@ -724,6 +724,8 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {
       for (const auto& arg : llvm::enumerate(expr.args())) {
         const auto& [target_type, target_name] = *struct_type->fields()[i];
         auto field_value = body_expression(*arg.value());
+        if (arg.value()->val_ty()->is_mut()) // XXX: This is a hacky workaround caused by technical debt. See #16
+          field_value = m_builder->CreateLoad(llvm_type(*arg.value()->val_ty()->qual_base()), field_value);
         base_value = m_builder->CreateInsertValue(base_value, field_value, i, "s.ctor.wf." + target_name);
         i++;
       }
