@@ -26,6 +26,25 @@
 
 namespace yume::semantic {
 
+inline void wrap_in_implicit_cast(ast::OptionalExpr& expr, ty::Conv conv, const ty::Type* target_type) {
+  auto cast_expr = std::make_unique<ast::ImplicitCastExpr>(expr->token_range(), move(expr), conv);
+  cast_expr->val_ty(target_type);
+  expr = move(cast_expr);
+}
+
+inline void try_implicit_conversion(ast::OptionalExpr& expr, const ty::Type* target_type) {
+  if (target_type == nullptr)
+    return;
+
+  auto compat = expr->val_ty()->compatibility(*target_type);
+  if (!compat.valid)
+    throw std::runtime_error("Invalid implicit conversion ('"s + expr->val_ty()->name() + "' -> '" +
+                             target_type->name() + "')");
+
+  if (!compat.conv.empty())
+    wrap_in_implicit_cast(expr, compat.conv, target_type);
+}
+
 template <> void TypeWalker::expression(ast::NumberExpr& expr) {
   auto val = expr.val();
   if (val > std::numeric_limits<int32_t>::max()) {
@@ -128,7 +147,7 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
   if (consider_ctor_overloads) {
 #ifdef YUME_SPEW_OVERLOAD_SELECTION
     errs() << "\n*** BEGIN CTOR OVERLOAD EVALUATION ***\n";
-    errs() << "Constructors with matching names:\n";
+    errs() << "Constructors with matching types:\n";
     ctor_overloads.dump(errs());
 #endif
 
@@ -164,25 +183,6 @@ template <> void TypeWalker::expression(ast::SliceExpr& expr) {
   expression(expr.type());
   const auto& base_type = convert_type(expr.type());
   expr.val_ty(&base_type.known_slice());
-}
-
-inline void wrap_in_implicit_cast(ast::OptionalExpr& expr, ty::Conv conv, const ty::Type* target_type) {
-  auto cast_expr = std::make_unique<ast::ImplicitCastExpr>(expr->token_range(), move(expr), conv);
-  cast_expr->val_ty(target_type);
-  expr = move(cast_expr);
-}
-
-inline void try_implicit_conversion(ast::OptionalExpr& expr, const ty::Type* target_type) {
-  if (target_type == nullptr)
-    return;
-
-  auto compat = expr->val_ty()->compatibility(*target_type);
-  if (!compat.valid)
-    throw std::runtime_error("Invalid implicit conversion ('"s + expr->val_ty()->name() + "' -> '" +
-                             target_type->name() + "')");
-
-  if (!compat.conv.empty())
-    wrap_in_implicit_cast(expr, compat.conv, target_type);
 }
 
 template <> void TypeWalker::expression(ast::AssignExpr& expr) {
