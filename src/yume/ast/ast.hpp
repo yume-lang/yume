@@ -580,10 +580,10 @@ public:
       : Expr(K_Assign, tok), m_target{move(target)}, m_value{move(value)} {}
   void visit(Visitor& visitor) const override;
 
-  [[nodiscard]] auto target() const -> const auto& { return *m_target; }
-  [[nodiscard]] auto target() -> auto& { return *m_target; }
-  [[nodiscard]] auto value() const -> const auto& { return *m_value; }
-  [[nodiscard]] auto value() -> auto& { return *m_value; }
+  [[nodiscard]] auto target() const -> const auto& { return m_target; }
+  [[nodiscard]] auto target() -> auto& { return m_target; }
+  [[nodiscard]] auto value() const -> const auto& { return m_value; }
+  [[nodiscard]] auto value() -> auto& { return m_value; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_Assign; }
   [[nodiscard]] auto clone() const -> AssignExpr* override;
 };

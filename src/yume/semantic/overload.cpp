@@ -159,7 +159,7 @@ template <typename T> auto OverloadSet<T>::is_valid_overload(Overload<T>& overlo
     overload.compatibilities.push_back(compat);
   }
 
-  // Add empty conversions for each argument which maps to a variadic
+  // Add dummy conversions for each argument which maps to a variadic
   while (overload.compatibilities.size() < args.size())
     overload.compatibilities.emplace_back();
 
