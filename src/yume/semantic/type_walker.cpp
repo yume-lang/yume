@@ -331,6 +331,15 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
     wrap_in_implicit_cast(expr_arg.unwrap(), compat.conv, target.type().val_ty());
   }
 
+  // Find excess variadic arguments. Logic will probably change later, but for now, always pass by value
+  // TODO(rymiel): revisit
+  for (const auto& expr_arg : llvm::enumerate(expr.args())) {
+    if (expr_arg.index() >= selected->ast().args().size()) {
+      const auto* target_type = &expr_arg.value()->val_ty()->known_mut();
+      wrap_in_implicit_cast(expr_arg.value().unwrap(), ty::Conv{.dereference = true}, target_type);
+    }
+  }
+
   if (selected->ast().ret().has_value())
     expr.attach_to(&selected->ast());
 
