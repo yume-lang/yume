@@ -178,6 +178,12 @@ template <> void TypeWalker::expression(ast::VarExpr& expr) {
   expr.attach_to(scope.at(expr.name()));
 }
 
+inline void wrap_in_implicit_cast(unique_ptr<ast::Expr>& expr, ty::Conv conv, const ty::Type* target_type) {
+  auto cast_expr = std::make_unique<ast::ImplicitCastExpr>(expr->token_range(), ast::AnyExpr(move(expr)), conv);
+  cast_expr->val_ty(target_type);
+  expr = move(cast_expr);
+}
+
 template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
   const ty::Type* type = nullptr;
 
@@ -298,15 +304,12 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
   }
 
   for (auto [target, expr_arg, compat] :
-       llvm::zip(selected->ast().args(), expr.direct_args(), best_overload.compatibilities)) {
+       llvm::zip(selected->ast().args(), expr.args(), best_overload.compatibilities)) {
     yume_assert(compat.valid, "Invalid compatibility after overload already selected?????");
     if (compat.conv.empty())
       continue;
 
-    const auto* target_type = target.type().val_ty();
-    auto cast_expr = std::make_unique<ast::ImplicitCastExpr>(expr_arg->token_range(), move(expr_arg), compat.conv);
-    cast_expr->val_ty(target_type);
-    expr_arg = ast::AnyExpr(move(cast_expr));
+    wrap_in_implicit_cast(expr_arg.unwrap(), compat.conv, target.type().val_ty());
   }
 
   if (selected->ast().ret().has_value())
