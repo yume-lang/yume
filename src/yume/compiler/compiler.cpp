@@ -478,7 +478,7 @@ template <> void Compiler::statement(const ast::ReturnStmt& stat) {
   InScope* reset_owning = nullptr;
 
   if (stat.expr().has_value()) {
-    if (const auto* var = dyn_cast<ast::VarExpr>(&*stat.expr())) {
+    if (const auto* var = dyn_cast<ast::VarExpr>(stat.expr().raw_ptr())) {
       auto& in_scope = m_scope.at(var->name());
       if (in_scope.owning) {
         in_scope.owning = false; // Returning a local variable also gives up ownership of it
@@ -524,13 +524,9 @@ template <> auto Compiler::expression(const ast::NumberExpr& expr) -> Val {
   return m_builder->getInt32(val);
 }
 
-template <> auto Compiler::expression(const ast::CharExpr& expr) -> Val {
-  return m_builder->getInt8(expr.val());
-}
+template <> auto Compiler::expression(const ast::CharExpr& expr) -> Val { return m_builder->getInt8(expr.val()); }
 
-template <> auto Compiler::expression(const ast::BoolExpr& expr) -> Val {
-  return m_builder->getInt1(expr.val());
-}
+template <> auto Compiler::expression(const ast::BoolExpr& expr) -> Val { return m_builder->getInt1(expr.val()); }
 
 template <> auto Compiler::expression(const ast::StringExpr& expr) -> Val {
   auto val = expr.val();
@@ -659,19 +655,19 @@ template <> auto Compiler::expression(const ast::CallExpr& expr) -> Val {
 }
 
 template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
-  if (const auto* target_var = dyn_cast<ast::VarExpr>(&expr.target())) {
-    auto expr_val = body_expression(expr.value());
+  if (const auto* target_var = dyn_cast<ast::VarExpr>(expr.target().raw_ptr())) {
+    auto expr_val = body_expression(*expr.value());
     auto target_val = m_scope.at(target_var->name()).value;
     m_builder->CreateStore(expr_val, target_val);
     return expr_val;
   }
-  if (const auto* field_access = dyn_cast<ast::FieldAccessExpr>(&expr.target())) {
+  if (const auto* field_access = dyn_cast<ast::FieldAccessExpr>(expr.target().raw_ptr())) {
     const auto& field_base = field_access->base();
     const ty::Type* struct_base{nullptr};
     Val base{nullptr};
     if (field_base.has_value()) {
       base = body_expression(*field_base);
-      struct_base = &field_access->base()->val_ty()->without_qual();
+      struct_base = field_access->base()->val_ty();
     } else {
       // TODO(rymiel): revisit
       if (!isa<ast::CtorDecl>(m_current_fn->ast))
@@ -685,7 +681,7 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
     auto base_name = field_access->field();
     int base_offset = field_access->offset();
 
-    auto expr_val = body_expression(expr.value());
+    auto expr_val = body_expression(*expr.value());
     auto* struct_type = llvm_type(cast<ty::Struct>(*struct_base));
 
     yume_assert(base_offset >= 0, "Field access has unknown offset into struct");
@@ -694,7 +690,7 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
     m_builder->CreateStore(expr_val, gep);
     return expr_val;
   }
-  throw std::runtime_error("Can't assign to target "s + expr.target().kind_name());
+  throw std::runtime_error("Can't assign to target "s + expr.target()->kind_name());
 }
 
 template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {

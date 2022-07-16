@@ -167,9 +167,12 @@ template <> void TypeWalker::expression(ast::SliceExpr& expr) {
 }
 
 template <> void TypeWalker::expression(ast::AssignExpr& expr) {
-  body_expression(expr.target());
-  body_expression(expr.value());
-  expr.target().attach_to(&expr.value());
+  body_expression(*expr.target());
+  body_expression(*expr.value());
+
+  // try_implicit_conversion(expr.value().unwrap(), expr.target()->val_ty());
+
+  expr.target()->attach_to(expr.value().raw_ptr());
 }
 
 template <> void TypeWalker::expression(ast::VarExpr& expr) {
