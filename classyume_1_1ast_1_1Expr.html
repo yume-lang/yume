@@ -90,7 +90,7 @@ Inheritance diagram for yume::ast::Expr:</div>
 <area shape="rect" href="classyume_1_1ast_1_1CtorExpr.html" title="A construction of a struct or cast of a primitive." alt="" coords="501,208,633,235"/>
 <area shape="rect" href="classyume_1_1ast_1_1DtorExpr.html" title="A destruction of an object upon leaving its scope." alt="" coords="501,259,633,285"/>
 <area shape="rect" href="classyume_1_1ast_1_1FieldAccessExpr.html" title="Direct access of a field of a struct (::)." alt="" coords="477,309,657,336"/>
-<area shape="rect" href="classyume_1_1ast_1_1ImplicitCastExpr.html" title=" " alt="" coords="479,360,656,387"/>
+<area shape="rect" href="classyume_1_1ast_1_1ImplicitCastExpr.html" title="Represents an implicit cast to a different type, performed during semantic analysis." alt="" coords="479,360,656,387"/>
 <area shape="rect" href="classyume_1_1ast_1_1NumberExpr.html" title="Number literals." alt="" coords="490,411,645,437"/>
 <area shape="rect" href="classyume_1_1ast_1_1SliceExpr.html" title="A slice literal, i.e. an array." alt="" coords="499,461,636,488"/>
 <area shape="rect" href="classyume_1_1ast_1_1StringExpr.html" title="String literals." alt="" coords="496,512,639,539"/>
@@ -130,6 +130,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af3b50b2b4d76421366bd56a35f87126d inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AST.html#af3b50b2b4d76421366bd56a35f87126d">~AST</a> ()=default</td></tr>
 <tr class="separator:af3b50b2b4d76421366bd56a35f87126d inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb1376044bc6a064fd71a2ea7505e86f inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AST.html#adb1376044bc6a064fd71a2ea7505e86f">visit</a> (<a class="el" href="classyume_1_1Visitor.html">Visitor</a> &amp;visitor) const =0</td></tr>
+<tr class="memdesc:adb1376044bc6a064fd71a2ea7505e86f inherit pub_methods_classyume_1_1ast_1_1AST"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recursively visit this ast node and all its constituents.  <a href="classyume_1_1ast_1_1AST.html#adb1376044bc6a064fd71a2ea7505e86f">More...</a><br /></td></tr>
 <tr class="separator:adb1376044bc6a064fd71a2ea7505e86f inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8437174337ab610fd2968b6aa133028e inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AST.html#a8437174337ab610fd2968b6aa133028e">val_ty</a> () const noexcept -&gt; const <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> *</td></tr>
 <tr class="separator:a8437174337ab610fd2968b6aa133028e inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -178,7 +179,7 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >Expressions have an associated value and type. </p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00376">376</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00396">396</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a29ba94050d310409485ff051d46933e5" name="a29ba94050d310409485ff051d46933e5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a29ba94050d310409485ff051d46933e5">&#9670;&nbsp;</a></span>clone()</h2>

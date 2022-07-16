@@ -7,7 +7,7 @@
 <area shape="rect" id="node8" href="$classyume_1_1ast_1_1CtorExpr.html" title="A construction of a struct or cast of a primitive." alt="" coords="501,208,633,235"/>
 <area shape="rect" id="node9" href="$classyume_1_1ast_1_1DtorExpr.html" title="A destruction of an object upon leaving its scope." alt="" coords="501,259,633,285"/>
 <area shape="rect" id="node10" href="$classyume_1_1ast_1_1FieldAccessExpr.html" title="Direct access of a field of a struct (::)." alt="" coords="477,309,657,336"/>
-<area shape="rect" id="node11" href="$classyume_1_1ast_1_1ImplicitCastExpr.html" title=" " alt="" coords="479,360,656,387"/>
+<area shape="rect" id="node11" href="$classyume_1_1ast_1_1ImplicitCastExpr.html" title="Represents an implicit cast to a different type, performed during semantic analysis." alt="" coords="479,360,656,387"/>
 <area shape="rect" id="node12" href="$classyume_1_1ast_1_1NumberExpr.html" title="Number literals." alt="" coords="490,411,645,437"/>
 <area shape="rect" id="node13" href="$classyume_1_1ast_1_1SliceExpr.html" title="A slice literal, i.e. an array." alt="" coords="499,461,636,488"/>
 <area shape="rect" id="node14" href="$classyume_1_1ast_1_1StringExpr.html" title="String literals." alt="" coords="496,512,639,539"/>

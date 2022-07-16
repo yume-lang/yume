@@ -73,13 +73,16 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>A helper template to walk the Abstract Syntax Tree (AST), utilizing the Curiously Recurring Template Pattern (CRTP).  
+ <a href="structyume_1_1CRTPWalker.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="crtp__walker_8hpp_source.html">crtp_walker.hpp</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for yume::CRTPWalker&lt; Derived, Const &gt;:</div>
 <div class="dyncontent">
 <div class="center"><img src="structyume_1_1CRTPWalker__inherit__graph.png" border="0" usemap="#ayume_1_1CRTPWalker_3_01Derived_00_01Const_01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="ayume_1_1CRTPWalker_3_01Derived_00_01Const_01_4_inherit__map" id="ayume_1_1CRTPWalker_3_01Derived_00_01Const_01_4_inherit__map">
-<area shape="rect" title=" " alt="" coords="129,5,323,47"/>
+<area shape="rect" title="A helper template to walk the Abstract Syntax Tree (AST), utilizing the Curiously Recurring Template ..." alt="" coords="129,5,323,47"/>
 <area shape="rect" href="structyume_1_1CRTPWalker.html" title=" " alt="" coords="5,117,212,143"/>
 <area shape="rect" href="structyume_1_1CRTPWalker.html" title=" " alt="" coords="236,109,453,151"/>
 <area shape="rect" href="classyume_1_1Compiler.html" title="The Compiler the the primary top&#45;level type during compilation. A single instance is created during t..." alt="" coords="53,200,164,227"/>
@@ -96,8 +99,10 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename Derived, bool Const = true&gt;<br />
-struct yume::CRTPWalker&lt; Derived, Const &gt;</div>
-<p class="definition">Definition at line <a class="el" href="crtp__walker_8hpp_source.html#l00014">14</a> of file <a class="el" href="crtp__walker_8hpp_source.html">crtp_walker.hpp</a>.</p>
+struct yume::CRTPWalker&lt; Derived, Const &gt;</div><p >A helper template to walk the Abstract Syntax Tree (AST), utilizing the Curiously Recurring Template Pattern (CRTP). </p>
+<p >A class inheriting from <code><a class="el" href="structyume_1_1CRTPWalker.html" title="A helper template to walk the Abstract Syntax Tree (AST), utilizing the Curiously Recurring Template ...">CRTPWalker</a></code> must declare the methods <code>body_expression</code> and <code>body_statement</code>, which take the base classes <code>Expr</code> and <code>Stmt</code> respectively. Those methods should delegate to the same methods defined in the <code><a class="el" href="structyume_1_1CRTPWalker.html" title="A helper template to walk the Abstract Syntax Tree (AST), utilizing the Curiously Recurring Template ...">CRTPWalker</a></code>. Then, the class must define any number of template methods named <code>expression</code> and <code>statement</code>, which take a subclass of <code>Expr</code> and <code>Stmt</code> respectively. The way this is done in <code><a class="el" href="classyume_1_1Compiler.html" title="The Compiler the the primary top-level type during compilation. A single instance is created during t...">Compiler</a></code> and <code>TypeWalker</code> is to define a template base in the header, with a fallback implementation (which should usually throw) for any cases that are unhandled. Then, for each AST node subclass that the deriving class knows how to handle, define a template specialization taking that specific subclass in the implementation file. </p>
+
+<p class="definition">Definition at line <a class="el" href="crtp__walker_8hpp_source.html#l00025">25</a> of file <a class="el" href="crtp__walker_8hpp_source.html">crtp_walker.hpp</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="aa3a33385519c11d0947d39f3edb22974" name="aa3a33385519c11d0947d39f3edb22974"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa3a33385519c11d0947d39f3edb22974">&#9670;&nbsp;</a></span>body_expression()</h2>
@@ -135,11 +140,11 @@ template&lt;typename Derived , bool Const = true&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="crtp__walker_8hpp_source.html#l00032">32</a> of file <a class="el" href="crtp__walker_8hpp_source.html">crtp_walker.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="crtp__walker_8hpp_source.html#l00043">43</a> of file <a class="el" href="crtp__walker_8hpp_source.html">crtp_walker.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="ast_8hpp_source.html#l00059">yume::ast::K_Assign</a>, <a class="el" href="ast_8hpp_source.html#l00052">yume::ast::K_Bool</a>, <a class="el" href="ast_8hpp_source.html#l00055">yume::ast::K_Call</a>, <a class="el" href="ast_8hpp_source.html#l00051">yume::ast::K_Char</a>, <a class="el" href="ast_8hpp_source.html#l00056">yume::ast::K_Ctor</a>, <a class="el" href="ast_8hpp_source.html#l00060">yume::ast::K_FieldAccess</a>, <a class="el" href="ast_8hpp_source.html#l00061">yume::ast::K_ImplicitCast</a>, <a class="el" href="ast_8hpp_source.html#l00050">yume::ast::K_Number</a>, <a class="el" href="ast_8hpp_source.html#l00058">yume::ast::K_Slice</a>, <a class="el" href="ast_8hpp_source.html#l00053">yume::ast::K_String</a>, and <a class="el" href="ast_8hpp_source.html#l00054">yume::ast::K_Var</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00426">yume::semantic::TypeWalker::body_expression()</a>, <a class="el" href="compiler_8cpp_source.html#l01011">yume::Compiler::body_expression()</a>, and <a class="el" href="crtp__walker_8hpp_source.html#l00017">yume::CRTPWalker&lt; Derived, Const &gt;::body_statement()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00469">yume::semantic::TypeWalker::body_expression()</a>, <a class="el" href="compiler_8cpp_source.html#l00982">yume::Compiler::body_expression()</a>, and <a class="el" href="crtp__walker_8hpp_source.html#l00028">yume::CRTPWalker&lt; Derived, Const &gt;::body_statement()</a>.</p>
 
 </div>
 </div>
@@ -179,11 +184,11 @@ template&lt;typename Derived , bool Const = true&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="crtp__walker_8hpp_source.html#l00017">17</a> of file <a class="el" href="crtp__walker_8hpp_source.html">crtp_walker.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="crtp__walker_8hpp_source.html#l00028">28</a> of file <a class="el" href="crtp__walker_8hpp_source.html">crtp_walker.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="crtp__walker_8hpp_source.html#l00032">yume::CRTPWalker&lt; Derived, Const &gt;::body_expression()</a>, <a class="el" href="ast_8hpp_source.html#l00038">yume::ast::K_Compound</a>, <a class="el" href="ast_8hpp_source.html#l00040">yume::ast::K_CtorDecl</a>, <a class="el" href="ast_8hpp_source.html#l00039">yume::ast::K_FnDecl</a>, <a class="el" href="ast_8hpp_source.html#l00044">yume::ast::K_If</a>, <a class="el" href="ast_8hpp_source.html#l00045">yume::ast::K_Return</a>, <a class="el" href="ast_8hpp_source.html#l00041">yume::ast::K_StructDecl</a>, <a class="el" href="ast_8hpp_source.html#l00042">yume::ast::K_VarDecl</a>, and <a class="el" href="ast_8hpp_source.html#l00043">yume::ast::K_While</a>.</p>
+<p class="reference">References <a class="el" href="crtp__walker_8hpp_source.html#l00043">yume::CRTPWalker&lt; Derived, Const &gt;::body_expression()</a>, <a class="el" href="ast_8hpp_source.html#l00038">yume::ast::K_Compound</a>, <a class="el" href="ast_8hpp_source.html#l00040">yume::ast::K_CtorDecl</a>, <a class="el" href="ast_8hpp_source.html#l00039">yume::ast::K_FnDecl</a>, <a class="el" href="ast_8hpp_source.html#l00044">yume::ast::K_If</a>, <a class="el" href="ast_8hpp_source.html#l00045">yume::ast::K_Return</a>, <a class="el" href="ast_8hpp_source.html#l00041">yume::ast::K_StructDecl</a>, <a class="el" href="ast_8hpp_source.html#l00042">yume::ast::K_VarDecl</a>, and <a class="el" href="ast_8hpp_source.html#l00043">yume::ast::K_While</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00422">yume::semantic::TypeWalker::body_statement()</a>, and <a class="el" href="compiler_8cpp_source.html#l01003">yume::Compiler::body_statement()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00465">yume::semantic::TypeWalker::body_statement()</a>, and <a class="el" href="compiler_8cpp_source.html#l00977">yume::Compiler::body_statement()</a>.</p>
 
 </div>
 </div>

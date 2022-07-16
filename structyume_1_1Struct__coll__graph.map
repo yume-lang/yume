@@ -1,5 +1,5 @@
 <map id="yume::Struct" name="yume::Struct">
-<area shape="rect" id="node1" title=" " alt="" coords="760,129,855,156"/>
+<area shape="rect" id="node1" title="A struct declaration in the compiler." alt="" coords="760,129,855,156"/>
 <area shape="rect" id="node2" href="$classyume_1_1ast_1_1StructDecl.html" title="A declaration of a struct (struct)." alt="" coords="463,5,607,32"/>
 <area shape="rect" id="node3" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="164,36,275,63"/>
 <area shape="rect" id="node6" href="$classyume_1_1ast_1_1Program.html" title="The top level structure of a file of source code." alt="" coords="469,56,601,83"/>

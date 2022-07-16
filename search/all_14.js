@@ -5,5 +5,6 @@ var searchData=
   ['u_5fty_2',['u_ty',['../structyume_1_1TypeHolder_1_1IntTypePair.html#a4edce067a0a3e629fe0fbf7b86675faf',1,'yume::TypeHolder::IntTypePair']]],
   ['unary_5foperators_3',['unary_operators',['../structyume_1_1ast_1_1parser_1_1Parser.html#a2c041ddd31fc86d7c675bb043badf9ff',1,'yume::ast::parser::Parser']]],
   ['unify_5fval_5fty_4',['unify_val_ty',['../classyume_1_1ast_1_1AST.html#ae27576d9b234da5753ac12d7f8eba513',1,'yume::ast::AST']]],
-  ['util_2ehpp_5',['util.hpp',['../util_8hpp.html',1,'']]]
+  ['unwrap_5',['unwrap',['../classyume_1_1ast_1_1AnyBase.html#aeeb89800ef649781f18841dfca37c0e9',1,'yume::ast::AnyBase::unwrap()'],['../classyume_1_1ast_1_1OptionalAnyBase.html#ad7085e41d6ee84fb4d220dd0b72e6a78',1,'yume::ast::OptionalAnyBase::unwrap()']]],
+  ['util_2ehpp_6',['util.hpp',['../util_8hpp.html',1,'']]]
 ];

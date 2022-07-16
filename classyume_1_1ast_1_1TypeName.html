@@ -101,6 +101,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ab42ed4a9cc6b1e4847aaa3129642eab3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1TypeName.html#ab42ed4a9cc6b1e4847aaa3129642eab3">TypeName</a> (span&lt; <a class="el" href="structyume_1_1Token.html">Token</a> &gt; <a class="el" href="classyume_1_1ast_1_1AST.html#aef0323c4bfe9d210c3edeef11f7fa9b4">tok</a>, <a class="el" href="namespaceyume_1_1ast.html#af834ef71cbc1b3437912ea086c06c7c3">AnyType</a> <a class="el" href="classyume_1_1ast_1_1TypeName.html#adbae9d27d10bde66df9d5289c0492f27">type</a>, string <a class="el" href="classyume_1_1ast_1_1TypeName.html#a402b543708c8674c230928f5c437525b">name</a>)</td></tr>
 <tr class="separator:ab42ed4a9cc6b1e4847aaa3129642eab3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a206588a9861ecdae058f944fe0618ccc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1TypeName.html#a206588a9861ecdae058f944fe0618ccc">visit</a> (<a class="el" href="classyume_1_1Visitor.html">Visitor</a> &amp;visitor) const override</td></tr>
+<tr class="memdesc:a206588a9861ecdae058f944fe0618ccc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recursively visit this ast node and all its constituents.  <a href="classyume_1_1ast_1_1TypeName.html#a206588a9861ecdae058f944fe0618ccc">More...</a><br /></td></tr>
 <tr class="separator:a206588a9861ecdae058f944fe0618ccc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3ebc76140abb8bd89fb12aabe13abf3d"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1TypeName.html#a3ebc76140abb8bd89fb12aabe13abf3d">describe</a> () const -&gt; string override</td></tr>
 <tr class="memdesc:a3ebc76140abb8bd89fb12aabe13abf3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">A short, string representation for debugging.  <a href="classyume_1_1ast_1_1TypeName.html#a3ebc76140abb8bd89fb12aabe13abf3d">More...</a><br /></td></tr>
@@ -135,6 +136,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af3b50b2b4d76421366bd56a35f87126d inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AST.html#af3b50b2b4d76421366bd56a35f87126d">~AST</a> ()=default</td></tr>
 <tr class="separator:af3b50b2b4d76421366bd56a35f87126d inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb1376044bc6a064fd71a2ea7505e86f inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AST.html#adb1376044bc6a064fd71a2ea7505e86f">visit</a> (<a class="el" href="classyume_1_1Visitor.html">Visitor</a> &amp;visitor) const =0</td></tr>
+<tr class="memdesc:adb1376044bc6a064fd71a2ea7505e86f inherit pub_methods_classyume_1_1ast_1_1AST"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recursively visit this ast node and all its constituents.  <a href="classyume_1_1ast_1_1AST.html#adb1376044bc6a064fd71a2ea7505e86f">More...</a><br /></td></tr>
 <tr class="separator:adb1376044bc6a064fd71a2ea7505e86f inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8437174337ab610fd2968b6aa133028e inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AST.html#a8437174337ab610fd2968b6aa133028e">val_ty</a> () const noexcept -&gt; const <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> *</td></tr>
 <tr class="separator:a8437174337ab610fd2968b6aa133028e inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -176,7 +178,7 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >A pair of a <code><a class="el" href="classyume_1_1ast_1_1Type.html" title="A type annotation. This (ast::Type) is distinct from the actual type of a value (ty::Type).">Type</a></code> and an identifier, <em>i.e</em>. a parameter name. </p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00335">335</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00355">355</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ab42ed4a9cc6b1e4847aaa3129642eab3" name="ab42ed4a9cc6b1e4847aaa3129642eab3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab42ed4a9cc6b1e4847aaa3129642eab3">&#9670;&nbsp;</a></span>TypeName()</h2>
@@ -218,7 +220,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00340">340</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00360">360</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="clone_8cpp_source.html#l00081">clone()</a>.</p>
 
@@ -254,7 +256,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="clone_8cpp_source.html#l00081">81</a> of file <a class="el" href="clone_8cpp_source.html">clone.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00196">yume::ast::AST::tok()</a>, and <a class="el" href="ast_8hpp_source.html#l00340">TypeName()</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00211">yume::ast::AST::tok()</a>, and <a class="el" href="ast_8hpp_source.html#l00360">TypeName()</a>.</p>
 
 </div>
 </div>
@@ -314,7 +316,7 @@ template&lt;size_t I&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00364">364</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00384">384</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -343,7 +345,7 @@ template&lt;size_t I&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00348">348</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00368">368</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -372,7 +374,7 @@ template&lt;size_t I&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00356">356</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00376">376</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -399,7 +401,7 @@ template&lt;size_t I&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00346">346</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00366">366</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -426,7 +428,7 @@ template&lt;size_t I&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00345">345</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00365">365</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -453,7 +455,7 @@ template&lt;size_t I&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00344">344</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00364">364</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00054">yume::semantic::TypeWalker::expression()</a>.</p>
 
@@ -482,6 +484,9 @@ template&lt;size_t I&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Recursively visit this ast node and all its constituents. </p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classyume_1_1Visitor.html">Visitor</a> </dd></dl>
 
 <p>Implements <a class="el" href="classyume_1_1ast_1_1AST.html#adb1376044bc6a064fd71a2ea7505e86f">yume::ast::AST</a>.</p>
 

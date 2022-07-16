@@ -2,7 +2,7 @@ var searchData=
 [
   ['any_5fof_0',['any_of',['../namespaceyume.html#a71865b15853a8ff7b98ed793716e21d7',1,'yume']]],
   ['any_5fof_5ffn_1',['any_of_fn',['../structyume_1_1any__of__fn.html',1,'yume']]],
-  ['anybase_2',['AnyBase',['../classyume_1_1ast_1_1AnyBase.html#a83c3b14b14288e79aa9478accd818cd3',1,'yume::ast::AnyBase::AnyBase(U uptr)'],['../classyume_1_1ast_1_1AnyBase.html#abba133bafff2924df706a05c7fb58bd6',1,'yume::ast::AnyBase::AnyBase(unique_ptr&lt; T &gt; uptr)'],['../classyume_1_1ast_1_1AnyBase.html#a6b542480e824ef57bfee3a58cfb63503',1,'yume::ast::AnyBase::AnyBase(T *raw_ptr)'],['../classyume_1_1ast_1_1AnyBase.html#ae29d0f9aff01ba2bbd8f2f1e5714c6ca',1,'yume::ast::AnyBase::AnyBase()=delete'],['../classyume_1_1ast_1_1AnyBase.html',1,'yume::ast::AnyBase&lt; T &gt;']]],
+  ['anybase_2',['AnyBase',['../classyume_1_1ast_1_1AnyBase.html#a83c3b14b14288e79aa9478accd818cd3',1,'yume::ast::AnyBase::AnyBase(U uptr)'],['../classyume_1_1ast_1_1AnyBase.html#a6b542480e824ef57bfee3a58cfb63503',1,'yume::ast::AnyBase::AnyBase(T *raw_ptr)'],['../classyume_1_1ast_1_1AnyBase.html#ae29d0f9aff01ba2bbd8f2f1e5714c6ca',1,'yume::ast::AnyBase::AnyBase()=delete'],['../classyume_1_1ast_1_1AnyBase.html',1,'yume::ast::AnyBase&lt; T &gt;']]],
   ['anybase_3c_20expr_20_3e_3',['AnyBase&lt; Expr &gt;',['../classyume_1_1ast_1_1AnyBase.html',1,'yume::ast']]],
   ['anybase_3c_20type_20_3e_4',['AnyBase&lt; Type &gt;',['../classyume_1_1ast_1_1AnyBase.html',1,'yume::ast']]],
   ['anyexpr_5',['AnyExpr',['../namespaceyume_1_1ast.html#ab6c3df64a07a2568e43a0876a910b0d2',1,'yume::ast']]],

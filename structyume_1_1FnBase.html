@@ -74,13 +74,16 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Common values between function declarations (<code><a class="el" href="structyume_1_1Fn.html" title="A function declaration in the compiler.">Fn</a></code>) and constructors (<code><a class="el" href="structyume_1_1Ctor.html" title="A constructor declaration in the compiler.">Ctor</a></code>), which behave very similarly.  
+ <a href="structyume_1_1FnBase.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="vals_8hpp_source.html">vals.hpp</a>&gt;</code></p>
 <div class="dynheader">
 Collaboration diagram for yume::FnBase:</div>
 <div class="dyncontent">
 <div class="center"><img src="structyume_1_1FnBase__coll__graph.png" border="0" usemap="#ayume_1_1FnBase_coll__map" alt="Collaboration graph"/></div>
 <map name="ayume_1_1FnBase_coll__map" id="ayume_1_1FnBase_coll__map">
-<area shape="rect" title=" " alt="" coords="196,260,300,287"/>
+<area shape="rect" title="Common values between function declarations (Fn) and constructors (Ctor), which behave very similarly..." alt="" coords="196,260,300,287"/>
 <area shape="rect" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,5,115,32"/>
 <area shape="rect" href="classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="87,81,198,108"/>
 <area shape="rect" href="classyume_1_1ty_1_1Type.html" title="Represents a type in the type system. All types inherit from this class." alt="" coords="238,171,341,197"/>
@@ -97,6 +100,7 @@ Public Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a9edb400f9d087084fa777bf59a413dc7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classyume_1_1ast_1_1AST.html">ast::AST</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1FnBase.html#a9edb400f9d087084fa777bf59a413dc7">ast</a></td></tr>
+<tr class="memdesc:a9edb400f9d087084fa777bf59a413dc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The ast node that defines this declaration, being <code><a class="el" href="classyume_1_1ast_1_1FnDecl.html" title="A declaration of a function (def).">ast::FnDecl</a></code> for <code><a class="el" href="structyume_1_1Fn.html" title="A function declaration in the compiler.">Fn</a></code> and <code><a class="el" href="classyume_1_1ast_1_1CtorDecl.html" title="A declaration of a custom constructor (def :new).">ast::CtorDecl</a></code> for <code><a class="el" href="structyume_1_1Ctor.html" title="A constructor declaration in the compiler.">Ctor</a></code>. Should not be accessed directly, instead.  <a href="structyume_1_1FnBase.html#a9edb400f9d087084fa777bf59a413dc7">More...</a><br /></td></tr>
 <tr class="separator:a9edb400f9d087084fa777bf59a413dc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a634bc1e0374c57cc793d6f64b251e83c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1FnBase.html#a634bc1e0374c57cc793d6f64b251e83c">self_ty</a> {}</td></tr>
 <tr class="memdesc:a634bc1e0374c57cc793d6f64b251e83c"><td class="mdescLeft">&#160;</td><td class="mdescRight">If this function is in the body of a struct, this points to its type. Used for the <code>self</code> type.  <a href="structyume_1_1FnBase.html#a634bc1e0374c57cc793d6f64b251e83c">More...</a><br /></td></tr>
@@ -105,11 +109,13 @@ Public Attributes</h2></td></tr>
 <tr class="memdesc:ad0f09e98d811792b09b9918917b04a31"><td class="mdescLeft">&#160;</td><td class="mdescRight">The program this declaration is a member of.  <a href="structyume_1_1FnBase.html#ad0f09e98d811792b09b9918917b04a31">More...</a><br /></td></tr>
 <tr class="separator:ad0f09e98d811792b09b9918917b04a31"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3b763ae9a08c2e9d23baaff880f4b7a6"><td class="memItemLeft" align="right" valign="top">llvm::Function *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1FnBase.html#a3b763ae9a08c2e9d23baaff880f4b7a6">llvm</a> {}</td></tr>
+<tr class="memdesc:a3b763ae9a08c2e9d23baaff880f4b7a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The LLVM function definition corresponding to this function or constructor.  <a href="structyume_1_1FnBase.html#a3b763ae9a08c2e9d23baaff880f4b7a6">More...</a><br /></td></tr>
 <tr class="separator:a3b763ae9a08c2e9d23baaff880f4b7a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00044">44</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<div class="textblock"><p >Common values between function declarations (<code><a class="el" href="structyume_1_1Fn.html" title="A function declaration in the compiler.">Fn</a></code>) and constructors (<code><a class="el" href="structyume_1_1Ctor.html" title="A constructor declaration in the compiler.">Ctor</a></code>), which behave very similarly. </p>
+
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00045">45</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a9a5b5f8e265b7e8b1bf2b53c3534a5f5" name="a9a5b5f8e265b7e8b1bf2b53c3534a5f5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9a5b5f8e265b7e8b1bf2b53c3534a5f5">&#9670;&nbsp;</a></span>operator llvm::Function *()</h2>
@@ -134,9 +140,9 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00052">52</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00056">56</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00050">llvm</a>.</p>
+<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00054">llvm</a>.</p>
 
 </div>
 </div>
@@ -153,9 +159,12 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00045">45</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p>The ast node that defines this declaration, being <code><a class="el" href="classyume_1_1ast_1_1FnDecl.html" title="A declaration of a function (def).">ast::FnDecl</a></code> for <code><a class="el" href="structyume_1_1Fn.html" title="A function declaration in the compiler.">Fn</a></code> and <code><a class="el" href="classyume_1_1ast_1_1CtorDecl.html" title="A declaration of a custom constructor (def :new).">ast::CtorDecl</a></code> for <code><a class="el" href="structyume_1_1Ctor.html" title="A constructor declaration in the compiler.">Ctor</a></code>. Should not be accessed directly, instead. </p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structyume_1_1FnBase.html#a9edb400f9d087084fa777bf59a413dc7" title="The ast node that defines this declaration, being ast::FnDecl for Fn and ast::CtorDecl for Ctor....">ast()</a> on <code><a class="el" href="structyume_1_1Fn.html" title="A function declaration in the compiler.">Fn</a></code> and <code><a class="el" href="structyume_1_1Ctor.html" title="A constructor declaration in the compiler.">Ctor</a></code>. </dd></dl>
 
-<p class="reference">Referenced by <a class="el" href="vals_8hpp_source.html#l00076">yume::Fn::ast()</a>, <a class="el" href="vals_8hpp_source.html#l00129">yume::Ctor::ast()</a>, and <a class="el" href="compiler_8cpp_source.html#l00477">yume::Compiler::statement()</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00048">48</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="vals_8hpp_source.html#l00080">yume::Fn::ast()</a>, and <a class="el" href="vals_8hpp_source.html#l00144">yume::Ctor::ast()</a>.</p>
 
 </div>
 </div>
@@ -171,9 +180,11 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00050">50</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p>The LLVM function definition corresponding to this function or constructor. </p>
 
-<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00375">yume::Compiler::define()</a>, and <a class="el" href="vals_8hpp_source.html#l00052">operator llvm::Function *()</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00054">54</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00375">yume::Compiler::define()</a>, and <a class="el" href="vals_8hpp_source.html#l00056">operator llvm::Function *()</a>.</p>
 
 </div>
 </div>
@@ -191,7 +202,7 @@ Public Attributes</h2></td></tr>
 
 <p>The program this declaration is a member of. </p>
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00049">49</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00052">52</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
 </div>
 </div>
@@ -209,9 +220,9 @@ Public Attributes</h2></td></tr>
 
 <p>If this function is in the body of a struct, this points to its type. Used for the <code>self</code> type. </p>
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00047">47</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00050">50</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00390">yume::Compiler::define()</a>, <a class="el" href="vals_8hpp_source.html#l00079">yume::Fn::get_self_ty()</a>, and <a class="el" href="vals_8hpp_source.html#l00131">yume::Ctor::get_self_ty()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00390">yume::Compiler::define()</a>, <a class="el" href="vals_8hpp_source.html#l00083">yume::Fn::get_self_ty()</a>, and <a class="el" href="vals_8hpp_source.html#l00146">yume::Ctor::get_self_ty()</a>.</p>
 
 </div>
 </div>

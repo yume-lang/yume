@@ -165,8 +165,10 @@ This graph shows which files directly or indirectly include this file:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AnyBase.html">yume::ast::AnyBase&lt; T &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents "any" kind of ast node of type <code>T</code>. See <code>AnyExpr</code>, <code>AnyStmt</code> and <code>AnyType</code>.  <a href="classyume_1_1ast_1_1AnyBase.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1OptionalAnyBase.html">yume::ast::OptionalAnyBase&lt; T &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents "any" kind of ast node of type <code>T</code>, or the absence of one. See <code>OptionalExpr</code> and <code>OptionalType</code>.  <a href="classyume_1_1ast_1_1OptionalAnyBase.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1Attachment.html">yume::ast::Attachment</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents the relationship between multiple <code><a class="el" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class.">AST</a></code> nodes.  <a href="structyume_1_1ast_1_1Attachment.html#details">More...</a><br /></td></tr>
@@ -187,7 +189,7 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A type with a <code>Qualifier</code> like <code>mut</code> or <code>[]</code> following.  <a href="classyume_1_1ast_1_1QualType.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1TemplatedType.html">yume::ast::TemplatedType</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A type with explicit type parameters <em>i.e</em>. Foo&lt;Bar,Baz&gt;.  <a href="classyume_1_1ast_1_1TemplatedType.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A type with explicit type parameters <em>i.e</em>. <code>Foo&lt;Bar,Baz&gt;</code>.  <a href="classyume_1_1ast_1_1TemplatedType.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1SelfType.html">yume::ast::SelfType</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <code>self</code> type.  <a href="classyume_1_1ast_1_1SelfType.html#details">More...</a><br /></td></tr>
@@ -223,7 +225,7 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A destruction of an object upon leaving its scope.  <a href="classyume_1_1ast_1_1DtorExpr.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1SliceExpr.html">yume::ast::SliceExpr</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A slice literal, i.e. an array.  <a href="classyume_1_1ast_1_1SliceExpr.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A slice literal, <em>i.e</em>. an array.  <a href="classyume_1_1ast_1_1SliceExpr.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AssignExpr.html">yume::ast::AssignExpr</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An assignment (<code>=</code>).  <a href="classyume_1_1ast_1_1AssignExpr.html#details">More...</a><br /></td></tr>
@@ -232,15 +234,16 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Direct access of a field of a struct (<code>::</code>).  <a href="classyume_1_1ast_1_1FieldAccessExpr.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1ImplicitCastExpr.html">yume::ast::ImplicitCastExpr</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents an implicit cast to a different type, performed during semantic analysis.  <a href="classyume_1_1ast_1_1ImplicitCastExpr.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1Compound.html">yume::ast::Compound</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A statement consisting of multiple other statements, i.e. the body of a function.  <a href="classyume_1_1ast_1_1Compound.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A statement consisting of multiple other statements, <em>i.e</em>. the body of a function.  <a href="classyume_1_1ast_1_1Compound.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1FnDecl.html">yume::ast::FnDecl</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A declaration of a function (<code>def</code>).  <a href="classyume_1_1ast_1_1FnDecl.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1CtorDecl.html">yume::ast::CtorDecl</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A declaration of a custom constructor (<code>def :</code>).  <a href="classyume_1_1ast_1_1CtorDecl.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A declaration of a custom constructor (<code>def :new</code>).  <a href="classyume_1_1ast_1_1CtorDecl.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1StructDecl.html">yume::ast::StructDecl</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A declaration of a struct (<code>struct</code>).  <a href="classyume_1_1ast_1_1StructDecl.html#details">More...</a><br /></td></tr>

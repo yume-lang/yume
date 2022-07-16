@@ -69,8 +69,7 @@ $(function() {
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
-<a href="#typedef-members">Typedefs</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#typedef-members">Typedefs</a>  </div>
   <div class="headertitle"><div class="title">vals.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -164,17 +163,19 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A mapping between type variables and substitutions for them.  <a href="structyume_1_1Instantiation.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1FnBase.html">yume::FnBase</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Common values between function declarations (<code><a class="el" href="structyume_1_1Fn.html" title="A function declaration in the compiler.">Fn</a></code>) and constructors (<code><a class="el" href="structyume_1_1Ctor.html" title="A constructor declaration in the compiler.">Ctor</a></code>), which behave very similarly.  <a href="structyume_1_1FnBase.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html">yume::Fn</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A function declaration in the compiler.  <a href="structyume_1_1Fn.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Struct.html">yume::Struct</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A struct declaration in the compiler.  <a href="structyume_1_1Struct.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Ctor.html">yume::Ctor</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1DeclLikeVisitor.html">yume::DeclLikeVisitor&lt; R, Ts &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A constructor declaration in the compiler.  <a href="structyume_1_1Ctor.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1DeclLike.html">yume::DeclLike</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A common base between declarations in the compiler: <code><a class="el" href="structyume_1_1Fn.html" title="A function declaration in the compiler.">Fn</a></code>, <code><a class="el" href="structyume_1_1Struct.html" title="A struct declaration in the compiler.">Struct</a></code>, and <code><a class="el" href="structyume_1_1Ctor.html" title="A constructor declaration in the compiler.">Ctor</a></code>. Its value may also be absent (<code>std::monostate</code>).  <a href="structyume_1_1DeclLike.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Val.html">yume::Val</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A value of a complied expression.  <a href="structyume_1_1Val.html#details">More...</a><br /></td></tr>
@@ -196,12 +197,6 @@ Typedefs</h2></td></tr>
 <tr class="separator:a1924a086f31b4d5cbd5e5a9fcacf1150"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a092ba077b253b7f71c511110acc90c1d"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a092ba077b253b7f71c511110acc90c1d">yume::DeclLike_t</a> = std::variant&lt; std::monostate, Fn *, Struct *, Ctor * &gt;</td></tr>
 <tr class="separator:a092ba077b253b7f71c511110acc90c1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:ae4d9ca2a64c7eca332d91c4fd772fa29"><td class="memTemplParams" colspan="2">template&lt;typename R , typename... Ts&gt; </td></tr>
-<tr class="memitem:ae4d9ca2a64c7eca332d91c4fd772fa29"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceyume.html#ae4d9ca2a64c7eca332d91c4fd772fa29">yume::DeclLikeVisitor</a> (R, Ts...) -&gt; DeclLikeVisitor&lt; R, Ts... &gt;</td></tr>
-<tr class="separator:ae4d9ca2a64c7eca332d91c4fd772fa29"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->
