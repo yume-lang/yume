@@ -366,7 +366,7 @@ template <typename T> void Compiler::setup_fn_base(T& fn) {
         continue;
       }
     }
-    alloc = m_builder->CreateAlloca(llvm_type(type), nullptr, name);
+    alloc = m_builder->CreateAlloca(llvm_type(type), nullptr, "lv."s + name);
     m_builder->CreateStore(&arg, alloc);
     m_scope.insert({name, {.value = alloc, .ast = val, .owning = false}}); // We don't own parameters
   }
@@ -810,9 +810,9 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {
     slice_inst = m_builder->CreateInsertValue(slice_inst, data_size, 1);
     slice_inst->setName("sl.ctor.inst");
 
-    // TODO(rymiel): This is literally implementing a while loop in llvm IR. This could be implemented directly in yume
-    // as a library function, or at least utilize llvm instrinsics such as memset. LLVM will probably optimize to those
-    // intrinsics anyway, but we could do it ourselves too!
+    // TODO(rymiel): This is literally implementing a while loop in llvm IR. This could be implemented directly in
+    // yume as a library function, or at least utilize llvm instrinsics such as memset. LLVM will probably optimize to
+    // those intrinsics anyway, but we could do it ourselves too!
     auto* iter_alloc = entrypoint_builder().CreateAlloca(m_builder->getInt64Ty(), nullptr, "sl.ctor.definit.iter");
     m_builder->CreateStore(m_builder->getInt64(0), iter_alloc);
 
