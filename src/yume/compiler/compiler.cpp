@@ -548,7 +548,13 @@ template <> auto Compiler::expression(const ast::StringExpr& expr) -> Val {
 }
 
 template <> auto Compiler::expression(const ast::VarExpr& expr) -> Val {
-  return m_scope.at(expr.name()).value.llvm;
+  auto& in_scope = m_scope.at(expr.name());
+  auto* val = in_scope.value.llvm;
+  // Function arguments act as locals, but they are immutable, but still behind a reference (alloca)
+  if (!in_scope.ast.val_ty()->is_mut())
+    return m_builder->CreateLoad(llvm_type(*in_scope.ast.val_ty()), val);
+
+  return val;
 }
 
 /// A constexpr-friendly simple string hash, for simple switches with string cases
