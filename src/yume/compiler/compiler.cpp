@@ -729,13 +729,13 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
 template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {
   const auto& type = *expr.val_ty();
   if (const auto* struct_type = dyn_cast<ty::Struct>(&type.without_qual())) {
-    auto* llvm_struct_type = llvm_type(*struct_type);
 
     // TODO(rymiel): #4 determine what kind of allocation must be done, and if at all. It'll probably require a
     // complicated semantic step to determine object lifetime, which would probably be evaluated before compilation of
     // these expressions.
 
     //// Heap allocation
+    // auto* llvm_struct_type = llvm_type(*struct_type);
     // llvm::Value* alloc = nullptr;
     // auto* alloc_size = llvm::ConstantExpr::getSizeOf(llvm_struct_type);
     // alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), m_builder->getInt64Ty(), llvm_struct_type,
@@ -746,7 +746,6 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {
     // alloc = m_builder->CreateAlloca(llvm_struct_type, 0, nullptr, "s.ctor.alloca");
 
     //// Value allocation
-    llvm::Value* base_value = llvm::UndefValue::get(llvm_struct_type);
     auto* selected_ctor_overload = expr.selected_overload();
 
     auto* llvm_fn = declare(*selected_ctor_overload);
@@ -755,7 +754,7 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {
       auto arg = body_expression(*i);
       llvm_args.push_back(arg.llvm);
     }
-    base_value = m_builder->CreateCall(llvm_fn, llvm_args);
+    llvm::Value* base_value = m_builder->CreateCall(llvm_fn, llvm_args);
 
     //// Heap allocation
     // if (mut) {
