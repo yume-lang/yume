@@ -87,7 +87,7 @@ public:
 
   void body_statement(const ast::Stmt&);
   auto decl_statement(ast::Stmt&, ty::Type* parent = nullptr, ast::Program* member = nullptr) -> DeclLike;
-  auto body_expression(const ast::Expr& expr, bool mut = false) -> Val;
+  auto body_expression(const ast::Expr& expr) -> Val;
 
   void write_object(const char* filename, bool binary);
 
@@ -110,7 +110,7 @@ private:
     throw std::runtime_error("Unknown statement "s + stat.kind_name());
   }
 
-  template <typename T> auto expression(const T& expr, [[maybe_unused]] bool mut = false) -> Val {
+  template <typename T> auto expression(const T& expr) -> Val {
     throw std::runtime_error("Unknown expression "s + expr.kind_name());
   }
 
