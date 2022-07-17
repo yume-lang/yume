@@ -187,6 +187,10 @@ public:
     return visit_decl<const ast::AST*>([](const auto* decl) -> const ast::AST* { return &decl->ast(); });
   };
 
+  [[nodiscard]] auto ast() -> ast::AST* {
+    return visit_decl<ast::AST*>([](auto* decl) -> ast::AST* { return &decl->ast(); });
+  };
+
   [[nodiscard]] auto self_ty() const -> const ty::Type* {
     return visit_decl<ty::Type*>([](const auto* decl) { return decl->get_self_ty(); });
   };

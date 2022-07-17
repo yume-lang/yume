@@ -7,7 +7,7 @@
 
 namespace yume::ast {
 
-void AST::unify_val_ty() const {
+void AST::unify_val_ty() {
   for (const auto* other : m_attach->depends) {
     if (m_val_ty == other->m_val_ty || other->m_val_ty == nullptr)
       return;
@@ -34,9 +34,9 @@ auto AST::location() const -> Loc {
   return m_tok[0].loc + m_tok[m_tok.size() - 1].loc;
 }
 
-void CtorExpr::selected_overload(Ctor* fn) const { m_selected_overload = fn; }
+void CtorExpr::selected_overload(Ctor* fn) { m_selected_overload = fn; }
 auto CtorExpr::selected_overload() const -> Ctor* { return m_selected_overload; }
 
-void CallExpr::selected_overload(Fn* fn) const { m_selected_overload = fn; }
+void CallExpr::selected_overload(Fn* fn) { m_selected_overload = fn; }
 auto CallExpr::selected_overload() const -> Fn* { return m_selected_overload; }
 } // namespace yume::ast

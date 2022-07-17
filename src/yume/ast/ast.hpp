@@ -182,9 +182,9 @@ public:
  */
 struct Attachment {
   /// Observers are the "children" and should have their type updated when this node's type changes
-  mutable llvm::SmallPtrSet<const AST*, 2> observers{};
+  llvm::SmallPtrSet<AST*, 2> observers{};
   /// Depends are the "parents" and should be verified for type compatibility when this node's type changes
-  mutable llvm::SmallPtrSet<const AST*, 2> depends{};
+  llvm::SmallPtrSet<AST*, 2> depends{};
 };
 
 /// All nodes in the `AST` tree of the program inherit from this class.
@@ -201,14 +201,14 @@ class AST {
   /// The range of tokenizer `Token`s that this node was parsed from.
   const span<Token> m_tok;
   /// The value type of this node. Determined in the semantic phase; always `nullptr` after parsing.
-  mutable const ty::Type* m_val_ty{};
+  const ty::Type* m_val_ty{};
   /// \see Attachment
   unique_ptr<Attachment> m_attach{std::make_unique<Attachment>()};
 
 protected:
   /// Verify the type compatibility of the depends of this node, and merge the types if possible.
   /// This is called every time the node's type is updated.
-  void unify_val_ty() const;
+  void unify_val_ty();
 
   [[nodiscard]] auto tok() const noexcept -> span<Token> { return m_tok; }
 
@@ -226,16 +226,16 @@ public:
 
   [[nodiscard]] auto val_ty() const noexcept -> const ty::Type* { return m_val_ty; }
   [[nodiscard]] auto get_val_ty() const noexcept -> const ty::Type* { return m_val_ty; }
-  void val_ty(const ty::Type* type) const {
+  void val_ty(const ty::Type* type) {
     m_val_ty = type;
-    for (const auto* i : m_attach->observers) {
+    for (auto* i : m_attach->observers) {
       i->unify_val_ty();
     }
   }
 
   /// Make the type of this node depend on the type of `other`.
   /// \sa Attachment
-  void attach_to(const AST* other) const {
+  void attach_to(AST* other) {
     other->m_attach->observers.insert(this);
     this->m_attach->depends.insert(other);
     unify_val_ty();
@@ -457,7 +457,7 @@ class CallExpr : public Expr {
   vector<AnyExpr> m_args;
   /// During semantic analysis, the `TypeWalker` performs overload selection and saves the function declaration or
   /// instantiation that this call refers to directly in the AST node, in this field.
-  mutable Fn* m_selected_overload{};
+  Fn* m_selected_overload{};
 
 public:
   CallExpr(span<Token> tok, string name, vector<AnyExpr> args)
@@ -469,7 +469,7 @@ public:
   [[nodiscard]] auto args() const -> const auto& { return m_args; }
   [[nodiscard]] auto args() -> auto& { return m_args; }
 
-  void selected_overload(Fn* fn) const;
+  void selected_overload(Fn* fn);
   [[nodiscard]] auto selected_overload() const -> Fn*;
   static auto classof(const AST* a) -> bool { return a->kind() == K_Call; }
   [[nodiscard]] auto clone() const -> CallExpr* override;
@@ -481,7 +481,7 @@ class CtorExpr : public Expr {
   vector<AnyExpr> m_args;
   /// During semantic analysis, the `TypeWalker` performs overload selection and saves the constructor declaration that
   /// this call refers to directly in the AST node, in this field.
-  mutable Ctor* m_selected_overload{};
+  Ctor* m_selected_overload{};
 
 public:
   CtorExpr(span<Token> tok, AnyType type, vector<AnyExpr> args)
@@ -494,7 +494,7 @@ public:
   [[nodiscard]] auto args() const -> const auto& { return m_args; }
   [[nodiscard]] auto args() -> auto& { return m_args; }
 
-  void selected_overload(Ctor* fn) const;
+  void selected_overload(Ctor* fn);
   [[nodiscard]] auto selected_overload() const -> Ctor*;
   static auto classof(const AST* a) -> bool { return a->kind() == K_Ctor; }
   [[nodiscard]] auto clone() const -> CtorExpr* override;
@@ -566,7 +566,7 @@ public:
 class FieldAccessExpr : public Expr {
   OptionalExpr m_base;
   string m_field;
-  mutable int m_offset = -1;
+  int m_offset = -1;
 
 public:
   FieldAccessExpr(span<Token> tok, OptionalExpr base, string field)
@@ -576,7 +576,7 @@ public:
   [[nodiscard]] auto base() const -> const auto& { return m_base; }
   [[nodiscard]] auto base() -> auto& { return m_base; }
   [[nodiscard]] auto field() const -> string { return m_field; }
-  void offset(int offset) const { m_offset = offset; }
+  void offset(int offset) { m_offset = offset; }
   [[nodiscard]] auto offset() const -> int { return m_offset; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_FieldAccess; }
   [[nodiscard]] auto clone() const -> FieldAccessExpr* override;
