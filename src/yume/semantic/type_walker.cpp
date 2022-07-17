@@ -198,7 +198,7 @@ template <> void TypeWalker::expression(ast::AssignExpr& expr) {
   body_expression(*expr.target());
   body_expression(*expr.value());
 
-  try_implicit_conversion(expr.value(), expr.target()->val_ty()->qual_base());
+  try_implicit_conversion(expr.value(), expr.target()->val_ty()->mut_base());
 
   expr.target()->attach_to(expr.value().raw_ptr());
   expr.attach_to(expr.value().raw_ptr());
@@ -221,7 +221,7 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
     type = expr.base()->val_ty();
 
     if (type->is_mut()) {
-      type = type->qual_base();
+      type = type->mut_base();
       base_is_mut = true;
     };
   }
@@ -348,7 +348,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
   // TODO(rymiel): revisit
   for (const auto& expr_arg : llvm::enumerate(expr.args())) {
     if (expr_arg.index() >= selected->ast().args().size() && expr_arg.value()->val_ty()->is_mut()) {
-      const auto* target_type = expr_arg.value()->val_ty()->qual_base();
+      const auto* target_type = expr_arg.value()->val_ty()->mut_base();
       wrap_in_implicit_cast(expr_arg.value(), ty::Conv{.dereference = true}, target_type);
     }
   }
@@ -397,7 +397,7 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
 template <> void TypeWalker::statement(ast::CtorDecl& stat) {
   scope.clear();
 
-  const auto* struct_type = dyn_cast<ty::Struct>(&current_decl.self_ty()->without_qual());
+  const auto* struct_type = dyn_cast<ty::Struct>(&current_decl.self_ty()->without_mut());
 
   if (struct_type == nullptr)
     throw std::runtime_error("Can't define constructor of non-struct type");

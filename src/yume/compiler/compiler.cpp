@@ -229,7 +229,7 @@ auto Compiler::llvm_type(const ty::Type* type) -> llvm::Type* {
 
 void Compiler::destruct(Val val, const ty::Type* type) {
   if (type->is_mut()) {
-    const auto* deref_type = type->qual_base();
+    const auto* deref_type = type->mut_base();
     return destruct(m_builder->CreateLoad(llvm_type(deref_type), val), deref_type);
   }
   if (const auto* ptr_type = dyn_cast<ty::Ptr>(type)) {
@@ -348,7 +348,7 @@ static inline auto is_trivially_destructible(const ty::Type* type) -> bool {
     return true;
 
   if (isa<ty::Qual>(type))
-    return is_trivially_destructible(type->qual_base());
+    return is_trivially_destructible(type->mut_base());
 
   if (const auto* ptr_type = dyn_cast<ty::Ptr>(type))
     return !ptr_type->has_qualifier(Qualifier::Slice);
@@ -533,7 +533,7 @@ auto Compiler::entrypoint_builder() -> llvm::IRBuilder<> {
 template <> void Compiler::statement(const ast::VarDecl& stat) {
   // Locals are currently always mut, get the base type instead
   // TODO(rymiel): revisit, probably extract logic
-  auto* var_type = llvm_type(stat.val_ty()->qual_base());
+  auto* var_type = llvm_type(stat.val_ty()->mut_base());
 
   if (stat.init()->val_ty()->is_mut()) {
     auto expr_val = body_expression(*stat.init());
@@ -627,7 +627,7 @@ auto Compiler::primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<
     return m_builder->CreateExtractValue(args.at(0), 1);
   if (primitive == "slice_ptr") {
     if (returns_mut) {
-      llvm::Type* result_type = llvm_type(&types[0]->without_qual());
+      llvm::Type* result_type = llvm_type(&types[0]->without_mut());
       return m_builder->CreateStructGEP(result_type, args.at(0), 0, "sl.ptr.mut");
     }
     return m_builder->CreateExtractValue(args.at(0), 0, "sl.ptr.x");
@@ -637,14 +637,14 @@ auto Compiler::primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<
         args.at(0), m_builder->CreateAdd(m_builder->CreateExtractValue(args.at(0), 1), args.at(1)), 1);
   }
   if (primitive == "set_at") {
-    auto* result_type = llvm_type(types[0]->without_qual().ptr_base());
+    auto* result_type = llvm_type(types[0]->without_mut().ptr_base());
     llvm::Value* value = args.at(2);
     llvm::Value* base = m_builder->CreateGEP(result_type, args.at(0), args.at(1), "p.set_at.gep");
     m_builder->CreateStore(value, base);
     return args.at(2);
   }
   if (primitive == "get_at") {
-    auto* result_type = llvm_type(types[0]->without_qual().ptr_base());
+    auto* result_type = llvm_type(types[0]->without_mut().ptr_base());
     llvm::Value* base = args.at(0);
     base = m_builder->CreateGEP(result_type, base, args.at(1), "p.get_at.gep");
     return base;
@@ -715,7 +715,7 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
     int base_offset = field_access->offset();
 
     auto expr_val = body_expression(*expr.value());
-    auto* struct_type = llvm_type(cast<ty::Struct>(struct_base->qual_base()));
+    auto* struct_type = llvm_type(cast<ty::Struct>(struct_base->mut_base()));
 
     yume_assert(base_offset >= 0, "Field access has unknown offset into struct");
 
@@ -728,7 +728,7 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
 
 template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {
   const auto& type = *expr.val_ty();
-  if (const auto* struct_type = dyn_cast<ty::Struct>(&type.without_qual())) {
+  if (const auto* struct_type = dyn_cast<ty::Struct>(&type.without_mut())) {
 
     // TODO(rymiel): #4 determine what kind of allocation must be done, and if at all. It'll probably require a
     // complicated semantic step to determine object lifetime, which would probably be evaluated before compilation of
@@ -764,21 +764,21 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {
 
     return base_value;
   }
-  if (const auto* int_type = dyn_cast<ty::Int>(&type.without_qual())) {
+  if (const auto* int_type = dyn_cast<ty::Int>(&type.without_mut())) {
     yume_assert(expr.args().size() == 1, "Numeric cast can only contain a single argument");
     const auto& cast_from = expr.args()[0];
-    yume_assert(isa<ty::Int>(cast_from->val_ty()->without_qual()), "Numeric cast must convert from int");
+    yume_assert(isa<ty::Int>(cast_from->val_ty()->without_mut()), "Numeric cast must convert from int");
     auto base = body_expression(*cast_from);
-    if (cast<ty::Int>(cast_from->val_ty()->without_qual()).is_signed()) {
+    if (cast<ty::Int>(cast_from->val_ty()->without_mut()).is_signed()) {
       return m_builder->CreateSExtOrTrunc(base, llvm_type(int_type));
     }
     return m_builder->CreateZExtOrTrunc(base, llvm_type(int_type));
   }
-  if (const auto* slice_type = dyn_cast<ty::Ptr>(&type.without_qual());
+  if (const auto* slice_type = dyn_cast<ty::Ptr>(&type.without_mut());
       slice_type != nullptr && slice_type->has_qualifier(Qualifier::Slice)) {
     yume_assert(expr.args().size() == 1, "Slice constructor can only contain a single argument");
     const auto& slice_size_expr = expr.args()[0];
-    yume_assert(isa<ty::Int>(slice_size_expr->val_ty()->without_qual()), "Slice constructor must convert from int");
+    yume_assert(isa<ty::Int>(slice_size_expr->val_ty()->without_mut()), "Slice constructor must convert from int");
     auto slice_size = body_expression(*slice_size_expr);
 
     auto* llvm_slice_type = llvm_type(slice_type);
@@ -889,7 +889,7 @@ template <> auto Compiler::expression(const ast::FieldAccessExpr& expr) -> Val {
   if (!expr.val_ty()->is_mut())
     return m_builder->CreateExtractValue(base, base_offset, "s.field.nm."s + base_name);
 
-  return m_builder->CreateStructGEP(llvm_type(expr.base()->val_ty()->qual_base()), base, base_offset,
+  return m_builder->CreateStructGEP(llvm_type(expr.base()->val_ty()->mut_base()), base, base_offset,
                                     "s.field.m."s + base_name);
 }
 
@@ -900,7 +900,7 @@ template <> auto Compiler::expression(const ast::ImplicitCastExpr& expr) -> Val 
 
   if (expr.conversion().dereference) {
     yume_assert(current_ty->is_mut(), "Source type must be mutable when implicitly derefencing");
-    current_ty = current_ty->qual_base();
+    current_ty = current_ty->mut_base();
     base = m_builder->CreateLoad(llvm_type(current_ty), base, "ic.deref");
   }
 

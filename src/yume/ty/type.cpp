@@ -25,7 +25,7 @@ auto Type::known_qual(Qualifier qual) const -> const Type& {
   if (existing != nullptr)
     return *existing;
 
-  const auto* base = qual_base();
+  const auto* base = mut_base();
   // Qualifiers like Mut can't repeat, so attempting to get mut of a mut type should return itself
   if (qual == Qualifier::Mut) {
     bool existing_mut = false;
@@ -58,11 +58,11 @@ auto Type::determine_generic_substitution(const Type& generic, Sub sub) const ->
   }
   // `Foo mut` -> `T mut`, with `T = Foo`.
   if (is_mut() && generic.is_mut())
-    return qual_base()->determine_generic_substitution(generic.without_qual(), sub);
+    return mut_base()->determine_generic_substitution(generic.without_mut(), sub);
 
   // `Foo[] mut` -> `T[]`, with `T = Foo`.
   if (is_mut() && !generic.is_mut())
-    return qual_base()->determine_generic_substitution(generic, sub);
+    return mut_base()->determine_generic_substitution(generic, sub);
 
   // Substitution impossible! For example, `Foo` -> `T ptr`.
   if (!isa<Generic>(generic))
@@ -85,7 +85,7 @@ auto Type::compatibility(const Type& other, Compat compat) const -> Compat {
   // Note that the base types are also compared, so `I32 mut` -> `I64`.
   if (is_mut() && !other.is_mut()) {
     compat.conv.dereference = true;
-    compat = qual_base()->compatibility(other.without_qual(), compat);
+    compat = mut_base()->compatibility(other.without_mut(), compat);
     return compat;
   }
 
@@ -109,7 +109,7 @@ auto Type::is_generic() const -> bool {
     return true;
 
   if (isa<Qual>(*this))
-    return qual_base()->is_generic();
+    return mut_base()->is_generic();
 
   if (isa<Ptr>(*this))
     return ptr_base()->is_generic();
@@ -126,7 +126,7 @@ auto Type::apply_generic_substitution(Sub sub) const -> const Type* {
 
   if (const auto* qual_this = dyn_cast<Qual>(this))
     if (qual_this->m_mut)
-      return &qual_base()->apply_generic_substitution(sub)->known_mut();
+      return &mut_base()->apply_generic_substitution(sub)->known_mut();
 
   if (const auto* ptr_this = dyn_cast<Ptr>(this))
     return &ptr_base()->apply_generic_substitution(sub)->known_qual(ptr_this->qualifier());
@@ -148,7 +148,7 @@ auto Type::fully_apply_instantiation(const Instantiation& inst) const -> const T
   return subbed;
 }
 
-auto Type::qual_base() const -> const Type* {
+auto Type::mut_base() const -> const Type* {
   if (const auto* qual = dyn_cast<Qual>(this))
     return &qual->base();
   return nullptr;
@@ -163,9 +163,9 @@ auto Type::ptr_base() const -> const Type* {
 auto Type::coalesce(const Type& other) const -> const Type* {
   if (this == &other)
     return this;
-  if (is_mut() && qual_base() == &other)
+  if (is_mut() && mut_base() == &other)
     return this;
-  if (other.is_mut() && other.qual_base() == this)
+  if (other.is_mut() && other.mut_base() == this)
     return &other;
 
   return nullptr;
@@ -174,17 +174,15 @@ auto Type::coalesce(const Type& other) const -> const Type* {
 auto Type::intersect(const Type& other) const -> const Type* {
   if (this == &other)
     return this;
-  if (is_mut() && qual_base() == &other)
+  if (is_mut() && mut_base() == &other)
     return &other;
-  if (other.is_mut() && other.qual_base() == this)
+  if (other.is_mut() && other.mut_base() == this)
     return this;
 
   return nullptr;
 }
 
-auto Type::without_qual() const -> const Type& { return *(isa<Qual>(*this) ? qual_base() : this); }
-
-auto Type::without_qual_kind() const -> Kind { return (isa<Qual>(*this) ? qual_base() : this)->kind(); }
+auto Type::without_mut() const -> const Type& { return is_mut() ? *mut_base() : *this; }
 
 namespace detail {
 static constexpr size_t BITSIZE_8 = 8;

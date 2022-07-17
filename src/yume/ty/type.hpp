@@ -72,24 +72,23 @@ public:
   /// The union of this and `other`. For example, the union of `T` and `T mut` is `T mut`.
   /// \returns `nullptr` if an union cannot be created.
   [[nodiscard]] auto coalesce(const Type& other) const -> const Type*;
-  /// Return the intersection of this and `other`. For example, the intersection of `T and `T mut` is `T`.
+  /// Return the intersection of this and `other`. For example, the intersection of `T` and `T mut` is `T`.
   /// \returns `nullptr` is there's not intersection between the types.
   [[nodiscard]] auto intersect(const Type& other) const -> const Type*;
 
   [[nodiscard]] auto is_mut() const -> bool;
   [[nodiscard]] auto is_generic() const -> bool;
 
-  /// If this type is a `Qual`, return the base of it (`T mut` -> `T`)
-  /// \returns `nullptr` if this type isn't `Qual`.
-  [[nodiscard]] auto qual_base() const -> const Type*;
+  /// If this type is a mutable reference, return the base of it (`T mut` -> `T`)
+  /// \returns `nullptr` if this type isn't a mutable reference.
+  [[nodiscard]] auto mut_base() const -> const Type*;
 
-  /// If this type is a `Ptr`, return the base of it (`T ptr` -> `T`)
-  /// \returns `nullptr` if this type isn't `Ptr`.
+  /// If this type is a pointer type, return the base of it (`T ptr` -> `T`)
+  /// \returns `nullptr` if this type isn't a pointer type.
   [[nodiscard]] auto ptr_base() const -> const Type*;
 
-  /// If this type is a `Qual`, return the base of it, otherwise return itself.
-  [[nodiscard]] auto without_qual() const -> const Type&;
-  [[nodiscard]] auto without_qual_kind() const -> Kind;
+  /// If this type is a mutable reference, return the base of it, otherwise return itself.
+  [[nodiscard]] auto without_mut() const -> const Type&;
 
 protected:
   Type(Kind kind, string name) : m_kind(kind), m_name(move(name)) {}
