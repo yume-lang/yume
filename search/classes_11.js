@@ -8,6 +8,6 @@ var searchData=
   ['tokenstate_5',['TokenState',['../structyume_1_1TokenState.html',1,'yume']]],
   ['type_6',['Type',['../classyume_1_1ast_1_1Type.html',1,'yume::ast::Type'],['../classyume_1_1ty_1_1Type.html',1,'yume::ty::Type']]],
   ['typeholder_7',['TypeHolder',['../structyume_1_1TypeHolder.html',1,'yume']]],
-  ['typename_8',['TypeName',['../classyume_1_1ast_1_1TypeName.html',1,'yume::ast']]],
+  ['typename_8',['TypeName',['../structyume_1_1ast_1_1TypeName.html',1,'yume::ast']]],
   ['typewalker_9',['TypeWalker',['../structyume_1_1semantic_1_1TypeWalker.html',1,'yume::semantic']]]
 ];

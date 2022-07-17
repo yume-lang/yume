@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-07-16 21:15:25</td>
+            <td class="headerValue">2022-07-17 00:18:46</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -93,7 +93,7 @@
 <a name="35"><span class="lineNum">      35 </span>            : void SimpleType::visit(Visitor&amp; visitor) const { visitor.visit(m_name); }</a>
 <a name="36"><span class="lineNum">      36 </span>            : void QualType::visit(Visitor&amp; visitor) const { visitor.visit(m_base, describe().c_str()); }</a>
 <a name="37"><span class="lineNum">      37 </span>            : void TemplatedType::visit(Visitor&amp; visitor) const { visitor.visit(m_base).visit(m_type_args, &quot;type arg&quot;); }</a>
-<a name="38"><span class="lineNum">      38 </span>            : void TypeName::visit(Visitor&amp; visitor) const { visitor.visit(m_name).visit(m_type); }</a>
+<a name="38"><span class="lineNum">      38 </span>            : void TypeName::visit(Visitor&amp; visitor) const { visitor.visit(name).visit(type); }</a>
 <a name="39"><span class="lineNum">      39 </span>            : void Compound::visit(Visitor&amp; visitor) const { visitor.visit(m_body); }</a>
 <a name="40"><span class="lineNum">      40 </span>            : void VarExpr::visit(Visitor&amp; visitor) const { visitor.visit(m_name); }</a>
 <a name="41"><span class="lineNum">      41 </span>            : void CallExpr::visit(Visitor&amp; visitor) const { visitor.visit(m_name).visit(m_args); }</a>

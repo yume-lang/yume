@@ -1,0 +1,10 @@
+<map id="yume::ast::TypeName" name="yume::ast::TypeName">
+<area shape="rect" id="node1" title="A pair of a Type and an identifier, i.e. a parameter name." alt="" coords="168,303,315,329"/>
+<area shape="rect" id="node2" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="40,206,149,233"/>
+<area shape="rect" id="node3" href="$classyume_1_1ast_1_1AnyBase.html" title=" " alt="" coords="174,199,309,240"/>
+<area shape="rect" id="node4" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title=" " alt="" coords="31,95,214,136"/>
+<area shape="rect" id="node5" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T, or the absence of one. See OptionalExpr and OptionalType..." alt="" coords="5,5,219,32"/>
+<area shape="rect" id="node6" href="$classyume_1_1ast_1_1AnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T. See AnyExpr, AnyStmt and AnyType." alt="" coords="257,102,423,129"/>
+<area shape="rect" id="node7" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T, or the absence of one. See OptionalExpr and OptionalType..." alt="" coords="243,5,456,32"/>
+<area shape="rect" id="node8" title=" " alt="" coords="333,206,387,233"/>
+</map>

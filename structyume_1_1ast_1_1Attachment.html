@@ -83,74 +83,58 @@ Collaboration diagram for yume::ast::Attachment:</div>
 <div class="center"><img src="structyume_1_1ast_1_1Attachment__coll__graph.png" border="0" usemap="#ayume_1_1ast_1_1Attachment_coll__map" alt="Collaboration graph"/></div>
 <map name="ayume_1_1ast_1_1Attachment_coll__map" id="ayume_1_1ast_1_1Attachment_coll__map">
 <area shape="rect" title="Represents the relationship between multiple AST nodes." alt="" coords="5,124,156,151"/>
-<area shape="rect" title=" " alt="" coords="8,5,153,47"/>
+<area shape="rect" title=" " alt="" coords="11,5,151,47"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a12b61e92d716210910bba79b519a578c"><td class="memItemLeft" align="right" valign="top">llvm::SmallPtrSet&lt; const <a class="el" href="classyume_1_1ast_1_1AST.html">AST</a> *, 2 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1Attachment.html#a12b61e92d716210910bba79b519a578c">observers</a> {}</td></tr>
-<tr class="memdesc:a12b61e92d716210910bba79b519a578c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Observers are the "children" and should have their type updated when this node's type changes.  <a href="structyume_1_1ast_1_1Attachment.html#a12b61e92d716210910bba79b519a578c">More...</a><br /></td></tr>
-<tr class="separator:a12b61e92d716210910bba79b519a578c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acdae10046300c5f156588b73b15272d6"><td class="memItemLeft" align="right" valign="top">llvm::SmallPtrSet&lt; const <a class="el" href="classyume_1_1ast_1_1AST.html">AST</a> *, 2 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1Attachment.html#acdae10046300c5f156588b73b15272d6">depends</a> {}</td></tr>
-<tr class="memdesc:acdae10046300c5f156588b73b15272d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Depends are the "parents" and should be verified for type compatibility when this node's type changes.  <a href="structyume_1_1ast_1_1Attachment.html#acdae10046300c5f156588b73b15272d6">More...</a><br /></td></tr>
-<tr class="separator:acdae10046300c5f156588b73b15272d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf00c7ebfdefd53592f5cf336be0aecd"><td class="memItemLeft" align="right" valign="top">llvm::SmallPtrSet&lt; <a class="el" href="classyume_1_1ast_1_1AST.html">AST</a> *, 2 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1Attachment.html#aaf00c7ebfdefd53592f5cf336be0aecd">observers</a> {}</td></tr>
+<tr class="memdesc:aaf00c7ebfdefd53592f5cf336be0aecd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Observers are the "children" and should have their type updated when this node's type changes.  <a href="structyume_1_1ast_1_1Attachment.html#aaf00c7ebfdefd53592f5cf336be0aecd">More...</a><br /></td></tr>
+<tr class="separator:aaf00c7ebfdefd53592f5cf336be0aecd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af54c28ff72cddb956133b52fbd30ce91"><td class="memItemLeft" align="right" valign="top">llvm::SmallPtrSet&lt; <a class="el" href="classyume_1_1ast_1_1AST.html">AST</a> *, 2 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1Attachment.html#af54c28ff72cddb956133b52fbd30ce91">depends</a> {}</td></tr>
+<tr class="memdesc:af54c28ff72cddb956133b52fbd30ce91"><td class="mdescLeft">&#160;</td><td class="mdescRight">Depends are the "parents" and should be verified for type compatibility when this node's type changes.  <a href="structyume_1_1ast_1_1Attachment.html#af54c28ff72cddb956133b52fbd30ce91">More...</a><br /></td></tr>
+<tr class="separator:af54c28ff72cddb956133b52fbd30ce91"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >Represents the relationship between multiple <code><a class="el" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class.">AST</a></code> nodes. </p>
 <p ><code><a class="el" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class.">AST</a></code> nodes can be attached to propagate type information between them. TODO: describe type propagation more </p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00181">181</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00183">183</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
-<a id="acdae10046300c5f156588b73b15272d6" name="acdae10046300c5f156588b73b15272d6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acdae10046300c5f156588b73b15272d6">&#9670;&nbsp;</a></span>depends</h2>
+<a id="af54c28ff72cddb956133b52fbd30ce91" name="af54c28ff72cddb956133b52fbd30ce91"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af54c28ff72cddb956133b52fbd30ce91">&#9670;&nbsp;</a></span>depends</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">llvm::SmallPtrSet&lt;const <a class="el" href="classyume_1_1ast_1_1AST.html">AST</a>*, 2&gt; yume::ast::Attachment::depends {}</td>
+          <td class="memname">llvm::SmallPtrSet&lt;<a class="el" href="classyume_1_1ast_1_1AST.html">AST</a>*, 2&gt; yume::ast::Attachment::depends {}</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">mutable</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Depends are the "parents" and should be verified for type compatibility when this node's type changes. </p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00185">185</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00187">187</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
-<a id="a12b61e92d716210910bba79b519a578c" name="a12b61e92d716210910bba79b519a578c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a12b61e92d716210910bba79b519a578c">&#9670;&nbsp;</a></span>observers</h2>
+<a id="aaf00c7ebfdefd53592f5cf336be0aecd" name="aaf00c7ebfdefd53592f5cf336be0aecd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf00c7ebfdefd53592f5cf336be0aecd">&#9670;&nbsp;</a></span>observers</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">llvm::SmallPtrSet&lt;const <a class="el" href="classyume_1_1ast_1_1AST.html">AST</a>*, 2&gt; yume::ast::Attachment::observers {}</td>
+          <td class="memname">llvm::SmallPtrSet&lt;<a class="el" href="classyume_1_1ast_1_1AST.html">AST</a>*, 2&gt; yume::ast::Attachment::observers {}</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">mutable</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Observers are the "children" and should have their type updated when this node's type changes. </p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00183">183</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00185">185</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>

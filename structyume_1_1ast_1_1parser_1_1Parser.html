@@ -142,7 +142,7 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ab7815afee4d1d5407d6ce4942a81361d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac57478053d1a4d9db4c5f7a6272dd5e9"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1parser_1_1Parser.html#ac57478053d1a4d9db4c5f7a6272dd5e9">parse_type</a> (bool implicit_self=false) -&gt; unique_ptr&lt; <a class="el" href="classyume_1_1ast_1_1Type.html">Type</a> &gt;</td></tr>
 <tr class="separator:ac57478053d1a4d9db4c5f7a6272dd5e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8cc75031f318628f4a8e681c7dd18dca"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1parser_1_1Parser.html#a8cc75031f318628f4a8e681c7dd18dca">parse_type_name</a> () -&gt; unique_ptr&lt; <a class="el" href="classyume_1_1ast_1_1TypeName.html">TypeName</a> &gt;</td></tr>
+<tr class="memitem:a8cc75031f318628f4a8e681c7dd18dca"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1parser_1_1Parser.html#a8cc75031f318628f4a8e681c7dd18dca">parse_type_name</a> () -&gt; unique_ptr&lt; <a class="el" href="structyume_1_1ast_1_1TypeName.html">TypeName</a> &gt;</td></tr>
 <tr class="separator:a8cc75031f318628f4a8e681c7dd18dca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5395a4bce412b8f14e3fdbc76ae51cdb"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1parser_1_1Parser.html#a5395a4bce412b8f14e3fdbc76ae51cdb">try_parse_type</a> () -&gt; optional&lt; unique_ptr&lt; <a class="el" href="classyume_1_1ast_1_1Type.html">Type</a> &gt; &gt;</td></tr>
 <tr class="separator:a5395a4bce412b8f14e3fdbc76ae51cdb"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1012,7 +1012,7 @@ template&lt;size_t N = 0&gt; </div>
           <td class="memname">auto yume::ast::parser::Parser::parse_type_name </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td> -&gt; unique_ptr&lt;<a class="el" href="classyume_1_1ast_1_1TypeName.html">TypeName</a>&gt;</td>
+          <td> -&gt; unique_ptr&lt;<a class="el" href="structyume_1_1ast_1_1TypeName.html">TypeName</a>&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1214,7 +1214,7 @@ template&lt;size_t N = 0&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00185">185</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="parser_8hpp_source.html#l00079">yume::ast::parser::KWD_MUT</a>, <a class="el" href="parser_8hpp_source.html#l00078">yume::ast::parser::KWD_PTR</a>, <a class="el" href="parser_8hpp_source.html#l00083">yume::ast::parser::KWD_SELF_TYPE</a>, <a class="el" href="atom_8hpp_source.html#l00035">yume::make_atom()</a>, <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>, <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a165d3d525f6d0cbd55e42cc3058cafcc">yume::Ptr</a>, <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706ad140d37ad98c12ccd8e1c432f548bcdb">yume::Slice</a>, <a class="el" href="parser_8hpp_source.html#l00100">yume::ast::parser::SYM_LBRACE</a>, <a class="el" href="parser_8hpp_source.html#l00098">yume::ast::parser::SYM_LBRACKET</a>, <a class="el" href="parser_8hpp_source.html#l00101">yume::ast::parser::SYM_RBRACE</a>, and <a class="el" href="parser_8hpp_source.html#l00099">yume::ast::parser::SYM_RBRACKET</a>.</p>
+<p class="reference">References <a class="el" href="parser_8hpp_source.html#l00079">yume::ast::parser::KWD_MUT</a>, <a class="el" href="parser_8hpp_source.html#l00078">yume::ast::parser::KWD_PTR</a>, <a class="el" href="parser_8hpp_source.html#l00083">yume::ast::parser::KWD_SELF_TYPE</a>, <a class="el" href="atom_8hpp_source.html#l00036">yume::make_atom()</a>, <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>, <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a165d3d525f6d0cbd55e42cc3058cafcc">yume::Ptr</a>, <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706ad140d37ad98c12ccd8e1c432f548bcdb">yume::Slice</a>, <a class="el" href="parser_8hpp_source.html#l00100">yume::ast::parser::SYM_LBRACE</a>, <a class="el" href="parser_8hpp_source.html#l00098">yume::ast::parser::SYM_LBRACKET</a>, <a class="el" href="parser_8hpp_source.html#l00101">yume::ast::parser::SYM_RBRACE</a>, and <a class="el" href="parser_8hpp_source.html#l00099">yume::ast::parser::SYM_RBRACKET</a>.</p>
 
 </div>
 </div>

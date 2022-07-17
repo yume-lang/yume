@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-07-16 21:15:25</td>
+            <td class="headerValue">2022-07-17 00:18:46</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -145,7 +145,7 @@
 <a name="87"><span class="lineNum">      87 </span>            : </a>
 <a name="88"><span class="lineNum">      88 </span>            :   vector&lt;ast::CtorDecl::arg_t&gt; ctor_args;</a>
 <a name="89"><span class="lineNum">      89 </span>            :   for (auto&amp; field : st.ast().fields())</a>
-<a name="90"><span class="lineNum">      90 </span>            :     ctor_args.emplace_back(ast::FieldAccessExpr(field.token_range(), std::nullopt, field.name()));</a>
+<a name="90"><span class="lineNum">      90 </span>            :     ctor_args.emplace_back(ast::FieldAccessExpr(field.token_range(), std::nullopt, field.name));</a>
 <a name="91"><span class="lineNum">      91 </span>            :   // TODO(rymiel): Give these things sensible locations?</a>
 <a name="92"><span class="lineNum">      92 </span>            :   auto&amp; new_ct = st.body().body().emplace_back(</a>
 <a name="93"><span class="lineNum">      93 </span>            :       std::make_unique&lt;ast::CtorDecl&gt;(span&lt;Token&gt;{}, move(ctor_args), ast::Compound({}, {})));</a>
@@ -251,29 +251,29 @@
 <a name="193"><span class="lineNum">     193 </span>            :   throw std::runtime_error(&quot;Invalid top-level statement: &quot;s + stmt.kind_name());</a>
 <a name="194"><span class="lineNum">     194 </span>            : }</a>
 <a name="195"><span class="lineNum">     195 </span>            : </a>
-<a name="196"><span class="lineNum">     196 </span>            : auto Compiler::llvm_type(const ty::Type&amp; type) -&gt; llvm::Type* {</a>
-<a name="197"><span class="lineNum">     197 </span>            :   if (const auto* int_type = dyn_cast&lt;ty::Int&gt;(&amp;type))</a>
+<a name="196"><span class="lineNum">     196 </span>            : auto Compiler::llvm_type(const ty::Type* type) -&gt; llvm::Type* {</a>
+<a name="197"><span class="lineNum">     197 </span>            :   if (const auto* int_type = dyn_cast&lt;ty::Int&gt;(type))</a>
 <a name="198"><span class="lineNum">     198 </span>            :     return llvm::Type::getIntNTy(*m_context, int_type-&gt;size());</a>
-<a name="199"><span class="lineNum">     199 </span>            :   if (const auto* qual_type = dyn_cast&lt;ty::Qual&gt;(&amp;type))</a>
-<a name="200"><span class="lineNum">     200 </span>            :     return llvm_type(qual_type-&gt;base())-&gt;getPointerTo();</a>
-<a name="201"><span class="lineNum">     201 </span>            :   if (const auto* ptr_type = dyn_cast&lt;ty::Ptr&gt;(&amp;type)) {</a>
+<a name="199"><span class="lineNum">     199 </span>            :   if (const auto* qual_type = dyn_cast&lt;ty::Qual&gt;(type))</a>
+<a name="200"><span class="lineNum">     200 </span>            :     return llvm_type(&amp;qual_type-&gt;base())-&gt;getPointerTo();</a>
+<a name="201"><span class="lineNum">     201 </span>            :   if (const auto* ptr_type = dyn_cast&lt;ty::Ptr&gt;(type)) {</a>
 <a name="202"><span class="lineNum">     202 </span>            :     switch (ptr_type-&gt;qualifier()) {</a>
-<a name="203"><span class="lineNum">     203 </span>            :     case Qualifier::Ptr: return llvm::PointerType::getUnqual(llvm_type(ptr_type-&gt;base()));</a>
+<a name="203"><span class="lineNum">     203 </span>            :     case Qualifier::Ptr: return llvm::PointerType::getUnqual(llvm_type(&amp;ptr_type-&gt;base()));</a>
 <a name="204"><span class="lineNum">     204 </span>            :     case Qualifier::Slice: {</a>
 <a name="205"><span class="lineNum">     205 </span>            :       auto args = vector&lt;llvm::Type*&gt;{};</a>
-<a name="206"><span class="lineNum">     206 </span>            :       args.push_back(llvm::PointerType::getUnqual(llvm_type(ptr_type-&gt;base())));</a>
+<a name="206"><span class="lineNum">     206 </span>            :       args.push_back(llvm::PointerType::getUnqual(llvm_type(&amp;ptr_type-&gt;base())));</a>
 <a name="207"><span class="lineNum">     207 </span>            :       args.push_back(llvm::Type::getInt64Ty(*m_context));</a>
 <a name="208"><span class="lineNum">     208 </span>            :       return llvm::StructType::get(*m_context, args);</a>
 <a name="209"><span class="lineNum">     209 </span>            :     }</a>
 <a name="210"><span class="lineNum">     210 </span>            :     default: llvm_unreachable(&quot;Ptr type cannot hold this qualifier&quot;);</a>
 <a name="211"><span class="lineNum">     211 </span>            :     }</a>
 <a name="212"><span class="lineNum">     212 </span>            :   }</a>
-<a name="213"><span class="lineNum">     213 </span>            :   if (const auto* struct_type = dyn_cast&lt;ty::Struct&gt;(&amp;type)) {</a>
+<a name="213"><span class="lineNum">     213 </span>            :   if (const auto* struct_type = dyn_cast&lt;ty::Struct&gt;(type)) {</a>
 <a name="214"><span class="lineNum">     214 </span>            :     auto* memo = struct_type-&gt;memo();</a>
 <a name="215"><span class="lineNum">     215 </span>            :     if (memo == nullptr) {</a>
 <a name="216"><span class="lineNum">     216 </span>            :       auto fields = vector&lt;llvm::Type*&gt;{};</a>
 <a name="217"><span class="lineNum">     217 </span>            :       for (const auto* i : struct_type-&gt;fields())</a>
-<a name="218"><span class="lineNum">     218 </span>            :         fields.push_back(llvm_type(*i-&gt;type().val_ty()));</a>
+<a name="218"><span class="lineNum">     218 </span>            :         fields.push_back(llvm_type(i-&gt;type-&gt;val_ty()));</a>
 <a name="219"><span class="lineNum">     219 </span>            : </a>
 <a name="220"><span class="lineNum">     220 </span>            :       memo = llvm::StructType::create(*m_context, fields, &quot;_&quot;s + struct_type-&gt;name());</a>
 <a name="221"><span class="lineNum">     221 </span>            :       struct_type-&gt;memo(memo);</a>
@@ -285,12 +285,12 @@
 <a name="227"><span class="lineNum">     227 </span>            :   return llvm::Type::getVoidTy(*m_context);</a>
 <a name="228"><span class="lineNum">     228 </span>            : }</a>
 <a name="229"><span class="lineNum">     229 </span>            : </a>
-<a name="230"><span class="lineNum">     230 </span>            : void Compiler::destruct(Val val, const ty::Type&amp; type) {</a>
-<a name="231"><span class="lineNum">     231 </span>            :   if (type.is_mut()) {</a>
-<a name="232"><span class="lineNum">     232 </span>            :     const auto&amp; deref_type = *type.qual_base();</a>
+<a name="230"><span class="lineNum">     230 </span>            : void Compiler::destruct(Val val, const ty::Type* type) {</a>
+<a name="231"><span class="lineNum">     231 </span>            :   if (type-&gt;is_mut()) {</a>
+<a name="232"><span class="lineNum">     232 </span>            :     const auto* deref_type = type-&gt;mut_base();</a>
 <a name="233"><span class="lineNum">     233 </span>            :     return destruct(m_builder-&gt;CreateLoad(llvm_type(deref_type), val), deref_type);</a>
 <a name="234"><span class="lineNum">     234 </span>            :   }</a>
-<a name="235"><span class="lineNum">     235 </span>            :   if (const auto* ptr_type = dyn_cast&lt;ty::Ptr&gt;(&amp;type)) {</a>
+<a name="235"><span class="lineNum">     235 </span>            :   if (const auto* ptr_type = dyn_cast&lt;ty::Ptr&gt;(type)) {</a>
 <a name="236"><span class="lineNum">     236 </span>            :     if (ptr_type-&gt;has_qualifier(Qualifier::Slice)) {</a>
 <a name="237"><span class="lineNum">     237 </span>            :       auto* ptr = m_builder-&gt;CreateExtractValue(val, 0, &quot;sl.ptr.free&quot;);</a>
 <a name="238"><span class="lineNum">     238 </span>            :       auto* free = llvm::CallInst::CreateFree(ptr, m_builder-&gt;GetInsertBlock());</a>
@@ -299,35 +299,35 @@
 <a name="241"><span class="lineNum">     241 </span>            :   }</a>
 <a name="242"><span class="lineNum">     242 </span>            : }</a>
 <a name="243"><span class="lineNum">     243 </span>            : </a>
-<a name="244"><span class="lineNum">     244 </span>            : auto Compiler::default_init(const ty::Type&amp; type) -&gt; Val {</a>
-<a name="245"><span class="lineNum">     245 </span>            :   if (const auto* int_type = dyn_cast&lt;ty::Int&gt;(&amp;type))</a>
+<a name="244"><span class="lineNum">     244 </span>            : auto Compiler::default_init(const ty::Type* type) -&gt; Val {</a>
+<a name="245"><span class="lineNum">     245 </span>            :   if (const auto* int_type = dyn_cast&lt;ty::Int&gt;(type))</a>
 <a name="246"><span class="lineNum">     246 </span>            :     return m_builder-&gt;getIntN(int_type-&gt;size(), 0);</a>
-<a name="247"><span class="lineNum">     247 </span>            :   if (isa&lt;ty::Qual&gt;(&amp;type))</a>
+<a name="247"><span class="lineNum">     247 </span>            :   if (isa&lt;ty::Qual&gt;(type))</a>
 <a name="248"><span class="lineNum">     248 </span>            :     throw std::runtime_error(&quot;Cannot default-initialize a reference&quot;);</a>
-<a name="249"><span class="lineNum">     249 </span>            :   if (const auto* ptr_type = dyn_cast&lt;ty::Ptr&gt;(&amp;type)) {</a>
+<a name="249"><span class="lineNum">     249 </span>            :   if (const auto* ptr_type = dyn_cast&lt;ty::Ptr&gt;(type)) {</a>
 <a name="250"><span class="lineNum">     250 </span>            :     switch (ptr_type-&gt;qualifier()) {</a>
 <a name="251"><span class="lineNum">     251 </span>            :     default: llvm_unreachable(&quot;Ptr type cannot hold this qualifier&quot;);</a>
 <a name="252"><span class="lineNum">     252 </span>            :     case Qualifier::Ptr:</a>
-<a name="253"><span class="lineNum">     253 </span>            :       llvm::ConstantPointerNull::get(llvm::PointerType::getUnqual(llvm_type(ptr_type-&gt;base())));</a>
+<a name="253"><span class="lineNum">     253 </span>            :       llvm::ConstantPointerNull::get(llvm::PointerType::getUnqual(llvm_type(&amp;ptr_type-&gt;base())));</a>
 <a name="254"><span class="lineNum">     254 </span>            :       break;</a>
 <a name="255"><span class="lineNum">     255 </span>            :     case Qualifier::Slice:</a>
-<a name="256"><span class="lineNum">     256 </span>            :       auto* ptr_member_type = llvm::PointerType::getUnqual(llvm_type(ptr_type-&gt;base()));</a>
+<a name="256"><span class="lineNum">     256 </span>            :       auto* ptr_member_type = llvm::PointerType::getUnqual(llvm_type(&amp;ptr_type-&gt;base()));</a>
 <a name="257"><span class="lineNum">     257 </span>            :       auto* struct_type = cast&lt;llvm::StructType&gt;(llvm_type(type));</a>
 <a name="258"><span class="lineNum">     258 </span>            :       return llvm::ConstantStruct::get(struct_type, llvm::ConstantPointerNull::get(ptr_member_type),</a>
 <a name="259"><span class="lineNum">     259 </span>            :                                        m_builder-&gt;getInt64(0));</a>
 <a name="260"><span class="lineNum">     260 </span>            :     }</a>
 <a name="261"><span class="lineNum">     261 </span>            :   }</a>
-<a name="262"><span class="lineNum">     262 </span>            :   if (const auto* struct_type = dyn_cast&lt;ty::Struct&gt;(&amp;type)) {</a>
+<a name="262"><span class="lineNum">     262 </span>            :   if (const auto* struct_type = dyn_cast&lt;ty::Struct&gt;(type)) {</a>
 <a name="263"><span class="lineNum">     263 </span>            :     auto* llvm_ty = cast&lt;llvm::StructType&gt;(llvm_type(type));</a>
 <a name="264"><span class="lineNum">     264 </span>            :     llvm::Value* val = llvm::UndefValue::get(llvm_ty);</a>
 <a name="265"><span class="lineNum">     265 </span>            : </a>
 <a name="266"><span class="lineNum">     266 </span>            :     for (const auto&amp; i : llvm::enumerate(struct_type-&gt;fields()))</a>
-<a name="267"><span class="lineNum">     267 </span>            :       val = m_builder-&gt;CreateInsertValue(val, default_init(*i.value()-&gt;type().val_ty()), i.index());</a>
+<a name="267"><span class="lineNum">     267 </span>            :       val = m_builder-&gt;CreateInsertValue(val, default_init(i.value()-&gt;type-&gt;val_ty()), i.index());</a>
 <a name="268"><span class="lineNum">     268 </span>            : </a>
 <a name="269"><span class="lineNum">     269 </span>            :     return val;</a>
 <a name="270"><span class="lineNum">     270 </span>            :   }</a>
 <a name="271"><span class="lineNum">     271 </span>            : </a>
-<a name="272"><span class="lineNum">     272 </span>            :   throw std::runtime_error(&quot;Cannot default-initialize &quot;s + type.name());</a>
+<a name="272"><span class="lineNum">     272 </span>            :   throw std::runtime_error(&quot;Cannot default-initialize &quot;s + type-&gt;name());</a>
 <a name="273"><span class="lineNum">     273 </span>            : }</a>
 <a name="274"><span class="lineNum">     274 </span>            : </a>
 <a name="275"><span class="lineNum">     275 </span>            : auto Compiler::declare(Fn&amp; fn, bool mangle) -&gt; llvm::Function* {</a>
@@ -340,10 +340,10 @@
 <a name="282"><span class="lineNum">     282 </span>            :   auto* llvm_ret_type = llvm::Type::getVoidTy(*m_context);</a>
 <a name="283"><span class="lineNum">     283 </span>            :   auto llvm_args = vector&lt;llvm::Type*&gt;{};</a>
 <a name="284"><span class="lineNum">     284 </span>            :   if (fn_decl.ret())</a>
-<a name="285"><span class="lineNum">     285 </span>            :     llvm_ret_type = llvm_type(*fn_decl.ret()-&gt;val_ty());</a>
+<a name="285"><span class="lineNum">     285 </span>            :     llvm_ret_type = llvm_type(fn_decl.ret()-&gt;val_ty());</a>
 <a name="286"><span class="lineNum">     286 </span>            : </a>
 <a name="287"><span class="lineNum">     287 </span>            :   for (const auto&amp; i : fn_decl.args())</a>
-<a name="288"><span class="lineNum">     288 </span>            :     llvm_args.push_back(llvm_type(*i.val_ty()));</a>
+<a name="288"><span class="lineNum">     288 </span>            :     llvm_args.push_back(llvm_type(i.val_ty()));</a>
 <a name="289"><span class="lineNum">     289 </span>            : </a>
 <a name="290"><span class="lineNum">     290 </span>            :   llvm::FunctionType* fn_t = llvm::FunctionType::get(llvm_ret_type, llvm_args, fn_decl.varargs());</a>
 <a name="291"><span class="lineNum">     291 </span>            : </a>
@@ -356,7 +356,7 @@
 <a name="298"><span class="lineNum">     298 </span>            :   fn.base.llvm = llvm_fn;</a>
 <a name="299"><span class="lineNum">     299 </span>            : </a>
 <a name="300"><span class="lineNum">     300 </span>            :   for (auto [llvm_arg, decl_arg] : llvm::zip(llvm_fn-&gt;args(), fn_decl.args()))</a>
-<a name="301"><span class="lineNum">     301 </span>            :     llvm_arg.setName(&quot;arg.&quot;s + decl_arg.name());</a>
+<a name="301"><span class="lineNum">     301 </span>            :     llvm_arg.setName(&quot;arg.&quot;s + decl_arg.name);</a>
 <a name="302"><span class="lineNum">     302 </span>            : </a>
 <a name="303"><span class="lineNum">     303 </span>            :   // Primitive definitions that got this far are actually external functions; declare its prototype but not its</a>
 <a name="304"><span class="lineNum">     304 </span>            :   // body</a>
@@ -373,11 +373,11 @@
 <a name="315"><span class="lineNum">     315 </span>            :     return ctor.base.llvm;</a>
 <a name="316"><span class="lineNum">     316 </span>            : </a>
 <a name="317"><span class="lineNum">     317 </span>            :   const auto&amp; ctor_decl = ctor.ast();</a>
-<a name="318"><span class="lineNum">     318 </span>            :   auto* llvm_ret_type = llvm_type(*ctor.base.self_ty);</a>
+<a name="318"><span class="lineNum">     318 </span>            :   auto* llvm_ret_type = llvm_type(ctor.base.self_ty);</a>
 <a name="319"><span class="lineNum">     319 </span>            :   auto llvm_args = vector&lt;llvm::Type*&gt;{};</a>
 <a name="320"><span class="lineNum">     320 </span>            : </a>
 <a name="321"><span class="lineNum">     321 </span>            :   for (const auto&amp; i : ctor_decl.args())</a>
-<a name="322"><span class="lineNum">     322 </span>            :     llvm_args.push_back(llvm_type(*Ctor::arg_type(i)));</a>
+<a name="322"><span class="lineNum">     322 </span>            :     llvm_args.push_back(llvm_type(Ctor::arg_type(i)));</a>
 <a name="323"><span class="lineNum">     323 </span>            : </a>
 <a name="324"><span class="lineNum">     324 </span>            :   llvm::FunctionType* fn_t = llvm::FunctionType::get(llvm_ret_type, llvm_args, false);</a>
 <a name="325"><span class="lineNum">     325 </span>            : </a>
@@ -406,7 +406,7 @@
 <a name="348"><span class="lineNum">     348 </span>            :     return true;</a>
 <a name="349"><span class="lineNum">     349 </span>            : </a>
 <a name="350"><span class="lineNum">     350 </span>            :   if (isa&lt;ty::Qual&gt;(type))</a>
-<a name="351"><span class="lineNum">     351 </span>            :     return is_trivially_destructible(type-&gt;qual_base());</a>
+<a name="351"><span class="lineNum">     351 </span>            :     return is_trivially_destructible(type-&gt;mut_base());</a>
 <a name="352"><span class="lineNum">     352 </span>            : </a>
 <a name="353"><span class="lineNum">     353 </span>            :   if (const auto* ptr_type = dyn_cast&lt;ty::Ptr&gt;(type))</a>
 <a name="354"><span class="lineNum">     354 </span>            :     return !ptr_type-&gt;has_qualifier(Qualifier::Slice);</a>
@@ -421,7 +421,7 @@
 <a name="363"><span class="lineNum">     363 </span>            : void Compiler::destruct_all_in_scope() {</a>
 <a name="364"><span class="lineNum">     364 </span>            :   for (const auto&amp; [k, v] : m_scope)</a>
 <a name="365"><span class="lineNum">     365 </span>            :     if (isa&lt;ast::VarDecl&gt;(v.ast) &amp;&amp; v.owning &amp;&amp; !is_trivially_destructible(v.ast.val_ty()))</a>
-<a name="366"><span class="lineNum">     366 </span>            :       destruct(v.value, *v.ast.val_ty());</a>
+<a name="366"><span class="lineNum">     366 </span>            :       destruct(v.value, v.ast.val_ty());</a>
 <a name="367"><span class="lineNum">     367 </span>            : }</a>
 <a name="368"><span class="lineNum">     368 </span>            : </a>
 <a name="369"><span class="lineNum">     369 </span>            : template &lt;typename T&gt; void Compiler::setup_fn_base(T&amp; fn) {</a>
@@ -436,11 +436,11 @@
 <a name="378"><span class="lineNum">     378 </span>            :   }</a>
 <a name="379"><span class="lineNum">     379 </span>            :   // Allocate local variables for each parameter</a>
 <a name="380"><span class="lineNum">     380 </span>            :   for (auto [arg, ast_arg] : llvm::zip(fn.base.llvm-&gt;args(), fn.ast().args())) {</a>
-<a name="381"><span class="lineNum">     381 </span>            :     const auto&amp; type = *T::arg_type(ast_arg);</a>
+<a name="381"><span class="lineNum">     381 </span>            :     const auto* type = T::arg_type(ast_arg);</a>
 <a name="382"><span class="lineNum">     382 </span>            :     auto name = T::arg_name(ast_arg);</a>
 <a name="383"><span class="lineNum">     383 </span>            :     auto&amp; val = T::common_ast(ast_arg);</a>
 <a name="384"><span class="lineNum">     384 </span>            :     llvm::Value* alloc = nullptr;</a>
-<a name="385"><span class="lineNum">     385 </span>            :     if (const auto* qual_type = dyn_cast&lt;ty::Qual&gt;(&amp;type)) {</a>
+<a name="385"><span class="lineNum">     385 </span>            :     if (const auto* qual_type = dyn_cast&lt;ty::Qual&gt;(type)) {</a>
 <a name="386"><span class="lineNum">     386 </span>            :       if (qual_type-&gt;is_mut()) {</a>
 <a name="387"><span class="lineNum">     387 </span>            :         m_scope.insert({name, {.value = &amp;arg, .ast = val, .owning = false}}); // We don't own parameters</a>
 <a name="388"><span class="lineNum">     388 </span>            :         continue;</a>
@@ -470,7 +470,7 @@
 <a name="412"><span class="lineNum">     412 </span>            : void Compiler::define(Ctor&amp; ctor) {</a>
 <a name="413"><span class="lineNum">     413 </span>            :   setup_fn_base(ctor);</a>
 <a name="414"><span class="lineNum">     414 </span>            : </a>
-<a name="415"><span class="lineNum">     415 </span>            :   auto* ctor_type = llvm_type(*ctor.base.self_ty);</a>
+<a name="415"><span class="lineNum">     415 </span>            :   auto* ctor_type = llvm_type(ctor.base.self_ty);</a>
 <a name="416"><span class="lineNum">     416 </span>            :   Val base_value = llvm::UndefValue::get(ctor_type);</a>
 <a name="417"><span class="lineNum">     417 </span>            : </a>
 <a name="418"><span class="lineNum">     418 </span>            :   // Initialize fields for short `::x` constructor syntax</a>
@@ -591,7 +591,7 @@
 <a name="533"><span class="lineNum">     533 </span><span class="lineNoCov">          0 : template &lt;&gt; void Compiler::statement(const ast::VarDecl&amp; stat) {</span></a>
 <a name="534"><span class="lineNum">     534 </span>            :   // Locals are currently always mut, get the base type instead</a>
 <a name="535"><span class="lineNum">     535 </span>            :   // TODO(rymiel): revisit, probably extract logic</a>
-<a name="536"><span class="lineNum">     536 </span>            :   auto* var_type = llvm_type(*stat.val_ty()-&gt;qual_base());</a>
+<a name="536"><span class="lineNum">     536 </span>            :   auto* var_type = llvm_type(stat.val_ty()-&gt;mut_base());</a>
 <a name="537"><span class="lineNum">     537 </span>            : </a>
 <a name="538"><span class="lineNum">     538 </span>            :   if (stat.init()-&gt;val_ty()-&gt;is_mut()) {</a>
 <a name="539"><span class="lineNum">     539 </span>            :     auto expr_val = body_expression(*stat.init());</a>
@@ -637,7 +637,7 @@
 <a name="579"><span class="lineNum">     579 </span>            :   auto* val = in_scope.value.llvm;</a>
 <a name="580"><span class="lineNum">     580 </span>            :   // Function arguments act as locals, but they are immutable, but still behind a reference (alloca)</a>
 <a name="581"><span class="lineNum">     581 </span>            :   if (!in_scope.ast.val_ty()-&gt;is_mut())</a>
-<a name="582"><span class="lineNum">     582 </span>            :     return m_builder-&gt;CreateLoad(llvm_type(*in_scope.ast.val_ty()), val);</a>
+<a name="582"><span class="lineNum">     582 </span>            :     return m_builder-&gt;CreateLoad(llvm_type(in_scope.ast.val_ty()), val);</a>
 <a name="583"><span class="lineNum">     583 </span>            : </a>
 <a name="584"><span class="lineNum">     584 </span>            :   return val;</a>
 <a name="585"><span class="lineNum">     585 </span>            : }</a>
@@ -685,7 +685,7 @@
 <a name="627"><span class="lineNum">     627 </span>            :     return m_builder-&gt;CreateExtractValue(args.at(0), 1);</a>
 <a name="628"><span class="lineNum">     628 </span>            :   if (primitive == &quot;slice_ptr&quot;) {</a>
 <a name="629"><span class="lineNum">     629 </span>            :     if (returns_mut) {</a>
-<a name="630"><span class="lineNum">     630 </span>            :       llvm::Type* result_type = llvm_type(types[0]-&gt;without_qual());</a>
+<a name="630"><span class="lineNum">     630 </span>            :       llvm::Type* result_type = llvm_type(&amp;types[0]-&gt;without_mut());</a>
 <a name="631"><span class="lineNum">     631 </span>            :       return m_builder-&gt;CreateStructGEP(result_type, args.at(0), 0, &quot;sl.ptr.mut&quot;);</a>
 <a name="632"><span class="lineNum">     632 </span>            :     }</a>
 <a name="633"><span class="lineNum">     633 </span>            :     return m_builder-&gt;CreateExtractValue(args.at(0), 0, &quot;sl.ptr.x&quot;);</a>
@@ -695,14 +695,14 @@
 <a name="637"><span class="lineNum">     637 </span>            :         args.at(0), m_builder-&gt;CreateAdd(m_builder-&gt;CreateExtractValue(args.at(0), 1), args.at(1)), 1);</a>
 <a name="638"><span class="lineNum">     638 </span>            :   }</a>
 <a name="639"><span class="lineNum">     639 </span>            :   if (primitive == &quot;set_at&quot;) {</a>
-<a name="640"><span class="lineNum">     640 </span>            :     auto* result_type = llvm_type(*types[0]-&gt;without_qual().ptr_base());</a>
+<a name="640"><span class="lineNum">     640 </span>            :     auto* result_type = llvm_type(types[0]-&gt;without_mut().ptr_base());</a>
 <a name="641"><span class="lineNum">     641 </span>            :     llvm::Value* value = args.at(2);</a>
 <a name="642"><span class="lineNum">     642 </span>            :     llvm::Value* base = m_builder-&gt;CreateGEP(result_type, args.at(0), args.at(1), &quot;p.set_at.gep&quot;);</a>
 <a name="643"><span class="lineNum">     643 </span>            :     m_builder-&gt;CreateStore(value, base);</a>
 <a name="644"><span class="lineNum">     644 </span>            :     return args.at(2);</a>
 <a name="645"><span class="lineNum">     645 </span>            :   }</a>
 <a name="646"><span class="lineNum">     646 </span>            :   if (primitive == &quot;get_at&quot;) {</a>
-<a name="647"><span class="lineNum">     647 </span>            :     auto* result_type = llvm_type(*types[0]-&gt;without_qual().ptr_base());</a>
+<a name="647"><span class="lineNum">     647 </span>            :     auto* result_type = llvm_type(types[0]-&gt;without_mut().ptr_base());</a>
 <a name="648"><span class="lineNum">     648 </span>            :     llvm::Value* base = args.at(0);</a>
 <a name="649"><span class="lineNum">     649 </span>            :     base = m_builder-&gt;CreateGEP(result_type, base, args.at(1), &quot;p.get_at.gep&quot;);</a>
 <a name="650"><span class="lineNum">     650 </span>            :     return base;</a>
@@ -773,7 +773,7 @@
 <a name="715"><span class="lineNum">     715 </span>            :     int base_offset = field_access-&gt;offset();</a>
 <a name="716"><span class="lineNum">     716 </span>            : </a>
 <a name="717"><span class="lineNum">     717 </span>            :     auto expr_val = body_expression(*expr.value());</a>
-<a name="718"><span class="lineNum">     718 </span>            :     auto* struct_type = llvm_type(cast&lt;ty::Struct&gt;(*struct_base-&gt;qual_base()));</a>
+<a name="718"><span class="lineNum">     718 </span>            :     auto* struct_type = llvm_type(cast&lt;ty::Struct&gt;(struct_base-&gt;mut_base()));</a>
 <a name="719"><span class="lineNum">     719 </span>            : </a>
 <a name="720"><span class="lineNum">     720 </span>            :     yume_assert(base_offset &gt;= 0, &quot;Field access has unknown offset into struct&quot;);</a>
 <a name="721"><span class="lineNum">     721 </span>            : </a>
@@ -786,7 +786,7 @@
 <a name="728"><span class="lineNum">     728 </span>            : </a>
 <a name="729"><span class="lineNum">     729 </span><span class="lineNoCov">          0 : template &lt;&gt; auto Compiler::expression(const ast::CtorExpr&amp; expr) -&gt; Val {</span></a>
 <a name="730"><span class="lineNum">     730 </span>            :   const auto&amp; type = *expr.val_ty();</a>
-<a name="731"><span class="lineNum">     731 </span>            :   if (const auto* struct_type = dyn_cast&lt;ty::Struct&gt;(&amp;type.without_qual())) {</a>
+<a name="731"><span class="lineNum">     731 </span>            :   if (const auto* struct_type = dyn_cast&lt;ty::Struct&gt;(&amp;type.without_mut())) {</a>
 <a name="732"><span class="lineNum">     732 </span>            : </a>
 <a name="733"><span class="lineNum">     733 </span>            :     // TODO(rymiel): #4 determine what kind of allocation must be done, and if at all. It'll probably require a</a>
 <a name="734"><span class="lineNum">     734 </span>            :     // complicated semantic step to determine object lifetime, which would probably be evaluated before compilation of</a>
@@ -822,25 +822,25 @@
 <a name="764"><span class="lineNum">     764 </span>            : </a>
 <a name="765"><span class="lineNum">     765 </span>            :     return base_value;</a>
 <a name="766"><span class="lineNum">     766 </span>            :   }</a>
-<a name="767"><span class="lineNum">     767 </span>            :   if (const auto* int_type = dyn_cast&lt;ty::Int&gt;(&amp;type.without_qual())) {</a>
+<a name="767"><span class="lineNum">     767 </span>            :   if (const auto* int_type = dyn_cast&lt;ty::Int&gt;(&amp;type.without_mut())) {</a>
 <a name="768"><span class="lineNum">     768 </span>            :     yume_assert(expr.args().size() == 1, &quot;Numeric cast can only contain a single argument&quot;);</a>
 <a name="769"><span class="lineNum">     769 </span>            :     const auto&amp; cast_from = expr.args()[0];</a>
-<a name="770"><span class="lineNum">     770 </span>            :     yume_assert(isa&lt;ty::Int&gt;(cast_from-&gt;val_ty()-&gt;without_qual()), &quot;Numeric cast must convert from int&quot;);</a>
+<a name="770"><span class="lineNum">     770 </span>            :     yume_assert(isa&lt;ty::Int&gt;(cast_from-&gt;val_ty()-&gt;without_mut()), &quot;Numeric cast must convert from int&quot;);</a>
 <a name="771"><span class="lineNum">     771 </span>            :     auto base = body_expression(*cast_from);</a>
-<a name="772"><span class="lineNum">     772 </span>            :     if (cast&lt;ty::Int&gt;(cast_from-&gt;val_ty()-&gt;without_qual()).is_signed()) {</a>
-<a name="773"><span class="lineNum">     773 </span>            :       return m_builder-&gt;CreateSExtOrTrunc(base, llvm_type(*int_type));</a>
+<a name="772"><span class="lineNum">     772 </span>            :     if (cast&lt;ty::Int&gt;(cast_from-&gt;val_ty()-&gt;without_mut()).is_signed()) {</a>
+<a name="773"><span class="lineNum">     773 </span>            :       return m_builder-&gt;CreateSExtOrTrunc(base, llvm_type(int_type));</a>
 <a name="774"><span class="lineNum">     774 </span>            :     }</a>
-<a name="775"><span class="lineNum">     775 </span>            :     return m_builder-&gt;CreateZExtOrTrunc(base, llvm_type(*int_type));</a>
+<a name="775"><span class="lineNum">     775 </span>            :     return m_builder-&gt;CreateZExtOrTrunc(base, llvm_type(int_type));</a>
 <a name="776"><span class="lineNum">     776 </span>            :   }</a>
-<a name="777"><span class="lineNum">     777 </span>            :   if (const auto* slice_type = dyn_cast&lt;ty::Ptr&gt;(&amp;type.without_qual());</a>
+<a name="777"><span class="lineNum">     777 </span>            :   if (const auto* slice_type = dyn_cast&lt;ty::Ptr&gt;(&amp;type.without_mut());</a>
 <a name="778"><span class="lineNum">     778 </span>            :       slice_type != nullptr &amp;&amp; slice_type-&gt;has_qualifier(Qualifier::Slice)) {</a>
 <a name="779"><span class="lineNum">     779 </span>            :     yume_assert(expr.args().size() == 1, &quot;Slice constructor can only contain a single argument&quot;);</a>
 <a name="780"><span class="lineNum">     780 </span>            :     const auto&amp; slice_size_expr = expr.args()[0];</a>
-<a name="781"><span class="lineNum">     781 </span>            :     yume_assert(isa&lt;ty::Int&gt;(slice_size_expr-&gt;val_ty()-&gt;without_qual()), &quot;Slice constructor must convert from int&quot;);</a>
+<a name="781"><span class="lineNum">     781 </span>            :     yume_assert(isa&lt;ty::Int&gt;(slice_size_expr-&gt;val_ty()-&gt;without_mut()), &quot;Slice constructor must convert from int&quot;);</a>
 <a name="782"><span class="lineNum">     782 </span>            :     auto slice_size = body_expression(*slice_size_expr);</a>
 <a name="783"><span class="lineNum">     783 </span>            : </a>
-<a name="784"><span class="lineNum">     784 </span>            :     auto* llvm_slice_type = llvm_type(*slice_type);</a>
-<a name="785"><span class="lineNum">     785 </span>            :     const auto&amp; base_ty_type = *slice_type-&gt;ptr_base(); // ???</a>
+<a name="784"><span class="lineNum">     784 </span>            :     auto* llvm_slice_type = llvm_type(slice_type);</a>
+<a name="785"><span class="lineNum">     785 </span>            :     const auto* base_ty_type = slice_type-&gt;ptr_base(); // ???</a>
 <a name="786"><span class="lineNum">     786 </span>            :     auto* base_type = llvm_type(base_ty_type);</a>
 <a name="787"><span class="lineNum">     787 </span>            : </a>
 <a name="788"><span class="lineNum">     788 </span>            :     //// Stack allocation</a>
@@ -920,8 +920,8 @@
 <a name="862"><span class="lineNum">     862 </span><span class="lineNoCov">          0 : template &lt;&gt; auto Compiler::expression(const ast::SliceExpr&amp; expr) -&gt; Val {</span></a>
 <a name="863"><span class="lineNum">     863 </span>            :   auto* slice_size = m_builder-&gt;getInt64(expr.args().size());</a>
 <a name="864"><span class="lineNum">     864 </span>            : </a>
-<a name="865"><span class="lineNum">     865 </span>            :   auto* slice_type = llvm_type(*expr.val_ty());</a>
-<a name="866"><span class="lineNum">     866 </span>            :   auto* base_type = llvm_type(*expr.val_ty()-&gt;ptr_base()); // ???</a>
+<a name="865"><span class="lineNum">     865 </span>            :   auto* slice_type = llvm_type(expr.val_ty());</a>
+<a name="866"><span class="lineNum">     866 </span>            :   auto* base_type = llvm_type(expr.val_ty()-&gt;ptr_base());</a>
 <a name="867"><span class="lineNum">     867 </span>            : </a>
 <a name="868"><span class="lineNum">     868 </span>            :   auto* alloc_size = llvm::ConstantExpr::getSizeOf(base_type);</a>
 <a name="869"><span class="lineNum">     869 </span>            :   auto* ptr_alloc = llvm::CallInst::CreateMalloc(m_builder-&gt;GetInsertBlock(), m_builder-&gt;getInt64Ty(), base_type,</a>
@@ -947,7 +947,7 @@
 <a name="889"><span class="lineNum">     889 </span>            :   if (!expr.val_ty()-&gt;is_mut())</a>
 <a name="890"><span class="lineNum">     890 </span>            :     return m_builder-&gt;CreateExtractValue(base, base_offset, &quot;s.field.nm.&quot;s + base_name);</a>
 <a name="891"><span class="lineNum">     891 </span>            : </a>
-<a name="892"><span class="lineNum">     892 </span>            :   return m_builder-&gt;CreateStructGEP(llvm_type(*expr.base()-&gt;val_ty()-&gt;qual_base()), base, base_offset,</a>
+<a name="892"><span class="lineNum">     892 </span>            :   return m_builder-&gt;CreateStructGEP(llvm_type(expr.base()-&gt;val_ty()-&gt;mut_base()), base, base_offset,</a>
 <a name="893"><span class="lineNum">     893 </span>            :                                     &quot;s.field.m.&quot;s + base_name);</a>
 <a name="894"><span class="lineNum">     894 </span>            : }</a>
 <a name="895"><span class="lineNum">     895 </span>            : </a>
@@ -958,12 +958,12 @@
 <a name="900"><span class="lineNum">     900 </span>            : </a>
 <a name="901"><span class="lineNum">     901 </span>            :   if (expr.conversion().dereference) {</a>
 <a name="902"><span class="lineNum">     902 </span>            :     yume_assert(current_ty-&gt;is_mut(), &quot;Source type must be mutable when implicitly derefencing&quot;);</a>
-<a name="903"><span class="lineNum">     903 </span>            :     current_ty = current_ty-&gt;qual_base();</a>
-<a name="904"><span class="lineNum">     904 </span>            :     base = m_builder-&gt;CreateLoad(llvm_type(*current_ty), base, &quot;ic.deref&quot;);</a>
+<a name="903"><span class="lineNum">     903 </span>            :     current_ty = current_ty-&gt;mut_base();</a>
+<a name="904"><span class="lineNum">     904 </span>            :     base = m_builder-&gt;CreateLoad(llvm_type(current_ty), base, &quot;ic.deref&quot;);</a>
 <a name="905"><span class="lineNum">     905 </span>            :   }</a>
 <a name="906"><span class="lineNum">     906 </span>            : </a>
 <a name="907"><span class="lineNum">     907 </span>            :   if (expr.conversion().kind == ty::Conv::Int) {</a>
-<a name="908"><span class="lineNum">     908 </span>            :     return m_builder-&gt;CreateIntCast(base, llvm_type(*target_ty), cast&lt;ty::Int&gt;(current_ty)-&gt;is_signed(), &quot;ic.int&quot;);</a>
+<a name="908"><span class="lineNum">     908 </span>            :     return m_builder-&gt;CreateIntCast(base, llvm_type(target_ty), cast&lt;ty::Int&gt;(current_ty)-&gt;is_signed(), &quot;ic.int&quot;);</a>
 <a name="909"><span class="lineNum">     909 </span>            :   }</a>
 <a name="910"><span class="lineNum">     910 </span>            : </a>
 <a name="911"><span class="lineNum">     911 </span>            :   return base;</a>
@@ -992,12 +992,12 @@
 <a name="934"><span class="lineNum">     934 </span>            :   for (const auto&amp; i : llvm::enumerate(fn.ast().args())) {</a>
 <a name="935"><span class="lineNum">     935 </span>            :     if (i.index() &gt; 0)</a>
 <a name="936"><span class="lineNum">     936 </span>            :       ss &lt;&lt; &quot;,&quot;;</a>
-<a name="937"><span class="lineNum">     937 </span>            :     ss &lt;&lt; mangle_name(*i.value().type().val_ty(), &amp;fn);</a>
+<a name="937"><span class="lineNum">     937 </span>            :     ss &lt;&lt; mangle_name(i.value().type-&gt;val_ty(), &amp;fn);</a>
 <a name="938"><span class="lineNum">     938 </span>            :   }</a>
 <a name="939"><span class="lineNum">     939 </span>            :   ss &lt;&lt; &quot;)&quot;;</a>
 <a name="940"><span class="lineNum">     940 </span>            :   // TODO(rymiel): should mangled names even contain the return type...?</a>
 <a name="941"><span class="lineNum">     941 </span>            :   if (fn.ast().ret().has_value())</a>
-<a name="942"><span class="lineNum">     942 </span>            :     ss &lt;&lt; mangle_name(*fn.ast().ret()-&gt;val_ty(), &amp;fn);</a>
+<a name="942"><span class="lineNum">     942 </span>            :     ss &lt;&lt; mangle_name(fn.ast().ret()-&gt;val_ty(), &amp;fn);</a>
 <a name="943"><span class="lineNum">     943 </span>            : </a>
 <a name="944"><span class="lineNum">     944 </span>            :   return ss.str();</a>
 <a name="945"><span class="lineNum">     945 </span>            : }</a>
@@ -1010,35 +1010,35 @@
 <a name="952"><span class="lineNum">     952 </span>            :   for (const auto&amp; i : llvm::enumerate(ctor.ast().args())) {</a>
 <a name="953"><span class="lineNum">     953 </span>            :     if (i.index() &gt; 0)</a>
 <a name="954"><span class="lineNum">     954 </span>            :       ss &lt;&lt; &quot;,&quot;;</a>
-<a name="955"><span class="lineNum">     955 </span>            :     ss &lt;&lt; mangle_name(*Ctor::arg_type(i.value()), &amp;ctor);</a>
+<a name="955"><span class="lineNum">     955 </span>            :     ss &lt;&lt; mangle_name(Ctor::arg_type(i.value()), &amp;ctor);</a>
 <a name="956"><span class="lineNum">     956 </span>            :   }</a>
 <a name="957"><span class="lineNum">     957 </span>            :   ss &lt;&lt; &quot;)&quot;;</a>
 <a name="958"><span class="lineNum">     958 </span>            : </a>
 <a name="959"><span class="lineNum">     959 </span>            :   return ss.str();</a>
 <a name="960"><span class="lineNum">     960 </span>            : }</a>
 <a name="961"><span class="lineNum">     961 </span>            : </a>
-<a name="962"><span class="lineNum">     962 </span>            : auto Compiler::mangle_name(const ty::Type&amp; ast_type, DeclLike parent) -&gt; string {</a>
+<a name="962"><span class="lineNum">     962 </span>            : auto Compiler::mangle_name(const ty::Type* ast_type, DeclLike parent) -&gt; string {</a>
 <a name="963"><span class="lineNum">     963 </span>            :   stringstream ss{};</a>
-<a name="964"><span class="lineNum">     964 </span>            :   if (const auto* qual_type = dyn_cast&lt;ty::Qual&gt;(&amp;ast_type)) {</a>
-<a name="965"><span class="lineNum">     965 </span>            :     ss &lt;&lt; mangle_name(qual_type-&gt;base(), parent);</a>
+<a name="964"><span class="lineNum">     964 </span>            :   if (const auto* qual_type = dyn_cast&lt;ty::Qual&gt;(ast_type)) {</a>
+<a name="965"><span class="lineNum">     965 </span>            :     ss &lt;&lt; mangle_name(&amp;qual_type-&gt;base(), parent);</a>
 <a name="966"><span class="lineNum">     966 </span>            :     if (qual_type-&gt;has_qualifier(Qualifier::Mut))</a>
 <a name="967"><span class="lineNum">     967 </span>            :       ss &lt;&lt; &quot;&amp;&quot;;</a>
 <a name="968"><span class="lineNum">     968 </span>            :     return ss.str();</a>
 <a name="969"><span class="lineNum">     969 </span>            :   }</a>
-<a name="970"><span class="lineNum">     970 </span>            :   if (const auto* ptr_type = dyn_cast&lt;ty::Ptr&gt;(&amp;ast_type)) {</a>
-<a name="971"><span class="lineNum">     971 </span>            :     ss &lt;&lt; mangle_name(ptr_type-&gt;base(), parent);</a>
+<a name="970"><span class="lineNum">     970 </span>            :   if (const auto* ptr_type = dyn_cast&lt;ty::Ptr&gt;(ast_type)) {</a>
+<a name="971"><span class="lineNum">     971 </span>            :     ss &lt;&lt; mangle_name(&amp;ptr_type-&gt;base(), parent);</a>
 <a name="972"><span class="lineNum">     972 </span>            :     if (ptr_type-&gt;has_qualifier(Qualifier::Ptr))</a>
 <a name="973"><span class="lineNum">     973 </span>            :       ss &lt;&lt; &quot;*&quot;;</a>
 <a name="974"><span class="lineNum">     974 </span>            :     if (ptr_type-&gt;has_qualifier(Qualifier::Slice))</a>
 <a name="975"><span class="lineNum">     975 </span>            :       ss &lt;&lt; &quot;[&quot;;</a>
 <a name="976"><span class="lineNum">     976 </span>            :     return ss.str();</a>
 <a name="977"><span class="lineNum">     977 </span>            :   }</a>
-<a name="978"><span class="lineNum">     978 </span>            :   if (const auto* generic_type = dyn_cast&lt;ty::Generic&gt;(&amp;ast_type)) {</a>
+<a name="978"><span class="lineNum">     978 </span>            :   if (const auto* generic_type = dyn_cast&lt;ty::Generic&gt;(ast_type)) {</a>
 <a name="979"><span class="lineNum">     979 </span>            :     auto match = parent.subs()-&gt;find(generic_type-&gt;name());</a>
 <a name="980"><span class="lineNum">     980 </span>            :     yume_assert(match != parent.subs()-&gt;end(), &quot;Cannot mangle unsubstituted generic&quot;);</a>
 <a name="981"><span class="lineNum">     981 </span>            :     return match-&gt;second-&gt;name();</a>
 <a name="982"><span class="lineNum">     982 </span>            :   }</a>
-<a name="983"><span class="lineNum">     983 </span>            :   return ast_type.name();</a>
+<a name="983"><span class="lineNum">     983 </span>            :   return ast_type-&gt;name();</a>
 <a name="984"><span class="lineNum">     984 </span>            : }</a>
 <a name="985"><span class="lineNum">     985 </span>            : </a>
 <a name="986"><span class="lineNum">     986 </span>            : void Compiler::body_statement(const ast::Stmt&amp; stat) {</a>

@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-07-16 21:15:25</td>
+            <td class="headerValue">2022-07-17 00:18:46</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -136,7 +136,7 @@
 <a name="78"><span class="lineNum">      78 </span>            : auto QualType::clone() const -&gt; QualType* { return new QualType(tok(), dup(m_base), m_qualifier); }</a>
 <a name="79"><span class="lineNum">      79 </span>            : auto TemplatedType::clone() const -&gt; TemplatedType* { return new TemplatedType(tok(), dup(m_base), dup(m_type_args)); }</a>
 <a name="80"><span class="lineNum">      80 </span>            : auto SelfType::clone() const -&gt; SelfType* { return new SelfType(tok()); }</a>
-<a name="81"><span class="lineNum">      81 </span>            : auto TypeName::clone() const -&gt; TypeName* { return new TypeName(tok(), dup(m_type), m_name); }</a>
+<a name="81"><span class="lineNum">      81 </span>            : auto TypeName::clone() const -&gt; TypeName* { return new TypeName(tok(), dup(type), name); }</a>
 <a name="82"><span class="lineNum">      82 </span>            : auto Compound::clone() const -&gt; Compound* { return new Compound(tok(), dup(m_body)); }</a>
 <a name="83"><span class="lineNum">      83 </span>            : auto VarExpr::clone() const -&gt; VarExpr* { return new VarExpr(tok(), m_name); }</a>
 <a name="84"><span class="lineNum">      84 </span>            : auto CallExpr::clone() const -&gt; CallExpr* { return new CallExpr(tok(), m_name, dup(m_args)); }</a>

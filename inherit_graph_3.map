@@ -3,7 +3,7 @@
 <area shape="rect" id="node2" href="$classyume_1_1ast_1_1IfClause.html" title="Clauses of an if statement IfStmt." alt="" coords="171,411,301,437"/>
 <area shape="rect" id="node3" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="181,461,291,488"/>
 <area shape="rect" id="node26" href="$classyume_1_1ast_1_1Type.html" title="A type annotation. This (ast::Type) is distinct from the actual type of a value (ty::Type)." alt="" coords="181,715,291,741"/>
-<area shape="rect" id="node31" href="$classyume_1_1ast_1_1TypeName.html" title="A pair of a Type and an identifier, i.e. a parameter name." alt="" coords="163,765,309,792"/>
+<area shape="rect" id="node31" href="$structyume_1_1ast_1_1TypeName.html" title="A pair of a Type and an identifier, i.e. a parameter name." alt="" coords="163,765,309,792"/>
 <area shape="rect" id="node4" href="$classyume_1_1ast_1_1Compound.html" title="A statement consisting of multiple other statements, i.e. the body of a function." alt="" coords="371,183,516,209"/>
 <area shape="rect" id="node5" href="$classyume_1_1ast_1_1CtorDecl.html" title="A declaration of a custom constructor (def :new)." alt="" coords="377,233,510,260"/>
 <area shape="rect" id="node6" href="$classyume_1_1ast_1_1Expr.html" title="Expressions have an associated value and type." alt="" coords="389,284,497,311"/>

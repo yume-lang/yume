@@ -98,7 +98,7 @@ Collaboration diagram for yume::ty::Struct:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aa853869ee0ba90445d1484b53b70775e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Struct.html#aa853869ee0ba90445d1484b53b70775e">Struct</a> (string <a class="el" href="classyume_1_1ty_1_1Type.html#ae38fa8998004a15c0e70e6122ddf7685">name</a>, vector&lt; const <a class="el" href="classyume_1_1ast_1_1TypeName.html">ast::TypeName</a> * &gt; <a class="el" href="classyume_1_1ty_1_1Struct.html#a5f7541de2804ceca4ea5efaa3546ca0a">fields</a>)</td></tr>
+<tr class="memitem:aa853869ee0ba90445d1484b53b70775e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Struct.html#aa853869ee0ba90445d1484b53b70775e">Struct</a> (string <a class="el" href="classyume_1_1ty_1_1Type.html#ae38fa8998004a15c0e70e6122ddf7685">name</a>, vector&lt; const <a class="el" href="structyume_1_1ast_1_1TypeName.html">ast::TypeName</a> * &gt; <a class="el" href="classyume_1_1ty_1_1Struct.html#a5f7541de2804ceca4ea5efaa3546ca0a">fields</a>)</td></tr>
 <tr class="separator:aa853869ee0ba90445d1484b53b70775e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5f7541de2804ceca4ea5efaa3546ca0a"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Struct.html#a5f7541de2804ceca4ea5efaa3546ca0a">fields</a> () const -&gt; const auto &amp;</td></tr>
 <tr class="separator:a5f7541de2804ceca4ea5efaa3546ca0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -142,23 +142,21 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a8f10a61534bac1908cd3fdabee576adf inherit pub_methods_classyume_1_1ty_1_1Type"><td class="mdescLeft">&#160;</td><td class="mdescRight">The union of this and <code>other</code>. For example, the union of <code>T</code> and <code>T mut</code> is <code>T mut</code>.  <a href="classyume_1_1ty_1_1Type.html#a8f10a61534bac1908cd3fdabee576adf">More...</a><br /></td></tr>
 <tr class="separator:a8f10a61534bac1908cd3fdabee576adf inherit pub_methods_classyume_1_1ty_1_1Type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a948f65ace0dbe9392cfb13601aad0a62 inherit pub_methods_classyume_1_1ty_1_1Type"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Type.html#a948f65ace0dbe9392cfb13601aad0a62">intersect</a> (const <a class="el" href="classyume_1_1ty_1_1Type.html">Type</a> &amp;other) const -&gt; const <a class="el" href="classyume_1_1ty_1_1Type.html">Type</a> *</td></tr>
-<tr class="memdesc:a948f65ace0dbe9392cfb13601aad0a62 inherit pub_methods_classyume_1_1ty_1_1Type"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the intersection of this and <code>other</code>. For example, the intersection of <code>T and</code>T mut<code>is</code>T<code>. \returns</code>nullptr` is there's not intersection between the types.  <a href="classyume_1_1ty_1_1Type.html#a948f65ace0dbe9392cfb13601aad0a62">More...</a><br /></td></tr>
+<tr class="memdesc:a948f65ace0dbe9392cfb13601aad0a62 inherit pub_methods_classyume_1_1ty_1_1Type"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the intersection of this and <code>other</code>. For example, the intersection of <code>T</code> and <code>T mut</code> is <code>T</code>.  <a href="classyume_1_1ty_1_1Type.html#a948f65ace0dbe9392cfb13601aad0a62">More...</a><br /></td></tr>
 <tr class="separator:a948f65ace0dbe9392cfb13601aad0a62 inherit pub_methods_classyume_1_1ty_1_1Type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a14e89718449e055ee8f9f192fda8b4fc inherit pub_methods_classyume_1_1ty_1_1Type"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Type.html#a14e89718449e055ee8f9f192fda8b4fc">is_mut</a> () const -&gt; bool</td></tr>
 <tr class="separator:a14e89718449e055ee8f9f192fda8b4fc inherit pub_methods_classyume_1_1ty_1_1Type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af101ad944f46d691353cc061301e2d72 inherit pub_methods_classyume_1_1ty_1_1Type"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Type.html#af101ad944f46d691353cc061301e2d72">is_generic</a> () const -&gt; bool</td></tr>
 <tr class="separator:af101ad944f46d691353cc061301e2d72 inherit pub_methods_classyume_1_1ty_1_1Type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a815eac3dbf01f58799f32447e7ecae7a inherit pub_methods_classyume_1_1ty_1_1Type"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Type.html#a815eac3dbf01f58799f32447e7ecae7a">qual_base</a> () const -&gt; const <a class="el" href="classyume_1_1ty_1_1Type.html">Type</a> *</td></tr>
-<tr class="memdesc:a815eac3dbf01f58799f32447e7ecae7a inherit pub_methods_classyume_1_1ty_1_1Type"><td class="mdescLeft">&#160;</td><td class="mdescRight">If this type is a <code><a class="el" href="classyume_1_1ty_1_1Qual.html" title="A &quot;qualified&quot; type, with a non-stackable qualifier, .i.e. mut.">Qual</a></code>, return the base of it (<code>T mut</code> -&gt; <code>T</code>)  <a href="classyume_1_1ty_1_1Type.html#a815eac3dbf01f58799f32447e7ecae7a">More...</a><br /></td></tr>
-<tr class="separator:a815eac3dbf01f58799f32447e7ecae7a inherit pub_methods_classyume_1_1ty_1_1Type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a18b774a78f6075d447eb5ba692ced2a7 inherit pub_methods_classyume_1_1ty_1_1Type"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Type.html#a18b774a78f6075d447eb5ba692ced2a7">mut_base</a> () const -&gt; const <a class="el" href="classyume_1_1ty_1_1Type.html">Type</a> *</td></tr>
+<tr class="memdesc:a18b774a78f6075d447eb5ba692ced2a7 inherit pub_methods_classyume_1_1ty_1_1Type"><td class="mdescLeft">&#160;</td><td class="mdescRight">If this type is a mutable reference, return the base of it (<code>T mut</code> -&gt; <code>T</code>)  <a href="classyume_1_1ty_1_1Type.html#a18b774a78f6075d447eb5ba692ced2a7">More...</a><br /></td></tr>
+<tr class="separator:a18b774a78f6075d447eb5ba692ced2a7 inherit pub_methods_classyume_1_1ty_1_1Type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a806cc087c21f93d1712e2cbd6434e38e inherit pub_methods_classyume_1_1ty_1_1Type"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Type.html#a806cc087c21f93d1712e2cbd6434e38e">ptr_base</a> () const -&gt; const <a class="el" href="classyume_1_1ty_1_1Type.html">Type</a> *</td></tr>
-<tr class="memdesc:a806cc087c21f93d1712e2cbd6434e38e inherit pub_methods_classyume_1_1ty_1_1Type"><td class="mdescLeft">&#160;</td><td class="mdescRight">If this type is a <code><a class="el" href="classyume_1_1ty_1_1Ptr.html" title="A &quot;qualified&quot; type, with a stackable qualifier, i.e. ptr.">Ptr</a></code>, return the base of it (<code>T ptr</code> -&gt; <code>T</code>)  <a href="classyume_1_1ty_1_1Type.html#a806cc087c21f93d1712e2cbd6434e38e">More...</a><br /></td></tr>
+<tr class="memdesc:a806cc087c21f93d1712e2cbd6434e38e inherit pub_methods_classyume_1_1ty_1_1Type"><td class="mdescLeft">&#160;</td><td class="mdescRight">If this type is a pointer type, return the base of it (<code>T ptr</code> -&gt; <code>T</code>)  <a href="classyume_1_1ty_1_1Type.html#a806cc087c21f93d1712e2cbd6434e38e">More...</a><br /></td></tr>
 <tr class="separator:a806cc087c21f93d1712e2cbd6434e38e inherit pub_methods_classyume_1_1ty_1_1Type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1cdecd7eecc20522978c125a35267368 inherit pub_methods_classyume_1_1ty_1_1Type"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Type.html#a1cdecd7eecc20522978c125a35267368">without_qual</a> () const -&gt; const <a class="el" href="classyume_1_1ty_1_1Type.html">Type</a> &amp;</td></tr>
-<tr class="memdesc:a1cdecd7eecc20522978c125a35267368 inherit pub_methods_classyume_1_1ty_1_1Type"><td class="mdescLeft">&#160;</td><td class="mdescRight">If this type is a <code><a class="el" href="classyume_1_1ty_1_1Qual.html" title="A &quot;qualified&quot; type, with a non-stackable qualifier, .i.e. mut.">Qual</a></code>, return the base of it, otherwise return itself.  <a href="classyume_1_1ty_1_1Type.html#a1cdecd7eecc20522978c125a35267368">More...</a><br /></td></tr>
-<tr class="separator:a1cdecd7eecc20522978c125a35267368 inherit pub_methods_classyume_1_1ty_1_1Type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a125a5854bef7197a8f0aa284c9fbac27 inherit pub_methods_classyume_1_1ty_1_1Type"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Type.html#a125a5854bef7197a8f0aa284c9fbac27">without_qual_kind</a> () const -&gt; <a class="el" href="namespaceyume_1_1ty.html#a4c255b641f0b91ee4ff8bc878e7bd04e">Kind</a></td></tr>
-<tr class="separator:a125a5854bef7197a8f0aa284c9fbac27 inherit pub_methods_classyume_1_1ty_1_1Type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c26cb06ee3dc8adb10b9ef9a51e7061 inherit pub_methods_classyume_1_1ty_1_1Type"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Type.html#a3c26cb06ee3dc8adb10b9ef9a51e7061">without_mut</a> () const -&gt; const <a class="el" href="classyume_1_1ty_1_1Type.html">Type</a> &amp;</td></tr>
+<tr class="memdesc:a3c26cb06ee3dc8adb10b9ef9a51e7061 inherit pub_methods_classyume_1_1ty_1_1Type"><td class="mdescLeft">&#160;</td><td class="mdescRight">If this type is a mutable reference, return the base of it, otherwise return itself.  <a href="classyume_1_1ty_1_1Type.html#a3c26cb06ee3dc8adb10b9ef9a51e7061">More...</a><br /></td></tr>
+<tr class="separator:a3c26cb06ee3dc8adb10b9ef9a51e7061 inherit pub_methods_classyume_1_1ty_1_1Type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -169,7 +167,7 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >An user-defined struct type with associated fields. </p>
 
-<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00143">143</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00142">142</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aa853869ee0ba90445d1484b53b70775e" name="aa853869ee0ba90445d1484b53b70775e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa853869ee0ba90445d1484b53b70775e">&#9670;&nbsp;</a></span>Struct()</h2>
@@ -189,7 +187,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">vector&lt; const <a class="el" href="classyume_1_1ast_1_1TypeName.html">ast::TypeName</a> * &gt;&#160;</td>
+          <td class="paramtype">vector&lt; const <a class="el" href="structyume_1_1ast_1_1TypeName.html">ast::TypeName</a> * &gt;&#160;</td>
           <td class="paramname"><em>fields</em>&#160;</td>
         </tr>
         <tr>
@@ -205,7 +203,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00151">151</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00150">150</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
 
 </div>
 </div>
@@ -233,7 +231,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00153">153</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00152">152</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
 
 </div>
 </div>
@@ -260,7 +258,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00152">152</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00151">151</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
 
 </div>
 </div>
@@ -287,7 +285,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00154">154</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8hpp_source.html#l00153">153</a> of file <a class="el" href="type_8hpp_source.html">type.hpp</a>.</p>
 
 </div>
 </div>

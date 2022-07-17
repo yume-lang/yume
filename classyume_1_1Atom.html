@@ -83,17 +83,19 @@ $(function() {
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a59c54f6386ba5f4246930aacbffe87b6"><td class="memItemLeft" align="right" valign="top">constexpr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Atom.html#a59c54f6386ba5f4246930aacbffe87b6">Atom</a> ()=delete</td></tr>
 <tr class="separator:a59c54f6386ba5f4246930aacbffe87b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a590c881ccfb6bf7930017033fb2dab83"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Atom.html#a590c881ccfb6bf7930017033fb2dab83">Atom</a> (const std::string *str)</td></tr>
-<tr class="separator:a590c881ccfb6bf7930017033fb2dab83"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acfaac00df5b99bef73434fc63c460272"><td class="memItemLeft" align="right" valign="top">constexpr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Atom.html#acfaac00df5b99bef73434fc63c460272">Atom</a> (std::string_view str)</td></tr>
+<tr class="separator:acfaac00df5b99bef73434fc63c460272"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a53630d7d68da350ecc5df13fb0658abd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Atom.html#a53630d7d68da350ecc5df13fb0658abd">operator std::string_view</a> () const</td></tr>
 <tr class="separator:a53630d7d68da350ecc5df13fb0658abd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:accc0367c88c5914d69cf6cfecfeb5b49"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Atom.html#accc0367c88c5914d69cf6cfecfeb5b49">operator&lt;=&gt;</a> (const <a class="el" href="classyume_1_1Atom.html">Atom</a> &amp;other) const noexcept=default</td></tr>
-<tr class="separator:accc0367c88c5914d69cf6cfecfeb5b49"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d296c3ef3ebd32e645f9eed531a18d1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Atom.html#a1d296c3ef3ebd32e645f9eed531a18d1">operator std::string</a> () const</td></tr>
+<tr class="separator:a1d296c3ef3ebd32e645f9eed531a18d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a34753f65a8da512ba62653f891aa6580"><td class="memItemLeft" align="right" valign="top">auto constexpr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Atom.html#a34753f65a8da512ba62653f891aa6580">operator&lt;=&gt;</a> (const <a class="el" href="classyume_1_1Atom.html">Atom</a> &amp;other) const noexcept=default</td></tr>
+<tr class="separator:a34753f65a8da512ba62653f891aa6580"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a45ac9a41f5b1041f7250e8acf2014b79"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Atom.html#a45ac9a41f5b1041f7250e8acf2014b79">make_atom</a> (const std::string &amp;value) noexcept -&gt; <a class="el" href="classyume_1_1Atom.html">Atom</a></td></tr>
-<tr class="separator:a45ac9a41f5b1041f7250e8acf2014b79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07e5e9b790a4404f0c88ab3822d9f9c5"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Atom.html#a07e5e9b790a4404f0c88ab3822d9f9c5">make_atom</a> (std::string_view value) noexcept -&gt; <a class="el" href="classyume_1_1Atom.html">Atom</a></td></tr>
+<tr class="separator:a07e5e9b790a4404f0c88ab3822d9f9c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p ><code><a class="el" href="classyume_1_1Atom.html" title="Atoms represent strings in a string pool.">Atom</a></code>s represent strings in a string pool. </p>
@@ -126,8 +128,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a590c881ccfb6bf7930017033fb2dab83" name="a590c881ccfb6bf7930017033fb2dab83"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a590c881ccfb6bf7930017033fb2dab83">&#9670;&nbsp;</a></span>Atom() <span class="overload">[2/2]</span></h2>
+<a id="acfaac00df5b99bef73434fc63c460272" name="acfaac00df5b99bef73434fc63c460272"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acfaac00df5b99bef73434fc63c460272">&#9670;&nbsp;</a></span>Atom() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -136,16 +138,16 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">yume::Atom::Atom </td>
+          <td class="memname">constexpr yume::Atom::Atom </td>
           <td>(</td>
-          <td class="paramtype">const std::string *&#160;</td>
+          <td class="paramtype">std::string_view&#160;</td>
           <td class="paramname"><em>str</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span><span class="mlabel">constexpr</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -155,8 +157,8 @@ Static Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a45ac9a41f5b1041f7250e8acf2014b79" name="a45ac9a41f5b1041f7250e8acf2014b79"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a45ac9a41f5b1041f7250e8acf2014b79">&#9670;&nbsp;</a></span>make_atom()</h2>
+<a id="a07e5e9b790a4404f0c88ab3822d9f9c5" name="a07e5e9b790a4404f0c88ab3822d9f9c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a07e5e9b790a4404f0c88ab3822d9f9c5">&#9670;&nbsp;</a></span>make_atom()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -167,7 +169,7 @@ Static Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">static auto yume::Atom::make_atom </td>
           <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramtype">std::string_view&#160;</td>
           <td class="paramname"><em>value</em></td><td>)</td>
           <td> -&gt; <a class="el" href="classyume_1_1Atom.html">Atom</a> </td>
         </tr>
@@ -179,9 +181,36 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="atom_8hpp_source.html#l00022">22</a> of file <a class="el" href="atom_8hpp_source.html">atom.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="atom_8hpp_source.html#l00023">23</a> of file <a class="el" href="atom_8hpp_source.html">atom.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="atom_8hpp_source.html#l00035">yume::make_atom()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="atom_8hpp_source.html#l00036">yume::make_atom()</a>.</p>
+
+</div>
+</div>
+<a id="a1d296c3ef3ebd32e645f9eed531a18d1" name="a1d296c3ef3ebd32e645f9eed531a18d1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1d296c3ef3ebd32e645f9eed531a18d1">&#9670;&nbsp;</a></span>operator std::string()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">yume::Atom::operator std::string </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="atom_8hpp_source.html#l00020">20</a> of file <a class="el" href="atom_8hpp_source.html">atom.hpp</a>.</p>
 
 </div>
 </div>
@@ -212,8 +241,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="accc0367c88c5914d69cf6cfecfeb5b49" name="accc0367c88c5914d69cf6cfecfeb5b49"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#accc0367c88c5914d69cf6cfecfeb5b49">&#9670;&nbsp;</a></span>operator&lt;=&gt;()</h2>
+<a id="a34753f65a8da512ba62653f891aa6580" name="a34753f65a8da512ba62653f891aa6580"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a34753f65a8da512ba62653f891aa6580">&#9670;&nbsp;</a></span>operator&lt;=&gt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -222,7 +251,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">auto yume::Atom::operator&lt;=&gt; </td>
+          <td class="memname">auto constexpr yume::Atom::operator&lt;=&gt; </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classyume_1_1Atom.html">Atom</a> &amp;&#160;</td>
           <td class="paramname"><em>other</em></td><td>)</td>
@@ -231,7 +260,7 @@ Static Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">default</span><span class="mlabel">noexcept</span></span>  </td>
+<span class="mlabels"><span class="mlabel">constexpr</span><span class="mlabel">default</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
