@@ -145,6 +145,7 @@ public:
   [[nodiscard]] operator bool() const { return static_cast<bool>(m_val); }
   [[nodiscard]] auto has_value() const -> bool { return static_cast<bool>(m_val); }
   [[nodiscard]] auto raw_ptr() const -> const T* { return m_val.get(); }
+  [[nodiscard]] auto raw_ptr() -> T* { return m_val.get(); }
 };
 
 /// Represents "any" kind of ast node of type `T`. See `AnyExpr`, `AnyStmt` and `AnyType`.
@@ -171,6 +172,7 @@ public:
   [[nodiscard]] auto operator*() -> T& { return *Super::m_val; }
 
   [[nodiscard]] auto raw_ptr() const -> const T* { return Super::m_val.get(); }
+  [[nodiscard]] auto raw_ptr() -> T* { return Super::m_val.get(); }
 };
 
 /// Represents the relationship between multiple `AST` nodes.

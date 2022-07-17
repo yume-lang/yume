@@ -125,8 +125,7 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
   } else {
     expression(expr.type());
     const auto& base_type = convert_type(expr.type());
-    auto struct_obj =
-        std::ranges::find_if(compiler.m_structs, [&](const Struct& st) { return st.self_ty == &base_type; });
+    auto struct_obj = std::ranges::find_if(compiler.m_structs, [&](auto& st) { return st.self_ty == &base_type; });
     if (struct_obj != compiler.m_structs.end())
       st = &*struct_obj;
     expr.val_ty(&base_type);
@@ -143,7 +142,7 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
 
   for (auto& i : expr.args()) {
     body_expression(*i);
-    ctor_overloads.args.push_back(&*i);
+    ctor_overloads.args.push_back(i.raw_ptr());
   }
 
   if (consider_ctor_overloads) {
@@ -278,7 +277,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
 
   for (auto& i : expr.args()) {
     body_expression(*i);
-    overload_set.args.push_back(&*i);
+    overload_set.args.push_back(i.raw_ptr());
   }
 
 #ifdef YUME_SPEW_OVERLOAD_SELECTION
@@ -384,7 +383,7 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
 
   if (stat.ret().has_value()) {
     expression(*stat.ret());
-    stat.attach_to(&*stat.ret());
+    stat.attach_to(stat.ret().raw_ptr());
   }
 
   // This decl still has unsubstituted generics, can't instantiate its body
@@ -435,7 +434,7 @@ template <> void TypeWalker::statement(ast::ReturnStmt& stat) {
   if (stat.expr().has_value()) {
     body_expression(*stat.expr());
     // If we're returning a local variable, mark that it will leave the scope and should not be destructed yet.
-    if (auto* var_expr = dyn_cast<ast::VarExpr>(&*stat.expr()))
+    if (auto* var_expr = dyn_cast<ast::VarExpr>(stat.expr().raw_ptr()))
       if (auto* var_decl = dyn_cast<ast::VarDecl>(scope.at(var_expr->name())))
         stat.extend_lifetime_of(var_decl);
 
