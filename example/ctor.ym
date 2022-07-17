@@ -1,6 +1,5 @@
 struct Rect(w I32, h I32)
-  def :new(::w, ::h)
-  end
+  def :new(::w, ::h) end
 
   def :new(size I32)
     ::w = size

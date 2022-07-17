@@ -334,7 +334,8 @@ auto Parser::parse_fn_decl() -> unique_ptr<FnDecl> {
     auto expr = parse_expr();
     body.emplace_back(ast_ptr<ReturnStmt>(entry, move(expr)));
   } else {
-    require_separator();
+    if (!try_peek(0, KWD_END)) // Allow `end` to be on the same line
+      require_separator();
 
     body_begin = tokens.begin();
     while (!try_consume(KWD_END)) {
@@ -369,7 +370,8 @@ auto Parser::parse_ctor_decl() -> unique_ptr<CtorDecl> {
   auto body = vector<AnyStmt>{};
   auto body_begin = entry;
 
-  require_separator();
+  if (!try_peek(0, KWD_END)) // Allow `end` to be on the same line
+    require_separator();
 
   body_begin = tokens.begin();
   while (!try_consume(KWD_END)) {
