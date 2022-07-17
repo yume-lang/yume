@@ -354,42 +354,14 @@ public:
 };
 
 /// A pair of a `Type` and an identifier, \e i.e. a parameter name.
-class TypeName : public AST {
-  AnyType m_type;
-  string m_name;
+struct TypeName : public AST {
+  AnyType type;
+  string name;
 
-public:
-  TypeName(span<Token> tok, AnyType type, string name) : AST(K_TypeName, tok), m_type{move(type)}, m_name{move(name)} {}
+  TypeName(span<Token> tok, AnyType type, string name) : AST(K_TypeName, tok), type{move(type)}, name{move(name)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] auto type() const -> const auto& { return *m_type; }
-  [[nodiscard]] auto type() -> auto& { return *m_type; }
-  [[nodiscard]] auto name() const -> string { return m_name; }
-
-  template <size_t I> [[maybe_unused]] auto get() & -> auto& {
-    if constexpr (I == 0) {
-      return *m_type;
-    } else if constexpr (I == 1) {
-      return m_name;
-    }
-  }
-
-  template <size_t I> [[maybe_unused]] auto get() const& -> auto const& {
-    if constexpr (I == 0) {
-      return *m_type;
-    } else if constexpr (I == 1) {
-      return m_name;
-    }
-  }
-
-  template <size_t I> [[maybe_unused]] auto get() && -> auto&& {
-    if constexpr (I == 0) {
-      return move(*m_type);
-    } else if constexpr (I == 1) {
-      return move(m_name);
-    }
-  }
   static auto classof(const AST* a) -> bool { return a->kind() == K_TypeName; }
   [[nodiscard]] auto clone() const -> TypeName* override;
 };
@@ -861,13 +833,3 @@ public:
   [[nodiscard]] auto clone() const -> Program* override;
 };
 } // namespace yume::ast
-
-// these clutter the docs and are hidden from docs
-/// \cond
-namespace std {
-template <> struct tuple_size<yume::ast::TypeName> : std::integral_constant<size_t, 2> {};
-
-template <> struct tuple_element<0, yume::ast::TypeName> { using type = yume::ast::Type; };
-template <> struct tuple_element<1, yume::ast::TypeName> { using type = std::string; };
-} // namespace std
-/// \endcond

@@ -63,12 +63,12 @@ auto Ctor::common_ast(const decl_t::arg_t& ast) -> const ast::AST& {
   return *std::visit([](auto& t) -> const ast::AST* { return &t; }, ast);
 };
 
-auto Fn::arg_name(const decl_t::arg_t& ast) -> string { return ast.name(); };
+auto Fn::arg_name(const decl_t::arg_t& ast) -> string { return ast.name; };
 auto Ctor::arg_name(const decl_t::arg_t& ast) -> string {
   return std::visit(
       []<typename T>(const T& t) {
         if constexpr (std::is_same_v<T, ast::TypeName>) {
-          return t.name();
+          return t.name;
         } else {
           return t.field();
         }

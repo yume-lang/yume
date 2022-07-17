@@ -71,7 +71,7 @@ template <> void TypeWalker::expression(ast::Type& expr) {
 }
 
 template <> void TypeWalker::expression(ast::TypeName& expr) {
-  auto& type = expr.type();
+  auto& type = *expr.type;
   expr.attach_to(&type);
   expression(type);
 }
@@ -235,8 +235,8 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
   const ty::Type* target_type{};
   int j = 0;
   for (const auto* field : struct_type->fields()) {
-    if (field->name() == target_name) {
-      target_type = field->type().val_ty();
+    if (field->name == target_name) {
+      target_type = field->type->val_ty();
       break;
     }
     j++;
@@ -341,7 +341,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
     if (compat.conv.empty())
       continue;
 
-    wrap_in_implicit_cast(expr_arg, compat.conv, target.type().val_ty());
+    wrap_in_implicit_cast(expr_arg, compat.conv, target.type->val_ty());
   }
 
   // Find excess variadic arguments. Logic will probably change later, but for now, always pass by value
@@ -378,7 +378,7 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
 
   for (auto& i : stat.args()) {
     expression(i);
-    scope.insert({i.name(), &i});
+    scope.insert({i.name, &i});
   }
 
   if (stat.ret().has_value()) {
@@ -406,15 +406,15 @@ template <> void TypeWalker::statement(ast::CtorDecl& stat) {
   for (auto& i : stat.args()) {
     if (auto* type_name = std::get_if<ast::TypeName>(&i)) {
       expression(*type_name);
-      scope.insert({type_name->name(), type_name});
+      scope.insert({type_name->name, type_name});
     } else if (auto* direct_init = std::get_if<ast::FieldAccessExpr>(&i)) {
       auto target_name = direct_init->field();
       // XXX: duplicated from FieldAccessExpr handling
       const ty::Type* target_type{};
       int j = 0;
       for (const auto* field : struct_type->fields()) {
-        if (field->name() == target_name) {
-          target_type = field->type().val_ty();
+        if (field->name == target_name) {
+          target_type = field->type->val_ty();
           break;
         }
         j++;

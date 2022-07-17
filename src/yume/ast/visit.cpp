@@ -35,7 +35,7 @@ void StructDecl::visit(Visitor& visitor) const {
 void SimpleType::visit(Visitor& visitor) const { visitor.visit(m_name); }
 void QualType::visit(Visitor& visitor) const { visitor.visit(m_base, describe().c_str()); }
 void TemplatedType::visit(Visitor& visitor) const { visitor.visit(m_base).visit(m_type_args, "type arg"); }
-void TypeName::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_type); }
+void TypeName::visit(Visitor& visitor) const { visitor.visit(name).visit(type); }
 void Compound::visit(Visitor& visitor) const { visitor.visit(m_body); }
 void VarExpr::visit(Visitor& visitor) const { visitor.visit(m_name); }
 void CallExpr::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_args); }

@@ -78,7 +78,7 @@ auto SimpleType::clone() const -> SimpleType* { return new SimpleType(tok(), m_n
 auto QualType::clone() const -> QualType* { return new QualType(tok(), dup(m_base), m_qualifier); }
 auto TemplatedType::clone() const -> TemplatedType* { return new TemplatedType(tok(), dup(m_base), dup(m_type_args)); }
 auto SelfType::clone() const -> SelfType* { return new SelfType(tok()); }
-auto TypeName::clone() const -> TypeName* { return new TypeName(tok(), dup(m_type), m_name); }
+auto TypeName::clone() const -> TypeName* { return new TypeName(tok(), dup(type), name); }
 auto Compound::clone() const -> Compound* { return new Compound(tok(), dup(m_body)); }
 auto VarExpr::clone() const -> VarExpr* { return new VarExpr(tok(), m_name); }
 auto CallExpr::clone() const -> CallExpr* { return new CallExpr(tok(), m_name, dup(m_args)); }

@@ -17,7 +17,7 @@ namespace yume {
 class Compiler;
 struct Instantiation;
 namespace ast {
-class TypeName;
+struct TypeName;
 }
 } // namespace yume
 

@@ -87,7 +87,7 @@ void Compiler::declare_default_ctor(Struct& st) {
 
   vector<ast::CtorDecl::arg_t> ctor_args;
   for (auto& field : st.ast().fields())
-    ctor_args.emplace_back(ast::FieldAccessExpr(field.token_range(), std::nullopt, field.name()));
+    ctor_args.emplace_back(ast::FieldAccessExpr(field.token_range(), std::nullopt, field.name));
   // TODO(rymiel): Give these things sensible locations?
   auto& new_ct = st.body().body().emplace_back(
       std::make_unique<ast::CtorDecl>(span<Token>{}, move(ctor_args), ast::Compound({}, {})));
