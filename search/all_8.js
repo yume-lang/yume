@@ -19,7 +19,7 @@ var searchData=
   ['int8_16',['int8',['../structyume_1_1TypeHolder.html#a0c1aefada325245bd55668b2ab3542a6',1,'yume::TypeHolder']]],
   ['int_5ftypes_17',['int_types',['../structyume_1_1TypeHolder.html#ab4fc219009a89b1fc1ec0d4956730109',1,'yume::TypeHolder']]],
   ['intersect_18',['intersect',['../classyume_1_1ty_1_1Type.html#a948f65ace0dbe9392cfb13601aad0a62',1,'yume::ty::Type']]],
-  ['intersect_5fgenerics_19',['intersect_generics',['../namespaceyume_1_1semantic.html#aa3da64b962ab7265b08ff4ac8145a7f9',1,'yume::semantic']]],
+  ['intersect_5fgenerics_19',['intersect_generics',['../namespaceyume_1_1ty.html#a7f36da910933c4593c4fce7ffb669c1d',1,'yume::ty']]],
   ['inttypepair_20',['IntTypePair',['../structyume_1_1TypeHolder_1_1IntTypePair.html',1,'yume::TypeHolder']]],
   ['is_5fa_21',['is_a',['../structyume_1_1Token.html#ac5667608eae86918686364d74e67c428',1,'yume::Token']]],
   ['is_5fany_5fof_22',['is_any_of',['../classyume_1_1Tokenizer.html#afb116232034da760da9f64203b6ad571',1,'yume::Tokenizer']]],

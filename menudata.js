@@ -62,6 +62,7 @@ var menudata={children:[
 {text:"q",url:"namespacemembers_func.html#index_q"},
 {text:"s",url:"namespacemembers_func.html#index_s"},
 {text:"t",url:"namespacemembers_func.html#index_t"},
+{text:"v",url:"namespacemembers_func.html#index_v"},
 {text:"w",url:"namespacemembers_func.html#index_w"},
 {text:"x",url:"namespacemembers_func.html#index_x"},
 {text:"y",url:"namespacemembers_func.html#index_y"}]},

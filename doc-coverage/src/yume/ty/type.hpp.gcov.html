@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-07-22 18:25:19</td>
+            <td class="headerValue">2022-07-22 18:42:06</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -123,7 +123,7 @@
 <a name="65"><span class="lineNum">      65 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto known_mut() const -&gt; const Type&amp; { return known_qual(Qualifier::Mut); }</span></a>
 <a name="66"><span class="lineNum">      66 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto known_slice() const -&gt; const Type&amp; { return known_qual(Qualifier::Slice); }</span></a>
 <a name="67"><span class="lineNum">      67 </span>            : </a>
-<a name="68"><span class="lineNum">      68 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto determine_generic_substitution(const Type&amp; generic, Sub sub = Sub()) const -&gt; Sub;</span></a>
+<a name="68"><span class="lineNum">      68 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto determine_generic_subs(const Type&amp; generic, Instantiation&amp; inst, Sub sub = Sub()) const -&gt; Sub;</span></a>
 <a name="69"><span class="lineNum">      69 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto apply_generic_substitution(Sub sub) const -&gt; const Type*;</span></a>
 <a name="70"><span class="lineNum">      70 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto fully_apply_instantiation(const Instantiation&amp; inst) const -&gt; const Type*;</span></a>
 <a name="71"><span class="lineNum">      71 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto compatibility(const Type&amp; other, Compat compat = Compat()) const -&gt; Compat;</span></a>
