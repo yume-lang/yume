@@ -457,8 +457,8 @@ template <> void Compiler::statement(const ast::WhileStmt& stat) {
 template <> void Compiler::statement(const ast::IfStmt& stat) {
   auto* merge_bb = llvm::BasicBlock::Create(*m_context, "if.cont", *m_current_fn);
   auto* next_test_bb = llvm::BasicBlock::Create(*m_context, "if.test", *m_current_fn, merge_bb);
+  auto* last_branch = m_builder->CreateBr(next_test_bb);
   bool all_terminated = true;
-  m_builder->CreateBr(next_test_bb);
 
   const auto& clauses = stat.clauses();
   for (const auto& clause : clauses) {
@@ -466,7 +466,7 @@ template <> void Compiler::statement(const ast::IfStmt& stat) {
     auto* body_bb = llvm::BasicBlock::Create(*m_context, "if.then", *m_current_fn, merge_bb);
     next_test_bb = llvm::BasicBlock::Create(*m_context, "if.test", *m_current_fn, merge_bb);
     auto condition = body_expression(clause.cond());
-    m_builder->CreateCondBr(condition, body_bb, next_test_bb);
+    last_branch = m_builder->CreateCondBr(condition, body_bb, next_test_bb);
     m_builder->SetInsertPoint(body_bb);
     statement(clause.body());
     if (m_builder->GetInsertBlock()->getTerminator() == nullptr) {
@@ -484,10 +484,8 @@ template <> void Compiler::statement(const ast::IfStmt& stat) {
       m_builder->CreateBr(merge_bb);
     }
   } else {
-    // HACK: #15  For if statements with no else clause, it creates an empty `if.test` block which only contains a
-    // single `br` instruction to the merge point.
-    m_builder->SetInsertPoint(next_test_bb);
-    m_builder->CreateBr(merge_bb);
+    last_branch->setSuccessor(1, merge_bb);
+    next_test_bb->eraseFromParent();
   }
 
   if (all_terminated)
