@@ -47,31 +47,58 @@ auto Type::known_qual(Qualifier qual) const -> const Type& {
   return *m_known_qual.at(qual_idx);
 }
 
-auto Type::determine_generic_substitution(const Type& generic, Sub sub) const -> Sub {
-  yume_assert(generic.is_generic(), "Cannot substitute generics in a non-generic type");
+static auto visit_subs(const Type& a, const Type& b, Sub sub) -> Sub {
+  yume_assert(b.is_generic(), "Cannot substitute generics in a non-generic type");
 
   // `Foo ptr` -> `T ptr`, with `T = Foo`.
-  if (auto this_ptr_base = ptr_base(), gen_ptr_base = generic.ptr_base();
-      this_ptr_base != nullptr && gen_ptr_base != nullptr &&
-      cast<Ptr>(this)->qualifier() == cast<Ptr>(generic).qualifier()) {
-    return this_ptr_base->determine_generic_substitution(*gen_ptr_base, sub);
+  if (auto a_ptr_base = a.ptr_base(), b_ptr_base = b.ptr_base();
+      a_ptr_base != nullptr && b_ptr_base != nullptr && cast<Ptr>(a).qualifier() == cast<Ptr>(b).qualifier()) {
+    return visit_subs(*a_ptr_base, *b_ptr_base, sub);
   }
   // `Foo mut` -> `T mut`, with `T = Foo`.
-  if (is_mut() && generic.is_mut())
-    return mut_base()->determine_generic_substitution(generic.without_mut(), sub);
+  if (a.is_mut() && b.is_mut())
+    return visit_subs(*a.mut_base(), b.without_mut(), sub);
 
   // `Foo[] mut` -> `T[]`, with `T = Foo`.
-  if (is_mut() && !generic.is_mut())
-    return mut_base()->determine_generic_substitution(generic, sub);
+  if (a.is_mut() && !b.is_mut())
+    return visit_subs(*a.mut_base(), b, sub);
 
   // Substitution impossible! For example, `Foo` -> `T ptr`.
-  if (!isa<Generic>(generic))
+  if (!isa<Generic>(b))
     return sub;
 
   // Any other generic that didn't match above.
   // `Foo ptr` -> `T`, with `T = Foo ptr`.
-  sub.target = &cast<Generic>(generic);
-  sub.replace = this;
+  sub.target = &cast<Generic>(b);
+  sub.replace = &a;
+  return sub;
+}
+
+/// Add the substitution `gen_sub` for the generic type variable `gen` in template instantiation `instantiation`.
+/// If a substitution already exists for the same type variable, the two substitutions are intersected.
+/// \returns nullptr if substitution failed
+static auto intersect_generics(Instantiation& inst, const Generic* gen, const Type* gen_sub) -> const Type* {
+  auto existing = inst.sub.find(gen);
+  // The substitution must have an intersection with an already deduced value for the same type variable
+  if (existing != inst.sub.end()) {
+    const auto* intersection = gen_sub->intersect(*existing->second);
+    if (intersection == nullptr) {
+      // The types don't have a common intersection, they cannot coexist.
+      return nullptr;
+    }
+    inst.sub[gen] = intersection;
+  } else {
+    inst.sub.try_emplace(gen, gen_sub);
+  }
+
+  return inst.sub.at(gen);
+}
+
+auto Type::determine_generic_subs(const Type& generic, Instantiation& inst, Sub sub) const -> Sub {
+  yume_assert(generic.is_generic(), "Cannot substitute generics in a non-generic type");
+
+  sub = visit_subs(*this, generic, sub);
+  sub.replace = intersect_generics(inst, sub.target, sub.replace);
   return sub;
 }
 

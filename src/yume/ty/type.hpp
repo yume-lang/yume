@@ -65,7 +65,7 @@ public:
   [[nodiscard]] auto known_mut() const -> const Type& { return known_qual(Qualifier::Mut); }
   [[nodiscard]] auto known_slice() const -> const Type& { return known_qual(Qualifier::Slice); }
 
-  [[nodiscard]] auto determine_generic_substitution(const Type& generic, Sub sub = Sub()) const -> Sub;
+  [[nodiscard]] auto determine_generic_subs(const Type& generic, Instantiation& inst, Sub sub = Sub()) const -> Sub;
   [[nodiscard]] auto apply_generic_substitution(Sub sub) const -> const Type*;
   [[nodiscard]] auto fully_apply_instantiation(const Instantiation& inst) const -> const Type*;
   [[nodiscard]] auto compatibility(const Type& other, Compat compat = Compat()) const -> Compat;

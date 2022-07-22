@@ -26,28 +26,6 @@ static auto join_args(const auto& iter, auto fn, llvm::raw_ostream& stream = err
   }
 }
 
-/// Add the substitution `gen_sub` for the generic type variable `gen` in template instantiation `instantiation`.
-/// If a substitution already exists for the same type variable, the two substitutions are intersected.
-/// \returns nullptr if substitution failed
-static auto intersect_generics(Instantiation& instantiation, const ty::Generic* gen, const ty::Type* gen_sub)
-    -> const ty::Type* {
-  // TODO(rymiel): this logic should be in the Type compatibility checker algorithm itself
-  auto existing = instantiation.sub.find(gen);
-  // The substitution must have an intersection with an already deduced value for the same type variable
-  if (existing != instantiation.sub.end()) {
-    const auto* intersection = gen_sub->intersect(*existing->second);
-    if (intersection == nullptr) {
-      // The types don't have a common intersection, they cannot coexist.
-      return nullptr;
-    }
-    instantiation.sub[gen] = intersection;
-  } else {
-    instantiation.sub.try_emplace(gen, gen_sub);
-  }
-
-  return instantiation.sub.at(gen);
-}
-
 template <typename T> void Overload<T>::dump(llvm::raw_ostream& stream) const {
   stream << fn->ast().location().to_string() << "\t" << fn->name() << "(";
   join_args(fn->ast().args(), T::arg_type, stream);
@@ -128,18 +106,13 @@ template <typename T> auto OverloadSet<T>::is_valid_overload(Overload<T>& overlo
     const auto* param_type = T::arg_type(param);
 
     if (param_type->is_generic()) {
-      auto sub = arg_type->determine_generic_substitution(*param_type);
+      auto sub = arg_type->determine_generic_subs(*param_type, overload.instantiation);
 
       // No valid substitution found
       if (sub.target == nullptr || sub.replace == nullptr)
         return false;
 
-      // Determined a substitution for a type variable, check it against others (if there are any).
-      const auto* new_target = intersect_generics(overload.instantiation, sub.target, sub.replace);
-      if (new_target == nullptr)
-        return false; // Incompatibility
-
-      param_type = param_type->apply_generic_substitution({sub.target, new_target});
+      param_type = param_type->apply_generic_substitution(sub);
 
       if (param_type == nullptr)
         return false;
