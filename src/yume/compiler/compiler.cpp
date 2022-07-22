@@ -369,6 +369,7 @@ void Compiler::destruct_all_in_scope() {
 template <typename T> void Compiler::setup_fn_base(T& fn) {
   m_current_fn = &fn.base;
   m_scope.clear();
+  m_scope_ctor.reset();
   auto* bb = llvm::BasicBlock::Create(*m_context, "entry", fn.base);
   m_builder->SetInsertPoint(bb);
 
@@ -428,8 +429,8 @@ void Compiler::define(Ctor& ctor) {
   auto* base_alloc = m_builder->CreateAlloca(ctor_type, nullptr, "ctor.base");
   m_builder->CreateStore(base_value, base_alloc);
 
-  // Act as if we don't own the object being constructed so it won't get destructed
-  m_scope.insert({"", {.value = base_alloc, .ast = ctor.ast(), .owning = false}});
+  // Act as if we don't own the object being constructed so it won't get destructed at the end of scope
+  m_scope_ctor.emplace(InScope{.value = base_alloc, .ast = ctor.ast(), .owning = false});
 
   statement(ctor.ast().body());
 
@@ -702,7 +703,7 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
       if (!isa<ast::CtorDecl>(m_current_fn->ast))
         throw std::logic_error("Field access without a base is only available in constructors");
 
-      auto [value, ast, owning] = m_scope.at(""); // TODO(rymiel): Sort of a magic value
+      auto [value, ast, owning] = *m_scope_ctor;
       base = value;
       struct_base = &ast.val_ty()->known_mut();
     }

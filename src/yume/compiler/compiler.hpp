@@ -56,7 +56,10 @@ class Compiler : public CRTPWalker<Compiler> {
   unique_ptr<semantic::TypeWalker> m_walker;
 
   FnBase* m_current_fn{};
+  /// Local variables currently in function scope. Used for destructors
   std::map<string, InScope> m_scope{};
+  /// In a constructor, the object being constructed, implicitly created by the compiler.
+  optional<InScope> m_scope_ctor{};
 
   unique_ptr<llvm::LLVMContext> m_context;
   unique_ptr<llvm::IRBuilder<>> m_builder;
