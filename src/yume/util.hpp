@@ -40,6 +40,14 @@ using llvm::errs;
 using llvm::isa;
 using std::move;
 
+#if __has_feature(nullability)
+template <typename T> using nullable = T _Nullable;
+template <typename T> using nonnull = T _Nonnull;
+#else
+template <typename T> using nullable = T;
+template <typename T> using nonnull = T;
+#endif
+
 #ifdef NDEBUG
 constexpr bool ENABLE_ASSERT = false;
 #else

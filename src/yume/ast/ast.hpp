@@ -201,7 +201,7 @@ class AST {
   /// The range of tokenizer `Token`s that this node was parsed from.
   const span<Token> m_tok;
   /// The value type of this node. Determined in the semantic phase; always `nullptr` after parsing.
-  const ty::Type* m_val_ty{};
+  nullable<const ty::Type*> m_val_ty{};
   /// \see Attachment
   unique_ptr<Attachment> m_attach{std::make_unique<Attachment>()};
 
