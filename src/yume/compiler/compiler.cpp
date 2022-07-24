@@ -147,7 +147,9 @@ void Compiler::walk_types(DeclLike decl_like) {
   });
 }
 
-auto Compiler::create_struct(ast::StructDecl& s_decl, substitution_t& sub) -> ty::Struct& {
+auto Compiler::create_struct(Struct& st) -> bool {
+  auto& s_decl = st.st_ast;
+
   auto fields = vector<const ast::TypeName*>();
   fields.reserve(s_decl.fields().size());
   for (const auto& f : s_decl.fields())
@@ -156,13 +158,21 @@ auto Compiler::create_struct(ast::StructDecl& s_decl, substitution_t& sub) -> ty
   auto iter = m_types.known.find(s_decl.name());
   if (iter == m_types.known.end()) {
     auto empl =
-        m_types.known.try_emplace(s_decl.name(), std::make_unique<ty::Struct>(s_decl.name(), move(fields), &sub));
+        m_types.known.try_emplace(s_decl.name(), std::make_unique<ty::Struct>(s_decl.name(), move(fields), &st.subs));
     yume_assert(isa<ty::Struct>(*empl.first->second));
-    return cast<ty::Struct>(*empl.first->second);
+    st.self_ty = &*empl.first->second;
+    return true;
   }
-  auto& existing = *iter->second;
-  yume_assert(isa<ty::Struct>(existing));
-  return cast<ty::Struct>(existing).emplace_subbed(sub);
+
+  yume_assert(isa<ty::Struct>(*iter->second));
+  auto& existing = cast<ty::Struct>(*iter->second);
+
+  if (std::ranges::any_of(st.subs, [](const auto& sub) { return sub.second->is_generic(); }))
+    return false;
+
+  existing.m_fields = move(fields);
+  st.self_ty = &existing.emplace_subbed(st.subs);
+  return true;
 }
 
 auto Compiler::decl_statement(ast::Stmt& stmt, const ty::Type* parent, ast::Program* member) -> DeclLike {
@@ -184,9 +194,11 @@ auto Compiler::decl_statement(ast::Stmt& stmt, const ty::Type* parent, ast::Prog
       auto& gen = type_args.emplace_back(std::make_unique<ty::Generic>(i));
       subs.try_emplace(i, gen.get());
     }
-    auto& st = m_structs.emplace_back(*s_decl, nullptr, member, move(subs), move(type_args));
-    auto& i_ty = create_struct(*s_decl, st.subs);
-    st.self_ty = &i_ty;
+    auto& st = m_structs.emplace_back(*s_decl, nullptr, member, subs, move(type_args));
+    if (!create_struct(st)) {
+      m_structs.pop_back();
+      return {};
+    }
 
     if (st.name() == "Slice") // TODO(rymiel): magic value?
       m_slice_struct = &st;
@@ -623,27 +635,17 @@ auto Compiler::int_bin_primitive(const string& primitive, const vector<llvm::Val
   }
 }
 
-auto Compiler::primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<const ty::Type*>& types,
-                         const ty::Type* ret_ty) -> optional<Val> {
+auto Compiler::primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<const ty::Type*>& types)
+    -> optional<Val> {
   if (!fn->ast().primitive())
     return {};
 
   auto primitive = get<string>(fn->body());
-  bool returns_mut = ret_ty != nullptr && ret_ty->is_mut();
 
   if (primitive == "libc")
     return m_builder->CreateCall(declare(*fn, false), args);
   if (primitive == "ptrto")
     return args.at(0);
-  if (primitive == "slice_size")
-    return m_builder->CreateExtractValue(args.at(0), 1);
-  if (primitive == "slice_ptr") {
-    if (returns_mut) {
-      llvm::Type* result_type = llvm_type(&types[0]->without_mut());
-      return m_builder->CreateStructGEP(result_type, args.at(0), 0, "sl.ptr.mut");
-    }
-    return m_builder->CreateExtractValue(args.at(0), 0, "sl.ptr.x");
-  }
   if (primitive == "slice_dup") {
     return m_builder->CreateInsertValue(
         args.at(0), m_builder->CreateAdd(m_builder->CreateExtractValue(args.at(0), 1), args.at(1)), 1);
@@ -669,7 +671,6 @@ auto Compiler::primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<
 template <> auto Compiler::expression(const ast::CallExpr& expr) -> Val {
   auto* selected = expr.selected_overload();
   llvm::Function* llvm_fn = nullptr;
-  const auto* ret_ty = selected->ast().val_ty();
 
   vector<Val> args{};
   vector<const ty::Type*> arg_types{};
@@ -686,7 +687,7 @@ template <> auto Compiler::expression(const ast::CallExpr& expr) -> Val {
 
   Val val{nullptr};
 
-  auto prim = primitive(selected, llvm_args, arg_types, ret_ty);
+  auto prim = primitive(selected, llvm_args, arg_types);
   if (prim.has_value()) {
     val = *prim;
   } else {
@@ -875,7 +876,7 @@ template <> auto Compiler::expression(const ast::SliceExpr& expr) -> Val {
   auto* slice_size = m_builder->getInt64(expr.args().size());
 
   auto* slice_type = llvm_type(expr.val_ty());
-  auto* base_type = llvm_type(expr.val_ty()->ptr_base());
+  auto* base_type = llvm_type(cast<ty::Struct>(expr.val_ty())->fields().at(0)->get_val_ty()->ptr_base()); // ???
 
   auto* alloc_size = llvm::ConstantExpr::getSizeOf(base_type);
   auto* ptr_alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), m_builder->getInt64Ty(), base_type,

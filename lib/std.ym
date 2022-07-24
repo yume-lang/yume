@@ -10,11 +10,30 @@ def assert(condition Bool)
 end
 
 struct Slice{T}(pointer T ptr, size I64)
-  def [](self, offset I64) T mut = __primitive__(get_at)
+  def size(self) I64 = self::size
+  def unsafe_ptr(self) T ptr = self::pointer
+
+  def [](self mut, offset I64) T mut = self::pointer[offset]
+  def [](self, offset I64) T = self::pointer[offset]
+  def []=(self mut, offset I64, val T) T
+    self::pointer[offset] = val
+    return val
+  end
+
+  def dup(self, extra I64) Self
+    let dup_t Self = self.dup_internal(extra)
+    copy(self::pointer, dup_t::pointer, self::size)
+    return dup_t
+  end
+
+  def dup_append(self, last T) Self
+    let dup_t Self = self.dup_internal(1)
+    copy(self::pointer, dup_t::pointer, self::size)
+    dup_t[self::size] = last
+    return dup_t
+  end
 end
 
-def size{T}(arr T[]) I64 = __primitive__(slice_size)
-def unsafe_ptr{T}(arr T[]) T ptr = __primitive__(slice_ptr)
 def []{T}(ptr T ptr, offset I64) T mut = __primitive__(get_at)
 def []={T}(ptr T ptr, offset I64, val T) T = __primitive__(set_at)
 def dup_internal{T}(arr T[], extra I64) T[] = __primitive__(slice_dup)
@@ -46,32 +65,12 @@ def !(a Bool) Bool
   end
 end
 
-def []{T}(slice T[] mut, offset I64) T mut = slice.unsafe_ptr[offset]
-def []{T}(slice T[], offset I64) T = slice.unsafe_ptr[offset]
-def []={T}(slice T[] mut, offset I64, val T) T
-  slice.unsafe_ptr[offset] = val
-  return val
-end
-
 def copy{T}(source T ptr, dest T ptr, amount I64)
   let count I64 = amount
   while count > 0
     count = count - 1
     dest[count] = source[count]
   end
-end
-
-def dup{T}(arr T[], extra I64) T[]
-  let dup_t T[] = arr.dup_internal(extra)
-  copy(arr.unsafe_ptr, dup_t.unsafe_ptr, arr.size)
-  return dup_t
-end
-
-def dup_append{T}(arr T[], last T) T[]
-  let dup_t T[] = arr.dup_internal(1)
-  copy(arr.unsafe_ptr, dup_t.unsafe_ptr, arr.size)
-  dup_t[arr.size] = last
-  return dup_t
 end
 
 # TODO: type inference should be able to cast I32 to U8, having determined U8 as the replacement for T
