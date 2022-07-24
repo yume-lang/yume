@@ -1,47 +1,40 @@
 #include "vals.hpp"
+#include "ty/substitution.hpp"
 #include <algorithm>
 #include <type_traits>
 
 namespace yume {
 
-auto Fn::create_instantiation(Instantiation& instantiate) -> Fn& {
+auto Fn::create_instantiation(Substitution& subs) -> Fn& {
   auto* decl_clone = ast().clone();
   base.member->body().emplace_back(decl_clone);
 
-  std::map<string, const ty::Type*> subs{};
-  for (const auto& [k, v] : instantiate.sub)
-    subs.try_emplace(k->name(), v);
-
-  auto fn_ptr = std::make_unique<Fn>(*decl_clone, base.self_ty, base.member, move(subs));
-  auto new_emplace = instantiations.emplace(instantiate, move(fn_ptr));
+  auto fn_ptr = std::make_unique<Fn>(*decl_clone, base.self_ty, base.member, subs);
+  auto new_emplace = instantiations.emplace(subs, move(fn_ptr));
   return *new_emplace.first->second;
 }
 
-auto Fn::get_or_create_instantiation(Instantiation& instantiate) -> std::pair<bool, Fn&> {
-  auto existing_instantiation = instantiations.find(instantiate);
+auto Fn::get_or_create_instantiation(Substitution& subs) -> std::pair<bool, Fn&> {
+  auto existing_instantiation = instantiations.find(subs);
   if (existing_instantiation == instantiations.end())
-    return {false, create_instantiation(instantiate)};
+    return {false, create_instantiation(subs)};
 
   return {true, *existing_instantiation->second};
 }
 
-auto Struct::create_instantiation(Instantiation& instantiate) -> Struct& {
+auto Struct::create_instantiation(Substitution& subs) -> Struct& {
   auto* decl_clone = st_ast.clone();
   member->body().emplace_back(ast::AnyStmt{decl_clone});
 
-  std::map<string, const ty::Type*> subs{};
-  for (const auto& [k, v] : instantiate.sub)
-    subs.try_emplace(k->name(), v);
-
-  auto st_ptr = std::make_unique<Struct>(*decl_clone, self_ty, member, move(subs));
-  auto new_emplace = instantiations.emplace(instantiate, move(st_ptr));
+  auto st_ptr = std::make_unique<Struct>(*decl_clone, self_ty, member, subs);
+  auto new_emplace = instantiations.emplace(subs, move(st_ptr));
   return *new_emplace.first->second;
 }
 
-auto Struct::get_or_create_instantiation(Instantiation& instantiate) -> std::pair<bool, Struct&> {
-  auto existing_instantiation = instantiations.find(instantiate);
+auto Struct::get_or_create_instantiation(Substitution& subs) -> std::pair<bool, Struct&> {
+  auto existing_instantiation = instantiations.find(subs);
   if (existing_instantiation == instantiations.end())
-    return {false, create_instantiation(instantiate)};
+    return {false, create_instantiation(subs)};
 
   return {true, *existing_instantiation->second};
 }

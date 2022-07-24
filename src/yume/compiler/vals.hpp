@@ -23,30 +23,13 @@ class Value;
 } // namespace llvm
 
 namespace yume {
-/// A mapping between type variables and substitutions for them.
-struct Instantiation {
-  std::map<const ty::Generic*, const ty::Type*> sub{};
-
-#if __cpp_lib_three_way_comparison >= 201907L
-  auto operator<=>(const Instantiation& other) const = default;
-#else
-  auto operator<=>(const Instantiation& other) const -> std::weak_ordering {
-    if (m_sub == other.m_sub)
-      return std::weak_ordering::equivalent;
-    if (m_sub < other.m_sub)
-      return std::weak_ordering::less;
-    return std::weak_ordering::greater;
-  }
-#endif
-};
-
 /// Common values between function declarations (`Fn`) and constructors (`Ctor`), which behave very similarly.
 struct FnBase {
   /// The ast node that defines this declaration, being `ast::FnDecl` for `Fn` and `ast::CtorDecl` for `Ctor`. Should
   /// not be accessed directly, instead \see ast() on `Fn` and `Ctor`.
   ast::AST& ast;
   /// If this function is in the body of a struct, this points to its type. Used for the `self` type.
-  ty::Type* self_ty{};
+  const ty::Type* self_ty{};
   /// The program this declaration is a member of.
   ast::Program* member{};
   /// The LLVM function definition corresponding to this function or constructor.
@@ -69,17 +52,17 @@ struct Fn {
   FnBase base;
   vector<unique_ptr<ty::Generic>> type_args{};
   /// If this is an instantiation of a template, a mapping between type variables and their substitutions.
-  substitution_t subs{};
-  std::map<Instantiation, unique_ptr<Fn>> instantiations{};
+  Substitution subs{};
+  std::map<Substitution, unique_ptr<Fn>> instantiations{};
 
-  Fn(ast::FnDecl& ast_decl, ty::Type* parent = nullptr, ast::Program* member = nullptr, substitution_t subs = {},
+  Fn(ast::FnDecl& ast_decl, const ty::Type* parent = nullptr, ast::Program* member = nullptr, Substitution subs = {},
      vector<unique_ptr<ty::Generic>> type_args = {})
       : base{ast_decl, parent, member}, type_args(move(type_args)), subs(move(subs)) {}
 
   [[nodiscard]] auto ast() const -> const auto& { return cast<decl_t>(base.ast); }
   [[nodiscard]] auto ast() -> auto& { return cast<decl_t>(base.ast); }
   [[nodiscard]] auto body() const -> const auto& { return ast().body(); }
-  [[nodiscard]] auto get_self_ty() const -> ty::Type* { return base.self_ty; };
+  [[nodiscard]] auto get_self_ty() const -> const ty::Type* { return base.self_ty; };
 
   [[nodiscard]] auto name() const -> string;
   [[nodiscard]] static auto overload_name(const call_t& ast) -> string;
@@ -87,8 +70,8 @@ struct Fn {
   [[nodiscard]] static auto arg_name(const decl_t::arg_t& ast) -> string;
   [[nodiscard]] static auto common_ast(const decl_t::arg_t& ast) -> const ast::AST&;
 
-  [[nodiscard]] auto get_or_create_instantiation(Instantiation& instantiate) -> std::pair<bool, Fn&>;
-  [[nodiscard]] auto create_instantiation(Instantiation& instantiate) -> Fn&;
+  [[nodiscard]] auto get_or_create_instantiation(Substitution& subs) -> std::pair<bool, Fn&>;
+  [[nodiscard]] auto create_instantiation(Substitution& subs) -> Fn&;
 };
 
 /// A struct declaration in the compiler.
@@ -102,28 +85,28 @@ struct Struct {
 
   ast::StructDecl& st_ast;
   /// The type of this struct. Used for the `self` type.
-  ty::Type* self_ty{};
+  const ty::Type* self_ty{};
   /// The program this declaration is a member of.
   ast::Program* member{};
   vector<unique_ptr<ty::Generic>> type_args{};
   /// If this is an instantiation of a template, a mapping between type variables and their substitutions.
-  substitution_t subs{};
-  std::map<Instantiation, unique_ptr<Struct>> instantiations{};
+  Substitution subs{};
+  std::map<Substitution, unique_ptr<Struct>> instantiations{};
 
-  Struct(ast::StructDecl& ast_decl, ty::Type* type = nullptr, ast::Program* member = nullptr, substitution_t subs = {},
-         vector<unique_ptr<ty::Generic>> type_args = {})
+  Struct(ast::StructDecl& ast_decl, const ty::Type* type = nullptr, ast::Program* member = nullptr,
+         Substitution subs = {}, vector<unique_ptr<ty::Generic>> type_args = {})
       : st_ast(ast_decl), self_ty(type), member(member), type_args(move(type_args)), subs(move(subs)) {}
 
   [[nodiscard]] auto ast() const -> const auto& { return st_ast; }
   [[nodiscard]] auto ast() -> auto& { return st_ast; }
   [[nodiscard]] auto body() const -> const auto& { return st_ast.body(); }
   [[nodiscard]] auto body() -> auto& { return st_ast.body(); }
-  [[nodiscard]] auto get_self_ty() const -> ty::Type* { return self_ty; };
+  [[nodiscard]] auto get_self_ty() const -> const ty::Type* { return self_ty; };
 
   [[nodiscard]] auto name() const -> string;
 
-  [[nodiscard]] auto get_or_create_instantiation(Instantiation& instantiate) -> std::pair<bool, Struct&>;
-  [[nodiscard]] auto create_instantiation(Instantiation& instantiate) -> Struct&;
+  [[nodiscard]] auto get_or_create_instantiation(Substitution& subs) -> std::pair<bool, Struct&>;
+  [[nodiscard]] auto create_instantiation(Substitution& subs) -> Struct&;
 };
 
 /// A constructor declaration in the compiler.
@@ -137,12 +120,12 @@ struct Ctor {
 
   FnBase base;
 
-  Ctor(ast::CtorDecl& ast_decl, ty::Type* type = nullptr, ast::Program* member = nullptr)
+  Ctor(ast::CtorDecl& ast_decl, const ty::Type* type = nullptr, ast::Program* member = nullptr)
       : base{ast_decl, type, member} {}
 
   [[nodiscard]] auto ast() const -> const auto& { return cast<decl_t>(base.ast); }
   [[nodiscard]] auto ast() -> auto& { return cast<decl_t>(base.ast); }
-  [[nodiscard]] auto get_self_ty() const -> ty::Type* { return base.self_ty; };
+  [[nodiscard]] auto get_self_ty() const -> const ty::Type* { return base.self_ty; };
 
   [[nodiscard]] auto name() const -> string;
   [[nodiscard]] static auto overload_name(const call_t& ast) -> string;
@@ -173,22 +156,22 @@ public:
     return std::visit(DeclLikeVisitor<R, Ts...>{ts...}, *this);
   }
 
-  [[nodiscard]] auto subs() const -> const substitution_t* {
-    return visit_decl<substitution_t*>([](Ctor* /*decl*/) -> substitution_t* { return nullptr; },
-                                       [](auto* decl) -> substitution_t* {
-                                         if (decl == nullptr)
-                                           return nullptr;
-                                         return &decl->subs;
-                                       });
+  [[nodiscard]] auto subs() const -> const Substitution* {
+    return visit_decl<Substitution*>([](Ctor* /*decl*/) -> Substitution* { return nullptr; },
+                                     [](auto* decl) -> Substitution* {
+                                       if (decl == nullptr)
+                                         return nullptr;
+                                       return &decl->subs;
+                                     });
   };
 
-  [[nodiscard]] auto subs() -> substitution_t* {
-    return visit_decl<substitution_t*>([](Ctor* /*decl*/) -> substitution_t* { return nullptr; },
-                                       [](auto* decl) -> substitution_t* {
-                                         if (decl == nullptr)
-                                           return nullptr;
-                                         return &decl->subs;
-                                       });
+  [[nodiscard]] auto subs() -> Substitution* {
+    return visit_decl<Substitution*>([](Ctor* /*decl*/) -> Substitution* { return nullptr; },
+                                     [](auto* decl) -> Substitution* {
+                                       if (decl == nullptr)
+                                         return nullptr;
+                                       return &decl->subs;
+                                     });
   };
 
   [[nodiscard]] auto ast() const -> const ast::AST* {
@@ -200,7 +183,7 @@ public:
   };
 
   [[nodiscard]] auto self_ty() const -> const ty::Type* {
-    return visit_decl<ty::Type*>([](const auto* decl) { return decl->get_self_ty(); });
+    return visit_decl<const ty::Type*>([](const auto* decl) { return decl->get_self_ty(); });
   };
 };
 

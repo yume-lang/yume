@@ -92,7 +92,7 @@ public:
   void define(Ctor&);
 
   void body_statement(const ast::Stmt&);
-  auto decl_statement(ast::Stmt&, ty::Type* parent = nullptr, ast::Program* member = nullptr) -> DeclLike;
+  auto decl_statement(ast::Stmt&, const ty::Type* parent = nullptr, ast::Program* member = nullptr) -> DeclLike;
   auto body_expression(const ast::Expr& expr) -> Val;
 
   void write_object(const char* filename, bool binary);

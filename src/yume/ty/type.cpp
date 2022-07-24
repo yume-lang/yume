@@ -142,6 +142,10 @@ auto Type::is_generic() const -> bool {
   if (isa<Ptr>(*this))
     return ptr_base()->is_generic();
 
+  if (const auto* struct_ty = dyn_cast<Struct>(this))
+    return std::ranges::any_of(struct_ty->subs(), [](const auto& sub) { return sub.second->is_generic(); });
+  // XXX: The above ranges call is repeated often
+
   return false;
 }
 

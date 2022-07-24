@@ -165,10 +165,10 @@ auto Compiler::create_struct(ast::StructDecl& s_decl, substitution_t& sub) -> ty
   return cast<ty::Struct>(existing).emplace_subbed(sub);
 }
 
-auto Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* member) -> DeclLike {
+auto Compiler::decl_statement(ast::Stmt& stmt, const ty::Type* parent, ast::Program* member) -> DeclLike {
   if (auto* fn_decl = dyn_cast<ast::FnDecl>(&stmt)) {
     vector<unique_ptr<ty::Generic>> type_args{};
-    substitution_t subs{};
+    Substitution subs{};
     for (auto& i : fn_decl->type_args()) {
       auto& gen = type_args.emplace_back(std::make_unique<ty::Generic>(i));
       subs.try_emplace(i, gen.get());
@@ -179,7 +179,7 @@ auto Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* m
   }
   if (auto* s_decl = dyn_cast<ast::StructDecl>(&stmt)) {
     vector<unique_ptr<ty::Generic>> type_args{};
-    substitution_t subs{};
+    Substitution subs{};
     for (auto& i : s_decl->type_args()) {
       auto& gen = type_args.emplace_back(std::make_unique<ty::Generic>(i));
       subs.try_emplace(i, gen.get());

@@ -5,6 +5,7 @@
 #include "compiler/vals.hpp"
 #include "diagnostic/errors.hpp"
 #include "ty/compatibility.hpp"
+#include "ty/substitution.hpp"
 #include "ty/type.hpp"
 #include <algorithm>
 #include <cstdint>
@@ -95,11 +96,11 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
       expression(*i);
 
     // XXX: Duplicated from function overload handling
-    Instantiation instantiation = {};
+    Substitution subs = {};
     for (const auto& [gen, gen_sub] : llvm::zip(struct_obj->type_args, templated->type_vars()))
-      instantiation.sub.try_emplace(gen.get(), gen_sub->val_ty());
+      subs.try_emplace(gen->name(), gen_sub->val_ty());
 
-    auto [already_existed, inst_struct] = struct_obj->get_or_create_instantiation(instantiation);
+    auto [already_existed, inst_struct] = struct_obj->get_or_create_instantiation(subs);
 
     if (!already_existed) {
       auto& new_st = inst_struct;
@@ -110,8 +111,8 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
         body_statement(new_st.st_ast);
       });
 
-      new_st.self_ty = &compiler.create_struct(new_st.st_ast, new_st.subs);
-      decl_queue.push(&new_st);
+      if (compiler.create_struct(new_st))
+        decl_queue.push(&new_st);
     }
 
     expr.val_ty(inst_struct.self_ty);
@@ -161,9 +162,9 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
     errs() << "\n*** END CTOR OVERLOAD EVALUATION ***\n\n";
 #endif
 
-    const auto& instantiate = best_overload.instantiation;
+    const auto& subs = best_overload.subs;
     auto* selected = best_overload.fn;
-    yume_assert(instantiate.sub.empty(), "Constructors cannot be generic"); // TODO(rymiel): revisit?
+    yume_assert(subs.empty(), "Constructors cannot be generic"); // TODO(rymiel): revisit?
 
     // XXX: STILL Duplicated from function overload handling
     for (auto [target, expr_arg, compat] :
@@ -299,13 +300,13 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
   errs() << "\n*** END FN OVERLOAD EVALUATION ***\n\n";
 #endif
 
-  auto& instantiate = best_overload.instantiation;
+  auto& subs = best_overload.subs;
   auto* selected = best_overload.fn;
 
   // It is an instantiation of a function template
-  if (!instantiate.sub.empty()) {
+  if (!subs.empty()) {
     // Try to find an already existing instantiation with the same substitutions
-    auto [already_existed, inst_fn] = selected->get_or_create_instantiation(instantiate);
+    auto [already_existed, inst_fn] = selected->get_or_create_instantiation(subs);
     if (!already_existed) {
       // An existing one wasn't found. We've been given a duplicate of the template's AST but without types
       // The duplicate will have its types set again according to the substitutions being used.
@@ -481,8 +482,8 @@ void TypeWalker::body_expression(ast::Expr& expr) {
 auto TypeWalker::convert_slice_type(const ast::Type& ast_type) -> const ty::Type& {
   const auto& base_type = convert_type(ast_type);
   auto* struct_obj = compiler.m_slice_struct;
-  Instantiation instantiation = {{{struct_obj->type_args.at(0).get(), &base_type}}};
-  auto [already_existed, inst_struct] = struct_obj->get_or_create_instantiation(instantiation);
+  Substitution subs = {{{struct_obj->type_args.at(0)->name(), &base_type}}};
+  auto [already_existed, inst_struct] = struct_obj->get_or_create_instantiation(subs);
 
   if (!already_existed) {
     auto& new_st = inst_struct;
@@ -493,8 +494,8 @@ auto TypeWalker::convert_slice_type(const ast::Type& ast_type) -> const ty::Type
       body_statement(new_st.st_ast);
     });
 
-    new_st.self_ty = &compiler.create_struct(new_st.st_ast, new_st.subs);
-    decl_queue.push(&new_st);
+    if (compiler.create_struct(new_st))
+      decl_queue.push(&new_st);
   }
 
   return *inst_struct.self_ty;

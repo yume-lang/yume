@@ -2,6 +2,7 @@
 
 #include "compiler/vals.hpp"
 #include "ty/compatibility.hpp"
+#include "ty/substitution.hpp"
 #include "util.hpp"
 #include <vector>
 
@@ -17,7 +18,7 @@ namespace yume::semantic {
 template <typename T> struct Overload {
   T* fn{};
   vector<ty::Compat> compatibilities{};
-  Instantiation instantiation{};
+  Substitution subs{};
   bool viable = false;
 
   Overload() = default;

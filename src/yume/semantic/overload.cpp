@@ -30,14 +30,14 @@ template <typename T> void Overload<T>::dump(llvm::raw_ostream& stream) const {
   stream << fn->ast().location().to_string() << "\t" << fn->name() << "(";
   join_args(fn->ast().args(), T::arg_type, stream);
   stream << ")";
-  if (!instantiation.sub.empty()) {
+  if (!subs.empty()) {
     stream << " with ";
     int i = 0;
-    for (const auto& [k, v] : instantiation.sub) {
+    for (const auto& [k, v] : subs) {
       if (i++ > 0)
         stream << ", ";
 
-      stream << k->name() << " = " << v->name();
+      stream << k << " = " << v->name();
     }
   }
 };
@@ -106,7 +106,7 @@ template <typename T> auto OverloadSet<T>::is_valid_overload(Overload<T>& overlo
     const auto* param_type = T::arg_type(param);
 
     if (param_type->is_generic()) {
-      auto sub = arg_type->determine_generic_subs(*param_type, overload.instantiation);
+      auto sub = arg_type->determine_generic_subs(*param_type, overload.subs);
 
       // No valid substitution found
       if (sub.target == nullptr || sub.replace == nullptr)
@@ -114,7 +114,7 @@ template <typename T> auto OverloadSet<T>::is_valid_overload(Overload<T>& overlo
 
       param_type = param_type->apply_generic_substitution(sub);
 
-      if (param_type == nullptr)
+      if (!param_type)
         return false;
     }
 
