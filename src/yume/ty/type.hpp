@@ -1,7 +1,9 @@
 #pragma once
 
 #include "compatibility.hpp"
+#include "compiler/vals.hpp"
 #include "qualifier.hpp"
+#include "ty/substitution.hpp"
 #include "util.hpp"
 #include <array>
 #include <cstdint>
@@ -53,7 +55,8 @@ public:
   auto operator=(Type&&) noexcept -> Type& = delete;
   virtual ~Type() = default;
   [[nodiscard]] auto kind() const -> Kind { return m_kind; };
-  [[nodiscard]] auto name() const -> string { return m_name; };
+  [[nodiscard]] auto base_name() const -> string { return m_name; };
+  [[nodiscard]] virtual auto name() const -> string = 0;
 
   /// Get this type with a given qualifier applied.
   /**
@@ -65,7 +68,7 @@ public:
   [[nodiscard]] auto known_mut() const -> const Type& { return known_qual(Qualifier::Mut); }
   [[nodiscard]] auto known_slice() const -> const Type& { return known_qual(Qualifier::Slice); }
 
-  [[nodiscard]] auto determine_generic_subs(const Type& generic, Instantiation& inst, Sub sub = Sub()) const -> Sub;
+  [[nodiscard]] auto determine_generic_subs(const Type& generic, Instantiation& inst) const -> Sub;
   [[nodiscard]] auto apply_generic_substitution(Sub sub) const -> const Type*;
   [[nodiscard]] auto fully_apply_instantiation(const Instantiation& inst) const -> const Type*;
   [[nodiscard]] auto compatibility(const Type& other, Compat compat = Compat()) const -> Compat;
@@ -103,6 +106,7 @@ public:
   Int(string name, int size, bool is_signed) : Type(K_Int, move(name)), m_size(size), m_signed(is_signed) {}
   [[nodiscard]] auto size() const -> int { return m_size; }
   [[nodiscard]] auto is_signed() const -> bool { return m_signed; }
+  [[nodiscard]] auto name() const -> string override { return base_name(); };
   [[nodiscard]] auto in_range(int64_t num) const -> bool;
   static auto classof(const Type* a) -> bool { return a->kind() == K_Int; }
 };
@@ -119,6 +123,7 @@ public:
   Qual(string name, const Type& base, bool mut) : Type(K_Qual, move(name)), m_base(base), m_mut(mut) {}
   [[nodiscard]] auto base() const -> const Type& { return m_base; }
   [[nodiscard]] auto has_qualifier(Qualifier qual) const -> bool { return (qual == Qualifier::Mut && m_mut); }
+  [[nodiscard]] auto name() const -> string override;
   static auto classof(const Type* a) -> bool { return a->kind() == K_Qual; }
 };
 
@@ -135,21 +140,29 @@ public:
   [[nodiscard]] auto base() const -> const Type& { return m_base; }
   [[nodiscard]] auto qualifier() const -> Qualifier { return m_qual; }
   [[nodiscard]] auto has_qualifier(Qualifier qual) const -> bool { return m_qual == qual; }
+  [[nodiscard]] auto name() const -> string override;
   static auto classof(const Type* a) -> bool { return a->kind() == K_Ptr; }
 };
 
 /// An user-defined struct type with associated fields.
 class Struct : public Type {
   vector<const ast::TypeName*> m_fields;
+  const substitution_t* m_subs;
+  mutable std::map<substitution_t, unique_ptr<Struct>> m_subbed{}; // HACK
+  auto emplace_subbed(substitution_t sub) const -> Struct&;
   mutable llvm::StructType* m_memo{};
   void memo(llvm::StructType* memo) const { m_memo = memo; }
 
   friend Compiler;
+  friend Type;
 
 public:
-  Struct(string name, vector<const ast::TypeName*> fields) : Type(K_Struct, move(name)), m_fields(move(fields)) {}
+  Struct(string name, vector<const ast::TypeName*> fields, const substitution_t* subs)
+      : Type(K_Struct, move(name)), m_fields(move(fields)), m_subs(subs) {}
   [[nodiscard]] auto fields() const -> const auto& { return m_fields; }
   [[nodiscard]] auto fields() -> auto& { return m_fields; }
+  [[nodiscard]] auto subs() const -> const auto& { return *m_subs; }
+  [[nodiscard]] auto name() const -> string override;
   [[nodiscard]] auto memo() const -> auto* { return m_memo; }
   static auto classof(const Type* a) -> bool { return a->kind() == K_Struct; }
 };
@@ -161,6 +174,7 @@ public:
 class Generic : public Type {
 public:
   explicit Generic(string name) : Type(K_Generic, move(name)) {}
+  [[nodiscard]] auto name() const -> string override { return base_name(); };
   static auto classof(const Type* a) -> bool { return a->kind() == K_Generic; }
 };
 } // namespace yume::ty

@@ -1,10 +1,12 @@
 #include "type.hpp"
 #include "compiler/vals.hpp"
 #include "ty/compatibility.hpp"
+#include "ty/substitution.hpp"
 #include <cstddef>
 #include <limits>
 #include <llvm/Support/Casting.h>
 #include <map>
+#include <sstream>
 #include <stdexcept>
 #include <type_traits>
 #include <utility>
@@ -37,11 +39,10 @@ auto Type::known_qual(Qualifier qual) const -> const Type& {
       existing_mut = existing_qual->m_mut;
       existing_base = &existing_qual->m_base;
     }
-    auto new_qual_type =
-        std::make_unique<Qual>(name() + qual_suffix(qual), *existing_base, (existing_mut || qual == Qualifier::Mut));
+    auto new_qual_type = std::make_unique<Qual>(m_name, *existing_base, (existing_mut || qual == Qualifier::Mut));
     m_known_qual.at(qual_idx) = move(new_qual_type);
   } else {
-    auto new_qual_type = std::make_unique<Ptr>(name() + qual_suffix(qual), *this, qual);
+    auto new_qual_type = std::make_unique<Ptr>(m_name, *this, qual);
     m_known_qual.at(qual_idx) = move(new_qual_type);
   }
   return *m_known_qual.at(qual_idx);
@@ -211,6 +212,28 @@ auto Type::intersect(const Type& other) const -> const Type* {
 
 auto Type::without_mut() const -> const Type& { return is_mut() ? *mut_base() : *this; }
 
+auto Qual::name() const -> string {
+  if (m_mut)
+    return m_base.name() + qual_suffix(Qualifier::Mut);
+  return m_base.name();
+}
+auto Ptr::name() const -> string { return m_base.name() + qual_suffix(m_qual); }
+auto Struct::name() const -> string {
+  if (m_subs->empty())
+    return base_name();
+
+  auto ss = stringstream{};
+  ss << base_name() << "{";
+  for (const auto& i : llvm::enumerate(*m_subs)) {
+    if (i.index() > 0)
+      ss << ",";
+    ss << i.value().second->name();
+  }
+  ss << "}";
+
+  return ss.str();
+}
+
 namespace detail {
 static constexpr size_t BITSIZE_8 = 8;
 static constexpr size_t BITSIZE_16 = 16;
@@ -250,5 +273,4 @@ auto Int::in_range(int64_t num) const -> bool {
     return num >= min_max.s_min && num <= min_max.s_max;
   return static_cast<uint64_t>(num) >= min_max.u_min && static_cast<uint64_t>(num) <= min_max.u_max;
 }
-
 } // namespace yume::ty

@@ -3,6 +3,7 @@
 #include "ast/ast.hpp"
 #include "ast/parser.hpp"
 #include "token.hpp"
+#include "ty/substitution.hpp"
 #include "ty/type.hpp"
 #include "util.hpp"
 #include <compare>
@@ -38,8 +39,6 @@ struct Instantiation {
   }
 #endif
 };
-
-using substitution_t = std::map<string, const ty::Type*>;
 
 /// Common values between function declarations (`Fn`) and constructors (`Ctor`), which behave very similarly.
 struct FnBase {
@@ -175,6 +174,15 @@ public:
   }
 
   [[nodiscard]] auto subs() const -> const substitution_t* {
+    return visit_decl<substitution_t*>([](Ctor* /*decl*/) -> substitution_t* { return nullptr; },
+                                       [](auto* decl) -> substitution_t* {
+                                         if (decl == nullptr)
+                                           return nullptr;
+                                         return &decl->subs;
+                                       });
+  };
+
+  [[nodiscard]] auto subs() -> substitution_t* {
     return visit_decl<substitution_t*>([](Ctor* /*decl*/) -> substitution_t* { return nullptr; },
                                        [](auto* decl) -> substitution_t* {
                                          if (decl == nullptr)

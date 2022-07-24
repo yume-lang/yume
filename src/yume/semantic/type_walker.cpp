@@ -110,13 +110,7 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
         body_statement(new_st.st_ast);
       });
 
-      // HACK: the "describe" method is being abused here
-      std::string name_with_types = new_st.st_ast.name() + templated->describe();
-
-      auto& i_ty = compiler.m_types.template_instantiations.emplace_back(
-          Compiler::create_struct(new_st.st_ast, name_with_types));
-
-      new_st.self_ty = i_ty.get();
+      new_st.self_ty = &compiler.create_struct(new_st.st_ast, new_st.subs);
       decl_queue.push(&new_st);
     }
 
@@ -189,9 +183,13 @@ template <> void TypeWalker::expression(ast::SliceExpr& expr) {
   for (auto& i : expr.args()) {
     body_expression(*i);
   }
-  expression(expr.type());
-  const auto& base_type = convert_type(expr.type());
-  expr.val_ty(&base_type.known_slice());
+
+  auto& slice_base = expr.type();
+  expression(slice_base);
+  const auto& base_type = convert_slice_type(slice_base);
+
+  // expr.val_ty(&base_type.known_slice());
+  expr.val_ty(&base_type);
 }
 
 template <> void TypeWalker::expression(ast::AssignExpr& expr) {
@@ -480,6 +478,28 @@ void TypeWalker::body_expression(ast::Expr& expr) {
   return CRTPWalker::body_expression(expr);
 }
 
+auto TypeWalker::convert_slice_type(const ast::Type& ast_type) -> const ty::Type& {
+  const auto& base_type = convert_type(ast_type);
+  auto* struct_obj = compiler.m_slice_struct;
+  Instantiation instantiation = {{{struct_obj->type_args.at(0).get(), &base_type}}};
+  auto [already_existed, inst_struct] = struct_obj->get_or_create_instantiation(instantiation);
+
+  if (!already_existed) {
+    auto& new_st = inst_struct;
+
+    with_saved_scope([&] {
+      in_depth = false;
+      current_decl = &new_st;
+      body_statement(new_st.st_ast);
+    });
+
+    new_st.self_ty = &compiler.create_struct(new_st.st_ast, new_st.subs);
+    decl_queue.push(&new_st);
+  }
+
+  return *inst_struct.self_ty;
+}
+
 auto TypeWalker::convert_type(const ast::Type& ast_type) -> const ty::Type& {
   const ty::Type* parent = current_decl.self_ty();
   const auto* context = current_decl.subs();
@@ -496,6 +516,8 @@ auto TypeWalker::convert_type(const ast::Type& ast_type) -> const ty::Type& {
       return *val->second;
   } else if (const auto* qual_type = dyn_cast<ast::QualType>(&ast_type)) {
     auto qualifier = qual_type->qualifier();
+    if (qualifier == Qualifier::Slice)
+      return convert_slice_type(qual_type->base());
     return convert_type(qual_type->base()).known_qual(qualifier);
   } else if (isa<ast::SelfType>(ast_type)) {
     if (parent != nullptr)
@@ -520,6 +542,12 @@ void TypeWalker::resolve_queue() {
           [&](Struct* st) {
             for (auto& i : st->body().body()) {
               auto decl = compiler.decl_statement(*i, st->self_ty, st->member);
+
+              // "Inherit" substitutions
+              // TODO(rymiel): Shadowing type variables should be an error
+              if (decl.subs() != nullptr)
+                for (auto& [k, v] : st->subs)
+                  decl.subs()->try_emplace(k, v);
               compiler.walk_types(decl);
             }
           },

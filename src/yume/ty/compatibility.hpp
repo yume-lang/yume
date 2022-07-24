@@ -41,5 +41,7 @@ struct Compat {
 struct Sub {
   const Generic* target{};
   const Type* replace{};
+
+  auto constexpr operator<=>(const Sub& other) const noexcept = default;
 };
 } // namespace yume::ty

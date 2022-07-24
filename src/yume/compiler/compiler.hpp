@@ -2,6 +2,7 @@
 
 #include "ast/crtp_walker.hpp"
 #include "semantic/type_walker.hpp"
+#include "ty/type.hpp"
 #include "type_holder.hpp"
 #include "util.hpp"
 #include "vals.hpp"
@@ -61,6 +62,8 @@ class Compiler : public CRTPWalker<Compiler> {
   /// In a constructor, the object being constructed, implicitly created by the compiler.
   optional<InScope> m_scope_ctor{};
 
+  Struct* m_slice_struct{};
+
   unique_ptr<llvm::LLVMContext> m_context;
   unique_ptr<llvm::IRBuilder<>> m_builder;
   unique_ptr<llvm::Module> m_module;
@@ -81,7 +84,7 @@ public:
   /// Declare a constructor in bytecode, or get an existing declaration.
   auto declare(Ctor&) -> llvm::Function*;
 
-  static auto create_struct(ast::StructDecl&, const optional<string>& name_override = {}) -> unique_ptr<ty::Struct>;
+  auto create_struct(ast::StructDecl&, substitution_t&) -> ty::Struct&;
 
   /// Compile the body of a function.
   void define(Fn&);

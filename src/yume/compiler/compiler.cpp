@@ -5,6 +5,7 @@
 #include "qualifier.hpp"
 #include "semantic/type_walker.hpp"
 #include "ty/compatibility.hpp"
+#include "ty/substitution.hpp"
 #include "ty/type.hpp"
 #include "util.hpp"
 #include "vals.hpp"
@@ -146,19 +147,28 @@ void Compiler::walk_types(DeclLike decl_like) {
   });
 }
 
-auto Compiler::create_struct(ast::StructDecl& s_decl, const optional<string>& name_override) -> unique_ptr<ty::Struct> {
+auto Compiler::create_struct(ast::StructDecl& s_decl, substitution_t& sub) -> ty::Struct& {
   auto fields = vector<const ast::TypeName*>();
   fields.reserve(s_decl.fields().size());
   for (const auto& f : s_decl.fields())
     fields.push_back(&f);
 
-  return std::make_unique<ty::Struct>(name_override.value_or(s_decl.name()), fields);
+  auto iter = m_types.known.find(s_decl.name());
+  if (iter == m_types.known.end()) {
+    auto empl =
+        m_types.known.try_emplace(s_decl.name(), std::make_unique<ty::Struct>(s_decl.name(), move(fields), &sub));
+    yume_assert(isa<ty::Struct>(*empl.first->second));
+    return cast<ty::Struct>(*empl.first->second);
+  }
+  auto& existing = *iter->second;
+  yume_assert(isa<ty::Struct>(existing));
+  return cast<ty::Struct>(existing).emplace_subbed(sub);
 }
 
 auto Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* member) -> DeclLike {
   if (auto* fn_decl = dyn_cast<ast::FnDecl>(&stmt)) {
     vector<unique_ptr<ty::Generic>> type_args{};
-    std::map<string, const ty::Type*> subs{};
+    substitution_t subs{};
     for (auto& i : fn_decl->type_args()) {
       auto& gen = type_args.emplace_back(std::make_unique<ty::Generic>(i));
       subs.try_emplace(i, gen.get());
@@ -168,15 +178,18 @@ auto Compiler::decl_statement(ast::Stmt& stmt, ty::Type* parent, ast::Program* m
     return &fn;
   }
   if (auto* s_decl = dyn_cast<ast::StructDecl>(&stmt)) {
-    auto i_ty = m_types.known.insert({s_decl->name(), create_struct(*s_decl)});
-
     vector<unique_ptr<ty::Generic>> type_args{};
-    std::map<string, const ty::Type*> subs{};
+    substitution_t subs{};
     for (auto& i : s_decl->type_args()) {
       auto& gen = type_args.emplace_back(std::make_unique<ty::Generic>(i));
       subs.try_emplace(i, gen.get());
     }
-    auto& st = m_structs.emplace_back(*s_decl, i_ty.first->second.get(), member, std::move(subs), std::move(type_args));
+    auto& st = m_structs.emplace_back(*s_decl, nullptr, member, move(subs), move(type_args));
+    auto& i_ty = create_struct(*s_decl, st.subs);
+    st.self_ty = &i_ty;
+
+    if (st.name() == "Slice") // TODO(rymiel): magic value?
+      m_slice_struct = &st;
 
     if (st.type_args.empty())
       for (auto& f : s_decl->body().body())
