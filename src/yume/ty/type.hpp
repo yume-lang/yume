@@ -68,9 +68,8 @@ public:
   [[nodiscard]] auto known_mut() const -> const Type& { return known_qual(Qualifier::Mut); }
   [[nodiscard]] auto known_slice() const -> const Type& { return known_qual(Qualifier::Slice); }
 
-  [[nodiscard]] auto determine_generic_subs(const Type& generic, Instantiation& inst) const -> Sub;
+  [[nodiscard]] auto determine_generic_subs(const Type& generic, Substitution& subs) const -> Sub;
   [[nodiscard]] auto apply_generic_substitution(Sub sub) const -> const Type*;
-  [[nodiscard]] auto fully_apply_instantiation(const Instantiation& inst) const -> const Type*;
   [[nodiscard]] auto compatibility(const Type& other, Compat compat = Compat()) const -> Compat;
   /// The union of this and `other`. For example, the union of `T` and `T mut` is `T mut`.
   /// \returns `nullptr` if an union cannot be created.
@@ -147,9 +146,10 @@ public:
 /// An user-defined struct type with associated fields.
 class Struct : public Type {
   vector<const ast::TypeName*> m_fields;
-  const substitution_t* m_subs;
-  mutable std::map<substitution_t, unique_ptr<Struct>> m_subbed{}; // HACK
-  auto emplace_subbed(substitution_t sub) const -> Struct&;
+  const Substitution* m_subs;
+  const Struct* m_parent{};
+  mutable std::map<Substitution, unique_ptr<Struct>> m_subbed{}; // HACK
+  auto emplace_subbed(Substitution sub) const -> const Struct&;
   mutable llvm::StructType* m_memo{};
   void memo(llvm::StructType* memo) const { m_memo = memo; }
 
@@ -157,7 +157,7 @@ class Struct : public Type {
   friend Type;
 
 public:
-  Struct(string name, vector<const ast::TypeName*> fields, const substitution_t* subs)
+  Struct(string name, vector<const ast::TypeName*> fields, const Substitution* subs)
       : Type(K_Struct, move(name)), m_fields(move(fields)), m_subs(subs) {}
   [[nodiscard]] auto fields() const -> const auto& { return m_fields; }
   [[nodiscard]] auto fields() -> auto& { return m_fields; }

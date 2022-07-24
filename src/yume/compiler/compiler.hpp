@@ -84,7 +84,7 @@ public:
   /// Declare a constructor in bytecode, or get an existing declaration.
   auto declare(Ctor&) -> llvm::Function*;
 
-  auto create_struct(ast::StructDecl&, substitution_t&) -> ty::Struct&;
+  auto create_struct(Struct&) -> bool;
 
   /// Compile the body of a function.
   void define(Fn&);
@@ -132,8 +132,7 @@ private:
   void destruct_all_in_scope();
 
   /// Handle all primitive, built-in functions
-  auto primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<const ty::Type*>& types, const ty::Type* ret_ty)
-      -> optional<Val>;
+  auto primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<const ty::Type*>& types) -> optional<Val>;
   /// Handle primitive functions taking two integral values, such as most arithmetic operations (add, multiply, etc).
   auto int_bin_primitive(const string& primitive, const vector<llvm::Value*>& args) -> Val;
 

@@ -60,9 +60,16 @@ static auto visit_subs(const Type& a, const Type& b, Sub sub) -> Sub {
   if (a.is_mut() && b.is_mut())
     return visit_subs(*a.mut_base(), b.without_mut(), sub);
 
-  // `Foo[] mut` -> `T[]`, with `T = Foo`.
+  // `Foo ptr mut` -> `T ptr`, with `T = Foo`.
   if (a.is_mut() && !b.is_mut())
     return visit_subs(*a.mut_base(), b, sub);
+
+  // `Foo{Bar}` -> `Foo{T}`, with `T = Foo`.
+  // TODO(rymiel): This could technically have multiple type variables... Currently only handling the "1" case.
+  if (auto a_st_ty = dyn_cast<Struct>(&a), b_st_ty = dyn_cast<Struct>(&b); a_st_ty != nullptr && b_st_ty != nullptr)
+    if (a_st_ty->base_name() == b_st_ty->base_name())
+      if (a_st_ty->subs().size() == 1 && b_st_ty->subs().size() == 1)
+        return visit_subs(*a_st_ty->subs().begin()->second, *b_st_ty->subs().begin()->second, sub);
 
   // Substitution impossible! For example, `Foo` -> `T ptr`.
   if (!isa<Generic>(b))
@@ -78,28 +85,34 @@ static auto visit_subs(const Type& a, const Type& b, Sub sub) -> Sub {
 /// Add the substitution `gen_sub` for the generic type variable `gen` in template instantiation `instantiation`.
 /// If a substitution already exists for the same type variable, the two substitutions are intersected.
 /// \returns nullptr if substitution failed
-static auto intersect_generics(Instantiation& inst, const Generic* gen, const Type* gen_sub) -> const Type* {
-  auto existing = inst.sub.find(gen);
+static auto intersect_generics(Substitution& subs, const Generic* gen, const Type* gen_sub) -> const Type* {
+  if (gen == nullptr)
+    return nullptr;
+
+  auto name = gen->name();
+  auto existing = subs.find(name);
   // The substitution must have an intersection with an already deduced value for the same type variable
-  if (existing != inst.sub.end()) {
+  if (existing != subs.end()) {
     const auto* intersection = gen_sub->intersect(*existing->second);
     if (intersection == nullptr) {
       // The types don't have a common intersection, they cannot coexist.
       return nullptr;
     }
-    inst.sub[gen] = intersection;
+    subs[name] = intersection;
   } else {
-    inst.sub.try_emplace(gen, gen_sub);
+    subs.try_emplace(name, gen_sub);
   }
 
-  return inst.sub.at(gen);
+  return subs.at(name);
 }
 
-auto Type::determine_generic_subs(const Type& generic, Instantiation& inst, Sub sub) const -> Sub {
+auto Type::determine_generic_subs(const Type& generic, Substitution& subs) const -> Sub {
   yume_assert(generic.is_generic(), "Cannot substitute generics in a non-generic type");
 
+  Sub sub{};
   sub = visit_subs(*this, generic, sub);
-  sub.replace = intersect_generics(inst, sub.target, sub.replace);
+  sub.replace = intersect_generics(subs, sub.target, sub.replace);
+
   return sub;
 }
 
@@ -163,21 +176,34 @@ auto Type::apply_generic_substitution(Sub sub) const -> const Type* {
   if (const auto* ptr_this = dyn_cast<Ptr>(this))
     return &ptr_base()->apply_generic_substitution(sub)->known_qual(ptr_this->qualifier());
 
+  if (const auto* st_this = dyn_cast<Struct>(this)) {
+    // Gah!
+    auto subs = Substitution{};
+    for (const auto& [k, v] : st_this->subs()) {
+      subs.try_emplace(k, v->apply_generic_substitution(sub));
+    }
+
+    return &st_this->emplace_subbed(move(subs));
+  }
+
   return nullptr;
 }
 
-auto Type::fully_apply_instantiation(const Instantiation& inst) const -> const Type* {
-  const auto* subbed = this;
-  for (const auto& [k, v] : inst.sub) {
-    if (!subbed->is_generic())
-      return subbed;
+auto Struct::emplace_subbed(Substitution sub) const -> const Struct& {
+  if (m_parent != nullptr)
+    return m_parent->emplace_subbed(move(sub));
 
-    const auto* with_sub = apply_generic_substitution({k, v});
-    if (with_sub != nullptr)
-      subbed = with_sub;
+  if (sub == *m_subs)
+    return *this;
+
+  auto existing = m_subbed.find(sub);
+  if (existing == m_subbed.end()) {
+    auto [iter, success] = m_subbed.emplace(move(sub), make_unique<Struct>(base_name(), fields(), nullptr));
+    iter->second->m_subs = &iter->first;
+    iter->second->m_parent = this;
+    return *iter->second;
   }
-
-  return subbed;
+  return *existing->second;
 }
 
 auto Type::mut_base() const -> const Type* {
