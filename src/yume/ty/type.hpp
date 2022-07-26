@@ -23,6 +23,7 @@ struct TypeName;
 } // namespace yume
 
 namespace yume::ty {
+class Type;
 enum Kind {
   K_Unknown,             ///< `UnknownType`, default, zero value. Hopefully never encountered!
   K_Int,                 ///< `Int`
@@ -52,6 +53,8 @@ class [[deprecated]] BaseType {
   [[deprecated]] mutable array<unique_ptr<BaseType>, static_cast<int>(Qualifier::Q_END)> m_known_ptr_like{};
   const Kind m_kind;
   string m_name;
+
+  friend Type;
 
 public:
   BaseType(const BaseType&) noexcept = delete;
@@ -104,12 +107,18 @@ class Type {
 
 public:
   Type(nullable<const BaseType*> base, bool mut) : m_base(base), m_mut(mut) {}
+  Type(nullable<const BaseType*> base) : m_base(base) {}
+
+  auto operator==(const Type&) const -> bool = default;
+
   [[nodiscard]] auto kind() const -> Kind { return m_base->kind(); };
   [[nodiscard]] auto base() const -> nullable<const BaseType*> { return m_base; }
   template <typename T> [[nodiscard]] auto base_cast() const -> nullable<const T*> { return cast<T>(m_base); }
   template <typename T> [[nodiscard]] auto base_dyn_cast() const -> nullable<const T*> { return dyn_cast<T>(m_base); }
   template <typename T> [[nodiscard]] auto base_isa() const -> bool { return isa<T>(m_base); }
-  [[nodiscard]] auto has_qualifier(Qualifier qual) const -> bool { return (qual == Qualifier::Mut && m_mut); }
+  [[nodiscard, deprecated]] auto has_qualifier(Qualifier qual) const -> bool {
+    return (qual == Qualifier::Mut && m_mut);
+  }
   [[nodiscard]] auto name() const -> string;
 
   [[nodiscard]] auto compatibility(Type other, Compat compat = Compat()) const -> Compat;
@@ -127,7 +136,7 @@ public:
   /// \returns `nullopt` is there's not intersection between the types.
   [[nodiscard]] auto intersect(Type other) const -> optional<Type>;
 
-  [[nodiscard]] auto is_mut() const -> bool;
+  [[nodiscard]] auto is_mut() const -> bool { return m_mut; };
   [[nodiscard]] auto is_generic() const -> bool;
 
   /// If this type is a mutable reference, return the base of it (`T mut` -> `T`)
