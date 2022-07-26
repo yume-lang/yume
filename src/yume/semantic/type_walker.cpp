@@ -27,13 +27,20 @@
 
 namespace yume::semantic {
 
-inline void wrap_in_implicit_cast(ast::OptionalExpr& expr, ty::Conv conv, const ty::BaseType* target_type) {
+[[deprecated]] inline void wrap_in_implicit_cast(ast::OptionalExpr& expr, ty::Conv conv,
+                                                 const ty::BaseType* target_type) {
   auto cast_expr = std::make_unique<ast::ImplicitCastExpr>(expr->token_range(), move(expr), conv);
   cast_expr->val_ty(target_type);
   expr = move(cast_expr);
 }
 
-inline void try_implicit_conversion(ast::OptionalExpr& expr, const ty::BaseType* target_type) {
+inline void wrap_in_implicit_cast(ast::OptionalExpr& expr, ty::Conv conv, optional<ty::Type> target_type) {
+  auto cast_expr = std::make_unique<ast::ImplicitCastExpr>(expr->token_range(), move(expr), conv);
+  cast_expr->type(target_type);
+  expr = move(cast_expr);
+}
+
+[[deprecated]] inline void try_implicit_conversion(ast::OptionalExpr& expr, const ty::BaseType* target_type) {
   if (target_type == nullptr)
     return;
 
@@ -41,6 +48,19 @@ inline void try_implicit_conversion(ast::OptionalExpr& expr, const ty::BaseType*
   if (!compat.valid)
     throw std::runtime_error("Invalid implicit conversion ('"s + expr->val_ty()->name() + "' -> '" +
                              target_type->name() + "')");
+
+  if (!compat.conv.empty())
+    wrap_in_implicit_cast(expr, compat.conv, target_type);
+}
+
+inline void try_implicit_conversion(ast::OptionalExpr& expr, optional<ty::Type> target_type) {
+  if (!target_type)
+    return;
+
+  auto compat = expr->type()->compatibility(*target_type);
+  if (!compat.valid)
+    throw std::runtime_error("Invalid implicit conversion ('"s + expr->type()->name() + "' -> '" + target_type->name() +
+                             "')");
 
   if (!compat.conv.empty())
     wrap_in_implicit_cast(expr, compat.conv, target_type);

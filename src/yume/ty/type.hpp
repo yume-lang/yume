@@ -1,7 +1,7 @@
 #pragma once
 
 #include "compatibility.hpp"
-#include "compiler/vals.hpp"
+// #include "compiler/vals.hpp"
 #include "qualifier.hpp"
 #include "ty/substitution.hpp"
 #include "util.hpp"
