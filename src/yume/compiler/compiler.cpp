@@ -257,10 +257,10 @@ auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
     return llvm::Type::getIntNTy(*m_context, int_type->size());
   if (const auto* ptr_type = type.base_dyn_cast<ty::Ptr>()) {
     switch (ptr_type->qualifier()) {
-    case Qualifier::Ptr: return llvm::PointerType::getUnqual(llvm_type(&ptr_type->base()));
+    case Qualifier::Ptr: return llvm::PointerType::getUnqual(llvm_type(ptr_type->pointee()));
     case Qualifier::Slice: {
       auto args = vector<llvm::Type*>{};
-      args.push_back(llvm::PointerType::getUnqual(llvm_type(&ptr_type->base())));
+      args.push_back(llvm::PointerType::getUnqual(llvm_type(ptr_type->pointee())));
       args.push_back(llvm::Type::getInt64Ty(*m_context));
       return llvm::StructType::get(*m_context, args);
     }
@@ -356,10 +356,10 @@ auto Compiler::default_init(ty::Type type) -> Val {
     switch (ptr_type->qualifier()) {
     default: llvm_unreachable("Ptr type cannot hold this qualifier");
     case Qualifier::Ptr:
-      llvm::ConstantPointerNull::get(llvm::PointerType::getUnqual(llvm_type(&ptr_type->base())));
+      llvm::ConstantPointerNull::get(llvm::PointerType::getUnqual(llvm_type(ptr_type->pointee())));
       break;
     case Qualifier::Slice:
-      auto* ptr_member_type = llvm::PointerType::getUnqual(llvm_type(&ptr_type->base()));
+      auto* ptr_member_type = llvm::PointerType::getUnqual(llvm_type(ptr_type->pointee()));
       auto* struct_type = cast<llvm::StructType>(llvm_type(type));
       return llvm::ConstantStruct::get(struct_type, llvm::ConstantPointerNull::get(ptr_member_type),
                                        m_builder->getInt64(0));
@@ -370,7 +370,7 @@ auto Compiler::default_init(ty::Type type) -> Val {
     llvm::Value* val = llvm::UndefValue::get(llvm_ty);
 
     for (const auto& i : llvm::enumerate(struct_type->fields()))
-      val = m_builder->CreateInsertValue(val, default_init(i.value()->type->val_ty()), i.index());
+      val = m_builder->CreateInsertValue(val, default_init(i.value()->type->ensure_type()), i.index());
 
     return val;
   }
@@ -485,6 +485,12 @@ void Compiler::destruct_all_in_scope() {
   for (const auto& [k, v] : m_scope)
     if (isa<ast::VarDecl>(v.ast) && v.owning && !is_trivially_destructible(v.ast.val_ty()))
       destruct(v.value, v.ast.val_ty());
+}
+
+void Compiler::__destruct_all_in_scope() {
+  for (const auto& [k, v] : m_scope)
+    if (isa<ast::VarDecl>(v.ast) && v.owning && !is_trivially_destructible(v.ast.ensure_type()))
+      destruct(v.value, v.ast.ensure_type());
 }
 
 template <typename T> void Compiler::setup_fn_base(T& fn) {
@@ -1090,6 +1096,28 @@ auto Compiler::mangle_name(const ty::BaseType* ast_type, DeclLike parent) -> str
     return match->second->name();
   }
   return ast_type->name();
+}
+
+auto Compiler::mangle_name(ty::Type ast_type, DeclLike parent) -> string {
+  stringstream ss{};
+  if (const auto* ptr_type = ast_type.base_dyn_cast<ty::Ptr>()) {
+    ss << mangle_name(ptr_type->pointee(), parent);
+    if (ptr_type->has_qualifier(Qualifier::Ptr))
+      ss << "*";
+    if (ptr_type->has_qualifier(Qualifier::Slice))
+      ss << "[";
+  } else if (const auto* generic_type = ast_type.base_dyn_cast<ty::Generic>()) {
+    auto match = parent.subs()->find(generic_type->name());
+    yume_assert(match != parent.subs()->end(), "Cannot mangle unsubstituted generic");
+    ss << match->second->name();
+  } else {
+    ss << ast_type.name();
+  }
+
+  if (ast_type.is_mut())
+    ss << "&";
+
+  return ss.str();
 }
 
 void Compiler::body_statement(const ast::Stmt& stat) {

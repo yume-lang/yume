@@ -55,13 +55,33 @@ template <typename T> void OverloadSet<T>::dump(llvm::raw_ostream& stream, bool 
   }
 };
 
-static auto literal_cast(ast::AST& arg, const ty::BaseType* target_type) -> ty::Compat {
+[[deprecated]] static auto literal_cast(ast::AST& arg, const ty::BaseType* target_type) -> ty::Compat {
   if (arg.val_ty() == target_type)
     return {.valid = true}; // Already the correct type
 
   if (isa<ast::NumberExpr>(arg) && isa<ty::Int>(target_type)) {
     auto& num_arg = cast<ast::NumberExpr>(arg);
     const auto* int_type = cast<ty::Int>(target_type);
+
+    if (int_type->size() == 1)
+      return {}; // Can't implicitly cast to Bool
+
+    auto in_range = int_type->in_range(num_arg.val());
+
+    if (in_range)
+      return {.valid = true, .conv = {.dereference = false, .kind = ty::Conv::Int}};
+  }
+
+  return {};
+}
+
+static auto literal_cast(ast::AST& arg, ty::Type target_type) -> ty::Compat {
+  if (arg.type() == target_type)
+    return {.valid = true}; // Already the correct type
+
+  if (isa<ast::NumberExpr>(arg) && target_type.base_isa<ty::Int>()) {
+    auto& num_arg = cast<ast::NumberExpr>(arg);
+    const auto* int_type = target_type.base_cast<ty::Int>();
 
     if (int_type->size() == 1)
       return {}; // Can't implicitly cast to Bool
