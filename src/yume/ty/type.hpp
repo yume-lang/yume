@@ -47,8 +47,8 @@ enum Kind {
 /// instances of `Type`. A "qualified" type is, for example, `mut`. These qualifiers do not stack. Getting the "mut"
 /// reference to a mutable reference should be itself.
 ///
-/// Also, pointer-like types are also not held in `TypeHolder`, and are instead stored in the `m_known_qual` array of
-/// their pointee type.
+/// Also, pointer-like types are also not held in `TypeHolder`, and are instead stored in the `m_known_ptr_like` array
+/// of their pointee type.
 class [[deprecated]] BaseType {
   [[deprecated]] mutable array<unique_ptr<BaseType>, static_cast<int>(Qualifier::Q_END)> m_known_ptr_like{};
   const Kind m_kind;
@@ -65,37 +65,82 @@ public:
   [[nodiscard]] virtual auto name() const -> string = 0;
 
   /// Get this type with a given qualifier applied.
-  [[nodiscard]] auto known_qual(Qualifier qual) const -> const BaseType&;
-  [[nodiscard]] auto known_ptr() const -> const BaseType& { return known_qual(Qualifier::Ptr); }
-  [[nodiscard]] auto known_mut() const -> const BaseType& { return known_qual(Qualifier::Mut); }
-  [[nodiscard]] auto known_slice() const -> const BaseType& { return known_qual(Qualifier::Slice); }
+  [[nodiscard, deprecated]] auto known_qual(Qualifier qual) const -> const BaseType&;
+  [[nodiscard, deprecated]] auto known_ptr() const -> const BaseType& { return known_qual(Qualifier::Ptr); }
+  [[nodiscard, deprecated]] auto known_mut() const -> const BaseType& { return known_qual(Qualifier::Mut); }
+  [[nodiscard, deprecated]] auto known_slice() const -> const BaseType& { return known_qual(Qualifier::Slice); }
 
   [[nodiscard]] auto determine_generic_subs(const BaseType& generic, Substitution& subs) const -> Sub;
   [[nodiscard]] auto apply_generic_substitution(Sub sub) const -> const BaseType*;
-  [[nodiscard]] auto compatibility(const BaseType& other, Compat compat = Compat()) const -> Compat;
+  [[nodiscard, deprecated]] auto compatibility(const BaseType& other, Compat compat = Compat()) const -> Compat;
   /// The union of this and `other`. For example, the union of `T` and `T mut` is `T mut`.
   /// \returns `nullptr` if an union cannot be created.
-  [[nodiscard]] auto coalesce(const BaseType& other) const -> const BaseType*;
+  [[nodiscard, deprecated]] auto coalesce(const BaseType& other) const -> const BaseType*;
   /// Return the intersection of this and `other`. For example, the intersection of `T` and `T mut` is `T`.
   /// \returns `nullptr` is there's not intersection between the types.
-  [[nodiscard]] auto intersect(const BaseType& other) const -> const BaseType*;
+  [[nodiscard, deprecated]] auto intersect(const BaseType& other) const -> const BaseType*;
+
+  [[nodiscard, deprecated]] auto is_mut() const -> bool;
+  [[nodiscard, deprecated]] auto is_generic() const -> bool;
+
+  /// If this type is a mutable reference, return the base of it (`T mut` -> `T`)
+  /// \returns `nullptr` if this type isn't a mutable reference.
+  [[nodiscard, deprecated]] auto mut_base() const -> const BaseType*;
+
+  /// If this type is a pointer type, return the base of it (`T ptr` -> `T`)
+  /// \returns `nullptr` if this type isn't a pointer type.
+  [[nodiscard, deprecated]] auto ptr_base() const -> const BaseType*;
+
+  /// If this type is a mutable reference, return the base of it, otherwise return itself.
+  [[nodiscard, deprecated]] auto without_mut() const -> const BaseType&;
+
+protected:
+  BaseType(Kind kind, string name) : m_kind(kind), m_name(move(name)) {}
+};
+
+/// A "qualified" type, with a non-stackable qualifier, \e .i.e. `mut`.
+class Type {
+  nullable<const BaseType*> m_base;
+  bool m_mut{};
+
+public:
+  Type(nullable<const BaseType*> base, bool mut) : m_base(base), m_mut(mut) {}
+  [[nodiscard]] auto kind() const -> Kind { return m_base->kind(); };
+  [[nodiscard]] auto base() const -> nullable<const BaseType*> { return m_base; }
+  template <typename T> [[nodiscard]] auto base_cast() const -> nullable<const T*> { return cast<T>(m_base); }
+  template <typename T> [[nodiscard]] auto base_dyn_cast() const -> nullable<const T*> { return dyn_cast<T>(m_base); }
+  template <typename T> [[nodiscard]] auto base_isa() const -> bool { return isa<T>(m_base); }
+  [[nodiscard]] auto has_qualifier(Qualifier qual) const -> bool { return (qual == Qualifier::Mut && m_mut); }
+  [[nodiscard]] auto name() const -> string;
+
+  [[nodiscard]] auto compatibility(Type other, Compat compat = Compat()) const -> Compat;
+
+  /// Get this type with a given qualifier applied.
+  [[nodiscard]] auto known_qual(Qualifier qual) const -> Type;
+  [[nodiscard]] auto known_ptr() const -> Type { return known_qual(Qualifier::Ptr); }
+  [[nodiscard]] auto known_mut() const -> Type { return known_qual(Qualifier::Mut); }
+  [[nodiscard]] auto known_slice() const -> Type { return known_qual(Qualifier::Slice); }
+
+  /// The union of this and `other`. For example, the union of `T` and `T mut` is `T mut`.
+  /// \returns `nullopt` if an union cannot be created.
+  [[nodiscard]] auto coalesce(Type other) const -> optional<Type>;
+  /// Return the intersection of this and `other`. For example, the intersection of `T` and `T mut` is `T`.
+  /// \returns `nullopt` is there's not intersection between the types.
+  [[nodiscard]] auto intersect(Type other) const -> optional<Type>;
 
   [[nodiscard]] auto is_mut() const -> bool;
   [[nodiscard]] auto is_generic() const -> bool;
 
   /// If this type is a mutable reference, return the base of it (`T mut` -> `T`)
-  /// \returns `nullptr` if this type isn't a mutable reference.
-  [[nodiscard]] auto mut_base() const -> const BaseType*;
+  /// \returns `nullopt` if this type isn't a mutable reference.
+  [[nodiscard]] auto mut_base() const -> optional<Type>;
 
   /// If this type is a pointer type, return the base of it (`T ptr` -> `T`)
-  /// \returns `nullptr` if this type isn't a pointer type.
-  [[nodiscard]] auto ptr_base() const -> const BaseType*;
+  /// \returns `nullopt` if this type isn't a pointer type.
+  [[nodiscard]] auto ptr_base() const -> optional<Type>;
 
   /// If this type is a mutable reference, return the base of it, otherwise return itself.
-  [[nodiscard]] auto without_mut() const -> const BaseType&;
-
-protected:
-  BaseType(Kind kind, string name) : m_kind(kind), m_name(move(name)) {}
+  [[nodiscard]] auto without_mut() const -> Type;
 };
 
 /// A built-in integral type, such as I32 or Bool.
