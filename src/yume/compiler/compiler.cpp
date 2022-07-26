@@ -221,8 +221,6 @@ auto Compiler::decl_statement(ast::Stmt& stmt, const ty::BaseType* parent, ast::
 auto Compiler::llvm_type(const ty::BaseType* type) -> llvm::Type* {
   if (const auto* int_type = dyn_cast<ty::Int>(type))
     return llvm::Type::getIntNTy(*m_context, int_type->size());
-  if (const auto* qual_type = dyn_cast<ty::Qual>(type))
-    return llvm_type(&qual_type->base())->getPointerTo();
   if (const auto* ptr_type = dyn_cast<ty::Ptr>(type)) {
     switch (ptr_type->qualifier()) {
     case Qualifier::Ptr: return llvm::PointerType::getUnqual(llvm_type(&ptr_type->base()));
@@ -252,12 +250,64 @@ auto Compiler::llvm_type(const ty::BaseType* type) -> llvm::Type* {
   return llvm::Type::getVoidTy(*m_context);
 }
 
+auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
+  auto* base = llvm::Type::getVoidTy(*m_context);
+
+  if (const auto* int_type = type.base_dyn_cast<ty::Int>())
+    return llvm::Type::getIntNTy(*m_context, int_type->size());
+  if (const auto* ptr_type = type.base_dyn_cast<ty::Ptr>()) {
+    switch (ptr_type->qualifier()) {
+    case Qualifier::Ptr: return llvm::PointerType::getUnqual(llvm_type(&ptr_type->base()));
+    case Qualifier::Slice: {
+      auto args = vector<llvm::Type*>{};
+      args.push_back(llvm::PointerType::getUnqual(llvm_type(&ptr_type->base())));
+      args.push_back(llvm::Type::getInt64Ty(*m_context));
+      return llvm::StructType::get(*m_context, args);
+    }
+    default: llvm_unreachable("Ptr type cannot hold this qualifier");
+    }
+  }
+  if (const auto* struct_type = type.base_dyn_cast<ty::Struct>()) {
+    auto* memo = struct_type->memo();
+    if (memo == nullptr) {
+      auto fields = vector<llvm::Type*>{};
+      for (const auto* i : struct_type->fields())
+        fields.push_back(llvm_type(i->type->ensure_type()));
+
+      memo = llvm::StructType::create(*m_context, fields, "_"s + struct_type->name());
+      struct_type->memo(memo);
+    }
+
+    return memo;
+  }
+
+  return llvm::Type::getVoidTy(*m_context);
+
+  if (type.is_mut())
+    return base->getPointerTo();
+  return base;
+}
+
 void Compiler::destruct(Val val, const ty::BaseType* type) {
   if (type->is_mut()) {
     const auto* deref_type = type->mut_base();
     return destruct(m_builder->CreateLoad(llvm_type(deref_type), val), deref_type);
   }
   if (const auto* ptr_type = dyn_cast<ty::Ptr>(type)) {
+    if (ptr_type->has_qualifier(Qualifier::Slice)) {
+      auto* ptr = m_builder->CreateExtractValue(val, 0, "sl.ptr.free");
+      auto* free = llvm::CallInst::CreateFree(ptr, m_builder->GetInsertBlock());
+      m_builder->Insert(free);
+    }
+  }
+}
+
+void Compiler::destruct(Val val, ty::Type type) {
+  if (type.is_mut()) {
+    const auto deref_type = *type.mut_base();
+    return destruct(m_builder->CreateLoad(llvm_type(deref_type), val), deref_type);
+  }
+  if (const auto* ptr_type = type.base_dyn_cast<ty::Ptr>()) {
     if (ptr_type->has_qualifier(Qualifier::Slice)) {
       auto* ptr = m_builder->CreateExtractValue(val, 0, "sl.ptr.free");
       auto* free = llvm::CallInst::CreateFree(ptr, m_builder->GetInsertBlock());
@@ -295,6 +345,37 @@ auto Compiler::default_init(const ty::BaseType* type) -> Val {
   }
 
   throw std::runtime_error("Cannot default-initialize "s + type->name());
+}
+
+auto Compiler::default_init(ty::Type type) -> Val {
+  if (type.is_mut())
+    throw std::runtime_error("Cannot default-initialize a reference");
+  if (const auto* int_type = type.base_dyn_cast<ty::Int>())
+    return m_builder->getIntN(int_type->size(), 0);
+  if (const auto* ptr_type = type.base_dyn_cast<ty::Ptr>()) {
+    switch (ptr_type->qualifier()) {
+    default: llvm_unreachable("Ptr type cannot hold this qualifier");
+    case Qualifier::Ptr:
+      llvm::ConstantPointerNull::get(llvm::PointerType::getUnqual(llvm_type(&ptr_type->base())));
+      break;
+    case Qualifier::Slice:
+      auto* ptr_member_type = llvm::PointerType::getUnqual(llvm_type(&ptr_type->base()));
+      auto* struct_type = cast<llvm::StructType>(llvm_type(type));
+      return llvm::ConstantStruct::get(struct_type, llvm::ConstantPointerNull::get(ptr_member_type),
+                                       m_builder->getInt64(0));
+    }
+  }
+  if (const auto* struct_type = type.base_dyn_cast<ty::Struct>()) {
+    auto* llvm_ty = cast<llvm::StructType>(llvm_type(type));
+    llvm::Value* val = llvm::UndefValue::get(llvm_ty);
+
+    for (const auto& i : llvm::enumerate(struct_type->fields()))
+      val = m_builder->CreateInsertValue(val, default_init(i.value()->type->val_ty()), i.index());
+
+    return val;
+  }
+
+  throw std::runtime_error("Cannot default-initialize "s + type.name());
 }
 
 auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
@@ -368,7 +449,7 @@ template <> void Compiler::statement(const ast::Compound& stat) {
     body_statement(*i);
 }
 
-static inline auto is_trivially_destructible(const ty::BaseType* type) -> bool {
+[[deprecated]] static inline auto is_trivially_destructible(const ty::BaseType* type) -> bool {
   if (isa<ty::Int>(type))
     return true;
 
@@ -383,6 +464,21 @@ static inline auto is_trivially_destructible(const ty::BaseType* type) -> bool {
 
   // A generic or something, shouldn't occur
   throw std::logic_error("Cannot check if "s + type->name() + " is trivially destructible");
+}
+
+static inline auto is_trivially_destructible(ty::Type type) -> bool {
+  if (type.base_isa<ty::Int>())
+    return true;
+
+  if (const auto* ptr_type = type.base_dyn_cast<ty::Ptr>())
+    return !ptr_type->has_qualifier(Qualifier::Slice);
+
+  if (const auto* struct_type = type.base_dyn_cast<ty::Struct>())
+    return std::ranges::all_of(
+        struct_type->fields(), [](const auto& i) { return is_trivially_destructible(i); }, &ast::TypeName::ensure_type);
+
+  // A generic or something, shouldn't occur
+  throw std::logic_error("Cannot check if "s + type.name() + " is trivially destructible");
 }
 
 void Compiler::destruct_all_in_scope() {
