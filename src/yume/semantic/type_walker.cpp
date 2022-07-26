@@ -521,6 +521,28 @@ auto TypeWalker::convert_slice_type(const ast::Type& ast_type) -> const ty::Base
   return *inst_struct.self_ty;
 }
 
+auto TypeWalker::__convert_slice_type(const ast::Type& ast_type) -> ty::Type {
+  auto base_type = __convert_type(ast_type);
+  auto* struct_obj = compiler.m_slice_struct;
+  Substitution subs = {{{struct_obj->type_args.at(0)->name(), base_type.base()}}};
+  auto [already_existed, inst_struct] = struct_obj->get_or_create_instantiation(subs);
+
+  if (!already_existed) {
+    auto& new_st = inst_struct;
+
+    with_saved_scope([&] {
+      in_depth = false;
+      current_decl = &new_st;
+      body_statement(new_st.st_ast);
+    });
+
+    if (compiler.create_struct(new_st))
+      decl_queue.push(&new_st);
+  }
+
+  return inst_struct.self_ty;
+}
+
 auto TypeWalker::convert_type(const ast::Type& ast_type) -> const ty::BaseType& {
   const ty::BaseType* parent = current_decl.self_ty();
   const auto* context = current_decl.subs();
@@ -543,6 +565,34 @@ auto TypeWalker::convert_type(const ast::Type& ast_type) -> const ty::BaseType& 
   } else if (isa<ast::SelfType>(ast_type)) {
     if (parent != nullptr)
       return *parent;
+  }
+
+  throw std::runtime_error("Cannot convert AST type to actual type! "s + ast_type.kind_name() + " (" +
+                           ast_type.describe() + ")");
+}
+
+auto TypeWalker::__convert_type(const ast::Type& ast_type) -> ty::Type {
+  ty::Type parent = current_decl.self_ty();
+  const auto* context = current_decl.subs();
+
+  if (const auto* simple_type = dyn_cast<ast::SimpleType>(&ast_type)) {
+    auto name = simple_type->name();
+    if (context != nullptr) {
+      auto generic = context->find(name);
+      if (generic != context->end())
+        return generic->second;
+    }
+    auto val = compiler.m_types.known.find(name);
+    if (val != compiler.m_types.known.end())
+      return val->second.get();
+  } else if (const auto* qual_type = dyn_cast<ast::QualType>(&ast_type)) {
+    auto qualifier = qual_type->qualifier();
+    if (qualifier == Qualifier::Slice)
+      return __convert_slice_type(qual_type->base());
+    return __convert_type(qual_type->base()).known_qual(qualifier);
+  } else if (isa<ast::SelfType>(ast_type)) {
+    if (parent != nullptr)
+      return parent;
   }
 
   throw std::runtime_error("Cannot convert AST type to actual type! "s + ast_type.kind_name() + " (" +

@@ -125,11 +125,11 @@ struct Ctor {
 
   [[nodiscard]] auto ast() const -> const auto& { return cast<decl_t>(base.ast); }
   [[nodiscard]] auto ast() -> auto& { return cast<decl_t>(base.ast); }
-  [[nodiscard]] auto get_self_ty() const -> const ty::BaseType* { return base.self_ty; };
+  [[nodiscard,deprecated]] auto get_self_ty() const -> const ty::BaseType* { return base.self_ty; };
 
   [[nodiscard]] auto name() const -> string;
   [[nodiscard]] static auto overload_name(const call_t& ast) -> string;
-  [[nodiscard]] static auto arg_type(const decl_t::arg_t& ast) -> const ty::BaseType*;
+  [[nodiscard,deprecated]] static auto arg_type(const decl_t::arg_t& ast) -> const ty::BaseType*;
   [[nodiscard]] static auto arg_name(const decl_t::arg_t& ast) -> string;
   [[nodiscard]] static auto common_ast(const decl_t::arg_t& ast) -> const ast::AST&;
 };
@@ -182,7 +182,7 @@ public:
     return visit_decl<ast::AST*>([](auto* decl) -> ast::AST* { return &decl->ast(); });
   };
 
-  [[nodiscard]] auto self_ty() const -> const ty::BaseType* {
+  [[nodiscard,deprecated]] auto self_ty() const -> const ty::BaseType* {
     return visit_decl<const ty::BaseType*>([](const auto* decl) { return decl->get_self_ty(); });
   };
 };
