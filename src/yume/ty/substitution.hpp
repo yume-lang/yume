@@ -5,10 +5,10 @@
 
 namespace yume {
 namespace ty {
-class Type;
+class BaseType;
 }
 
-using substitution_t = std::map<string, const ty::Type*>;
+using substitution_t = std::map<string, const ty::BaseType*>;
 struct Substitution : substitution_t {
   using substitution_t::map;
 

@@ -55,7 +55,7 @@ template <typename T> void OverloadSet<T>::dump(llvm::raw_ostream& stream, bool 
   }
 };
 
-static auto literal_cast(ast::AST& arg, const ty::Type* target_type) -> ty::Compat {
+static auto literal_cast(ast::AST& arg, const ty::BaseType* target_type) -> ty::Compat {
   if (arg.val_ty() == target_type)
     return {.valid = true}; // Already the correct type
 

@@ -175,7 +175,7 @@ auto Compiler::create_struct(Struct& st) -> bool {
   return true;
 }
 
-auto Compiler::decl_statement(ast::Stmt& stmt, const ty::Type* parent, ast::Program* member) -> DeclLike {
+auto Compiler::decl_statement(ast::Stmt& stmt, const ty::BaseType* parent, ast::Program* member) -> DeclLike {
   if (auto* fn_decl = dyn_cast<ast::FnDecl>(&stmt)) {
     vector<unique_ptr<ty::Generic>> type_args{};
     Substitution subs{};
@@ -218,7 +218,7 @@ auto Compiler::decl_statement(ast::Stmt& stmt, const ty::Type* parent, ast::Prog
   throw std::runtime_error("Invalid top-level statement: "s + stmt.kind_name());
 }
 
-auto Compiler::llvm_type(const ty::Type* type) -> llvm::Type* {
+auto Compiler::llvm_type(const ty::BaseType* type) -> llvm::Type* {
   if (const auto* int_type = dyn_cast<ty::Int>(type))
     return llvm::Type::getIntNTy(*m_context, int_type->size());
   if (const auto* qual_type = dyn_cast<ty::Qual>(type))
@@ -252,7 +252,7 @@ auto Compiler::llvm_type(const ty::Type* type) -> llvm::Type* {
   return llvm::Type::getVoidTy(*m_context);
 }
 
-void Compiler::destruct(Val val, const ty::Type* type) {
+void Compiler::destruct(Val val, const ty::BaseType* type) {
   if (type->is_mut()) {
     const auto* deref_type = type->mut_base();
     return destruct(m_builder->CreateLoad(llvm_type(deref_type), val), deref_type);
@@ -266,7 +266,7 @@ void Compiler::destruct(Val val, const ty::Type* type) {
   }
 }
 
-auto Compiler::default_init(const ty::Type* type) -> Val {
+auto Compiler::default_init(const ty::BaseType* type) -> Val {
   if (const auto* int_type = dyn_cast<ty::Int>(type))
     return m_builder->getIntN(int_type->size(), 0);
   if (isa<ty::Qual>(type))
@@ -368,7 +368,7 @@ template <> void Compiler::statement(const ast::Compound& stat) {
     body_statement(*i);
 }
 
-static inline auto is_trivially_destructible(const ty::Type* type) -> bool {
+static inline auto is_trivially_destructible(const ty::BaseType* type) -> bool {
   if (isa<ty::Int>(type))
     return true;
 
@@ -635,7 +635,7 @@ auto Compiler::int_bin_primitive(const string& primitive, const vector<llvm::Val
   }
 }
 
-auto Compiler::primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<const ty::Type*>& types)
+auto Compiler::primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<const ty::BaseType*>& types)
     -> optional<Val> {
   if (!fn->ast().primitive())
     return {};
@@ -673,7 +673,7 @@ template <> auto Compiler::expression(const ast::CallExpr& expr) -> Val {
   llvm::Function* llvm_fn = nullptr;
 
   vector<Val> args{};
-  vector<const ty::Type*> arg_types{};
+  vector<const ty::BaseType*> arg_types{};
   vector<llvm::Value*> llvm_args{};
 
   unsigned j = 0;
@@ -707,7 +707,7 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
   }
   if (const auto* field_access = dyn_cast<ast::FieldAccessExpr>(expr.target().raw_ptr())) {
     const auto& field_base = field_access->base();
-    const ty::Type* struct_base{nullptr};
+    const ty::BaseType* struct_base{nullptr};
     Val base{nullptr};
     if (field_base.has_value()) {
       base = body_expression(*field_base);
@@ -972,7 +972,7 @@ auto Compiler::mangle_name(Ctor& ctor) -> string {
   return ss.str();
 }
 
-auto Compiler::mangle_name(const ty::Type* ast_type, DeclLike parent) -> string {
+auto Compiler::mangle_name(const ty::BaseType* ast_type, DeclLike parent) -> string {
   stringstream ss{};
   if (const auto* qual_type = dyn_cast<ty::Qual>(ast_type)) {
     ss << mangle_name(&qual_type->base(), parent);

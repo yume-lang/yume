@@ -27,13 +27,13 @@
 
 namespace yume::semantic {
 
-inline void wrap_in_implicit_cast(ast::OptionalExpr& expr, ty::Conv conv, const ty::Type* target_type) {
+inline void wrap_in_implicit_cast(ast::OptionalExpr& expr, ty::Conv conv, const ty::BaseType* target_type) {
   auto cast_expr = std::make_unique<ast::ImplicitCastExpr>(expr->token_range(), move(expr), conv);
   cast_expr->val_ty(target_type);
   expr = move(cast_expr);
 }
 
-inline void try_implicit_conversion(ast::OptionalExpr& expr, const ty::Type* target_type) {
+inline void try_implicit_conversion(ast::OptionalExpr& expr, const ty::BaseType* target_type) {
   if (target_type == nullptr)
     return;
 
@@ -210,7 +210,7 @@ template <> void TypeWalker::expression(ast::VarExpr& expr) {
 }
 
 template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
-  const ty::Type* type = nullptr;
+  const ty::BaseType* type = nullptr;
   bool base_is_mut = false;
 
   if (!expr.base().has_value()) {
@@ -231,7 +231,7 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
     throw std::runtime_error("Can't access field of expression with non-struct type");
 
   auto target_name = expr.field();
-  const ty::Type* target_type{};
+  const ty::BaseType* target_type{};
   int j = 0;
   for (const auto* field : struct_type->fields()) {
     if (field->name == target_name) {
@@ -409,7 +409,7 @@ template <> void TypeWalker::statement(ast::CtorDecl& stat) {
     } else if (auto* direct_init = std::get_if<ast::FieldAccessExpr>(&i)) {
       auto target_name = direct_init->field();
       // XXX: duplicated from FieldAccessExpr handling
-      const ty::Type* target_type{};
+      const ty::BaseType* target_type{};
       int j = 0;
       for (const auto* field : struct_type->fields()) {
         if (field->name == target_name) {
@@ -479,7 +479,7 @@ void TypeWalker::body_expression(ast::Expr& expr) {
   return CRTPWalker::body_expression(expr);
 }
 
-auto TypeWalker::convert_slice_type(const ast::Type& ast_type) -> const ty::Type& {
+auto TypeWalker::convert_slice_type(const ast::Type& ast_type) -> const ty::BaseType& {
   const auto& base_type = convert_type(ast_type);
   auto* struct_obj = compiler.m_slice_struct;
   Substitution subs = {{{struct_obj->type_args.at(0)->name(), &base_type}}};
@@ -501,8 +501,8 @@ auto TypeWalker::convert_slice_type(const ast::Type& ast_type) -> const ty::Type
   return *inst_struct.self_ty;
 }
 
-auto TypeWalker::convert_type(const ast::Type& ast_type) -> const ty::Type& {
-  const ty::Type* parent = current_decl.self_ty();
+auto TypeWalker::convert_type(const ast::Type& ast_type) -> const ty::BaseType& {
+  const ty::BaseType* parent = current_decl.self_ty();
   const auto* context = current_decl.subs();
 
   if (const auto* simple_type = dyn_cast<ast::SimpleType>(&ast_type)) {
