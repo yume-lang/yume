@@ -22,7 +22,7 @@ class Visitor;
 struct Fn;
 struct Ctor;
 namespace ty {
-class Type;
+class BaseType;
 }
 } // namespace yume
 
@@ -201,7 +201,7 @@ class AST {
   /// The range of tokenizer `Token`s that this node was parsed from.
   const span<Token> m_tok;
   /// The value type of this node. Determined in the semantic phase; always `nullptr` after parsing.
-  nullable<const ty::Type*> m_val_ty{};
+  nullable<const ty::BaseType*> m_val_ty{};
   /// \see Attachment
   unique_ptr<Attachment> m_attach{std::make_unique<Attachment>()};
 
@@ -224,9 +224,9 @@ public:
   /// Recursively visit this ast node and all its constituents. \see Visitor
   virtual void visit(Visitor& visitor) const = 0;
 
-  [[nodiscard]] auto val_ty() const noexcept -> const ty::Type* { return m_val_ty; }
-  [[nodiscard]] auto get_val_ty() const noexcept -> const ty::Type* { return m_val_ty; }
-  void val_ty(const ty::Type* type) {
+  [[nodiscard]] auto val_ty() const noexcept -> const ty::BaseType* { return m_val_ty; }
+  [[nodiscard]] auto get_val_ty() const noexcept -> const ty::BaseType* { return m_val_ty; }
+  void val_ty(const ty::BaseType* type) {
     m_val_ty = type;
     for (auto* i : m_attach->observers) {
       i->unify_val_ty();

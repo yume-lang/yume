@@ -21,9 +21,9 @@ static auto qual_suffix(Qualifier qual) -> string {
   }
 }
 
-auto Type::known_qual(Qualifier qual) const -> const Type& {
+auto BaseType::known_qual(Qualifier qual) const -> const BaseType& {
   int qual_idx = static_cast<int>(qual);
-  const auto& existing = m_known_qual.at(qual_idx);
+  const auto& existing = m_known_ptr_like.at(qual_idx);
   if (existing != nullptr)
     return *existing;
 
@@ -33,22 +33,22 @@ auto Type::known_qual(Qualifier qual) const -> const Type& {
     bool existing_mut = false;
     const auto* existing_base = this;
     if (base != nullptr) {
-      if (base->m_known_qual.at(qual_idx).get() == this)
+      if (base->m_known_ptr_like.at(qual_idx).get() == this)
         return *this;
       const auto* existing_qual = cast<Qual>(this);
       existing_mut = existing_qual->m_mut;
       existing_base = &existing_qual->m_base;
     }
     auto new_qual_type = std::make_unique<Qual>(m_name, *existing_base, (existing_mut || qual == Qualifier::Mut));
-    m_known_qual.at(qual_idx) = move(new_qual_type);
+    m_known_ptr_like.at(qual_idx) = move(new_qual_type);
   } else {
     auto new_qual_type = std::make_unique<Ptr>(m_name, *this, qual);
-    m_known_qual.at(qual_idx) = move(new_qual_type);
+    m_known_ptr_like.at(qual_idx) = move(new_qual_type);
   }
-  return *m_known_qual.at(qual_idx);
+  return *m_known_ptr_like.at(qual_idx);
 }
 
-static auto visit_subs(const Type& a, const Type& b, Sub sub) -> Sub {
+[[deprecated]] static auto visit_subs(const BaseType& a, const BaseType& b, Sub sub) -> Sub {
   yume_assert(b.is_generic(), "Cannot substitute generics in a non-generic type");
 
   // `Foo ptr` -> `T ptr`, with `T = Foo`.
@@ -85,7 +85,7 @@ static auto visit_subs(const Type& a, const Type& b, Sub sub) -> Sub {
 /// Add the substitution `gen_sub` for the generic type variable `gen` in template instantiation `instantiation`.
 /// If a substitution already exists for the same type variable, the two substitutions are intersected.
 /// \returns nullptr if substitution failed
-static auto intersect_generics(Substitution& subs, const Generic* gen, const Type* gen_sub) -> const Type* {
+[[deprecated]] static auto intersect_generics(Substitution& subs, const Generic* gen, const BaseType* gen_sub) -> const BaseType* {
   if (gen == nullptr)
     return nullptr;
 
@@ -106,7 +106,7 @@ static auto intersect_generics(Substitution& subs, const Generic* gen, const Typ
   return subs.at(name);
 }
 
-auto Type::determine_generic_subs(const Type& generic, Substitution& subs) const -> Sub {
+auto BaseType::determine_generic_subs(const BaseType& generic, Substitution& subs) const -> Sub {
   yume_assert(generic.is_generic(), "Cannot substitute generics in a non-generic type");
 
   Sub sub{};
@@ -116,7 +116,7 @@ auto Type::determine_generic_subs(const Type& generic, Substitution& subs) const
   return sub;
 }
 
-auto Type::compatibility(const Type& other, Compat compat) const -> Compat {
+auto BaseType::compatibility(const BaseType& other, Compat compat) const -> Compat {
   if (this == &other) {
     compat.valid = true;
     return compat;
@@ -143,9 +143,9 @@ auto Type::compatibility(const Type& other, Compat compat) const -> Compat {
   return compat;
 }
 
-auto Type::is_mut() const -> bool { return isa<Qual>(*this) && cast<Qual>(this)->has_qualifier(Qualifier::Mut); }
+auto BaseType::is_mut() const -> bool { return isa<Qual>(*this) && cast<Qual>(this)->has_qualifier(Qualifier::Mut); }
 
-auto Type::is_generic() const -> bool {
+auto BaseType::is_generic() const -> bool {
   if (isa<Generic>(*this))
     return true;
 
@@ -162,7 +162,7 @@ auto Type::is_generic() const -> bool {
   return false;
 }
 
-auto Type::apply_generic_substitution(Sub sub) const -> const Type* {
+auto BaseType::apply_generic_substitution(Sub sub) const -> const BaseType* {
   yume_assert(is_generic(), "Can't perform generic substitution without a generic type");
   yume_assert(sub.target != nullptr && sub.replace != nullptr,
               "Can't perform generic substitution without anything to substitute");
@@ -206,19 +206,19 @@ auto Struct::emplace_subbed(Substitution sub) const -> const Struct& {
   return *existing->second;
 }
 
-auto Type::mut_base() const -> const Type* {
+auto BaseType::mut_base() const -> const BaseType* {
   if (const auto* qual = dyn_cast<Qual>(this))
     return &qual->base();
   return nullptr;
 }
 
-auto Type::ptr_base() const -> const Type* {
+auto BaseType::ptr_base() const -> const BaseType* {
   if (const auto* ptr = dyn_cast<Ptr>(this))
     return &ptr->base();
   return nullptr;
 }
 
-auto Type::coalesce(const Type& other) const -> const Type* {
+auto BaseType::coalesce(const BaseType& other) const -> const BaseType* {
   if (this == &other)
     return this;
   if (is_mut() && mut_base() == &other)
@@ -229,7 +229,7 @@ auto Type::coalesce(const Type& other) const -> const Type* {
   return nullptr;
 }
 
-auto Type::intersect(const Type& other) const -> const Type* {
+auto BaseType::intersect(const BaseType& other) const -> const BaseType* {
   if (this == &other)
     return this;
   if (is_mut() && mut_base() == &other)
@@ -240,7 +240,7 @@ auto Type::intersect(const Type& other) const -> const Type* {
   return nullptr;
 }
 
-auto Type::without_mut() const -> const Type& { return is_mut() ? *mut_base() : *this; }
+auto BaseType::without_mut() const -> const BaseType& { return is_mut() ? *mut_base() : *this; }
 
 auto Qual::name() const -> string {
   if (m_mut)

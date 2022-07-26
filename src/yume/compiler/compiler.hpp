@@ -34,7 +34,7 @@ class Stmt;
 } // namespace ast
 namespace ty {
 class Struct;
-class Type;
+class BaseType;
 } // namespace ty
 
 /// A local variable in function scope. Used to track destructing when the scope ends.
@@ -92,22 +92,22 @@ public:
   void define(Ctor&);
 
   void body_statement(const ast::Stmt&);
-  auto decl_statement(ast::Stmt&, const ty::Type* parent = nullptr, ast::Program* member = nullptr) -> DeclLike;
+  auto decl_statement(ast::Stmt&, const ty::BaseType* parent = nullptr, ast::Program* member = nullptr) -> DeclLike;
   auto body_expression(const ast::Expr& expr) -> Val;
 
   void write_object(const char* filename, bool binary);
 
   /// Convert a type into its corresponding llvm type
-  auto llvm_type(const ty::Type* type) -> llvm::Type*;
+  auto llvm_type(const ty::BaseType* type) -> llvm::Type*;
 
   /// Default-constructs an object of specified type \p type .
-  auto default_init(const ty::Type* type) -> Val;
+  auto default_init(const ty::BaseType* type) -> Val;
   /// Destructs an object \p val of specified type \p type .
-  void destruct(Val val, const ty::Type* type);
+  void destruct(Val val, const ty::BaseType* type);
 
   auto mangle_name(Fn& fn) -> string;
   auto mangle_name(Ctor& ctor) -> string;
-  auto mangle_name(const ty::Type* ast_type, DeclLike parent) -> string;
+  auto mangle_name(const ty::BaseType* ast_type, DeclLike parent) -> string;
 
   [[nodiscard]] auto source_files() -> const auto& { return m_sources; }
 
@@ -132,7 +132,7 @@ private:
   void destruct_all_in_scope();
 
   /// Handle all primitive, built-in functions
-  auto primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<const ty::Type*>& types) -> optional<Val>;
+  auto primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<const ty::BaseType*>& types) -> optional<Val>;
   /// Handle primitive functions taking two integral values, such as most arithmetic operations (add, multiply, etc).
   auto int_bin_primitive(const string& primitive, const vector<llvm::Value*>& args) -> Val;
 

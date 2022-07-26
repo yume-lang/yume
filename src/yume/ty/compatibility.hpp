@@ -6,7 +6,7 @@
 
 namespace yume::ty {
 class Generic;
-class Type;
+class BaseType;
 
 struct Conv {
   enum struct Kind : uint8_t { None, Int };
@@ -40,7 +40,7 @@ struct Compat {
 
 struct Sub {
   const Generic* target{};
-  const Type* replace{};
+  const BaseType* replace{};
 
   auto constexpr operator<=>(const Sub& other) const noexcept = default;
 };
