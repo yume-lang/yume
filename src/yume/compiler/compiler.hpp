@@ -97,13 +97,17 @@ public:
 
   void write_object(const char* filename, bool binary);
 
-  /// Convert a type into its corresponding llvm type
-  auto llvm_type(const ty::BaseType* type) -> llvm::Type*;
+  /// Convert a type into its corresponding LLVM type
+  auto llvm_type(ty::Type type) -> llvm::Type*;
+  /// \see llvm_type(ty::Type)
+  [[deprecated]] auto llvm_type(const ty::BaseType* type) -> llvm::Type*;
 
   /// Default-constructs an object of specified type \p type .
-  auto default_init(const ty::BaseType* type) -> Val;
+  [[deprecated]] auto default_init(ty::Type type) -> Val;
+  [[deprecated]] auto default_init(const ty::BaseType* type) -> Val;
   /// Destructs an object \p val of specified type \p type .
-  void destruct(Val val, const ty::BaseType* type);
+  [[deprecated]] void destruct(Val val, ty::Type type);
+  [[deprecated]] void destruct(Val val, const ty::BaseType* type);
 
   auto mangle_name(Fn& fn) -> string;
   auto mangle_name(Ctor& ctor) -> string;
