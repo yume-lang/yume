@@ -368,7 +368,7 @@ template <> void TypeWalker::statement(ast::Compound& stat) {
 
 template <> void TypeWalker::statement(ast::StructDecl& stat) {
   // This decl still has unsubstituted generics, can't instantiate its body
-  if (std::ranges::any_of(*current_decl.subs(), [](const auto& sub) { return ty::Type(sub.second).is_generic(); }))
+  if (std::ranges::any_of(*current_decl.subs(), [](const auto& sub) { return sub.second.is_generic(); }))
     return;
 
   for (auto& i : stat.fields())
@@ -389,7 +389,7 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
   }
 
   // This decl still has unsubstituted generics, can't instantiate its body
-  if (std::ranges::any_of(*current_decl.subs(), [](const auto& sub) { return ty::Type(sub.second).is_generic(); }))
+  if (std::ranges::any_of(*current_decl.subs(), [](const auto& sub) { return sub.second.is_generic(); }))
     return;
 
   if (in_depth && std::holds_alternative<ast::Compound>(stat.body()))
