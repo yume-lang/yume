@@ -99,7 +99,7 @@ void Compiler::declare_default_ctor(Struct& st) {
 void Compiler::run() {
   for (const auto& source : m_sources)
     for (auto& i : source.program->body())
-      decl_statement(*i, nullptr, source.program.get());
+      decl_statement(*i, {}, source.program.get());
 
   // First pass: only convert structs
   for (auto& st : m_structs)
@@ -194,7 +194,7 @@ auto Compiler::decl_statement(ast::Stmt& stmt, optional<ty::Type> parent, ast::P
       auto& gen = type_args.emplace_back(std::make_unique<ty::Generic>(i));
       subs.try_emplace(i, gen.get());
     }
-    auto& st = m_structs.emplace_back(*s_decl, nullptr, member, subs, move(type_args));
+    auto& st = m_structs.emplace_back(*s_decl, std::nullopt, member, subs, move(type_args));
     if (!create_struct(st)) {
       m_structs.pop_back();
       return {};

@@ -65,7 +65,7 @@ constexpr inline void yume_assert(T&& assertion, const std::string_view log_msg 
 }
 
 /// Opens a writeable stream to a file with the given filename relative to the current working directory.
-auto inline open_file(const char* filename) -> unique_ptr<llvm::raw_pwrite_stream> {
+auto inline open_file(nonnull<const char*> filename) -> unique_ptr<llvm::raw_pwrite_stream> {
   std::error_code error_code;
   auto dest =
       std::make_unique<llvm::raw_fd_ostream>(filename, error_code, llvm::sys::fs::CreationDisposition::CD_CreateAlways);

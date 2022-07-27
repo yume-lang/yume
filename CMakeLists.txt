@@ -31,7 +31,7 @@ if(YUME_SANITIZE)
     target_compile_options(yume PUBLIC "$<$<CONFIG:DEBUG>:-g3>")
   endif()
 
-  target_compile_options(yume PUBLIC "$<$<CONFIG:DEBUG>:-fno-omit-frame-pointer;-O0;-fsanitize=address,undefined,vptr>")
+  target_compile_options(yume PUBLIC "$<$<CONFIG:DEBUG>:-fno-omit-frame-pointer;-O0;-fsanitize=address,undefined,vptr,nullability;-fsanitize-trap=nullability>")
   target_link_options(yume PUBLIC "$<$<CONFIG:DEBUG>:-fsanitize=address,undefined,vptr>")
 endif()
 

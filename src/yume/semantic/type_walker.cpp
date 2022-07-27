@@ -209,9 +209,7 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
   optional<ty::Type> type;
   bool base_is_mut = false;
 
-  if (!expr.base().has_value()) {
-    type = current_decl.self_ty();
-  } else {
+  if (expr.base().has_value()) {
     body_expression(*expr.base());
     type = expr.base()->ensure_type();
 
@@ -219,6 +217,8 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
       type = type->mut_base();
       base_is_mut = true;
     };
+  } else {
+    type = current_decl.self_ty();
   }
 
   const auto* struct_type = type->base_dyn_cast<ty::Struct>();
