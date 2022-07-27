@@ -16,7 +16,7 @@
 
 namespace yume::semantic {
 
-inline static constexpr auto get_val_ty = [](const ast::AST* ast) { return ast->val_ty(); };
+inline static constexpr auto get_val_ty = [](const ast::AST* ast) { return ast->__val_ty(); };
 
 static auto join_args(const auto& iter, auto fn, llvm::raw_ostream& stream = errs()) {
   for (auto& i : llvm::enumerate(iter)) {
@@ -37,7 +37,7 @@ template <typename T> void Overload<T>::dump(llvm::raw_ostream& stream) const {
       if (i++ > 0)
         stream << ", ";
 
-      stream << k << " = " << v->name();
+      stream << k << " = " << v.name();
     }
   }
 };
@@ -122,24 +122,24 @@ template <typename T> auto OverloadSet<T>::is_valid_overload(Overload<T>& overlo
   // compatibility of the "variadic" part of varargs functions. Currently, varargs methods can only be primitives and
   // carry no type information for their variadic part. This will change in the future.
   for (const auto& [param, arg] : llvm::zip_first(fn_ast.args(), args)) {
-    const auto* arg_type = arg->val_ty();
-    const auto* param_type = T::arg_type(param);
+    auto arg_type = arg->type();
+    auto param_type = T::arg_type(param);
 
     if (param_type->is_generic()) {
       auto sub = arg_type->determine_generic_subs(*param_type, overload.subs);
 
       // No valid substitution found
-      if (sub.target == nullptr || sub.replace == nullptr)
+      if (!sub)
         return false;
 
-      param_type = param_type->apply_generic_substitution(sub);
+      param_type = param_type->apply_generic_substitution(*sub);
 
       if (!param_type)
         return false;
     }
 
     // Attempt to do a literal cast
-    auto compat = literal_cast(*arg, param_type);
+    auto compat = literal_cast(*arg, *param_type);
     // Couldn't perform a literal cast, try regular casts
     if (!compat.valid)
       compat = arg_type->compatibility(*param_type);

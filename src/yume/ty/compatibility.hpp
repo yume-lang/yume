@@ -37,11 +37,4 @@ struct Compat {
   bool valid = false;
   Conv conv{};
 };
-
-struct Sub {
-  const Generic* target{};
-  const BaseType* replace{};
-
-  auto constexpr operator<=>(const Sub& other) const noexcept = default;
-};
 } // namespace yume::ty
