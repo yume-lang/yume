@@ -65,11 +65,7 @@ static auto visit_subs(Type a, Type b, optional<Sub> sub) -> optional<Sub> {
 
   // Any other generic that didn't match above.
   // `Foo ptr` -> `T`, with `T = Foo ptr`.
-  if (sub) {
-    sub->target = b.base_cast<Generic>();
-    sub->replace = a;
-  }
-  return sub;
+  return Sub{b.base_cast<Generic>(), a};
 }
 
 /// Add the substitution `gen_sub` for the generic type variable `gen` in template instantiation `instantiation`.
