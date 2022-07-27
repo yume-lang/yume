@@ -13,12 +13,11 @@ struct Sub;
 class Type;
 
 enum Kind {
-  K_Unknown,             ///< `UnknownType`, default, zero value. Hopefully never encountered!
-  K_Int,                 ///< `Int`
-  K_Qual [[deprecated]], ///< `Qual`
-  K_Ptr,                 ///< `Ptr`
-  K_Struct,              ///< `Struct`
-  K_Generic,             ///< `Generic`
+  K_Unknown, ///< `UnknownType`, default, zero value. Hopefully never encountered!
+  K_Int,     ///< `Int`
+  K_Ptr,     ///< `Ptr`
+  K_Struct,  ///< `Struct`
+  K_Generic, ///< `Generic`
 };
 
 /// Represents a type in the type system.
@@ -38,7 +37,7 @@ enum Kind {
 /// Also, pointer-like types are also not held in `TypeHolder`, and are instead stored in the `m_known_ptr_like` array
 /// of their pointee type.
 class BaseType {
-  [[deprecated]] mutable array<unique_ptr<BaseType>, static_cast<int>(Qualifier::Q_END)> m_known_ptr_like{};
+  mutable array<unique_ptr<BaseType>, static_cast<int>(PtrLikeQualifier::Q_END)> m_known_ptr_like{};
   const Kind m_kind;
   string m_name;
 
@@ -84,6 +83,7 @@ public:
   template <typename T> [[nodiscard]] auto base_isa() const noexcept -> bool { return isa<T>(m_base); }
   [[nodiscard]] auto has_qualifier(Qualifier qual) const -> bool;
   [[nodiscard]] auto name() const -> string;
+  [[nodiscard]] auto base_name() const -> string;
 
   [[nodiscard]] auto determine_generic_subs(Type generic, Substitution& subs) const -> optional<Sub>;
   [[nodiscard]] auto apply_generic_substitution(Sub sub) const -> optional<Type>;

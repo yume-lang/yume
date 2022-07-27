@@ -5,6 +5,11 @@ enum struct Qualifier {
   Ptr,   ///< `ptr`
   Slice, ///< `[]`
   Mut,   ///< `mut`
-  Q_END  /// Used for the amount of qualifiers.
 };
-}
+
+enum struct PtrLikeQualifier {
+  Ptr = static_cast<int>(Qualifier::Ptr),
+  Slice = static_cast<int>(Qualifier::Slice),
+  Q_END
+};
+} // namespace yume

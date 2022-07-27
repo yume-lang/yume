@@ -985,7 +985,7 @@ auto Compiler::mangle_name(ty::Type ast_type, DeclLike parent) -> string {
     yume_assert(match != parent.subs()->end(), "Cannot mangle unsubstituted generic");
     ss << match->second.name();
   } else {
-    ss << ast_type.name();
+    ss << ast_type.base_name();
   }
 
   if (ast_type.is_mut())

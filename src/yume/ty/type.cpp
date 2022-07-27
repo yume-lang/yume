@@ -232,13 +232,10 @@ auto Type::name() const -> string {
     return m_base->name() + qual_suffix(Qualifier::Mut);
   return m_base->name();
 }
+auto Type::base_name() const -> string { return m_base->name(); }
 
-auto Qual::name() const -> string {
-  if (m_mut)
-    return m_base.name() + qual_suffix(Qualifier::Mut);
-  return m_base.name();
-}
 auto Ptr::name() const -> string { return m_base.name() + qual_suffix(m_qual); }
+
 auto Struct::name() const -> string {
   if (m_subs->empty())
     return base_name();
