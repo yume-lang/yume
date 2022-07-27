@@ -42,7 +42,7 @@ auto BaseType::known_qual(Qualifier qual) const -> const BaseType& {
     auto new_qual_type = std::make_unique<Qual>(m_name, *existing_base, (existing_mut || qual == Qualifier::Mut));
     m_known_ptr_like.at(qual_idx) = move(new_qual_type);
   } else {
-    auto new_qual_type = std::make_unique<Ptr>(m_name, *this, qual);
+    auto new_qual_type = std::make_unique<Ptr>(m_name, ty::Type(this), qual);
     m_known_ptr_like.at(qual_idx) = move(new_qual_type);
   }
   return *m_known_ptr_like.at(qual_idx);
@@ -57,7 +57,7 @@ auto Type::known_qual(Qualifier qual) const -> Type {
   if (existing != nullptr)
     return {existing.get()};
 
-  auto new_qual_type = std::make_unique<Ptr>(m_base->base_name(), *m_base, qual);
+  auto new_qual_type = std::make_unique<Ptr>(m_base->base_name(), *this, qual);
   m_base->m_known_ptr_like.at(qual_idx) = move(new_qual_type);
   return {m_base->m_known_ptr_like.at(qual_idx).get()};
 }
@@ -319,6 +319,29 @@ auto BaseType::apply_generic_substitution(Sub sub) const -> const BaseType* {
     auto subs = Substitution{};
     for (const auto& [k, v] : st_this->subs()) {
       subs.try_emplace(k, v.base()->apply_generic_substitution(sub));
+    }
+
+    return &st_this->emplace_subbed(move(subs));
+  }
+
+  return nullptr;
+}
+
+auto Type::apply_generic_substitution(Sub sub) const -> Type {
+  yume_assert(is_generic(), "Can't perform generic substitution without a generic type");
+  yume_assert(sub.target != nullptr && sub.replace != nullptr,
+              "Can't perform generic substitution without anything to substitute");
+  if (m_base == sub.target)
+    return {sub.replace.base(), m_mut};
+
+  if (const auto* ptr_this = base_dyn_cast<Ptr>())
+    return ptr_base()->apply_generic_substitution(sub).known_qual(ptr_this->qualifier());
+
+  if (const auto* st_this = base_dyn_cast<Struct>()) {
+    // Gah!
+    auto subs = Substitution{};
+    for (const auto& [k, v] : st_this->subs()) {
+      subs.try_emplace(k, v.apply_generic_substitution(sub));
     }
 
     return &st_this->emplace_subbed(move(subs));

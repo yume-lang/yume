@@ -188,13 +188,13 @@ class Ptr : public BaseType {
   friend BaseType;
 
 private:
-  const BaseType& m_base;
+  Type m_base;
   Qualifier m_qual;
 
 public:
-  Ptr(string name, const BaseType& base, Qualifier qual) : BaseType(K_Ptr, move(name)), m_base(base), m_qual(qual) {}
-  [[nodiscard, deprecated]] auto base() const -> const BaseType& { return m_base; }
-  [[nodiscard]] auto pointee() const -> Type; // { return m_base; }
+  Ptr(string name, Type base, Qualifier qual) : BaseType(K_Ptr, move(name)), m_base(base), m_qual(qual) {}
+  [[nodiscard, deprecated]] auto base() const -> const BaseType&;
+  [[nodiscard]] auto pointee() const -> Type { return m_base; }
   [[nodiscard]] auto qualifier() const -> Qualifier { return m_qual; }
   [[nodiscard]] auto has_qualifier(Qualifier qual) const -> bool { return m_qual == qual; }
   [[nodiscard]] auto name() const -> string override;
@@ -213,6 +213,7 @@ class Struct : public BaseType {
 
   friend Compiler;
   friend BaseType;
+  friend Type;
 
 public:
   Struct(string name, vector<const ast::TypeName*> fields, const Substitution* subs)
