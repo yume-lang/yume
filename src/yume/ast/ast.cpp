@@ -9,10 +9,10 @@ namespace yume::ast {
 
 void AST::unify_val_ty() {
   for (const auto* other : m_attach->depends) {
-    if (m_val_ty == other->m_val_ty || other->m_val_ty == nullptr)
+    if (m_val_ty == other->m_val_ty || !other->m_val_ty)
       return;
 
-    if (m_val_ty == nullptr) {
+    if (!m_val_ty) {
       m_val_ty = other->m_val_ty;
     } else {
       const auto merged = m_val_ty->coalesce(*other->m_val_ty);
