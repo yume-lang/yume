@@ -26,31 +26,10 @@
 #include <vector>
 
 namespace yume::semantic {
-
-[[deprecated]] inline void wrap_in_implicit_cast(ast::OptionalExpr& expr, ty::Conv conv,
-                                                 const ty::BaseType* target_type) {
-  auto cast_expr = std::make_unique<ast::ImplicitCastExpr>(expr->token_range(), move(expr), conv);
-  cast_expr->val_ty(target_type);
-  expr = move(cast_expr);
-}
-
 inline void wrap_in_implicit_cast(ast::OptionalExpr& expr, ty::Conv conv, optional<ty::Type> target_type) {
   auto cast_expr = std::make_unique<ast::ImplicitCastExpr>(expr->token_range(), move(expr), conv);
   cast_expr->type(target_type);
   expr = move(cast_expr);
-}
-
-[[deprecated]] inline void try_implicit_conversion(ast::OptionalExpr& expr, const ty::BaseType* target_type) {
-  if (target_type == nullptr)
-    return;
-
-  auto compat = expr->val_ty()->compatibility(*target_type);
-  if (!compat.valid)
-    throw std::runtime_error("Invalid implicit conversion ('"s + expr->val_ty()->name() + "' -> '" +
-                             target_type->name() + "')");
-
-  if (!compat.conv.empty())
-    wrap_in_implicit_cast(expr, compat.conv, target_type);
 }
 
 inline void try_implicit_conversion(ast::OptionalExpr& expr, optional<ty::Type> target_type) {
@@ -496,32 +475,10 @@ void TypeWalker::body_expression(ast::Expr& expr) {
   return CRTPWalker::body_expression(expr);
 }
 
-auto TypeWalker::convert_slice_type(const ast::Type& ast_type) -> const ty::BaseType& {
-  const auto& base_type = convert_type(ast_type);
-  auto* struct_obj = compiler.m_slice_struct;
-  Substitution subs = {{{struct_obj->type_args.at(0)->name(), &base_type}}};
-  auto [already_existed, inst_struct] = struct_obj->get_or_create_instantiation(subs);
-
-  if (!already_existed) {
-    auto& new_st = inst_struct;
-
-    with_saved_scope([&] {
-      in_depth = false;
-      current_decl = &new_st;
-      body_statement(new_st.st_ast);
-    });
-
-    if (compiler.create_struct(new_st))
-      decl_queue.push(&new_st);
-  }
-
-  return *inst_struct.self_ty->base();
-}
-
 auto TypeWalker::__convert_slice_type(const ast::Type& ast_type) -> ty::Type {
   auto base_type = __convert_type(ast_type);
   auto* struct_obj = compiler.m_slice_struct;
-  Substitution subs = {{{struct_obj->type_args.at(0)->name(), base_type.base()}}};
+  Substitution subs = {{{struct_obj->type_args.at(0)->name(), base_type}}};
   auto [already_existed, inst_struct] = struct_obj->get_or_create_instantiation(subs);
 
   if (!already_existed) {
@@ -538,34 +495,6 @@ auto TypeWalker::__convert_slice_type(const ast::Type& ast_type) -> ty::Type {
   }
 
   return *inst_struct.self_ty;
-}
-
-auto TypeWalker::convert_type(const ast::Type& ast_type) -> const ty::BaseType& {
-  const ty::BaseType* parent = current_decl.self_ty()->base();
-  const auto* context = current_decl.subs();
-
-  if (const auto* simple_type = dyn_cast<ast::SimpleType>(&ast_type)) {
-    auto name = simple_type->name();
-    if (context != nullptr) {
-      auto generic = context->find(name);
-      if (generic != context->end())
-        return *generic->second.base();
-    }
-    auto val = compiler.m_types.known.find(name);
-    if (val != compiler.m_types.known.end())
-      return *val->second;
-  } else if (const auto* qual_type = dyn_cast<ast::QualType>(&ast_type)) {
-    auto qualifier = qual_type->qualifier();
-    if (qualifier == Qualifier::Slice)
-      return convert_slice_type(qual_type->base());
-    return convert_type(qual_type->base()).known_qual(qualifier);
-  } else if (isa<ast::SelfType>(ast_type)) {
-    if (parent != nullptr)
-      return *parent;
-  }
-
-  throw std::runtime_error("Cannot convert AST type to actual type! "s + ast_type.kind_name() + " (" +
-                           ast_type.describe() + ")");
 }
 
 auto TypeWalker::__convert_type(const ast::Type& ast_type) -> ty::Type {

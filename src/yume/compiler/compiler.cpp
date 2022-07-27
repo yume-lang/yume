@@ -218,38 +218,6 @@ auto Compiler::decl_statement(ast::Stmt& stmt, optional<ty::Type> parent, ast::P
   throw std::runtime_error("Invalid top-level statement: "s + stmt.kind_name());
 }
 
-auto Compiler::llvm_type(const ty::BaseType* type) -> llvm::Type* {
-  if (const auto* int_type = dyn_cast<ty::Int>(type))
-    return llvm::Type::getIntNTy(*m_context, int_type->size());
-  if (const auto* ptr_type = dyn_cast<ty::Ptr>(type)) {
-    switch (ptr_type->qualifier()) {
-    case Qualifier::Ptr: return llvm::PointerType::getUnqual(llvm_type(&ptr_type->base()));
-    case Qualifier::Slice: {
-      auto args = vector<llvm::Type*>{};
-      args.push_back(llvm::PointerType::getUnqual(llvm_type(&ptr_type->base())));
-      args.push_back(llvm::Type::getInt64Ty(*m_context));
-      return llvm::StructType::get(*m_context, args);
-    }
-    default: llvm_unreachable("Ptr type cannot hold this qualifier");
-    }
-  }
-  if (const auto* struct_type = dyn_cast<ty::Struct>(type)) {
-    auto* memo = struct_type->memo();
-    if (memo == nullptr) {
-      auto fields = vector<llvm::Type*>{};
-      for (const auto* i : struct_type->fields())
-        fields.push_back(llvm_type(i->type->ensure_type()));
-
-      memo = llvm::StructType::create(*m_context, fields, "_"s + struct_type->name());
-      struct_type->memo(memo);
-    }
-
-    return memo;
-  }
-
-  return llvm::Type::getVoidTy(*m_context);
-}
-
 auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
   auto* base = llvm::Type::getVoidTy(*m_context);
 
@@ -288,20 +256,6 @@ auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
   return base;
 }
 
-void Compiler::destruct(Val val, const ty::BaseType* type) {
-  if (type->is_mut()) {
-    const auto* deref_type = type->mut_base();
-    return destruct(m_builder->CreateLoad(llvm_type(deref_type), val), deref_type);
-  }
-  if (const auto* ptr_type = dyn_cast<ty::Ptr>(type)) {
-    if (ptr_type->has_qualifier(Qualifier::Slice)) {
-      auto* ptr = m_builder->CreateExtractValue(val, 0, "sl.ptr.free");
-      auto* free = llvm::CallInst::CreateFree(ptr, m_builder->GetInsertBlock());
-      m_builder->Insert(free);
-    }
-  }
-}
-
 void Compiler::destruct(Val val, ty::Type type) {
   if (type.is_mut()) {
     const auto deref_type = *type.mut_base();
@@ -314,37 +268,6 @@ void Compiler::destruct(Val val, ty::Type type) {
       m_builder->Insert(free);
     }
   }
-}
-
-auto Compiler::default_init(const ty::BaseType* type) -> Val {
-  if (const auto* int_type = dyn_cast<ty::Int>(type))
-    return m_builder->getIntN(int_type->size(), 0);
-  if (isa<ty::Qual>(type))
-    throw std::runtime_error("Cannot default-initialize a reference");
-  if (const auto* ptr_type = dyn_cast<ty::Ptr>(type)) {
-    switch (ptr_type->qualifier()) {
-    default: llvm_unreachable("Ptr type cannot hold this qualifier");
-    case Qualifier::Ptr:
-      llvm::ConstantPointerNull::get(llvm::PointerType::getUnqual(llvm_type(&ptr_type->base())));
-      break;
-    case Qualifier::Slice:
-      auto* ptr_member_type = llvm::PointerType::getUnqual(llvm_type(&ptr_type->base()));
-      auto* struct_type = cast<llvm::StructType>(llvm_type(type));
-      return llvm::ConstantStruct::get(struct_type, llvm::ConstantPointerNull::get(ptr_member_type),
-                                       m_builder->getInt64(0));
-    }
-  }
-  if (const auto* struct_type = dyn_cast<ty::Struct>(type)) {
-    auto* llvm_ty = cast<llvm::StructType>(llvm_type(type));
-    llvm::Value* val = llvm::UndefValue::get(llvm_ty);
-
-    for (const auto& i : llvm::enumerate(struct_type->fields()))
-      val = m_builder->CreateInsertValue(val, default_init(i.value()->type->ensure_type()), i.index());
-
-    return val;
-  }
-
-  throw std::runtime_error("Cannot default-initialize "s + type->name());
 }
 
 auto Compiler::default_init(ty::Type type) -> Val {
@@ -449,23 +372,6 @@ template <> void Compiler::statement(const ast::Compound& stat) {
     body_statement(*i);
 }
 
-[[deprecated]] static inline auto is_trivially_destructible(const ty::BaseType* type) -> bool {
-  if (isa<ty::Int>(type))
-    return true;
-
-  if (isa<ty::Qual>(type))
-    return is_trivially_destructible(type->mut_base());
-
-  if (const auto* ptr_type = dyn_cast<ty::Ptr>(type))
-    return !ptr_type->has_qualifier(Qualifier::Slice);
-
-  if (const auto* struct_type = dyn_cast<ty::Struct>(type))
-    return std::ranges::all_of(struct_type->fields(), &is_trivially_destructible, &ast::TypeName::get_val_ty);
-
-  // A generic or something, shouldn't occur
-  throw std::logic_error("Cannot check if "s + type->name() + " is trivially destructible");
-}
-
 static inline auto is_trivially_destructible(ty::Type type) -> bool {
   if (type.base_isa<ty::Int>())
     return true;
@@ -479,12 +385,6 @@ static inline auto is_trivially_destructible(ty::Type type) -> bool {
 
   // A generic or something, shouldn't occur
   throw std::logic_error("Cannot check if "s + type.name() + " is trivially destructible");
-}
-
-void Compiler::destruct_all_in_scope() {
-  for (const auto& [k, v] : m_scope)
-    if (isa<ast::VarDecl>(v.ast) && v.owning && !is_trivially_destructible(v.ast.val_ty()))
-      destruct(v.value, v.ast.val_ty());
 }
 
 void Compiler::__destruct_all_in_scope() {
@@ -1070,30 +970,6 @@ auto Compiler::mangle_name(Ctor& ctor) -> string {
   ss << ")";
 
   return ss.str();
-}
-
-auto Compiler::mangle_name(const ty::BaseType* ast_type, DeclLike parent) -> string {
-  stringstream ss{};
-  if (const auto* qual_type = dyn_cast<ty::Qual>(ast_type)) {
-    ss << mangle_name(&qual_type->base(), parent);
-    if (qual_type->has_qualifier(Qualifier::Mut))
-      ss << "&";
-    return ss.str();
-  }
-  if (const auto* ptr_type = dyn_cast<ty::Ptr>(ast_type)) {
-    ss << mangle_name(&ptr_type->base(), parent);
-    if (ptr_type->has_qualifier(Qualifier::Ptr))
-      ss << "*";
-    if (ptr_type->has_qualifier(Qualifier::Slice))
-      ss << "[";
-    return ss.str();
-  }
-  if (const auto* generic_type = dyn_cast<ty::Generic>(ast_type)) {
-    auto match = parent.subs()->find(generic_type->name());
-    yume_assert(match != parent.subs()->end(), "Cannot mangle unsubstituted generic");
-    return match->second.name();
-  }
-  return ast_type->name();
 }
 
 auto Compiler::mangle_name(ty::Type ast_type, DeclLike parent) -> string {
