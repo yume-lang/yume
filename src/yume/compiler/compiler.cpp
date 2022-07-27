@@ -222,20 +222,18 @@ auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
   auto* base = llvm::Type::getVoidTy(*m_context);
 
   if (const auto* int_type = type.base_dyn_cast<ty::Int>())
-    return llvm::Type::getIntNTy(*m_context, int_type->size());
-  if (const auto* ptr_type = type.base_dyn_cast<ty::Ptr>()) {
+    base = llvm::Type::getIntNTy(*m_context, int_type->size());
+  else if (const auto* ptr_type = type.base_dyn_cast<ty::Ptr>()) {
     switch (ptr_type->qualifier()) {
-    case Qualifier::Ptr: return llvm::PointerType::getUnqual(llvm_type(ptr_type->pointee()));
-    case Qualifier::Slice: {
+    default: llvm_unreachable("Ptr type cannot hold this qualifier");
+    case Qualifier::Ptr: base = llvm::PointerType::getUnqual(llvm_type(ptr_type->pointee())); break;
+    case Qualifier::Slice:
       auto args = vector<llvm::Type*>{};
       args.push_back(llvm::PointerType::getUnqual(llvm_type(ptr_type->pointee())));
       args.push_back(llvm::Type::getInt64Ty(*m_context));
-      return llvm::StructType::get(*m_context, args);
+      base = llvm::StructType::get(*m_context, args);
     }
-    default: llvm_unreachable("Ptr type cannot hold this qualifier");
-    }
-  }
-  if (const auto* struct_type = type.base_dyn_cast<ty::Struct>()) {
+  } else if (const auto* struct_type = type.base_dyn_cast<ty::Struct>()) {
     auto* memo = struct_type->memo();
     if (memo == nullptr) {
       auto fields = vector<llvm::Type*>{};
@@ -246,10 +244,8 @@ auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
       struct_type->memo(memo);
     }
 
-    return memo;
+    base = memo;
   }
-
-  return llvm::Type::getVoidTy(*m_context);
 
   if (type.is_mut())
     return base->getPointerTo();
