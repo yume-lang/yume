@@ -38,8 +38,8 @@ inline void try_implicit_conversion(ast::OptionalExpr& expr, optional<ty::Type> 
 
   auto compat = expr->val_ty()->compatibility(*target_type);
   if (!compat.valid)
-    throw std::runtime_error("Invalid implicit conversion ('"s + expr->val_ty()->name() + "' -> '" + target_type->name() +
-                             "')");
+    throw std::runtime_error("Invalid implicit conversion ('"s + expr->val_ty()->name() + "' -> '" +
+                             target_type->name() + "')");
 
   if (!compat.conv.empty())
     wrap_in_implicit_cast(expr, compat.conv, target_type);
@@ -219,6 +219,7 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
     };
   } else {
     type = current_decl.self_ty();
+    base_is_mut = true;
   }
 
   const auto* struct_type = type->base_dyn_cast<ty::Struct>();
@@ -542,9 +543,8 @@ void TypeWalker::resolve_queue() {
 
               // "Inherit" substitutions
               // TODO(rymiel): Shadowing type variables should be an error
-              if (decl.subs() != nullptr)
-                for (auto& [k, v] : st->subs)
-                  decl.subs()->try_emplace(k, v);
+              for (auto& [k, v] : st->subs)
+                decl.subs()->try_emplace(k, v);
               compiler.walk_types(decl);
             }
           },

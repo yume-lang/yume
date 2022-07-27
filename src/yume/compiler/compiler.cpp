@@ -891,15 +891,23 @@ template <> auto Compiler::expression(const ast::SliceExpr& expr) -> Val {
 }
 
 template <> auto Compiler::expression(const ast::FieldAccessExpr& expr) -> Val {
-  auto base = body_expression(*expr.base());
+  optional<Val> base;
+  optional<ty::Type> base_type;
+  if (expr.base().has_value()) {
+    base = body_expression(*expr.base());
+    base_type = expr.base()->ensure_ty().mut_base();
+  } else {
+    base = m_scope_ctor->value;
+    base_type = m_current_fn->self_ty;
+  }
+
   auto base_name = expr.field();
   int base_offset = expr.offset();
 
   if (!expr.ensure_ty().is_mut())
-    return m_builder->CreateExtractValue(base, base_offset, "s.field.nm."s + base_name);
+    return m_builder->CreateExtractValue(*base, base_offset, "s.field.nm."s + base_name);
 
-  return m_builder->CreateStructGEP(llvm_type(expr.base()->ensure_ty().mut_base().value()), base, base_offset,
-                                    "s.field.m."s + base_name);
+  return m_builder->CreateStructGEP(llvm_type(base_type.value()), *base, base_offset, "s.field.m."s + base_name);
 }
 
 template <> auto Compiler::expression(const ast::ImplicitCastExpr& expr) -> Val {

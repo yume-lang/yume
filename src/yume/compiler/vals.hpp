@@ -32,6 +32,8 @@ struct FnBase {
   optional<ty::Type> self_ty{};
   /// The program this declaration is a member of.
   ast::Program* member{};
+  /// If this is an instantiation of a template, a mapping between type variables and their substitutions.
+  Substitution subs{};
   /// The LLVM function definition corresponding to this function or constructor.
   llvm::Function* llvm{};
 
@@ -51,18 +53,18 @@ struct Fn {
 
   FnBase base;
   vector<unique_ptr<ty::Generic>> type_args{};
-  /// If this is an instantiation of a template, a mapping between type variables and their substitutions.
-  Substitution subs{};
   std::map<Substitution, unique_ptr<Fn>> instantiations{};
 
   Fn(ast::FnDecl& ast_decl, optional<ty::Type> parent = std::nullopt, ast::Program* member = nullptr,
      Substitution subs = {}, vector<unique_ptr<ty::Generic>> type_args = {})
-      : base{ast_decl, parent, member}, type_args(move(type_args)), subs(move(subs)) {}
+      : base{ast_decl, parent, member, move(subs)}, type_args(move(type_args)) {}
 
   [[nodiscard]] auto ast() const -> const auto& { return cast<decl_t>(base.ast); }
   [[nodiscard]] auto ast() -> auto& { return cast<decl_t>(base.ast); }
   [[nodiscard]] auto body() const -> const auto& { return ast().body(); }
   [[nodiscard]] auto get_self_ty() const -> optional<ty::Type> { return base.self_ty; };
+  [[nodiscard]] auto get_subs() const -> const Substitution& { return base.subs; };
+  [[nodiscard]] auto get_subs() -> Substitution& { return base.subs; };
 
   [[nodiscard]] auto name() const -> string;
   [[nodiscard]] static auto overload_name(const call_t& ast) -> string;
@@ -102,6 +104,8 @@ struct Struct {
   [[nodiscard]] auto body() const -> const auto& { return st_ast.body(); }
   [[nodiscard]] auto body() -> auto& { return st_ast.body(); }
   [[nodiscard]] auto get_self_ty() const -> optional<ty::Type> { return self_ty; };
+  [[nodiscard]] auto get_subs() const -> const Substitution& { return subs; };
+  [[nodiscard]] auto get_subs() -> Substitution& { return subs; };
 
   [[nodiscard]] auto name() const -> string;
 
@@ -126,6 +130,8 @@ struct Ctor {
   [[nodiscard]] auto ast() const -> const auto& { return cast<decl_t>(base.ast); }
   [[nodiscard]] auto ast() -> auto& { return cast<decl_t>(base.ast); }
   [[nodiscard]] auto get_self_ty() const -> optional<ty::Type> { return base.self_ty; };
+  [[nodiscard]] auto get_subs() const -> const Substitution& { return base.subs; };
+  [[nodiscard]] auto get_subs() -> Substitution& { return base.subs; };
 
   [[nodiscard]] auto name() const -> string;
   [[nodiscard]] static auto overload_name(const call_t& ast) -> string;
@@ -157,21 +163,19 @@ public:
   }
 
   [[nodiscard]] auto subs() const -> const Substitution* {
-    return visit_decl<Substitution*>([](Ctor* /*decl*/) -> Substitution* { return nullptr; },
-                                     [](auto* decl) -> Substitution* {
-                                       if (decl == nullptr)
-                                         return nullptr;
-                                       return &decl->subs;
-                                     });
+    return visit_decl<Substitution*>([](auto* decl) -> Substitution* {
+      if (decl == nullptr)
+        return nullptr;
+      return &decl->get_subs();
+    });
   };
 
   [[nodiscard]] auto subs() -> Substitution* {
-    return visit_decl<Substitution*>([](Ctor* /*decl*/) -> Substitution* { return nullptr; },
-                                     [](auto* decl) -> Substitution* {
-                                       if (decl == nullptr)
-                                         return nullptr;
-                                       return &decl->subs;
-                                     });
+    return visit_decl<Substitution*>([](auto* decl) -> Substitution* {
+      if (decl == nullptr)
+        return nullptr;
+      return &decl->get_subs();
+    });
   };
 
   [[nodiscard]] auto ast() const -> const ast::AST* {
