@@ -42,22 +42,6 @@ public:
   static auto classof(const BaseType* a) -> bool { return a->kind() == K_Int; }
 };
 
-/// A "qualified" type, with a non-stackable qualifier, \e .i.e. `mut`.
-class [[deprecated]] Qual : public BaseType {
-  friend BaseType;
-
-private:
-  const BaseType& m_base;
-  bool m_mut{};
-
-public:
-  Qual(string name, const BaseType& base, bool mut) : BaseType(K_Qual, move(name)), m_base(base), m_mut(mut) {}
-  [[nodiscard]] auto base() const -> const BaseType& { return m_base; }
-  [[nodiscard]] auto has_qualifier(Qualifier qual) const -> bool { return (qual == Qualifier::Mut && m_mut); }
-  [[nodiscard]] auto name() const -> string override;
-  static auto classof(const BaseType* a) -> bool { return a->kind() == K_Qual; }
-};
-
 /// A "qualified" type, with a stackable qualifier, \e i.e. `ptr`.
 class Ptr : public BaseType {
   friend BaseType;
