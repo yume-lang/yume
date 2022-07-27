@@ -269,10 +269,13 @@ auto TypeWalker::all_ctor_overloads_by_type(Struct& st, ast::CtorExpr& call) -> 
 }
 
 template <> void TypeWalker::expression(ast::CallExpr& expr) {
-  resolve_queue();
-
   auto overload_set = all_fn_overloads_by_name(expr);
   auto name = expr.name();
+
+  if (overload_set.empty()) {                      // HACK
+    resolve_queue();                               // HACK
+    overload_set = all_fn_overloads_by_name(expr); // HACK
+  }                                                // HACK
 
   if (overload_set.empty())
     throw std::logic_error("No function overload named "s + name);
@@ -295,6 +298,11 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
   overload_set.dump(errs(), true);
 #endif
 
+  const auto* maybe_best_overload = overload_set.try_best_viable_overload(); // HACK
+  if (maybe_best_overload == nullptr && !decl_queue.empty()) {               // HACK
+    resolve_queue();                                                         // HACK
+    return expression(expr);                                                 // HACK
+  }                                                                          // HACK
   Overload best_overload = overload_set.best_viable_overload();
 
 #ifdef YUME_SPEW_OVERLOAD_SELECTION
