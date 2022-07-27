@@ -129,7 +129,7 @@ private:
 
   /// Run the destructors for every owned local variable in the current scope. Should be run when returning from a
   /// function in any way.
-  void __destruct_all_in_scope();
+  void destruct_all_in_scope();
 
   /// Handle all primitive, built-in functions
   auto primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<ty::Type>& types) -> optional<Val>;
