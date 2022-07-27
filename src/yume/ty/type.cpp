@@ -118,7 +118,7 @@ auto Type::compatibility(Type other, Compat compat) const -> Compat {
   // Note that the base types are also compared, so `I32 mut` -> `I64`.
   if (is_mut() && !other.is_mut()) {
     compat.conv.dereference = true;
-    compat = mut_base()->compatibility(other.without_mut(), compat);
+    compat = mut_base()->compatibility(other, compat);
     return compat;
   }
 
@@ -197,7 +197,7 @@ auto Struct::emplace_subbed(Substitution sub) const -> const Struct& {
 
 auto Type::mut_base() const noexcept -> optional<Type> {
   if (m_mut)
-    return *this;
+    return Type(m_base);
   return std::nullopt;
 }
 
