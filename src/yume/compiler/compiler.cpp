@@ -203,8 +203,8 @@ auto Compiler::decl_statement(ast::Stmt& stmt, optional<ty::Type> parent, ast::P
     if (st.name() == "Slice") // TODO(rymiel): magic value?
       m_slice_struct = &st;
 
-    if (st.type_args.empty())
-      for (auto& f : s_decl->body().body())
+    for (auto& f : s_decl->body().body())
+      if (st.type_args.empty() || isa<ast::CtorDecl>(*f))
         decl_statement(*f, st.self_ty, member);
 
     return &st;

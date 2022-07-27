@@ -49,12 +49,7 @@ def main(argc I32, argv U8 ptr ptr) I32
   if argc > 1
     word_ptr = argv[1]
   end
-  # TODO
-  # Perhaps this could be constructed from the same pointer, instead of
-  # allocating a new one and copying it. It would probably require constructors
-  # to be a real feature, but slice constructors are a special case anyway
-  let word = U8[](word_ptr.c_len)
-  copy(word_ptr, word.unsafe_ptr, word.size)
+  let word = U8[](word_ptr, word_ptr.c_len)
 
   let instructions = parse(word)
 
