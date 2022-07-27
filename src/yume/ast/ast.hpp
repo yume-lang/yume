@@ -222,16 +222,9 @@ public:
   /// Recursively visit this ast node and all its constituents. \see Visitor
   virtual void visit(Visitor& visitor) const = 0;
 
-  [[nodiscard]] auto type() const noexcept -> optional<ty::Type> { return m_val_ty; }
-  [[nodiscard]] auto __val_ty() const noexcept -> optional<ty::Type> { return m_val_ty; }
-  [[nodiscard]] auto ensure_type() const -> ty::Type { return *m_val_ty; }
-  void type(optional<ty::Type> type) {
-    m_val_ty = type;
-    for (auto* i : m_attach->observers) {
-      i->unify_val_ty();
-    }
-  }
-  void __val_ty(optional<ty::Type> type) {
+  [[nodiscard]] auto val_ty() const noexcept -> optional<ty::Type> { return m_val_ty; }
+  [[nodiscard]] auto ensure_ty() const -> ty::Type { return *m_val_ty; }
+  void val_ty(optional<ty::Type> type) {
     m_val_ty = type;
     for (auto* i : m_attach->observers) {
       i->unify_val_ty();

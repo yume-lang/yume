@@ -16,7 +16,7 @@
 
 namespace yume::semantic {
 
-inline static constexpr auto get_val_ty = [](const ast::AST* ast) { return ast->__val_ty(); };
+inline static constexpr auto get_val_ty = [](const ast::AST* ast) { return ast->val_ty(); };
 
 static auto join_args(const auto& iter, auto fn, llvm::raw_ostream& stream = errs()) {
   for (auto& i : llvm::enumerate(iter)) {
@@ -56,7 +56,7 @@ template <typename T> void OverloadSet<T>::dump(llvm::raw_ostream& stream, bool 
 };
 
 static auto literal_cast(ast::AST& arg, ty::Type target_type) -> ty::Compat {
-  if (arg.type() == target_type)
+  if (arg.val_ty() == target_type)
     return {.valid = true}; // Already the correct type
 
   if (isa<ast::NumberExpr>(arg) && target_type.base_isa<ty::Int>()) {
@@ -102,7 +102,7 @@ template <typename T> auto OverloadSet<T>::is_valid_overload(Overload<T>& overlo
   // compatibility of the "variadic" part of varargs functions. Currently, varargs methods can only be primitives and
   // carry no type information for their variadic part. This will change in the future.
   for (const auto& [param, arg] : llvm::zip_first(fn_ast.args(), args)) {
-    auto arg_type = arg->type();
+    auto arg_type = arg->val_ty();
     auto param_type = T::arg_type(param);
 
     if (param_type->is_generic()) {

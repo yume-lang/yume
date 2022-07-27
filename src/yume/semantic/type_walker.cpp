@@ -28,7 +28,7 @@
 namespace yume::semantic {
 inline void wrap_in_implicit_cast(ast::OptionalExpr& expr, ty::Conv conv, optional<ty::Type> target_type) {
   auto cast_expr = std::make_unique<ast::ImplicitCastExpr>(expr->token_range(), move(expr), conv);
-  cast_expr->type(target_type);
+  cast_expr->val_ty(target_type);
   expr = move(cast_expr);
 }
 
@@ -36,9 +36,9 @@ inline void try_implicit_conversion(ast::OptionalExpr& expr, optional<ty::Type> 
   if (!target_type)
     return;
 
-  auto compat = expr->type()->compatibility(*target_type);
+  auto compat = expr->val_ty()->compatibility(*target_type);
   if (!compat.valid)
-    throw std::runtime_error("Invalid implicit conversion ('"s + expr->type()->name() + "' -> '" + target_type->name() +
+    throw std::runtime_error("Invalid implicit conversion ('"s + expr->val_ty()->name() + "' -> '" + target_type->name() +
                              "')");
 
   if (!compat.conv.empty())
@@ -48,22 +48,22 @@ inline void try_implicit_conversion(ast::OptionalExpr& expr, optional<ty::Type> 
 template <> void TypeWalker::expression(ast::NumberExpr& expr) {
   auto val = expr.val();
   if (val > std::numeric_limits<int32_t>::max())
-    expr.type(compiler.m_types.int64().s_ty);
+    expr.val_ty(compiler.m_types.int64().s_ty);
   else
-    expr.type(compiler.m_types.int32().s_ty);
+    expr.val_ty(compiler.m_types.int32().s_ty);
 }
 
 template <> void TypeWalker::expression(ast::StringExpr& expr) {
   // TODO(rymiel): #18 String type
-  expr.type(ty::Type(compiler.m_types.int8().u_ty).known_ptr());
+  expr.val_ty(ty::Type(compiler.m_types.int8().u_ty).known_ptr());
 }
 
-template <> void TypeWalker::expression(ast::CharExpr& expr) { expr.type(compiler.m_types.int8().u_ty); }
+template <> void TypeWalker::expression(ast::CharExpr& expr) { expr.val_ty(compiler.m_types.int8().u_ty); }
 
-template <> void TypeWalker::expression(ast::BoolExpr& expr) { expr.type(compiler.m_types.bool_type); }
+template <> void TypeWalker::expression(ast::BoolExpr& expr) { expr.val_ty(compiler.m_types.bool_type); }
 
 template <> void TypeWalker::expression(ast::Type& expr) {
-  expr.type(__convert_type(expr));
+  expr.val_ty(convert_type(expr));
   if (auto* qual_type = dyn_cast<ast::QualType>(&expr))
     expression(qual_type->base());
 }
@@ -82,7 +82,7 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
   if (auto* templated = dyn_cast<ast::TemplatedType>(&expr.type())) {
     auto& template_base = templated->base();
     expression(template_base);
-    auto base_type = __convert_type(template_base);
+    auto base_type = convert_type(template_base);
     auto struct_obj = std::ranges::find(compiler.m_structs, base_type, &Struct::self_ty);
 
     if (struct_obj == compiler.m_structs.end())
@@ -94,7 +94,7 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
     // XXX: Duplicated from function overload handling
     Substitution subs = {};
     for (const auto& [gen, gen_sub] : llvm::zip(struct_obj->type_args, templated->type_vars()))
-      subs.try_emplace(gen->name(), gen_sub->ensure_type());
+      subs.try_emplace(gen->name(), gen_sub->ensure_ty());
 
     auto [already_existed, inst_struct] = struct_obj->get_or_create_instantiation(subs);
 
@@ -111,15 +111,15 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
         decl_queue.push(&new_st);
     }
 
-    expr.__val_ty(inst_struct.self_ty);
+    expr.val_ty(inst_struct.self_ty);
     st = &inst_struct;
   } else {
     expression(expr.type());
-    auto base_type = __convert_type(expr.type());
+    auto base_type = convert_type(expr.type());
     auto struct_obj = std::ranges::find(compiler.m_structs, base_type, &Struct::self_ty);
     if (struct_obj != compiler.m_structs.end())
       st = &*struct_obj;
-    expr.__val_ty(base_type);
+    expr.val_ty(base_type);
   }
 
   bool consider_ctor_overloads = st != nullptr;
@@ -183,17 +183,17 @@ template <> void TypeWalker::expression(ast::SliceExpr& expr) {
 
   auto& slice_base = expr.type();
   expression(slice_base);
-  auto base_type = __convert_slice_type(slice_base);
+  auto base_type = convert_slice_type(slice_base);
 
   // expr.val_ty(&base_type.known_slice());
-  expr.__val_ty(base_type);
+  expr.val_ty(base_type);
 }
 
 template <> void TypeWalker::expression(ast::AssignExpr& expr) {
   body_expression(*expr.target());
   body_expression(*expr.value());
 
-  try_implicit_conversion(expr.value(), expr.target()->ensure_type().mut_base());
+  try_implicit_conversion(expr.value(), expr.target()->ensure_ty().mut_base());
 
   expr.target()->attach_to(expr.value().raw_ptr());
   expr.attach_to(expr.value().raw_ptr());
@@ -211,7 +211,7 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
 
   if (expr.base().has_value()) {
     body_expression(*expr.base());
-    type = expr.base()->ensure_type();
+    type = expr.base()->ensure_ty();
 
     if (type->is_mut()) {
       type = type->mut_base();
@@ -231,14 +231,14 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
   int j = 0;
   for (const auto* field : struct_type->fields()) {
     if (field->name == target_name) {
-      target_type = field->type->type();
+      target_type = field->type->val_ty();
       break;
     }
     j++;
   }
 
   expr.offset(j);
-  expr.type(base_is_mut ? target_type->known_mut() : target_type);
+  expr.val_ty(base_is_mut ? target_type->known_mut() : target_type);
 }
 
 auto TypeWalker::all_fn_overloads_by_name(ast::CallExpr& call) -> OverloadSet<Fn> {
@@ -336,14 +336,14 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
     if (compat.conv.empty())
       continue;
 
-    wrap_in_implicit_cast(expr_arg, compat.conv, target.type->type());
+    wrap_in_implicit_cast(expr_arg, compat.conv, target.type->val_ty());
   }
 
   // Find excess variadic arguments. Logic will probably change later, but for now, always pass by value
   // TODO(rymiel): revisit
   for (const auto& expr_arg : llvm::enumerate(expr.args())) {
-    if (expr_arg.index() >= selected->ast().args().size() && expr_arg.value()->ensure_type().is_mut()) {
-      auto target_type = expr_arg.value()->ensure_type().mut_base();
+    if (expr_arg.index() >= selected->ast().args().size() && expr_arg.value()->ensure_ty().is_mut()) {
+      auto target_type = expr_arg.value()->ensure_ty().mut_base();
       wrap_in_implicit_cast(expr_arg.value(), ty::Conv{.dereference = true}, target_type);
     }
   }
@@ -397,7 +397,7 @@ template <> void TypeWalker::statement(ast::CtorDecl& stat) {
   if (struct_type == nullptr)
     throw std::runtime_error("Can't define constructor of non-struct type");
 
-  stat.type(struct_type);
+  stat.val_ty(struct_type);
   for (auto& i : stat.args()) {
     if (auto* type_name = std::get_if<ast::TypeName>(&i)) {
       expression(*type_name);
@@ -409,14 +409,14 @@ template <> void TypeWalker::statement(ast::CtorDecl& stat) {
       int j = 0;
       for (const auto* field : struct_type->fields()) {
         if (field->name == target_name) {
-          target_type = field->type->type();
+          target_type = field->type->val_ty();
           break;
         }
         j++;
       }
 
       direct_init->offset(j);
-      direct_init->type(target_type);
+      direct_init->val_ty(target_type);
       scope.insert({target_name, direct_init});
     }
   }
@@ -433,7 +433,7 @@ template <> void TypeWalker::statement(ast::ReturnStmt& stat) {
       if (auto* var_decl = dyn_cast<ast::VarDecl>(scope.at(var_expr->name())))
         stat.extend_lifetime_of(var_decl);
 
-    try_implicit_conversion(stat.expr(), current_decl.ast()->type());
+    try_implicit_conversion(stat.expr(), current_decl.ast()->val_ty());
     current_decl.ast()->attach_to(stat.expr().raw_ptr());
     // TODO(rymiel): Once return type deduction exists, make sure to not return `mut` unless there is an _explicit_ type
     // annotation saying so
@@ -444,11 +444,11 @@ template <> void TypeWalker::statement(ast::VarDecl& stat) {
   body_expression(*stat.init());
   if (stat.type().has_value()) {
     expression(*stat.type());
-    try_implicit_conversion(stat.init(), stat.type()->type());
+    try_implicit_conversion(stat.init(), stat.type()->val_ty());
     stat.init()->attach_to(stat.type().raw_ptr());
   }
 
-  stat.__val_ty(stat.init()->ensure_type().known_mut());
+  stat.val_ty(stat.init()->ensure_ty().known_mut());
   scope.insert({stat.name(), &stat});
 }
 
@@ -475,8 +475,8 @@ void TypeWalker::body_expression(ast::Expr& expr) {
   return CRTPWalker::body_expression(expr);
 }
 
-auto TypeWalker::__convert_slice_type(const ast::Type& ast_type) -> ty::Type {
-  auto base_type = __convert_type(ast_type);
+auto TypeWalker::convert_slice_type(const ast::Type& ast_type) -> ty::Type {
+  auto base_type = convert_type(ast_type);
   auto* struct_obj = compiler.m_slice_struct;
   Substitution subs = {{{struct_obj->type_args.at(0)->name(), base_type}}};
   auto [already_existed, inst_struct] = struct_obj->get_or_create_instantiation(subs);
@@ -497,7 +497,7 @@ auto TypeWalker::__convert_slice_type(const ast::Type& ast_type) -> ty::Type {
   return *inst_struct.self_ty;
 }
 
-auto TypeWalker::__convert_type(const ast::Type& ast_type) -> ty::Type {
+auto TypeWalker::convert_type(const ast::Type& ast_type) -> ty::Type {
   auto parent = current_decl.self_ty();
   const auto* context = current_decl.subs();
 
@@ -514,8 +514,8 @@ auto TypeWalker::__convert_type(const ast::Type& ast_type) -> ty::Type {
   } else if (const auto* qual_type = dyn_cast<ast::QualType>(&ast_type)) {
     auto qualifier = qual_type->qualifier();
     if (qualifier == Qualifier::Slice)
-      return __convert_slice_type(qual_type->base());
-    return __convert_type(qual_type->base()).known_qual(qualifier);
+      return convert_slice_type(qual_type->base());
+    return convert_type(qual_type->base()).known_qual(qualifier);
   } else if (isa<ast::SelfType>(ast_type)) {
     if (parent)
       return *parent;

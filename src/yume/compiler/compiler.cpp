@@ -240,7 +240,7 @@ auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
     if (memo == nullptr) {
       auto fields = vector<llvm::Type*>{};
       for (const auto* i : struct_type->fields())
-        fields.push_back(llvm_type(i->type->ensure_type()));
+        fields.push_back(llvm_type(i->type->ensure_ty()));
 
       memo = llvm::StructType::create(*m_context, fields, "_"s + struct_type->name());
       struct_type->memo(memo);
@@ -293,7 +293,7 @@ auto Compiler::default_init(ty::Type type) -> Val {
     llvm::Value* val = llvm::UndefValue::get(llvm_ty);
 
     for (const auto& i : llvm::enumerate(struct_type->fields()))
-      val = m_builder->CreateInsertValue(val, default_init(i.value()->type->ensure_type()), i.index());
+      val = m_builder->CreateInsertValue(val, default_init(i.value()->type->ensure_ty()), i.index());
 
     return val;
   }
@@ -311,10 +311,10 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
   auto* llvm_ret_type = llvm::Type::getVoidTy(*m_context);
   auto llvm_args = vector<llvm::Type*>{};
   if (fn_decl.ret())
-    llvm_ret_type = llvm_type(fn_decl.ret()->ensure_type());
+    llvm_ret_type = llvm_type(fn_decl.ret()->ensure_ty());
 
   for (const auto& i : fn_decl.args())
-    llvm_args.push_back(llvm_type(i.ensure_type()));
+    llvm_args.push_back(llvm_type(i.ensure_ty()));
 
   llvm::FunctionType* fn_t = llvm::FunctionType::get(llvm_ret_type, llvm_args, fn_decl.varargs());
 
@@ -381,16 +381,16 @@ static inline auto is_trivially_destructible(ty::Type type) -> bool {
 
   if (const auto* struct_type = type.base_dyn_cast<ty::Struct>())
     return std::ranges::all_of(
-        struct_type->fields(), [](const auto& i) { return is_trivially_destructible(i); }, &ast::TypeName::ensure_type);
+        struct_type->fields(), [](const auto& i) { return is_trivially_destructible(i); }, &ast::TypeName::ensure_ty);
 
   // A generic or something, shouldn't occur
   throw std::logic_error("Cannot check if "s + type.name() + " is trivially destructible");
 }
 
-void Compiler::__destruct_all_in_scope() {
+void Compiler::destruct_all_in_scope() {
   for (const auto& [k, v] : m_scope)
-    if (isa<ast::VarDecl>(v.ast) && v.owning && !is_trivially_destructible(v.ast.ensure_type()))
-      destruct(v.value, v.ast.ensure_type());
+    if (isa<ast::VarDecl>(v.ast) && v.owning && !is_trivially_destructible(v.ast.ensure_ty()))
+      destruct(v.value, v.ast.ensure_ty());
 }
 
 template <typename T> void Compiler::setup_fn_base(T& fn) {
@@ -428,7 +428,7 @@ void Compiler::define(Fn& fn) {
   }
 
   if (m_builder->GetInsertBlock()->getTerminator() == nullptr) {
-    __destruct_all_in_scope();
+    destruct_all_in_scope();
     m_builder->CreateRetVoid();
   }
 
@@ -459,7 +459,7 @@ void Compiler::define(Ctor& ctor) {
 
   statement(ctor.ast().body());
 
-  __destruct_all_in_scope();
+  destruct_all_in_scope();
   auto* finalized_value = m_builder->CreateLoad(ctor_type, base_alloc);
   m_builder->CreateRet(finalized_value);
 
@@ -535,7 +535,7 @@ template <> void Compiler::statement(const ast::ReturnStmt& stat) {
       }
     }
 
-    __destruct_all_in_scope();
+    destruct_all_in_scope();
 
     if (reset_owning != nullptr)
       reset_owning->owning = true; // The local variable may not be returned in all code paths, so reset its ownership
@@ -546,7 +546,7 @@ template <> void Compiler::statement(const ast::ReturnStmt& stat) {
     return;
   }
 
-  __destruct_all_in_scope();
+  destruct_all_in_scope();
   m_builder->CreateRetVoid();
 }
 
@@ -557,9 +557,9 @@ auto Compiler::entrypoint_builder() -> llvm::IRBuilder<> {
 template <> void Compiler::statement(const ast::VarDecl& stat) {
   // Locals are currently always mut, get the base type instead
   // TODO(rymiel): revisit, probably extract logic
-  auto* var_type = llvm_type(*stat.ensure_type().mut_base());
+  auto* var_type = llvm_type(*stat.ensure_ty().mut_base());
 
-  if (stat.init()->ensure_type().is_mut()) {
+  if (stat.init()->ensure_ty().is_mut()) {
     auto expr_val = body_expression(*stat.init());
     m_scope.insert({stat.name(), {.value = expr_val, .ast = stat, .owning = false}});
     return;
@@ -574,7 +574,7 @@ template <> void Compiler::statement(const ast::VarDecl& stat) {
 
 template <> auto Compiler::expression(const ast::NumberExpr& expr) -> Val {
   auto val = expr.val();
-  if (expr.ensure_type().base() == m_types.int64().s_ty)
+  if (expr.ensure_ty().base() == m_types.int64().s_ty)
     return m_builder->getInt64(val);
   return m_builder->getInt32(val);
 }
@@ -602,8 +602,8 @@ template <> auto Compiler::expression(const ast::VarExpr& expr) -> Val {
   auto& in_scope = m_scope.at(expr.name());
   auto* val = in_scope.value.llvm;
   // Function arguments act as locals, but they are immutable, but still behind a reference (alloca)
-  if (!in_scope.ast.ensure_type().is_mut())
-    return m_builder->CreateLoad(llvm_type(in_scope.ast.ensure_type()), val);
+  if (!in_scope.ast.ensure_ty().is_mut())
+    return m_builder->CreateLoad(llvm_type(in_scope.ast.ensure_ty()), val);
 
   return val;
 }
@@ -680,7 +680,7 @@ template <> auto Compiler::expression(const ast::CallExpr& expr) -> Val {
     auto arg = body_expression(*i);
     args.push_back(arg);
     llvm_args.push_back(arg.llvm);
-    arg_types.push_back(i->ensure_type());
+    arg_types.push_back(i->ensure_ty());
     j++;
   }
 
@@ -710,7 +710,7 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
     Val base{nullptr};
     if (field_base.has_value()) {
       base = body_expression(*field_base);
-      struct_base = field_access->base()->type();
+      struct_base = field_access->base()->val_ty();
     } else {
       // TODO(rymiel): revisit
       if (!isa<ast::CtorDecl>(m_current_fn->ast))
@@ -718,7 +718,7 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
 
       auto [value, ast, owning] = *m_scope_ctor;
       base = value;
-      struct_base = ast.ensure_type().known_mut();
+      struct_base = ast.ensure_ty().known_mut();
     }
 
     yume_assert(struct_base->is_mut(), "Cannot assign into field of immutable structure");
@@ -739,7 +739,7 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
 }
 
 template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {
-  auto type = expr.ensure_type();
+  auto type = expr.ensure_ty();
   if (const auto* struct_type = type.without_mut().base_dyn_cast<ty::Struct>()) {
     // TODO(rymiel): #4 determine what kind of allocation must be done, and if at all. It'll probably require a
     // complicated semantic step to determine object lifetime, which would probably be evaluated before compilation of
@@ -778,9 +778,9 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {
   if (auto int_type = type.without_mut().try_as<ty::Int>()) {
     yume_assert(expr.args().size() == 1, "Numeric cast can only contain a single argument");
     const auto& cast_from = expr.args()[0];
-    yume_assert(cast_from->ensure_type().without_mut().base_isa<ty::Int>(), "Numeric cast must convert from int");
+    yume_assert(cast_from->ensure_ty().without_mut().base_isa<ty::Int>(), "Numeric cast must convert from int");
     auto base = body_expression(*cast_from);
-    if (cast_from->ensure_type().without_mut().base_cast<ty::Int>()->is_signed()) {
+    if (cast_from->ensure_ty().without_mut().base_cast<ty::Int>()->is_signed()) {
       return m_builder->CreateSExtOrTrunc(base, llvm_type(*int_type));
     }
     return m_builder->CreateZExtOrTrunc(base, llvm_type(*int_type));
@@ -789,7 +789,7 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {
       slice_type && slice_type->has_qualifier(Qualifier::Slice)) {
     yume_assert(expr.args().size() == 1, "Slice constructor can only contain a single argument");
     const auto& slice_size_expr = expr.args()[0];
-    yume_assert(slice_size_expr->ensure_type().without_mut().base_isa<ty::Int>(),
+    yume_assert(slice_size_expr->ensure_ty().without_mut().base_isa<ty::Int>(),
                 "Slice constructor must convert from int");
     auto slice_size = body_expression(*slice_size_expr);
 
@@ -874,9 +874,9 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {
 template <> auto Compiler::expression(const ast::SliceExpr& expr) -> Val {
   auto* slice_size = m_builder->getInt64(expr.args().size());
 
-  auto* slice_type = llvm_type(expr.ensure_type());
+  auto* slice_type = llvm_type(expr.ensure_ty());
   auto* base_type =
-      llvm_type(expr.ensure_type().base_cast<ty::Struct>()->fields().at(0)->ensure_type().ptr_base().value()); // ???
+      llvm_type(expr.ensure_ty().base_cast<ty::Struct>()->fields().at(0)->ensure_ty().ptr_base().value()); // ???
 
   auto* alloc_size = llvm::ConstantExpr::getSizeOf(base_type);
   auto* ptr_alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), m_builder->getInt64Ty(), base_type,
@@ -899,16 +899,16 @@ template <> auto Compiler::expression(const ast::FieldAccessExpr& expr) -> Val {
   auto base_name = expr.field();
   int base_offset = expr.offset();
 
-  if (!expr.ensure_type().is_mut())
+  if (!expr.ensure_ty().is_mut())
     return m_builder->CreateExtractValue(base, base_offset, "s.field.nm."s + base_name);
 
-  return m_builder->CreateStructGEP(llvm_type(expr.base()->ensure_type().mut_base().value()), base, base_offset,
+  return m_builder->CreateStructGEP(llvm_type(expr.base()->ensure_ty().mut_base().value()), base, base_offset,
                                     "s.field.m."s + base_name);
 }
 
 template <> auto Compiler::expression(const ast::ImplicitCastExpr& expr) -> Val {
-  auto target_ty = expr.ensure_type();
-  auto current_ty = expr.base().ensure_type();
+  auto target_ty = expr.ensure_ty();
+  auto current_ty = expr.base().ensure_ty();
   llvm::Value* base = body_expression(expr.base());
 
   if (expr.conversion().dereference) {
@@ -947,12 +947,12 @@ auto Compiler::mangle_name(Fn& fn) -> string {
   for (const auto& i : llvm::enumerate(fn.ast().args())) {
     if (i.index() > 0)
       ss << ",";
-    ss << mangle_name(i.value().type->ensure_type(), &fn);
+    ss << mangle_name(i.value().type->ensure_ty(), &fn);
   }
   ss << ")";
   // TODO(rymiel): should mangled names even contain the return type...?
   if (fn.ast().ret().has_value())
-    ss << mangle_name(fn.ast().ret()->ensure_type(), &fn);
+    ss << mangle_name(fn.ast().ret()->ensure_ty(), &fn);
 
   return ss.str();
 }
