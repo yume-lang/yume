@@ -5,6 +5,7 @@ option(YUME_SANITIZE "Enable sanitization flags (-fsanitize)" FALSE)
 option(YUME_SPEW "Verbose output (higher numbers mean more)" 0)
 option(YUME_IWYU "Check the project with include-what-you-use" FALSE)
 option(YUME_COV "Coverage information" FALSE)
+option(YUME_FORCE_COLOR "Always produce ANSI-colored output when compiling" FALSE)
 
 find_package(Git)
 execute_process(
@@ -53,6 +54,14 @@ endif()
 
 if(YUME_EMIT_DOT)
   target_compile_definitions(yume PUBLIC YUME_EMIT_DOT)
+endif()
+
+if(YUME_FORCE_COLOR)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    target_compile_options(yume PUBLIC -fcolor-diagnostics)
+  elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    target_compile_options(yume PUBLIC -fdiagnostics-color=always)
+  endif()
 endif()
 
 target_compile_definitions(yume PUBLIC "YUME_LIB_DIR=\"${CMAKE_SOURCE_DIR}/lib/\"")
