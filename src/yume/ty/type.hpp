@@ -68,7 +68,6 @@ private:
 
 public:
   Ptr(string name, Type base, Qualifier qual) : BaseType(K_Ptr, move(name)), m_base(base), m_qual(qual) {}
-  [[nodiscard, deprecated]] auto base() const -> const BaseType&;
   [[nodiscard]] auto pointee() const -> Type { return m_base; }
   [[nodiscard]] auto qualifier() const -> Qualifier { return m_qual; }
   [[nodiscard]] auto has_qualifier(Qualifier qual) const -> bool { return m_qual == qual; }

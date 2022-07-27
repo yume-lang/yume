@@ -52,9 +52,7 @@ public:
 private:
   /// Convert an ast type (`ast::Type`) into a type in the type system (`ty::Type`).
   auto __convert_type(const ast::Type& ast_type) -> ty::Type;
-  [[deprecated]] auto convert_type(const ast::Type& ast_type) -> const ty::BaseType&;
   auto __convert_slice_type(const ast::Type& ast_type) -> ty::Type;
-  [[deprecated]] auto convert_slice_type(const ast::Type& ast_type) -> const ty::BaseType&;
 
   auto all_fn_overloads_by_name(ast::CallExpr& call) -> OverloadSet<Fn>;
   auto all_ctor_overloads_by_type(Struct& st, ast::CtorExpr& call) -> OverloadSet<Ctor>;

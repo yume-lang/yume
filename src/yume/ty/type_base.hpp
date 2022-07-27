@@ -54,36 +54,6 @@ public:
   [[nodiscard]] auto base_name() const -> string { return m_name; };
   [[nodiscard]] virtual auto name() const -> string = 0;
 
-  /// Get this type with a given qualifier applied.
-  [[nodiscard, deprecated]] auto known_qual(Qualifier qual) const -> const BaseType&;
-  [[nodiscard, deprecated]] auto known_ptr() const -> const BaseType& { return known_qual(Qualifier::Ptr); }
-  [[nodiscard, deprecated]] auto known_mut() const -> const BaseType& { return known_qual(Qualifier::Mut); }
-  [[nodiscard, deprecated]] auto known_slice() const -> const BaseType& { return known_qual(Qualifier::Slice); }
-
-  [[nodiscard, deprecated]] auto determine_generic_subs(const BaseType& generic, Substitution& subs) const -> Sub;
-  [[nodiscard, deprecated]] auto apply_generic_substitution(Sub sub) const -> const BaseType*;
-  [[nodiscard, deprecated]] auto compatibility(const BaseType& other, Compat compat = Compat()) const -> Compat;
-  /// The union of this and `other`. For example, the union of `T` and `T mut` is `T mut`.
-  /// \returns `nullptr` if an union cannot be created.
-  [[nodiscard, deprecated]] auto coalesce(const BaseType& other) const -> const BaseType*;
-  /// Return the intersection of this and `other`. For example, the intersection of `T` and `T mut` is `T`.
-  /// \returns `nullptr` is there's not intersection between the types.
-  [[nodiscard, deprecated]] auto intersect(const BaseType& other) const -> const BaseType*;
-
-  [[nodiscard, deprecated]] auto is_mut() const -> bool;
-  [[nodiscard, deprecated]] auto is_generic() const -> bool;
-
-  /// If this type is a mutable reference, return the base of it (`T mut` -> `T`)
-  /// \returns `nullptr` if this type isn't a mutable reference.
-  [[nodiscard, deprecated]] auto mut_base() const -> const BaseType*;
-
-  /// If this type is a pointer type, return the base of it (`T ptr` -> `T`)
-  /// \returns `nullptr` if this type isn't a pointer type.
-  [[nodiscard, deprecated]] auto ptr_base() const -> const BaseType*;
-
-  /// If this type is a mutable reference, return the base of it, otherwise return itself.
-  [[nodiscard, deprecated]] auto without_mut() const -> const BaseType&;
-
 protected:
   BaseType(Kind kind, string name) : m_kind(kind), m_name(move(name)) {}
 };

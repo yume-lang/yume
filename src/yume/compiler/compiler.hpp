@@ -99,20 +99,15 @@ public:
 
   /// Convert a type into its corresponding LLVM type
   auto llvm_type(ty::Type type) -> llvm::Type*;
-  /// \see llvm_type(ty::Type)
-  [[deprecated]] auto llvm_type(const ty::BaseType* type) -> llvm::Type*;
 
   /// Default-constructs an object of specified type \p type .
   auto default_init(ty::Type type) -> Val;
-  [[deprecated]] auto default_init(const ty::BaseType* type) -> Val;
   /// Destructs an object \p val of specified type \p type .
   void destruct(Val val, ty::Type type);
-  [[deprecated]] void destruct(Val val, const ty::BaseType* type);
 
   auto mangle_name(Fn& fn) -> string;
   auto mangle_name(Ctor& ctor) -> string;
   auto mangle_name(ty::Type ast_type, DeclLike parent) -> string;
-  [[deprecated]] auto mangle_name(const ty::BaseType* ast_type, DeclLike parent) -> string;
 
   [[nodiscard]] auto source_files() -> const auto& { return m_sources; }
 
@@ -135,7 +130,6 @@ private:
   /// Run the destructors for every owned local variable in the current scope. Should be run when returning from a
   /// function in any way.
   void __destruct_all_in_scope();
-  [[deprecated]] void destruct_all_in_scope();
 
   /// Handle all primitive, built-in functions
   auto primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<ty::Type>& types) -> optional<Val>;
