@@ -37,7 +37,7 @@ enum Kind {
 ///
 /// Also, pointer-like types are also not held in `TypeHolder`, and are instead stored in the `m_known_ptr_like` array
 /// of their pointee type.
-class [[deprecated]] BaseType {
+class BaseType {
   [[deprecated]] mutable array<unique_ptr<BaseType>, static_cast<int>(Qualifier::Q_END)> m_known_ptr_like{};
   const Kind m_kind;
   string m_name;
@@ -60,17 +60,17 @@ protected:
 
 /// A "qualified" type, with a non-stackable qualifier, \e .i.e. `mut`.
 class Type {
-  nullable<const BaseType*> m_base; // TODO(rymiel): non-null
+  nonnull<const BaseType*> m_base;
   bool m_mut{};
 
 public:
-  Type(nullable<const BaseType*> base, bool mut) : m_base(base), m_mut(mut) {}
-  Type(nullable<const BaseType*> base) : m_base(base) {}
+  Type(nonnull<const BaseType*> base, bool mut) : m_base(base), m_mut(mut) {}
+  Type(nonnull<const BaseType*> base) : m_base(base) {}
 
   auto operator<=>(const Type&) const noexcept = default;
 
   [[nodiscard]] auto kind() const -> Kind { return m_base->kind(); };
-  [[nodiscard]] auto base() const -> nullable<const BaseType*> { return m_base; }
+  [[nodiscard]] auto base() const -> nonnull<const BaseType*> { return m_base; }
   template <typename T> [[nodiscard]] auto base_cast() const noexcept -> nonnull<const T*> { return cast<T>(m_base); }
   template <typename T> [[nodiscard]] auto base_dyn_cast() const noexcept -> nullable<const T*> {
     return dyn_cast<T>(m_base);
@@ -86,7 +86,7 @@ public:
   [[nodiscard]] auto name() const -> string;
 
   [[nodiscard]] auto determine_generic_subs(Type generic, Substitution& subs) const -> optional<Sub>;
-  [[nodiscard]] auto apply_generic_substitution(Sub sub) const -> Type;
+  [[nodiscard]] auto apply_generic_substitution(Sub sub) const -> optional<Type>;
   [[nodiscard]] auto compatibility(Type other, Compat compat = Compat()) const -> Compat;
 
   /// Get this type with a given qualifier applied.

@@ -40,8 +40,7 @@ static auto visit_subs(Type a, Type b, optional<Sub> sub) -> optional<Sub> {
 
   // `Foo ptr` -> `T ptr`, with `T = Foo`.
   if (auto a_ptr_base = a.ptr_base(), b_ptr_base = b.ptr_base();
-      a_ptr_base != nullptr && b_ptr_base != nullptr &&
-      a.base_cast<Ptr>()->qualifier() == b.base_cast<Ptr>()->qualifier()) {
+      a_ptr_base && b_ptr_base && a.base_cast<Ptr>()->qualifier() == b.base_cast<Ptr>()->qualifier()) {
     return visit_subs(*a_ptr_base, *b_ptr_base, sub);
   }
   // `Foo mut` -> `T mut`, with `T = Foo`.
@@ -158,27 +157,25 @@ auto Type::has_qualifier(Qualifier qual) const -> bool {
   return false;
 }
 
-auto Type::apply_generic_substitution(Sub sub) const -> Type {
+auto Type::apply_generic_substitution(Sub sub) const -> optional<Type> {
   yume_assert(is_generic(), "Can't perform generic substitution without a generic type");
-  yume_assert(sub.target != nullptr && sub.replace != nullptr,
-              "Can't perform generic substitution without anything to substitute");
   if (m_base == sub.target)
-    return {sub.replace.base(), m_mut};
+    return Type{sub.replace.base(), m_mut};
 
   if (const auto* ptr_this = base_dyn_cast<Ptr>())
-    return ptr_base()->apply_generic_substitution(sub).known_qual(ptr_this->qualifier());
+    return ptr_base()->apply_generic_substitution(sub)->known_qual(ptr_this->qualifier());
 
   if (const auto* st_this = base_dyn_cast<Struct>()) {
     // Gah!
     auto subs = Substitution{};
     for (const auto& [k, v] : st_this->subs()) {
-      subs.try_emplace(k, v.apply_generic_substitution(sub));
+      subs.try_emplace(k, v.apply_generic_substitution(sub).value());
     }
 
     return &st_this->emplace_subbed(move(subs));
   }
 
-  return nullptr;
+  return {};
 }
 
 auto Struct::emplace_subbed(Substitution sub) const -> const Struct& {
