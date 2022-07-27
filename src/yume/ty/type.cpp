@@ -23,7 +23,7 @@ static auto qual_suffix(Qualifier qual) -> string {
 
 auto Type::known_qual(Qualifier qual) const -> Type {
   if (qual == Qualifier::Mut)
-    Type(m_base, true);
+    return {m_base, true};
 
   int qual_idx = static_cast<int>(qual);
   const auto& existing = m_base->m_known_ptr_like.at(qual_idx);
