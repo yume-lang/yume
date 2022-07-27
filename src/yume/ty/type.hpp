@@ -3,9 +3,11 @@
 #include "compatibility.hpp"
 #include "qualifier.hpp"
 #include "ty/substitution.hpp"
+#include "ty/type_base.hpp"
 #include "util.hpp"
 #include <array>
 #include <cstdint>
+#include <map>
 #include <memory>
 #include <string>
 #include <utility>
@@ -191,7 +193,7 @@ private:
 
 public:
   Ptr(string name, const BaseType& base, Qualifier qual) : BaseType(K_Ptr, move(name)), m_base(base), m_qual(qual) {}
-  [[nodiscard,deprecated]] auto base() const -> const BaseType& { return m_base; }
+  [[nodiscard, deprecated]] auto base() const -> const BaseType& { return m_base; }
   [[nodiscard]] auto pointee() const -> Type; // { return m_base; }
   [[nodiscard]] auto qualifier() const -> Qualifier { return m_qual; }
   [[nodiscard]] auto has_qualifier(Qualifier qual) const -> bool { return m_qual == qual; }

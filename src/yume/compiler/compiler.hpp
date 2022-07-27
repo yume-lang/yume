@@ -92,7 +92,7 @@ public:
   void define(Ctor&);
 
   void body_statement(const ast::Stmt&);
-  auto decl_statement(ast::Stmt&, const ty::BaseType* parent = nullptr, ast::Program* member = nullptr) -> DeclLike;
+  auto decl_statement(ast::Stmt&, optional<ty::Type> parent = std::nullopt, ast::Program* member = nullptr) -> DeclLike;
   auto body_expression(const ast::Expr& expr) -> Val;
 
   void write_object(const char* filename, bool binary);
@@ -138,7 +138,7 @@ private:
   [[deprecated]] void destruct_all_in_scope();
 
   /// Handle all primitive, built-in functions
-  auto primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<const ty::BaseType*>& types) -> optional<Val>;
+  auto primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<ty::Type>& types) -> optional<Val>;
   /// Handle primitive functions taking two integral values, such as most arithmetic operations (add, multiply, etc).
   auto int_bin_primitive(const string& primitive, const vector<llvm::Value*>& args) -> Val;
 

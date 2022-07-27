@@ -85,7 +85,7 @@ void DotVisitor::DotNode::write(llvm::raw_ostream& stream) const {
 auto DotVisitor::visit(const ast::AST& expr, const char* label) -> DotVisitor& {
   Loc location = expr.location();
   optional<string> type = {};
-  if (const auto* val_ty = expr.val_ty(); val_ty != nullptr) {
+  if (auto val_ty = expr.type(); val_ty) {
     type = xml_escape(val_ty->name());
   }
   auto kind_label = xml_escape(expr.kind_name());

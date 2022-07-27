@@ -167,7 +167,7 @@ auto Compiler::create_struct(Struct& st) -> bool {
   yume_assert(isa<ty::Struct>(*iter->second));
   auto& existing = cast<ty::Struct>(*iter->second);
 
-  if (std::ranges::any_of(st.subs, [](const auto& sub) { return sub.second->is_generic(); }))
+  if (std::ranges::any_of(st.subs, [](const auto& sub) { return sub.second.is_generic(); }))
     return false;
 
   existing.m_fields = move(fields);
@@ -175,7 +175,7 @@ auto Compiler::create_struct(Struct& st) -> bool {
   return true;
 }
 
-auto Compiler::decl_statement(ast::Stmt& stmt, const ty::BaseType* parent, ast::Program* member) -> DeclLike {
+auto Compiler::decl_statement(ast::Stmt& stmt, optional<ty::Type> parent, ast::Program* member) -> DeclLike {
   if (auto* fn_decl = dyn_cast<ast::FnDecl>(&stmt)) {
     vector<unique_ptr<ty::Generic>> type_args{};
     Substitution subs{};
@@ -238,7 +238,7 @@ auto Compiler::llvm_type(const ty::BaseType* type) -> llvm::Type* {
     if (memo == nullptr) {
       auto fields = vector<llvm::Type*>{};
       for (const auto* i : struct_type->fields())
-        fields.push_back(llvm_type(i->type->val_ty()));
+        fields.push_back(llvm_type(i->type->ensure_type()));
 
       memo = llvm::StructType::create(*m_context, fields, "_"s + struct_type->name());
       struct_type->memo(memo);
@@ -339,7 +339,7 @@ auto Compiler::default_init(const ty::BaseType* type) -> Val {
     llvm::Value* val = llvm::UndefValue::get(llvm_ty);
 
     for (const auto& i : llvm::enumerate(struct_type->fields()))
-      val = m_builder->CreateInsertValue(val, default_init(i.value()->type->val_ty()), i.index());
+      val = m_builder->CreateInsertValue(val, default_init(i.value()->type->ensure_type()), i.index());
 
     return val;
   }
@@ -388,10 +388,10 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
   auto* llvm_ret_type = llvm::Type::getVoidTy(*m_context);
   auto llvm_args = vector<llvm::Type*>{};
   if (fn_decl.ret())
-    llvm_ret_type = llvm_type(fn_decl.ret()->val_ty());
+    llvm_ret_type = llvm_type(fn_decl.ret()->ensure_type());
 
   for (const auto& i : fn_decl.args())
-    llvm_args.push_back(llvm_type(i.val_ty()));
+    llvm_args.push_back(llvm_type(i.ensure_type()));
 
   llvm::FunctionType* fn_t = llvm::FunctionType::get(llvm_ret_type, llvm_args, fn_decl.varargs());
 
@@ -421,11 +421,11 @@ auto Compiler::declare(Ctor& ctor) -> llvm::Function* {
     return ctor.base.llvm;
 
   const auto& ctor_decl = ctor.ast();
-  auto* llvm_ret_type = llvm_type(ctor.base.self_ty);
+  auto* llvm_ret_type = llvm_type(*ctor.base.self_ty);
   auto llvm_args = vector<llvm::Type*>{};
 
   for (const auto& i : ctor_decl.args())
-    llvm_args.push_back(llvm_type(Ctor::arg_type(i)));
+    llvm_args.push_back(llvm_type(*Ctor::arg_type(i)));
 
   llvm::FunctionType* fn_t = llvm::FunctionType::get(llvm_ret_type, llvm_args, false);
 
@@ -506,15 +506,13 @@ template <typename T> void Compiler::setup_fn_base(T& fn) {
   }
   // Allocate local variables for each parameter
   for (auto [arg, ast_arg] : llvm::zip(fn.base.llvm->args(), fn.ast().args())) {
-    const auto* type = T::arg_type(ast_arg);
+    ty::Type type = *T::arg_type(ast_arg);
     auto name = T::arg_name(ast_arg);
     auto& val = T::common_ast(ast_arg);
     llvm::Value* alloc = nullptr;
-    if (const auto* qual_type = dyn_cast<ty::Qual>(type)) {
-      if (qual_type->is_mut()) {
-        m_scope.insert({name, {.value = &arg, .ast = val, .owning = false}}); // We don't own parameters
-        continue;
-      }
+    if (type.is_mut()) {
+      m_scope.insert({name, {.value = &arg, .ast = val, .owning = false}}); // We don't own parameters
+      continue;
     }
     alloc = m_builder->CreateAlloca(llvm_type(type), nullptr, "lv."s + name);
     m_builder->CreateStore(&arg, alloc);
@@ -530,7 +528,7 @@ void Compiler::define(Fn& fn) {
   }
 
   if (m_builder->GetInsertBlock()->getTerminator() == nullptr) {
-    destruct_all_in_scope();
+    __destruct_all_in_scope();
     m_builder->CreateRetVoid();
   }
 
@@ -540,7 +538,7 @@ void Compiler::define(Fn& fn) {
 void Compiler::define(Ctor& ctor) {
   setup_fn_base(ctor);
 
-  auto* ctor_type = llvm_type(ctor.base.self_ty);
+  auto* ctor_type = llvm_type(*ctor.base.self_ty);
   Val base_value = llvm::UndefValue::get(ctor_type);
 
   // Initialize fields for short `::x` constructor syntax
@@ -561,7 +559,7 @@ void Compiler::define(Ctor& ctor) {
 
   statement(ctor.ast().body());
 
-  destruct_all_in_scope();
+  __destruct_all_in_scope();
   auto* finalized_value = m_builder->CreateLoad(ctor_type, base_alloc);
   m_builder->CreateRet(finalized_value);
 
@@ -637,7 +635,7 @@ template <> void Compiler::statement(const ast::ReturnStmt& stat) {
       }
     }
 
-    destruct_all_in_scope();
+    __destruct_all_in_scope();
 
     if (reset_owning != nullptr)
       reset_owning->owning = true; // The local variable may not be returned in all code paths, so reset its ownership
@@ -648,7 +646,7 @@ template <> void Compiler::statement(const ast::ReturnStmt& stat) {
     return;
   }
 
-  destruct_all_in_scope();
+  __destruct_all_in_scope();
   m_builder->CreateRetVoid();
 }
 
@@ -659,9 +657,9 @@ auto Compiler::entrypoint_builder() -> llvm::IRBuilder<> {
 template <> void Compiler::statement(const ast::VarDecl& stat) {
   // Locals are currently always mut, get the base type instead
   // TODO(rymiel): revisit, probably extract logic
-  auto* var_type = llvm_type(stat.val_ty()->mut_base());
+  auto* var_type = llvm_type(*stat.ensure_type().mut_base());
 
-  if (stat.init()->val_ty()->is_mut()) {
+  if (stat.init()->ensure_type().is_mut()) {
     auto expr_val = body_expression(*stat.init());
     m_scope.insert({stat.name(), {.value = expr_val, .ast = stat, .owning = false}});
     return;
@@ -676,7 +674,7 @@ template <> void Compiler::statement(const ast::VarDecl& stat) {
 
 template <> auto Compiler::expression(const ast::NumberExpr& expr) -> Val {
   auto val = expr.val();
-  if (expr.val_ty() == m_types.int64().s_ty)
+  if (expr.ensure_type().base() == m_types.int64().s_ty)
     return m_builder->getInt64(val);
   return m_builder->getInt32(val);
 }
@@ -704,8 +702,8 @@ template <> auto Compiler::expression(const ast::VarExpr& expr) -> Val {
   auto& in_scope = m_scope.at(expr.name());
   auto* val = in_scope.value.llvm;
   // Function arguments act as locals, but they are immutable, but still behind a reference (alloca)
-  if (!in_scope.ast.val_ty()->is_mut())
-    return m_builder->CreateLoad(llvm_type(in_scope.ast.val_ty()), val);
+  if (!in_scope.ast.ensure_type().is_mut())
+    return m_builder->CreateLoad(llvm_type(in_scope.ast.ensure_type()), val);
 
   return val;
 }
@@ -737,8 +735,7 @@ auto Compiler::int_bin_primitive(const string& primitive, const vector<llvm::Val
   }
 }
 
-auto Compiler::primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<const ty::BaseType*>& types)
-    -> optional<Val> {
+auto Compiler::primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<ty::Type>& types) -> optional<Val> {
   if (!fn->ast().primitive())
     return {};
 
@@ -753,14 +750,14 @@ auto Compiler::primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<
         args.at(0), m_builder->CreateAdd(m_builder->CreateExtractValue(args.at(0), 1), args.at(1)), 1);
   }
   if (primitive == "set_at") {
-    auto* result_type = llvm_type(types[0]->without_mut().ptr_base());
+    auto* result_type = llvm_type(types[0].without_mut().ptr_base().value());
     llvm::Value* value = args.at(2);
     llvm::Value* base = m_builder->CreateGEP(result_type, args.at(0), args.at(1), "p.set_at.gep");
     m_builder->CreateStore(value, base);
     return args.at(2);
   }
   if (primitive == "get_at") {
-    auto* result_type = llvm_type(types[0]->without_mut().ptr_base());
+    auto* result_type = llvm_type(types[0].without_mut().ptr_base().value());
     llvm::Value* base = args.at(0);
     base = m_builder->CreateGEP(result_type, base, args.at(1), "p.get_at.gep");
     return base;
@@ -775,7 +772,7 @@ template <> auto Compiler::expression(const ast::CallExpr& expr) -> Val {
   llvm::Function* llvm_fn = nullptr;
 
   vector<Val> args{};
-  vector<const ty::BaseType*> arg_types{};
+  vector<ty::Type> arg_types{};
   vector<llvm::Value*> llvm_args{};
 
   unsigned j = 0;
@@ -783,7 +780,7 @@ template <> auto Compiler::expression(const ast::CallExpr& expr) -> Val {
     auto arg = body_expression(*i);
     args.push_back(arg);
     llvm_args.push_back(arg.llvm);
-    arg_types.push_back(i->val_ty());
+    arg_types.push_back(i->ensure_type());
     j++;
   }
 
@@ -809,11 +806,11 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
   }
   if (const auto* field_access = dyn_cast<ast::FieldAccessExpr>(expr.target().raw_ptr())) {
     const auto& field_base = field_access->base();
-    const ty::BaseType* struct_base{nullptr};
+    optional<ty::Type> struct_base = {};
     Val base{nullptr};
     if (field_base.has_value()) {
       base = body_expression(*field_base);
-      struct_base = field_access->base()->val_ty();
+      struct_base = field_access->base()->type();
     } else {
       // TODO(rymiel): revisit
       if (!isa<ast::CtorDecl>(m_current_fn->ast))
@@ -821,7 +818,7 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
 
       auto [value, ast, owning] = *m_scope_ctor;
       base = value;
-      struct_base = &ast.val_ty()->known_mut();
+      struct_base = ast.ensure_type().known_mut();
     }
 
     yume_assert(struct_base->is_mut(), "Cannot assign into field of immutable structure");
@@ -830,7 +827,7 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
     int base_offset = field_access->offset();
 
     auto expr_val = body_expression(*expr.value());
-    auto* struct_type = llvm_type(cast<ty::Struct>(struct_base->mut_base()));
+    auto* struct_type = llvm_type(struct_base->mut_base()->base_cast<ty::Struct>());
 
     yume_assert(base_offset >= 0, "Field access has unknown offset into struct");
 
@@ -842,9 +839,8 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
 }
 
 template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {
-  const auto& type = *expr.val_ty();
-  if (const auto* struct_type = dyn_cast<ty::Struct>(&type.without_mut())) {
-
+  auto type = expr.ensure_type();
+  if (const auto* struct_type = type.without_mut().base_dyn_cast<ty::Struct>()) {
     // TODO(rymiel): #4 determine what kind of allocation must be done, and if at all. It'll probably require a
     // complicated semantic step to determine object lifetime, which would probably be evaluated before compilation of
     // these expressions.
@@ -879,25 +875,26 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {
 
     return base_value;
   }
-  if (const auto* int_type = dyn_cast<ty::Int>(&type.without_mut())) {
+  if (auto int_type = type.without_mut().try_as<ty::Int>()) {
     yume_assert(expr.args().size() == 1, "Numeric cast can only contain a single argument");
     const auto& cast_from = expr.args()[0];
-    yume_assert(isa<ty::Int>(cast_from->val_ty()->without_mut()), "Numeric cast must convert from int");
+    yume_assert(cast_from->ensure_type().without_mut().base_isa<ty::Int>(), "Numeric cast must convert from int");
     auto base = body_expression(*cast_from);
-    if (cast<ty::Int>(cast_from->val_ty()->without_mut()).is_signed()) {
-      return m_builder->CreateSExtOrTrunc(base, llvm_type(int_type));
+    if (cast_from->ensure_type().without_mut().base_cast<ty::Int>()->is_signed()) {
+      return m_builder->CreateSExtOrTrunc(base, llvm_type(*int_type));
     }
-    return m_builder->CreateZExtOrTrunc(base, llvm_type(int_type));
+    return m_builder->CreateZExtOrTrunc(base, llvm_type(*int_type));
   }
-  if (const auto* slice_type = dyn_cast<ty::Ptr>(&type.without_mut());
-      slice_type != nullptr && slice_type->has_qualifier(Qualifier::Slice)) {
+  if (auto slice_type = type.without_mut().try_as<ty::Ptr>();
+      slice_type && slice_type->has_qualifier(Qualifier::Slice)) {
     yume_assert(expr.args().size() == 1, "Slice constructor can only contain a single argument");
     const auto& slice_size_expr = expr.args()[0];
-    yume_assert(isa<ty::Int>(slice_size_expr->val_ty()->without_mut()), "Slice constructor must convert from int");
+    yume_assert(slice_size_expr->ensure_type().without_mut().base_isa<ty::Int>(),
+                "Slice constructor must convert from int");
     auto slice_size = body_expression(*slice_size_expr);
 
-    auto* llvm_slice_type = llvm_type(slice_type);
-    const auto* base_ty_type = slice_type->ptr_base(); // ???
+    auto* llvm_slice_type = llvm_type(*slice_type);
+    auto base_ty_type = *slice_type->ptr_base(); // ???
     auto* base_type = llvm_type(base_ty_type);
 
     //// Stack allocation
@@ -977,8 +974,9 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {
 template <> auto Compiler::expression(const ast::SliceExpr& expr) -> Val {
   auto* slice_size = m_builder->getInt64(expr.args().size());
 
-  auto* slice_type = llvm_type(expr.val_ty());
-  auto* base_type = llvm_type(cast<ty::Struct>(expr.val_ty())->fields().at(0)->get_val_ty()->ptr_base()); // ???
+  auto* slice_type = llvm_type(expr.ensure_type());
+  auto* base_type =
+      llvm_type(expr.ensure_type().base_cast<ty::Struct>()->fields().at(0)->ensure_type().ptr_base().value()); // ???
 
   auto* alloc_size = llvm::ConstantExpr::getSizeOf(base_type);
   auto* ptr_alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), m_builder->getInt64Ty(), base_type,
@@ -1001,26 +999,26 @@ template <> auto Compiler::expression(const ast::FieldAccessExpr& expr) -> Val {
   auto base_name = expr.field();
   int base_offset = expr.offset();
 
-  if (!expr.val_ty()->is_mut())
+  if (!expr.ensure_type().is_mut())
     return m_builder->CreateExtractValue(base, base_offset, "s.field.nm."s + base_name);
 
-  return m_builder->CreateStructGEP(llvm_type(expr.base()->val_ty()->mut_base()), base, base_offset,
+  return m_builder->CreateStructGEP(llvm_type(expr.base()->ensure_type().mut_base().value()), base, base_offset,
                                     "s.field.m."s + base_name);
 }
 
 template <> auto Compiler::expression(const ast::ImplicitCastExpr& expr) -> Val {
-  const auto* target_ty = expr.val_ty();
-  const auto* current_ty = expr.base().val_ty();
+  auto target_ty = expr.ensure_type();
+  auto current_ty = expr.base().ensure_type();
   llvm::Value* base = body_expression(expr.base());
 
   if (expr.conversion().dereference) {
-    yume_assert(current_ty->is_mut(), "Source type must be mutable when implicitly derefencing");
-    current_ty = current_ty->mut_base();
+    yume_assert(current_ty.is_mut(), "Source type must be mutable when implicitly derefencing");
+    current_ty = current_ty.mut_base().value();
     base = m_builder->CreateLoad(llvm_type(current_ty), base, "ic.deref");
   }
 
   if (expr.conversion().kind == ty::Conv::Int) {
-    return m_builder->CreateIntCast(base, llvm_type(target_ty), cast<ty::Int>(current_ty)->is_signed(), "ic.int");
+    return m_builder->CreateIntCast(base, llvm_type(target_ty), current_ty.base_cast<ty::Int>()->is_signed(), "ic.int");
   }
 
   return base;
@@ -1049,12 +1047,12 @@ auto Compiler::mangle_name(Fn& fn) -> string {
   for (const auto& i : llvm::enumerate(fn.ast().args())) {
     if (i.index() > 0)
       ss << ",";
-    ss << mangle_name(i.value().type->val_ty(), &fn);
+    ss << mangle_name(i.value().type->ensure_type(), &fn);
   }
   ss << ")";
   // TODO(rymiel): should mangled names even contain the return type...?
   if (fn.ast().ret().has_value())
-    ss << mangle_name(fn.ast().ret()->val_ty(), &fn);
+    ss << mangle_name(fn.ast().ret()->ensure_type(), &fn);
 
   return ss.str();
 }
@@ -1067,7 +1065,7 @@ auto Compiler::mangle_name(Ctor& ctor) -> string {
   for (const auto& i : llvm::enumerate(ctor.ast().args())) {
     if (i.index() > 0)
       ss << ",";
-    ss << mangle_name(Ctor::arg_type(i.value()), &ctor);
+    ss << mangle_name(*Ctor::arg_type(i.value()), &ctor);
   }
   ss << ")";
 
@@ -1093,7 +1091,7 @@ auto Compiler::mangle_name(const ty::BaseType* ast_type, DeclLike parent) -> str
   if (const auto* generic_type = dyn_cast<ty::Generic>(ast_type)) {
     auto match = parent.subs()->find(generic_type->name());
     yume_assert(match != parent.subs()->end(), "Cannot mangle unsubstituted generic");
-    return match->second->name();
+    return match->second.name();
   }
   return ast_type->name();
 }
@@ -1109,7 +1107,7 @@ auto Compiler::mangle_name(ty::Type ast_type, DeclLike parent) -> string {
   } else if (const auto* generic_type = ast_type.base_dyn_cast<ty::Generic>()) {
     auto match = parent.subs()->find(generic_type->name());
     yume_assert(match != parent.subs()->end(), "Cannot mangle unsubstituted generic");
-    ss << match->second->name();
+    ss << match->second.name();
   } else {
     ss << ast_type.name();
   }

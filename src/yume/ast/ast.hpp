@@ -198,9 +198,8 @@ class AST {
   const Kind m_kind;
   /// The range of tokenizer `Token`s that this node was parsed from.
   const span<Token> m_tok;
-  /// The value type of this node. Determined in the semantic phase; always `nullptr` after parsing.
-  [[deprecated]] nullable<const ty::BaseType*> m_val_ty{};
-  // ty::Type m_val_ty{}; <- for the future
+  /// The value type of this node. Determined in the semantic phase; always empty after parsing.
+  optional<ty::Type> m_val_ty{};
   /// \see Attachment
   unique_ptr<Attachment> m_attach{std::make_unique<Attachment>()};
 
@@ -223,17 +222,25 @@ public:
   /// Recursively visit this ast node and all its constituents. \see Visitor
   virtual void visit(Visitor& visitor) const = 0;
 
-  [[nodiscard, deprecated]] auto val_ty() const noexcept -> const ty::BaseType* { return m_val_ty; }
-  [[nodiscard]] auto type() const noexcept -> optional<ty::Type>;
-  [[nodiscard]] auto ensure_type() const -> ty::Type;
-  [[nodiscard, deprecated]] auto get_val_ty() const noexcept -> const ty::BaseType* { return m_val_ty; }
-  [[deprecated]] void val_ty(const ty::BaseType* type) {
+  [[nodiscard, deprecated]] auto val_ty() const noexcept -> const ty::BaseType*;
+  [[nodiscard, deprecated]] auto get_val_ty() const noexcept -> const ty::BaseType*;
+  [[deprecated]] void val_ty(const ty::BaseType* type);
+
+  [[nodiscard]] auto type() const noexcept -> optional<ty::Type> { return m_val_ty; }
+  [[nodiscard]] auto __val_ty() const noexcept -> optional<ty::Type> { return m_val_ty; }
+  [[nodiscard]] auto ensure_type() const -> ty::Type { return *m_val_ty; }
+  void type(optional<ty::Type> type) {
     m_val_ty = type;
     for (auto* i : m_attach->observers) {
       i->unify_val_ty();
     }
   }
-  void type(optional<ty::Type> type);
+  void __val_ty(optional<ty::Type> type) {
+    m_val_ty = type;
+    for (auto* i : m_attach->observers) {
+      i->unify_val_ty();
+    }
+  }
 
   /// Make the type of this node depend on the type of `other`.
   /// \sa Attachment

@@ -29,7 +29,7 @@ struct FnBase {
   /// not be accessed directly, instead \see ast() on `Fn` and `Ctor`.
   ast::AST& ast;
   /// If this function is in the body of a struct, this points to its type. Used for the `self` type.
-  const ty::BaseType* self_ty{};
+  optional<ty::Type> self_ty{};
   /// The program this declaration is a member of.
   ast::Program* member{};
   /// The LLVM function definition corresponding to this function or constructor.
@@ -55,18 +55,18 @@ struct Fn {
   Substitution subs{};
   std::map<Substitution, unique_ptr<Fn>> instantiations{};
 
-  Fn(ast::FnDecl& ast_decl, const ty::BaseType* parent = nullptr, ast::Program* member = nullptr, Substitution subs = {},
-     vector<unique_ptr<ty::Generic>> type_args = {})
+  Fn(ast::FnDecl& ast_decl, optional<ty::Type> parent = std::nullopt, ast::Program* member = nullptr,
+     Substitution subs = {}, vector<unique_ptr<ty::Generic>> type_args = {})
       : base{ast_decl, parent, member}, type_args(move(type_args)), subs(move(subs)) {}
 
   [[nodiscard]] auto ast() const -> const auto& { return cast<decl_t>(base.ast); }
   [[nodiscard]] auto ast() -> auto& { return cast<decl_t>(base.ast); }
   [[nodiscard]] auto body() const -> const auto& { return ast().body(); }
-  [[nodiscard]] auto get_self_ty() const -> const ty::BaseType* { return base.self_ty; };
+  [[nodiscard]] auto get_self_ty() const -> optional<ty::Type> { return base.self_ty; };
 
   [[nodiscard]] auto name() const -> string;
   [[nodiscard]] static auto overload_name(const call_t& ast) -> string;
-  [[nodiscard]] static auto arg_type(const decl_t::arg_t& ast) -> const ty::BaseType*;
+  [[nodiscard]] static auto arg_type(const decl_t::arg_t& ast) -> optional<ty::Type>;
   [[nodiscard]] static auto arg_name(const decl_t::arg_t& ast) -> string;
   [[nodiscard]] static auto common_ast(const decl_t::arg_t& ast) -> const ast::AST&;
 
@@ -85,7 +85,7 @@ struct Struct {
 
   ast::StructDecl& st_ast;
   /// The type of this struct. Used for the `self` type.
-  const ty::BaseType* self_ty{};
+  optional<ty::Type> self_ty{};
   /// The program this declaration is a member of.
   ast::Program* member{};
   vector<unique_ptr<ty::Generic>> type_args{};
@@ -93,7 +93,7 @@ struct Struct {
   Substitution subs{};
   std::map<Substitution, unique_ptr<Struct>> instantiations{};
 
-  Struct(ast::StructDecl& ast_decl, const ty::BaseType* type = nullptr, ast::Program* member = nullptr,
+  Struct(ast::StructDecl& ast_decl, optional<ty::Type> type = std::nullopt, ast::Program* member = nullptr,
          Substitution subs = {}, vector<unique_ptr<ty::Generic>> type_args = {})
       : st_ast(ast_decl), self_ty(type), member(member), type_args(move(type_args)), subs(move(subs)) {}
 
@@ -101,7 +101,7 @@ struct Struct {
   [[nodiscard]] auto ast() -> auto& { return st_ast; }
   [[nodiscard]] auto body() const -> const auto& { return st_ast.body(); }
   [[nodiscard]] auto body() -> auto& { return st_ast.body(); }
-  [[nodiscard]] auto get_self_ty() const -> const ty::BaseType* { return self_ty; };
+  [[nodiscard]] auto get_self_ty() const -> optional<ty::Type> { return self_ty; };
 
   [[nodiscard]] auto name() const -> string;
 
@@ -120,16 +120,16 @@ struct Ctor {
 
   FnBase base;
 
-  Ctor(ast::CtorDecl& ast_decl, const ty::BaseType* type = nullptr, ast::Program* member = nullptr)
+  Ctor(ast::CtorDecl& ast_decl, optional<ty::Type> type = std::nullopt, ast::Program* member = nullptr)
       : base{ast_decl, type, member} {}
 
   [[nodiscard]] auto ast() const -> const auto& { return cast<decl_t>(base.ast); }
   [[nodiscard]] auto ast() -> auto& { return cast<decl_t>(base.ast); }
-  [[nodiscard,deprecated]] auto get_self_ty() const -> const ty::BaseType* { return base.self_ty; };
+  [[nodiscard]] auto get_self_ty() const -> optional<ty::Type> { return base.self_ty; };
 
   [[nodiscard]] auto name() const -> string;
   [[nodiscard]] static auto overload_name(const call_t& ast) -> string;
-  [[nodiscard,deprecated]] static auto arg_type(const decl_t::arg_t& ast) -> const ty::BaseType*;
+  [[nodiscard]] static auto arg_type(const decl_t::arg_t& ast) -> optional<ty::Type>;
   [[nodiscard]] static auto arg_name(const decl_t::arg_t& ast) -> string;
   [[nodiscard]] static auto common_ast(const decl_t::arg_t& ast) -> const ast::AST&;
 };
@@ -182,8 +182,8 @@ public:
     return visit_decl<ast::AST*>([](auto* decl) -> ast::AST* { return &decl->ast(); });
   };
 
-  [[nodiscard,deprecated]] auto self_ty() const -> const ty::BaseType* {
-    return visit_decl<const ty::BaseType*>([](const auto* decl) { return decl->get_self_ty(); });
+  [[nodiscard]] auto self_ty() const -> optional<ty::Type> {
+    return visit_decl<optional<ty::Type>>([](const auto* decl) { return decl->get_self_ty(); });
   };
 };
 
