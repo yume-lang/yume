@@ -645,6 +645,24 @@ auto Compiler::primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<
     return m_builder->CreateInsertValue(
         args.at(0), m_builder->CreateAdd(m_builder->CreateExtractValue(args.at(0), 1), args.at(1)), 1);
   }
+  if (primitive == "slice_malloc") {
+    auto base_ty_type = types.at(0).ptr_base().value();
+    auto* base_type = llvm_type(base_ty_type);
+    auto* slice_size = args.at(1);
+
+    auto* alloc_size = llvm::ConstantExpr::getSizeOf(base_type);
+    auto* array_size = m_builder->CreateSExt(slice_size, m_builder->getInt64Ty(), "sl.ctor.size");
+    auto* array_alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), m_builder->getInt64Ty(), base_type,
+                                                     alloc_size, array_size, nullptr, "sl.ctor.malloc");
+
+    return m_builder->Insert(array_alloc);
+  }
+  if (primitive == "default_init") {
+    auto base_type = types.at(0).mut_base().value();
+    m_builder->CreateStore(default_init(base_type), args.at(0));
+
+    return args.at(0);
+  }
   if (primitive == "set_at") {
     auto* result_type = llvm_type(types[0].without_mut().ptr_base().value());
     llvm::Value* value = args.at(2);
@@ -781,90 +799,41 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {
     }
     return m_builder->CreateZExtOrTrunc(base, llvm_type(*int_type));
   }
-  if (auto slice_type = type.without_mut().try_as<ty::Ptr>();
-      slice_type && slice_type->has_qualifier(Qualifier::Slice)) {
-    yume_assert(expr.args().size() == 1, "Slice constructor can only contain a single argument");
-    const auto& slice_size_expr = expr.args()[0];
-    yume_assert(slice_size_expr->ensure_ty().without_mut().base_isa<ty::Int>(),
-                "Slice constructor must convert from int");
-    auto slice_size = body_expression(*slice_size_expr);
 
-    auto* llvm_slice_type = llvm_type(*slice_type);
-    auto base_ty_type = *slice_type->ptr_base(); // ???
-    auto* base_type = llvm_type(base_ty_type);
+  //// Stack allocation of slice
+  // if (auto* const_value = dyn_cast<llvm::ConstantInt>(slice_size.llvm())) {
+  //   auto slice_size_val = const_value->getLimitedValue();
+  //   auto* array_type = ArrayType::get(base_type, slice_size_val);
+  //   auto* array_alloc = m_builder->CreateAlloca(array_type, nullptr, "sl.ctor.alloc");
 
-    //// Stack allocation
-    // if (auto* const_value = dyn_cast<llvm::ConstantInt>(slice_size.llvm())) {
-    //   auto slice_size_val = const_value->getLimitedValue();
-    //   auto* array_type = ArrayType::get(base_type, slice_size_val);
-    //   auto* array_alloc = m_builder->CreateAlloca(array_type, nullptr, "sl.ctor.alloc");
+  //   auto* data_ptr = m_builder->CreateBitCast(array_alloc, base_type->getPointerTo(), "sl.ctor.ptr");
+  //   llvm::Value* slice_inst = llvm::UndefValue::get(llvm_slice_type);
+  //   slice_inst = m_builder->CreateInsertValue(slice_inst, data_ptr, 0);
+  //   slice_inst = m_builder->CreateInsertValue(slice_inst, m_builder->getInt64(slice_size_val), 1);
+  //   slice_inst->setName("sl.ctor.inst");
 
-    //   auto* data_ptr = m_builder->CreateBitCast(array_alloc, base_type->getPointerTo(), "sl.ctor.ptr");
-    //   llvm::Value* slice_inst = llvm::UndefValue::get(llvm_slice_type);
-    //   slice_inst = m_builder->CreateInsertValue(slice_inst, data_ptr, 0);
-    //   slice_inst = m_builder->CreateInsertValue(slice_inst, m_builder->getInt64(slice_size_val), 1);
-    //   slice_inst->setName("sl.ctor.inst");
+  //   return slice_inst;
+  // }
 
-    //   return slice_inst;
-    // }
+  // TODO(rymiel): the commented-out block above stack-allocates a slice constructor if its size can be determined
+  // trivially. However, since it references stack memory, a slice allocated this way could never be feasibly returned
+  // or passed into a function which stores a reference to it, etc. The compiler currently does nothing resembling
+  // "escape analysis", however something like that might be needed to perform an optimization like shown above.
 
-    // TODO(rymiel): the commented-out block above stack-allocates a slice constructor if its size can be determined
-    // trivially. However, since it references stack memory, a slice allocated this way could never be feasibly
-    // returned or passed into a function which stores a reference to it, etc. The compiler currently does nothing
-    // resembling "escape analysis", however something like that might be needed to perform an optimization like
-    // shown above.
-    // TODO(rymiel): Note that also a slice could be stack-allocated even if its size *wasn't* known at compile time,
-    // however, I simply didn't know how to do that when i wrote the above snipped. But, since its problematic
-    // anyway, it remains unfixed (and commented out); revisit later.
-    // TODO(rymiel): A large slice may be unfeasible to be stack-allocated anyway, so in addition to the above points,
-    // slice size could also be a consideration. Perhaps we don't *want* to stack-allocate unknown-sized slices as
-    // they may be absurdly huge in size and cause stack overflow.
-    // Related: #4
+  // TODO(rymiel): Note that also a slice could be stack-allocated even if its size *wasn't* known at compile time,
+  // however, I simply didn't know how to do that when i wrote the above snipped. But, since its problematic anyway, it
+  // remains unfixed (and commented out); revisit later.
 
-    auto* alloc_size = llvm::ConstantExpr::getSizeOf(base_type);
-    auto* array_size = m_builder->CreateSExt(slice_size, m_builder->getInt64Ty(), "sl.ctor.size");
-    auto* array_alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), m_builder->getInt64Ty(), base_type,
-                                                     alloc_size, array_size, nullptr, "sl.ctor.malloc");
+  // TODO(rymiel): A large slice may be unfeasible to be stack-allocated anyway, so in addition to the above points,
+  // slice size could also be a consideration. Perhaps we don't *want* to stack-allocate unknown-sized slices as they
+  // may be absurdly huge in size and cause stack overflow.
+  // Related: #4
 
-    auto* data_ptr = m_builder->Insert(array_alloc);
-    auto* data_size = m_builder->CreateSExtOrBitCast(slice_size, m_builder->getInt64Ty());
-    llvm::Value* slice_inst = llvm::UndefValue::get(llvm_slice_type);
-    slice_inst = m_builder->CreateInsertValue(slice_inst, data_ptr, 0);
-    slice_inst = m_builder->CreateInsertValue(slice_inst, data_size, 1);
-    slice_inst->setName("sl.ctor.inst");
+  // NOTE: The above comments are now largely irrelevant as slice allocation is sort-of performed in-source, with the
+  // __builtin_slice_malloc primitive. For the above to apply, the compiler must more invasively track the lifetime of
+  // slices, and skip the constructor entirely, or something like that
 
-    // TODO(rymiel): This is literally implementing a while loop in llvm IR. This could be implemented directly in
-    // yume as a library function, or at least utilize llvm instrinsics such as memset. LLVM will probably optimize to
-    // those intrinsics anyway, but we could do it ourselves too!
-    auto* iter_alloc = entrypoint_builder().CreateAlloca(m_builder->getInt64Ty(), nullptr, "sl.ctor.definit.iter");
-    m_builder->CreateStore(m_builder->getInt64(0), iter_alloc);
-
-    auto* iter_test = llvm::BasicBlock::Create(*m_context, "sl.ctor.definit.test", *m_current_fn);
-    auto* iter_body = llvm::BasicBlock::Create(*m_context, "sl.ctor.definit.head", *m_current_fn);
-    auto* iter_merge = llvm::BasicBlock::Create(*m_context, "sl.ctor.definit.merge", *m_current_fn);
-
-    m_builder->CreateBr(iter_test);
-    m_builder->SetInsertPoint(iter_test);
-
-    auto* iter_less = m_builder->CreateICmpSLT(m_builder->CreateLoad(m_builder->getInt64Ty(), iter_alloc), data_size,
-                                               "sl.ctor.definit.cmp");
-    m_builder->CreateCondBr(iter_less, iter_body, iter_merge);
-
-    m_builder->SetInsertPoint(iter_body);
-    auto* iter_next_addr = m_builder->CreateInBoundsGEP(
-        base_type, data_ptr, m_builder->CreateLoad(m_builder->getInt64Ty(), iter_alloc), "sl.ctor.definit.gep");
-    m_builder->CreateStore(default_init(base_ty_type), iter_next_addr);
-    m_builder->CreateStore(
-        m_builder->CreateAdd(m_builder->CreateLoad(m_builder->getInt64Ty(), iter_alloc), m_builder->getInt64(1)),
-        iter_alloc);
-    m_builder->CreateBr(iter_test);
-
-    m_builder->SetInsertPoint(iter_merge);
-
-    return slice_inst;
-  }
-
-  throw std::runtime_error("Can't construct non-struct, non-integer, non-slice type");
+  throw std::runtime_error("Can't construct non-struct, non-integer type");
 }
 
 template <> auto Compiler::expression(const ast::SliceExpr& expr) -> Val {

@@ -116,9 +116,15 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
   } else {
     expression(expr.type());
     auto base_type = convert_type(expr.type());
-    auto struct_obj = std::ranges::find(compiler.m_structs, base_type, &Struct::self_ty);
-    if (struct_obj != compiler.m_structs.end())
-      st = &*struct_obj;
+    // XXX: searching all structs and all their instantiations, could at least be extracted elsewhere
+    for (auto& i : compiler.m_structs) {
+      if (i.self_ty == base_type)
+        st = &i;
+      else
+        for (auto& [k, v] : i.instantiations)
+          if (v->self_ty == base_type)
+            st = &*v;
+    }
     expr.val_ty(base_type);
   }
 

@@ -9,7 +9,19 @@ def assert(condition Bool)
   end
 end
 
+def __builtin_slice_malloc{T}(ptr T ptr, size I64) T ptr = __primitive__(slice_malloc)
+
 struct Slice{T}(pointer T ptr, size I64)
+  def :new(::pointer, ::size) end
+  def :new(::size)
+    ::pointer = __builtin_slice_malloc(::pointer, size) # TODO: this should really be an error, as ::pointer isn't initialized here yet
+    let i I64 = 0
+    while i < ::size
+      ::pointer[i].__builtin_default_init # TODO: this should just be `T()`, which requires implicit default ctors
+      i = i + 1
+    end
+  end
+
   def size(self) I64 = self::size
   def unsafe_ptr(self) T ptr = self::pointer
 
@@ -36,6 +48,7 @@ end
 
 def []{T}(ptr T ptr, offset I64) T mut = __primitive__(get_at)
 def []={T}(ptr T ptr, offset I64, val T) T = __primitive__(set_at)
+def __builtin_default_init{T}(obj T mut) = __primitive__(default_init)
 def dup_internal{T}(arr T[], extra I64) T[] = __primitive__(slice_dup)
 
 # TODO: most of these should be templated
