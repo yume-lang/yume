@@ -88,8 +88,8 @@ Classes</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:a7196f10ee388b6df9ea3df78e8bd397b"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a7196f10ee388b6df9ea3df78e8bd397b">join_args</a> (const auto &amp;iter, auto fn, llvm::raw_ostream &amp;stream=errs())</td></tr>
 <tr class="separator:a7196f10ee388b6df9ea3df78e8bd397b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1125faadc921de97975780f8f793d038"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a1125faadc921de97975780f8f793d038">literal_cast</a> (<a class="el" href="classyume_1_1ast_1_1AST.html">ast::AST</a> &amp;arg, const <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> *target_type) -&gt; <a class="el" href="structyume_1_1ty_1_1Compat.html">ty::Compat</a></td></tr>
-<tr class="separator:a1125faadc921de97975780f8f793d038"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad840cb24751dfb444717162926adbb3"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#aad840cb24751dfb444717162926adbb3">literal_cast</a> (<a class="el" href="classyume_1_1ast_1_1AST.html">ast::AST</a> &amp;arg, <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> target_type) -&gt; <a class="el" href="structyume_1_1ty_1_1Compat.html">ty::Compat</a></td></tr>
+<tr class="separator:aad840cb24751dfb444717162926adbb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7d0cb5e803e893778e33e129eddd2849"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a7d0cb5e803e893778e33e129eddd2849"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a7d0cb5e803e893778e33e129eddd2849">parameter_count_matches</a> (const vector&lt; <a class="el" href="classyume_1_1ast_1_1AST.html">ast::AST</a> * &gt; &amp;args, const T &amp;fn_ast) -&gt; bool</td></tr>
 <tr class="separator:a7d0cb5e803e893778e33e129eddd2849"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -103,10 +103,10 @@ Functions</h2></td></tr>
 <tr class="separator:a943175a1fef95d1b8291ff441ba3d0c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a700bf29d9cab289a1b98803ca057ec52"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a700bf29d9cab289a1b98803ca057ec52">compare_implicit_conversions</a> (<a class="el" href="structyume_1_1ty_1_1Conv.html">ty::Conv</a> a, <a class="el" href="structyume_1_1ty_1_1Conv.html">ty::Conv</a> b) -&gt; std::weak_ordering</td></tr>
 <tr class="separator:a700bf29d9cab289a1b98803ca057ec52"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a18e0ec59b5de8abe884312c112ef58c9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a18e0ec59b5de8abe884312c112ef58c9">wrap_in_implicit_cast</a> (<a class="el" href="namespaceyume_1_1ast.html#af4e6788ee8c32918650276c689d849a2">ast::OptionalExpr</a> &amp;expr, <a class="el" href="structyume_1_1ty_1_1Conv.html">ty::Conv</a> conv, const <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> *target_type)</td></tr>
-<tr class="separator:a18e0ec59b5de8abe884312c112ef58c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f46bc3665e961bffb3c6664b0ab7008"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a5f46bc3665e961bffb3c6664b0ab7008">try_implicit_conversion</a> (<a class="el" href="namespaceyume_1_1ast.html#af4e6788ee8c32918650276c689d849a2">ast::OptionalExpr</a> &amp;expr, const <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> *target_type)</td></tr>
-<tr class="separator:a5f46bc3665e961bffb3c6664b0ab7008"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a94861a7595c15b4f2d0646b4f471d2fd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a94861a7595c15b4f2d0646b4f471d2fd">wrap_in_implicit_cast</a> (<a class="el" href="namespaceyume_1_1ast.html#af4e6788ee8c32918650276c689d849a2">ast::OptionalExpr</a> &amp;expr, <a class="el" href="structyume_1_1ty_1_1Conv.html">ty::Conv</a> conv, optional&lt; <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> &gt; target_type)</td></tr>
+<tr class="separator:a94861a7595c15b4f2d0646b4f471d2fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a05f4b23dd7b4cef3773278ad473145d4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a05f4b23dd7b4cef3773278ad473145d4">try_implicit_conversion</a> (<a class="el" href="namespaceyume_1_1ast.html#af4e6788ee8c32918650276c689d849a2">ast::OptionalExpr</a> &amp;expr, optional&lt; <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> &gt; target_type)</td></tr>
+<tr class="separator:a05f4b23dd7b4cef3773278ad473145d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
@@ -242,8 +242,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a1125faadc921de97975780f8f793d038" name="a1125faadc921de97975780f8f793d038"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1125faadc921de97975780f8f793d038">&#9670;&nbsp;</a></span>literal_cast()</h2>
+<a id="aad840cb24751dfb444717162926adbb3" name="aad840cb24751dfb444717162926adbb3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aad840cb24751dfb444717162926adbb3">&#9670;&nbsp;</a></span>literal_cast()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -260,7 +260,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a>&#160;</td>
           <td class="paramname"><em>target_type</em>&#160;</td>
         </tr>
         <tr>
@@ -278,7 +278,7 @@ Variables</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="overload_8cpp_source.html#l00058">58</a> of file <a class="el" href="overload_8cpp_source.html">overload.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="compatibility_8hpp_source.html#l00037">yume::ty::Compat::valid</a>.</p>
+<p class="reference">References <a class="el" href="type_8cpp_source.html#l00286">yume::ty::Int::in_range()</a>, and <a class="el" href="compatibility_8hpp_source.html#l00037">yume::ty::Compat::valid</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="overload_8cpp_source.html#l00090">yume::semantic::OverloadSet&lt; T &gt;::is_valid_overload()</a>.</p>
 
@@ -380,8 +380,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="a5f46bc3665e961bffb3c6664b0ab7008" name="a5f46bc3665e961bffb3c6664b0ab7008"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5f46bc3665e961bffb3c6664b0ab7008">&#9670;&nbsp;</a></span>try_implicit_conversion()</h2>
+<a id="a05f4b23dd7b4cef3773278ad473145d4" name="a05f4b23dd7b4cef3773278ad473145d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a05f4b23dd7b4cef3773278ad473145d4">&#9670;&nbsp;</a></span>try_implicit_conversion()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -398,7 +398,7 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> *&#160;</td>
+          <td class="paramtype">optional&lt; <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> &gt;&#160;</td>
           <td class="paramname"><em>target_type</em>&#160;</td>
         </tr>
         <tr>
@@ -416,14 +416,14 @@ template&lt;typename T &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="type__walker_8cpp_source.html#l00035">35</a> of file <a class="el" href="type__walker_8cpp_source.html">type_walker.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="type_8hpp_source.html#l00056">yume::ty::Type::name()</a>, and <a class="el" href="type__walker_8cpp_source.html#l00029">wrap_in_implicit_cast()</a>.</p>
+<p class="reference">References <a class="el" href="type__walker_8cpp_source.html#l00029">wrap_in_implicit_cast()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00197">yume::semantic::TypeWalker::expression()</a>, and <a class="el" href="type__walker_8cpp_source.html#l00433">yume::semantic::TypeWalker::statement()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00198">yume::semantic::TypeWalker::expression()</a>, and <a class="el" href="type__walker_8cpp_source.html#l00443">yume::semantic::TypeWalker::statement()</a>.</p>
 
 </div>
 </div>
-<a id="a18e0ec59b5de8abe884312c112ef58c9" name="a18e0ec59b5de8abe884312c112ef58c9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a18e0ec59b5de8abe884312c112ef58c9">&#9670;&nbsp;</a></span>wrap_in_implicit_cast()</h2>
+<a id="a94861a7595c15b4f2d0646b4f471d2fd" name="a94861a7595c15b4f2d0646b4f471d2fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a94861a7595c15b4f2d0646b4f471d2fd">&#9670;&nbsp;</a></span>wrap_in_implicit_cast()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -446,7 +446,7 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> *&#160;</td>
+          <td class="paramtype">optional&lt; <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> &gt;&#160;</td>
           <td class="paramname"><em>target_type</em>&#160;</td>
         </tr>
         <tr>
@@ -464,7 +464,7 @@ template&lt;typename T &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="type__walker_8cpp_source.html#l00029">29</a> of file <a class="el" href="type__walker_8cpp_source.html">type_walker.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00081">yume::semantic::TypeWalker::expression()</a>, and <a class="el" href="type__walker_8cpp_source.html#l00035">try_implicit_conversion()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00079">yume::semantic::TypeWalker::expression()</a>, and <a class="el" href="type__walker_8cpp_source.html#l00035">try_implicit_conversion()</a>.</p>
 
 </div>
 </div>

@@ -1,4 +1,4 @@
 <map id="yume::ty::Ptr" name="yume::ty::Ptr">
-<area shape="rect" id="node1" title="A &quot;qualified&quot; type, with a stackable qualifier, i.e. ptr." alt="" coords="11,80,103,107"/>
-<area shape="rect" id="node2" href="$classyume_1_1ty_1_1Type.html" title="Represents a type in the type system. All types inherit from this class." alt="" coords="5,5,108,32"/>
+<area shape="rect" id="node1" title="A &quot;qualified&quot; type, with a stackable qualifier, i.e. ptr." alt="" coords="26,80,118,107"/>
+<area shape="rect" id="node2" href="$classyume_1_1ty_1_1BaseType.html" title="Represents a type in the type system. NOTE: that this isn&#39;t the class to use for type introspection,..." alt="" coords="5,5,139,32"/>
 </map>

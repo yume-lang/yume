@@ -1,9 +1,9 @@
 <map id="yume::TypeHolder" name="yume::TypeHolder">
-<area shape="rect" id="node1" title=" " alt="" coords="623,116,748,143"/>
-<area shape="rect" id="node2" title=" " alt="" coords="273,14,437,55"/>
-<area shape="rect" id="node3" title=" " alt="" coords="31,21,82,48"/>
-<area shape="rect" id="node4" href="$classyume_1_1ty_1_1Int.html" title="A built&#45;in integral type, such as I32 or Bool." alt="" coords="310,80,401,107"/>
-<area shape="rect" id="node5" href="$classyume_1_1ty_1_1Type.html" title="Represents a type in the type system. All types inherit from this class." alt="" coords="5,80,108,107"/>
-<area shape="rect" id="node6" title=" " alt="" coords="279,131,431,173"/>
-<area shape="rect" id="node7" title=" " alt="" coords="287,197,423,238"/>
+<area shape="rect" id="node1" title=" " alt="" coords="656,116,781,143"/>
+<area shape="rect" id="node2" title=" " alt="" coords="305,14,469,55"/>
+<area shape="rect" id="node3" title=" " alt="" coords="47,21,97,48"/>
+<area shape="rect" id="node4" href="$classyume_1_1ty_1_1Int.html" title="A built&#45;in integral type, such as I32 or Bool." alt="" coords="342,80,433,107"/>
+<area shape="rect" id="node5" href="$classyume_1_1ty_1_1BaseType.html" title="Represents a type in the type system. NOTE: that this isn&#39;t the class to use for type introspection,..." alt="" coords="5,80,139,107"/>
+<area shape="rect" id="node6" title=" " alt="" coords="304,131,471,173"/>
+<area shape="rect" id="node7" title=" " alt="" coords="304,197,471,238"/>
 </map>

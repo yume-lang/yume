@@ -1,8 +1,0 @@
-<map id="yume::ty::Type" name="yume::ty::Type">
-<area shape="rect" id="node1" title="Represents a type in the type system. All types inherit from this class." alt="" coords="259,5,362,32"/>
-<area shape="rect" id="node2" href="$classyume_1_1ty_1_1Generic.html" title="An unsubstituted generic type variable, usually something like T." alt="" coords="5,80,125,107"/>
-<area shape="rect" id="node3" href="$classyume_1_1ty_1_1Int.html" title="A built&#45;in integral type, such as I32 or Bool." alt="" coords="149,80,240,107"/>
-<area shape="rect" id="node4" href="$classyume_1_1ty_1_1Ptr.html" title="A &quot;qualified&quot; type, with a stackable qualifier, i.e. ptr." alt="" coords="265,80,357,107"/>
-<area shape="rect" id="node5" href="$classyume_1_1ty_1_1Qual.html" title="A &quot;qualified&quot; type, with a non&#45;stackable qualifier, .i.e. mut." alt="" coords="381,80,483,107"/>
-<area shape="rect" id="node6" href="$classyume_1_1ty_1_1Struct.html" title="An user&#45;defined struct type with associated fields." alt="" coords="507,80,618,107"/>
-</map>

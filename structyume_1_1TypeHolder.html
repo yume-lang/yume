@@ -81,13 +81,13 @@ Collaboration diagram for yume::TypeHolder:</div>
 <div class="dyncontent">
 <div class="center"><img src="structyume_1_1TypeHolder__coll__graph.png" border="0" usemap="#ayume_1_1TypeHolder_coll__map" alt="Collaboration graph"/></div>
 <map name="ayume_1_1TypeHolder_coll__map" id="ayume_1_1TypeHolder_coll__map">
-<area shape="rect" title=" " alt="" coords="623,116,748,143"/>
-<area shape="rect" title=" " alt="" coords="273,14,437,55"/>
-<area shape="rect" title=" " alt="" coords="31,21,82,48"/>
-<area shape="rect" href="classyume_1_1ty_1_1Int.html" title="A built&#45;in integral type, such as I32 or Bool." alt="" coords="310,80,401,107"/>
-<area shape="rect" href="classyume_1_1ty_1_1Type.html" title="Represents a type in the type system. All types inherit from this class." alt="" coords="5,80,108,107"/>
-<area shape="rect" title=" " alt="" coords="279,131,431,173"/>
-<area shape="rect" title=" " alt="" coords="287,197,423,238"/>
+<area shape="rect" title=" " alt="" coords="656,116,781,143"/>
+<area shape="rect" title=" " alt="" coords="305,14,469,55"/>
+<area shape="rect" title=" " alt="" coords="47,21,97,48"/>
+<area shape="rect" href="classyume_1_1ty_1_1Int.html" title="A built&#45;in integral type, such as I32 or Bool." alt="" coords="342,80,433,107"/>
+<area shape="rect" href="classyume_1_1ty_1_1BaseType.html" title="Represents a type in the type system. NOTE: that this isn&#39;t the class to use for type introspection,..." alt="" coords="5,80,139,107"/>
+<area shape="rect" title=" " alt="" coords="304,131,471,173"/>
+<area shape="rect" title=" " alt="" coords="304,197,471,238"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -115,10 +115,10 @@ Public Attributes</h2></td></tr>
 <tr class="separator:ab4fc219009a89b1fc1ec0d4956730109"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4dee7d7520cf8565a4c3c94f892d7102"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classyume_1_1ty_1_1Int.html">ty::Int</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1TypeHolder.html#a4dee7d7520cf8565a4c3c94f892d7102">bool_type</a> {}</td></tr>
 <tr class="separator:a4dee7d7520cf8565a4c3c94f892d7102"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab0842e1bc2c82ce8c5adba95a7964327"><td class="memItemLeft" align="right" valign="top">llvm::StringMap&lt; unique_ptr&lt; <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1TypeHolder.html#ab0842e1bc2c82ce8c5adba95a7964327">known</a> {}</td></tr>
-<tr class="separator:ab0842e1bc2c82ce8c5adba95a7964327"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ba99050c787fbfa9490529bae5b81c7"><td class="memItemLeft" align="right" valign="top">std::vector&lt; unique_ptr&lt; <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1TypeHolder.html#a8ba99050c787fbfa9490529bae5b81c7">template_instantiations</a> {}</td></tr>
-<tr class="separator:a8ba99050c787fbfa9490529bae5b81c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8553dc957c2bdc77cc57467c5ccafe41"><td class="memItemLeft" align="right" valign="top">llvm::StringMap&lt; unique_ptr&lt; <a class="el" href="classyume_1_1ty_1_1BaseType.html">ty::BaseType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1TypeHolder.html#a8553dc957c2bdc77cc57467c5ccafe41">known</a> {}</td></tr>
+<tr class="separator:a8553dc957c2bdc77cc57467c5ccafe41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4c87800a00c2e16513800ba7b18d8df"><td class="memItemLeft" align="right" valign="top">std::vector&lt; unique_ptr&lt; <a class="el" href="classyume_1_1ty_1_1BaseType.html">ty::BaseType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1TypeHolder.html#ae4c87800a00c2e16513800ba7b18d8df">template_instantiations</a> {}</td></tr>
+<tr class="separator:ae4c87800a00c2e16513800ba7b18d8df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
@@ -264,7 +264,7 @@ Public Attributes</h2></td></tr>
 
 <p class="reference">References <a class="el" href="type__holder_8hpp_source.html#l00016">int_types</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00057">yume::semantic::TypeWalker::expression()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00056">yume::semantic::TypeWalker::expression()</a>.</p>
 
 </div>
 </div>
@@ -283,7 +283,7 @@ Public Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="type__holder_8hpp_source.html#l00017">17</a> of file <a class="el" href="type__holder_8hpp_source.html">type_holder.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00064">yume::semantic::TypeWalker::expression()</a>, and <a class="el" href="type__holder_8cpp_source.html#l00010">TypeHolder()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00063">yume::semantic::TypeWalker::expression()</a>, and <a class="el" href="type__holder_8cpp_source.html#l00010">TypeHolder()</a>.</p>
 
 </div>
 </div>
@@ -305,14 +305,14 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="ab0842e1bc2c82ce8c5adba95a7964327" name="ab0842e1bc2c82ce8c5adba95a7964327"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab0842e1bc2c82ce8c5adba95a7964327">&#9670;&nbsp;</a></span>known</h2>
+<a id="a8553dc957c2bdc77cc57467c5ccafe41" name="a8553dc957c2bdc77cc57467c5ccafe41"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8553dc957c2bdc77cc57467c5ccafe41">&#9670;&nbsp;</a></span>known</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">llvm::StringMap&lt;unique_ptr&lt;<a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a>&gt; &gt; yume::TypeHolder::known {}</td>
+          <td class="memname">llvm::StringMap&lt;unique_ptr&lt;<a class="el" href="classyume_1_1ty_1_1BaseType.html">ty::BaseType</a>&gt; &gt; yume::TypeHolder::known {}</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -323,21 +323,19 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a8ba99050c787fbfa9490529bae5b81c7" name="a8ba99050c787fbfa9490529bae5b81c7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8ba99050c787fbfa9490529bae5b81c7">&#9670;&nbsp;</a></span>template_instantiations</h2>
+<a id="ae4c87800a00c2e16513800ba7b18d8df" name="ae4c87800a00c2e16513800ba7b18d8df"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4c87800a00c2e16513800ba7b18d8df">&#9670;&nbsp;</a></span>template_instantiations</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;unique_ptr&lt;<a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a>&gt; &gt; yume::TypeHolder::template_instantiations {}</td>
+          <td class="memname">std::vector&lt;unique_ptr&lt;<a class="el" href="classyume_1_1ty_1_1BaseType.html">ty::BaseType</a>&gt; &gt; yume::TypeHolder::template_instantiations {}</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="type__holder_8hpp_source.html#l00019">19</a> of file <a class="el" href="type__holder_8hpp_source.html">type_holder.hpp</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00081">yume::semantic::TypeWalker::expression()</a>.</p>
 
 </div>
 </div>

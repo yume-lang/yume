@@ -79,6 +79,7 @@ $(function() {
 <code>#include &quot;<a class="el" href="vals_8hpp_source.html">compiler/vals.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="errors_8hpp_source.html">diagnostic/errors.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="compatibility_8hpp_source.html">ty/compatibility.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="substitution_8hpp_source.html">ty/substitution.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="type_8hpp_source.html">ty/type.hpp</a>&quot;</code><br />
 <code>#include &lt;algorithm&gt;</code><br />
 <code>#include &lt;cstdint&gt;</code><br />
@@ -102,56 +103,56 @@ Include dependency graph for type_walker.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="type__walker_8cpp__incl.png" border="0" usemap="#asrc_2yume_2semantic_2type__walker_8cpp" alt=""/></div>
 <map name="asrc_2yume_2semantic_2type__walker_8cpp" id="asrc_2yume_2semantic_2type__walker_8cpp">
-<area shape="rect" title=" " alt="" coords="3127,5,3287,47"/>
-<area shape="rect" href="type__walker_8hpp.html" title=" " alt="" coords="3149,169,3264,196"/>
-<area shape="rect" href="ast_8hpp.html" title=" " alt="" coords="2261,468,2347,495"/>
-<area shape="rect" title=" " alt="" coords="1655,707,1809,733"/>
-<area shape="rect" title=" " alt="" coords="4059,707,4243,733"/>
-<area shape="rect" title=" " alt="" coords="574,707,642,733"/>
-<area shape="rect" title=" " alt="" coords="3507,707,3573,733"/>
-<area shape="rect" title=" " alt="" coords="1579,707,1631,733"/>
-<area shape="rect" title=" " alt="" coords="1149,707,1211,733"/>
-<area shape="rect" title=" " alt="" coords="2765,707,2824,733"/>
-<area shape="rect" title=" " alt="" coords="3425,632,3500,659"/>
-<area shape="rect" href="compatibility_8hpp.html" title=" " alt="" coords="1242,550,1374,577"/>
-<area shape="rect" title=" " alt="" coords="1127,632,1188,659"/>
-<area shape="rect" href="vals_8hpp.html" title=" " alt="" coords="1556,319,1679,345"/>
-<area shape="rect" href="errors_8hpp.html" title=" " alt="" coords="3587,468,3730,495"/>
-<area shape="rect" title=" " alt="" coords="3857,468,3935,495"/>
-<area shape="rect" href="type_8hpp.html" title=" " alt="" coords="975,468,1059,495"/>
-<area shape="rect" href="compiler_8hpp.html" title=" " alt="" coords="2806,95,2954,121"/>
-<area shape="rect" href="type__holder_8hpp.html" title=" " alt="" coords="224,393,336,420"/>
-<area shape="rect" title=" " alt="" coords="43,468,192,495"/>
-<area shape="rect" title=" " alt="" coords="4315,95,4394,121"/>
-<area shape="rect" title=" " alt="" coords="4419,95,4472,121"/>
-<area shape="rect" title=" " alt="" coords="4497,95,4647,121"/>
-<area shape="rect" title=" " alt="" coords="4672,95,4851,121"/>
-<area shape="rect" title=" " alt="" coords="4875,95,5005,121"/>
-<area shape="rect" title=" " alt="" coords="5029,95,5091,121"/>
-<area shape="rect" href="crtp__walker_8hpp.html" title=" " alt="" coords="3087,393,3222,420"/>
-<area shape="rect" href="util_8hpp.html" title=" " alt="" coords="1701,632,1763,659"/>
-<area shape="rect" title=" " alt="" coords="3153,632,3207,659"/>
-<area shape="rect" href="overload_8hpp.html" title=" " alt="" coords="2401,244,2553,271"/>
-<area shape="rect" title=" " alt="" coords="3015,393,3062,420"/>
-<area shape="rect" title=" " alt="" coords="2867,244,2925,271"/>
-<area shape="rect" title=" " alt="" coords="3113,550,3196,577"/>
-<area shape="rect" href="qualifier_8hpp.html" title=" " alt="" coords="1127,550,1217,577"/>
-<area shape="rect" href="token_8hpp.html" title=" " alt="" coords="2909,550,2987,577"/>
-<area shape="rect" title=" " alt="" coords="2190,707,2255,733"/>
-<area shape="rect" title=" " alt="" coords="1944,707,1995,733"/>
-<area shape="rect" title=" " alt="" coords="2311,550,2471,577"/>
-<area shape="rect" title=" " alt="" coords="2495,550,2681,577"/>
-<area shape="rect" title=" " alt="" coords="329,707,380,733"/>
-<area shape="rect" href="parser_8hpp.html" title=" " alt="" coords="2211,393,2315,420"/>
-<area shape="rect" title=" " alt="" coords="1420,393,1492,420"/>
-<area shape="rect" title=" " alt="" coords="1517,393,1577,420"/>
-<area shape="rect" title=" " alt="" coords="3766,550,3834,577"/>
-<area shape="rect" title=" " alt="" coords="3859,550,3936,577"/>
-<area shape="rect" title=" " alt="" coords="3575,543,3742,584"/>
-<area shape="rect" title=" " alt="" coords="2611,169,2741,196"/>
-<area shape="rect" title=" " alt="" coords="2917,169,3075,196"/>
-<area shape="rect" title=" " alt="" coords="2257,169,2375,196"/>
-<area shape="rect" title=" " alt="" coords="2400,169,2587,196"/>
+<area shape="rect" title=" " alt="" coords="3564,5,3724,47"/>
+<area shape="rect" href="type__walker_8hpp.html" title=" " alt="" coords="2371,169,2485,196"/>
+<area shape="rect" href="ast_8hpp.html" title=" " alt="" coords="2082,468,2169,495"/>
+<area shape="rect" title=" " alt="" coords="157,767,310,793"/>
+<area shape="rect" title=" " alt="" coords="403,767,587,793"/>
+<area shape="rect" title=" " alt="" coords="3721,767,3789,793"/>
+<area shape="rect" title=" " alt="" coords="2539,767,2605,793"/>
+<area shape="rect" title=" " alt="" coords="891,767,943,793"/>
+<area shape="rect" title=" " alt="" coords="35,767,96,793"/>
+<area shape="rect" title=" " alt="" coords="1265,767,1324,793"/>
+<area shape="rect" title=" " alt="" coords="955,617,1029,644"/>
+<area shape="rect" href="compatibility_8hpp.html" title=" " alt="" coords="2214,617,2346,644"/>
+<area shape="rect" title=" " alt="" coords="2561,692,2623,719"/>
+<area shape="rect" href="type_8hpp.html" title=" " alt="" coords="2970,543,3054,569"/>
+<area shape="rect" href="substitution_8hpp.html" title=" " alt="" coords="3210,617,3337,644"/>
+<area shape="rect" href="vals_8hpp.html" title=" " alt="" coords="1629,319,1752,345"/>
+<area shape="rect" href="errors_8hpp.html" title=" " alt="" coords="2726,468,2869,495"/>
+<area shape="rect" title=" " alt="" coords="3350,468,3429,495"/>
+<area shape="rect" href="compiler_8hpp.html" title=" " alt="" coords="2902,95,3050,121"/>
+<area shape="rect" href="type__holder_8hpp.html" title=" " alt="" coords="3823,468,3935,495"/>
+<area shape="rect" title=" " alt="" coords="3967,543,4116,569"/>
+<area shape="rect" title=" " alt="" coords="4118,95,4197,121"/>
+<area shape="rect" title=" " alt="" coords="4221,95,4275,121"/>
+<area shape="rect" title=" " alt="" coords="4299,95,4450,121"/>
+<area shape="rect" title=" " alt="" coords="4475,95,4653,121"/>
+<area shape="rect" title=" " alt="" coords="4677,95,4808,121"/>
+<area shape="rect" title=" " alt="" coords="4832,95,4893,121"/>
+<area shape="rect" href="crtp__walker_8hpp.html" title=" " alt="" coords="2313,393,2447,420"/>
+<area shape="rect" href="util_8hpp.html" title=" " alt="" coords="1374,692,1437,719"/>
+<area shape="rect" title=" " alt="" coords="2559,617,2614,644"/>
+<area shape="rect" title=" " alt="" coords="3351,692,3398,719"/>
+<area shape="rect" href="overload_8hpp.html" title=" " alt="" coords="2317,244,2469,271"/>
+<area shape="rect" title=" " alt="" coords="2777,244,2834,271"/>
+<area shape="rect" title=" " alt="" coords="2416,543,2499,569"/>
+<area shape="rect" href="qualifier_8hpp.html" title=" " alt="" coords="2639,617,2729,644"/>
+<area shape="rect" href="token_8hpp.html" title=" " alt="" coords="1209,543,1287,569"/>
+<area shape="rect" title=" " alt="" coords="1525,767,1590,793"/>
+<area shape="rect" title=" " alt="" coords="1615,767,1665,793"/>
+<area shape="rect" title=" " alt="" coords="1928,543,2088,569"/>
+<area shape="rect" title=" " alt="" coords="1667,543,1853,569"/>
+<area shape="rect" title=" " alt="" coords="3248,767,3299,793"/>
+<area shape="rect" href="parser_8hpp.html" title=" " alt="" coords="1527,393,1631,420"/>
+<area shape="rect" title=" " alt="" coords="1655,393,1727,420"/>
+<area shape="rect" title=" " alt="" coords="1751,393,1811,420"/>
+<area shape="rect" title=" " alt="" coords="2878,543,2946,569"/>
+<area shape="rect" title=" " alt="" coords="2776,543,2853,569"/>
+<area shape="rect" title=" " alt="" coords="2661,169,2792,196"/>
+<area shape="rect" title=" " alt="" coords="2816,169,2973,196"/>
+<area shape="rect" title=" " alt="" coords="2998,169,3117,196"/>
+<area shape="rect" title=" " alt="" coords="3141,169,3328,196"/>
 </map>
 </div>
 </div>
@@ -166,10 +167,10 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a18e0ec59b5de8abe884312c112ef58c9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a18e0ec59b5de8abe884312c112ef58c9">yume::semantic::wrap_in_implicit_cast</a> (ast::OptionalExpr &amp;expr, ty::Conv conv, const ty::Type *target_type)</td></tr>
-<tr class="separator:a18e0ec59b5de8abe884312c112ef58c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f46bc3665e961bffb3c6664b0ab7008"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a5f46bc3665e961bffb3c6664b0ab7008">yume::semantic::try_implicit_conversion</a> (ast::OptionalExpr &amp;expr, const ty::Type *target_type)</td></tr>
-<tr class="separator:a5f46bc3665e961bffb3c6664b0ab7008"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a94861a7595c15b4f2d0646b4f471d2fd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a94861a7595c15b4f2d0646b4f471d2fd">yume::semantic::wrap_in_implicit_cast</a> (ast::OptionalExpr &amp;expr, ty::Conv conv, optional&lt; ty::Type &gt; target_type)</td></tr>
+<tr class="separator:a94861a7595c15b4f2d0646b4f471d2fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a05f4b23dd7b4cef3773278ad473145d4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1semantic.html#a05f4b23dd7b4cef3773278ad473145d4">yume::semantic::try_implicit_conversion</a> (ast::OptionalExpr &amp;expr, optional&lt; ty::Type &gt; target_type)</td></tr>
+<tr class="separator:a05f4b23dd7b4cef3773278ad473145d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->

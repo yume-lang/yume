@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['has_5fqualifier_0',['has_qualifier',['../classyume_1_1ty_1_1Qual.html#a31435e308101561c9f8924a1e0581b71',1,'yume::ty::Qual::has_qualifier()'],['../classyume_1_1ty_1_1Ptr.html#a2047c656c3f2fb5b637dd58645012210',1,'yume::ty::Ptr::has_qualifier()']]],
+  ['has_5fqualifier_0',['has_qualifier',['../classyume_1_1ty_1_1Ptr.html#a2047c656c3f2fb5b637dd58645012210',1,'yume::ty::Ptr::has_qualifier()'],['../classyume_1_1ty_1_1Type.html#a99090f352aeb81a1d6dba964380d88f3',1,'yume::ty::Type::has_qualifier()']]],
   ['has_5fvalue_1',['has_value',['../classyume_1_1ast_1_1OptionalAnyBase.html#a0e8856bacf6351a3a3cd79000b4fa40a',1,'yume::ast::OptionalAnyBase']]],
   ['hash_5fvisitor_2ecpp_2',['hash_visitor.cpp',['../hash__visitor_8cpp.html',1,'']]],
   ['hash_5fvisitor_2ehpp_3',['hash_visitor.hpp',['../hash__visitor_8hpp.html',1,'']]],

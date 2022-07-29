@@ -1,5 +1,6 @@
 <map id="yume::ty::Sub" name="yume::ty::Sub">
-<area shape="rect" id="node1" title=" " alt="" coords="34,171,133,197"/>
-<area shape="rect" id="node2" href="$classyume_1_1ty_1_1Generic.html" title="An unsubstituted generic type variable, usually something like T." alt="" coords="110,81,230,108"/>
-<area shape="rect" id="node3" href="$classyume_1_1ty_1_1Type.html" title="Represents a type in the type system. All types inherit from this class." alt="" coords="5,5,108,32"/>
+<area shape="rect" id="node1" title=" " alt="" coords="91,171,189,197"/>
+<area shape="rect" id="node2" href="$classyume_1_1ty_1_1Generic.html" title="An unsubstituted generic type variable, usually something like T." alt="" coords="12,81,132,108"/>
+<area shape="rect" id="node3" href="$classyume_1_1ty_1_1BaseType.html" title="Represents a type in the type system. NOTE: that this isn&#39;t the class to use for type introspection,..." alt="" coords="5,5,139,32"/>
+<area shape="rect" id="node4" href="$classyume_1_1ty_1_1Type.html" title="A &quot;qualified&quot; type, with a non&#45;stackable qualifier, .i.e. mut." alt="" coords="157,81,259,108"/>
 </map>

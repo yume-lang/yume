@@ -79,6 +79,7 @@ $(function() {
 <code>#include &quot;<a class="el" href="qualifier_8hpp_source.html">qualifier.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="type__walker_8hpp_source.html">semantic/type_walker.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="compatibility_8hpp_source.html">ty/compatibility.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="substitution_8hpp_source.html">ty/substitution.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="type_8hpp_source.html">ty/type.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="util_8hpp_source.html">util.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="vals_8hpp_source.html">vals.hpp</a>&quot;</code><br />
@@ -123,56 +124,56 @@ Include dependency graph for compiler.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="compiler_8cpp__incl.png" border="0" usemap="#asrc_2yume_2compiler_2compiler_8cpp" alt=""/></div>
 <map name="asrc_2yume_2compiler_2compiler_8cpp" id="asrc_2yume_2compiler_2compiler_8cpp">
-<area shape="rect" title=" " alt="" coords="2121,5,2327,32"/>
-<area shape="rect" href="compiler_8hpp.html" title=" " alt="" coords="747,80,842,107"/>
-<area shape="rect" href="ast_8hpp.html" title=" " alt="" coords="838,304,925,331"/>
-<area shape="rect" href="qualifier_8hpp.html" title=" " alt="" coords="1469,379,1560,405"/>
-<area shape="rect" href="compatibility_8hpp.html" title=" " alt="" coords="1313,379,1445,405"/>
-<area shape="rect" href="util_8hpp.html" title=" " alt="" coords="729,453,791,480"/>
-<area shape="rect" title=" " alt="" coords="231,528,385,555"/>
-<area shape="rect" title=" " alt="" coords="1593,528,1777,555"/>
-<area shape="rect" title=" " alt="" coords="499,528,565,555"/>
-<area shape="rect" title=" " alt="" coords="1344,528,1413,555"/>
-<area shape="rect" title=" " alt="" coords="937,528,989,555"/>
-<area shape="rect" title=" " alt="" coords="679,528,740,555"/>
-<area shape="rect" title=" " alt="" coords="1000,379,1187,405"/>
-<area shape="rect" title=" " alt="" coords="336,379,419,405"/>
-<area shape="rect" href="type__walker_8hpp.html" title=" " alt="" coords="297,155,469,181"/>
-<area shape="rect" title=" " alt="" coords="230,229,309,256"/>
-<area shape="rect" href="type__holder_8hpp.html" title=" " alt="" coords="1240,155,1352,181"/>
-<area shape="rect" href="type_8hpp.html" title=" " alt="" coords="1233,304,1317,331"/>
-<area shape="rect" title=" " alt="" coords="1259,229,1408,256"/>
-<area shape="rect" href="vals_8hpp.html" title=" " alt="" coords="901,229,1024,256"/>
-<area shape="rect" href="errors_8hpp.html" title=" " alt="" coords="1737,80,1879,107"/>
-<area shape="rect" title=" " alt="" coords="1857,155,1935,181"/>
-<area shape="rect" title=" " alt="" coords="1955,80,2029,107"/>
-<area shape="rect" title=" " alt="" coords="2054,80,2205,107"/>
-<area shape="rect" title=" " alt="" coords="2229,80,2408,107"/>
-<area shape="rect" title=" " alt="" coords="2432,80,2576,107"/>
-<area shape="rect" title=" " alt="" coords="2600,80,2725,107"/>
-<area shape="rect" title=" " alt="" coords="2749,80,2880,107"/>
-<area shape="rect" title=" " alt="" coords="2904,80,3037,107"/>
-<area shape="rect" title=" " alt="" coords="3062,80,3205,107"/>
-<area shape="rect" title=" " alt="" coords="3229,80,3358,107"/>
-<area shape="rect" title=" " alt="" coords="3381,80,3517,107"/>
-<area shape="rect" title=" " alt="" coords="3542,80,3698,107"/>
-<area shape="rect" title=" " alt="" coords="3722,80,3849,107"/>
-<area shape="rect" title=" " alt="" coords="3873,80,4020,107"/>
-<area shape="rect" title=" " alt="" coords="4045,80,4206,107"/>
-<area shape="rect" title=" " alt="" coords="4231,80,4369,107"/>
-<area shape="rect" title=" " alt="" coords="4394,80,4539,107"/>
-<area shape="rect" title=" " alt="" coords="4563,80,4762,107"/>
-<area shape="rect" title=" " alt="" coords="4786,80,4891,107"/>
-<area shape="rect" title=" " alt="" coords="4915,80,5026,107"/>
-<area shape="rect" title=" " alt="" coords="5051,80,5168,107"/>
-<area shape="rect" title=" " alt="" coords="5192,80,5355,107"/>
-<area shape="rect" title=" " alt="" coords="5379,80,5517,107"/>
-<area shape="rect" title=" " alt="" coords="5541,80,5723,107"/>
-<area shape="rect" title=" " alt="" coords="5747,80,5930,107"/>
-<area shape="rect" title=" " alt="" coords="5954,80,6147,107"/>
-<area shape="rect" href="crtp__walker_8hpp.html" title=" " alt="" coords="385,229,519,256"/>
-<area shape="rect" title=" " alt="" coords="645,155,776,181"/>
-<area shape="rect" title=" " alt="" coords="800,155,957,181"/>
+<area shape="rect" title=" " alt="" coords="1979,5,2184,32"/>
+<area shape="rect" href="compiler_8hpp.html" title=" " alt="" coords="758,80,853,107"/>
+<area shape="rect" href="ast_8hpp.html" title=" " alt="" coords="697,304,783,331"/>
+<area shape="rect" href="qualifier_8hpp.html" title=" " alt="" coords="704,453,795,480"/>
+<area shape="rect" href="compatibility_8hpp.html" title=" " alt="" coords="1123,453,1255,480"/>
+<area shape="rect" href="util_8hpp.html" title=" " alt="" coords="1003,528,1066,555"/>
+<area shape="rect" title=" " alt="" coords="115,603,269,629"/>
+<area shape="rect" title=" " alt="" coords="1636,603,1820,629"/>
+<area shape="rect" title=" " alt="" coords="412,603,479,629"/>
+<area shape="rect" title=" " alt="" coords="1377,603,1447,629"/>
+<area shape="rect" title=" " alt="" coords="1301,603,1353,629"/>
+<area shape="rect" title=" " alt="" coords="535,603,596,629"/>
+<area shape="rect" href="type_8hpp.html" title=" " alt="" coords="961,379,1045,405"/>
+<area shape="rect" href="substitution_8hpp.html" title=" " alt="" coords="921,453,1047,480"/>
+<area shape="rect" title=" " alt="" coords="1069,379,1256,405"/>
+<area shape="rect" title=" " alt="" coords="296,379,379,405"/>
+<area shape="rect" href="type__walker_8hpp.html" title=" " alt="" coords="390,155,562,181"/>
+<area shape="rect" title=" " alt="" coords="289,229,367,256"/>
+<area shape="rect" href="type__holder_8hpp.html" title=" " alt="" coords="1045,155,1157,181"/>
+<area shape="rect" title=" " alt="" coords="1059,229,1208,256"/>
+<area shape="rect" href="vals_8hpp.html" title=" " alt="" coords="760,229,883,256"/>
+<area shape="rect" href="errors_8hpp.html" title=" " alt="" coords="1689,80,1831,107"/>
+<area shape="rect" title=" " alt="" coords="1644,155,1721,181"/>
+<area shape="rect" title=" " alt="" coords="1907,80,1981,107"/>
+<area shape="rect" title=" " alt="" coords="2006,80,2157,107"/>
+<area shape="rect" title=" " alt="" coords="2181,80,2360,107"/>
+<area shape="rect" title=" " alt="" coords="2384,80,2528,107"/>
+<area shape="rect" title=" " alt="" coords="2552,80,2677,107"/>
+<area shape="rect" title=" " alt="" coords="2701,80,2832,107"/>
+<area shape="rect" title=" " alt="" coords="2856,80,2989,107"/>
+<area shape="rect" title=" " alt="" coords="3014,80,3157,107"/>
+<area shape="rect" title=" " alt="" coords="3181,80,3310,107"/>
+<area shape="rect" title=" " alt="" coords="3333,80,3469,107"/>
+<area shape="rect" title=" " alt="" coords="3494,80,3650,107"/>
+<area shape="rect" title=" " alt="" coords="3674,80,3801,107"/>
+<area shape="rect" title=" " alt="" coords="3825,80,3972,107"/>
+<area shape="rect" title=" " alt="" coords="3997,80,4158,107"/>
+<area shape="rect" title=" " alt="" coords="4183,80,4321,107"/>
+<area shape="rect" title=" " alt="" coords="4346,80,4491,107"/>
+<area shape="rect" title=" " alt="" coords="4515,80,4714,107"/>
+<area shape="rect" title=" " alt="" coords="4738,80,4843,107"/>
+<area shape="rect" title=" " alt="" coords="4867,80,4978,107"/>
+<area shape="rect" title=" " alt="" coords="5003,80,5120,107"/>
+<area shape="rect" title=" " alt="" coords="5144,80,5307,107"/>
+<area shape="rect" title=" " alt="" coords="5331,80,5469,107"/>
+<area shape="rect" title=" " alt="" coords="5493,80,5675,107"/>
+<area shape="rect" title=" " alt="" coords="5699,80,5882,107"/>
+<area shape="rect" title=" " alt="" coords="5906,80,6099,107"/>
+<area shape="rect" href="crtp__walker_8hpp.html" title=" " alt="" coords="443,229,578,256"/>
+<area shape="rect" title=" " alt="" coords="688,155,819,181"/>
 </map>
 </div>
 </div>
@@ -185,8 +186,8 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a651ecb6191ce83e072c33c695cd1a8d2"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a651ecb6191ce83e072c33c695cd1a8d2">yume::is_trivially_destructible</a> (const ty::Type *type) -&gt; bool</td></tr>
-<tr class="separator:a651ecb6191ce83e072c33c695cd1a8d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4910537b7fcaa9c73e9264602bf00eb9"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a4910537b7fcaa9c73e9264602bf00eb9">yume::is_trivially_destructible</a> (ty::Type type) -&gt; bool</td></tr>
+<tr class="separator:a4910537b7fcaa9c73e9264602bf00eb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d0b3ac909119ef64ef8a54f014993d9"><td class="memItemLeft" align="right" valign="top">static auto constexpr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a4d0b3ac909119ef64ef8a54f014993d9">yume::const_hash</a> (char const *input) -&gt; unsigned</td></tr>
 <tr class="memdesc:a4d0b3ac909119ef64ef8a54f014993d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">A constexpr-friendly simple string hash, for simple switches with string cases.  <a href="namespaceyume.html#a4d0b3ac909119ef64ef8a54f014993d9">More...</a><br /></td></tr>
 <tr class="separator:a4d0b3ac909119ef64ef8a54f014993d9"><td class="memSeparator" colspan="2">&#160;</td></tr>

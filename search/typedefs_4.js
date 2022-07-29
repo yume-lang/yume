@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['optionalexpr_0',['OptionalExpr',['../namespaceyume_1_1ast.html#af4e6788ee8c32918650276c689d849a2',1,'yume::ast']]],
-  ['optionaltype_1',['OptionalType',['../namespaceyume_1_1ast.html#abbe8370067fd80e7639b21ac03c4c7f1',1,'yume::ast']]]
+  ['nonnull_0',['nonnull',['../namespaceyume.html#ad142a07d8a149e4dfed612e8a96c0fe9',1,'yume']]],
+  ['nullable_1',['nullable',['../namespaceyume.html#a38932a6efdeba0de668a05650c45b8b3',1,'yume']]]
 ];

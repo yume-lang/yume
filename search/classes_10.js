@@ -9,5 +9,7 @@ var searchData=
   ['stringexpr_6',['StringExpr',['../classyume_1_1ast_1_1StringExpr.html',1,'yume::ast']]],
   ['struct_7',['Struct',['../structyume_1_1Struct.html',1,'yume::Struct'],['../classyume_1_1ty_1_1Struct.html',1,'yume::ty::Struct']]],
   ['structdecl_8',['StructDecl',['../classyume_1_1ast_1_1StructDecl.html',1,'yume::ast']]],
-  ['sub_9',['Sub',['../structyume_1_1ty_1_1Sub.html',1,'yume::ty']]]
+  ['sub_9',['Sub',['../structyume_1_1ty_1_1Sub.html',1,'yume::ty']]],
+  ['substitution_10',['Substitution',['../structyume_1_1Substitution.html',1,'yume']]],
+  ['substitution_5ft_11',['substitution_t',['../classsubstitution__t.html',1,'']]]
 ];

@@ -32,12 +32,12 @@
             <td></td>
             <td class="headerItem">Lines:</td>
             <td class="headerCovTableEntry">3</td>
-            <td class="headerCovTableEntry">18</td>
-            <td class="headerCovTableEntryLo">16.7 %</td>
+            <td class="headerCovTableEntry">19</td>
+            <td class="headerCovTableEntryLo">15.8 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-07-22 18:42:06</td>
+            <td class="headerValue">2022-07-29 17:04:56</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -78,7 +78,7 @@
 <a name="20"><span class="lineNum">      20 </span>            : class Type;</a>
 <a name="21"><span class="lineNum">      21 </span>            : } // namespace ast</a>
 <a name="22"><span class="lineNum">      22 </span>            : namespace ty {</a>
-<a name="23"><span class="lineNum">      23 </span>            : class Type;</a>
+<a name="23"><span class="lineNum">      23 </span>            : class BaseType;</a>
 <a name="24"><span class="lineNum">      24 </span>            : }</a>
 <a name="25"><span class="lineNum">      25 </span>            : } // namespace yume</a>
 <a name="26"><span class="lineNum">      26 </span>            : </a>
@@ -109,34 +109,35 @@
 <a name="51"><span class="lineNum">      51 </span>            : </a>
 <a name="52"><span class="lineNum">      52 </span>            : private:</a>
 <a name="53"><span class="lineNum">      53 </span>            :   /// Convert an ast type (`ast::Type`) into a type in the type system (`ty::Type`).</a>
-<a name="54"><span class="lineNum">      54 </span><span class="lineCov">          1 :   auto convert_type(const ast::Type&amp; ast_type) -&gt; const ty::Type&amp;;</span></a>
-<a name="55"><span class="lineNum">      55 </span>            : </a>
-<a name="56"><span class="lineNum">      56 </span><span class="lineNoCov">          0 :   auto all_fn_overloads_by_name(ast::CallExpr&amp; call) -&gt; OverloadSet&lt;Fn&gt;;</span></a>
-<a name="57"><span class="lineNum">      57 </span><span class="lineNoCov">          0 :   auto all_ctor_overloads_by_type(Struct&amp; st, ast::CtorExpr&amp; call) -&gt; OverloadSet&lt;Ctor&gt;;</span></a>
-<a name="58"><span class="lineNum">      58 </span>            : </a>
-<a name="59"><span class="lineNum">      59 </span><span class="lineNoCov">          0 :   auto with_saved_scope(auto&amp;&amp; callback) {</span></a>
-<a name="60"><span class="lineNum">      60 </span>            :     // Save everything pertaining to the old context</a>
-<a name="61"><span class="lineNum">      61 </span>            :     auto saved_scope = scope;</a>
-<a name="62"><span class="lineNum">      62 </span>            :     auto saved_current_decl = current_decl;</a>
-<a name="63"><span class="lineNum">      63 </span>            :     auto saved_depth = in_depth;</a>
-<a name="64"><span class="lineNum">      64 </span>            : </a>
-<a name="65"><span class="lineNum">      65 </span>            :     callback();</a>
-<a name="66"><span class="lineNum">      66 </span>            : </a>
-<a name="67"><span class="lineNum">      67 </span>            :     // Restore again</a>
-<a name="68"><span class="lineNum">      68 </span>            :     in_depth = saved_depth;</a>
-<a name="69"><span class="lineNum">      69 </span>            :     current_decl = saved_current_decl;</a>
-<a name="70"><span class="lineNum">      70 </span>            :     scope = saved_scope;</a>
-<a name="71"><span class="lineNum">      71 </span>            :   }</a>
-<a name="72"><span class="lineNum">      72 </span>            : </a>
-<a name="73"><span class="lineNum">      73 </span><span class="lineNoCov">          0 :   template &lt;typename T&gt; void statement([[maybe_unused]] T&amp; stat) {</span></a>
-<a name="74"><span class="lineNum">      74 </span>            :     throw std::runtime_error(&quot;Type walker stubbed on statement &quot;s + stat.kind_name());</a>
-<a name="75"><span class="lineNum">      75 </span>            :   }</a>
-<a name="76"><span class="lineNum">      76 </span>            : </a>
-<a name="77"><span class="lineNum">      77 </span><span class="lineNoCov">          0 :   template &lt;typename T&gt; void expression([[maybe_unused]] T&amp; expr) {</span></a>
-<a name="78"><span class="lineNum">      78 </span>            :     throw std::runtime_error(&quot;Type walker stubbed on expression &quot;s + expr.kind_name());</a>
-<a name="79"><span class="lineNum">      79 </span>            :   }</a>
-<a name="80"><span class="lineNum">      80 </span>            : };</a>
-<a name="81"><span class="lineNum">      81 </span>            : } // namespace yume::semantic</a>
+<a name="54"><span class="lineNum">      54 </span><span class="lineCov">          1 :   auto convert_type(const ast::Type&amp; ast_type) -&gt; ty::Type;</span></a>
+<a name="55"><span class="lineNum">      55 </span><span class="lineNoCov">          0 :   auto convert_slice_type(const ast::Type&amp; ast_type) -&gt; ty::Type;</span></a>
+<a name="56"><span class="lineNum">      56 </span>            : </a>
+<a name="57"><span class="lineNum">      57 </span><span class="lineNoCov">          0 :   auto all_fn_overloads_by_name(ast::CallExpr&amp; call) -&gt; OverloadSet&lt;Fn&gt;;</span></a>
+<a name="58"><span class="lineNum">      58 </span><span class="lineNoCov">          0 :   auto all_ctor_overloads_by_type(Struct&amp; st, ast::CtorExpr&amp; call) -&gt; OverloadSet&lt;Ctor&gt;;</span></a>
+<a name="59"><span class="lineNum">      59 </span>            : </a>
+<a name="60"><span class="lineNum">      60 </span><span class="lineNoCov">          0 :   auto with_saved_scope(auto&amp;&amp; callback) {</span></a>
+<a name="61"><span class="lineNum">      61 </span>            :     // Save everything pertaining to the old context</a>
+<a name="62"><span class="lineNum">      62 </span>            :     auto saved_scope = scope;</a>
+<a name="63"><span class="lineNum">      63 </span>            :     auto saved_current_decl = current_decl;</a>
+<a name="64"><span class="lineNum">      64 </span>            :     auto saved_depth = in_depth;</a>
+<a name="65"><span class="lineNum">      65 </span>            : </a>
+<a name="66"><span class="lineNum">      66 </span>            :     callback();</a>
+<a name="67"><span class="lineNum">      67 </span>            : </a>
+<a name="68"><span class="lineNum">      68 </span>            :     // Restore again</a>
+<a name="69"><span class="lineNum">      69 </span>            :     in_depth = saved_depth;</a>
+<a name="70"><span class="lineNum">      70 </span>            :     current_decl = saved_current_decl;</a>
+<a name="71"><span class="lineNum">      71 </span>            :     scope = saved_scope;</a>
+<a name="72"><span class="lineNum">      72 </span>            :   }</a>
+<a name="73"><span class="lineNum">      73 </span>            : </a>
+<a name="74"><span class="lineNum">      74 </span><span class="lineNoCov">          0 :   template &lt;typename T&gt; void statement([[maybe_unused]] T&amp; stat) {</span></a>
+<a name="75"><span class="lineNum">      75 </span>            :     throw std::runtime_error(&quot;Type walker stubbed on statement &quot;s + stat.kind_name());</a>
+<a name="76"><span class="lineNum">      76 </span>            :   }</a>
+<a name="77"><span class="lineNum">      77 </span>            : </a>
+<a name="78"><span class="lineNum">      78 </span><span class="lineNoCov">          0 :   template &lt;typename T&gt; void expression([[maybe_unused]] T&amp; expr) {</span></a>
+<a name="79"><span class="lineNum">      79 </span>            :     throw std::runtime_error(&quot;Type walker stubbed on expression &quot;s + expr.kind_name());</a>
+<a name="80"><span class="lineNum">      80 </span>            :   }</a>
+<a name="81"><span class="lineNum">      81 </span>            : };</a>
+<a name="82"><span class="lineNum">      82 </span>            : } // namespace yume::semantic</a>
 </pre>
       </td>
     </tr>

@@ -1,4 +1,4 @@
 <map id="yume::ty::Generic" name="yume::ty::Generic">
-<area shape="rect" id="node1" title="An unsubstituted generic type variable, usually something like T." alt="" coords="5,80,125,107"/>
-<area shape="rect" id="node2" href="$classyume_1_1ty_1_1Type.html" title="Represents a type in the type system. All types inherit from this class." alt="" coords="14,5,117,32"/>
+<area shape="rect" id="node1" title="An unsubstituted generic type variable, usually something like T." alt="" coords="12,80,132,107"/>
+<area shape="rect" id="node2" href="$classyume_1_1ty_1_1BaseType.html" title="Represents a type in the type system. NOTE: that this isn&#39;t the class to use for type introspection,..." alt="" coords="5,5,139,32"/>
 </map>

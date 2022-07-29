@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-07-22 18:42:06</td>
+            <td class="headerValue">2022-07-29 17:04:56</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -67,14 +67,14 @@
 <a name="9"><span class="lineNum">       9 </span>            : </a>
 <a name="10"><span class="lineNum">      10 </span>            : void AST::unify_val_ty() {</a>
 <a name="11"><span class="lineNum">      11 </span>            :   for (const auto* other : m_attach-&gt;depends) {</a>
-<a name="12"><span class="lineNum">      12 </span>            :     if (m_val_ty == other-&gt;m_val_ty || other-&gt;m_val_ty == nullptr)</a>
+<a name="12"><span class="lineNum">      12 </span>            :     if (m_val_ty == other-&gt;m_val_ty || !other-&gt;m_val_ty)</a>
 <a name="13"><span class="lineNum">      13 </span>            :       return;</a>
 <a name="14"><span class="lineNum">      14 </span>            : </a>
-<a name="15"><span class="lineNum">      15 </span>            :     if (m_val_ty == nullptr) {</a>
+<a name="15"><span class="lineNum">      15 </span>            :     if (!m_val_ty) {</a>
 <a name="16"><span class="lineNum">      16 </span>            :       m_val_ty = other-&gt;m_val_ty;</a>
 <a name="17"><span class="lineNum">      17 </span>            :     } else {</a>
-<a name="18"><span class="lineNum">      18 </span>            :       const auto* merged = m_val_ty-&gt;coalesce(*other-&gt;m_val_ty);</a>
-<a name="19"><span class="lineNum">      19 </span>            :       if (merged == nullptr) {</a>
+<a name="18"><span class="lineNum">      18 </span>            :       const auto merged = m_val_ty-&gt;coalesce(*other-&gt;m_val_ty);</a>
+<a name="19"><span class="lineNum">      19 </span>            :       if (!merged) {</a>
 <a name="20"><span class="lineNum">      20 </span>            :         throw std::logic_error(&quot;Conflicting types between AST nodes that are attached: `&quot;s + m_val_ty-&gt;name() +</a>
 <a name="21"><span class="lineNum">      21 </span>            :                                &quot;` vs `&quot; + other-&gt;m_val_ty-&gt;name() + &quot;`!&quot;);</a>
 <a name="22"><span class="lineNum">      22 </span>            :       }</a>

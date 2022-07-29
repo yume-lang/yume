@@ -1,13 +1,15 @@
 <map id="yume::Fn" name="yume::Fn">
-<area shape="rect" id="node1" title="A function declaration in the compiler." alt="" coords="941,225,1016,252"/>
-<area shape="rect" id="node2" href="$structyume_1_1FnBase.html" title="Common values between function declarations (Fn) and constructors (Ctor), which behave very similarly..." alt="" coords="675,101,779,128"/>
-<area shape="rect" id="node3" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,25,115,52"/>
-<area shape="rect" id="node6" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="164,51,275,77"/>
-<area shape="rect" id="node4" href="$classyume_1_1ty_1_1Type.html" title="Represents a type in the type system. All types inherit from this class." alt="" coords="359,101,461,128"/>
-<area shape="rect" id="node5" href="$classyume_1_1ast_1_1Program.html" title="The top level structure of a file of source code." alt="" coords="344,51,476,77"/>
-<area shape="rect" id="node7" title=" " alt="" coords="370,152,450,179"/>
-<area shape="rect" id="node8" title=" " alt="" coords="650,175,803,217"/>
-<area shape="rect" id="node9" title=" " alt="" coords="381,209,439,236"/>
-<area shape="rect" id="node10" title=" " alt="" coords="662,241,791,282"/>
-<area shape="rect" id="node11" title=" " alt="" coords="641,306,812,347"/>
+<area shape="rect" id="node1" title="A function declaration in the compiler." alt="" coords="1027,244,1101,271"/>
+<area shape="rect" id="node2" href="$structyume_1_1FnBase.html" title="Common values between function declarations (Fn) and constructors (Ctor), which behave very similarly..." alt="" coords="760,157,864,184"/>
+<area shape="rect" id="node3" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,43,115,69"/>
+<area shape="rect" id="node7" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="164,68,275,95"/>
+<area shape="rect" id="node4" title=" " alt="" coords="433,119,558,161"/>
+<area shape="rect" id="node5" title=" " alt="" coords="186,127,253,153"/>
+<area shape="rect" id="node6" href="$classyume_1_1ast_1_1Program.html" title="The top level structure of a file of source code." alt="" coords="429,68,561,95"/>
+<area shape="rect" id="node8" href="$structyume_1_1Substitution.html" title=" " alt="" coords="431,185,559,212"/>
+<area shape="rect" id="node9" href="$classsubstitution__t.html" title=" " alt="" coords="169,185,269,212"/>
+<area shape="rect" id="node10" title=" " alt="" coords="455,236,535,263"/>
+<area shape="rect" id="node11" title=" " alt="" coords="735,237,889,278"/>
+<area shape="rect" id="node12" title=" " alt="" coords="466,291,525,317"/>
+<area shape="rect" id="node13" title=" " alt="" coords="727,302,897,343"/>
 </map>

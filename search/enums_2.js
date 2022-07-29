@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['type_0',['Type',['../structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1c',1,'yume::Token']]]
+  ['qualifier_0',['Qualifier',['../namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706',1,'yume']]]
 ];
