@@ -4,8 +4,8 @@ on: push
 
 env:
   BUILD_TYPE: Debug
-  TARGET_CLANG: 14
-  TARGET_LLVM: 14
+  TARGET_CLANG: 15
+  TARGET_LLVM: 15
   CATCH2_REF: '5a1ef7e4a6caf3d5f696eb82302e3d87ff5c2303'
   BUILD_DIR: ${{ github.workspace }}/build
 
@@ -17,8 +17,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        clang: [13, 14, 15]
-        llvm: [13, 14] #, 15]
+        clang: [13, 14, 15, 16]
+        llvm: [13, 14, 15, 16]
     env:
       CC: clang-${{ matrix.clang }}
       CXX: clang++-${{ matrix.clang }}
@@ -32,20 +32,19 @@ jobs:
       - name: Install libstdc++-12
         run: sudo apt update && sudo apt install libstdc++-12-dev
 
-      - if: matrix.clang == 15 || matrix.llvm == 15
-        name: Add LLVM 15 Repo
+      - name: Add LLVM repos
         run: |
           sudo add-apt-repository 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy main'
+          sudo add-apt-repository 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-14 main'
+          sudo add-apt-repository 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-15 main'
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
           sudo apt update
 
-      - if: matrix.llvm == 15
-        name: Install LLVM 15
-        run: sudo apt install llvm-15
+      - name: Install LLVM ${{ matrix.llvm }}
+        run: sudo apt install llvm-${{ matrix.llvm }}
 
-      - if: matrix.clang == 15
-        name: Install Clang 15
-        run: sudo apt install clang-15
+      - name: Install Clang ${{ matrix.clang }}
+        run: sudo apt install clang-${{ matrix.clang }}
 
       - name: Cache Catch2
         id: cache-catch2

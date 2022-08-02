@@ -29,9 +29,9 @@ Debug:
 ## Compiler compatibility
 
 The Yume compiler uses C++20 features which may not be fully implemented in all places.  
-**The target environment is LLVM 14, with clang 14 on libstdc++**
+**The target environment is LLVM 15, with clang 15 on libstdc++**
 
-- CI tests the compiler using **LLVM versions 13, 14 and 15**; and using **clang version 13, 14 and 15**, using **libstdc++ 12**.
+- CI tests the compiler using **LLVM versions 13, 14, 15, and 16**; and using **clang version 13, 14, 15, and 16**, using **libstdc++ 12**.
 - Compatibility with libc++ is on a best-effort casis: A few shims exist to add C++ stdlib features still missing from c++ and a build-time flag can be used to force using libc++, provided the system is ready to provide a version of llvm also using libc++.
 - Compatibility with gcc is not checked, and left as an excercise to the user
 
