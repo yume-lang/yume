@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <limits>
 #include <llvm/Support/Casting.h>
+#include <llvm/Support/ErrorHandling.h>
 #include <map>
 #include <sstream>
 #include <stdexcept>
@@ -197,10 +198,22 @@ auto Type::mut_base() const noexcept -> optional<Type> {
   return std::nullopt;
 }
 
+auto Type::ensure_mut_base() const -> Type {
+  if (m_mut)
+    return {m_base};
+  llvm_unreachable("Tried calling ensure_mut_base on a type that isn't a mutable reference");
+}
+
 auto Type::ptr_base() const noexcept -> optional<Type> {
   if (const auto* ptr = base_dyn_cast<Ptr>())
     return ptr->pointee();
   return {};
+}
+
+auto Type::ensure_ptr_base() const -> Type {
+  if (const auto* ptr = base_dyn_cast<Ptr>())
+    return ptr->pointee();
+  llvm_unreachable("Tried calling ensure_ptr_base on a type that isn't a pointer-like type");
 }
 
 auto Type::coalesce(Type other) const noexcept -> optional<Type> {

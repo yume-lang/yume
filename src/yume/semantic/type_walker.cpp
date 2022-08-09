@@ -32,7 +32,7 @@ inline void wrap_in_implicit_cast(ast::OptionalExpr& expr, ty::Conv conv, option
   expr = move(cast_expr);
 }
 
-inline void try_implicit_conversion(ast::OptionalExpr& expr, optional<ty::Type> target_type) {
+inline void try_implicit_conversion(ast::AnyExpr& expr, optional<ty::Type> target_type) {
   if (!target_type)
     return;
 
@@ -128,7 +128,7 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
     expr.val_ty(base_type);
   }
 
-  bool consider_ctor_overloads = st != nullptr;
+  const bool consider_ctor_overloads = st != nullptr;
   OverloadSet<Ctor> ctor_overloads{};
 
   // XXX: Duplicated from function overload handling
@@ -448,7 +448,8 @@ template <> void TypeWalker::statement(ast::ReturnStmt& stat) {
       if (auto* var_decl = dyn_cast<ast::VarDecl>(scope.at(var_expr->name())))
         stat.extend_lifetime_of(var_decl);
 
-    try_implicit_conversion(stat.expr(), current_decl.ast()->val_ty());
+    auto expr = stat.expr().ensure_value();
+    try_implicit_conversion(expr, current_decl.ast()->val_ty());
     current_decl.ast()->attach_to(stat.expr().raw_ptr());
     // TODO(rymiel): Once return type deduction exists, make sure to not return `mut` unless there is an _explicit_ type
     // annotation saying so

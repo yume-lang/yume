@@ -109,9 +109,17 @@ public:
   /// \returns `nullopt` if this type isn't a mutable reference.
   [[nodiscard]] auto mut_base() const noexcept -> optional<Type>;
 
+  /// If this type is a mutable reference, return the base of it (`T mut` -> `T`)
+  /// \throws if this type isn't a mutable reference.
+  [[nodiscard]] auto ensure_mut_base() const noexcept(false) -> Type;
+
   /// If this type is a pointer type, return the base of it (`T ptr` -> `T`)
   /// \returns `nullopt` if this type isn't a pointer type.
   [[nodiscard]] auto ptr_base() const noexcept -> optional<Type>;
+
+  /// If this type is a pointer type, return the base of it (`T ptr` -> `T`)
+  /// \throws if this type isn't a pointer type.
+  [[nodiscard]] auto ensure_ptr_base() const noexcept(false) -> Type;
 
   /// If this type is a mutable reference, return the base of it, otherwise return itself.
   [[nodiscard]] auto without_mut() const noexcept -> Type;
