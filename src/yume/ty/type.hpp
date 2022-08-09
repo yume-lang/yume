@@ -1,6 +1,5 @@
 #pragma once
 
-#include "compatibility.hpp"
 #include "qualifier.hpp"
 #include "ty/substitution.hpp"
 #include "ty/type_base.hpp"

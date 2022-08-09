@@ -87,7 +87,7 @@ auto compile(std::span<const char*> args) -> int {
 
 #ifdef YUME_EMIT_DOT
   for (const auto& i : compiler.source_files()) {
-    std::string full_name = "output_"s + std::string(yume::stem(i.name)) + ".dot";
+    const std::string full_name = "output_"s + std::string(yume::stem(i.name)) + ".dot";
     auto dot = yume::open_file(full_name.c_str());
     auto visitor = yume::diagnostic::DotVisitor{*dot};
     visitor.visit(*i.program, nullptr);

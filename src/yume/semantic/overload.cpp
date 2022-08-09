@@ -1,6 +1,5 @@
 #include "overload.hpp"
 #include "ast/ast.hpp"
-#include "token.hpp"
 #include "ty/compatibility.hpp"
 #include "ty/type.hpp"
 #include "util.hpp"

@@ -1,7 +1,6 @@
 #include "dot_visitor.hpp"
 #include "ast/ast.hpp"
 #include "token.hpp"
-#include "ty/type.hpp"
 #include "util.hpp"
 #include "llvm/Support/raw_ostream.h"
 #include <algorithm>

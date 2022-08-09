@@ -1,5 +1,4 @@
 #include "type.hpp"
-#include "compiler/vals.hpp"
 #include "ty/compatibility.hpp"
 #include "ty/substitution.hpp"
 #include <cstddef>

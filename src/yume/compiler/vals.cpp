@@ -24,7 +24,7 @@ auto Fn::get_or_create_instantiation(Substitution& subs) -> std::pair<bool, Fn&>
 
 auto Struct::create_instantiation(Substitution& subs) -> Struct& {
   auto* decl_clone = st_ast.clone();
-  member->body().emplace_back(ast::AnyStmt{decl_clone});
+  member->body().emplace_back(decl_clone);
 
   auto st_ptr = std::make_unique<Struct>(*decl_clone, self_ty, member, subs);
   auto new_emplace = instantiations.emplace(subs, move(st_ptr));
@@ -44,7 +44,7 @@ auto Ctor::name() const -> string { return get_self_ty()->name() + ":new"; }
 auto Struct::name() const -> string { return st_ast.name(); }
 
 auto Fn::overload_name(const call_t& ast) -> string { return ast.name(); };
-auto Ctor::overload_name(const call_t& ast) -> string { return ast.val_ty()->name() + ":new"; };
+auto Ctor::overload_name(const call_t& ast) -> string { return ast.ensure_ty().name() + ":new"; };
 
 auto Fn::arg_type(const decl_t::arg_t& ast) -> optional<ty::Type> { return ast.val_ty(); };
 auto Ctor::arg_type(const decl_t::arg_t& ast) -> optional<ty::Type> {

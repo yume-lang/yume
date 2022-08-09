@@ -2,7 +2,6 @@
 
 #include "ast/crtp_walker.hpp"
 #include "semantic/type_walker.hpp"
-#include "ty/type.hpp"
 #include "type_holder.hpp"
 #include "util.hpp"
 #include "vals.hpp"

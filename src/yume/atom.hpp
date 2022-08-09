@@ -29,8 +29,6 @@ private:
   static inline llvm::StringSet interned{}; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
 };
 
-// using Atom = const char*;
-
 /// Create an `Atom` with the given string content.
 /// \sa atom_literal::operator""_a
 auto inline make_atom(std::string_view value) noexcept -> Atom { return Atom::make_atom(value); }
