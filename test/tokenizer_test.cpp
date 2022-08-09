@@ -27,18 +27,22 @@ auto operator""_Separator(const char* str, size_t size) -> Token { return {Separ
 auto operator""_Symbol(const char* str, size_t size) -> Token { return {Symbol, make_atom({str, size})}; }
 auto operator""_Word(const char* str, size_t size) -> Token { return {Word, make_atom({str, size})}; }
 
-template <bool FilterSkip> auto tkn(const std::string& str) -> std::vector<Token> {
+auto tkn(const std::string& str) -> std::vector<Token> {
   static const std::string TEST_FILENAME = "<test>";
   auto in_stream = std::stringstream(str);
-  if (FilterSkip)
-    return tokenize(in_stream, TEST_FILENAME);
+  return tokenize(in_stream, TEST_FILENAME);
+}
+
+auto tkn_preserve(const std::string& str) -> std::vector<Token> {
+  static const std::string TEST_FILENAME = "<test>";
+  auto in_stream = std::stringstream(str);
   return tokenize_preserve_skipped(in_stream, TEST_FILENAME);
 }
 } // namespace
 
-#define CHECK_TOKENIZER(body, ...) CHECK_THAT(tkn<true>(body), equals_tokens(__VA_ARGS__))
-#define CHECK_TOKENIZER_THROWS(body) CHECK_THROWS(tkn<true>(body))
-#define CHECK_TOKENIZER_PRESERVED(body, ...) CHECK_THAT(tkn<false>(body), equals_tokens(__VA_ARGS__))
+#define CHECK_TOKENIZER(body, ...) CHECK_THAT(tkn(body), equals_tokens(__VA_ARGS__))
+#define CHECK_TOKENIZER_THROWS(body) CHECK_THROWS(tkn(body))
+#define CHECK_TOKENIZER_PRESERVED(body, ...) CHECK_THAT(tkn_preserve(body), equals_tokens(__VA_ARGS__))
 
 using enum yume::Token::Type;
 using namespace std::string_literals;
