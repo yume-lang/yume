@@ -39,8 +39,7 @@ inline void try_implicit_conversion(ast::OptionalExpr& expr, optional<ty::Type> 
   if (!expr)
     return;
 
-  // NOLINTNEXTLINE(bugprone-unchecked-optional-access): There is literally a check above
-  auto expr_ty = expr->val_ty().value();
+  auto expr_ty = expr->ensure_ty();
   auto compat = expr_ty.compatibility(*target_ty);
   if (!compat.valid)
     throw std::runtime_error("Invalid implicit conversion ('"s + expr_ty.name() + "' -> '" + target_ty->name() + "')");
@@ -80,7 +79,7 @@ template <> void TypeWalker::expression(ast::TypeName& expr) {
 
 template <> void TypeWalker::expression(ast::ImplicitCastExpr& expr) { body_expression(expr.base()); }
 
-static inline auto for_all_instantiations(std::list<Struct> structs, std::invocable<Struct&> auto fn) {
+static inline auto for_all_instantiations(std::list<Struct>& structs, std::invocable<Struct&> auto fn) {
   for (auto& i : structs) {
     fn(i);
     for (auto& [k, v] : i.instantiations)
@@ -480,8 +479,9 @@ template <> void TypeWalker::statement(ast::IfStmt& stat) {
     body_expression(i.cond());
     statement(i.body());
   }
-  if (stat.else_clause().has_value())
-    statement(*stat.else_clause());
+  auto& else_clause = stat.else_clause();
+  if (else_clause)
+    statement(*else_clause);
 }
 
 template <> void TypeWalker::statement(ast::WhileStmt& stat) {

@@ -843,7 +843,7 @@ template <> auto Compiler::expression(const ast::SliceExpr& expr) -> Val {
 
   auto* slice_type = llvm_type(expr.ensure_ty());
   auto* base_type =
-      llvm_type(expr.ensure_ty().base_cast<ty::Struct>()->fields().at(0)->ensure_ty().ptr_base().value()); // ???
+      llvm_type(expr.ensure_ty().base_cast<ty::Struct>()->fields().at(0)->ensure_ty().ensure_ptr_base()); // ???
 
   auto* alloc_size = llvm::ConstantExpr::getSizeOf(base_type);
   auto* ptr_alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), m_builder->getInt64Ty(), base_type,
@@ -888,7 +888,7 @@ template <> auto Compiler::expression(const ast::ImplicitCastExpr& expr) -> Val 
 
   if (expr.conversion().dereference) {
     yume_assert(current_ty.is_mut(), "Source type must be mutable when implicitly derefencing");
-    current_ty = current_ty.mut_base().value();
+    current_ty = current_ty.ensure_mut_base();
     base = m_builder->CreateLoad(llvm_type(current_ty), base, "ic.deref");
   }
 

@@ -26,7 +26,7 @@ auto Type::known_qual(Qualifier qual) const -> Type {
   if (qual == Qualifier::Mut)
     return {m_base, true};
 
-  int qual_idx = static_cast<int>(qual);
+  const int qual_idx = static_cast<int>(qual);
   const auto& existing = m_base->m_known_ptr_like.at(qual_idx);
   if (existing != nullptr)
     return {existing.get()};
@@ -46,11 +46,11 @@ static auto visit_subs(Type a, Type b, optional<Sub> sub) -> optional<Sub> {
   }
   // `Foo mut` -> `T mut`, with `T = Foo`.
   if (a.is_mut() && b.is_mut())
-    return visit_subs(*a.mut_base(), b.without_mut(), sub);
+    return visit_subs(a.ensure_mut_base(), b.without_mut(), sub);
 
   // `Foo ptr mut` -> `T ptr`, with `T = Foo`.
   if (a.is_mut() && !b.is_mut())
-    return visit_subs(*a.mut_base(), b, sub);
+    return visit_subs(a.ensure_mut_base(), b, sub);
 
   // `Foo{Bar}` -> `Foo{T}`, with `T = Foo`.
   // TODO(rymiel): This could technically have multiple type variables... Currently only handling the "1" case.
@@ -115,7 +115,7 @@ auto Type::compatibility(Type other, Compat compat) const -> Compat {
   // Note that the base types are also compared, so `I32 mut` -> `I64`.
   if (is_mut() && !other.is_mut()) {
     compat.conv.dereference = true;
-    compat = mut_base()->compatibility(other, compat);
+    compat = ensure_mut_base().compatibility(other, compat);
     return compat;
   }
 
@@ -137,7 +137,7 @@ auto Type::is_generic() const noexcept -> bool {
     return true;
 
   if (base_isa<Ptr>())
-    return ptr_base()->is_generic();
+    return ensure_ptr_base().is_generic();
 
   if (const auto* struct_ty = base_dyn_cast<Struct>())
     return std::ranges::any_of(struct_ty->subs(), [](const auto& sub) { return sub.second.is_generic(); });
@@ -160,7 +160,7 @@ auto Type::apply_generic_substitution(Sub sub) const -> optional<Type> {
     return Type{sub.replace.base(), m_mut};
 
   if (const auto* ptr_this = base_dyn_cast<Ptr>())
-    return ptr_base()->apply_generic_substitution(sub)->known_qual(ptr_this->qualifier());
+    return ensure_ptr_base().apply_generic_substitution(sub)->known_qual(ptr_this->qualifier());
 
   if (const auto* st_this = base_dyn_cast<Struct>()) {
     // Gah!
