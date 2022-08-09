@@ -61,7 +61,7 @@ Compiler::Compiler(vector<SourceFile> source_files)
   llvm::InitializeNativeTargetAsmParser();
   llvm::InitializeNativeTargetAsmPrinter();
   string error;
-  string target_triple = llvm::sys::getDefaultTargetTriple();
+  const string target_triple = llvm::sys::getDefaultTargetTriple();
   const auto* target = llvm::TargetRegistry::lookupTarget(target_triple, error);
 
   if (target == nullptr) {
@@ -71,7 +71,7 @@ Compiler::Compiler(vector<SourceFile> source_files)
   const char* cpu = "generic";
   const char* feat = "";
 
-  llvm::TargetOptions opt;
+  const llvm::TargetOptions opt;
   m_targetMachine = unique_ptr<llvm::TargetMachine>(
       target->createTargetMachine(target_triple, cpu, feat, opt, llvm::Reloc::Model::PIC_));
 
@@ -80,7 +80,7 @@ Compiler::Compiler(vector<SourceFile> source_files)
 }
 
 void Compiler::declare_default_ctor(Struct& st) {
-  bool no_ctors_declared =
+  const bool no_ctors_declared =
       std::ranges::none_of(m_ctors, [&](const Ctor& ct) { return ct.get_self_ty() == st.get_self_ty(); });
 
   if (!no_ctors_declared)
@@ -254,8 +254,9 @@ auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
 
 void Compiler::destruct(Val val, ty::Type type) {
   if (type.is_mut()) {
-    const auto deref_type = *type.mut_base();
-    return destruct(m_builder->CreateLoad(llvm_type(deref_type), val), deref_type);
+    const auto deref_type = type.mut_base();
+    if (deref_type.has_value())
+      return destruct(m_builder->CreateLoad(llvm_type(*deref_type), val), *deref_type);
   }
   if (const auto* ptr_type = type.base_dyn_cast<ty::Ptr>()) {
     if (ptr_type->has_qualifier(Qualifier::Slice)) {
@@ -340,6 +341,8 @@ auto Compiler::declare(Ctor& ctor) -> llvm::Function* {
     return ctor.base.llvm;
 
   const auto& ctor_decl = ctor.ast();
+  yume_assert(ctor.base.self_ty.has_value(), "Cannot declare constructor when the type being constructed is unknown");
+  // NOLINTNEXTLINE(bugprone-unchecked-optional-access): clang-tidy doesn't accept yume_assert as an assertion
   auto* llvm_ret_type = llvm_type(*ctor.base.self_ty);
   auto llvm_args = vector<llvm::Type*>{};
 
@@ -348,7 +351,7 @@ auto Compiler::declare(Ctor& ctor) -> llvm::Function* {
 
   llvm::FunctionType* fn_t = llvm::FunctionType::get(llvm_ret_type, llvm_args, false);
 
-  string name = mangle_name(ctor);
+  const string name = mangle_name(ctor);
 
   auto linkage = llvm::Function::InternalLinkage;
   auto* llvm_fn = llvm::Function::Create(fn_t, linkage, name, m_module.get());
@@ -434,6 +437,8 @@ void Compiler::define(Fn& fn) {
 void Compiler::define(Ctor& ctor) {
   setup_fn_base(ctor);
 
+  yume_assert(ctor.base.self_ty.has_value(), "Cannot declare constructor when the type being constructed is unknown");
+  // NOLINTNEXTLINE(bugprone-unchecked-optional-access): clang-tidy doesn't accept yume_assert as an assertion
   auto* ctor_type = llvm_type(*ctor.base.self_ty);
   Val base_value = llvm::UndefValue::get(ctor_type);
 
@@ -441,7 +446,7 @@ void Compiler::define(Ctor& ctor) {
   for (auto [arg, ast_arg] : llvm::zip(ctor.base.llvm->args(), ctor.ast().args())) {
     if (const auto* field_access = std::get_if<ast::FieldAccessExpr>(&ast_arg)) {
       auto base_name = field_access->field();
-      int base_offset = field_access->offset();
+      const int base_offset = field_access->offset();
       yume_assert(base_offset >= 0, "Field access has unknown offset into struct");
 
       base_value = m_builder->CreateInsertValue(base_value, &arg, base_offset, "ctor.wf."s + base_name);
@@ -497,10 +502,11 @@ template <> void Compiler::statement(const ast::IfStmt& stat) {
     }
   }
 
-  if (stat.else_clause().has_value()) {
+  const auto& else_clause = stat.else_clause();
+  if (else_clause.has_value()) {
     next_test_bb->setName("if.else");
     m_builder->SetInsertPoint(next_test_bb);
-    statement(*stat.else_clause());
+    statement(*else_clause);
     if (m_builder->GetInsertBlock()->getTerminator() == nullptr) {
       all_terminated = false;
       m_builder->CreateBr(merge_bb);
@@ -553,7 +559,7 @@ auto Compiler::entrypoint_builder() -> llvm::IRBuilder<> {
 template <> void Compiler::statement(const ast::VarDecl& stat) {
   // Locals are currently always mut, get the base type instead
   // TODO(rymiel): revisit, probably extract logic
-  auto* var_type = llvm_type(*stat.ensure_ty().mut_base());
+  auto* var_type = llvm_type(stat.ensure_ty().ensure_mut_base());
 
   if (stat.init()->ensure_ty().is_mut()) {
     auto expr_val = body_expression(*stat.init());
@@ -605,7 +611,7 @@ template <> auto Compiler::expression(const ast::VarExpr& expr) -> Val {
 }
 
 /// A constexpr-friendly simple string hash, for simple switches with string cases
-static auto constexpr const_hash(char const* input) -> unsigned {
+static auto constexpr const_hash(const char* input) -> unsigned {
   return *input != 0 ? static_cast<unsigned int>(*input) + 33 * const_hash(input + 1) : 5381; // NOLINT
 }
 
@@ -646,7 +652,7 @@ auto Compiler::primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<
         args.at(0), m_builder->CreateAdd(m_builder->CreateExtractValue(args.at(0), 1), args.at(1)), 1);
   }
   if (primitive == "slice_malloc") {
-    auto base_ty_type = types.at(0).ptr_base().value();
+    auto base_ty_type = types.at(0).ensure_ptr_base();
     auto* base_type = llvm_type(base_ty_type);
     auto* slice_size = args.at(1);
 
@@ -658,20 +664,20 @@ auto Compiler::primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<
     return m_builder->Insert(array_alloc);
   }
   if (primitive == "default_init") {
-    auto base_type = types.at(0).mut_base().value();
+    auto base_type = types.at(0).ensure_mut_base();
     m_builder->CreateStore(default_init(base_type), args.at(0));
 
     return args.at(0);
   }
   if (primitive == "set_at") {
-    auto* result_type = llvm_type(types[0].without_mut().ptr_base().value());
+    auto* result_type = llvm_type(types[0].without_mut().ensure_ptr_base());
     llvm::Value* value = args.at(2);
     llvm::Value* base = m_builder->CreateGEP(result_type, args.at(0), args.at(1), "p.set_at.gep");
     m_builder->CreateStore(value, base);
     return args.at(2);
   }
   if (primitive == "get_at") {
-    auto* result_type = llvm_type(types[0].without_mut().ptr_base().value());
+    auto* result_type = llvm_type(types[0].without_mut().ensure_ptr_base());
     llvm::Value* base = args.at(0);
     base = m_builder->CreateGEP(result_type, base, args.at(1), "p.get_at.gep");
     return base;
@@ -689,13 +695,11 @@ template <> auto Compiler::expression(const ast::CallExpr& expr) -> Val {
   vector<ty::Type> arg_types{};
   vector<llvm::Value*> llvm_args{};
 
-  unsigned j = 0;
   for (const auto& i : expr.args()) {
     auto arg = body_expression(*i);
     args.push_back(arg);
     llvm_args.push_back(arg.llvm);
     arg_types.push_back(i->ensure_ty());
-    j++;
   }
 
   Val val{nullptr};
@@ -720,28 +724,26 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
   }
   if (const auto* field_access = dyn_cast<ast::FieldAccessExpr>(expr.target().raw_ptr())) {
     const auto& field_base = field_access->base();
-    optional<ty::Type> struct_base = {};
-    Val base{nullptr};
-    if (field_base.has_value()) {
-      base = body_expression(*field_base);
-      struct_base = field_access->base()->val_ty();
-    } else {
-      // TODO(rymiel): revisit
+    const auto [struct_base, base] = [&]() -> tuple<ty::Type, Val> {
+      if (field_base.has_value()) {
+        auto base = body_expression(*field_base);
+        auto struct_base = field_access->base()->ensure_ty();
+        return {struct_base, base};
+      } // TODO(rymiel): revisit
       if (!isa<ast::CtorDecl>(m_current_fn->ast))
         throw std::logic_error("Field access without a base is only available in constructors");
 
       auto [value, ast, owning] = *m_scope_ctor;
-      base = value;
-      struct_base = ast.ensure_ty().known_mut();
-    }
+      return {ast.ensure_ty().known_mut(), value};
+    }();
 
-    yume_assert(struct_base->is_mut(), "Cannot assign into field of immutable structure");
+    yume_assert(struct_base.is_mut(), "Cannot assign into field of immutable structure");
 
-    auto base_name = field_access->field();
-    int base_offset = field_access->offset();
+    const string base_name = field_access->field();
+    const int base_offset = field_access->offset();
 
     auto expr_val = body_expression(*expr.value());
-    auto* struct_type = llvm_type(struct_base->mut_base()->base_cast<ty::Struct>());
+    auto* struct_type = llvm_type(struct_base.ensure_mut_base().base_cast<ty::Struct>());
 
     yume_assert(base_offset >= 0, "Field access has unknown offset into struct");
 
@@ -870,8 +872,8 @@ template <> auto Compiler::expression(const ast::FieldAccessExpr& expr) -> Val {
     base_type = m_current_fn->self_ty;
   }
 
-  auto base_name = expr.field();
-  int base_offset = expr.offset();
+  const string base_name = expr.field();
+  const int base_offset = expr.offset();
 
   if (!expr.ensure_ty().is_mut())
     return m_builder->CreateExtractValue(*base, base_offset, "s.field.nm."s + base_name);
