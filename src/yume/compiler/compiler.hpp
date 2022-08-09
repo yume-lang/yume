@@ -104,10 +104,6 @@ public:
   /// Destructs an object \p val of specified type \p type .
   void destruct(Val val, ty::Type type);
 
-  auto mangle_name(Fn& fn) -> string;
-  auto mangle_name(Ctor& ctor) -> string;
-  auto mangle_name(ty::Type ast_type, DeclLike parent) -> string;
-
   [[nodiscard]] auto source_files() -> const auto& { return m_sources; }
 
 private:
