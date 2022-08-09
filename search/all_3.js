@@ -3,7 +3,7 @@ var searchData=
   ['decl_5fqueue_0',['decl_queue',['../structyume_1_1semantic_1_1TypeWalker.html#a50e688ad7be6bcb60cdf0cfb831d4556',1,'yume::semantic::TypeWalker']]],
   ['decl_5fstatement_1',['decl_statement',['../classyume_1_1Compiler.html#a3f05300d31c4709ce1f9b6387761c11f',1,'yume::Compiler']]],
   ['decl_5ft_2',['decl_t',['../structyume_1_1Ctor.html#a2e7bed7b04f0a3a25775d2bf920ef2eb',1,'yume::Ctor::decl_t()'],['../structyume_1_1Struct.html#a9306172635db385f212f35056d64a630',1,'yume::Struct::decl_t()'],['../structyume_1_1Fn.html#aa5fb367d4f42527de17be550fb04be20',1,'yume::Fn::decl_t()']]],
-  ['declare_3',['declare',['../classyume_1_1Compiler.html#a0cd131954af6ce5ba18902b8bb675a54',1,'yume::Compiler::declare(Ctor &amp;) -&gt; llvm::Function *'],['../classyume_1_1Compiler.html#af256ab9e0483fda81fba391bd401bb5f',1,'yume::Compiler::declare(Fn &amp;, bool mangle=true) -&gt; llvm::Function *']]],
+  ['declare_3',['declare',['../classyume_1_1Compiler.html#a0cd131954af6ce5ba18902b8bb675a54',1,'yume::Compiler::declare(Ctor &amp;) -&gt; llvm::Function *'],['../classyume_1_1Compiler.html#abab9748d5d44d5593e75af6a5ee92709',1,'yume::Compiler::declare(Fn &amp;) -&gt; llvm::Function *']]],
   ['decllike_4',['DeclLike',['../structyume_1_1DeclLike.html',1,'yume']]],
   ['decllike_5ft_5',['DeclLike_t',['../classDeclLike__t.html',1,'DeclLike_t'],['../namespaceyume.html#a092ba077b253b7f71c511110acc90c1d',1,'yume::DeclLike_t()']]],
   ['default_5finit_6',['default_init',['../classyume_1_1Compiler.html#adf4c9fec71767df40509584f5d181cdd',1,'yume::Compiler']]],

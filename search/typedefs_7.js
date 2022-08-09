@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['substitution_5ft_0',['substitution_t',['../namespaceyume.html#a5dc96a3ee2ac1f563d1451989a1c11e9',1,'yume']]]
+  ['optionalexpr_0',['OptionalExpr',['../namespaceyume_1_1ast.html#af4e6788ee8c32918650276c689d849a2',1,'yume::ast']]],
+  ['optionaltype_1',['OptionalType',['../namespaceyume_1_1ast.html#abbe8370067fd80e7639b21ac03c4c7f1',1,'yume::ast']]]
 ];

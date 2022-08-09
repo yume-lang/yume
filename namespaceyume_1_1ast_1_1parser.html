@@ -120,6 +120,8 @@ Variables</h2></td></tr>
 <tr class="separator:a68fd402689c9b322f54f9ca8419d0128"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aebe74a863fb886e7e7680bbb8408a075"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="namespaceyume_1_1ast_1_1parser.html#af2bb5ecccc83c997bd6403d5cc0dd3e0">TokenAtom</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast_1_1parser.html#aebe74a863fb886e7e7680bbb8408a075">KWD_RETURN</a> = {<a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1ca07a094a210794e74a0e5e1a1457a92ee">Token::Type::Word</a>, &quot;return&quot;_a}</td></tr>
 <tr class="separator:aebe74a863fb886e7e7680bbb8408a075"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae91d020fd30afe03bb83d60812aeac61"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="namespaceyume_1_1ast_1_1parser.html#af2bb5ecccc83c997bd6403d5cc0dd3e0">TokenAtom</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast_1_1parser.html#ae91d020fd30afe03bb83d60812aeac61">KWD_EXTERN</a> = {<a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1ca07a094a210794e74a0e5e1a1457a92ee">Token::Type::Word</a>, &quot;__extern__&quot;_a}</td></tr>
+<tr class="separator:ae91d020fd30afe03bb83d60812aeac61"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6944885aed90134d6719990a2a0f6bde"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="namespaceyume_1_1ast_1_1parser.html#af2bb5ecccc83c997bd6403d5cc0dd3e0">TokenAtom</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast_1_1parser.html#a6944885aed90134d6719990a2a0f6bde">KWD_VARARGS</a> = {<a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1ca07a094a210794e74a0e5e1a1457a92ee">Token::Type::Word</a>, &quot;__varargs__&quot;_a}</td></tr>
 <tr class="separator:a6944885aed90134d6719990a2a0f6bde"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a07b15c3a2d7f598fe29014ba8c7ae4"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="namespaceyume_1_1ast_1_1parser.html#af2bb5ecccc83c997bd6403d5cc0dd3e0">TokenAtom</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ast_1_1parser.html#a7a07b15c3a2d7f598fe29014ba8c7ae4">KWD_PRIMITIVE</a> = {<a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1ca07a094a210794e74a0e5e1a1457a92ee">Token::Type::Word</a>, &quot;__primitive__&quot;_a}</td></tr>
@@ -207,7 +209,7 @@ Variables</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00075">75</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00369">yume::ast::parser::Parser::parse_ctor_decl()</a>, <a class="el" href="parser_8cpp_source.html#l00317">yume::ast::parser::Parser::parse_fn_decl()</a>, and <a class="el" href="parser_8cpp_source.html#l00138">yume::ast::parser::Parser::parse_stmt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00379">yume::ast::parser::Parser::parse_ctor_decl()</a>, <a class="el" href="parser_8cpp_source.html#l00317">yume::ast::parser::Parser::parse_fn_decl()</a>, and <a class="el" href="parser_8cpp_source.html#l00138">yume::ast::parser::Parser::parse_stmt()</a>.</p>
 
 </div>
 </div>
@@ -233,7 +235,7 @@ Variables</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00081">81</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00441">yume::ast::parser::Parser::parse_if_stmt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00451">yume::ast::parser::Parser::parse_if_stmt()</a>.</p>
 
 </div>
 </div>
@@ -259,7 +261,33 @@ Variables</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00076">76</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00369">yume::ast::parser::Parser::parse_ctor_decl()</a>, <a class="el" href="parser_8cpp_source.html#l00317">yume::ast::parser::Parser::parse_fn_decl()</a>, <a class="el" href="parser_8cpp_source.html#l00441">yume::ast::parser::Parser::parse_if_stmt()</a>, <a class="el" href="parser_8cpp_source.html#l00281">yume::ast::parser::Parser::parse_struct_decl()</a>, and <a class="el" href="parser_8cpp_source.html#l00409">yume::ast::parser::Parser::parse_while_stmt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00379">yume::ast::parser::Parser::parse_ctor_decl()</a>, <a class="el" href="parser_8cpp_source.html#l00317">yume::ast::parser::Parser::parse_fn_decl()</a>, <a class="el" href="parser_8cpp_source.html#l00451">yume::ast::parser::Parser::parse_if_stmt()</a>, <a class="el" href="parser_8cpp_source.html#l00281">yume::ast::parser::Parser::parse_struct_decl()</a>, and <a class="el" href="parser_8cpp_source.html#l00419">yume::ast::parser::Parser::parse_while_stmt()</a>.</p>
+
+</div>
+</div>
+<a id="ae91d020fd30afe03bb83d60812aeac61" name="ae91d020fd30afe03bb83d60812aeac61"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae91d020fd30afe03bb83d60812aeac61">&#9670;&nbsp;</a></span>KWD_EXTERN</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="namespaceyume_1_1ast_1_1parser.html#af2bb5ecccc83c997bd6403d5cc0dd3e0">TokenAtom</a> yume::ast::parser::KWD_EXTERN = {<a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1ca07a094a210794e74a0e5e1a1457a92ee">Token::Type::Word</a>, &quot;__extern__&quot;_a}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00090">90</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00317">yume::ast::parser::Parser::parse_fn_decl()</a>.</p>
 
 </div>
 </div>
@@ -285,7 +313,7 @@ Variables</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00086">86</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00523">yume::ast::parser::Parser::parse_primary()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00533">yume::ast::parser::Parser::parse_primary()</a>.</p>
 
 </div>
 </div>
@@ -311,7 +339,7 @@ Variables</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00074">74</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00441">yume::ast::parser::Parser::parse_if_stmt()</a>, and <a class="el" href="parser_8cpp_source.html#l00138">yume::ast::parser::Parser::parse_stmt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00451">yume::ast::parser::Parser::parse_if_stmt()</a>, and <a class="el" href="parser_8cpp_source.html#l00138">yume::ast::parser::Parser::parse_stmt()</a>.</p>
 
 </div>
 </div>
@@ -337,7 +365,7 @@ Variables</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00077">77</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00138">yume::ast::parser::Parser::parse_stmt()</a>, and <a class="el" href="parser_8cpp_source.html#l00395">yume::ast::parser::Parser::parse_var_decl()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00138">yume::ast::parser::Parser::parse_stmt()</a>, and <a class="el" href="parser_8cpp_source.html#l00405">yume::ast::parser::Parser::parse_var_decl()</a>.</p>
 
 </div>
 </div>
@@ -389,7 +417,7 @@ Variables</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00080">80</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00369">yume::ast::parser::Parser::parse_ctor_decl()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00379">yume::ast::parser::Parser::parse_ctor_decl()</a>.</p>
 
 </div>
 </div>
@@ -413,7 +441,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00091">91</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00092">92</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00317">yume::ast::parser::Parser::parse_fn_decl()</a>.</p>
 
@@ -467,7 +495,7 @@ Variables</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00089">89</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00429">yume::ast::parser::Parser::parse_return_stmt()</a>, and <a class="el" href="parser_8cpp_source.html#l00138">yume::ast::parser::Parser::parse_stmt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00439">yume::ast::parser::Parser::parse_return_stmt()</a>, and <a class="el" href="parser_8cpp_source.html#l00138">yume::ast::parser::Parser::parse_stmt()</a>.</p>
 
 </div>
 </div>
@@ -571,7 +599,7 @@ Variables</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00084">84</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00441">yume::ast::parser::Parser::parse_if_stmt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00451">yume::ast::parser::Parser::parse_if_stmt()</a>.</p>
 
 </div>
 </div>
@@ -597,7 +625,7 @@ Variables</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00085">85</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00523">yume::ast::parser::Parser::parse_primary()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00533">yume::ast::parser::Parser::parse_primary()</a>.</p>
 
 </div>
 </div>
@@ -621,7 +649,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00090">90</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00091">91</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00317">yume::ast::parser::Parser::parse_fn_decl()</a>.</p>
 
@@ -649,7 +677,7 @@ Variables</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00087">87</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00138">yume::ast::parser::Parser::parse_stmt()</a>, and <a class="el" href="parser_8cpp_source.html#l00409">yume::ast::parser::Parser::parse_while_stmt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00138">yume::ast::parser::Parser::parse_stmt()</a>, and <a class="el" href="parser_8cpp_source.html#l00419">yume::ast::parser::Parser::parse_while_stmt()</a>.</p>
 
 </div>
 </div>
@@ -673,9 +701,9 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00111">111</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00112">112</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00246">yume::ast::parser::Parser::parse_fn_name()</a>, and <a class="el" href="parser_8hpp_source.html#l00164">yume::ast::parser::Parser::unary_operators()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00246">yume::ast::parser::Parser::parse_fn_name()</a>, and <a class="el" href="parser_8hpp_source.html#l00165">yume::ast::parser::Parser::unary_operators()</a>.</p>
 
 </div>
 </div>
@@ -699,9 +727,9 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00112">112</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00113">113</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00369">yume::ast::parser::Parser::parse_ctor_decl()</a>, <a class="el" href="parser_8cpp_source.html#l00311">yume::ast::parser::Parser::parse_fn_or_ctor_decl()</a>, and <a class="el" href="parser_8cpp_source.html#l00523">yume::ast::parser::Parser::parse_primary()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00379">yume::ast::parser::Parser::parse_ctor_decl()</a>, <a class="el" href="parser_8cpp_source.html#l00311">yume::ast::parser::Parser::parse_fn_or_ctor_decl()</a>, and <a class="el" href="parser_8cpp_source.html#l00533">yume::ast::parser::Parser::parse_primary()</a>.</p>
 
 </div>
 </div>
@@ -725,9 +753,9 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00113">113</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00114">114</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00523">yume::ast::parser::Parser::parse_primary()</a>, <a class="el" href="parser_8cpp_source.html#l00575">yume::ast::parser::Parser::parse_receiver()</a>, and <a class="el" href="parser_8cpp_source.html#l00361">yume::ast::parser::Parser::parse_type_name_or_ctor_field()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00533">yume::ast::parser::Parser::parse_primary()</a>, <a class="el" href="parser_8cpp_source.html#l00585">yume::ast::parser::Parser::parse_receiver()</a>, and <a class="el" href="parser_8cpp_source.html#l00371">yume::ast::parser::Parser::parse_type_name_or_ctor_field()</a>.</p>
 
 </div>
 </div>
@@ -751,9 +779,9 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00093">93</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00094">94</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00201">yume::ast::parser::Parser::consume_with_commas_until()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00202">yume::ast::parser::Parser::consume_with_commas_until()</a>.</p>
 
 </div>
 </div>
@@ -777,9 +805,9 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00094">94</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00095">95</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00575">yume::ast::parser::Parser::parse_receiver()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00585">yume::ast::parser::Parser::parse_receiver()</a>.</p>
 
 </div>
 </div>
@@ -803,9 +831,9 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00095">95</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00096">96</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00317">yume::ast::parser::Parser::parse_fn_decl()</a>, <a class="el" href="parser_8cpp_source.html#l00246">yume::ast::parser::Parser::parse_fn_name()</a>, <a class="el" href="parser_8cpp_source.html#l00575">yume::ast::parser::Parser::parse_receiver()</a>, and <a class="el" href="parser_8cpp_source.html#l00395">yume::ast::parser::Parser::parse_var_decl()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00317">yume::ast::parser::Parser::parse_fn_decl()</a>, <a class="el" href="parser_8cpp_source.html#l00246">yume::ast::parser::Parser::parse_fn_name()</a>, <a class="el" href="parser_8cpp_source.html#l00585">yume::ast::parser::Parser::parse_receiver()</a>, and <a class="el" href="parser_8cpp_source.html#l00405">yume::ast::parser::Parser::parse_var_decl()</a>.</p>
 
 </div>
 </div>
@@ -829,9 +857,9 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00102">102</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00103">103</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00155">yume::ast::parser::Parser::operators()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00156">yume::ast::parser::Parser::operators()</a>.</p>
 
 </div>
 </div>
@@ -855,9 +883,9 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00105">105</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00106">106</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00155">yume::ast::parser::Parser::operators()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00156">yume::ast::parser::Parser::operators()</a>.</p>
 
 </div>
 </div>
@@ -881,7 +909,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00100">100</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00101">101</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00317">yume::ast::parser::Parser::parse_fn_decl()</a>, <a class="el" href="parser_8cpp_source.html#l00281">yume::ast::parser::Parser::parse_struct_decl()</a>, <a class="el" href="parser_8cpp_source.html#l00160">yume::ast::parser::Parser::parse_type()</a>, and <a class="el" href="parser_8cpp_source.html#l00195">yume::ast::parser::Parser::try_parse_type()</a>.</p>
 
@@ -907,9 +935,9 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00098">98</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00099">99</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00246">yume::ast::parser::Parser::parse_fn_name()</a>, <a class="el" href="parser_8cpp_source.html#l00523">yume::ast::parser::Parser::parse_primary()</a>, <a class="el" href="parser_8cpp_source.html#l00575">yume::ast::parser::Parser::parse_receiver()</a>, <a class="el" href="parser_8cpp_source.html#l00160">yume::ast::parser::Parser::parse_type()</a>, and <a class="el" href="parser_8cpp_source.html#l00195">yume::ast::parser::Parser::try_parse_type()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00246">yume::ast::parser::Parser::parse_fn_name()</a>, <a class="el" href="parser_8cpp_source.html#l00533">yume::ast::parser::Parser::parse_primary()</a>, <a class="el" href="parser_8cpp_source.html#l00585">yume::ast::parser::Parser::parse_receiver()</a>, <a class="el" href="parser_8cpp_source.html#l00160">yume::ast::parser::Parser::parse_type()</a>, and <a class="el" href="parser_8cpp_source.html#l00195">yume::ast::parser::Parser::try_parse_type()</a>.</p>
 
 </div>
 </div>
@@ -933,9 +961,9 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00096">96</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00097">97</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00369">yume::ast::parser::Parser::parse_ctor_decl()</a>, <a class="el" href="parser_8cpp_source.html#l00317">yume::ast::parser::Parser::parse_fn_decl()</a>, <a class="el" href="parser_8cpp_source.html#l00523">yume::ast::parser::Parser::parse_primary()</a>, <a class="el" href="parser_8cpp_source.html#l00575">yume::ast::parser::Parser::parse_receiver()</a>, and <a class="el" href="parser_8cpp_source.html#l00281">yume::ast::parser::Parser::parse_struct_decl()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00379">yume::ast::parser::Parser::parse_ctor_decl()</a>, <a class="el" href="parser_8cpp_source.html#l00317">yume::ast::parser::Parser::parse_fn_decl()</a>, <a class="el" href="parser_8cpp_source.html#l00533">yume::ast::parser::Parser::parse_primary()</a>, <a class="el" href="parser_8cpp_source.html#l00585">yume::ast::parser::Parser::parse_receiver()</a>, and <a class="el" href="parser_8cpp_source.html#l00281">yume::ast::parser::Parser::parse_struct_decl()</a>.</p>
 
 </div>
 </div>
@@ -959,9 +987,9 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00104">104</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00105">105</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00155">yume::ast::parser::Parser::operators()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00156">yume::ast::parser::Parser::operators()</a>.</p>
 
 </div>
 </div>
@@ -985,9 +1013,9 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00107">107</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00108">108</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00155">yume::ast::parser::Parser::operators()</a>, and <a class="el" href="parser_8hpp_source.html#l00164">yume::ast::parser::Parser::unary_operators()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00156">yume::ast::parser::Parser::operators()</a>, and <a class="el" href="parser_8hpp_source.html#l00165">yume::ast::parser::Parser::unary_operators()</a>.</p>
 
 </div>
 </div>
@@ -1011,9 +1039,9 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00103">103</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00104">104</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00155">yume::ast::parser::Parser::operators()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00156">yume::ast::parser::Parser::operators()</a>.</p>
 
 </div>
 </div>
@@ -1037,9 +1065,9 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00108">108</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00109">109</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00155">yume::ast::parser::Parser::operators()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00156">yume::ast::parser::Parser::operators()</a>.</p>
 
 </div>
 </div>
@@ -1063,9 +1091,9 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00106">106</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00107">107</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00155">yume::ast::parser::Parser::operators()</a>, and <a class="el" href="parser_8hpp_source.html#l00164">yume::ast::parser::Parser::unary_operators()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00156">yume::ast::parser::Parser::operators()</a>, and <a class="el" href="parser_8hpp_source.html#l00165">yume::ast::parser::Parser::unary_operators()</a>.</p>
 
 </div>
 </div>
@@ -1089,7 +1117,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00101">101</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00102">102</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00317">yume::ast::parser::Parser::parse_fn_decl()</a>, <a class="el" href="parser_8cpp_source.html#l00281">yume::ast::parser::Parser::parse_struct_decl()</a>, <a class="el" href="parser_8cpp_source.html#l00160">yume::ast::parser::Parser::parse_type()</a>, and <a class="el" href="parser_8cpp_source.html#l00195">yume::ast::parser::Parser::try_parse_type()</a>.</p>
 
@@ -1115,9 +1143,9 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00099">99</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00100">100</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00246">yume::ast::parser::Parser::parse_fn_name()</a>, <a class="el" href="parser_8cpp_source.html#l00523">yume::ast::parser::Parser::parse_primary()</a>, <a class="el" href="parser_8cpp_source.html#l00575">yume::ast::parser::Parser::parse_receiver()</a>, <a class="el" href="parser_8cpp_source.html#l00160">yume::ast::parser::Parser::parse_type()</a>, and <a class="el" href="parser_8cpp_source.html#l00195">yume::ast::parser::Parser::try_parse_type()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00246">yume::ast::parser::Parser::parse_fn_name()</a>, <a class="el" href="parser_8cpp_source.html#l00533">yume::ast::parser::Parser::parse_primary()</a>, <a class="el" href="parser_8cpp_source.html#l00585">yume::ast::parser::Parser::parse_receiver()</a>, <a class="el" href="parser_8cpp_source.html#l00160">yume::ast::parser::Parser::parse_type()</a>, and <a class="el" href="parser_8cpp_source.html#l00195">yume::ast::parser::Parser::try_parse_type()</a>.</p>
 
 </div>
 </div>
@@ -1141,9 +1169,9 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00097">97</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00098">98</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00369">yume::ast::parser::Parser::parse_ctor_decl()</a>, <a class="el" href="parser_8cpp_source.html#l00317">yume::ast::parser::Parser::parse_fn_decl()</a>, <a class="el" href="parser_8cpp_source.html#l00523">yume::ast::parser::Parser::parse_primary()</a>, <a class="el" href="parser_8cpp_source.html#l00575">yume::ast::parser::Parser::parse_receiver()</a>, and <a class="el" href="parser_8cpp_source.html#l00281">yume::ast::parser::Parser::parse_struct_decl()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00379">yume::ast::parser::Parser::parse_ctor_decl()</a>, <a class="el" href="parser_8cpp_source.html#l00317">yume::ast::parser::Parser::parse_fn_decl()</a>, <a class="el" href="parser_8cpp_source.html#l00533">yume::ast::parser::Parser::parse_primary()</a>, <a class="el" href="parser_8cpp_source.html#l00585">yume::ast::parser::Parser::parse_receiver()</a>, and <a class="el" href="parser_8cpp_source.html#l00281">yume::ast::parser::Parser::parse_struct_decl()</a>.</p>
 
 </div>
 </div>
@@ -1167,9 +1195,9 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00109">109</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00110">110</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00155">yume::ast::parser::Parser::operators()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00156">yume::ast::parser::Parser::operators()</a>.</p>
 
 </div>
 </div>
@@ -1193,9 +1221,9 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00110">110</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00111">111</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00155">yume::ast::parser::Parser::operators()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00156">yume::ast::parser::Parser::operators()</a>.</p>
 
 </div>
 </div>

@@ -31,13 +31,13 @@
             <td class="headerValue">doc-cov.info</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntry">132</td>
-            <td class="headerCovTableEntry">342</td>
-            <td class="headerCovTableEntryLo">38.6 %</td>
+            <td class="headerCovTableEntry">131</td>
+            <td class="headerCovTableEntry">347</td>
+            <td class="headerCovTableEntryLo">37.8 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-08-09 06:29:14</td>
+            <td class="headerValue">2022-08-09 20:33:01</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -61,7 +61,7 @@
 <a name="3"><span class="lineNum">       3 </span>            : #include &quot;qualifier.hpp&quot;</a>
 <a name="4"><span class="lineNum">       4 </span>            : #include &quot;token.hpp&quot;</a>
 <a name="5"><span class="lineNum">       5 </span>            : #include &quot;ty/compatibility.hpp&quot;</a>
-<a name="6"><span class="lineNum">       6 </span>            : #include &quot;ty/type.hpp&quot;</a>
+<a name="6"><span class="lineNum">       6 </span>            : #include &quot;ty/type_base.hpp&quot;</a>
 <a name="7"><span class="lineNum">       7 </span>            : #include &quot;util.hpp&quot;</a>
 <a name="8"><span class="lineNum">       8 </span>            : #include &lt;cstddef&gt;</a>
 <a name="9"><span class="lineNum">       9 </span>            : #include &lt;cstdint&gt;</a>
@@ -686,215 +686,222 @@
 <a name="628"><span class="lineNum">     628 </span>            : public:</a>
 <a name="629"><span class="lineNum">     629 </span><span class="lineNoCov">          0 :   using arg_t = TypeName;</span></a>
 <a name="630"><span class="lineNum">     630 </span>            : </a>
-<a name="631"><span class="lineNum">     631 </span>            : private:</a>
-<a name="632"><span class="lineNum">     632 </span><span class="lineNoCov">          0 :   string m_name;</span></a>
-<a name="633"><span class="lineNum">     633 </span>            :   /// Can only be set if this function declaration is a primitive</a>
-<a name="634"><span class="lineNum">     634 </span><span class="lineCov">          1 :   bool m_varargs{};</span></a>
-<a name="635"><span class="lineNum">     635 </span><span class="lineNoCov">          0 :   vector&lt;arg_t&gt; m_args;</span></a>
-<a name="636"><span class="lineNum">     636 </span><span class="lineNoCov">          0 :   vector&lt;string&gt; m_type_args;</span></a>
-<a name="637"><span class="lineNum">     637 </span><span class="lineNoCov">          0 :   OptionalType m_ret;</span></a>
-<a name="638"><span class="lineNum">     638 </span>            :   /// If this function declaration refers to a primitive, this field is a string representing the name of the primitive.</a>
-<a name="639"><span class="lineNum">     639 </span>            :   /// Otherise, this function declaration refers to a regular function and this field holds the body of that function.</a>
-<a name="640"><span class="lineNum">     640 </span><span class="lineCov">          1 :   variant&lt;Compound, string&gt; m_body;</span></a>
-<a name="641"><span class="lineNum">     641 </span>            : </a>
-<a name="642"><span class="lineNum">     642 </span>            : public:</a>
-<a name="643"><span class="lineNum">     643 </span><span class="lineNoCov">          0 :   FnDecl(span&lt;Token&gt; tok, string name, vector&lt;arg_t&gt; args, vector&lt;string&gt; type_args, OptionalType ret, Compound body)</span></a>
-<a name="644"><span class="lineNum">     644 </span>            :       : Stmt(K_FnDecl, tok), m_name{move(name)}, m_args{move(args)},</a>
-<a name="645"><span class="lineNum">     645 </span>            :         m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(body)} {}</a>
-<a name="646"><span class="lineNum">     646 </span><span class="lineNoCov">          0 :   FnDecl(span&lt;Token&gt; tok, string name, vector&lt;arg_t&gt; args, vector&lt;string&gt; type_args, OptionalType ret, bool varargs,</span></a>
-<a name="647"><span class="lineNum">     647 </span>            :          string primitive)</a>
-<a name="648"><span class="lineNum">     648 </span>            :       : Stmt(K_FnDecl, tok), m_name{move(name)}, m_varargs{varargs}, m_args{move(args)},</a>
-<a name="649"><span class="lineNum">     649 </span>            :         m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(primitive)} {}</a>
-<a name="650"><span class="lineNum">     650 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
-<a name="651"><span class="lineNum">     651 </span><span class="lineCov">          1 :   [[nodiscard]] auto describe() const -&gt; string override;</span></a>
-<a name="652"><span class="lineNum">     652 </span>            : </a>
-<a name="653"><span class="lineNum">     653 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto name() const -&gt; string { return m_name; }</span></a>
-<a name="654"><span class="lineNum">     654 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto args() const -&gt; const auto&amp; { return m_args; }</span></a>
-<a name="655"><span class="lineNum">     655 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto args() -&gt; auto&amp; { return m_args; }</span></a>
-<a name="656"><span class="lineNum">     656 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto type_args() const { return m_type_args; }</span></a>
-<a name="657"><span class="lineNum">     657 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ret() const -&gt; const auto&amp; { return m_ret; }</span></a>
-<a name="658"><span class="lineNum">     658 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ret() -&gt; auto&amp; { return m_ret; }</span></a>
-<a name="659"><span class="lineNum">     659 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto body() const -&gt; const auto&amp; { return m_body; }</span></a>
-<a name="660"><span class="lineNum">     660 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto body() -&gt; auto&amp; { return m_body; }</span></a>
-<a name="661"><span class="lineNum">     661 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto varargs() const -&gt; bool { return m_varargs; }</span></a>
-<a name="662"><span class="lineNum">     662 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto primitive() const -&gt; bool { return holds_alternative&lt;string&gt;(m_body); }</span></a>
-<a name="663"><span class="lineNum">     663 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_FnDecl; }</a>
-<a name="664"><span class="lineNum">     664 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; FnDecl* override;</span></a>
-<a name="665"><span class="lineNum">     665 </span>            : };</a>
-<a name="666"><span class="lineNum">     666 </span>            : </a>
-<a name="667"><span class="lineNum">     667 </span>            : /// A declaration of a custom constructor (`def :new`).</a>
-<a name="668"><span class="lineNum">     668 </span>            : /**</a>
-<a name="669"><span class="lineNum">     669 </span>            :  * The arguments of a constructor may be regular `TypeName`s, just as in regular function declarations, but they also</a>
-<a name="670"><span class="lineNum">     670 </span>            :  * may be a `FieldAccessExpr` without a base (such as `::x`), representing a shorthand where the field is set</a>
-<a name="671"><span class="lineNum">     671 </span>            :  * immediately, and the type is deduced to be that of the field.</a>
-<a name="672"><span class="lineNum">     672 </span>            :  * Essentially the following two declarations are identical:</a>
-<a name="673"><span class="lineNum">     673 </span>            :  * \code</a>
-<a name="674"><span class="lineNum">     674 </span>            :  * struct Foo(data I32)</a>
-<a name="675"><span class="lineNum">     675 </span>            :  *   def :new(::data)</a>
-<a name="676"><span class="lineNum">     676 </span>            :  *   end</a>
-<a name="677"><span class="lineNum">     677 </span>            :  *</a>
-<a name="678"><span class="lineNum">     678 </span>            :  *   def :new(data I32)</a>
-<a name="679"><span class="lineNum">     679 </span>            :  *     ::data = data</a>
-<a name="680"><span class="lineNum">     680 </span>            :  *   end</a>
-<a name="681"><span class="lineNum">     681 </span>            :  * end</a>
-<a name="682"><span class="lineNum">     682 </span>            :  * \endcode</a>
-<a name="683"><span class="lineNum">     683 </span>            :  */</a>
-<a name="684"><span class="lineNum">     684 </span><span class="lineCov">          1 : class CtorDecl : public Stmt {</span></a>
-<a name="685"><span class="lineNum">     685 </span>            : public:</a>
-<a name="686"><span class="lineNum">     686 </span><span class="lineNoCov">          0 :   using arg_t = variant&lt;TypeName, FieldAccessExpr&gt;;</span></a>
-<a name="687"><span class="lineNum">     687 </span>            : </a>
-<a name="688"><span class="lineNum">     688 </span>            : private:</a>
-<a name="689"><span class="lineNum">     689 </span><span class="lineNoCov">          0 :   vector&lt;arg_t&gt; m_args;</span></a>
-<a name="690"><span class="lineNum">     690 </span><span class="lineNoCov">          0 :   Compound m_body;</span></a>
-<a name="691"><span class="lineNum">     691 </span>            : </a>
+<a name="631"><span class="lineNum">     631 </span><span class="lineNoCov">          0 :   using extern_decl_t = struct {</span></a>
+<a name="632"><span class="lineNum">     632 </span>            :     string name;</a>
+<a name="633"><span class="lineNum">     633 </span><span class="lineNoCov">          0 :     bool varargs;</span></a>
+<a name="634"><span class="lineNum">     634 </span>            :   };</a>
+<a name="635"><span class="lineNum">     635 </span>            : </a>
+<a name="636"><span class="lineNum">     636 </span><span class="lineNoCov">          0 :   using body_t = variant&lt;Compound, string, extern_decl_t&gt;;</span></a>
+<a name="637"><span class="lineNum">     637 </span>            : </a>
+<a name="638"><span class="lineNum">     638 </span>            : private:</a>
+<a name="639"><span class="lineNum">     639 </span><span class="lineNoCov">          0 :   string m_name;</span></a>
+<a name="640"><span class="lineNum">     640 </span><span class="lineNoCov">          0 :   bool m_extern_linkage;</span></a>
+<a name="641"><span class="lineNum">     641 </span><span class="lineNoCov">          0 :   vector&lt;arg_t&gt; m_args;</span></a>
+<a name="642"><span class="lineNum">     642 </span><span class="lineNoCov">          0 :   vector&lt;string&gt; m_type_args;</span></a>
+<a name="643"><span class="lineNum">     643 </span><span class="lineNoCov">          0 :   OptionalType m_ret;</span></a>
+<a name="644"><span class="lineNum">     644 </span>            :   /// If this function declaration refers to a primitive, this field is a string representing the name of the primitive.</a>
+<a name="645"><span class="lineNum">     645 </span>            :   /// If it's an external method, this field is a pair of the extern name and whether the method is varargs.</a>
+<a name="646"><span class="lineNum">     646 </span>            :   /// Otherise, this function declaration refers to a regular function and this field holds the body of that function.</a>
+<a name="647"><span class="lineNum">     647 </span><span class="lineCov">          1 :   body_t m_body;</span></a>
+<a name="648"><span class="lineNum">     648 </span>            : </a>
+<a name="649"><span class="lineNum">     649 </span>            : public:</a>
+<a name="650"><span class="lineNum">     650 </span><span class="lineNoCov">          0 :   FnDecl(span&lt;Token&gt; tok, string name, vector&lt;arg_t&gt; args, vector&lt;string&gt; type_args, OptionalType ret, body_t body,</span></a>
+<a name="651"><span class="lineNum">     651 </span>            :          bool extern_linkage)</a>
+<a name="652"><span class="lineNum">     652 </span>            :       : Stmt(K_FnDecl, tok), m_name{move(name)}, m_extern_linkage(extern_linkage), m_args{move(args)},</a>
+<a name="653"><span class="lineNum">     653 </span>            :         m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(body)} {}</a>
+<a name="654"><span class="lineNum">     654 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
+<a name="655"><span class="lineNum">     655 </span><span class="lineCov">          1 :   [[nodiscard]] auto describe() const -&gt; string override;</span></a>
+<a name="656"><span class="lineNum">     656 </span>            : </a>
+<a name="657"><span class="lineNum">     657 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto name() const -&gt; string { return m_name; }</span></a>
+<a name="658"><span class="lineNum">     658 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto args() const -&gt; const auto&amp; { return m_args; }</span></a>
+<a name="659"><span class="lineNum">     659 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto args() -&gt; auto&amp; { return m_args; }</span></a>
+<a name="660"><span class="lineNum">     660 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto type_args() const { return m_type_args; }</span></a>
+<a name="661"><span class="lineNum">     661 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ret() const -&gt; const auto&amp; { return m_ret; }</span></a>
+<a name="662"><span class="lineNum">     662 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ret() -&gt; auto&amp; { return m_ret; }</span></a>
+<a name="663"><span class="lineNum">     663 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto body() const -&gt; const auto&amp; { return m_body; }</span></a>
+<a name="664"><span class="lineNum">     664 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto body() -&gt; auto&amp; { return m_body; }</span></a>
+<a name="665"><span class="lineNum">     665 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto varargs() const -&gt; bool { return extern_decl() &amp;&amp; std::get&lt;extern_decl_t&gt;(m_body).varargs; }</span></a>
+<a name="666"><span class="lineNum">     666 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto primitive() const -&gt; bool { return holds_alternative&lt;string&gt;(m_body); }</span></a>
+<a name="667"><span class="lineNum">     667 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto extern_decl() const -&gt; bool { return holds_alternative&lt;extern_decl_t&gt;(m_body); }</span></a>
+<a name="668"><span class="lineNum">     668 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto extern_linkage() const -&gt; bool { return m_extern_linkage || extern_decl(); }</span></a>
+<a name="669"><span class="lineNum">     669 </span><span class="lineNoCov">          0 :   void make_extern_linkage(bool value = true) { m_extern_linkage = value; }</span></a>
+<a name="670"><span class="lineNum">     670 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_FnDecl; }</a>
+<a name="671"><span class="lineNum">     671 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; FnDecl* override;</span></a>
+<a name="672"><span class="lineNum">     672 </span>            : };</a>
+<a name="673"><span class="lineNum">     673 </span>            : </a>
+<a name="674"><span class="lineNum">     674 </span>            : /// A declaration of a custom constructor (`def :new`).</a>
+<a name="675"><span class="lineNum">     675 </span>            : /**</a>
+<a name="676"><span class="lineNum">     676 </span>            :  * The arguments of a constructor may be regular `TypeName`s, just as in regular function declarations, but they also</a>
+<a name="677"><span class="lineNum">     677 </span>            :  * may be a `FieldAccessExpr` without a base (such as `::x`), representing a shorthand where the field is set</a>
+<a name="678"><span class="lineNum">     678 </span>            :  * immediately, and the type is deduced to be that of the field.</a>
+<a name="679"><span class="lineNum">     679 </span>            :  * Essentially the following two declarations are identical:</a>
+<a name="680"><span class="lineNum">     680 </span>            :  * \code</a>
+<a name="681"><span class="lineNum">     681 </span>            :  * struct Foo(data I32)</a>
+<a name="682"><span class="lineNum">     682 </span>            :  *   def :new(::data)</a>
+<a name="683"><span class="lineNum">     683 </span>            :  *   end</a>
+<a name="684"><span class="lineNum">     684 </span>            :  *</a>
+<a name="685"><span class="lineNum">     685 </span>            :  *   def :new(data I32)</a>
+<a name="686"><span class="lineNum">     686 </span>            :  *     ::data = data</a>
+<a name="687"><span class="lineNum">     687 </span>            :  *   end</a>
+<a name="688"><span class="lineNum">     688 </span>            :  * end</a>
+<a name="689"><span class="lineNum">     689 </span>            :  * \endcode</a>
+<a name="690"><span class="lineNum">     690 </span>            :  */</a>
+<a name="691"><span class="lineNum">     691 </span><span class="lineCov">          1 : class CtorDecl : public Stmt {</span></a>
 <a name="692"><span class="lineNum">     692 </span>            : public:</a>
-<a name="693"><span class="lineNum">     693 </span><span class="lineNoCov">          0 :   CtorDecl(span&lt;Token&gt; tok, vector&lt;arg_t&gt; args, Compound body)</span></a>
-<a name="694"><span class="lineNum">     694 </span>            :       : Stmt(K_CtorDecl, tok), m_args{move(args)}, m_body{move(body)} {}</a>
-<a name="695"><span class="lineNum">     695 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
-<a name="696"><span class="lineNum">     696 </span><span class="lineCov">          1 :   [[nodiscard]] auto describe() const -&gt; string override;</span></a>
-<a name="697"><span class="lineNum">     697 </span>            : </a>
-<a name="698"><span class="lineNum">     698 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto args() const -&gt; const auto&amp; { return m_args; }</span></a>
-<a name="699"><span class="lineNum">     699 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto args() -&gt; auto&amp; { return m_args; }</span></a>
-<a name="700"><span class="lineNum">     700 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto body() const -&gt; const auto&amp; { return m_body; }</span></a>
-<a name="701"><span class="lineNum">     701 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto body() -&gt; auto&amp; { return m_body; }</span></a>
-<a name="702"><span class="lineNum">     702 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_CtorDecl; }</a>
-<a name="703"><span class="lineNum">     703 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; CtorDecl* override;</span></a>
-<a name="704"><span class="lineNum">     704 </span>            : };</a>
-<a name="705"><span class="lineNum">     705 </span>            : </a>
-<a name="706"><span class="lineNum">     706 </span>            : /// A declaration of a struct (`struct`).</a>
-<a name="707"><span class="lineNum">     707 </span><span class="lineCov">          1 : class StructDecl : public Stmt {</span></a>
-<a name="708"><span class="lineNum">     708 </span><span class="lineNoCov">          0 :   string m_name;</span></a>
-<a name="709"><span class="lineNum">     709 </span><span class="lineNoCov">          0 :   vector&lt;TypeName&gt; m_fields;</span></a>
-<a name="710"><span class="lineNum">     710 </span><span class="lineNoCov">          0 :   vector&lt;string&gt; m_type_args;</span></a>
-<a name="711"><span class="lineNum">     711 </span><span class="lineNoCov">          0 :   Compound m_body;</span></a>
+<a name="693"><span class="lineNum">     693 </span><span class="lineNoCov">          0 :   using arg_t = variant&lt;TypeName, FieldAccessExpr&gt;;</span></a>
+<a name="694"><span class="lineNum">     694 </span>            : </a>
+<a name="695"><span class="lineNum">     695 </span>            : private:</a>
+<a name="696"><span class="lineNum">     696 </span><span class="lineNoCov">          0 :   vector&lt;arg_t&gt; m_args;</span></a>
+<a name="697"><span class="lineNum">     697 </span><span class="lineNoCov">          0 :   Compound m_body;</span></a>
+<a name="698"><span class="lineNum">     698 </span>            : </a>
+<a name="699"><span class="lineNum">     699 </span>            : public:</a>
+<a name="700"><span class="lineNum">     700 </span><span class="lineNoCov">          0 :   CtorDecl(span&lt;Token&gt; tok, vector&lt;arg_t&gt; args, Compound body)</span></a>
+<a name="701"><span class="lineNum">     701 </span>            :       : Stmt(K_CtorDecl, tok), m_args{move(args)}, m_body{move(body)} {}</a>
+<a name="702"><span class="lineNum">     702 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
+<a name="703"><span class="lineNum">     703 </span><span class="lineCov">          1 :   [[nodiscard]] auto describe() const -&gt; string override;</span></a>
+<a name="704"><span class="lineNum">     704 </span>            : </a>
+<a name="705"><span class="lineNum">     705 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto args() const -&gt; const auto&amp; { return m_args; }</span></a>
+<a name="706"><span class="lineNum">     706 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto args() -&gt; auto&amp; { return m_args; }</span></a>
+<a name="707"><span class="lineNum">     707 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto body() const -&gt; const auto&amp; { return m_body; }</span></a>
+<a name="708"><span class="lineNum">     708 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto body() -&gt; auto&amp; { return m_body; }</span></a>
+<a name="709"><span class="lineNum">     709 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_CtorDecl; }</a>
+<a name="710"><span class="lineNum">     710 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; CtorDecl* override;</span></a>
+<a name="711"><span class="lineNum">     711 </span>            : };</a>
 <a name="712"><span class="lineNum">     712 </span>            : </a>
-<a name="713"><span class="lineNum">     713 </span>            : public:</a>
-<a name="714"><span class="lineNum">     714 </span><span class="lineNoCov">          0 :   StructDecl(span&lt;Token&gt; tok, string name, vector&lt;TypeName&gt; fields, vector&lt;string&gt; type_args, Compound body)</span></a>
-<a name="715"><span class="lineNum">     715 </span>            :       : Stmt(K_StructDecl, tok), m_name{move(name)}, m_fields{move(fields)}, m_type_args{move(type_args)},</a>
-<a name="716"><span class="lineNum">     716 </span>            :         m_body(move(body)) {}</a>
-<a name="717"><span class="lineNum">     717 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
-<a name="718"><span class="lineNum">     718 </span><span class="lineCov">          1 :   [[nodiscard]] auto describe() const -&gt; string override;</span></a>
+<a name="713"><span class="lineNum">     713 </span>            : /// A declaration of a struct (`struct`).</a>
+<a name="714"><span class="lineNum">     714 </span><span class="lineCov">          1 : class StructDecl : public Stmt {</span></a>
+<a name="715"><span class="lineNum">     715 </span><span class="lineNoCov">          0 :   string m_name;</span></a>
+<a name="716"><span class="lineNum">     716 </span><span class="lineNoCov">          0 :   vector&lt;TypeName&gt; m_fields;</span></a>
+<a name="717"><span class="lineNum">     717 </span><span class="lineNoCov">          0 :   vector&lt;string&gt; m_type_args;</span></a>
+<a name="718"><span class="lineNum">     718 </span><span class="lineNoCov">          0 :   Compound m_body;</span></a>
 <a name="719"><span class="lineNum">     719 </span>            : </a>
-<a name="720"><span class="lineNum">     720 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto name() const -&gt; string { return m_name; }</span></a>
-<a name="721"><span class="lineNum">     721 </span><span class="lineNoCov">          0 :   [[nodiscard]] constexpr auto fields() const -&gt; const auto&amp; { return m_fields; }</span></a>
-<a name="722"><span class="lineNum">     722 </span><span class="lineNoCov">          0 :   [[nodiscard]] constexpr auto fields() -&gt; auto&amp; { return m_fields; }</span></a>
-<a name="723"><span class="lineNum">     723 </span><span class="lineNoCov">          0 :   [[nodiscard]] constexpr auto body() const -&gt; const auto&amp; { return m_body; }</span></a>
-<a name="724"><span class="lineNum">     724 </span><span class="lineNoCov">          0 :   [[nodiscard]] constexpr auto body() -&gt; auto&amp; { return m_body; }</span></a>
-<a name="725"><span class="lineNum">     725 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto type_args() const { return m_type_args; }</span></a>
-<a name="726"><span class="lineNum">     726 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_StructDecl; }</a>
-<a name="727"><span class="lineNum">     727 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; StructDecl* override;</span></a>
-<a name="728"><span class="lineNum">     728 </span>            : };</a>
-<a name="729"><span class="lineNum">     729 </span>            : </a>
-<a name="730"><span class="lineNum">     730 </span>            : /// A declaration of a local variable (`let`).</a>
-<a name="731"><span class="lineNum">     731 </span><span class="lineCov">          1 : class VarDecl : public Stmt {</span></a>
-<a name="732"><span class="lineNum">     732 </span><span class="lineNoCov">          0 :   string m_name;</span></a>
-<a name="733"><span class="lineNum">     733 </span><span class="lineNoCov">          0 :   OptionalType m_type;</span></a>
-<a name="734"><span class="lineNum">     734 </span><span class="lineNoCov">          0 :   AnyExpr m_init;</span></a>
-<a name="735"><span class="lineNum">     735 </span>            : </a>
-<a name="736"><span class="lineNum">     736 </span>            : public:</a>
-<a name="737"><span class="lineNum">     737 </span><span class="lineNoCov">          0 :   VarDecl(span&lt;Token&gt; tok, string name, OptionalType type, AnyExpr init)</span></a>
-<a name="738"><span class="lineNum">     738 </span>            :       : Stmt(K_VarDecl, tok), m_name{move(name)}, m_type{move(type)}, m_init(move(init)) {}</a>
-<a name="739"><span class="lineNum">     739 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
-<a name="740"><span class="lineNum">     740 </span><span class="lineCov">          1 :   [[nodiscard]] auto describe() const -&gt; string override;</span></a>
-<a name="741"><span class="lineNum">     741 </span>            : </a>
-<a name="742"><span class="lineNum">     742 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto name() const -&gt; string { return m_name; }</span></a>
-<a name="743"><span class="lineNum">     743 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto type() const -&gt; const auto&amp; { return m_type; }</span></a>
-<a name="744"><span class="lineNum">     744 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto type() -&gt; auto&amp; { return m_type; }</span></a>
-<a name="745"><span class="lineNum">     745 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto init() const -&gt; const auto&amp; { return m_init; }</span></a>
-<a name="746"><span class="lineNum">     746 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto init() -&gt; auto&amp; { return m_init; }</span></a>
-<a name="747"><span class="lineNum">     747 </span>            : </a>
-<a name="748"><span class="lineNum">     748 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_VarDecl; }</a>
-<a name="749"><span class="lineNum">     749 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; VarDecl* override;</span></a>
-<a name="750"><span class="lineNum">     750 </span>            : };</a>
-<a name="751"><span class="lineNum">     751 </span>            : </a>
-<a name="752"><span class="lineNum">     752 </span>            : /// A while loop (`while`).</a>
-<a name="753"><span class="lineNum">     753 </span><span class="lineCov">          1 : class WhileStmt : public Stmt {</span></a>
-<a name="754"><span class="lineNum">     754 </span><span class="lineNoCov">          0 :   AnyExpr m_cond;</span></a>
-<a name="755"><span class="lineNum">     755 </span><span class="lineNoCov">          0 :   Compound m_body;</span></a>
-<a name="756"><span class="lineNum">     756 </span>            : </a>
-<a name="757"><span class="lineNum">     757 </span>            : public:</a>
-<a name="758"><span class="lineNum">     758 </span><span class="lineNoCov">          0 :   WhileStmt(span&lt;Token&gt; tok, AnyExpr cond, Compound body)</span></a>
-<a name="759"><span class="lineNum">     759 </span>            :       : Stmt(K_While, tok), m_cond{move(cond)}, m_body{move(body)} {}</a>
-<a name="760"><span class="lineNum">     760 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
-<a name="761"><span class="lineNum">     761 </span>            : </a>
-<a name="762"><span class="lineNum">     762 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto cond() const -&gt; const auto&amp; { return *m_cond; }</span></a>
-<a name="763"><span class="lineNum">     763 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto cond() -&gt; auto&amp; { return *m_cond; }</span></a>
-<a name="764"><span class="lineNum">     764 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto body() const -&gt; const auto&amp; { return m_body; }</span></a>
-<a name="765"><span class="lineNum">     765 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto body() -&gt; auto&amp; { return m_body; }</span></a>
-<a name="766"><span class="lineNum">     766 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_While; }</a>
-<a name="767"><span class="lineNum">     767 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; WhileStmt* override;</span></a>
-<a name="768"><span class="lineNum">     768 </span>            : };</a>
-<a name="769"><span class="lineNum">     769 </span>            : </a>
-<a name="770"><span class="lineNum">     770 </span>            : /// Clauses of an if statement `IfStmt`.</a>
-<a name="771"><span class="lineNum">     771 </span><span class="lineCov">          1 : class IfClause : public AST {</span></a>
-<a name="772"><span class="lineNum">     772 </span><span class="lineNoCov">          0 :   AnyExpr m_cond;</span></a>
-<a name="773"><span class="lineNum">     773 </span><span class="lineNoCov">          0 :   Compound m_body;</span></a>
-<a name="774"><span class="lineNum">     774 </span>            : </a>
-<a name="775"><span class="lineNum">     775 </span>            : public:</a>
-<a name="776"><span class="lineNum">     776 </span><span class="lineNoCov">          0 :   IfClause(span&lt;Token&gt; tok, AnyExpr cond, Compound body)</span></a>
-<a name="777"><span class="lineNum">     777 </span>            :       : AST(K_IfClause, tok), m_cond{move(cond)}, m_body{move(body)} {}</a>
-<a name="778"><span class="lineNum">     778 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
-<a name="779"><span class="lineNum">     779 </span>            : </a>
-<a name="780"><span class="lineNum">     780 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto cond() const -&gt; const auto&amp; { return *m_cond; }</span></a>
-<a name="781"><span class="lineNum">     781 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto cond() -&gt; auto&amp; { return *m_cond; }</span></a>
-<a name="782"><span class="lineNum">     782 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto body() const -&gt; const auto&amp; { return m_body; }</span></a>
-<a name="783"><span class="lineNum">     783 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto body() -&gt; auto&amp; { return m_body; }</span></a>
-<a name="784"><span class="lineNum">     784 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_IfClause; }</a>
-<a name="785"><span class="lineNum">     785 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; IfClause* override;</span></a>
-<a name="786"><span class="lineNum">     786 </span>            : };</a>
-<a name="787"><span class="lineNum">     787 </span>            : </a>
-<a name="788"><span class="lineNum">     788 </span>            : /// An if statement (`if`), with one or more `IfClause`s, and optionally an else clause.</a>
-<a name="789"><span class="lineNum">     789 </span><span class="lineCov">          1 : class IfStmt : public Stmt {</span></a>
-<a name="790"><span class="lineNum">     790 </span><span class="lineNoCov">          0 :   vector&lt;IfClause&gt; m_clauses;</span></a>
-<a name="791"><span class="lineNum">     791 </span><span class="lineNoCov">          0 :   optional&lt;Compound&gt; m_else_clause;</span></a>
-<a name="792"><span class="lineNum">     792 </span>            : </a>
-<a name="793"><span class="lineNum">     793 </span>            : public:</a>
-<a name="794"><span class="lineNum">     794 </span><span class="lineNoCov">          0 :   IfStmt(span&lt;Token&gt; tok, vector&lt;IfClause&gt; clauses, optional&lt;Compound&gt; else_clause)</span></a>
-<a name="795"><span class="lineNum">     795 </span>            :       : Stmt(K_If, tok), m_clauses{move(clauses)}, m_else_clause{move(else_clause)} {}</a>
-<a name="796"><span class="lineNum">     796 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
-<a name="797"><span class="lineNum">     797 </span>            : </a>
-<a name="798"><span class="lineNum">     798 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto clauses() const -&gt; const auto&amp; { return m_clauses; }</span></a>
-<a name="799"><span class="lineNum">     799 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto clauses() -&gt; auto&amp; { return m_clauses; }</span></a>
-<a name="800"><span class="lineNum">     800 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto else_clause() const -&gt; const auto&amp; { return m_else_clause; }</span></a>
-<a name="801"><span class="lineNum">     801 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto else_clause() -&gt; auto&amp; { return m_else_clause; }</span></a>
-<a name="802"><span class="lineNum">     802 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_If; }</a>
-<a name="803"><span class="lineNum">     803 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; IfStmt* override;</span></a>
-<a name="804"><span class="lineNum">     804 </span>            : };</a>
-<a name="805"><span class="lineNum">     805 </span>            : </a>
-<a name="806"><span class="lineNum">     806 </span>            : /// Return from a function body.</a>
-<a name="807"><span class="lineNum">     807 </span><span class="lineCov">          1 : class ReturnStmt : public Stmt {</span></a>
-<a name="808"><span class="lineNum">     808 </span><span class="lineNoCov">          0 :   OptionalExpr m_expr;</span></a>
-<a name="809"><span class="lineNum">     809 </span><span class="lineNoCov">          0 :   VarDecl* m_extends_lifetime{};</span></a>
-<a name="810"><span class="lineNum">     810 </span>            : </a>
-<a name="811"><span class="lineNum">     811 </span>            : public:</a>
-<a name="812"><span class="lineNum">     812 </span><span class="lineNoCov">          0 :   explicit ReturnStmt(span&lt;Token&gt; tok, OptionalExpr expr) : Stmt(K_Return, tok), m_expr{move(expr)} {}</span></a>
-<a name="813"><span class="lineNum">     813 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
-<a name="814"><span class="lineNum">     814 </span>            : </a>
-<a name="815"><span class="lineNum">     815 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto expr() const -&gt; const auto&amp; { return m_expr; }</span></a>
-<a name="816"><span class="lineNum">     816 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto expr() -&gt; auto&amp; { return m_expr; }</span></a>
+<a name="720"><span class="lineNum">     720 </span>            : public:</a>
+<a name="721"><span class="lineNum">     721 </span><span class="lineNoCov">          0 :   StructDecl(span&lt;Token&gt; tok, string name, vector&lt;TypeName&gt; fields, vector&lt;string&gt; type_args, Compound body)</span></a>
+<a name="722"><span class="lineNum">     722 </span>            :       : Stmt(K_StructDecl, tok), m_name{move(name)}, m_fields{move(fields)}, m_type_args{move(type_args)},</a>
+<a name="723"><span class="lineNum">     723 </span>            :         m_body(move(body)) {}</a>
+<a name="724"><span class="lineNum">     724 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
+<a name="725"><span class="lineNum">     725 </span><span class="lineCov">          1 :   [[nodiscard]] auto describe() const -&gt; string override;</span></a>
+<a name="726"><span class="lineNum">     726 </span>            : </a>
+<a name="727"><span class="lineNum">     727 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto name() const -&gt; string { return m_name; }</span></a>
+<a name="728"><span class="lineNum">     728 </span><span class="lineNoCov">          0 :   [[nodiscard]] constexpr auto fields() const -&gt; const auto&amp; { return m_fields; }</span></a>
+<a name="729"><span class="lineNum">     729 </span><span class="lineNoCov">          0 :   [[nodiscard]] constexpr auto fields() -&gt; auto&amp; { return m_fields; }</span></a>
+<a name="730"><span class="lineNum">     730 </span><span class="lineNoCov">          0 :   [[nodiscard]] constexpr auto body() const -&gt; const auto&amp; { return m_body; }</span></a>
+<a name="731"><span class="lineNum">     731 </span><span class="lineNoCov">          0 :   [[nodiscard]] constexpr auto body() -&gt; auto&amp; { return m_body; }</span></a>
+<a name="732"><span class="lineNum">     732 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto type_args() const { return m_type_args; }</span></a>
+<a name="733"><span class="lineNum">     733 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_StructDecl; }</a>
+<a name="734"><span class="lineNum">     734 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; StructDecl* override;</span></a>
+<a name="735"><span class="lineNum">     735 </span>            : };</a>
+<a name="736"><span class="lineNum">     736 </span>            : </a>
+<a name="737"><span class="lineNum">     737 </span>            : /// A declaration of a local variable (`let`).</a>
+<a name="738"><span class="lineNum">     738 </span><span class="lineCov">          1 : class VarDecl : public Stmt {</span></a>
+<a name="739"><span class="lineNum">     739 </span><span class="lineNoCov">          0 :   string m_name;</span></a>
+<a name="740"><span class="lineNum">     740 </span><span class="lineNoCov">          0 :   OptionalType m_type;</span></a>
+<a name="741"><span class="lineNum">     741 </span><span class="lineNoCov">          0 :   AnyExpr m_init;</span></a>
+<a name="742"><span class="lineNum">     742 </span>            : </a>
+<a name="743"><span class="lineNum">     743 </span>            : public:</a>
+<a name="744"><span class="lineNum">     744 </span><span class="lineNoCov">          0 :   VarDecl(span&lt;Token&gt; tok, string name, OptionalType type, AnyExpr init)</span></a>
+<a name="745"><span class="lineNum">     745 </span>            :       : Stmt(K_VarDecl, tok), m_name{move(name)}, m_type{move(type)}, m_init(move(init)) {}</a>
+<a name="746"><span class="lineNum">     746 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
+<a name="747"><span class="lineNum">     747 </span><span class="lineCov">          1 :   [[nodiscard]] auto describe() const -&gt; string override;</span></a>
+<a name="748"><span class="lineNum">     748 </span>            : </a>
+<a name="749"><span class="lineNum">     749 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto name() const -&gt; string { return m_name; }</span></a>
+<a name="750"><span class="lineNum">     750 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto type() const -&gt; const auto&amp; { return m_type; }</span></a>
+<a name="751"><span class="lineNum">     751 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto type() -&gt; auto&amp; { return m_type; }</span></a>
+<a name="752"><span class="lineNum">     752 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto init() const -&gt; const auto&amp; { return m_init; }</span></a>
+<a name="753"><span class="lineNum">     753 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto init() -&gt; auto&amp; { return m_init; }</span></a>
+<a name="754"><span class="lineNum">     754 </span>            : </a>
+<a name="755"><span class="lineNum">     755 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_VarDecl; }</a>
+<a name="756"><span class="lineNum">     756 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; VarDecl* override;</span></a>
+<a name="757"><span class="lineNum">     757 </span>            : };</a>
+<a name="758"><span class="lineNum">     758 </span>            : </a>
+<a name="759"><span class="lineNum">     759 </span>            : /// A while loop (`while`).</a>
+<a name="760"><span class="lineNum">     760 </span><span class="lineCov">          1 : class WhileStmt : public Stmt {</span></a>
+<a name="761"><span class="lineNum">     761 </span><span class="lineNoCov">          0 :   AnyExpr m_cond;</span></a>
+<a name="762"><span class="lineNum">     762 </span><span class="lineNoCov">          0 :   Compound m_body;</span></a>
+<a name="763"><span class="lineNum">     763 </span>            : </a>
+<a name="764"><span class="lineNum">     764 </span>            : public:</a>
+<a name="765"><span class="lineNum">     765 </span><span class="lineNoCov">          0 :   WhileStmt(span&lt;Token&gt; tok, AnyExpr cond, Compound body)</span></a>
+<a name="766"><span class="lineNum">     766 </span>            :       : Stmt(K_While, tok), m_cond{move(cond)}, m_body{move(body)} {}</a>
+<a name="767"><span class="lineNum">     767 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
+<a name="768"><span class="lineNum">     768 </span>            : </a>
+<a name="769"><span class="lineNum">     769 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto cond() const -&gt; const auto&amp; { return *m_cond; }</span></a>
+<a name="770"><span class="lineNum">     770 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto cond() -&gt; auto&amp; { return *m_cond; }</span></a>
+<a name="771"><span class="lineNum">     771 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto body() const -&gt; const auto&amp; { return m_body; }</span></a>
+<a name="772"><span class="lineNum">     772 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto body() -&gt; auto&amp; { return m_body; }</span></a>
+<a name="773"><span class="lineNum">     773 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_While; }</a>
+<a name="774"><span class="lineNum">     774 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; WhileStmt* override;</span></a>
+<a name="775"><span class="lineNum">     775 </span>            : };</a>
+<a name="776"><span class="lineNum">     776 </span>            : </a>
+<a name="777"><span class="lineNum">     777 </span>            : /// Clauses of an if statement `IfStmt`.</a>
+<a name="778"><span class="lineNum">     778 </span><span class="lineCov">          1 : class IfClause : public AST {</span></a>
+<a name="779"><span class="lineNum">     779 </span><span class="lineNoCov">          0 :   AnyExpr m_cond;</span></a>
+<a name="780"><span class="lineNum">     780 </span><span class="lineNoCov">          0 :   Compound m_body;</span></a>
+<a name="781"><span class="lineNum">     781 </span>            : </a>
+<a name="782"><span class="lineNum">     782 </span>            : public:</a>
+<a name="783"><span class="lineNum">     783 </span><span class="lineNoCov">          0 :   IfClause(span&lt;Token&gt; tok, AnyExpr cond, Compound body)</span></a>
+<a name="784"><span class="lineNum">     784 </span>            :       : AST(K_IfClause, tok), m_cond{move(cond)}, m_body{move(body)} {}</a>
+<a name="785"><span class="lineNum">     785 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
+<a name="786"><span class="lineNum">     786 </span>            : </a>
+<a name="787"><span class="lineNum">     787 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto cond() const -&gt; const auto&amp; { return *m_cond; }</span></a>
+<a name="788"><span class="lineNum">     788 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto cond() -&gt; auto&amp; { return *m_cond; }</span></a>
+<a name="789"><span class="lineNum">     789 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto body() const -&gt; const auto&amp; { return m_body; }</span></a>
+<a name="790"><span class="lineNum">     790 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto body() -&gt; auto&amp; { return m_body; }</span></a>
+<a name="791"><span class="lineNum">     791 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_IfClause; }</a>
+<a name="792"><span class="lineNum">     792 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; IfClause* override;</span></a>
+<a name="793"><span class="lineNum">     793 </span>            : };</a>
+<a name="794"><span class="lineNum">     794 </span>            : </a>
+<a name="795"><span class="lineNum">     795 </span>            : /// An if statement (`if`), with one or more `IfClause`s, and optionally an else clause.</a>
+<a name="796"><span class="lineNum">     796 </span><span class="lineCov">          1 : class IfStmt : public Stmt {</span></a>
+<a name="797"><span class="lineNum">     797 </span><span class="lineNoCov">          0 :   vector&lt;IfClause&gt; m_clauses;</span></a>
+<a name="798"><span class="lineNum">     798 </span><span class="lineNoCov">          0 :   optional&lt;Compound&gt; m_else_clause;</span></a>
+<a name="799"><span class="lineNum">     799 </span>            : </a>
+<a name="800"><span class="lineNum">     800 </span>            : public:</a>
+<a name="801"><span class="lineNum">     801 </span><span class="lineNoCov">          0 :   IfStmt(span&lt;Token&gt; tok, vector&lt;IfClause&gt; clauses, optional&lt;Compound&gt; else_clause)</span></a>
+<a name="802"><span class="lineNum">     802 </span>            :       : Stmt(K_If, tok), m_clauses{move(clauses)}, m_else_clause{move(else_clause)} {}</a>
+<a name="803"><span class="lineNum">     803 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
+<a name="804"><span class="lineNum">     804 </span>            : </a>
+<a name="805"><span class="lineNum">     805 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto clauses() const -&gt; const auto&amp; { return m_clauses; }</span></a>
+<a name="806"><span class="lineNum">     806 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto clauses() -&gt; auto&amp; { return m_clauses; }</span></a>
+<a name="807"><span class="lineNum">     807 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto else_clause() const -&gt; const auto&amp; { return m_else_clause; }</span></a>
+<a name="808"><span class="lineNum">     808 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto else_clause() -&gt; auto&amp; { return m_else_clause; }</span></a>
+<a name="809"><span class="lineNum">     809 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_If; }</a>
+<a name="810"><span class="lineNum">     810 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; IfStmt* override;</span></a>
+<a name="811"><span class="lineNum">     811 </span>            : };</a>
+<a name="812"><span class="lineNum">     812 </span>            : </a>
+<a name="813"><span class="lineNum">     813 </span>            : /// Return from a function body.</a>
+<a name="814"><span class="lineNum">     814 </span><span class="lineCov">          1 : class ReturnStmt : public Stmt {</span></a>
+<a name="815"><span class="lineNum">     815 </span><span class="lineNoCov">          0 :   OptionalExpr m_expr;</span></a>
+<a name="816"><span class="lineNum">     816 </span><span class="lineNoCov">          0 :   VarDecl* m_extends_lifetime{};</span></a>
 <a name="817"><span class="lineNum">     817 </span>            : </a>
-<a name="818"><span class="lineNum">     818 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto extends_lifetime() const -&gt; const auto* { return m_extends_lifetime; }</span></a>
-<a name="819"><span class="lineNum">     819 </span><span class="lineNoCov">          0 :   auto extend_lifetime_of(VarDecl* decl) { m_extends_lifetime = decl; }</span></a>
-<a name="820"><span class="lineNum">     820 </span>            : </a>
-<a name="821"><span class="lineNum">     821 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_Return; }</a>
-<a name="822"><span class="lineNum">     822 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; ReturnStmt* override;</span></a>
-<a name="823"><span class="lineNum">     823 </span>            : };</a>
+<a name="818"><span class="lineNum">     818 </span>            : public:</a>
+<a name="819"><span class="lineNum">     819 </span><span class="lineNoCov">          0 :   explicit ReturnStmt(span&lt;Token&gt; tok, OptionalExpr expr) : Stmt(K_Return, tok), m_expr{move(expr)} {}</span></a>
+<a name="820"><span class="lineNum">     820 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
+<a name="821"><span class="lineNum">     821 </span>            : </a>
+<a name="822"><span class="lineNum">     822 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto expr() const -&gt; const auto&amp; { return m_expr; }</span></a>
+<a name="823"><span class="lineNum">     823 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto expr() -&gt; auto&amp; { return m_expr; }</span></a>
 <a name="824"><span class="lineNum">     824 </span>            : </a>
-<a name="825"><span class="lineNum">     825 </span>            : /// The top level structure of a file of source code.</a>
-<a name="826"><span class="lineNum">     826 </span><span class="lineCov">          1 : class Program : public Stmt {</span></a>
-<a name="827"><span class="lineNum">     827 </span><span class="lineNoCov">          0 :   vector&lt;AnyStmt&gt; m_body;</span></a>
-<a name="828"><span class="lineNum">     828 </span>            : </a>
-<a name="829"><span class="lineNum">     829 </span>            : public:</a>
-<a name="830"><span class="lineNum">     830 </span><span class="lineNoCov">          0 :   explicit Program(span&lt;Token&gt; tok, vector&lt;AnyStmt&gt; body) : Stmt(K_Program, tok), m_body{move(body)} {}</span></a>
-<a name="831"><span class="lineNum">     831 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
-<a name="832"><span class="lineNum">     832 </span><span class="lineNoCov">          0 :   [[nodiscard]] static auto parse(TokenIterator&amp; tokens) -&gt; unique_ptr&lt;Program&gt;;</span></a>
-<a name="833"><span class="lineNum">     833 </span>            : </a>
-<a name="834"><span class="lineNum">     834 </span><span class="lineNoCov">          0 :   [[nodiscard]] constexpr auto body() const -&gt; const auto&amp; { return m_body; }</span></a>
-<a name="835"><span class="lineNum">     835 </span><span class="lineNoCov">          0 :   [[nodiscard]] constexpr auto body() -&gt; auto&amp; { return m_body; }</span></a>
-<a name="836"><span class="lineNum">     836 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_Program; }</a>
-<a name="837"><span class="lineNum">     837 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; Program* override;</span></a>
-<a name="838"><span class="lineNum">     838 </span>            : };</a>
-<a name="839"><span class="lineNum">     839 </span>            : } // namespace yume::ast</a>
+<a name="825"><span class="lineNum">     825 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto extends_lifetime() const -&gt; const auto* { return m_extends_lifetime; }</span></a>
+<a name="826"><span class="lineNum">     826 </span><span class="lineNoCov">          0 :   auto extend_lifetime_of(VarDecl* decl) { m_extends_lifetime = decl; }</span></a>
+<a name="827"><span class="lineNum">     827 </span>            : </a>
+<a name="828"><span class="lineNum">     828 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_Return; }</a>
+<a name="829"><span class="lineNum">     829 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; ReturnStmt* override;</span></a>
+<a name="830"><span class="lineNum">     830 </span>            : };</a>
+<a name="831"><span class="lineNum">     831 </span>            : </a>
+<a name="832"><span class="lineNum">     832 </span>            : /// The top level structure of a file of source code.</a>
+<a name="833"><span class="lineNum">     833 </span><span class="lineCov">          1 : class Program : public Stmt {</span></a>
+<a name="834"><span class="lineNum">     834 </span><span class="lineNoCov">          0 :   vector&lt;AnyStmt&gt; m_body;</span></a>
+<a name="835"><span class="lineNum">     835 </span>            : </a>
+<a name="836"><span class="lineNum">     836 </span>            : public:</a>
+<a name="837"><span class="lineNum">     837 </span><span class="lineNoCov">          0 :   explicit Program(span&lt;Token&gt; tok, vector&lt;AnyStmt&gt; body) : Stmt(K_Program, tok), m_body{move(body)} {}</span></a>
+<a name="838"><span class="lineNum">     838 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
+<a name="839"><span class="lineNum">     839 </span><span class="lineNoCov">          0 :   [[nodiscard]] static auto parse(TokenIterator&amp; tokens) -&gt; unique_ptr&lt;Program&gt;;</span></a>
+<a name="840"><span class="lineNum">     840 </span>            : </a>
+<a name="841"><span class="lineNum">     841 </span><span class="lineNoCov">          0 :   [[nodiscard]] constexpr auto body() const -&gt; const auto&amp; { return m_body; }</span></a>
+<a name="842"><span class="lineNum">     842 </span><span class="lineNoCov">          0 :   [[nodiscard]] constexpr auto body() -&gt; auto&amp; { return m_body; }</span></a>
+<a name="843"><span class="lineNum">     843 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_Program; }</a>
+<a name="844"><span class="lineNum">     844 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; Program* override;</span></a>
+<a name="845"><span class="lineNum">     845 </span>            : };</a>
+<a name="846"><span class="lineNum">     846 </span>            : } // namespace yume::ast</a>
 </pre>
       </td>
     </tr>
