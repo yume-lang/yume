@@ -646,16 +646,9 @@ private:
   body_t m_body;
 
 public:
-  FnDecl(span<Token> tok, string name, vector<arg_t> args, vector<string> type_args, OptionalType ret, Compound body)
+  FnDecl(span<Token> tok, string name, vector<arg_t> args, vector<string> type_args, OptionalType ret, body_t body)
       : Stmt(K_FnDecl, tok), m_name{move(name)}, m_args{move(args)},
         m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(body)} {}
-  FnDecl(span<Token> tok, string name, vector<arg_t> args, vector<string> type_args, OptionalType ret, string primitive)
-      : Stmt(K_FnDecl, tok), m_name{move(name)}, m_args{move(args)},
-        m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(primitive)} {}
-  FnDecl(span<Token> tok, string name, vector<arg_t> args, vector<string> type_args, OptionalType ret,
-         extern_decl_t extern_decl)
-      : Stmt(K_FnDecl, tok), m_name{move(name)}, m_args{move(args)},
-        m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(extern_decl)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 

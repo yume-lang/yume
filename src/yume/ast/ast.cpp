@@ -1,7 +1,6 @@
 #include "ast.hpp"
 
 #include "token.hpp"
-#include "ty/type.hpp"
 #include <memory>
 #include <stdexcept>
 
