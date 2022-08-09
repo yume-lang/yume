@@ -6,7 +6,7 @@ env:
   BUILD_TYPE: Debug
   TARGET_CLANG: 15
   TARGET_LLVM: 15
-  CATCH2_REF: '5a1ef7e4a6caf3d5f696eb82302e3d87ff5c2303'
+  CATCH2_REF: "5a1ef7e4a6caf3d5f696eb82302e3d87ff5c2303"
   BUILD_DIR: ${{ github.workspace }}/build
 
 jobs:
@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         clang: [13, 14, 15, 16]
-        llvm: [13, 14, 15, 16]
+        llvm: [13, 14, 15] #, 16] https://salsa.debian.org/pkg-llvm-team/llvm-toolchain/-/commit/4fc79f273a2ccead21d10390444775c1dcd47aad
     env:
       CC: clang-${{ matrix.clang }}
       CXX: clang++-${{ matrix.clang }}
@@ -107,8 +107,8 @@ jobs:
     name: "Event File"
     runs-on: ubuntu-latest
     steps:
-    - name: Upload
-      uses: actions/upload-artifact@v2
-      with:
-        name: Event File
-        path: ${{ github.event_path }}
+      - name: Upload
+        uses: actions/upload-artifact@v2
+        with:
+          name: Event File
+          path: ${{ github.event_path }}
