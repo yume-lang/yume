@@ -130,6 +130,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a69ed3c71b9755fafcf9f43c6bacee49b"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1parser_1_1Parser.html#a69ed3c71b9755fafcf9f43c6bacee49b">next</a> (<a class="el" href="structyume_1_1source__location.html">source_location</a> location=<a class="el" href="structyume_1_1source__location.html#ad108a54f98ee467385af98ca279fd95a">source_location::current</a>()) -&gt; <a class="el" href="structyume_1_1Token.html">Token</a></td></tr>
 <tr class="memdesc:a69ed3c71b9755fafcf9f43c6bacee49b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the next token and increment the iterator.  <a href="structyume_1_1ast_1_1parser_1_1Parser.html#a69ed3c71b9755fafcf9f43c6bacee49b">More...</a><br /></td></tr>
 <tr class="separator:a69ed3c71b9755fafcf9f43c6bacee49b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c989f2236cc414d63a1f80c78b466ab"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1parser_1_1Parser.html#a7c989f2236cc414d63a1f80c78b466ab">assert_payload_next</a> (<a class="el" href="structyume_1_1source__location.html">source_location</a> location=<a class="el" href="structyume_1_1source__location.html#ad108a54f98ee467385af98ca279fd95a">source_location::current</a>()) -&gt; <a class="el" href="classyume_1_1Atom.html">Atom</a></td></tr>
+<tr class="memdesc:a7c989f2236cc414d63a1f80c78b466ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the payload of the next token and increment the iterator.  <a href="structyume_1_1ast_1_1parser_1_1Parser.html#a7c989f2236cc414d63a1f80c78b466ab">More...</a><br /></td></tr>
+<tr class="separator:a7c989f2236cc414d63a1f80c78b466ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b4aa1c21f838a822d12cbc41bdae22c"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1parser_1_1Parser.html#a1b4aa1c21f838a822d12cbc41bdae22c">consume_word</a> (<a class="el" href="structyume_1_1source__location.html">source_location</a> location=<a class="el" href="structyume_1_1source__location.html#ad108a54f98ee467385af98ca279fd95a">source_location::current</a>()) -&gt; string</td></tr>
 <tr class="memdesc:a1b4aa1c21f838a822d12cbc41bdae22c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the payload of the next token. Throws if the next token isn't a <code>Word</code>.  <a href="structyume_1_1ast_1_1parser_1_1Parser.html#a1b4aa1c21f838a822d12cbc41bdae22c">More...</a><br /></td></tr>
 <tr class="separator:a1b4aa1c21f838a822d12cbc41bdae22c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -219,6 +222,36 @@ Static Public Attributes</h2></td></tr>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00125">125</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a7c989f2236cc414d63a1f80c78b466ab" name="a7c989f2236cc414d63a1f80c78b466ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7c989f2236cc414d63a1f80c78b466ab">&#9670;&nbsp;</a></span>assert_payload_next()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto yume::ast::parser::Parser::assert_payload_next </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structyume_1_1source__location.html">source_location</a>&#160;</td>
+          <td class="paramname"><em>location</em> = <code><a class="el" href="structyume_1_1source__location.html#ad108a54f98ee467385af98ca279fd95a">source_location::current</a>()</code></td><td>)</td>
+          <td> -&gt; <a class="el" href="classyume_1_1Atom.html">Atom</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the payload of the next token and increment the iterator. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">if</td><td>the next token has no payload </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00108">108</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
+
+<p class="reference">References <a class="el" href="source__location_8hpp_source.html#l00034">yume::at()</a>.</p>
+
+</div>
+</div>
 <a id="a034f9be864ce748a09f076beeb75216a" name="a034f9be864ce748a09f076beeb75216a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a034f9be864ce748a09f076beeb75216a">&#9670;&nbsp;</a></span>ast_ptr() <span class="overload">[1/2]</span></h2>
 
@@ -403,7 +436,7 @@ template&lt;typename T , typename... Args&gt; </div>
 
 <p>Return the payload of the next token. Throws if the next token isn't a <code>Word</code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00108">108</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00117">117</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="source__location_8hpp_source.html#l00034">yume::at()</a>.</p>
 
@@ -468,7 +501,7 @@ template&lt;typename T , typename... Args&gt; </div>
 
 <p class="reference">References <a class="el" href="source__location_8hpp_source.html#l00034">yume::at()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00041">consume()</a>, <a class="el" href="parser_8cpp_source.html#l00629">yume::ast::Program::parse()</a>, and <a class="el" href="parser_8cpp_source.html#l00029">require_separator()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8cpp_source.html#l00041">consume()</a>, <a class="el" href="parser_8cpp_source.html#l00642">yume::ast::Program::parse()</a>, and <a class="el" href="parser_8cpp_source.html#l00029">require_separator()</a>.</p>
 
 </div>
 </div>
@@ -498,7 +531,7 @@ template&lt;typename T , typename... Args&gt; </div>
 
 <p>Check if the string begins with a capital letter. Used for types, as all types must be capitalized. </p>
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00218">218</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00222">222</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
 </div>
 </div>
@@ -625,7 +658,7 @@ template&lt;typename T , typename... Args&gt; </div>
 
 <p class="reference">References <a class="el" href="parser_8hpp_source.html#l00102">yume::ast::parser::SYM_EQ_EQ</a>, <a class="el" href="parser_8hpp_source.html#l00105">yume::ast::parser::SYM_GT</a>, <a class="el" href="parser_8hpp_source.html#l00104">yume::ast::parser::SYM_LT</a>, <a class="el" href="parser_8hpp_source.html#l00107">yume::ast::parser::SYM_MINUS</a>, <a class="el" href="parser_8hpp_source.html#l00103">yume::ast::parser::SYM_NEQ</a>, <a class="el" href="parser_8hpp_source.html#l00108">yume::ast::parser::SYM_PERCENT</a>, <a class="el" href="parser_8hpp_source.html#l00106">yume::ast::parser::SYM_PLUS</a>, <a class="el" href="parser_8hpp_source.html#l00109">yume::ast::parser::SYM_SLASH_SLASH</a>, and <a class="el" href="parser_8hpp_source.html#l00110">yume::ast::parser::SYM_STAR</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00263">parse_operator()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00267">parse_operator()</a>.</p>
 
 </div>
 </div>
@@ -644,7 +677,7 @@ template&lt;typename T , typename... Args&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00502">502</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00514">514</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1ca8e95e84813830072b7516cfaa7dbc1a9">yume::Token::Char</a>.</p>
 
@@ -665,7 +698,7 @@ template&lt;typename T , typename... Args&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00359">359</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00369">369</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="parser_8hpp_source.html#l00075">yume::ast::parser::KWD_DEF</a>, <a class="el" href="parser_8hpp_source.html#l00076">yume::ast::parser::KWD_END</a>, <a class="el" href="parser_8hpp_source.html#l00080">yume::ast::parser::KWD_NEW</a>, <a class="el" href="parser_8hpp_source.html#l00112">yume::ast::parser::SYM_COLON</a>, <a class="el" href="parser_8hpp_source.html#l00096">yume::ast::parser::SYM_LPAREN</a>, and <a class="el" href="parser_8hpp_source.html#l00097">yume::ast::parser::SYM_RPAREN</a>.</p>
 
@@ -686,7 +719,7 @@ template&lt;typename T , typename... Args&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00234">234</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00244">244</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
 
 </div>
 </div>
@@ -705,7 +738,7 @@ template&lt;typename T , typename... Args&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00307">307</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00317">317</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="parser_8hpp_source.html#l00075">yume::ast::parser::KWD_DEF</a>, <a class="el" href="parser_8hpp_source.html#l00076">yume::ast::parser::KWD_END</a>, <a class="el" href="parser_8hpp_source.html#l00091">yume::ast::parser::KWD_PRIMITIVE</a>, <a class="el" href="parser_8hpp_source.html#l00090">yume::ast::parser::KWD_VARARGS</a>, <a class="el" href="parser_8hpp_source.html#l00095">yume::ast::parser::SYM_EQ</a>, <a class="el" href="parser_8hpp_source.html#l00100">yume::ast::parser::SYM_LBRACE</a>, <a class="el" href="parser_8hpp_source.html#l00096">yume::ast::parser::SYM_LPAREN</a>, <a class="el" href="parser_8hpp_source.html#l00101">yume::ast::parser::SYM_RBRACE</a>, and <a class="el" href="parser_8hpp_source.html#l00097">yume::ast::parser::SYM_RPAREN</a>.</p>
 
@@ -726,7 +759,7 @@ template&lt;typename T , typename... Args&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00236">236</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00246">246</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="parser_8hpp_source.html#l00111">yume::ast::parser::SYM_BANG</a>, <a class="el" href="parser_8hpp_source.html#l00095">yume::ast::parser::SYM_EQ</a>, <a class="el" href="parser_8hpp_source.html#l00098">yume::ast::parser::SYM_LBRACKET</a>, and <a class="el" href="parser_8hpp_source.html#l00099">yume::ast::parser::SYM_RBRACKET</a>.</p>
 
@@ -747,7 +780,7 @@ template&lt;typename T , typename... Args&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00301">301</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00311">311</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="parser_8hpp_source.html#l00112">yume::ast::parser::SYM_COLON</a>.</p>
 
@@ -768,7 +801,7 @@ template&lt;typename T , typename... Args&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00431">431</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00441">441</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="parser_8hpp_source.html#l00081">yume::ast::parser::KWD_ELSE</a>, <a class="el" href="parser_8hpp_source.html#l00076">yume::ast::parser::KWD_END</a>, <a class="el" href="parser_8hpp_source.html#l00074">yume::ast::parser::KWD_IF</a>, and <a class="el" href="parser_8hpp_source.html#l00084">yume::ast::parser::KWD_THEN</a>.</p>
 
@@ -789,7 +822,7 @@ template&lt;typename T , typename... Args&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00486">486</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00496">496</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
 
 </div>
 </div>
@@ -818,9 +851,9 @@ template&lt;size_t N = 0&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00263">263</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00267">267</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="parser_8hpp_source.html#l00067">yume::ast::TokenIterator::begin()</a>, <a class="el" href="parser_8hpp_source.html#l00155">operators()</a>, <a class="el" href="parser_8cpp_source.html#l00614">parse_unary()</a>, <a class="el" href="parser_8hpp_source.html#l00126">tokens</a>, and <a class="el" href="parser_8cpp_source.html#l00057">try_consume()</a>.</p>
+<p class="reference">References <a class="el" href="parser_8hpp_source.html#l00067">yume::ast::TokenIterator::begin()</a>, <a class="el" href="parser_8hpp_source.html#l00155">operators()</a>, <a class="el" href="parser_8cpp_source.html#l00627">parse_unary()</a>, <a class="el" href="parser_8hpp_source.html#l00126">tokens</a>, and <a class="el" href="parser_8cpp_source.html#l00057">try_consume()</a>.</p>
 
 </div>
 </div>
@@ -839,7 +872,7 @@ template&lt;size_t N = 0&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00510">510</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00523">523</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1ca8e95e84813830072b7516cfaa7dbc1a9">yume::Token::Char</a>, <a class="el" href="parser_8hpp_source.html#l00086">yume::ast::parser::KWD_FALSE</a>, <a class="el" href="parser_8hpp_source.html#l00085">yume::ast::parser::KWD_TRUE</a>, <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1cad7da1b76e5799f53a399b7a96ba67437">yume::Token::Literal</a>, <a class="el" href="parser_8hpp_source.html#l00112">yume::ast::parser::SYM_COLON</a>, <a class="el" href="parser_8hpp_source.html#l00113">yume::ast::parser::SYM_COLON_COLON</a>, <a class="el" href="parser_8hpp_source.html#l00098">yume::ast::parser::SYM_LBRACKET</a>, <a class="el" href="parser_8hpp_source.html#l00096">yume::ast::parser::SYM_LPAREN</a>, <a class="el" href="parser_8hpp_source.html#l00099">yume::ast::parser::SYM_RBRACKET</a>, and <a class="el" href="parser_8hpp_source.html#l00097">yume::ast::parser::SYM_RPAREN</a>.</p>
 
@@ -860,7 +893,7 @@ template&lt;size_t N = 0&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00609">609</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00622">622</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
 
 </div>
 </div>
@@ -890,7 +923,7 @@ template&lt;size_t N = 0&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00562">562</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00575">575</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="parser_8hpp_source.html#l00113">yume::ast::parser::SYM_COLON_COLON</a>, <a class="el" href="parser_8hpp_source.html#l00094">yume::ast::parser::SYM_DOT</a>, <a class="el" href="parser_8hpp_source.html#l00095">yume::ast::parser::SYM_EQ</a>, <a class="el" href="parser_8hpp_source.html#l00098">yume::ast::parser::SYM_LBRACKET</a>, <a class="el" href="parser_8hpp_source.html#l00096">yume::ast::parser::SYM_LPAREN</a>, <a class="el" href="parser_8hpp_source.html#l00099">yume::ast::parser::SYM_RBRACKET</a>, and <a class="el" href="parser_8hpp_source.html#l00097">yume::ast::parser::SYM_RPAREN</a>.</p>
 
@@ -911,7 +944,7 @@ template&lt;size_t N = 0&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00419">419</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00429">429</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="parser_8hpp_source.html#l00089">yume::ast::parser::KWD_RETURN</a>.</p>
 
@@ -932,7 +965,7 @@ template&lt;size_t N = 0&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00128">128</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00138">138</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="parser_8hpp_source.html#l00075">yume::ast::parser::KWD_DEF</a>, <a class="el" href="parser_8hpp_source.html#l00074">yume::ast::parser::KWD_IF</a>, <a class="el" href="parser_8hpp_source.html#l00077">yume::ast::parser::KWD_LET</a>, <a class="el" href="parser_8hpp_source.html#l00089">yume::ast::parser::KWD_RETURN</a>, <a class="el" href="parser_8hpp_source.html#l00088">yume::ast::parser::KWD_STRUCT</a>, and <a class="el" href="parser_8hpp_source.html#l00087">yume::ast::parser::KWD_WHILE</a>.</p>
 
@@ -953,7 +986,7 @@ template&lt;size_t N = 0&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00494">494</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00505">505</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1cad7da1b76e5799f53a399b7a96ba67437">yume::Token::Literal</a>.</p>
 
@@ -974,7 +1007,7 @@ template&lt;size_t N = 0&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00271">271</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00281">281</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="parser_8hpp_source.html#l00076">yume::ast::parser::KWD_END</a>, <a class="el" href="parser_8hpp_source.html#l00088">yume::ast::parser::KWD_STRUCT</a>, <a class="el" href="parser_8hpp_source.html#l00100">yume::ast::parser::SYM_LBRACE</a>, <a class="el" href="parser_8hpp_source.html#l00096">yume::ast::parser::SYM_LPAREN</a>, <a class="el" href="parser_8hpp_source.html#l00101">yume::ast::parser::SYM_RBRACE</a>, and <a class="el" href="parser_8hpp_source.html#l00097">yume::ast::parser::SYM_RPAREN</a>.</p>
 
@@ -996,7 +1029,7 @@ template&lt;size_t N = 0&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00150">150</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00160">160</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="parser_8hpp_source.html#l00079">yume::ast::parser::KWD_MUT</a>, <a class="el" href="parser_8hpp_source.html#l00078">yume::ast::parser::KWD_PTR</a>, <a class="el" href="parser_8hpp_source.html#l00083">yume::ast::parser::KWD_SELF_TYPE</a>, <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>, <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a165d3d525f6d0cbd55e42cc3058cafcc">yume::Ptr</a>, <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706ad140d37ad98c12ccd8e1c432f548bcdb">yume::Slice</a>, <a class="el" href="parser_8hpp_source.html#l00100">yume::ast::parser::SYM_LBRACE</a>, <a class="el" href="parser_8hpp_source.html#l00098">yume::ast::parser::SYM_LBRACKET</a>, <a class="el" href="parser_8hpp_source.html#l00101">yume::ast::parser::SYM_RBRACE</a>, and <a class="el" href="parser_8hpp_source.html#l00099">yume::ast::parser::SYM_RBRACKET</a>.</p>
 
@@ -1017,7 +1050,7 @@ template&lt;size_t N = 0&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00223">223</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00233">233</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="parser_8hpp_source.html#l00082">yume::ast::parser::KWD_SELF_ITEM</a>.</p>
 
@@ -1038,7 +1071,7 @@ template&lt;size_t N = 0&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00351">351</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00361">361</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="parser_8hpp_source.html#l00113">yume::ast::parser::SYM_COLON_COLON</a>.</p>
 
@@ -1059,9 +1092,9 @@ template&lt;size_t N = 0&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00614">614</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00627">627</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00263">parse_operator()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00267">parse_operator()</a>.</p>
 
 </div>
 </div>
@@ -1080,7 +1113,7 @@ template&lt;size_t N = 0&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00385">385</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00395">395</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="parser_8hpp_source.html#l00077">yume::ast::parser::KWD_LET</a>, and <a class="el" href="parser_8hpp_source.html#l00095">yume::ast::parser::SYM_EQ</a>.</p>
 
@@ -1101,7 +1134,7 @@ template&lt;size_t N = 0&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00399">399</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00409">409</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="parser_8hpp_source.html#l00076">yume::ast::parser::KWD_END</a>, and <a class="el" href="parser_8hpp_source.html#l00087">yume::ast::parser::KWD_WHILE</a>.</p>
 
@@ -1193,7 +1226,7 @@ template&lt;size_t N = 0&gt; </div>
 
 <p class="reference">References <a class="el" href="source__location_8hpp_source.html#l00034">yume::at()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00201">consume_with_commas_until()</a>, and <a class="el" href="parser_8hpp_source.html#l00263">parse_operator()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00201">consume_with_commas_until()</a>, and <a class="el" href="parser_8hpp_source.html#l00267">parse_operator()</a>.</p>
 
 </div>
 </div>
@@ -1212,7 +1245,7 @@ template&lt;size_t N = 0&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00185">185</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00195">195</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="parser_8hpp_source.html#l00079">yume::ast::parser::KWD_MUT</a>, <a class="el" href="parser_8hpp_source.html#l00078">yume::ast::parser::KWD_PTR</a>, <a class="el" href="parser_8hpp_source.html#l00083">yume::ast::parser::KWD_SELF_TYPE</a>, <a class="el" href="atom_8hpp_source.html#l00036">yume::make_atom()</a>, <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>, <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a165d3d525f6d0cbd55e42cc3058cafcc">yume::Ptr</a>, <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706ad140d37ad98c12ccd8e1c432f548bcdb">yume::Slice</a>, <a class="el" href="parser_8hpp_source.html#l00100">yume::ast::parser::SYM_LBRACE</a>, <a class="el" href="parser_8hpp_source.html#l00098">yume::ast::parser::SYM_LBRACKET</a>, <a class="el" href="parser_8hpp_source.html#l00101">yume::ast::parser::SYM_RBRACE</a>, and <a class="el" href="parser_8hpp_source.html#l00099">yume::ast::parser::SYM_RBRACKET</a>.</p>
 
@@ -1326,7 +1359,7 @@ template&lt;size_t N = 0&gt; </div>
 
 <p>Check if the ahead by <code>ahead</code> is a capitalized word. </p>
 
-<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00118">118</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parser_8cpp_source.html#l00127">127</a> of file <a class="el" href="parser_8cpp_source.html">parser.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="source__location_8hpp_source.html#l00034">yume::at()</a>.</p>
 
@@ -1522,7 +1555,7 @@ template&lt;typename T , typename U &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="parser_8hpp_source.html#l00126">126</a> of file <a class="el" href="parser_8hpp_source.html">parser.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00136">ast_ptr()</a>, <a class="el" href="parser_8cpp_source.html#l00041">consume()</a>, <a class="el" href="parser_8cpp_source.html#l00020">expect()</a>, <a class="el" href="parser_8hpp_source.html#l00144">make_ast()</a>, <a class="el" href="parser_8hpp_source.html#l00153">make_guard()</a>, <a class="el" href="parser_8hpp_source.html#l00263">parse_operator()</a>, <a class="el" href="parser_8cpp_source.html#l00029">require_separator()</a>, and <a class="el" href="parser_8hpp_source.html#l00132">ts()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="parser_8hpp_source.html#l00136">ast_ptr()</a>, <a class="el" href="parser_8cpp_source.html#l00041">consume()</a>, <a class="el" href="parser_8cpp_source.html#l00020">expect()</a>, <a class="el" href="parser_8hpp_source.html#l00144">make_ast()</a>, <a class="el" href="parser_8hpp_source.html#l00153">make_guard()</a>, <a class="el" href="parser_8hpp_source.html#l00267">parse_operator()</a>, <a class="el" href="parser_8cpp_source.html#l00029">require_separator()</a>, and <a class="el" href="parser_8hpp_source.html#l00132">ts()</a>.</p>
 
 </div>
 </div>

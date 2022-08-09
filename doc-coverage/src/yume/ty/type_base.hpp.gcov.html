@@ -31,13 +31,13 @@
             <td class="headerValue">doc-cov.info</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntry">8</td>
-            <td class="headerCovTableEntry">45</td>
-            <td class="headerCovTableEntryLo">17.8 %</td>
+            <td class="headerCovTableEntry">10</td>
+            <td class="headerCovTableEntry">47</td>
+            <td class="headerCovTableEntryLo">21.3 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-08-02 20:18:24</td>
+            <td class="headerValue">2022-08-09 05:27:10</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -167,14 +167,22 @@
 <a name="109"><span class="lineNum">     109 </span>            :   /// \returns `nullopt` if this type isn't a mutable reference.</a>
 <a name="110"><span class="lineNum">     110 </span><span class="lineCov">          1 :   [[nodiscard]] auto mut_base() const noexcept -&gt; optional&lt;Type&gt;;</span></a>
 <a name="111"><span class="lineNum">     111 </span>            : </a>
-<a name="112"><span class="lineNum">     112 </span>            :   /// If this type is a pointer type, return the base of it (`T ptr` -&gt; `T`)</a>
-<a name="113"><span class="lineNum">     113 </span>            :   /// \returns `nullopt` if this type isn't a pointer type.</a>
-<a name="114"><span class="lineNum">     114 </span><span class="lineCov">          1 :   [[nodiscard]] auto ptr_base() const noexcept -&gt; optional&lt;Type&gt;;</span></a>
+<a name="112"><span class="lineNum">     112 </span>            :   /// If this type is a mutable reference, return the base of it (`T mut` -&gt; `T`)</a>
+<a name="113"><span class="lineNum">     113 </span>            :   /// \throws if this type isn't a mutable reference.</a>
+<a name="114"><span class="lineNum">     114 </span><span class="lineCov">          1 :   [[nodiscard]] auto ensure_mut_base() const noexcept(false) -&gt; Type;</span></a>
 <a name="115"><span class="lineNum">     115 </span>            : </a>
-<a name="116"><span class="lineNum">     116 </span>            :   /// If this type is a mutable reference, return the base of it, otherwise return itself.</a>
-<a name="117"><span class="lineNum">     117 </span><span class="lineCov">          1 :   [[nodiscard]] auto without_mut() const noexcept -&gt; Type;</span></a>
-<a name="118"><span class="lineNum">     118 </span>            : };</a>
-<a name="119"><span class="lineNum">     119 </span>            : } // namespace yume::ty</a>
+<a name="116"><span class="lineNum">     116 </span>            :   /// If this type is a pointer type, return the base of it (`T ptr` -&gt; `T`)</a>
+<a name="117"><span class="lineNum">     117 </span>            :   /// \returns `nullopt` if this type isn't a pointer type.</a>
+<a name="118"><span class="lineNum">     118 </span><span class="lineCov">          1 :   [[nodiscard]] auto ptr_base() const noexcept -&gt; optional&lt;Type&gt;;</span></a>
+<a name="119"><span class="lineNum">     119 </span>            : </a>
+<a name="120"><span class="lineNum">     120 </span>            :   /// If this type is a pointer type, return the base of it (`T ptr` -&gt; `T`)</a>
+<a name="121"><span class="lineNum">     121 </span>            :   /// \throws if this type isn't a pointer type.</a>
+<a name="122"><span class="lineNum">     122 </span><span class="lineCov">          1 :   [[nodiscard]] auto ensure_ptr_base() const noexcept(false) -&gt; Type;</span></a>
+<a name="123"><span class="lineNum">     123 </span>            : </a>
+<a name="124"><span class="lineNum">     124 </span>            :   /// If this type is a mutable reference, return the base of it, otherwise return itself.</a>
+<a name="125"><span class="lineNum">     125 </span><span class="lineCov">          1 :   [[nodiscard]] auto without_mut() const noexcept -&gt; Type;</span></a>
+<a name="126"><span class="lineNum">     126 </span>            : };</a>
+<a name="127"><span class="lineNum">     127 </span>            : } // namespace yume::ty</a>
 </pre>
       </td>
     </tr>

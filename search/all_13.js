@@ -21,7 +21,7 @@ var searchData=
   ['try_5fas_18',['try_as',['../classyume_1_1ty_1_1Type.html#a4060b517fa5f58d8ed077bdc40dcdfa5',1,'yume::ty::Type']]],
   ['try_5fbest_5fviable_5foverload_19',['try_best_viable_overload',['../structyume_1_1semantic_1_1OverloadSet.html#af85f63ce6c9857345102b46ab3b711f9',1,'yume::semantic::OverloadSet']]],
   ['try_5fconsume_20',['try_consume',['../structyume_1_1ast_1_1parser_1_1Parser.html#a6284b99bb4a1236e43c03bce08e9da58',1,'yume::ast::parser::Parser']]],
-  ['try_5fimplicit_5fconversion_21',['try_implicit_conversion',['../namespaceyume_1_1semantic.html#a05f4b23dd7b4cef3773278ad473145d4',1,'yume::semantic']]],
+  ['try_5fimplicit_5fconversion_21',['try_implicit_conversion',['../namespaceyume_1_1semantic.html#aaea356ccf6145f157cd9c4234684a1a0',1,'yume::semantic']]],
   ['try_5fparse_5ftype_22',['try_parse_type',['../structyume_1_1ast_1_1parser_1_1Parser.html#a5395a4bce412b8f14e3fdbc76ae51cdb',1,'yume::ast::parser::Parser']]],
   ['try_5fpeek_23',['try_peek',['../structyume_1_1ast_1_1parser_1_1Parser.html#a8eae45afdb4e463e5202f93d35318661',1,'yume::ast::parser::Parser::try_peek(int ahead, TokenAtom token_atom, source_location location=source_location::current()) const -&gt; bool'],['../structyume_1_1ast_1_1parser_1_1Parser.html#aa2c08351233ab7af82b284b2f8744d1a',1,'yume::ast::parser::Parser::try_peek(int ahead, Token::Type token_type, source_location location=source_location::current()) const -&gt; bool']]],
   ['try_5fpeek_5fuword_24',['try_peek_uword',['../structyume_1_1ast_1_1parser_1_1Parser.html#adcca7d42f93ad3a5b3835b582a70ac10',1,'yume::ast::parser::Parser']]],
