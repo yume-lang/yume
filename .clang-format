@@ -6,3 +6,4 @@ Language: Cpp
 PointerAlignment: Left
 ColumnLimit: 120
 AllowShortCaseLabelsOnASingleLine: true
+QualifierAlignment: Left

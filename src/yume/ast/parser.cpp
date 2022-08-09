@@ -80,7 +80,7 @@ auto Parser::try_peek(int ahead, TokenAtom token_atom, [[maybe_unused]] const so
          << ", got " << *token << " at " << at(location) << "\n";
 #endif
 
-  return !(token->type != token_type || token->payload != payload);
+  return (token->type == token_type) && (token->payload == payload);
 }
 
 auto Parser::try_peek(int ahead, Token::Type token_type, [[maybe_unused]] const source_location location) const
@@ -105,6 +105,15 @@ auto Parser::next([[maybe_unused]] const source_location location) -> Token {
   return tok;
 }
 
+auto Parser::assert_payload_next([[maybe_unused]] const source_location location) -> Atom {
+  auto payload = tokens->payload;
+  if (!payload)
+    throw std::runtime_error("Expected a payload, but wasn't found: "s + to_string(*tokens) + " at " + at(location));
+
+  next(location);
+  return payload.value();
+}
+
 auto Parser::consume_word(const source_location location) -> string {
   ignore_separator();
   if (tokens.at_end())
@@ -112,7 +121,7 @@ auto Parser::consume_word(const source_location location) -> string {
   if (tokens->type != Word)
     throw std::runtime_error("Expected word, got "s + to_string(*tokens) + " at " + at(location));
 
-  return string(*next(location).payload);
+  return string(assert_payload_next());
 }
 
 auto Parser::try_peek_uword(int ahead, [[maybe_unused]] const source_location location) const -> bool {
@@ -122,7 +131,8 @@ auto Parser::try_peek_uword(int ahead, [[maybe_unused]] const source_location lo
   errs() << "try_peek ahead by " << ahead << ": expected uword, got " << *token << " at " << at(location) << "\n";
 #endif
 
-  return token->type == Word && is_uword(token->payload.value());
+  auto payload = token->payload;
+  return token->type == Word && payload.has_value() && is_uword(payload.value());
 }
 
 auto Parser::parse_stmt() -> unique_ptr<Stmt> {
@@ -486,7 +496,8 @@ auto Parser::parse_if_stmt() -> unique_ptr<IfStmt> {
 auto Parser::parse_number_expr() -> unique_ptr<NumberExpr> {
   auto entry = tokens.begin();
   expect(Number);
-  auto value = stoll(string(*next().payload));
+
+  auto value = stoll(string(assert_payload_next()));
 
   return ast_ptr<NumberExpr>({entry, 1}, value);
 }
@@ -494,7 +505,8 @@ auto Parser::parse_number_expr() -> unique_ptr<NumberExpr> {
 auto Parser::parse_string_expr() -> unique_ptr<StringExpr> {
   auto entry = tokens.begin();
   expect(Token::Type::Literal);
-  auto value = string(*next().payload);
+
+  auto value = string(assert_payload_next());
 
   return ast_ptr<StringExpr>({entry, 1}, value);
 }
@@ -502,7 +514,8 @@ auto Parser::parse_string_expr() -> unique_ptr<StringExpr> {
 auto Parser::parse_char_expr() -> unique_ptr<CharExpr> {
   auto entry = tokens.begin();
   expect(Token::Type::Char);
-  auto value = string(*next().payload)[0];
+
+  auto value = string(assert_payload_next())[0];
 
   return ast_ptr<CharExpr>({entry, 1}, value);
 }

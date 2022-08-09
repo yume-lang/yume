@@ -223,7 +223,11 @@ public:
   virtual void visit(Visitor& visitor) const = 0;
 
   [[nodiscard]] auto val_ty() const noexcept -> optional<ty::Type> { return m_val_ty; }
-  [[nodiscard]] auto ensure_ty() const -> ty::Type { return *m_val_ty; }
+  [[nodiscard]] auto ensure_ty() const -> ty::Type {
+    yume_assert(m_val_ty.has_value(), "Ensured that AST node has type, but one has not been assigned");
+    // NOLINTNEXTLINE(bugprone-unchecked-optional-access): clang-tidy doesn't accept yume_assert as an assertion
+    return *m_val_ty;
+  }
   void val_ty(optional<ty::Type> type) {
     m_val_ty = type;
     for (auto* i : m_attach->observers) {

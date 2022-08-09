@@ -211,6 +211,10 @@ struct Parser {
   /// Return the next token and increment the iterator.
   auto next([[maybe_unused]] source_location location = source_location::current()) -> Token;
 
+  /// Returns the payload of the next token and increment the iterator.
+  /// \throws if the next token has no payload
+  auto assert_payload_next([[maybe_unused]] source_location location = source_location::current()) -> Atom;
+
   /// Return the payload of the next token. Throws if the next token isn't a `Word`.
   auto consume_word(source_location location = source_location::current()) -> string;
 
