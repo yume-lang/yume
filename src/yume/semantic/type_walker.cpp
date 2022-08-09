@@ -80,6 +80,14 @@ template <> void TypeWalker::expression(ast::TypeName& expr) {
 
 template <> void TypeWalker::expression(ast::ImplicitCastExpr& expr) { body_expression(expr.base()); }
 
+static inline auto for_all_instantiations(std::list<Struct> structs, std::invocable<Struct&> auto fn) {
+  for (auto& i : structs) {
+    fn(i);
+    for (auto& [k, v] : i.instantiations)
+      fn(*v);
+  }
+}
+
 template <> void TypeWalker::expression(ast::CtorExpr& expr) {
   Struct* st = nullptr;
 
@@ -120,15 +128,11 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
   } else {
     expression(expr.type());
     auto base_type = convert_type(expr.type());
-    // XXX: searching all structs and all their instantiations, could at least be extracted elsewhere
-    for (auto& i : compiler.m_structs) {
+
+    for_all_instantiations(compiler.m_structs, [&](Struct& i) {
       if (i.self_ty == base_type)
         st = &i;
-      else
-        for (auto& [k, v] : i.instantiations)
-          if (v->self_ty == base_type)
-            st = &*v;
-    }
+    });
     expr.val_ty(base_type);
   }
 

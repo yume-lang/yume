@@ -79,4 +79,5 @@ private:
     throw std::runtime_error("Type walker stubbed on expression "s + expr.kind_name());
   }
 };
+
 } // namespace yume::semantic

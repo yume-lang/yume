@@ -405,7 +405,7 @@ template <typename T> void Compiler::setup_fn_base(T& fn) {
   }
   // Allocate local variables for each parameter
   for (auto [arg, ast_arg] : llvm::zip(fn.base.llvm->args(), fn.ast().args())) {
-    ty::Type type = *T::arg_type(ast_arg);
+    const ty::Type type = *T::arg_type(ast_arg);
     auto name = T::arg_name(ast_arg);
     auto& val = T::common_ast(ast_arg);
     llvm::Value* alloc = nullptr;
