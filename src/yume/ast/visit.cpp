@@ -20,13 +20,15 @@ void WhileStmt::visit(Visitor& visitor) const { visitor.visit(m_cond).visit(m_bo
 void VarDecl::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_type).visit(m_init); }
 void FnDecl::visit(Visitor& visitor) const {
   visitor.visit(m_name).visit(m_args, "arg").visit(m_type_args, "type arg").visit(m_ret, "ret");
-  if (const auto* s = get_if<string>(&m_body); s)
+  if (const auto* s = get_if<string>(&m_body); s) {
     visitor.visit(*s, "primitive");
-  else
+  } else if (const auto* s = get_if<extern_decl_t>(&m_body); s) {
+    visitor.visit(s->name, "extern");
+    if (s->varargs)
+      visitor.visit("varargs");
+  } else {
     visitor.visit(get<Compound>(m_body));
-
-  if (m_varargs)
-    visitor.visit("varargs");
+  }
 }
 void CtorDecl::visit(Visitor& visitor) const { visitor.visit(m_args, "arg").visit(m_body); }
 void StructDecl::visit(Visitor& visitor) const {

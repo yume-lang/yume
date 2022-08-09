@@ -87,6 +87,7 @@ static const TokenAtom KWD_FALSE = {Token::Type::Word, "false"_a};
 static const TokenAtom KWD_WHILE = {Token::Type::Word, "while"_a};
 static const TokenAtom KWD_STRUCT = {Token::Type::Word, "struct"_a};
 static const TokenAtom KWD_RETURN = {Token::Type::Word, "return"_a};
+static const TokenAtom KWD_EXTERN = {Token::Type::Word, "__extern__"_a};
 static const TokenAtom KWD_VARARGS = {Token::Type::Word, "__varargs__"_a};
 static const TokenAtom KWD_PRIMITIVE = {Token::Type::Word, "__primitive__"_a};
 

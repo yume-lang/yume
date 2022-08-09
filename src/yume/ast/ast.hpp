@@ -628,25 +628,34 @@ class FnDecl : public Stmt {
 public:
   using arg_t = TypeName;
 
+  using extern_decl_t = struct {
+    string name;
+    bool varargs;
+  };
+
+  using body_t = variant<Compound, string, extern_decl_t>;
+
 private:
   string m_name;
-  /// Can only be set if this function declaration is a primitive
-  bool m_varargs{};
   vector<arg_t> m_args;
   vector<string> m_type_args;
   OptionalType m_ret;
   /// If this function declaration refers to a primitive, this field is a string representing the name of the primitive.
+  /// If it's an external method, this field is a pair of the extern name and whether the method is varargs.
   /// Otherise, this function declaration refers to a regular function and this field holds the body of that function.
-  variant<Compound, string> m_body;
+  body_t m_body;
 
 public:
   FnDecl(span<Token> tok, string name, vector<arg_t> args, vector<string> type_args, OptionalType ret, Compound body)
       : Stmt(K_FnDecl, tok), m_name{move(name)}, m_args{move(args)},
         m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(body)} {}
-  FnDecl(span<Token> tok, string name, vector<arg_t> args, vector<string> type_args, OptionalType ret, bool varargs,
-         string primitive)
-      : Stmt(K_FnDecl, tok), m_name{move(name)}, m_varargs{varargs}, m_args{move(args)},
+  FnDecl(span<Token> tok, string name, vector<arg_t> args, vector<string> type_args, OptionalType ret, string primitive)
+      : Stmt(K_FnDecl, tok), m_name{move(name)}, m_args{move(args)},
         m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(primitive)} {}
+  FnDecl(span<Token> tok, string name, vector<arg_t> args, vector<string> type_args, OptionalType ret,
+         extern_decl_t extern_decl)
+      : Stmt(K_FnDecl, tok), m_name{move(name)}, m_args{move(args)},
+        m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(extern_decl)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
@@ -658,8 +667,9 @@ public:
   [[nodiscard]] auto ret() -> auto& { return m_ret; }
   [[nodiscard]] auto body() const -> const auto& { return m_body; }
   [[nodiscard]] auto body() -> auto& { return m_body; }
-  [[nodiscard]] auto varargs() const -> bool { return m_varargs; }
+  [[nodiscard]] auto varargs() const -> bool { return is_extern() && std::get<extern_decl_t>(m_body).varargs; }
   [[nodiscard]] auto primitive() const -> bool { return holds_alternative<string>(m_body); }
+  [[nodiscard]] auto is_extern() const -> bool { return holds_alternative<extern_decl_t>(m_body); }
   static auto classof(const AST* a) -> bool { return a->kind() == K_FnDecl; }
   [[nodiscard]] auto clone() const -> FnDecl* override;
 };

@@ -1,8 +1,8 @@
-def printf(format U8 ptr) I32 = __primitive__(libc) __varargs__
-def puts(string U8 ptr) I32 = __primitive__(libc)
-def putchar(char I32) I32 = __primitive__(libc)
+def printf(format U8 ptr) I32 = __extern__ __varargs__
+def puts(string U8 ptr) I32 = __extern__
+def putchar(char I32) I32 = __extern__
 
-def exit(status I32) = __primitive__(libc)
+def exit(status I32) = __extern__
 def assert(condition Bool)
   if !condition
     exit(1)

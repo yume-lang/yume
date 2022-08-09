@@ -66,13 +66,23 @@ auto make_fn_decl(const std::string& name, std::initializer_list<TName> args = {
                      make_compound(std::forward<Ts>(ts)...));
 }
 
-auto make_fn_decl(const std::string& name, std::initializer_list<TName> args, OptionalType ret,
-                  const std::string& primitive, bool varargs = false) -> std::unique_ptr<FnDecl> {
+auto make_primitive_decl(const std::string& name, std::initializer_list<TName> args, OptionalType ret,
+                         const std::string& primitive) -> std::unique_ptr<FnDecl> {
   auto ast_args = std::vector<TypeName>();
   ast_args.reserve(args.size());
   std::transform(args.begin(), args.end(), std::back_inserter(ast_args),
                  [](auto& tn) { return static_cast<TypeName>(tn); });
-  return ast<FnDecl>(name, std::move(ast_args), std::vector<std::string>{}, std::move(ret), varargs, primitive);
+  return ast<FnDecl>(name, std::move(ast_args), std::vector<std::string>{}, std::move(ret), primitive);
+}
+
+auto make_extern_decl(const std::string& name, std::initializer_list<TName> args, OptionalType ret,
+                      const std::string& extern_name, bool varargs = false) -> std::unique_ptr<FnDecl> {
+  auto ast_args = std::vector<TypeName>();
+  ast_args.reserve(args.size());
+  std::transform(args.begin(), args.end(), std::back_inserter(ast_args),
+                 [](auto& tn) { return static_cast<TypeName>(tn); });
+  return ast<FnDecl>(name, std::move(ast_args), std::vector<std::string>{}, std::move(ret),
+                     FnDecl::extern_decl_t{extern_name, varargs});
 }
 
 auto operator""_Var(const char* str, size_t size) { return ast<VarExpr>(std::string{str, size}); }
@@ -274,11 +284,12 @@ TEST_CASE("Parse operator function declaration", "[parse][fn]") {
 }
 
 TEST_CASE("Parse primitive function declaration", "[parse][fn]") {
-  CHECK_PARSER("def prim() = __primitive__(name_of_primitive)", make_fn_decl("prim", {}, {}, "name_of_primitive"));
+  CHECK_PARSER("def prim() = __primitive__(name_of_primitive)",
+               make_primitive_decl("prim", {}, {}, "name_of_primitive"));
   CHECK_PARSER("def munge(a I32 ptr) I32 ptr = __primitive__(native_munge)",
-               make_fn_decl("munge", {{"a", "I32"_Type & Ptr}}, "I32"_Type & Ptr, "native_munge"));
-  CHECK_PARSER("def printf(format U8 ptr) = __primitive__(libc_printf) __varargs__",
-               make_fn_decl("printf", {{"format", "U8"_Type & Ptr}}, {}, "libc_printf", true));
+               make_primitive_decl("munge", {{"a", "I32"_Type & Ptr}}, "I32"_Type & Ptr, "native_munge"));
+  CHECK_PARSER("def printf(format U8 ptr) = __extern__ __varargs__",
+               make_extern_decl("printf", {{"format", "U8"_Type & Ptr}}, {}, "printf", true));
 }
 
 #undef CHECK_PARSER

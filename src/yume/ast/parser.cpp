@@ -337,8 +337,14 @@ auto Parser::parse_fn_decl() -> unique_ptr<FnDecl> {
       consume(SYM_LPAREN);
       auto primitive = consume_word();
       consume(SYM_RPAREN);
+      return ast_ptr<FnDecl>(entry, name, move(args), type_args, move(ret_type), primitive);
+    }
+    if (try_consume(KWD_EXTERN)) {
+      // consume(SYM_LPAREN);
+      // auto primitive = consume_word();
+      // consume(SYM_RPAREN);
       auto varargs = try_consume(KWD_VARARGS);
-      return ast_ptr<FnDecl>(entry, name, move(args), type_args, move(ret_type), varargs, primitive);
+      return ast_ptr<FnDecl>(entry, name, move(args), type_args, move(ret_type), FnDecl::extern_decl_t{name, varargs});
     }
     body_begin = tokens.begin();
     auto expr = parse_expr();

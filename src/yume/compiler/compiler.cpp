@@ -302,8 +302,7 @@ auto Compiler::default_init(ty::Type type) -> Val {
 auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
   if (fn.base.llvm != nullptr)
     return fn.base.llvm;
-  // Skip primitive definitions, unless they are actually external functions (i.e. printf)
-  if (fn.ast().primitive() && mangle)
+  if (fn.ast().primitive())
     return nullptr;
   const auto& fn_decl = fn.ast();
   auto* llvm_ret_type = llvm::Type::getVoidTy(*m_context);
@@ -327,9 +326,9 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
   for (auto [llvm_arg, decl_arg] : llvm::zip(llvm_fn->args(), fn_decl.args()))
     llvm_arg.setName("arg."s + decl_arg.name);
 
-  // Primitive definitions that got this far are actually external functions; declare its prototype but not its
-  // body
-  if (!fn_decl.primitive()) {
+  // At this point, the function prototype is declared, but not the body.
+  // In the case of extern functions, a prototype is all that will be declared.
+  if (!fn_decl.is_extern()) {
     m_decl_queue.push(&fn);
     m_walker->current_decl = &fn;
     m_walker->body_statement(fn.ast());
@@ -639,13 +638,14 @@ auto Compiler::int_bin_primitive(const string& primitive, const vector<llvm::Val
 }
 
 auto Compiler::primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<ty::Type>& types) -> optional<Val> {
+  if (fn->ast().is_extern())
+    return m_builder->CreateCall(declare(*fn, false), args);
+
   if (!fn->ast().primitive())
     return {};
 
   auto primitive = get<string>(fn->body());
 
-  if (primitive == "libc")
-    return m_builder->CreateCall(declare(*fn, false), args);
   if (primitive == "ptrto")
     return args.at(0);
   if (primitive == "slice_dup") {

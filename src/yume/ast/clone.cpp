@@ -66,9 +66,8 @@ auto ReturnStmt::clone() const -> ReturnStmt* { return new ReturnStmt(tok(), dup
 auto WhileStmt::clone() const -> WhileStmt* { return new WhileStmt(tok(), dup(m_cond), dup(m_body)); }
 auto VarDecl::clone() const -> VarDecl* { return new VarDecl(tok(), m_name, dup(m_type), dup(m_init)); }
 auto FnDecl::clone() const -> FnDecl* {
-  if (const auto* s = get_if<string>(&m_body); s)
-    return new FnDecl(tok(), m_name, dup(m_args), m_type_args, dup(m_ret), m_varargs, *s);
-  return new FnDecl(tok(), m_name, dup(m_args), m_type_args, dup(m_ret), dup(get<Compound>(m_body)));
+  return std::visit([&](auto& s) { return new FnDecl(tok(), m_name, dup(m_args), m_type_args, dup(m_ret), dup(s)); },
+                    m_body);
 }
 auto CtorDecl::clone() const -> CtorDecl* { return new CtorDecl(tok(), dup(m_args), dup(m_body)); }
 auto StructDecl::clone() const -> StructDecl* {
