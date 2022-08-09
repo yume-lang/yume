@@ -127,9 +127,10 @@ void Compiler::run() {
     if (fn.name() == "main")
       main_fn = &fn;
 
+  main_fn->ast().make_extern_linkage();
   if (main_fn == nullptr)
     throw std::logic_error("Program is missing a `main` function!"); // Related: #10
-  declare(*main_fn, false);
+  declare(*main_fn);
 
   while (!m_decl_queue.empty()) {
     auto next = m_decl_queue.front();
@@ -299,7 +300,7 @@ auto Compiler::default_init(ty::Type type) -> Val {
   throw std::runtime_error("Cannot default-initialize "s + type.name());
 }
 
-auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
+auto Compiler::declare(Fn& fn) -> llvm::Function* {
   if (fn.base.llvm != nullptr)
     return fn.base.llvm;
   if (fn.ast().primitive())
@@ -316,10 +317,10 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
   llvm::FunctionType* fn_t = llvm::FunctionType::get(llvm_ret_type, llvm_args, fn_decl.varargs());
 
   string name = fn_decl.name();
-  if (mangle)
+  if (!fn.ast().extern_linkage())
     name = mangle::mangle_name(fn);
 
-  auto linkage = mangle ? llvm::Function::InternalLinkage : llvm::Function::ExternalLinkage;
+  auto linkage = fn.ast().extern_linkage() ? llvm::Function::ExternalLinkage : llvm::Function::InternalLinkage;
   auto* llvm_fn = llvm::Function::Create(fn_t, linkage, name, m_module.get());
   fn.base.llvm = llvm_fn;
 
@@ -328,7 +329,7 @@ auto Compiler::declare(Fn& fn, bool mangle) -> llvm::Function* {
 
   // At this point, the function prototype is declared, but not the body.
   // In the case of extern functions, a prototype is all that will be declared.
-  if (!fn_decl.is_extern()) {
+  if (!fn_decl.extern_decl()) {
     m_decl_queue.push(&fn);
     m_walker->current_decl = &fn;
     m_walker->body_statement(fn.ast());
@@ -638,8 +639,8 @@ auto Compiler::int_bin_primitive(const string& primitive, const vector<llvm::Val
 }
 
 auto Compiler::primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<ty::Type>& types) -> optional<Val> {
-  if (fn->ast().is_extern())
-    return m_builder->CreateCall(declare(*fn, false), args);
+  if (fn->ast().extern_decl())
+    return m_builder->CreateCall(declare(*fn), args);
 
   if (!fn->ast().primitive())
     return {};

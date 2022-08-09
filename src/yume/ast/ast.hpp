@@ -3,7 +3,7 @@
 #include "qualifier.hpp"
 #include "token.hpp"
 #include "ty/compatibility.hpp"
-#include "ty/type.hpp"
+#include "ty/type_base.hpp"
 #include "util.hpp"
 #include <cstddef>
 #include <cstdint>
@@ -637,6 +637,7 @@ public:
 
 private:
   string m_name;
+  bool m_extern_linkage;
   vector<arg_t> m_args;
   vector<string> m_type_args;
   OptionalType m_ret;
@@ -646,8 +647,9 @@ private:
   body_t m_body;
 
 public:
-  FnDecl(span<Token> tok, string name, vector<arg_t> args, vector<string> type_args, OptionalType ret, body_t body)
-      : Stmt(K_FnDecl, tok), m_name{move(name)}, m_args{move(args)},
+  FnDecl(span<Token> tok, string name, vector<arg_t> args, vector<string> type_args, OptionalType ret, body_t body,
+         bool extern_linkage)
+      : Stmt(K_FnDecl, tok), m_name{move(name)}, m_extern_linkage(extern_linkage), m_args{move(args)},
         m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(body)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
@@ -660,9 +662,11 @@ public:
   [[nodiscard]] auto ret() -> auto& { return m_ret; }
   [[nodiscard]] auto body() const -> const auto& { return m_body; }
   [[nodiscard]] auto body() -> auto& { return m_body; }
-  [[nodiscard]] auto varargs() const -> bool { return is_extern() && std::get<extern_decl_t>(m_body).varargs; }
+  [[nodiscard]] auto varargs() const -> bool { return extern_decl() && std::get<extern_decl_t>(m_body).varargs; }
   [[nodiscard]] auto primitive() const -> bool { return holds_alternative<string>(m_body); }
-  [[nodiscard]] auto is_extern() const -> bool { return holds_alternative<extern_decl_t>(m_body); }
+  [[nodiscard]] auto extern_decl() const -> bool { return holds_alternative<extern_decl_t>(m_body); }
+  [[nodiscard]] auto extern_linkage() const -> bool { return m_extern_linkage || extern_decl(); }
+  void make_extern_linkage(bool value = true) { m_extern_linkage = value; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_FnDecl; }
   [[nodiscard]] auto clone() const -> FnDecl* override;
 };

@@ -54,7 +54,7 @@ struct TName {
   explicit operator TypeName() const { return std::move(*ast<TypeName>(std::move(type), name)); }
 };
 
-template <typename... Ts>
+template <bool ExternLinkage = false, typename... Ts>
 auto make_fn_decl(const std::string& name, std::initializer_list<TName> args = {},
                   std::vector<std::string> type_args = {}, OptionalType ret = std::nullopt, Ts&&... ts)
     -> std::unique_ptr<FnDecl> {
@@ -63,16 +63,16 @@ auto make_fn_decl(const std::string& name, std::initializer_list<TName> args = {
   std::transform(args.begin(), args.end(), std::back_inserter(ast_args),
                  [](auto& tn) { return static_cast<TypeName>(tn); });
   return ast<FnDecl>(name, std::move(ast_args), std::move(type_args), std::move(ret),
-                     make_compound(std::forward<Ts>(ts)...));
+                     make_compound(std::forward<Ts>(ts)...), ExternLinkage);
 }
 
 auto make_primitive_decl(const std::string& name, std::initializer_list<TName> args, OptionalType ret,
-                         const std::string& primitive) -> std::unique_ptr<FnDecl> {
+                         const std::string& primitive, bool extern_linkage = false) -> std::unique_ptr<FnDecl> {
   auto ast_args = std::vector<TypeName>();
   ast_args.reserve(args.size());
   std::transform(args.begin(), args.end(), std::back_inserter(ast_args),
                  [](auto& tn) { return static_cast<TypeName>(tn); });
-  return ast<FnDecl>(name, std::move(ast_args), std::vector<std::string>{}, std::move(ret), primitive);
+  return ast<FnDecl>(name, std::move(ast_args), std::vector<std::string>{}, std::move(ret), primitive, extern_linkage);
 }
 
 auto make_extern_decl(const std::string& name, std::initializer_list<TName> args, OptionalType ret,
@@ -82,7 +82,7 @@ auto make_extern_decl(const std::string& name, std::initializer_list<TName> args
   std::transform(args.begin(), args.end(), std::back_inserter(ast_args),
                  [](auto& tn) { return static_cast<TypeName>(tn); });
   return ast<FnDecl>(name, std::move(ast_args), std::vector<std::string>{}, std::move(ret),
-                     FnDecl::extern_decl_t{extern_name, varargs});
+                     FnDecl::extern_decl_t{extern_name, varargs}, false);
 }
 
 auto operator""_Var(const char* str, size_t size) { return ast<VarExpr>(std::string{str, size}); }
@@ -290,6 +290,11 @@ TEST_CASE("Parse primitive function declaration", "[parse][fn]") {
                make_primitive_decl("munge", {{"a", "I32"_Type & Ptr}}, "I32"_Type & Ptr, "native_munge"));
   CHECK_PARSER("def printf(format U8 ptr) = __extern__ __varargs__",
                make_extern_decl("printf", {{"format", "U8"_Type & Ptr}}, {}, "printf", true));
+}
+
+TEST_CASE("Parse extern linkage function declaration", "[parse][fn]") {
+  CHECK_PARSER("def __extern__ foo()\nend", make_fn_decl<true>("foo"));
+  CHECK_PARSER("def __extern__ short() = 0", make_fn_decl<true>("short", {}, {}, {}, ast<ReturnStmt>(0_Num)));
 }
 
 #undef CHECK_PARSER

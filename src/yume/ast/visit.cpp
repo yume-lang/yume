@@ -20,6 +20,9 @@ void WhileStmt::visit(Visitor& visitor) const { visitor.visit(m_cond).visit(m_bo
 void VarDecl::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_type).visit(m_init); }
 void FnDecl::visit(Visitor& visitor) const {
   visitor.visit(m_name).visit(m_args, "arg").visit(m_type_args, "type arg").visit(m_ret, "ret");
+  if (m_extern_linkage)
+    visitor.visit("extern linkage");
+
   if (const auto* s = get_if<string>(&m_body); s) {
     visitor.visit(*s, "primitive");
   } else if (const auto* s = get_if<extern_decl_t>(&m_body); s) {

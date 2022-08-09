@@ -85,7 +85,11 @@ target_compile_options(yume PUBLIC -Wno-unknown-warning-option -W -Wall -Wimplic
 include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag(-Wunused_template SUPPORTS_W_UNUSED_TEMPLATE)
 if(SUPPORTS_W_UNUSED_TEMPLATE)
-  target_compiler_options(yume PUBLIC -Wunused-template)
+  target_compile_options(yume PUBLIC -Wunused-template)
+endif()
+check_cxx_compiler_flag(-Wmost SUPPORTS_W_MOST)
+if(SUPPORTS_W_MOST)
+  target_compile_options(yume PUBLIC -Wmost)
 endif()
 
 if(YUME_FORCE_LIBCXX)

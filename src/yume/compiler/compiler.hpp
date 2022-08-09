@@ -79,7 +79,7 @@ public:
   void run();
 
   /// Declare a function in bytecode, or get an existing declaration.
-  auto declare(Fn&, bool mangle = true) -> llvm::Function*;
+  auto declare(Fn&) -> llvm::Function*;
   /// Declare a constructor in bytecode, or get an existing declaration.
   auto declare(Ctor&) -> llvm::Function*;
 
