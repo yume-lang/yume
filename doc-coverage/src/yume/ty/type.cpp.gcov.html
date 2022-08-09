@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-08-09 05:27:10</td>
+            <td class="headerValue">2022-08-09 06:08:25</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -84,7 +84,7 @@
 <a name="26"><span class="lineNum">      26 </span>            :   if (qual == Qualifier::Mut)</a>
 <a name="27"><span class="lineNum">      27 </span>            :     return {m_base, true};</a>
 <a name="28"><span class="lineNum">      28 </span>            : </a>
-<a name="29"><span class="lineNum">      29 </span>            :   int qual_idx = static_cast&lt;int&gt;(qual);</a>
+<a name="29"><span class="lineNum">      29 </span>            :   const int qual_idx = static_cast&lt;int&gt;(qual);</a>
 <a name="30"><span class="lineNum">      30 </span>            :   const auto&amp; existing = m_base-&gt;m_known_ptr_like.at(qual_idx);</a>
 <a name="31"><span class="lineNum">      31 </span>            :   if (existing != nullptr)</a>
 <a name="32"><span class="lineNum">      32 </span>            :     return {existing.get()};</a>
@@ -104,11 +104,11 @@
 <a name="46"><span class="lineNum">      46 </span>            :   }</a>
 <a name="47"><span class="lineNum">      47 </span>            :   // `Foo mut` -&gt; `T mut`, with `T = Foo`.</a>
 <a name="48"><span class="lineNum">      48 </span>            :   if (a.is_mut() &amp;&amp; b.is_mut())</a>
-<a name="49"><span class="lineNum">      49 </span>            :     return visit_subs(*a.mut_base(), b.without_mut(), sub);</a>
+<a name="49"><span class="lineNum">      49 </span>            :     return visit_subs(a.ensure_mut_base(), b.without_mut(), sub);</a>
 <a name="50"><span class="lineNum">      50 </span>            : </a>
 <a name="51"><span class="lineNum">      51 </span>            :   // `Foo ptr mut` -&gt; `T ptr`, with `T = Foo`.</a>
 <a name="52"><span class="lineNum">      52 </span>            :   if (a.is_mut() &amp;&amp; !b.is_mut())</a>
-<a name="53"><span class="lineNum">      53 </span>            :     return visit_subs(*a.mut_base(), b, sub);</a>
+<a name="53"><span class="lineNum">      53 </span>            :     return visit_subs(a.ensure_mut_base(), b, sub);</a>
 <a name="54"><span class="lineNum">      54 </span>            : </a>
 <a name="55"><span class="lineNum">      55 </span>            :   // `Foo{Bar}` -&gt; `Foo{T}`, with `T = Foo`.</a>
 <a name="56"><span class="lineNum">      56 </span>            :   // TODO(rymiel): This could technically have multiple type variables... Currently only handling the &quot;1&quot; case.</a>
@@ -173,7 +173,7 @@
 <a name="115"><span class="lineNum">     115 </span>            :   // Note that the base types are also compared, so `I32 mut` -&gt; `I64`.</a>
 <a name="116"><span class="lineNum">     116 </span>            :   if (is_mut() &amp;&amp; !other.is_mut()) {</a>
 <a name="117"><span class="lineNum">     117 </span>            :     compat.conv.dereference = true;</a>
-<a name="118"><span class="lineNum">     118 </span>            :     compat = mut_base()-&gt;compatibility(other, compat);</a>
+<a name="118"><span class="lineNum">     118 </span>            :     compat = ensure_mut_base().compatibility(other, compat);</a>
 <a name="119"><span class="lineNum">     119 </span>            :     return compat;</a>
 <a name="120"><span class="lineNum">     120 </span>            :   }</a>
 <a name="121"><span class="lineNum">     121 </span>            : </a>
@@ -195,7 +195,7 @@
 <a name="137"><span class="lineNum">     137 </span>            :     return true;</a>
 <a name="138"><span class="lineNum">     138 </span>            : </a>
 <a name="139"><span class="lineNum">     139 </span>            :   if (base_isa&lt;Ptr&gt;())</a>
-<a name="140"><span class="lineNum">     140 </span>            :     return ptr_base()-&gt;is_generic();</a>
+<a name="140"><span class="lineNum">     140 </span>            :     return ensure_ptr_base().is_generic();</a>
 <a name="141"><span class="lineNum">     141 </span>            : </a>
 <a name="142"><span class="lineNum">     142 </span>            :   if (const auto* struct_ty = base_dyn_cast&lt;Struct&gt;())</a>
 <a name="143"><span class="lineNum">     143 </span>            :     return std::ranges::any_of(struct_ty-&gt;subs(), [](const auto&amp; sub) { return sub.second.is_generic(); });</a>
@@ -218,7 +218,7 @@
 <a name="160"><span class="lineNum">     160 </span>            :     return Type{sub.replace.base(), m_mut};</a>
 <a name="161"><span class="lineNum">     161 </span>            : </a>
 <a name="162"><span class="lineNum">     162 </span>            :   if (const auto* ptr_this = base_dyn_cast&lt;Ptr&gt;())</a>
-<a name="163"><span class="lineNum">     163 </span>            :     return ptr_base()-&gt;apply_generic_substitution(sub)-&gt;known_qual(ptr_this-&gt;qualifier());</a>
+<a name="163"><span class="lineNum">     163 </span>            :     return ensure_ptr_base().apply_generic_substitution(sub)-&gt;known_qual(ptr_this-&gt;qualifier());</a>
 <a name="164"><span class="lineNum">     164 </span>            : </a>
 <a name="165"><span class="lineNum">     165 </span>            :   if (const auto* st_this = base_dyn_cast&lt;Struct&gt;()) {</a>
 <a name="166"><span class="lineNum">     166 </span>            :     // Gah!</a>

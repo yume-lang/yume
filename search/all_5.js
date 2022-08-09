@@ -9,7 +9,8 @@ var searchData=
   ['fn_6',['Fn',['../structyume_1_1Fn.html#a8af990934f192c1da1fe6b731f29e6a0',1,'yume::Fn::Fn()'],['../structyume_1_1Fn.html',1,'yume::Fn']]],
   ['fnbase_7',['FnBase',['../structyume_1_1FnBase.html',1,'yume']]],
   ['fndecl_8',['FnDecl',['../classyume_1_1ast_1_1FnDecl.html#a425c832f18f9b6ca789dc0174a40633a',1,'yume::ast::FnDecl::FnDecl(span&lt; Token &gt; tok, string name, vector&lt; arg_t &gt; args, vector&lt; string &gt; type_args, OptionalType ret, Compound body)'],['../classyume_1_1ast_1_1FnDecl.html#a43637b053fc4bd1282ad7e173be0caf1',1,'yume::ast::FnDecl::FnDecl(span&lt; Token &gt; tok, string name, vector&lt; arg_t &gt; args, vector&lt; string &gt; type_args, OptionalType ret, bool varargs, string primitive)'],['../classyume_1_1ast_1_1FnDecl.html',1,'yume::ast::FnDecl']]],
-  ['from_9',['from',['../errors_8cpp.html#ae04bdbaf153fd25f2f7a8a2636fc6443',1,'errors.cpp']]],
-  ['front_10',['front',['../errors_8cpp.html#a3554b208b127a4b9c1b64f6ddc1f6d7b',1,'errors.cpp']]],
-  ['function_5fname_11',['function_name',['../structyume_1_1source__location.html#ae2393b03eecf578c9a1f64b6e2c3c703',1,'yume::source_location']]]
+  ['for_5fall_5finstantiations_9',['for_all_instantiations',['../namespaceyume_1_1semantic.html#a192fdcc961c74cd36e38edc8b6a11251',1,'yume::semantic']]],
+  ['from_10',['from',['../errors_8cpp.html#ae04bdbaf153fd25f2f7a8a2636fc6443',1,'errors.cpp']]],
+  ['front_11',['front',['../errors_8cpp.html#a3554b208b127a4b9c1b64f6ddc1f6d7b',1,'errors.cpp']]],
+  ['function_5fname_12',['function_name',['../structyume_1_1source__location.html#ae2393b03eecf578c9a1f64b6e2c3c703',1,'yume::source_location']]]
 ];

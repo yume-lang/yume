@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-08-09 05:27:10</td>
+            <td class="headerValue">2022-08-09 06:08:25</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -463,7 +463,7 @@
 <a name="405"><span class="lineNum">     405 </span>            :   }</a>
 <a name="406"><span class="lineNum">     406 </span>            :   // Allocate local variables for each parameter</a>
 <a name="407"><span class="lineNum">     407 </span>            :   for (auto [arg, ast_arg] : llvm::zip(fn.base.llvm-&gt;args(), fn.ast().args())) {</a>
-<a name="408"><span class="lineNum">     408 </span>            :     ty::Type type = *T::arg_type(ast_arg);</a>
+<a name="408"><span class="lineNum">     408 </span>            :     const ty::Type type = *T::arg_type(ast_arg);</a>
 <a name="409"><span class="lineNum">     409 </span>            :     auto name = T::arg_name(ast_arg);</a>
 <a name="410"><span class="lineNum">     410 </span>            :     auto&amp; val = T::common_ast(ast_arg);</a>
 <a name="411"><span class="lineNum">     411 </span>            :     llvm::Value* alloc = nullptr;</a>
@@ -901,7 +901,7 @@
 <a name="843"><span class="lineNum">     843 </span>            : </a>
 <a name="844"><span class="lineNum">     844 </span>            :   auto* slice_type = llvm_type(expr.ensure_ty());</a>
 <a name="845"><span class="lineNum">     845 </span>            :   auto* base_type =</a>
-<a name="846"><span class="lineNum">     846 </span>            :       llvm_type(expr.ensure_ty().base_cast&lt;ty::Struct&gt;()-&gt;fields().at(0)-&gt;ensure_ty().ptr_base().value()); // ???</a>
+<a name="846"><span class="lineNum">     846 </span>            :       llvm_type(expr.ensure_ty().base_cast&lt;ty::Struct&gt;()-&gt;fields().at(0)-&gt;ensure_ty().ensure_ptr_base()); // ???</a>
 <a name="847"><span class="lineNum">     847 </span>            : </a>
 <a name="848"><span class="lineNum">     848 </span>            :   auto* alloc_size = llvm::ConstantExpr::getSizeOf(base_type);</a>
 <a name="849"><span class="lineNum">     849 </span>            :   auto* ptr_alloc = llvm::CallInst::CreateMalloc(m_builder-&gt;GetInsertBlock(), m_builder-&gt;getInt64Ty(), base_type,</a>
@@ -946,7 +946,7 @@
 <a name="888"><span class="lineNum">     888 </span>            : </a>
 <a name="889"><span class="lineNum">     889 </span>            :   if (expr.conversion().dereference) {</a>
 <a name="890"><span class="lineNum">     890 </span>            :     yume_assert(current_ty.is_mut(), &quot;Source type must be mutable when implicitly derefencing&quot;);</a>
-<a name="891"><span class="lineNum">     891 </span>            :     current_ty = current_ty.mut_base().value();</a>
+<a name="891"><span class="lineNum">     891 </span>            :     current_ty = current_ty.ensure_mut_base();</a>
 <a name="892"><span class="lineNum">     892 </span>            :     base = m_builder-&gt;CreateLoad(llvm_type(current_ty), base, &quot;ic.deref&quot;);</a>
 <a name="893"><span class="lineNum">     893 </span>            :   }</a>
 <a name="894"><span class="lineNum">     894 </span>            : </a>
