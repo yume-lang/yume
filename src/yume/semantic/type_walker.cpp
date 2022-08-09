@@ -32,17 +32,21 @@ inline void wrap_in_implicit_cast(ast::OptionalExpr& expr, ty::Conv conv, option
   expr = move(cast_expr);
 }
 
-inline void try_implicit_conversion(ast::AnyExpr& expr, optional<ty::Type> target_type) {
-  if (!target_type)
+inline void try_implicit_conversion(ast::OptionalExpr& expr, optional<ty::Type> target_ty) {
+  if (!target_ty)
     return;
 
-  auto compat = expr->val_ty()->compatibility(*target_type);
+  if (!expr)
+    return;
+
+  // NOLINTNEXTLINE(bugprone-unchecked-optional-access): There is literally a check above
+  auto expr_ty = expr->val_ty().value();
+  auto compat = expr_ty.compatibility(*target_ty);
   if (!compat.valid)
-    throw std::runtime_error("Invalid implicit conversion ('"s + expr->val_ty()->name() + "' -> '" +
-                             target_type->name() + "')");
+    throw std::runtime_error("Invalid implicit conversion ('"s + expr_ty.name() + "' -> '" + target_ty->name() + "')");
 
   if (!compat.conv.empty())
-    wrap_in_implicit_cast(expr, compat.conv, target_type);
+    wrap_in_implicit_cast(expr, compat.conv, target_ty);
 }
 
 template <> void TypeWalker::expression(ast::NumberExpr& expr) {
@@ -448,8 +452,7 @@ template <> void TypeWalker::statement(ast::ReturnStmt& stat) {
       if (auto* var_decl = dyn_cast<ast::VarDecl>(scope.at(var_expr->name())))
         stat.extend_lifetime_of(var_decl);
 
-    auto expr = stat.expr().ensure_value();
-    try_implicit_conversion(expr, current_decl.ast()->val_ty());
+    try_implicit_conversion(stat.expr(), current_decl.ast()->val_ty());
     current_decl.ast()->attach_to(stat.expr().raw_ptr());
     // TODO(rymiel): Once return type deduction exists, make sure to not return `mut` unless there is an _explicit_ type
     // annotation saying so
