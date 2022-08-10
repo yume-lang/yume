@@ -598,12 +598,14 @@ template <> auto Compiler::expression(const ast::StringExpr& expr) -> Val {
   for (unsigned int i = 0; i < val.size(); i++)
     chars[i] = m_builder->getInt8(val[i]);
 
-  chars.push_back(m_builder->getInt8(0));
   auto* string_type = llvm::ArrayType::get(m_builder->getInt8Ty(), chars.size());
+  auto* slice_type = cast<llvm::StructType>(llvm_type(expr.ensure_ty()));
   auto* init = llvm::ConstantArray::get(string_type, chars);
   auto* global =
       new llvm::GlobalVariable(*m_module, string_type, true, llvm::GlobalVariable::PrivateLinkage, init, ".str");
-  return llvm::ConstantExpr::getBitCast(global, m_builder->getInt8PtrTy(0));
+
+  auto* string_ptr = llvm::ConstantExpr::getBitCast(global, m_builder->getInt8PtrTy(0));
+  return llvm::ConstantStruct::get(slice_type, string_ptr, m_builder->getInt64(val.length()));
 }
 
 template <> auto Compiler::expression(const ast::VarExpr& expr) -> Val {

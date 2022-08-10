@@ -58,7 +58,7 @@ template <> void TypeWalker::expression(ast::NumberExpr& expr) {
 
 template <> void TypeWalker::expression(ast::StringExpr& expr) {
   // TODO(rymiel): #18 String type
-  expr.val_ty(ty::Type(compiler.m_types.int8().u_ty).known_ptr());
+  expr.val_ty(convert_slice_type(ty::Type(compiler.m_types.int8().u_ty)));
 }
 
 template <> void TypeWalker::expression(ast::CharExpr& expr) { expr.val_ty(compiler.m_types.int8().u_ty); }
@@ -196,7 +196,7 @@ template <> void TypeWalker::expression(ast::SliceExpr& expr) {
 
   auto& slice_base = expr.type();
   expression(slice_base);
-  auto base_type = convert_slice_type(slice_base);
+  auto base_type = convert_slice_type(convert_type(slice_base));
 
   // expr.val_ty(&base_type.known_slice());
   expr.val_ty(base_type);
@@ -498,8 +498,7 @@ void TypeWalker::body_expression(ast::Expr& expr) {
   return CRTPWalker::body_expression(expr);
 }
 
-auto TypeWalker::convert_slice_type(const ast::Type& ast_type) -> ty::Type {
-  auto base_type = convert_type(ast_type);
+auto TypeWalker::convert_slice_type(const ty::Type& base_type) -> ty::Type {
   auto* struct_obj = compiler.m_slice_struct;
   Substitution subs = {{{struct_obj->type_args.at(0)->name(), base_type}}};
   auto [already_existed, inst_struct] = struct_obj->get_or_create_instantiation(subs);
@@ -537,7 +536,7 @@ auto TypeWalker::convert_type(const ast::Type& ast_type) -> ty::Type {
   } else if (const auto* qual_type = dyn_cast<ast::QualType>(&ast_type)) {
     auto qualifier = qual_type->qualifier();
     if (qualifier == Qualifier::Slice)
-      return convert_slice_type(qual_type->base());
+      return convert_slice_type(convert_type(qual_type->base()));
     return convert_type(qual_type->base()).known_qual(qualifier);
   } else if (isa<ast::SelfType>(ast_type)) {
     if (parent)
