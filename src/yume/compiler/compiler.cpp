@@ -52,7 +52,7 @@
 #include <variant>
 
 namespace yume {
-Compiler::Compiler(vector<SourceFile> source_files)
+Compiler::Compiler(const optional<string>& target_triple, vector<SourceFile> source_files)
     : m_sources(move(source_files)), m_walker(std::make_unique<semantic::TypeWalker>(*this)) {
   m_context = std::make_unique<llvm::LLVMContext>();
   m_module = std::make_unique<llvm::Module>("yume", *m_context);
@@ -62,8 +62,8 @@ Compiler::Compiler(vector<SourceFile> source_files)
   llvm::InitializeNativeTargetAsmParser();
   llvm::InitializeNativeTargetAsmPrinter();
   string error;
-  const string target_triple = llvm::sys::getDefaultTargetTriple();
-  const auto* target = llvm::TargetRegistry::lookupTarget(target_triple, error);
+  const string triple = target_triple.value_or(llvm::sys::getDefaultTargetTriple());
+  const auto* target = llvm::TargetRegistry::lookupTarget(triple, error);
 
   if (target == nullptr) {
     errs() << error;
@@ -73,11 +73,11 @@ Compiler::Compiler(vector<SourceFile> source_files)
   const char* feat = "";
 
   const llvm::TargetOptions opt;
-  m_targetMachine = unique_ptr<llvm::TargetMachine>(
-      target->createTargetMachine(target_triple, cpu, feat, opt, llvm::Reloc::Model::PIC_));
+  m_targetMachine =
+      unique_ptr<llvm::TargetMachine>(target->createTargetMachine(triple, cpu, feat, opt, llvm::Reloc::Model::PIC_));
 
   m_module->setDataLayout(m_targetMachine->createDataLayout());
-  m_module->setTargetTriple(target_triple);
+  m_module->setTargetTriple(triple);
 }
 
 void Compiler::declare_default_ctor(Struct& st) {

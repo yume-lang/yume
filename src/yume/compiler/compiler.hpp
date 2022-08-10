@@ -74,7 +74,7 @@ class Compiler : public CRTPWalker<Compiler> {
 public:
   [[nodiscard]] auto module() const -> const auto& { return m_module; }
 
-  explicit Compiler(vector<SourceFile> source_files);
+  Compiler(const optional<string>& target_triple, vector<SourceFile> source_files);
   /// Begin compilation!
   void run();
 

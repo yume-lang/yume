@@ -35,11 +35,8 @@ static constexpr std::string_view GIT_SHORTHASH = "???";
 
 using namespace std::string_literals;
 
-auto compile(std::span<const char*> args) -> int {
-  std::vector<std::string> src_file_names{};
-  src_file_names.reserve(args.size());
-  src_file_names.push_back(std::string(YUME_LIB_DIR) + "std.ym");
-  std::copy(args.begin(), args.end(), std::back_inserter(src_file_names));
+auto compile(const std::optional<std::string>& target_triple, std::vector<std::string> src_file_names) -> int {
+  src_file_names.insert(src_file_names.begin(), std::string(YUME_LIB_DIR) + "std.ym");
 
   std::vector<yume::SourceFile> source_files{};
   source_files.reserve(src_file_names.size());
@@ -82,7 +79,7 @@ auto compile(std::span<const char*> args) -> int {
     }
   }
 
-  auto compiler = yume::Compiler{std::move(source_files)};
+  auto compiler = yume::Compiler{target_triple, std::move(source_files)};
   compiler.run();
 
 #ifdef YUME_EMIT_DOT
@@ -113,14 +110,27 @@ auto main(int argc, const char* argv[]) -> int {
   auto raw_args = std::span(argv, argc);
   auto args = raw_args.subspan(1); // omit argv 0 (program name)
 
+  std::optional<std::string> target_triple = {};
+  std::vector<std::string> source_file_names = {};
+  bool consuming_target = false;
   for (const auto& arg : args) {
+    if (consuming_target) {
+      target_triple = arg;
+      consuming_target = false;
+      continue;
+    }
     if (arg == "--version"s) {
       emit_version();
       return EXIT_SUCCESS;
     }
+    if (arg == "--target"s) {
+      consuming_target = true;
+      continue;
+    }
+    source_file_names.emplace_back(arg);
   }
 
-  if (args.empty()) {
+  if (source_file_names.empty()) {
     emit_version();
     llvm::outs() << "\n";
     llvm::outs() << raw_args[0] << ": error: provide at least one source file\n";
@@ -133,5 +143,5 @@ auto main(int argc, const char* argv[]) -> int {
   llvm::setBugReportMsg("");
   llvm::sys::AddSignalHandler(yume::backtrace, args.data());
 
-  return compile(args);
+  return compile(target_triple, source_file_names);
 }
