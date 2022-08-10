@@ -35,7 +35,8 @@ static constexpr std::string_view GIT_SHORTHASH = "???";
 
 using namespace std::string_literals;
 
-auto compile(const std::optional<std::string>& target_triple, std::vector<std::string> src_file_names) -> int {
+auto compile(const std::optional<std::string>& target_triple, std::vector<std::string> src_file_names, bool do_link)
+    -> int {
   src_file_names.insert(src_file_names.begin(), std::string(YUME_LIB_DIR) + "std.ym");
 
   std::vector<yume::SourceFile> source_files{};
@@ -95,7 +96,8 @@ auto compile(const std::optional<std::string>& target_triple, std::vector<std::s
   compiler.write_object("output.s", false);
   compiler.write_object("output.o", true);
   llvm::outs().flush();
-  std::system("cc output.o -o yume.out");
+  if (do_link)
+    std::system("cc output.o -o yume.out");
 
   return EXIT_SUCCESS;
 }
@@ -113,6 +115,8 @@ auto main(int argc, const char* argv[]) -> int {
   std::optional<std::string> target_triple = {};
   std::vector<std::string> source_file_names = {};
   bool consuming_target = false;
+  bool do_link = false;
+
   for (const auto& arg : args) {
     if (consuming_target) {
       target_triple = arg;
@@ -125,6 +129,10 @@ auto main(int argc, const char* argv[]) -> int {
     }
     if (arg == "--target"s) {
       consuming_target = true;
+      continue;
+    }
+    if (arg == "-c"s) {
+      do_link = true;
       continue;
     }
     source_file_names.emplace_back(arg);
@@ -143,5 +151,5 @@ auto main(int argc, const char* argv[]) -> int {
   llvm::setBugReportMsg("");
   llvm::sys::AddSignalHandler(yume::backtrace, args.data());
 
-  return compile(target_triple, source_file_names);
+  return compile(target_triple, source_file_names, do_link);
 }
