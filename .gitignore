@@ -42,3 +42,4 @@ bin/*
 !bin/ci.sh
 .cache
 docs/
+gensou/

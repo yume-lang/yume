@@ -122,15 +122,20 @@ void Compiler::run() {
   // Fourth pass: convert everything else, but only when instantiated
   m_walker->in_depth = true;
 
-  Fn* main_fn = nullptr;
-  for (auto& fn : m_fns)
+  vector<Fn*> extern_fns = {};
+  for (auto& fn : m_fns) {
     if (fn.name() == "main")
-      main_fn = &fn;
+      fn.ast().make_extern_linkage();
 
-  main_fn->ast().make_extern_linkage();
-  if (main_fn == nullptr)
-    throw std::logic_error("Program is missing a `main` function!"); // Related: #10
-  declare(*main_fn);
+    if (fn.ast().extern_linkage() && !fn.ast().extern_decl())
+      extern_fns.push_back(&fn);
+  }
+
+  if (extern_fns.empty())
+    throw std::logic_error("Program is missing any declarations with external linkage. Perhaps you meant to declare a "
+                           "`main` function?"); // Related: #10
+  for (auto* ext : extern_fns)
+    declare(*ext);
 
   while (!m_decl_queue.empty()) {
     auto next = m_decl_queue.front();
