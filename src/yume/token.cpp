@@ -83,6 +83,16 @@ class Tokenizer {
   int m_col = 1;
   const char* m_source_file;
 
+  static auto unescape(char c) -> char {
+    switch (c) {
+    case '0': return '\x00';
+    case 'n': return '\n';
+    case 'r': return '\r';
+    case 't': return '\t';
+    default: return c;
+    }
+  }
+
 public:
   /// Words consist of alphanumeric characters, or underscores, but *must* begin with a letter.
   constexpr static const auto is_word = [](int c, int i) {
@@ -103,13 +113,11 @@ public:
     } else if (state.c == '"' && !escape && !end) {
       end = true;
       state.valid = true;
-    } else {
-      if (escape && state.c == 'n')
-        state.stream.put('\n');
-      else
-        state.stream.put(state.c);
-
+    } else if (escape) {
+      state.stream.put(unescape(state.c));
       escape = false;
+    } else {
+      state.stream.put(state.c);
     }
     return true;
   };
@@ -129,10 +137,7 @@ public:
       return true;
     }
     if (state.index == 2 && escape) {
-      if (state.c == '0')
-        state.stream.put('\x00');
-      else
-        state.stream.put(state.c);
+      state.stream.put(unescape(state.c));
       state.valid = true;
       return true;
     }
