@@ -102,6 +102,7 @@ static const TokenAtom SYM_LBRACE = {Token::Type::Symbol, "{"_a};
 static const TokenAtom SYM_RBRACE = {Token::Type::Symbol, "}"_a};
 static const TokenAtom SYM_EQ_EQ = {Token::Type::Symbol, "=="_a};
 static const TokenAtom SYM_NEQ = {Token::Type::Symbol, "!="_a};
+static const TokenAtom SYM_AND = {Token::Type::Symbol, "&"_a};
 static const TokenAtom SYM_LT = {Token::Type::Symbol, "<"_a};
 static const TokenAtom SYM_GT = {Token::Type::Symbol, ">"_a};
 static const TokenAtom SYM_PLUS = {Token::Type::Symbol, "+"_a};
@@ -155,6 +156,7 @@ struct Parser {
 
   static auto operators() {
     const static array OPERATORS = {
+        vector{SYM_AND},
         vector{SYM_EQ_EQ, SYM_NEQ, SYM_GT, SYM_LT},
         vector{SYM_PLUS, SYM_MINUS},
         vector{SYM_PERCENT, SYM_SLASH_SLASH, SYM_STAR},

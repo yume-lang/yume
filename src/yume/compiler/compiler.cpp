@@ -635,11 +635,12 @@ auto Compiler::int_bin_primitive(const string& primitive, const vector<llvm::Val
   case const_hash("ib_add"): return m_builder->CreateAdd(a, b);
   case const_hash("ib_sub"): return m_builder->CreateSub(a, b);
   case const_hash("ib_mul"): return m_builder->CreateMul(a, b);
+  case const_hash("ib_and"): return m_builder->CreateAnd(a, b);
   case const_hash("ib_srem"): return m_builder->CreateSRem(a, b);
   case const_hash("ib_urem"): return m_builder->CreateURem(a, b);
   case const_hash("ib_sdiv"): return m_builder->CreateSDiv(a, b);
   case const_hash("ib_udiv"): return m_builder->CreateUDiv(a, b);
-  default: throw std::runtime_error("Unknown binary integer primitive ib_"s + primitive);
+  default: throw std::runtime_error("Unknown binary integer primitive "s + primitive);
   }
 }
 
