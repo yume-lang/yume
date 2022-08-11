@@ -129,7 +129,7 @@ $(function() {
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno"><a class="line" href="structyume_1_1semantic_1_1TypeWalker.html#a34bee126c5c8382eb593328798292c72">   59</a></span><span class="keyword">template</span> &lt;&gt; <span class="keywordtype">void</span> TypeWalker::expression(<a class="code hl_class" href="classyume_1_1ast_1_1StringExpr.html">ast::StringExpr</a>&amp; expr) {</div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>  <span class="comment">// TODO(rymiel): #18 String type</span></div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>  expr.<a class="code hl_function" href="classyume_1_1ast_1_1AST.html#a0f5bac08572a30ad500ac1b34f2eface">val_ty</a>(<a class="code hl_class" href="classyume_1_1ty_1_1Type.html">ty::Type</a>(<a class="code hl_variable" href="structyume_1_1semantic_1_1TypeWalker.html#a6053cbc38e92823c902b934bf51fd76e">compiler</a>.m_types.<a class="code hl_function" href="structyume_1_1TypeHolder.html#a0c1aefada325245bd55668b2ab3542a6">int8</a>().u_ty).<a class="code hl_function" href="classyume_1_1ty_1_1Type.html#a96f0c8989c0074ed4a2bd362dee10013">known_ptr</a>());</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>  expr.<a class="code hl_function" href="classyume_1_1ast_1_1AST.html#a0f5bac08572a30ad500ac1b34f2eface">val_ty</a>(convert_slice_type(<a class="code hl_class" href="classyume_1_1ty_1_1Type.html">ty::Type</a>(<a class="code hl_variable" href="structyume_1_1semantic_1_1TypeWalker.html#a6053cbc38e92823c902b934bf51fd76e">compiler</a>.m_types.<a class="code hl_function" href="structyume_1_1TypeHolder.html#a0c1aefada325245bd55668b2ab3542a6">int8</a>().u_ty)));</div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>}</div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno"><a class="line" href="structyume_1_1semantic_1_1TypeWalker.html#ac516e3ddeed90767881f5e57b3e770c0">   64</a></span><span class="keyword">template</span> &lt;&gt; <span class="keywordtype">void</span> TypeWalker::expression(<a class="code hl_class" href="classyume_1_1ast_1_1CharExpr.html">ast::CharExpr</a>&amp; expr) { expr.<a class="code hl_function" href="classyume_1_1ast_1_1AST.html#a0f5bac08572a30ad500ac1b34f2eface">val_ty</a>(<a class="code hl_variable" href="structyume_1_1semantic_1_1TypeWalker.html#a6053cbc38e92823c902b934bf51fd76e">compiler</a>.m_types.<a class="code hl_function" href="structyume_1_1TypeHolder.html#a0c1aefada325245bd55668b2ab3542a6">int8</a>().u_ty); }</div>
@@ -267,7 +267,7 @@ $(function() {
 <div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span> </div>
 <div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>  <span class="keyword">auto</span>&amp; slice_base = expr.<a class="code hl_function" href="classyume_1_1ast_1_1SliceExpr.html#ab2f5f3eee7696393dd73163970ef9c23">type</a>();</div>
 <div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>  expression(slice_base);</div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>  <span class="keyword">auto</span> base_type = convert_slice_type(slice_base);</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>  <span class="keyword">auto</span> base_type = convert_slice_type(convert_type(slice_base));</div>
 <div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span> </div>
 <div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>  <span class="comment">// expr.val_ty(&amp;base_type.known_slice());</span></div>
 <div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>  expr.<a class="code hl_function" href="classyume_1_1ast_1_1AST.html#a0f5bac08572a30ad500ac1b34f2eface">val_ty</a>(base_type);</div>
@@ -569,86 +569,85 @@ $(function() {
 <div class="line"><a id="l00498" name="l00498"></a><span class="lineno">  498</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="structyume_1_1CRTPWalker.html#aa3a33385519c11d0947d39f3edb22974">CRTPWalker::body_expression</a>(expr);</div>
 <div class="line"><a id="l00499" name="l00499"></a><span class="lineno">  499</span>}</div>
 <div class="line"><a id="l00500" name="l00500"></a><span class="lineno">  500</span> </div>
-<div class="line"><a id="l00501" name="l00501"></a><span class="lineno">  501</span><span class="keyword">auto</span> TypeWalker::convert_slice_type(<span class="keyword">const</span> <a class="code hl_class" href="classyume_1_1ast_1_1Type.html">ast::Type</a>&amp; ast_type) -&gt; <a class="code hl_class" href="classyume_1_1ty_1_1Type.html">ty::Type</a> {</div>
-<div class="line"><a id="l00502" name="l00502"></a><span class="lineno">  502</span>  <span class="keyword">auto</span> base_type = convert_type(ast_type);</div>
-<div class="line"><a id="l00503" name="l00503"></a><span class="lineno">  503</span>  <span class="keyword">auto</span>* struct_obj = compiler.m_slice_struct;</div>
-<div class="line"><a id="l00504" name="l00504"></a><span class="lineno">  504</span>  <a class="code hl_struct" href="structyume_1_1Substitution.html">Substitution</a> subs = {{{struct_obj-&gt;type_args.at(0)-&gt;name(), base_type}}};</div>
-<div class="line"><a id="l00505" name="l00505"></a><span class="lineno">  505</span>  <span class="keyword">auto</span> [already_existed, inst_struct] = struct_obj-&gt;get_or_create_instantiation(subs);</div>
-<div class="line"><a id="l00506" name="l00506"></a><span class="lineno">  506</span> </div>
-<div class="line"><a id="l00507" name="l00507"></a><span class="lineno">  507</span>  <span class="keywordflow">if</span> (!already_existed) {</div>
-<div class="line"><a id="l00508" name="l00508"></a><span class="lineno">  508</span>    <span class="keyword">auto</span>&amp; new_st = inst_struct;</div>
-<div class="line"><a id="l00509" name="l00509"></a><span class="lineno">  509</span> </div>
-<div class="line"><a id="l00510" name="l00510"></a><span class="lineno">  510</span>    with_saved_scope([&amp;] {</div>
-<div class="line"><a id="l00511" name="l00511"></a><span class="lineno">  511</span>      in_depth = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00512" name="l00512"></a><span class="lineno">  512</span>      current_decl = &amp;new_st;</div>
-<div class="line"><a id="l00513" name="l00513"></a><span class="lineno">  513</span>      body_statement(new_st.st_ast);</div>
-<div class="line"><a id="l00514" name="l00514"></a><span class="lineno">  514</span>    });</div>
-<div class="line"><a id="l00515" name="l00515"></a><span class="lineno">  515</span> </div>
-<div class="line"><a id="l00516" name="l00516"></a><span class="lineno">  516</span>    <span class="keywordflow">if</span> (compiler.create_struct(new_st))</div>
-<div class="line"><a id="l00517" name="l00517"></a><span class="lineno">  517</span>      decl_queue.push(&amp;new_st);</div>
-<div class="line"><a id="l00518" name="l00518"></a><span class="lineno">  518</span>  }</div>
-<div class="line"><a id="l00519" name="l00519"></a><span class="lineno">  519</span> </div>
-<div class="line"><a id="l00520" name="l00520"></a><span class="lineno">  520</span>  <span class="keywordflow">return</span> *inst_struct.self_ty;</div>
-<div class="line"><a id="l00521" name="l00521"></a><span class="lineno">  521</span>}</div>
-<div class="line"><a id="l00522" name="l00522"></a><span class="lineno">  522</span> </div>
-<div class="line"><a id="l00523" name="l00523"></a><span class="lineno">  523</span><span class="keyword">auto</span> TypeWalker::convert_type(<span class="keyword">const</span> ast::Type&amp; ast_type) -&gt; ty::Type {</div>
-<div class="line"><a id="l00524" name="l00524"></a><span class="lineno">  524</span>  <span class="keyword">auto</span> parent = current_decl.self_ty();</div>
-<div class="line"><a id="l00525" name="l00525"></a><span class="lineno">  525</span>  <span class="keyword">const</span> <span class="keyword">auto</span>* context = current_decl.subs();</div>
-<div class="line"><a id="l00526" name="l00526"></a><span class="lineno">  526</span> </div>
-<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>  <span class="keywordflow">if</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* simple_type = dyn_cast&lt;ast::SimpleType&gt;(&amp;ast_type)) {</div>
-<div class="line"><a id="l00528" name="l00528"></a><span class="lineno">  528</span>    <span class="keyword">auto</span> name = simple_type-&gt;name();</div>
-<div class="line"><a id="l00529" name="l00529"></a><span class="lineno">  529</span>    <span class="keywordflow">if</span> (context != <span class="keyword">nullptr</span>) {</div>
-<div class="line"><a id="l00530" name="l00530"></a><span class="lineno">  530</span>      <span class="keyword">auto</span> <span class="keyword">generic</span> = context-&gt;find(name);</div>
-<div class="line"><a id="l00531" name="l00531"></a><span class="lineno">  531</span>      <span class="keywordflow">if</span> (generic != context-&gt;end())</div>
-<div class="line"><a id="l00532" name="l00532"></a><span class="lineno">  532</span>        <span class="keywordflow">return</span> <span class="keyword">generic</span>-&gt;second;</div>
-<div class="line"><a id="l00533" name="l00533"></a><span class="lineno">  533</span>    }</div>
-<div class="line"><a id="l00534" name="l00534"></a><span class="lineno">  534</span>    <span class="keyword">auto</span> val = compiler.m_types.known.find(name);</div>
-<div class="line"><a id="l00535" name="l00535"></a><span class="lineno">  535</span>    <span class="keywordflow">if</span> (val != compiler.m_types.known.end())</div>
-<div class="line"><a id="l00536" name="l00536"></a><span class="lineno">  536</span>      <span class="keywordflow">return</span> val-&gt;second.get();</div>
-<div class="line"><a id="l00537" name="l00537"></a><span class="lineno">  537</span>  } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* qual_type = dyn_cast&lt;ast::QualType&gt;(&amp;ast_type)) {</div>
-<div class="line"><a id="l00538" name="l00538"></a><span class="lineno">  538</span>    <span class="keyword">auto</span> qualifier = qual_type-&gt;qualifier();</div>
-<div class="line"><a id="l00539" name="l00539"></a><span class="lineno">  539</span>    <span class="keywordflow">if</span> (qualifier == <a class="code hl_enumvalue" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706ad140d37ad98c12ccd8e1c432f548bcdb">Qualifier::Slice</a>)</div>
-<div class="line"><a id="l00540" name="l00540"></a><span class="lineno">  540</span>      <span class="keywordflow">return</span> convert_slice_type(qual_type-&gt;base());</div>
-<div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span>    <span class="keywordflow">return</span> convert_type(qual_type-&gt;base()).known_qual(qualifier);</div>
-<div class="line"><a id="l00542" name="l00542"></a><span class="lineno">  542</span>  } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (isa&lt;ast::SelfType&gt;(ast_type)) {</div>
-<div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span>    <span class="keywordflow">if</span> (parent)</div>
-<div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>      <span class="keywordflow">return</span> *parent;</div>
-<div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span>  }</div>
-<div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span> </div>
-<div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span>  <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Cannot convert AST type to actual type! &quot;</span>s + ast_type.kind_name() + <span class="stringliteral">&quot; (&quot;</span> +</div>
-<div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span>                           ast_type.describe() + <span class="stringliteral">&quot;)&quot;</span>);</div>
-<div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span>}</div>
-<div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span> </div>
-<div class="line"><a id="l00551" name="l00551"></a><span class="lineno"><a class="line" href="structyume_1_1semantic_1_1TypeWalker.html#a70155485116ff5bcfd48d0f3b825f9bb">  551</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="structyume_1_1semantic_1_1TypeWalker.html#a70155485116ff5bcfd48d0f3b825f9bb">TypeWalker::resolve_queue</a>() {</div>
-<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span>  <span class="keywordflow">while</span> (!<a class="code hl_variable" href="structyume_1_1semantic_1_1TypeWalker.html#a50e688ad7be6bcb60cdf0cfb831d4556">decl_queue</a>.empty()) {</div>
-<div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span>    <span class="keyword">auto</span> next = <a class="code hl_variable" href="structyume_1_1semantic_1_1TypeWalker.html#a50e688ad7be6bcb60cdf0cfb831d4556">decl_queue</a>.front();</div>
-<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span>    <a class="code hl_variable" href="structyume_1_1semantic_1_1TypeWalker.html#a50e688ad7be6bcb60cdf0cfb831d4556">decl_queue</a>.pop();</div>
-<div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span> </div>
-<div class="line"><a id="l00556" name="l00556"></a><span class="lineno">  556</span>    with_saved_scope([&amp;] {</div>
-<div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span>      next.visit_decl(</div>
-<div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span>          [&amp;](<a class="code hl_struct" href="structyume_1_1Fn.html">Fn</a>* fn) {</div>
-<div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span>            <a class="code hl_variable" href="structyume_1_1semantic_1_1TypeWalker.html#af9a74becf44b236bec8bf38365735c59">in_depth</a> = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span>            <a class="code hl_variable" href="structyume_1_1semantic_1_1TypeWalker.html#a6053cbc38e92823c902b934bf51fd76e">compiler</a>.<a class="code hl_function" href="classyume_1_1Compiler.html#abab9748d5d44d5593e75af6a5ee92709">declare</a>(*fn);</div>
-<div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span>          },</div>
-<div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span>          [&amp;](<a class="code hl_struct" href="structyume_1_1Struct.html">Struct</a>* st) {</div>
-<div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span>            <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; i : st-&gt;body().body()) {</div>
-<div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span>              auto decl = compiler.decl_statement(*i, st-&gt;self_ty, st-&gt;member);</div>
-<div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span> </div>
-<div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span>              <span class="comment">// &quot;Inherit&quot; substitutions</span></div>
-<div class="line"><a id="l00567" name="l00567"></a><span class="lineno">  567</span>              <span class="comment">// TODO(rymiel): Shadowing type variables should be an error</span></div>
-<div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span>              for (auto&amp; [k, v] : st-&gt;subs)</div>
-<div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span>                decl.subs()-&gt;try_emplace(k, v);</div>
-<div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span>              compiler.walk_types(decl);</div>
-<div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span>            }</div>
-<div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span>          },</div>
-<div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>          [&amp;](<a class="code hl_struct" href="structyume_1_1Ctor.html">Ctor</a>* <span class="comment">/*ctor*/</span>) { <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Unimplemented&quot;</span>); });</div>
-<div class="line"><a id="l00574" name="l00574"></a><span class="lineno">  574</span>    });</div>
-<div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span>  }</div>
-<div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>}</div>
-<div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span>} <span class="comment">// namespace yume::semantic</span></div>
+<div class="line"><a id="l00501" name="l00501"></a><span class="lineno">  501</span><span class="keyword">auto</span> TypeWalker::convert_slice_type(<span class="keyword">const</span> <a class="code hl_class" href="classyume_1_1ty_1_1Type.html">ty::Type</a>&amp; base_type) -&gt; <a class="code hl_class" href="classyume_1_1ty_1_1Type.html">ty::Type</a> {</div>
+<div class="line"><a id="l00502" name="l00502"></a><span class="lineno">  502</span>  <span class="keyword">auto</span>* struct_obj = compiler.m_slice_struct;</div>
+<div class="line"><a id="l00503" name="l00503"></a><span class="lineno">  503</span>  <a class="code hl_struct" href="structyume_1_1Substitution.html">Substitution</a> subs = {{{struct_obj-&gt;type_args.at(0)-&gt;name(), base_type}}};</div>
+<div class="line"><a id="l00504" name="l00504"></a><span class="lineno">  504</span>  <span class="keyword">auto</span> [already_existed, inst_struct] = struct_obj-&gt;get_or_create_instantiation(subs);</div>
+<div class="line"><a id="l00505" name="l00505"></a><span class="lineno">  505</span> </div>
+<div class="line"><a id="l00506" name="l00506"></a><span class="lineno">  506</span>  <span class="keywordflow">if</span> (!already_existed) {</div>
+<div class="line"><a id="l00507" name="l00507"></a><span class="lineno">  507</span>    <span class="keyword">auto</span>&amp; new_st = inst_struct;</div>
+<div class="line"><a id="l00508" name="l00508"></a><span class="lineno">  508</span> </div>
+<div class="line"><a id="l00509" name="l00509"></a><span class="lineno">  509</span>    with_saved_scope([&amp;] {</div>
+<div class="line"><a id="l00510" name="l00510"></a><span class="lineno">  510</span>      in_depth = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00511" name="l00511"></a><span class="lineno">  511</span>      current_decl = &amp;new_st;</div>
+<div class="line"><a id="l00512" name="l00512"></a><span class="lineno">  512</span>      body_statement(new_st.st_ast);</div>
+<div class="line"><a id="l00513" name="l00513"></a><span class="lineno">  513</span>    });</div>
+<div class="line"><a id="l00514" name="l00514"></a><span class="lineno">  514</span> </div>
+<div class="line"><a id="l00515" name="l00515"></a><span class="lineno">  515</span>    <span class="keywordflow">if</span> (compiler.create_struct(new_st))</div>
+<div class="line"><a id="l00516" name="l00516"></a><span class="lineno">  516</span>      decl_queue.push(&amp;new_st);</div>
+<div class="line"><a id="l00517" name="l00517"></a><span class="lineno">  517</span>  }</div>
+<div class="line"><a id="l00518" name="l00518"></a><span class="lineno">  518</span> </div>
+<div class="line"><a id="l00519" name="l00519"></a><span class="lineno">  519</span>  <span class="keywordflow">return</span> *inst_struct.self_ty;</div>
+<div class="line"><a id="l00520" name="l00520"></a><span class="lineno">  520</span>}</div>
+<div class="line"><a id="l00521" name="l00521"></a><span class="lineno">  521</span> </div>
+<div class="line"><a id="l00522" name="l00522"></a><span class="lineno">  522</span><span class="keyword">auto</span> TypeWalker::convert_type(<span class="keyword">const</span> ast::Type&amp; ast_type) -&gt; ty::Type {</div>
+<div class="line"><a id="l00523" name="l00523"></a><span class="lineno">  523</span>  <span class="keyword">auto</span> parent = current_decl.self_ty();</div>
+<div class="line"><a id="l00524" name="l00524"></a><span class="lineno">  524</span>  <span class="keyword">const</span> <span class="keyword">auto</span>* context = current_decl.subs();</div>
+<div class="line"><a id="l00525" name="l00525"></a><span class="lineno">  525</span> </div>
+<div class="line"><a id="l00526" name="l00526"></a><span class="lineno">  526</span>  <span class="keywordflow">if</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* simple_type = dyn_cast&lt;ast::SimpleType&gt;(&amp;ast_type)) {</div>
+<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>    <span class="keyword">auto</span> name = simple_type-&gt;name();</div>
+<div class="line"><a id="l00528" name="l00528"></a><span class="lineno">  528</span>    <span class="keywordflow">if</span> (context != <span class="keyword">nullptr</span>) {</div>
+<div class="line"><a id="l00529" name="l00529"></a><span class="lineno">  529</span>      <span class="keyword">auto</span> <span class="keyword">generic</span> = context-&gt;find(name);</div>
+<div class="line"><a id="l00530" name="l00530"></a><span class="lineno">  530</span>      <span class="keywordflow">if</span> (generic != context-&gt;end())</div>
+<div class="line"><a id="l00531" name="l00531"></a><span class="lineno">  531</span>        <span class="keywordflow">return</span> <span class="keyword">generic</span>-&gt;second;</div>
+<div class="line"><a id="l00532" name="l00532"></a><span class="lineno">  532</span>    }</div>
+<div class="line"><a id="l00533" name="l00533"></a><span class="lineno">  533</span>    <span class="keyword">auto</span> val = compiler.m_types.known.find(name);</div>
+<div class="line"><a id="l00534" name="l00534"></a><span class="lineno">  534</span>    <span class="keywordflow">if</span> (val != compiler.m_types.known.end())</div>
+<div class="line"><a id="l00535" name="l00535"></a><span class="lineno">  535</span>      <span class="keywordflow">return</span> val-&gt;second.get();</div>
+<div class="line"><a id="l00536" name="l00536"></a><span class="lineno">  536</span>  } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* qual_type = dyn_cast&lt;ast::QualType&gt;(&amp;ast_type)) {</div>
+<div class="line"><a id="l00537" name="l00537"></a><span class="lineno">  537</span>    <span class="keyword">auto</span> qualifier = qual_type-&gt;qualifier();</div>
+<div class="line"><a id="l00538" name="l00538"></a><span class="lineno">  538</span>    <span class="keywordflow">if</span> (qualifier == <a class="code hl_enumvalue" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706ad140d37ad98c12ccd8e1c432f548bcdb">Qualifier::Slice</a>)</div>
+<div class="line"><a id="l00539" name="l00539"></a><span class="lineno">  539</span>      <span class="keywordflow">return</span> convert_slice_type(convert_type(qual_type-&gt;base()));</div>
+<div class="line"><a id="l00540" name="l00540"></a><span class="lineno">  540</span>    <span class="keywordflow">return</span> convert_type(qual_type-&gt;base()).known_qual(qualifier);</div>
+<div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span>  } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (isa&lt;ast::SelfType&gt;(ast_type)) {</div>
+<div class="line"><a id="l00542" name="l00542"></a><span class="lineno">  542</span>    <span class="keywordflow">if</span> (parent)</div>
+<div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span>      <span class="keywordflow">return</span> *parent;</div>
+<div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>  }</div>
+<div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span> </div>
+<div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span>  <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Cannot convert AST type to actual type! &quot;</span>s + ast_type.kind_name() + <span class="stringliteral">&quot; (&quot;</span> +</div>
+<div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span>                           ast_type.describe() + <span class="stringliteral">&quot;)&quot;</span>);</div>
+<div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span>}</div>
+<div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span> </div>
+<div class="line"><a id="l00550" name="l00550"></a><span class="lineno"><a class="line" href="structyume_1_1semantic_1_1TypeWalker.html#a70155485116ff5bcfd48d0f3b825f9bb">  550</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="structyume_1_1semantic_1_1TypeWalker.html#a70155485116ff5bcfd48d0f3b825f9bb">TypeWalker::resolve_queue</a>() {</div>
+<div class="line"><a id="l00551" name="l00551"></a><span class="lineno">  551</span>  <span class="keywordflow">while</span> (!<a class="code hl_variable" href="structyume_1_1semantic_1_1TypeWalker.html#a50e688ad7be6bcb60cdf0cfb831d4556">decl_queue</a>.empty()) {</div>
+<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span>    <span class="keyword">auto</span> next = <a class="code hl_variable" href="structyume_1_1semantic_1_1TypeWalker.html#a50e688ad7be6bcb60cdf0cfb831d4556">decl_queue</a>.front();</div>
+<div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span>    <a class="code hl_variable" href="structyume_1_1semantic_1_1TypeWalker.html#a50e688ad7be6bcb60cdf0cfb831d4556">decl_queue</a>.pop();</div>
+<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span> </div>
+<div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span>    with_saved_scope([&amp;] {</div>
+<div class="line"><a id="l00556" name="l00556"></a><span class="lineno">  556</span>      next.visit_decl(</div>
+<div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span>          [&amp;](<a class="code hl_struct" href="structyume_1_1Fn.html">Fn</a>* fn) {</div>
+<div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span>            <a class="code hl_variable" href="structyume_1_1semantic_1_1TypeWalker.html#af9a74becf44b236bec8bf38365735c59">in_depth</a> = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span>            <a class="code hl_variable" href="structyume_1_1semantic_1_1TypeWalker.html#a6053cbc38e92823c902b934bf51fd76e">compiler</a>.<a class="code hl_function" href="classyume_1_1Compiler.html#abab9748d5d44d5593e75af6a5ee92709">declare</a>(*fn);</div>
+<div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span>          },</div>
+<div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span>          [&amp;](<a class="code hl_struct" href="structyume_1_1Struct.html">Struct</a>* st) {</div>
+<div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span>            <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; i : st-&gt;body().body()) {</div>
+<div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span>              auto decl = compiler.decl_statement(*i, st-&gt;self_ty, st-&gt;member);</div>
+<div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span> </div>
+<div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span>              <span class="comment">// &quot;Inherit&quot; substitutions</span></div>
+<div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span>              <span class="comment">// TODO(rymiel): Shadowing type variables should be an error</span></div>
+<div class="line"><a id="l00567" name="l00567"></a><span class="lineno">  567</span>              for (auto&amp; [k, v] : st-&gt;subs)</div>
+<div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span>                decl.subs()-&gt;try_emplace(k, v);</div>
+<div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span>              compiler.walk_types(decl);</div>
+<div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span>            }</div>
+<div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span>          },</div>
+<div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span>          [&amp;](<a class="code hl_struct" href="structyume_1_1Ctor.html">Ctor</a>* <span class="comment">/*ctor*/</span>) { <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Unimplemented&quot;</span>); });</div>
+<div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>    });</div>
+<div class="line"><a id="l00574" name="l00574"></a><span class="lineno">  574</span>  }</div>
+<div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span>}</div>
+<div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>} <span class="comment">// namespace yume::semantic</span></div>
 <div class="ttc" id="aast_8hpp_html"><div class="ttname"><a href="ast_8hpp.html">ast.hpp</a></div></div>
-<div class="ttc" id="aclassyume_1_1Compiler_html_abab9748d5d44d5593e75af6a5ee92709"><div class="ttname"><a href="classyume_1_1Compiler.html#abab9748d5d44d5593e75af6a5ee92709">yume::Compiler::declare</a></div><div class="ttdeci">auto declare(Fn &amp;) -&gt; llvm::Function *</div><div class="ttdoc">Declare a function in bytecode, or get an existing declaration.</div><div class="ttdef"><b>Definition:</b> <a href="compiler_8cpp_source.html#l00303">compiler.cpp:303</a></div></div>
-<div class="ttc" id="aclassyume_1_1Compiler_html_ae0aafb2f1aa66f03133fcd3ca2726ef2"><div class="ttname"><a href="classyume_1_1Compiler.html#ae0aafb2f1aa66f03133fcd3ca2726ef2">yume::Compiler::create_struct</a></div><div class="ttdeci">auto create_struct(Struct &amp;) -&gt; bool</div><div class="ttdef"><b>Definition:</b> <a href="compiler_8cpp_source.html#l00152">compiler.cpp:152</a></div></div>
+<div class="ttc" id="aclassyume_1_1Compiler_html_abab9748d5d44d5593e75af6a5ee92709"><div class="ttname"><a href="classyume_1_1Compiler.html#abab9748d5d44d5593e75af6a5ee92709">yume::Compiler::declare</a></div><div class="ttdeci">auto declare(Fn &amp;) -&gt; llvm::Function *</div><div class="ttdoc">Declare a function in bytecode, or get an existing declaration.</div><div class="ttdef"><b>Definition:</b> <a href="compiler_8cpp_source.html#l00308">compiler.cpp:308</a></div></div>
+<div class="ttc" id="aclassyume_1_1Compiler_html_ae0aafb2f1aa66f03133fcd3ca2726ef2"><div class="ttname"><a href="classyume_1_1Compiler.html#ae0aafb2f1aa66f03133fcd3ca2726ef2">yume::Compiler::create_struct</a></div><div class="ttdeci">auto create_struct(Struct &amp;) -&gt; bool</div><div class="ttdef"><b>Definition:</b> <a href="compiler_8cpp_source.html#l00157">compiler.cpp:157</a></div></div>
 <div class="ttc" id="aclassyume_1_1ast_1_1AST_html_a0f5bac08572a30ad500ac1b34f2eface"><div class="ttname"><a href="classyume_1_1ast_1_1AST.html#a0f5bac08572a30ad500ac1b34f2eface">yume::ast::AST::val_ty</a></div><div class="ttdeci">auto val_ty() const noexcept -&gt; optional&lt; ty::Type &gt;</div><div class="ttdef"><b>Definition:</b> <a href="ast_8hpp_source.html#l00227">ast.hpp:227</a></div></div>
 <div class="ttc" id="aclassyume_1_1ast_1_1AST_html_a35e3f20abd8401f7ac9b50dcc8cfff9e"><div class="ttname"><a href="classyume_1_1ast_1_1AST.html#a35e3f20abd8401f7ac9b50dcc8cfff9e">yume::ast::AST::kind_name</a></div><div class="ttdeci">auto kind_name() const -&gt; string</div><div class="ttdoc">Human-readable string representation of the Kind of this node.</div><div class="ttdef"><b>Definition:</b> <a href="ast_8hpp_source.html#l00250">ast.hpp:250</a></div></div>
 <div class="ttc" id="aclassyume_1_1ast_1_1AST_html_a82d0ba2f669b82780c23c538632366be"><div class="ttname"><a href="classyume_1_1ast_1_1AST.html#a82d0ba2f669b82780c23c538632366be">yume::ast::AST::attach_to</a></div><div class="ttdeci">void attach_to(AST *other)</div><div class="ttdoc">Make the type of this node depend on the type of other.</div><div class="ttdef"><b>Definition:</b> <a href="ast_8hpp_source.html#l00242">ast.hpp:242</a></div></div>
@@ -709,7 +708,6 @@ $(function() {
 <div class="ttc" id="aclassyume_1_1ast_1_1WhileStmt_html_ac84774ce867f20432eae678624941020"><div class="ttname"><a href="classyume_1_1ast_1_1WhileStmt.html#ac84774ce867f20432eae678624941020">yume::ast::WhileStmt::body</a></div><div class="ttdeci">auto body() const -&gt; const auto &amp;</div><div class="ttdef"><b>Definition:</b> <a href="ast_8hpp_source.html#l00771">ast.hpp:771</a></div></div>
 <div class="ttc" id="aclassyume_1_1ty_1_1Struct_html"><div class="ttname"><a href="classyume_1_1ty_1_1Struct.html">yume::ty::Struct</a></div><div class="ttdoc">An user-defined struct type with associated fields.</div><div class="ttdef"><b>Definition:</b> <a href="type_8hpp_source.html#l00062">type.hpp:62</a></div></div>
 <div class="ttc" id="aclassyume_1_1ty_1_1Type_html"><div class="ttname"><a href="classyume_1_1ty_1_1Type.html">yume::ty::Type</a></div><div class="ttdoc">A &quot;qualified&quot; type, with a non-stackable qualifier, .i.e. mut.</div><div class="ttdef"><b>Definition:</b> <a href="type__base_8hpp_source.html#l00061">type_base.hpp:61</a></div></div>
-<div class="ttc" id="aclassyume_1_1ty_1_1Type_html_a96f0c8989c0074ed4a2bd362dee10013"><div class="ttname"><a href="classyume_1_1ty_1_1Type.html#a96f0c8989c0074ed4a2bd362dee10013">yume::ty::Type::known_ptr</a></div><div class="ttdeci">auto known_ptr() const -&gt; Type</div><div class="ttdef"><b>Definition:</b> <a href="type__base_8hpp_source.html#l00094">type_base.hpp:94</a></div></div>
 <div class="ttc" id="acompatibility_8hpp_html"><div class="ttname"><a href="compatibility_8hpp.html">compatibility.hpp</a></div></div>
 <div class="ttc" id="acompiler_8hpp_html"><div class="ttname"><a href="compiler_8hpp.html">compiler.hpp</a></div></div>
 <div class="ttc" id="aerrors_8hpp_html"><div class="ttname"><a href="errors_8hpp.html">errors.hpp</a></div></div>
@@ -746,7 +744,7 @@ $(function() {
 <div class="ttc" id="astructyume_1_1semantic_1_1Overload_html_af0a940a1e533b5835333a0a2660d6571"><div class="ttname"><a href="structyume_1_1semantic_1_1Overload.html#af0a940a1e533b5835333a0a2660d6571">yume::semantic::Overload::fn</a></div><div class="ttdeci">T * fn</div><div class="ttdef"><b>Definition:</b> <a href="overload_8hpp_source.html#l00019">overload.hpp:19</a></div></div>
 <div class="ttc" id="astructyume_1_1semantic_1_1TypeWalker_html_a50e688ad7be6bcb60cdf0cfb831d4556"><div class="ttname"><a href="structyume_1_1semantic_1_1TypeWalker.html#a50e688ad7be6bcb60cdf0cfb831d4556">yume::semantic::TypeWalker::decl_queue</a></div><div class="ttdeci">std::queue&lt; DeclLike &gt; decl_queue</div><div class="ttdef"><b>Definition:</b> <a href="type__walker_8hpp_source.html#l00039">type_walker.hpp:39</a></div></div>
 <div class="ttc" id="astructyume_1_1semantic_1_1TypeWalker_html_a6053cbc38e92823c902b934bf51fd76e"><div class="ttname"><a href="structyume_1_1semantic_1_1TypeWalker.html#a6053cbc38e92823c902b934bf51fd76e">yume::semantic::TypeWalker::compiler</a></div><div class="ttdeci">Compiler &amp; compiler</div><div class="ttdef"><b>Definition:</b> <a href="type__walker_8hpp_source.html#l00035">type_walker.hpp:35</a></div></div>
-<div class="ttc" id="astructyume_1_1semantic_1_1TypeWalker_html_a70155485116ff5bcfd48d0f3b825f9bb"><div class="ttname"><a href="structyume_1_1semantic_1_1TypeWalker.html#a70155485116ff5bcfd48d0f3b825f9bb">yume::semantic::TypeWalker::resolve_queue</a></div><div class="ttdeci">void resolve_queue()</div><div class="ttdef"><b>Definition:</b> <a href="type__walker_8cpp_source.html#l00551">type_walker.cpp:551</a></div></div>
+<div class="ttc" id="astructyume_1_1semantic_1_1TypeWalker_html_a70155485116ff5bcfd48d0f3b825f9bb"><div class="ttname"><a href="structyume_1_1semantic_1_1TypeWalker.html#a70155485116ff5bcfd48d0f3b825f9bb">yume::semantic::TypeWalker::resolve_queue</a></div><div class="ttdeci">void resolve_queue()</div><div class="ttdef"><b>Definition:</b> <a href="type__walker_8cpp_source.html#l00550">type_walker.cpp:550</a></div></div>
 <div class="ttc" id="astructyume_1_1semantic_1_1TypeWalker_html_aa2ac89481a5ce7a5a5db6e1b447ce100"><div class="ttname"><a href="structyume_1_1semantic_1_1TypeWalker.html#aa2ac89481a5ce7a5a5db6e1b447ce100">yume::semantic::TypeWalker::current_decl</a></div><div class="ttdeci">DeclLike current_decl</div><div class="ttdef"><b>Definition:</b> <a href="type__walker_8hpp_source.html#l00036">type_walker.hpp:36</a></div></div>
 <div class="ttc" id="astructyume_1_1semantic_1_1TypeWalker_html_aa2f528e3a660e2d13e79f5a755b624d2"><div class="ttname"><a href="structyume_1_1semantic_1_1TypeWalker.html#aa2f528e3a660e2d13e79f5a755b624d2">yume::semantic::TypeWalker::body_statement</a></div><div class="ttdeci">void body_statement(ast::Stmt &amp;)</div><div class="ttdef"><b>Definition:</b> <a href="type__walker_8cpp_source.html#l00492">type_walker.cpp:492</a></div></div>
 <div class="ttc" id="astructyume_1_1semantic_1_1TypeWalker_html_aadcc1b7256fb3b55a7613e5afd94fd0e"><div class="ttname"><a href="structyume_1_1semantic_1_1TypeWalker.html#aadcc1b7256fb3b55a7613e5afd94fd0e">yume::semantic::TypeWalker::body_expression</a></div><div class="ttdeci">void body_expression(ast::Expr &amp;)</div><div class="ttdef"><b>Definition:</b> <a href="type__walker_8cpp_source.html#l00496">type_walker.cpp:496</a></div></div>
