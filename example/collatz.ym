@@ -1,7 +1,7 @@
 def collatz(int I32) I32
   let k I32 = 0
   while int > 1
-    printf("%d -> ", int)
+    printf("%d -> ".c_str.unsafe_ptr, int)
     if int % 2 == 0
       int = int // 2
     else
@@ -9,7 +9,7 @@ def collatz(int I32) I32
     end
     k = k + 1
   end
-  printf("%d\n", int)
+  printf("%d\n".c_str.unsafe_ptr, int)
   return k
 end
 

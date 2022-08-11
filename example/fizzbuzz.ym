@@ -1,12 +1,12 @@
 def fizzbuzz(num I32)
   if num % 15 == 0
-    printf("FizzBuzz\n")
+    puts("FizzBuzz")
   else if num % 3 == 0
-    printf("Fizz\n")
+    puts("Fizz")
   else if num % 5 == 0
-    printf("Buzz\n")
+    puts("Buzz")
   else
-    printf("%d\n", num)
+    printf("%d\n".c_str.unsafe_ptr, num)
   end
 end
 

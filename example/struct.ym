@@ -16,11 +16,11 @@ def ptrto(v Vector mut) Vector ptr = __primitive__(ptrto)
 def main() I32
   let a = Vector(2, 3)
   let b = Vector(5, 1)
-  printf("a %p x: %d, y: %d\n", a.ptrto, a.x, a.y)
-  printf("b %p x: %d, y: %d\n", b.ptrto, b.x, b.y)
+  printf("a %p x: %d, y: %d\n".c_str.unsafe_ptr, a.ptrto, a.x, a.y)
+  printf("b %p x: %d, y: %d\n".c_str.unsafe_ptr, b.ptrto, b.x, b.y)
   let c = a + b
-  printf("c %p x: %d, y: %d\n", c.ptrto, c.x, c.y)
+  printf("c %p x: %d, y: %d\n".c_str.unsafe_ptr, c.ptrto, c.x, c.y)
   c.x = 9
-  printf("c %p x: %d, y: %d\n", c.ptrto, c.x, c.y)
+  printf("c %p x: %d, y: %d\n".c_str.unsafe_ptr, c.ptrto, c.x, c.y)
   return 0
 end

@@ -45,11 +45,11 @@ end
 
 def main(argc I32, argv U8 ptr ptr) I32
   # Hello world example function
-  let word_ptr = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++."
+  let word U8[] = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++."
   if argc > 1
-    word_ptr = argv[1]
+    let word_ptr U8 ptr = argv[1]
+    word = U8[](word_ptr, word_ptr.c_len)
   end
-  let word = U8[](word_ptr, word_ptr.c_len)
 
   let instructions = parse(word)
 
@@ -68,7 +68,7 @@ def main(argc I32, argv U8 ptr ptr) I32
     else if instr::type == 4
       memory[ptr] = memory[ptr] - 1
     else if instr::type == 5
-      printf("%c", memory[ptr])
+      printf("%c".c_str.unsafe_ptr, memory[ptr])
     else if instr::type == 7
       if memory[ptr] == ?\0
         pc = instr::payload
