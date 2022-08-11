@@ -7,9 +7,9 @@ Checks: >-
   performance-*,
   bugprone-*,
   misc-*,
-  google-readability-todo,
   llvm-prefer-isa-or-dyn-cast-in-conditionals,
   cert-oop58-cpp,
+  google-readability-todo,
   google-readability-casting,
   google-runtime-int,
   hicpp-exception-baseclass,
@@ -22,6 +22,8 @@ Checks: >-
   -misc-non-private-member-variables-in-classes,
   -misc-unused-using-decls
 CheckOptions:
+  - key:             google-runtime-int.TypeSuffix
+    value:           _t
   - key:             readability-identifier-naming.ClassCase
     value:           CamelCase
   - key:             readability-identifier-naming.EnumCase
