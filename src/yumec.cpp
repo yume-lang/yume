@@ -115,7 +115,7 @@ auto main(int argc, const char* argv[]) -> int {
   std::optional<std::string> target_triple = {};
   std::vector<std::string> source_file_names = {};
   bool consuming_target = false;
-  bool do_link = false;
+  bool do_link = true;
 
   for (const auto& arg : args) {
     if (consuming_target) {
@@ -132,7 +132,7 @@ auto main(int argc, const char* argv[]) -> int {
       continue;
     }
     if (arg == "-c"s) {
-      do_link = true;
+      do_link = false;
       continue;
     }
     source_file_names.emplace_back(arg);

@@ -101,8 +101,8 @@ TEST_CASE("Tokenize string literals", "[token]") {
 }
 
 TEST_CASE("Tokenize operators/symbols", "[token]") {
-  for (std::string i :
-       {"=", "<", ">", "+", "-", "*", "/", "//", "(", ")", "==", "!=", "!", ",", ".", ":", "::", "%", "[", "]"}) {
+  for (const std::string i :
+       {"=", "<", ">", "+", "-", "*", "/", "//", "(", ")", "==", "!=", "!", ",", ".", ":", "::", "%", "[", "]", "&"}) {
     CHECK_TOKENIZER(i, Token(Symbol, make_atom(i)));
   }
 
