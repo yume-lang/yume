@@ -33,13 +33,15 @@ struct Slice{T}(pointer T ptr, size I64)
   end
 
   def dup(self, extra I64) Self
-    let dup_t Self = self.dup_internal(extra)
+    let dup_t Self = Self(self::pointer, self::size)
+    dup_t::pointer = __builtin_slice_malloc(dup_t::pointer, self::size)
     copy(self::pointer, dup_t::pointer, self::size)
     return dup_t
   end
 
   def dup_append(self, last T) Self
-    let dup_t Self = self.dup_internal(1)
+    let dup_t Self = Self(self::pointer, self::size + 1)
+    dup_t::pointer = __builtin_slice_malloc(dup_t::pointer, self::size + 1)
     copy(self::pointer, dup_t::pointer, self::size)
     dup_t[self::size] = last
     return dup_t
@@ -49,7 +51,6 @@ end
 def []{T}(ptr T ptr, offset I64) T mut = __primitive__(get_at)
 def []={T}(ptr T ptr, offset I64, val T) T = __primitive__(set_at)
 def __builtin_default_init{T}(obj T mut) = __primitive__(default_init)
-def dup_internal{T}(arr T[], extra I64) T[] = __primitive__(slice_dup)
 
 # TODO: most of these should be templated
 def +(a I32, b I32) I32 = __primitive__(ib_add)

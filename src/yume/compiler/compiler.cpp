@@ -657,10 +657,6 @@ auto Compiler::primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<
 
   if (primitive == "ptrto")
     return args.at(0);
-  if (primitive == "slice_dup") {
-    return m_builder->CreateInsertValue(
-        args.at(0), m_builder->CreateAdd(m_builder->CreateExtractValue(args.at(0), 1), args.at(1)), 1);
-  }
   if (primitive == "slice_malloc") {
     auto base_ty_type = types.at(0).ensure_ptr_base();
     auto* base_type = llvm_type(base_ty_type);
