@@ -1,5 +1,6 @@
 def printf(format U8 ptr) I32 = __extern__ __varargs__
 def puts(string U8 ptr) I32 = __extern__
+def puts(string U8[]) I32 = puts(string.c_str.unsafe_ptr)
 def putchar(char I32) I32 = __extern__
 
 def exit(status I32) = __extern__
