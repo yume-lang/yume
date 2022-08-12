@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-08-11 14:37:29</td>
+            <td class="headerValue">2022-08-12 08:40:08</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -221,68 +221,73 @@
 <a name="163"><span class="lineNum">     163 </span>            :   }</a>
 <a name="164"><span class="lineNum">     164 </span>            : </a>
 <a name="165"><span class="lineNum">     165 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto subs() const -&gt; const Substitution* {</span></a>
-<a name="166"><span class="lineNum">     166 </span>            :     return visit_decl&lt;Substitution*&gt;([](auto* decl) -&gt; Substitution* {</a>
+<a name="166"><span class="lineNum">     166 </span>            :     return visit_decl&lt;const Substitution*&gt;([](auto* decl) -&gt; const Substitution* {</a>
 <a name="167"><span class="lineNum">     167 </span>            :       if (decl == nullptr)</a>
 <a name="168"><span class="lineNum">     168 </span>            :         return nullptr;</a>
-<a name="169"><span class="lineNum">     169 </span>            :       return &amp;decl-&gt;get_subs();</a>
-<a name="170"><span class="lineNum">     170 </span>            :     });</a>
-<a name="171"><span class="lineNum">     171 </span>            :   };</a>
-<a name="172"><span class="lineNum">     172 </span>            : </a>
-<a name="173"><span class="lineNum">     173 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto subs() -&gt; Substitution* {</span></a>
-<a name="174"><span class="lineNum">     174 </span>            :     return visit_decl&lt;Substitution*&gt;([](auto* decl) -&gt; Substitution* {</a>
-<a name="175"><span class="lineNum">     175 </span>            :       if (decl == nullptr)</a>
-<a name="176"><span class="lineNum">     176 </span>            :         return nullptr;</a>
-<a name="177"><span class="lineNum">     177 </span>            :       return &amp;decl-&gt;get_subs();</a>
-<a name="178"><span class="lineNum">     178 </span>            :     });</a>
-<a name="179"><span class="lineNum">     179 </span>            :   };</a>
-<a name="180"><span class="lineNum">     180 </span>            : </a>
-<a name="181"><span class="lineNum">     181 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() const -&gt; const ast::AST* {</span></a>
-<a name="182"><span class="lineNum">     182 </span>            :     return visit_decl&lt;const ast::AST*&gt;([](const auto* decl) -&gt; const ast::AST* { return &amp;decl-&gt;ast(); });</a>
-<a name="183"><span class="lineNum">     183 </span>            :   };</a>
-<a name="184"><span class="lineNum">     184 </span>            : </a>
-<a name="185"><span class="lineNum">     185 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() -&gt; ast::AST* {</span></a>
-<a name="186"><span class="lineNum">     186 </span>            :     return visit_decl&lt;ast::AST*&gt;([](auto* decl) -&gt; ast::AST* { return &amp;decl-&gt;ast(); });</a>
-<a name="187"><span class="lineNum">     187 </span>            :   };</a>
-<a name="188"><span class="lineNum">     188 </span>            : </a>
-<a name="189"><span class="lineNum">     189 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto self_ty() const -&gt; optional&lt;ty::Type&gt; {</span></a>
-<a name="190"><span class="lineNum">     190 </span>            :     return visit_decl&lt;optional&lt;ty::Type&gt;&gt;([](const auto* decl) { return decl-&gt;get_self_ty(); });</a>
-<a name="191"><span class="lineNum">     191 </span>            :   };</a>
-<a name="192"><span class="lineNum">     192 </span>            : };</a>
+<a name="169"><span class="lineNum">     169 </span>            :       auto&amp; subs = decl-&gt;get_subs();</a>
+<a name="170"><span class="lineNum">     170 </span>            :       if (auto self = decl-&gt;get_self_ty(); subs.empty() &amp;&amp; self.has_value())</a>
+<a name="171"><span class="lineNum">     171 </span>            :         if (auto* self_st = self-&gt;template base_dyn_cast&lt;ty::Struct&gt;())</a>
+<a name="172"><span class="lineNum">     172 </span>            :           return &amp;self_st-&gt;subs();</a>
+<a name="173"><span class="lineNum">     173 </span>            : </a>
+<a name="174"><span class="lineNum">     174 </span>            :       return &amp;subs;</a>
+<a name="175"><span class="lineNum">     175 </span>            :     });</a>
+<a name="176"><span class="lineNum">     176 </span>            :   };</a>
+<a name="177"><span class="lineNum">     177 </span>            : </a>
+<a name="178"><span class="lineNum">     178 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto subs() -&gt; Substitution* {</span></a>
+<a name="179"><span class="lineNum">     179 </span>            :     return visit_decl&lt;Substitution*&gt;([](auto* decl) -&gt; Substitution* {</a>
+<a name="180"><span class="lineNum">     180 </span>            :       if (decl == nullptr)</a>
+<a name="181"><span class="lineNum">     181 </span>            :         return nullptr;</a>
+<a name="182"><span class="lineNum">     182 </span>            :       return &amp;decl-&gt;get_subs();</a>
+<a name="183"><span class="lineNum">     183 </span>            :     });</a>
+<a name="184"><span class="lineNum">     184 </span>            :   };</a>
+<a name="185"><span class="lineNum">     185 </span>            : </a>
+<a name="186"><span class="lineNum">     186 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() const -&gt; const ast::AST* {</span></a>
+<a name="187"><span class="lineNum">     187 </span>            :     return visit_decl&lt;const ast::AST*&gt;([](const auto* decl) -&gt; const ast::AST* { return &amp;decl-&gt;ast(); });</a>
+<a name="188"><span class="lineNum">     188 </span>            :   };</a>
+<a name="189"><span class="lineNum">     189 </span>            : </a>
+<a name="190"><span class="lineNum">     190 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() -&gt; ast::AST* {</span></a>
+<a name="191"><span class="lineNum">     191 </span>            :     return visit_decl&lt;ast::AST*&gt;([](auto* decl) -&gt; ast::AST* { return &amp;decl-&gt;ast(); });</a>
+<a name="192"><span class="lineNum">     192 </span>            :   };</a>
 <a name="193"><span class="lineNum">     193 </span>            : </a>
-<a name="194"><span class="lineNum">     194 </span>            : /// A value of a complied expression.</a>
-<a name="195"><span class="lineNum">     195 </span>            : /**</a>
-<a name="196"><span class="lineNum">     196 </span>            :  * Note that this struct is mostly useless, it is a very thin wrapper around `llvm::Value`. It may be removed in the</a>
-<a name="197"><span class="lineNum">     197 </span>            :  * future.</a>
-<a name="198"><span class="lineNum">     198 </span>            :  */</a>
-<a name="199"><span class="lineNum">     199 </span><span class="lineCov">          1 : struct Val {</span></a>
-<a name="200"><span class="lineNum">     200 </span><span class="lineNoCov">          0 :   llvm::Value* llvm{};</span></a>
-<a name="201"><span class="lineNum">     201 </span>            : </a>
-<a name="202"><span class="lineNum">     202 </span><span class="lineNoCov">          0 :   /* implicit */ Val(llvm::Value* llvm_val) : llvm(llvm_val) {}</span></a>
-<a name="203"><span class="lineNum">     203 </span>            : </a>
-<a name="204"><span class="lineNum">     204 </span><span class="lineNoCov">          0 :   /* implicit */ operator llvm::Value*() const { return llvm; }</span></a>
-<a name="205"><span class="lineNum">     205 </span>            : };</a>
+<a name="194"><span class="lineNum">     194 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto self_ty() const -&gt; optional&lt;ty::Type&gt; {</span></a>
+<a name="195"><span class="lineNum">     195 </span>            :     return visit_decl&lt;optional&lt;ty::Type&gt;&gt;([](const auto* decl) { return decl-&gt;get_self_ty(); });</a>
+<a name="196"><span class="lineNum">     196 </span>            :   };</a>
+<a name="197"><span class="lineNum">     197 </span>            : };</a>
+<a name="198"><span class="lineNum">     198 </span>            : </a>
+<a name="199"><span class="lineNum">     199 </span>            : /// A value of a complied expression.</a>
+<a name="200"><span class="lineNum">     200 </span>            : /**</a>
+<a name="201"><span class="lineNum">     201 </span>            :  * Note that this struct is mostly useless, it is a very thin wrapper around `llvm::Value`. It may be removed in the</a>
+<a name="202"><span class="lineNum">     202 </span>            :  * future.</a>
+<a name="203"><span class="lineNum">     203 </span>            :  */</a>
+<a name="204"><span class="lineNum">     204 </span><span class="lineCov">          1 : struct Val {</span></a>
+<a name="205"><span class="lineNum">     205 </span><span class="lineNoCov">          0 :   llvm::Value* llvm{};</span></a>
 <a name="206"><span class="lineNum">     206 </span>            : </a>
-<a name="207"><span class="lineNum">     207 </span>            : /// A source file with its associated Syntax Tree.</a>
-<a name="208"><span class="lineNum">     208 </span><span class="lineCov">          1 : struct SourceFile {</span></a>
-<a name="209"><span class="lineNum">     209 </span><span class="lineNoCov">          0 :   const string name;</span></a>
-<a name="210"><span class="lineNum">     210 </span><span class="lineNoCov">          0 :   vector&lt;yume::Token&gt; tokens;</span></a>
-<a name="211"><span class="lineNum">     211 </span><span class="lineNoCov">          0 :   ast::TokenIterator iterator;</span></a>
-<a name="212"><span class="lineNum">     212 </span><span class="lineNoCov">          0 :   unique_ptr&lt;ast::Program&gt; program;</span></a>
-<a name="213"><span class="lineNum">     213 </span>            : </a>
-<a name="214"><span class="lineNum">     214 </span><span class="lineNoCov">          0 :   SourceFile(std::istream&amp; in, string name)</span></a>
-<a name="215"><span class="lineNum">     215 </span>            :       : name(move(name)), tokens(yume::tokenize(in, this-&gt;name)), iterator{tokens.begin(), tokens.end()} {</a>
-<a name="216"><span class="lineNum">     216 </span>            : #ifdef YUME_SPEW_LIST_TOKENS</a>
-<a name="217"><span class="lineNum">     217 </span>            :     llvm::outs() &lt;&lt; &quot;tokens:\n&quot;;</a>
-<a name="218"><span class="lineNum">     218 </span>            :     for (auto&amp; i : tokens) {</a>
-<a name="219"><span class="lineNum">     219 </span>            :       llvm::outs() &lt;&lt; &quot;  &quot; &lt;&lt; i &lt;&lt; &quot;\n&quot;;</a>
-<a name="220"><span class="lineNum">     220 </span>            :     }</a>
-<a name="221"><span class="lineNum">     221 </span>            :     llvm::outs() &lt;&lt; &quot;\n&quot;;</a>
-<a name="222"><span class="lineNum">     222 </span>            :     llvm::outs().flush();</a>
-<a name="223"><span class="lineNum">     223 </span>            : #endif</a>
-<a name="224"><span class="lineNum">     224 </span>            :     program = ast::Program::parse(iterator);</a>
-<a name="225"><span class="lineNum">     225 </span>            :   }</a>
-<a name="226"><span class="lineNum">     226 </span>            : };</a>
-<a name="227"><span class="lineNum">     227 </span>            : } // namespace yume</a>
+<a name="207"><span class="lineNum">     207 </span><span class="lineNoCov">          0 :   /* implicit */ Val(llvm::Value* llvm_val) : llvm(llvm_val) {}</span></a>
+<a name="208"><span class="lineNum">     208 </span>            : </a>
+<a name="209"><span class="lineNum">     209 </span><span class="lineNoCov">          0 :   /* implicit */ operator llvm::Value*() const { return llvm; }</span></a>
+<a name="210"><span class="lineNum">     210 </span>            : };</a>
+<a name="211"><span class="lineNum">     211 </span>            : </a>
+<a name="212"><span class="lineNum">     212 </span>            : /// A source file with its associated Syntax Tree.</a>
+<a name="213"><span class="lineNum">     213 </span><span class="lineCov">          1 : struct SourceFile {</span></a>
+<a name="214"><span class="lineNum">     214 </span><span class="lineNoCov">          0 :   const string name;</span></a>
+<a name="215"><span class="lineNum">     215 </span><span class="lineNoCov">          0 :   vector&lt;yume::Token&gt; tokens;</span></a>
+<a name="216"><span class="lineNum">     216 </span><span class="lineNoCov">          0 :   ast::TokenIterator iterator;</span></a>
+<a name="217"><span class="lineNum">     217 </span><span class="lineNoCov">          0 :   unique_ptr&lt;ast::Program&gt; program;</span></a>
+<a name="218"><span class="lineNum">     218 </span>            : </a>
+<a name="219"><span class="lineNum">     219 </span><span class="lineNoCov">          0 :   SourceFile(std::istream&amp; in, string name)</span></a>
+<a name="220"><span class="lineNum">     220 </span>            :       : name(move(name)), tokens(yume::tokenize(in, this-&gt;name)), iterator{tokens.begin(), tokens.end()} {</a>
+<a name="221"><span class="lineNum">     221 </span>            : #ifdef YUME_SPEW_LIST_TOKENS</a>
+<a name="222"><span class="lineNum">     222 </span>            :     llvm::outs() &lt;&lt; &quot;tokens:\n&quot;;</a>
+<a name="223"><span class="lineNum">     223 </span>            :     for (auto&amp; i : tokens) {</a>
+<a name="224"><span class="lineNum">     224 </span>            :       llvm::outs() &lt;&lt; &quot;  &quot; &lt;&lt; i &lt;&lt; &quot;\n&quot;;</a>
+<a name="225"><span class="lineNum">     225 </span>            :     }</a>
+<a name="226"><span class="lineNum">     226 </span>            :     llvm::outs() &lt;&lt; &quot;\n&quot;;</a>
+<a name="227"><span class="lineNum">     227 </span>            :     llvm::outs().flush();</a>
+<a name="228"><span class="lineNum">     228 </span>            : #endif</a>
+<a name="229"><span class="lineNum">     229 </span>            :     program = ast::Program::parse(iterator);</a>
+<a name="230"><span class="lineNum">     230 </span>            :   }</a>
+<a name="231"><span class="lineNum">     231 </span>            : };</a>
+<a name="232"><span class="lineNum">     232 </span>            : } // namespace yume</a>
 </pre>
       </td>
     </tr>

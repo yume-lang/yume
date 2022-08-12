@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-08-11 14:37:29</td>
+            <td class="headerValue">2022-08-12 08:40:08</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -579,7 +579,7 @@
 <a name="521"><span class="lineNum">     521 </span>            : </a>
 <a name="522"><span class="lineNum">     522 </span>            : auto TypeWalker::convert_type(const ast::Type&amp; ast_type) -&gt; ty::Type {</a>
 <a name="523"><span class="lineNum">     523 </span>            :   auto parent = current_decl.self_ty();</a>
-<a name="524"><span class="lineNum">     524 </span>            :   const auto* context = current_decl.subs();</a>
+<a name="524"><span class="lineNum">     524 </span>            :   const auto* context = static_cast&lt;const DeclLike&gt;(current_decl).subs();</a>
 <a name="525"><span class="lineNum">     525 </span>            : </a>
 <a name="526"><span class="lineNum">     526 </span>            :   if (const auto* simple_type = dyn_cast&lt;ast::SimpleType&gt;(&amp;ast_type)) {</a>
 <a name="527"><span class="lineNum">     527 </span>            :     auto name = simple_type-&gt;name();</a>
