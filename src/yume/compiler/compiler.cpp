@@ -695,14 +695,14 @@ auto Compiler::primitive(Fn* fn, const vector<Val>& args, const vector<ty::Type>
   if (primitive == "set_at") {
     auto* result_type = llvm_type(types[0].without_mut().ensure_ptr_base());
     llvm::Value* value = args.at(2);
-    llvm::Value* base = m_builder->CreateGEP(result_type, args.at(0), args.at(1), "p.set_at.gep");
+    llvm::Value* base = m_builder->CreateGEP(result_type, args.at(0).llvm, args.at(1).llvm, "p.set_at.gep");
     m_builder->CreateStore(value, base);
     return args.at(2);
   }
   if (primitive == "get_at") {
     auto* result_type = llvm_type(types[0].without_mut().ensure_ptr_base());
     llvm::Value* base = args.at(0);
-    base = m_builder->CreateGEP(result_type, base, args.at(1), "p.get_at.gep");
+    base = m_builder->CreateGEP(result_type, base, args.at(1).llvm, "p.get_at.gep");
     return base;
   }
   if (primitive.starts_with("ib_"))
