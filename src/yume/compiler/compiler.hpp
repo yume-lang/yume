@@ -36,14 +36,6 @@ class Struct;
 class BaseType;
 } // namespace ty
 
-/// A local variable in function scope. Used to track destructing when the scope ends.
-struct InScope {
-  Val value;
-  const ast::AST& ast;
-  /// Whether or not the local scope "owns" the variable. Unowned variables are not destructed at the end of the scope.
-  bool owning{};
-};
-
 /// The `Compiler` the the primary top-level type during compilation. A single instance is created during the
 /// compilation process.
 class Compiler : public CRTPWalker<Compiler> {

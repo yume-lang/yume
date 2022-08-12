@@ -196,17 +196,25 @@ public:
   };
 };
 
+struct InScope;
+
 /// A value of a complied expression.
-/**
- * Note that this struct is mostly useless, it is a very thin wrapper around `llvm::Value`. It may be removed in the
- * future.
- */
 struct Val {
   llvm::Value* llvm{};
+  InScope* scope{};
 
   /* implicit */ Val(llvm::Value* llvm_val) : llvm(llvm_val) {}
+  Val(llvm::Value* llvm_val, InScope* scope_val) : llvm(llvm_val), scope(scope_val) {}
 
   /* implicit */ operator llvm::Value*() const { return llvm; }
+};
+
+/// A local variable in function scope. Used to track destructing when the scope ends.
+struct InScope {
+  Val value;
+  const ast::AST& ast;
+  /// Whether or not the local scope "owns" the variable. Unowned variables are not destructed at the end of the scope.
+  bool owning{};
 };
 
 /// A source file with its associated Syntax Tree.

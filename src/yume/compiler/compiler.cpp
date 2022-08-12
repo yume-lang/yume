@@ -262,6 +262,8 @@ void Compiler::destruct(Val val, ty::Type type) {
       return destruct(m_builder->CreateLoad(llvm_type(*deref_type), val), *deref_type);
   }
   if (type.is_slice()) {
+    if (val.llvm->getType()->isPointerTy())
+      val = m_builder->CreateLoad(llvm_type(type), val.llvm);
     auto* ptr = m_builder->CreateExtractValue(val, 0, "sl.ptr.free");
     auto* free = llvm::CallInst::CreateFree(ptr, m_builder->GetInsertBlock());
     m_builder->Insert(free);
@@ -383,7 +385,7 @@ static inline auto is_trivially_destructible(ty::Type type) -> bool {
 
 void Compiler::destruct_all_in_scope() {
   for (const auto& [k, v] : m_scope)
-    if (isa<ast::VarDecl>(v.ast) && v.owning && !is_trivially_destructible(v.ast.ensure_ty()))
+    if (v.owning && !is_trivially_destructible(v.ast.ensure_ty()))
       destruct(v.value, v.ast.ensure_ty());
 }
 
@@ -730,7 +732,20 @@ template <> auto Compiler::expression(const ast::CallExpr& expr) -> Val {
     val = *prim;
   } else {
     llvm_fn = declare(*selected);
-    val = m_builder->CreateCall(llvm_fn, llvm_args);
+    val = m_builder->CreateCall(llvm_fn, vals_to_llvm(llvm_args));
+  }
+
+  // TODO(rymiel): This still leaks memory when in a loop. This is why stuff like loops should create their own inner
+  // scope, where these temporaries would go
+  if (auto ty = expr.val_ty(); ty.has_value() && !is_trivially_destructible(*ty)) {
+    Val alloc = entrypoint_builder().CreateAlloca(val.llvm->getType(), nullptr, "tmp");
+    auto [iter, ok] =
+        m_scope.insert({"tmp " + expr.location().to_string(), {.value = val, .ast = expr, .owning = true}});
+    m_builder->CreateStore(val.llvm, alloc);
+    val.scope = &iter->second;
+    val.scope->value = alloc;
+    llvm::outs() << expr.location().to_string() << " " << expr.name() << " -> " << ty->name() << " " << val.scope
+                 << "\n";
   }
 
   return val;
