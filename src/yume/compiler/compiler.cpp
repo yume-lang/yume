@@ -734,6 +734,12 @@ template <> auto Compiler::expression(const ast::CallExpr& expr) -> Val {
 
 template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
   if (const auto* target_var = dyn_cast<ast::VarExpr>(expr.target().raw_ptr())) {
+    auto [target_val, target_ast, target_owning] = m_scope.at(target_var->name());
+    auto target_type = target_ast.ensure_ty();
+
+    if (target_owning && !is_trivially_destructible(target_type))
+      destruct(target_val, target_type);
+
     auto expr_val = body_expression(*expr.value());
     auto target_val = m_scope.at(target_var->name()).value;
     m_builder->CreateStore(expr_val, target_val);
