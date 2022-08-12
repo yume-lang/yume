@@ -90,51 +90,14 @@ static inline auto for_all_instantiations(std::list<Struct>& structs, std::invoc
 template <> void TypeWalker::expression(ast::CtorExpr& expr) {
   Struct* st = nullptr;
 
-  // XXX: This is completely duplicated from convert_type!!
-  if (auto* templated = dyn_cast<ast::TemplatedType>(&expr.type())) {
-    auto& template_base = templated->base();
-    expression(template_base);
-    auto base_type = convert_type(template_base);
-    auto struct_obj = std::ranges::find(compiler.m_structs, base_type, &Struct::self_ty);
+  expression(expr.type());
+  auto base_type = convert_type(expr.type());
 
-    if (struct_obj == compiler.m_structs.end())
-      throw std::logic_error("Can't add template arguments to non-struct types");
-
-    for (auto& i : templated->type_vars())
-      expression(*i);
-
-    // XXX: Duplicated from function overload handling
-    Substitution subs = {};
-    for (const auto& [gen, gen_sub] : llvm::zip(struct_obj->type_args, templated->type_vars()))
-      subs.try_emplace(gen->name(), gen_sub->ensure_ty());
-
-    auto [already_existed, inst_struct] = struct_obj->get_or_create_instantiation(subs);
-
-    if (!already_existed) {
-      auto& new_st = inst_struct;
-
-      with_saved_scope([&] {
-        in_depth = false;
-        current_decl = &new_st;
-        body_statement(new_st.st_ast);
-      });
-
-      if (compiler.create_struct(new_st))
-        decl_queue.push(&new_st);
-    }
-
-    expr.val_ty(inst_struct.self_ty);
-    st = &inst_struct;
-  } else {
-    expression(expr.type());
-    auto base_type = convert_type(expr.type());
-
-    for_all_instantiations(compiler.m_structs, [&](Struct& i) {
-      if (i.self_ty == base_type)
-        st = &i;
-    });
-    expr.val_ty(base_type);
-  }
+  for_all_instantiations(compiler.m_structs, [&](Struct& i) {
+    if (i.self_ty == base_type)
+      st = &i;
+  });
+  expr.val_ty(base_type);
 
   const bool consider_ctor_overloads = st != nullptr;
   OverloadSet<Ctor> ctor_overloads{};
