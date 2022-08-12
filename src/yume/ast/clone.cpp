@@ -68,7 +68,7 @@ auto VarDecl::clone() const -> VarDecl* { return new VarDecl(tok(), m_name, dup(
 auto FnDecl::clone() const -> FnDecl* {
   return std::visit(
       [&](auto& s) {
-        return new FnDecl(tok(), m_name, dup(m_args), m_type_args, dup(m_ret), dup(s), m_extern_linkage);
+        return new FnDecl(tok(), m_name, dup(m_args), m_type_args, dup(m_ret), dup(s), dup(m_annotations));
       },
       m_body);
 }

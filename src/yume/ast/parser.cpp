@@ -327,7 +327,9 @@ auto Parser::parse_fn_decl() -> unique_ptr<FnDecl> {
 
   consume(KWD_DEF);
 
-  const bool extern_linkage = try_consume(KWD_EXTERN);
+  auto annotations = std::set<string>{};
+  while (try_consume(SYM_AT))
+    annotations.emplace(consume_word());
 
   const string name = parse_fn_name();
   auto type_args = vector<string>{};
@@ -348,7 +350,7 @@ auto Parser::parse_fn_decl() -> unique_ptr<FnDecl> {
       consume(SYM_LPAREN);
       auto primitive = consume_word();
       consume(SYM_RPAREN);
-      return ast_ptr<FnDecl>(entry, name, move(args), type_args, move(ret_type), primitive, extern_linkage);
+      return ast_ptr<FnDecl>(entry, name, move(args), type_args, move(ret_type), primitive, move(annotations));
     }
     if (try_consume(KWD_EXTERN)) {
       // consume(SYM_LPAREN);
@@ -356,7 +358,7 @@ auto Parser::parse_fn_decl() -> unique_ptr<FnDecl> {
       // consume(SYM_RPAREN);
       auto varargs = try_consume(KWD_VARARGS);
       return ast_ptr<FnDecl>(entry, name, move(args), type_args, move(ret_type), FnDecl::extern_decl_t{name, varargs},
-                             extern_linkage);
+                             move(annotations));
     }
     body_begin = tokens.begin();
     auto expr = parse_expr();
@@ -373,7 +375,7 @@ auto Parser::parse_fn_decl() -> unique_ptr<FnDecl> {
   }
 
   return ast_ptr<FnDecl>(entry, name, move(args), type_args, move(ret_type), make_ast<Compound>(body_begin, move(body)),
-                         extern_linkage);
+                         move(annotations));
 }
 
 auto Parser::parse_type_name_or_ctor_field() -> CtorDecl::arg_t {
