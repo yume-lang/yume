@@ -163,10 +163,15 @@ public:
   }
 
   [[nodiscard]] auto subs() const -> const Substitution* {
-    return visit_decl<Substitution*>([](auto* decl) -> Substitution* {
+    return visit_decl<const Substitution*>([](auto* decl) -> const Substitution* {
       if (decl == nullptr)
         return nullptr;
-      return &decl->get_subs();
+      auto& subs = decl->get_subs();
+      if (auto self = decl->get_self_ty(); subs.empty() && self.has_value())
+        if (auto* self_st = self->template base_dyn_cast<ty::Struct>())
+          return &self_st->subs();
+
+      return &subs;
     });
   };
 

@@ -13,7 +13,11 @@ end
 def __builtin_slice_malloc{T}(ptr T ptr, size I64) T ptr = __primitive__(slice_malloc)
 
 struct Slice{T}(pointer T ptr, size I64)
-  def :new(::pointer, ::size) end
+  def :new(pointer T ptr, ::size)
+    ::pointer = __builtin_slice_malloc(pointer, size)
+    copy(pointer, ::pointer, size)
+  end
+
   def :new(::size)
     ::pointer = __builtin_slice_malloc(::pointer, size) # TODO: this should really be an error, as ::pointer isn't initialized here yet
     let i I64 = 0

@@ -521,7 +521,7 @@ auto TypeWalker::convert_slice_type(const ty::Type& base_type) -> ty::Type {
 
 auto TypeWalker::convert_type(const ast::Type& ast_type) -> ty::Type {
   auto parent = current_decl.self_ty();
-  const auto* context = current_decl.subs();
+  const auto* context = static_cast<const DeclLike>(current_decl).subs();
 
   if (const auto* simple_type = dyn_cast<ast::SimpleType>(&ast_type)) {
     auto name = simple_type->name();
