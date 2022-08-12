@@ -38,15 +38,13 @@ struct Slice{T}(pointer T ptr, size I64)
   end
 
   def dup(self, extra I64) Self
-    let dup_t Self = Self(self::pointer, self::size)
-    dup_t::pointer = __builtin_slice_malloc(dup_t::pointer, self::size)
+    let dup_t Self = Self(self::size + extra)
     copy(self::pointer, dup_t::pointer, self::size)
     return dup_t
   end
 
   def dup_append(self, last T) Self
-    let dup_t Self = Self(self::pointer, self::size + 1)
-    dup_t::pointer = __builtin_slice_malloc(dup_t::pointer, self::size + 1)
+    let dup_t Self = Self(self::size + 1)
     copy(self::pointer, dup_t::pointer, self::size)
     dup_t[self::size] = last
     return dup_t
