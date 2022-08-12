@@ -5,6 +5,7 @@
 #include <functional>
 #include <initializer_list>
 #include <iterator>
+#include <llvm/ADT/StringExtras.h>
 #include <llvm/Support/Format.h>
 #include <llvm/Support/raw_ostream.h>
 #include <sstream>
@@ -33,13 +34,44 @@ struct any_of_fn {
 static constexpr any_of_fn any_of;
 #endif
 
+using char_raw_fn = bool(char);
+using char_pos_fn = bool(char, size_t);
 struct TokenState {
   bool valid;
   char c;
   size_t index;
   stringstream& stream;
+
+  auto validate(bool val = true) -> bool {
+    valid |= val;
+    return val;
+  }
+
+  auto accept(char chr) -> bool {
+    if (c == chr)
+      stream.put(c);
+
+    return c == chr;
+  }
+
+  auto accept(char_raw_fn fn) -> bool {
+    if (fn(c)) {
+      stream.put(c);
+      return true;
+    }
+    return false;
+  }
+
+  auto accept(char_pos_fn fn) -> bool {
+    if (fn(c, index)) {
+      stream.put(c);
+      return true;
+    }
+    return false;
+  }
+
+  auto accept_validate(auto x) -> bool { return validate(accept(x)); }
 };
-using char_raw_fn = int(int);
 using char_fn = std::function<bool(TokenState&)>;
 
 /// A criterion for classifying a stream of characters as a specific type of token \link Token::Type
@@ -62,14 +94,10 @@ struct Characteristic {
 
   /// Criterion doesn't take a stringstream: if `true` is returned the same character is appended. This is usually
   /// preferred.
-  Characteristic(Token::Type type, const std::function<bool(int, int)>& fn)
-      : fn([fn](TokenState& state) {
-          bool b = fn(state.c, static_cast<int>(state.index));
-          if (b)
-            state.stream.put(state.c);
-          return b;
-        }),
-        type(type) {}
+  Characteristic(Token::Type type, char_pos_fn* fn)
+      : fn([fn](TokenState& state) { return state.accept_validate(fn); }), type(type) {}
+  Characteristic(Token::Type type, char_raw_fn* fn)
+      : fn([fn](TokenState& state) { return state.accept_validate(fn); }), type(type) {}
   Characteristic(Token::Type type, char_fn fn) : fn(move(fn)), type(type) {}
 };
 
@@ -95,8 +123,8 @@ class Tokenizer {
 
 public:
   /// Words consist of alphanumeric characters, or underscores, but *must* begin with a letter.
-  constexpr static const auto is_word = [](int c, int i) {
-    return (i == 0 && std::isalpha(c) != 0) || std::isalnum(c) != 0 || c == '_';
+  constexpr static const auto is_word = [](char c, size_t i) {
+    return (i == 0 && llvm::isAlpha(c)) || llvm::isAlnum(c) || c == '_';
   };
 
   /// Strings are delimited by double quotes `"` and may contain escapes.
@@ -104,15 +132,14 @@ public:
     if (end)
       return false;
 
-    state.valid = false;
     if (state.index == 0)
-      return state.c == '"';
+      return state.accept('"');
 
     if (state.c == '\\' && !escape) {
       escape = true;
     } else if (state.c == '"' && !escape && !end) {
       end = true;
-      state.valid = true;
+      state.validate();
     } else if (escape) {
       state.stream.put(unescape(state.c));
       escape = false;
@@ -124,33 +151,50 @@ public:
 
   /// Chars begin with a question mark `?` and may contain escapes.
   constexpr static const auto is_char = [escape = false](TokenState& state) mutable {
-    if (state.index == 0) {
-      state.valid = false;
+    if (state.index == 0)
       return state.c == '?';
-    }
+
     if (state.index == 1) {
       if (state.c == '\\')
         escape = true;
       else
         state.stream.put(state.c);
-      state.valid = true;
-      return true;
+      return state.validate();
     }
     if (state.index == 2 && escape) {
       state.stream.put(unescape(state.c));
-      state.valid = true;
-      return true;
+      return state.validate();
     }
     return false;
   };
 
   /// Comments begin with an octothorpe `#` and last until the end of the line.
-  constexpr static const auto is_comment = [](char c, int i) { return (i == 0 && c == '#') || (i > 0 && c != '\n'); };
-
-  /// Generate a criterion matching a single character from any within the string `chars`.
-  constexpr static const auto is_any_of = [](string chars) {
-    return [checks = move(chars)](char c, int i) { return i == 0 && checks.find(c) != string::npos; };
+  constexpr static const auto is_comment = [](char c, size_t i) {
+    return (i == 0 && c == '#') || (i > 0 && c != '\n');
   };
+
+  /// Hex numbers begin with `0x`, and consist of any of 0-9, a-f or A-F
+  constexpr static const auto is_hex_num = [](TokenState& state) {
+    if (state.index == 0)
+      return state.accept('0');
+    if (state.index == 1)
+      return state.accept('x');
+    return state.accept_validate(llvm::isHexDigit);
+  };
+
+  template <size_t N> struct FixedString {
+    std::array<char, N> value{};
+
+    [[nodiscard]] consteval auto view() const -> std::string_view { return {value.begin(), value.end()}; }
+
+    // NOLINTNEXTLINE(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+    consteval FixedString(const char (&str)[N]) { std::copy_n(static_cast<const char*>(str), N, value.begin()); }
+  };
+
+  /// Generate a criterion matching a single character from any within the string `Checks`.
+  template <FixedString Checks>
+  constexpr static const auto is_any_of =
+      [](char c, size_t i) { return i == 0 && Checks.view().find(c) != string::npos; };
 
   /// Generate a criterion matching the string exactly.
   constexpr static const auto is_exactly = [](string str) {
@@ -168,19 +212,15 @@ public:
     };
   };
 
-  /// Generate a criterion from a libc function from the `is...` family of functions, such as `isdigit`.
-  constexpr static const auto is_c = [](char_raw_fn fn) {
-    return [=](char c, [[maybe_unused]] int i) { return fn(c) != 0; };
-  };
-
   void tokenize() {
 
     while (!m_in.eof()) {
       if (!select_characteristic({
               {Token::Type::Separator, is_exactly("\n")},
-              {Token::Type::Skip, is_c(isspace)},
+              {Token::Type::Skip, llvm::isSpace},
               {Token::Type::Skip, is_comment},
-              {Token::Type::Number, is_c(isdigit)},
+              {Token::Type::Number, is_hex_num},
+              {Token::Type::Number, llvm::isDigit},
               {Token::Type::Literal, is_str},
               {Token::Type::Char, is_char},
               {Token::Type::Word, is_word},
@@ -188,7 +228,7 @@ public:
               {Token::Type::Symbol, is_exactly("!=")},
               {Token::Type::Symbol, is_exactly("//")},
               {Token::Type::Symbol, is_exactly("::")},
-              {Token::Type::Symbol, is_any_of(R"(()[]{}<>=:#%-+.,!/*&@\)")},
+              {Token::Type::Symbol, is_any_of<R"(()[]{}<>=:#%-+.,!/*&@\)">},
           })) {
         string message = "Tokenizer didn't recognize ";
         message += m_last;
@@ -218,7 +258,7 @@ private:
   /// until the criterion becomes false. The result is appended to the current list of tokens `m_tokens`.
   ///
   /// \returns `false` if no criterion matched.
-  /// \sa is_characteristic, consume_characteristic
+  /// \sa consume_characteristic
   auto select_characteristic(std::initializer_list<Characteristic> list) -> bool {
     int begin_line = m_line;
     int begin_col = m_col;
@@ -229,11 +269,11 @@ private:
       m_line = begin_line;
       m_col = begin_col;
       m_last = begin_last;
-      m_in.seekg(begin_position);
       m_in.clear();
+      m_in.seekg(begin_position);
 
       auto stream = stringstream{};
-      auto state = TokenState{true, m_last, 0, stream};
+      auto state = TokenState{false, m_last, 0, stream};
       if (c.fn(state)) {
         auto [atom, end_line, end_col] = consume_characteristic(c.fn, state);
         if (state.valid) {
@@ -246,7 +286,7 @@ private:
   }
 
   /// Consume characters until the criterion becomes false. Note that the first character is assumed to already be
-  /// matched by `is_characteristic`
+  /// matched.
   /// \returns `Atom` containing the payload of the matched token, and the line and col number it stopped on.
   auto consume_characteristic(const char_fn& fun, TokenState& state) -> std::tuple<Atom, int, int> {
     state.index++;

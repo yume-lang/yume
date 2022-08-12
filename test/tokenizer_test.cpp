@@ -81,6 +81,13 @@ TEST_CASE("Tokenize numbers", "[token]") {
   CHECK_TOKENIZER("123", "123"_Number);
 }
 
+TEST_CASE("Tokenize hex numbers", "[token]") {
+  CHECK_TOKENIZER("0x0", "0x0"_Number);
+  CHECK_TOKENIZER("0xfa123", "0xfa123"_Number);
+  CHECK_TOKENIZER("0x", "0"_Number, "x"_Word);
+  CHECK_TOKENIZER("0xg", "0"_Number, "xg"_Word);
+}
+
 TEST_CASE("Tokenize characters", "[token]") {
   CHECK_TOKENIZER("?a", "a"_Char);
   CHECK_TOKENIZER("??", "?"_Char);
