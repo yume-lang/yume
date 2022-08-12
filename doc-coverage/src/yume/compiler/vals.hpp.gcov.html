@@ -31,13 +31,13 @@
             <td class="headerValue">doc-cov.info</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntry">14</td>
-            <td class="headerCovTableEntry">84</td>
-            <td class="headerCovTableEntryLo">16.7 %</td>
+            <td class="headerCovTableEntry">16</td>
+            <td class="headerCovTableEntry">90</td>
+            <td class="headerCovTableEntryLo">17.8 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-08-12 09:16:54</td>
+            <td class="headerValue">2022-08-12 11:21:33</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -254,40 +254,48 @@
 <a name="196"><span class="lineNum">     196 </span>            :   };</a>
 <a name="197"><span class="lineNum">     197 </span>            : };</a>
 <a name="198"><span class="lineNum">     198 </span>            : </a>
-<a name="199"><span class="lineNum">     199 </span>            : /// A value of a complied expression.</a>
-<a name="200"><span class="lineNum">     200 </span>            : /**</a>
-<a name="201"><span class="lineNum">     201 </span>            :  * Note that this struct is mostly useless, it is a very thin wrapper around `llvm::Value`. It may be removed in the</a>
-<a name="202"><span class="lineNum">     202 </span>            :  * future.</a>
-<a name="203"><span class="lineNum">     203 </span>            :  */</a>
-<a name="204"><span class="lineNum">     204 </span><span class="lineCov">          1 : struct Val {</span></a>
-<a name="205"><span class="lineNum">     205 </span><span class="lineNoCov">          0 :   llvm::Value* llvm{};</span></a>
-<a name="206"><span class="lineNum">     206 </span>            : </a>
-<a name="207"><span class="lineNum">     207 </span><span class="lineNoCov">          0 :   /* implicit */ Val(llvm::Value* llvm_val) : llvm(llvm_val) {}</span></a>
+<a name="199"><span class="lineNum">     199 </span>            : struct InScope;</a>
+<a name="200"><span class="lineNum">     200 </span>            : </a>
+<a name="201"><span class="lineNum">     201 </span>            : /// A value of a complied expression.</a>
+<a name="202"><span class="lineNum">     202 </span><span class="lineCov">          1 : struct Val {</span></a>
+<a name="203"><span class="lineNum">     203 </span><span class="lineNoCov">          0 :   llvm::Value* llvm{};</span></a>
+<a name="204"><span class="lineNum">     204 </span><span class="lineNoCov">          0 :   InScope* scope{};</span></a>
+<a name="205"><span class="lineNum">     205 </span>            : </a>
+<a name="206"><span class="lineNum">     206 </span><span class="lineNoCov">          0 :   /* implicit */ Val(llvm::Value* llvm_val) : llvm(llvm_val) {}</span></a>
+<a name="207"><span class="lineNum">     207 </span><span class="lineNoCov">          0 :   Val(llvm::Value* llvm_val, InScope* scope_val) : llvm(llvm_val), scope(scope_val) {}</span></a>
 <a name="208"><span class="lineNum">     208 </span>            : </a>
 <a name="209"><span class="lineNum">     209 </span><span class="lineNoCov">          0 :   /* implicit */ operator llvm::Value*() const { return llvm; }</span></a>
 <a name="210"><span class="lineNum">     210 </span>            : };</a>
 <a name="211"><span class="lineNum">     211 </span>            : </a>
-<a name="212"><span class="lineNum">     212 </span>            : /// A source file with its associated Syntax Tree.</a>
-<a name="213"><span class="lineNum">     213 </span><span class="lineCov">          1 : struct SourceFile {</span></a>
-<a name="214"><span class="lineNum">     214 </span><span class="lineNoCov">          0 :   const string name;</span></a>
-<a name="215"><span class="lineNum">     215 </span><span class="lineNoCov">          0 :   vector&lt;yume::Token&gt; tokens;</span></a>
-<a name="216"><span class="lineNum">     216 </span><span class="lineNoCov">          0 :   ast::TokenIterator iterator;</span></a>
-<a name="217"><span class="lineNum">     217 </span><span class="lineNoCov">          0 :   unique_ptr&lt;ast::Program&gt; program;</span></a>
-<a name="218"><span class="lineNum">     218 </span>            : </a>
-<a name="219"><span class="lineNum">     219 </span><span class="lineNoCov">          0 :   SourceFile(std::istream&amp; in, string name)</span></a>
-<a name="220"><span class="lineNum">     220 </span>            :       : name(move(name)), tokens(yume::tokenize(in, this-&gt;name)), iterator{tokens.begin(), tokens.end()} {</a>
-<a name="221"><span class="lineNum">     221 </span>            : #ifdef YUME_SPEW_LIST_TOKENS</a>
-<a name="222"><span class="lineNum">     222 </span>            :     llvm::outs() &lt;&lt; &quot;tokens:\n&quot;;</a>
-<a name="223"><span class="lineNum">     223 </span>            :     for (auto&amp; i : tokens) {</a>
-<a name="224"><span class="lineNum">     224 </span>            :       llvm::outs() &lt;&lt; &quot;  &quot; &lt;&lt; i &lt;&lt; &quot;\n&quot;;</a>
-<a name="225"><span class="lineNum">     225 </span>            :     }</a>
-<a name="226"><span class="lineNum">     226 </span>            :     llvm::outs() &lt;&lt; &quot;\n&quot;;</a>
-<a name="227"><span class="lineNum">     227 </span>            :     llvm::outs().flush();</a>
-<a name="228"><span class="lineNum">     228 </span>            : #endif</a>
-<a name="229"><span class="lineNum">     229 </span>            :     program = ast::Program::parse(iterator);</a>
-<a name="230"><span class="lineNum">     230 </span>            :   }</a>
-<a name="231"><span class="lineNum">     231 </span>            : };</a>
-<a name="232"><span class="lineNum">     232 </span>            : } // namespace yume</a>
+<a name="212"><span class="lineNum">     212 </span>            : /// A local variable in function scope. Used to track destructing when the scope ends.</a>
+<a name="213"><span class="lineNum">     213 </span><span class="lineCov">          1 : struct InScope {</span></a>
+<a name="214"><span class="lineNum">     214 </span><span class="lineNoCov">          0 :   Val value;</span></a>
+<a name="215"><span class="lineNum">     215 </span><span class="lineNoCov">          0 :   const ast::AST&amp; ast;</span></a>
+<a name="216"><span class="lineNum">     216 </span>            :   /// Whether or not the local scope &quot;owns&quot; the variable. Unowned variables are not destructed at the end of the scope.</a>
+<a name="217"><span class="lineNum">     217 </span><span class="lineCov">          1 :   bool owning{};</span></a>
+<a name="218"><span class="lineNum">     218 </span>            : };</a>
+<a name="219"><span class="lineNum">     219 </span>            : </a>
+<a name="220"><span class="lineNum">     220 </span>            : /// A source file with its associated Syntax Tree.</a>
+<a name="221"><span class="lineNum">     221 </span><span class="lineCov">          1 : struct SourceFile {</span></a>
+<a name="222"><span class="lineNum">     222 </span><span class="lineNoCov">          0 :   const string name;</span></a>
+<a name="223"><span class="lineNum">     223 </span><span class="lineNoCov">          0 :   vector&lt;yume::Token&gt; tokens;</span></a>
+<a name="224"><span class="lineNum">     224 </span><span class="lineNoCov">          0 :   ast::TokenIterator iterator;</span></a>
+<a name="225"><span class="lineNum">     225 </span><span class="lineNoCov">          0 :   unique_ptr&lt;ast::Program&gt; program;</span></a>
+<a name="226"><span class="lineNum">     226 </span>            : </a>
+<a name="227"><span class="lineNum">     227 </span><span class="lineNoCov">          0 :   SourceFile(std::istream&amp; in, string name)</span></a>
+<a name="228"><span class="lineNum">     228 </span>            :       : name(move(name)), tokens(yume::tokenize(in, this-&gt;name)), iterator{tokens.begin(), tokens.end()} {</a>
+<a name="229"><span class="lineNum">     229 </span>            : #ifdef YUME_SPEW_LIST_TOKENS</a>
+<a name="230"><span class="lineNum">     230 </span>            :     llvm::outs() &lt;&lt; &quot;tokens:\n&quot;;</a>
+<a name="231"><span class="lineNum">     231 </span>            :     for (auto&amp; i : tokens) {</a>
+<a name="232"><span class="lineNum">     232 </span>            :       llvm::outs() &lt;&lt; &quot;  &quot; &lt;&lt; i &lt;&lt; &quot;\n&quot;;</a>
+<a name="233"><span class="lineNum">     233 </span>            :     }</a>
+<a name="234"><span class="lineNum">     234 </span>            :     llvm::outs() &lt;&lt; &quot;\n&quot;;</a>
+<a name="235"><span class="lineNum">     235 </span>            :     llvm::outs().flush();</a>
+<a name="236"><span class="lineNum">     236 </span>            : #endif</a>
+<a name="237"><span class="lineNum">     237 </span>            :     program = ast::Program::parse(iterator);</a>
+<a name="238"><span class="lineNum">     238 </span>            :   }</a>
+<a name="239"><span class="lineNum">     239 </span>            : };</a>
+<a name="240"><span class="lineNum">     240 </span>            : } // namespace yume</a>
 </pre>
       </td>
     </tr>

@@ -1,7 +1,7 @@
 <map id="yume::InScope" name="yume::InScope">
-<area shape="rect" id="node1" title="A local variable in function scope. Used to track destructing when the scope ends." alt="" coords="110,184,217,211"/>
-<area shape="rect" id="node2" href="$structyume_1_1Val.html" title="A value of a complied expression." alt="" coords="5,95,84,121"/>
-<area shape="rect" id="node3" title=" " alt="" coords="13,5,76,32"/>
-<area shape="rect" id="node4" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="109,95,218,121"/>
-<area shape="rect" id="node5" title=" " alt="" coords="243,95,289,121"/>
+<area shape="rect" id="node1" title="A local variable in function scope. Used to track destructing when the scope ends." alt="" coords="102,95,209,121"/>
+<area shape="rect" id="node2" href="$structyume_1_1Val.html" title="A value of a complied expression." alt="" coords="56,184,135,211"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,95,68,121"/>
+<area shape="rect" id="node4" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="50,5,159,32"/>
+<area shape="rect" id="node5" title=" " alt="" coords="184,5,231,32"/>
 </map>

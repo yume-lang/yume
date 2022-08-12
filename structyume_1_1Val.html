@@ -83,8 +83,11 @@ Collaboration diagram for yume::Val:</div>
 <div class="dyncontent">
 <div class="center"><img src="structyume_1_1Val__coll__graph.png" border="0" usemap="#ayume_1_1Val_coll__map" alt="Collaboration graph"/></div>
 <map name="ayume_1_1Val_coll__map" id="ayume_1_1Val_coll__map">
-<area shape="rect" title="A value of a complied expression." alt="" coords="5,95,84,121"/>
-<area shape="rect" title=" " alt="" coords="13,5,76,32"/>
+<area shape="rect" title="A value of a complied expression." alt="" coords="237,95,315,121"/>
+<area shape="rect" href="structyume_1_1InScope.html" title="A local variable in function scope. Used to track destructing when the scope ends." alt="" coords="147,184,253,211"/>
+<area shape="rect" title=" " alt="" coords="245,5,307,32"/>
+<area shape="rect" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,95,115,121"/>
+<area shape="rect" title=" " alt="" coords="139,95,186,121"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -92,6 +95,8 @@ Collaboration diagram for yume::Val:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a9fc3342cf3d703f8c6a4fb21c8e685a4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Val.html#a9fc3342cf3d703f8c6a4fb21c8e685a4">Val</a> (llvm::Value *llvm_val)</td></tr>
 <tr class="separator:a9fc3342cf3d703f8c6a4fb21c8e685a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af61476df60d0150af324d32e9bbb9bbd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Val.html#af61476df60d0150af324d32e9bbb9bbd">Val</a> (llvm::Value *llvm_val, <a class="el" href="structyume_1_1InScope.html">InScope</a> *scope_val)</td></tr>
+<tr class="separator:af61476df60d0150af324d32e9bbb9bbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a645d4983ee82011eb1a2a1018d0b2d9d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Val.html#a645d4983ee82011eb1a2a1018d0b2d9d">operator llvm::Value *</a> () const</td></tr>
 <tr class="separator:a645d4983ee82011eb1a2a1018d0b2d9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -99,15 +104,16 @@ Public Member Functions</h2></td></tr>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a0705ca6b25ccfc5f449a5910411912fa"><td class="memItemLeft" align="right" valign="top">llvm::Value *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Val.html#a0705ca6b25ccfc5f449a5910411912fa">llvm</a> {}</td></tr>
 <tr class="separator:a0705ca6b25ccfc5f449a5910411912fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf72ab6b90bd4b73865c80ff15b28c59"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structyume_1_1InScope.html">InScope</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Val.html#aaf72ab6b90bd4b73865c80ff15b28c59">scope</a> {}</td></tr>
+<tr class="separator:aaf72ab6b90bd4b73865c80ff15b28c59"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >A value of a complied expression. </p>
-<p >Note that this struct is mostly useless, it is a very thin wrapper around <code>llvm::Value</code>. It may be removed in the future. </p>
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00204">204</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00202">202</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a9fc3342cf3d703f8c6a4fb21c8e685a4" name="a9fc3342cf3d703f8c6a4fb21c8e685a4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9fc3342cf3d703f8c6a4fb21c8e685a4">&#9670;&nbsp;</a></span>Val()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a9fc3342cf3d703f8c6a4fb21c8e685a4">&#9670;&nbsp;</a></span>Val() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -121,6 +127,44 @@ Public Attributes</h2></td></tr>
           <td class="paramtype">llvm::Value *&#160;</td>
           <td class="paramname"><em>llvm_val</em></td><td>)</td>
           <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00206">206</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+
+</div>
+</div>
+<a id="af61476df60d0150af324d32e9bbb9bbd" name="af61476df60d0150af324d32e9bbb9bbd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af61476df60d0150af324d32e9bbb9bbd">&#9670;&nbsp;</a></span>Val() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">yume::Val::Val </td>
+          <td>(</td>
+          <td class="paramtype">llvm::Value *&#160;</td>
+          <td class="paramname"><em>llvm_val</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structyume_1_1InScope.html">InScope</a> *&#160;</td>
+          <td class="paramname"><em>scope_val</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -175,9 +219,27 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00205">205</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00203">203</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00614">yume::Compiler::expression()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00258">yume::Compiler::destruct()</a>, and <a class="el" href="compiler_8cpp_source.html#l00620">yume::Compiler::expression()</a>.</p>
+
+</div>
+</div>
+<a id="aaf72ab6b90bd4b73865c80ff15b28c59" name="aaf72ab6b90bd4b73865c80ff15b28c59"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf72ab6b90bd4b73865c80ff15b28c59">&#9670;&nbsp;</a></span>scope</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structyume_1_1InScope.html">InScope</a>* yume::Val::scope {}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00204">204</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00713">yume::Compiler::expression()</a>.</p>
 
 </div>
 </div>
