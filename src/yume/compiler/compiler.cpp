@@ -28,6 +28,7 @@
 #include <llvm/IR/GlobalVariable.h>
 #include <llvm/IR/Instruction.h>
 #include <llvm/IR/Instructions.h>
+#include <llvm/IR/IntrinsicInst.h>
 #include <llvm/IR/LegacyPassManager.h>
 #include <llvm/IR/Type.h>
 #include <llvm/IR/Value.h>
@@ -586,14 +587,28 @@ template <> auto Compiler::expression(const ast::StringExpr& expr) -> Val {
   for (unsigned int i = 0; i < val.size(); i++)
     chars[i] = m_builder->getInt8(val[i]);
 
-  auto* string_type = llvm::ArrayType::get(m_builder->getInt8Ty(), chars.size());
-  auto* slice_type = cast<llvm::StructType>(llvm_type(expr.ensure_ty()));
-  auto* init = llvm::ConstantArray::get(string_type, chars);
-  auto* global =
-      new llvm::GlobalVariable(*m_module, string_type, true, llvm::GlobalVariable::PrivateLinkage, init, ".str");
+  auto* base_type = m_builder->getInt8Ty();
+  auto* global_string_type = llvm::ArrayType::get(base_type, chars.size());
+  auto* global_init = llvm::ConstantArray::get(global_string_type, chars);
+  auto* global = new llvm::GlobalVariable(*m_module, global_string_type, true, llvm::GlobalVariable::PrivateLinkage,
+                                          global_init, ".str");
 
-  auto* string_ptr = llvm::ConstantExpr::getBitCast(global, m_builder->getInt8PtrTy(0));
-  return llvm::ConstantStruct::get(slice_type, string_ptr, m_builder->getInt64(val.length()));
+  auto* global_string_ptr = llvm::ConstantExpr::getBitCast(global, m_builder->getInt8PtrTy(0));
+
+  auto* slice_size = m_builder->getInt64(val.length());
+  auto* slice_type = cast<llvm::StructType>(llvm_type(expr.ensure_ty()));
+
+  auto* alloc_size = llvm::ConstantExpr::getSizeOf(base_type);
+  auto* string_alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), m_builder->getInt64Ty(), base_type,
+                                                    alloc_size, slice_size, nullptr, "str.ctor.malloc");
+  m_builder->Insert(string_alloc);
+  m_builder->CreateMemCpy(string_alloc, {}, global_string_ptr, {}, slice_size);
+
+  Val string_slice = llvm::UndefValue::get(slice_type);
+  string_slice = m_builder->CreateInsertValue(string_slice, string_alloc, 0);
+  string_slice = m_builder->CreateInsertValue(string_slice, slice_size, 1);
+
+  return string_slice;
 }
 
 template <> auto Compiler::expression(const ast::VarExpr& expr) -> Val {
