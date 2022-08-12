@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-08-12 11:33:41</td>
+            <td class="headerValue">2022-08-12 11:41:53</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -126,7 +126,7 @@
 <a name="68"><span class="lineNum">      68 </span>            : auto FnDecl::clone() const -&gt; FnDecl* {</a>
 <a name="69"><span class="lineNum">      69 </span>            :   return std::visit(</a>
 <a name="70"><span class="lineNum">      70 </span>            :       [&amp;](auto&amp; s) {</a>
-<a name="71"><span class="lineNum">      71 </span>            :         return new FnDecl(tok(), m_name, dup(m_args), m_type_args, dup(m_ret), dup(s), m_extern_linkage);</a>
+<a name="71"><span class="lineNum">      71 </span>            :         return new FnDecl(tok(), m_name, dup(m_args), m_type_args, dup(m_ret), dup(s), dup(m_annotations));</a>
 <a name="72"><span class="lineNum">      72 </span>            :       },</a>
 <a name="73"><span class="lineNum">      73 </span>            :       m_body);</a>
 <a name="74"><span class="lineNum">      74 </span>            : }</a>
