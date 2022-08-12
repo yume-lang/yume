@@ -283,7 +283,7 @@ auto Compiler::default_init(ty::Type type) -> Val {
   }
   if (const auto* struct_type = type.base_dyn_cast<ty::Struct>()) {
     auto* llvm_ty = cast<llvm::StructType>(llvm_type(type));
-    llvm::Value* val = llvm::UndefValue::get(llvm_ty);
+    Val val = llvm::UndefValue::get(llvm_ty);
 
     for (const auto& i : llvm::enumerate(struct_type->fields()))
       val = m_builder->CreateInsertValue(val, default_init(i.value()->type->ensure_ty()), i.index());
@@ -626,7 +626,7 @@ static auto constexpr const_hash(const char* input) -> unsigned {
   return *input != 0 ? static_cast<unsigned int>(*input) + 33 * const_hash(input + 1) : 5381; // NOLINT
 }
 
-auto Compiler::int_bin_primitive(const string& primitive, const vector<llvm::Value*>& args) -> Val {
+auto Compiler::int_bin_primitive(const string& primitive, const vector<Val>& args) -> Val {
   const auto& a = args.at(0);
   const auto& b = args.at(1);
   auto hash = const_hash(primitive.data());
@@ -649,9 +649,17 @@ auto Compiler::int_bin_primitive(const string& primitive, const vector<llvm::Val
   }
 }
 
-auto Compiler::primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<ty::Type>& types) -> optional<Val> {
+static inline auto vals_to_llvm(const vector<Val>& in) -> vector<llvm::Value*> {
+  auto out = vector<llvm::Value*>{};
+  for (const auto& i : in)
+    out.push_back(i.llvm);
+
+  return out;
+}
+
+auto Compiler::primitive(Fn* fn, const vector<Val>& args, const vector<ty::Type>& types) -> optional<Val> {
   if (fn->ast().extern_decl())
-    return m_builder->CreateCall(declare(*fn), args);
+    return m_builder->CreateCall(declare(*fn), vals_to_llvm(args));
 
   if (!fn->ast().primitive())
     return {};
@@ -663,7 +671,7 @@ auto Compiler::primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<
   if (primitive == "slice_malloc") {
     auto base_ty_type = types.at(0).ensure_ptr_base();
     auto* base_type = llvm_type(base_ty_type);
-    auto* slice_size = args.at(1);
+    auto slice_size = args.at(1);
 
     auto* alloc_size = llvm::ConstantExpr::getSizeOf(base_type);
     auto* array_size = m_builder->CreateSExt(slice_size, m_builder->getInt64Ty(), "sl.ctor.size");
@@ -702,12 +710,12 @@ template <> auto Compiler::expression(const ast::CallExpr& expr) -> Val {
 
   vector<Val> args{};
   vector<ty::Type> arg_types{};
-  vector<llvm::Value*> llvm_args{};
+  vector<Val> llvm_args{};
 
   for (const auto& i : expr.args()) {
     auto arg = body_expression(*i);
     args.push_back(arg);
-    llvm_args.push_back(arg.llvm);
+    llvm_args.emplace_back(arg.llvm);
     arg_types.push_back(i->ensure_ty());
   }
 
@@ -790,7 +798,7 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {
       auto arg = body_expression(*i);
       llvm_args.push_back(arg.llvm);
     }
-    llvm::Value* base_value = m_builder->CreateCall(llvm_fn, llvm_args);
+    Val base_value = m_builder->CreateCall(llvm_fn, llvm_args);
 
     //// Heap allocation
     // if (mut) {
@@ -863,7 +871,7 @@ template <> auto Compiler::expression(const ast::SliceExpr& expr) -> Val {
   for (const auto& i : expr.args())
     m_builder->CreateStore(body_expression(*i), m_builder->CreateConstInBoundsGEP1_32(base_type, data_ptr, j++));
 
-  llvm::Value* slice_inst = llvm::UndefValue::get(slice_type);
+  Val slice_inst = llvm::UndefValue::get(slice_type);
   slice_inst = m_builder->CreateInsertValue(slice_inst, data_ptr, 0);
   slice_inst = m_builder->CreateInsertValue(slice_inst, slice_size, 1);
 
@@ -893,12 +901,12 @@ template <> auto Compiler::expression(const ast::FieldAccessExpr& expr) -> Val {
 template <> auto Compiler::expression(const ast::ImplicitCastExpr& expr) -> Val {
   auto target_ty = expr.ensure_ty();
   auto current_ty = expr.base().ensure_ty();
-  llvm::Value* base = body_expression(expr.base());
+  Val base = body_expression(expr.base());
 
   if (expr.conversion().dereference) {
     yume_assert(current_ty.is_mut(), "Source type must be mutable when implicitly derefencing");
     current_ty = current_ty.ensure_mut_base();
-    base = m_builder->CreateLoad(llvm_type(current_ty), base, "ic.deref");
+    base.llvm = m_builder->CreateLoad(llvm_type(current_ty), base, "ic.deref");
   }
 
   if (expr.conversion().kind == ty::Conv::Int) {

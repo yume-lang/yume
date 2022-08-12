@@ -127,9 +127,9 @@ private:
   void destruct_all_in_scope();
 
   /// Handle all primitive, built-in functions
-  auto primitive(Fn* fn, const vector<llvm::Value*>& args, const vector<ty::Type>& types) -> optional<Val>;
+  auto primitive(Fn* fn, const vector<Val>& args, const vector<ty::Type>& types) -> optional<Val>;
   /// Handle primitive functions taking two integral values, such as most arithmetic operations (add, multiply, etc).
-  auto int_bin_primitive(const string& primitive, const vector<llvm::Value*>& args) -> Val;
+  auto int_bin_primitive(const string& primitive, const vector<Val>& args) -> Val;
 
   /// Instruct the `TypeWalker` to perform semantic analysis and infer types for the given declaration.
   void walk_types(DeclLike);
