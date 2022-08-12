@@ -5,6 +5,7 @@
 #include "token.hpp"
 #include "util.hpp"
 #include <catch2/catch_test_macros.hpp>
+#include <initializer_list>
 #include <iterator>
 #include <utility>
 
@@ -54,25 +55,32 @@ struct TName {
   explicit operator TypeName() const { return std::move(*ast<TypeName>(std::move(type), name)); }
 };
 
-template <bool ExternLinkage = false, typename... Ts>
-auto make_fn_decl(const std::string& name, std::initializer_list<TName> args = {},
-                  std::vector<std::string> type_args = {}, OptionalType ret = std::nullopt, Ts&&... ts)
+struct FnDeclArgs {
+  std::string name;
+  std::initializer_list<TName> args = {};
+  std::vector<std::string> type_args = {};
+  OptionalType ret = std::nullopt;
+  std::set<std::string> attributes = {};
+};
+
+template <typename... Ts> auto make_fn_decl(FnDeclArgs a, Ts&&... ts) -> std::unique_ptr<FnDecl> {
+  auto ast_args = std::vector<TypeName>();
+  ast_args.reserve(a.args.size());
+  std::transform(a.args.begin(), a.args.end(), std::back_inserter(ast_args),
+                 [](auto& tn) { return static_cast<TypeName>(tn); });
+  return ast<FnDecl>(a.name, std::move(ast_args), std::move(a.type_args), std::move(a.ret),
+                     make_compound(std::forward<Ts>(ts)...), std::move(a.attributes));
+}
+
+auto make_primitive_decl(const std::string& name, std::initializer_list<TName> args, OptionalType ret,
+                         const std::string& primitive, std::set<std::string> attributes = {})
     -> std::unique_ptr<FnDecl> {
   auto ast_args = std::vector<TypeName>();
   ast_args.reserve(args.size());
   std::transform(args.begin(), args.end(), std::back_inserter(ast_args),
                  [](auto& tn) { return static_cast<TypeName>(tn); });
-  return ast<FnDecl>(name, std::move(ast_args), std::move(type_args), std::move(ret),
-                     make_compound(std::forward<Ts>(ts)...), ExternLinkage);
-}
-
-auto make_primitive_decl(const std::string& name, std::initializer_list<TName> args, OptionalType ret,
-                         const std::string& primitive, bool extern_linkage = false) -> std::unique_ptr<FnDecl> {
-  auto ast_args = std::vector<TypeName>();
-  ast_args.reserve(args.size());
-  std::transform(args.begin(), args.end(), std::back_inserter(ast_args),
-                 [](auto& tn) { return static_cast<TypeName>(tn); });
-  return ast<FnDecl>(name, std::move(ast_args), std::vector<std::string>{}, std::move(ret), primitive, extern_linkage);
+  return ast<FnDecl>(name, std::move(ast_args), std::vector<std::string>{}, std::move(ret), primitive,
+                     std::move(attributes));
 }
 
 auto make_extern_decl(const std::string& name, std::initializer_list<TName> args, OptionalType ret,
@@ -82,7 +90,7 @@ auto make_extern_decl(const std::string& name, std::initializer_list<TName> args
   std::transform(args.begin(), args.end(), std::back_inserter(ast_args),
                  [](auto& tn) { return static_cast<TypeName>(tn); });
   return ast<FnDecl>(name, std::move(ast_args), std::vector<std::string>{}, std::move(ret),
-                     FnDecl::extern_decl_t{extern_name, varargs}, false);
+                     FnDecl::extern_decl_t{extern_name, varargs}, std::set<std::string>{});
 }
 
 auto operator""_Var(const char* str, size_t size) { return ast<VarExpr>(std::string{str, size}); }
@@ -224,72 +232,82 @@ TEST_CASE("Parse variable declaration", "[parse]") {
 }
 
 TEST_CASE("Parse function declaration", "[parse][fn]") {
-  CHECK_PARSER("def foo()\nend", make_fn_decl("foo"));
-  CHECK_PARSER("def foo(a I32)\nend", make_fn_decl("foo", {{"a", "I32"_Type}}));
-  CHECK_PARSER("def bar(a I32, x Foo)\nend", make_fn_decl("bar", {{"a", "I32"_Type}, {"x", "Foo"_Type}}));
-  CHECK_PARSER("def bar() U32\nend", make_fn_decl("bar", {}, {}, "U32"_Type));
+  CHECK_PARSER("def foo()\nend", make_fn_decl({"foo"}));
+  CHECK_PARSER("def foo(a I32)\nend", make_fn_decl({"foo", {{"a", "I32"_Type}}}));
+  CHECK_PARSER("def bar(a I32, x Foo)\nend", make_fn_decl({"bar", {{"a", "I32"_Type}, {"x", "Foo"_Type}}}));
+  CHECK_PARSER("def bar() U32\nend", make_fn_decl({.name = "bar", .ret = "U32"_Type}));
 
   CHECK_PARSER("def baz(l Left, r Right) U32\nend",
-               make_fn_decl("baz", {{"l", "Left"_Type}, {"r", "Right"_Type}}, {}, "U32"_Type));
+               make_fn_decl({.name = "baz", .args = {{"l", "Left"_Type}, {"r", "Right"_Type}}, .ret = "U32"_Type}));
 
-  CHECK_PARSER("def foo(a I32) I32\na\nend", make_fn_decl("foo", {{"a", "I32"_Type}}, {}, "I32"_Type, "a"_Var));
+  CHECK_PARSER("def foo(a I32) I32\na\nend",
+               make_fn_decl({.name = "foo", .args = {{"a", "I32"_Type}}, .ret = "I32"_Type}, "a"_Var));
 }
 
 TEST_CASE("Parse short function declaration", "[parse][fn]") {
-  CHECK_PARSER("def short() = 0", make_fn_decl("short", {}, {}, {}, ast<ReturnStmt>(0_Num)));
-  CHECK_PARSER("def short(a I32) = a", make_fn_decl("short", {{"a", "I32"_Type}}, {}, {}, ast<ReturnStmt>("a"_Var)));
+  CHECK_PARSER("def short() = 0", make_fn_decl({"short"}, ast<ReturnStmt>(0_Num)));
+  CHECK_PARSER("def short(a I32) = a", make_fn_decl({"short", {{"a", "I32"_Type}}}, ast<ReturnStmt>("a"_Var)));
 
-  CHECK_PARSER("def short(a I32) I32 = a",
-               make_fn_decl("short", {{"a", "I32"_Type}}, {}, "I32"_Type, ast<ReturnStmt>("a"_Var)));
+  CHECK_PARSER(
+      "def short(a I32) I32 = a",
+      make_fn_decl({.name = "short", .args = {{"a", "I32"_Type}}, .ret = "I32"_Type}, ast<ReturnStmt>("a"_Var)));
 
   CHECK_PARSER("def short(a I32, b I32) I32 = a + b",
-               make_fn_decl("short", {{"a", "I32"_Type}, {"b", "I32"_Type}}, {}, "I32"_Type,
+               make_fn_decl({.name = "short", .args = {{"a", "I32"_Type}, {"b", "I32"_Type}}, .ret = "I32"_Type},
                             ast<ReturnStmt>(make_call("+", "a"_Var, "b"_Var))));
 }
 
 TEST_CASE("Parse templated function declaration", "[parse][fn]") {
-  CHECK_PARSER("def templated{T}()\nend", make_fn_decl("templated", {}, {"T"}, {}));
+  CHECK_PARSER("def templated{T}()\nend", make_fn_decl({.name = "templated", .type_args = {"T"}}));
 
-  CHECK_PARSER("def templated{T}(t T) T\nend", make_fn_decl("templated", {{"t", "T"_Type}}, {"T"}, "T"_Type));
+  CHECK_PARSER("def templated{T}(t T) T\nend",
+               make_fn_decl({.name = "templated", .args = {{"t", "T"_Type}}, .type_args = {"T"}, .ret = "T"_Type}));
 
   CHECK_PARSER("def templated{T}(t T) T = t",
-               make_fn_decl("templated", {{"t", "T"_Type}}, {"T"}, "T"_Type, ast<ReturnStmt>("t"_Var)));
+               make_fn_decl({.name = "templated", .args = {{"t", "T"_Type}}, .type_args = {"T"}, .ret = "T"_Type},
+                            ast<ReturnStmt>("t"_Var)));
 
   CHECK_PARSER("def templated{T,U,V,X,Y,Z}(t T, u U, v V) X = Y() + Z()",
-               make_fn_decl("templated", {{"t", "T"_Type}, {"u", "U"_Type}, {"v", "V"_Type}},
-                            {"T", "U", "V", "X", "Y", "Z"}, "X"_Type,
+               make_fn_decl({.name = "templated",
+                             .args = {{"t", "T"_Type}, {"u", "U"_Type}, {"v", "V"_Type}},
+                             .type_args = {"T", "U", "V", "X", "Y", "Z"},
+                             .ret = "X"_Type},
                             ast<ReturnStmt>(make_call("+", make_ctor("Y"_Type), make_ctor("Z"_Type)))));
 
   CHECK_PARSER("def templated{T}(slice T[], pointer T ptr, mutable T mut, mix T ptr[] mut)\nend",
-               make_fn_decl("templated",
-                            {{"slice", "T"_Type & Slice},
-                             {"pointer", "T"_Type & Ptr},
-                             {"mutable", "T"_Type & Mut},
-                             {"mix", "T"_Type & Ptr & Slice & Mut}},
-                            {"T"}, {}));
+               make_fn_decl({.name = "templated",
+                             .args = {{"slice", "T"_Type & Slice},
+                                      {"pointer", "T"_Type & Ptr},
+                                      {"mutable", "T"_Type & Mut},
+                                      {"mix", "T"_Type & Ptr & Slice & Mut}},
+                             .type_args{"T"}}));
 }
 
 TEST_CASE("Parse operator function declaration", "[parse][fn]") {
-  CHECK_PARSER("def +()\nend", make_fn_decl("+"));
+  CHECK_PARSER("def +()\nend", make_fn_decl({"+"}));
 
-  CHECK_PARSER("def -() = 0", make_fn_decl("-", {}, {}, {}, ast<ReturnStmt>(0_Num)));
+  CHECK_PARSER("def -() = 0", make_fn_decl({"-"}, ast<ReturnStmt>(0_Num)));
 
-  CHECK_PARSER("def !(a I32) I32\nend", make_fn_decl("!", {{"a", "I32"_Type}}, {}, "I32"_Type));
+  CHECK_PARSER("def !(a I32) I32\nend", make_fn_decl({.name = "!", .args = {{"a", "I32"_Type}}, .ret = "I32"_Type}));
 
-  CHECK_PARSER("def [](a I32[], x Foo)\nend", make_fn_decl("[]", {{"a", "I32"_Type & Slice}, {"x", "Foo"_Type}}));
+  CHECK_PARSER("def [](a I32[], x Foo)\nend",
+               make_fn_decl({.name = "[]", .args = {{"a", "I32"_Type & Slice}, {"x", "Foo"_Type}}}));
+
+  CHECK_PARSER("def []=(target L, offs I32, val V) L[]\nend",
+               make_fn_decl({.name = "[]=",
+                             .args = {{"target", "L"_Type}, {"offs", "I32"_Type}, {"val", "V"_Type}},
+                             .ret = "L"_Type & Slice}));
 
   CHECK_PARSER(
-      "def []=(target L, offs I32, val V) L[]\nend",
-      make_fn_decl("[]=", {{"target", "L"_Type}, {"offs", "I32"_Type}, {"val", "V"_Type}}, {}, "L"_Type & Slice));
-
-  CHECK_PARSER("def +=(i I32 mut, j I32) I32 mut = i + j",
-               make_fn_decl("+=", {{"i", "I32"_Type & Mut}, {"j", "I32"_Type}}, {}, "I32"_Type & Mut,
-                            ast<ReturnStmt>(make_call("+", "i"_Var, "j"_Var))));
+      "def +=(i I32 mut, j I32) I32 mut = i + j",
+      make_fn_decl({.name = "+=", .args = {{"i", "I32"_Type & Mut}, {"j", "I32"_Type}}, .ret = "I32"_Type & Mut},
+                   ast<ReturnStmt>(make_call("+", "i"_Var, "j"_Var))));
 
   CHECK_PARSER("def baz(l Left, r Right) U32\nend",
-               make_fn_decl("baz", {{"l", "Left"_Type}, {"r", "Right"_Type}}, {}, "U32"_Type));
+               make_fn_decl({.name = "baz", .args = {{"l", "Left"_Type}, {"r", "Right"_Type}}, .ret = "U32"_Type}));
 
-  CHECK_PARSER("def foo(a I32) I32\na\nend", make_fn_decl("foo", {{"a", "I32"_Type}}, {}, "I32"_Type, "a"_Var));
+  CHECK_PARSER("def foo(a I32) I32\na\nend",
+               make_fn_decl({.name = "foo", .args = {{"a", "I32"_Type}}, .ret = "I32"_Type}, "a"_Var));
 }
 
 TEST_CASE("Parse primitive function declaration", "[parse][fn]") {
@@ -302,8 +320,11 @@ TEST_CASE("Parse primitive function declaration", "[parse][fn]") {
 }
 
 TEST_CASE("Parse extern linkage function declaration", "[parse][fn]") {
-  CHECK_PARSER("def __extern__ foo()\nend", make_fn_decl<true>("foo"));
-  CHECK_PARSER("def __extern__ short() = 0", make_fn_decl<true>("short", {}, {}, {}, ast<ReturnStmt>(0_Num)));
+  CHECK_PARSER("def @extern foo()\nend", make_fn_decl({.name = "foo", .attributes = {"extern"}}));
+  CHECK_PARSER("def @extern short() = 0",
+               make_fn_decl({.name = "short", .attributes = {"extern"}}, ast<ReturnStmt>(0_Num)));
+  CHECK_PARSER("def @extern @pure @foo short() = 0",
+               make_fn_decl({.name = "short", .attributes = {"extern", "pure", "foo"}}, ast<ReturnStmt>(0_Num)));
 }
 
 #undef CHECK_PARSER
