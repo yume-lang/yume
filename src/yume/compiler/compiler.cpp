@@ -260,13 +260,10 @@ void Compiler::destruct(Val val, ty::Type type) {
     if (deref_type.has_value())
       return destruct(m_builder->CreateLoad(llvm_type(*deref_type), val), *deref_type);
   }
-  if (const auto* ptr_type = type.base_dyn_cast<ty::Ptr>()) {
-    // TODO(rymiel): Implement is_slice() on type!!
-    // if (ptr_type->has_qualifier(Qualifier::Slice)) {
-    //   auto* ptr = m_builder->CreateExtractValue(val, 0, "sl.ptr.free");
-    //   auto* free = llvm::CallInst::CreateFree(ptr, m_builder->GetInsertBlock());
-    //   m_builder->Insert(free);
-    // }
+  if (type.is_slice()) {
+    auto* ptr = m_builder->CreateExtractValue(val, 0, "sl.ptr.free");
+    auto* free = llvm::CallInst::CreateFree(ptr, m_builder->GetInsertBlock());
+    m_builder->Insert(free);
   }
 }
 
@@ -371,6 +368,9 @@ template <> void Compiler::statement(const ast::Compound& stat) {
 static inline auto is_trivially_destructible(ty::Type type) -> bool {
   if (type.base_isa<ty::Int>() || type.base_isa<ty::Ptr>())
     return true;
+
+  if (type.is_slice())
+    return false;
 
   if (const auto* struct_type = type.base_dyn_cast<ty::Struct>())
     return std::ranges::all_of(

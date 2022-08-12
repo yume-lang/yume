@@ -144,6 +144,13 @@ auto Type::is_generic() const noexcept -> bool {
   return false;
 }
 
+auto Type::is_slice() const noexcept -> bool {
+  if (const auto* base = base_dyn_cast<Struct>())
+    return base->base_name() == "Slice" && (base->m_subs != nullptr) && base->m_subs->size() == 1;
+
+  return false;
+};
+
 auto Type::has_qualifier(Qualifier qual) const -> bool {
   if (m_mut)
     return (qual == Qualifier::Mut);

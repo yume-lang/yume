@@ -102,6 +102,7 @@ public:
   [[nodiscard]] auto intersect(Type other) const noexcept -> optional<Type>;
 
   [[nodiscard]] auto is_mut() const noexcept -> bool { return m_mut; };
+  [[nodiscard]] auto is_slice() const noexcept -> bool;
   [[nodiscard]] auto is_generic() const noexcept -> bool;
 
   /// If this type is a mutable reference, return the base of it (`T mut` -> `T`)
