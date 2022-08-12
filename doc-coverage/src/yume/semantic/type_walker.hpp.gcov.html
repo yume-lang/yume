@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-08-12 08:40:08</td>
+            <td class="headerValue">2022-08-12 09:16:54</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -109,8 +109,8 @@
 <a name="51"><span class="lineNum">      51 </span>            : </a>
 <a name="52"><span class="lineNum">      52 </span>            : private:</a>
 <a name="53"><span class="lineNum">      53 </span>            :   /// Convert an ast type (`ast::Type`) into a type in the type system (`ty::Type`).</a>
-<a name="54"><span class="lineNum">      54 </span><span class="lineCov">          1 :   auto convert_type(const ast::Type&amp; ast_type) -&gt; ty::Type;</span></a>
-<a name="55"><span class="lineNum">      55 </span><span class="lineNoCov">          0 :   auto convert_slice_type(const ty::Type&amp; base_type) -&gt; ty::Type;</span></a>
+<a name="54"><span class="lineNum">      54 </span><span class="lineCov">          1 :   auto convert_type(ast::Type&amp; ast_type) -&gt; ty::Type;</span></a>
+<a name="55"><span class="lineNum">      55 </span><span class="lineNoCov">          0 :   auto create_slice_type(const ty::Type&amp; base_type) -&gt; ty::Type;</span></a>
 <a name="56"><span class="lineNum">      56 </span>            : </a>
 <a name="57"><span class="lineNum">      57 </span><span class="lineNoCov">          0 :   auto all_fn_overloads_by_name(ast::CallExpr&amp; call) -&gt; OverloadSet&lt;Fn&gt;;</span></a>
 <a name="58"><span class="lineNum">      58 </span><span class="lineNoCov">          0 :   auto all_ctor_overloads_by_type(Struct&amp; st, ast::CtorExpr&amp; call) -&gt; OverloadSet&lt;Ctor&gt;;</span></a>

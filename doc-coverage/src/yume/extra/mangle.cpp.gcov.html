@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-08-12 08:40:08</td>
+            <td class="headerValue">2022-08-12 09:16:54</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -101,23 +101,21 @@
 <a name="43"><span class="lineNum">      43 </span>            :     ss &lt;&lt; mangle_name(ptr_type-&gt;pointee(), parent);</a>
 <a name="44"><span class="lineNum">      44 </span>            :     if (ptr_type-&gt;has_qualifier(Qualifier::Ptr))</a>
 <a name="45"><span class="lineNum">      45 </span>            :       ss &lt;&lt; &quot;*&quot;;</a>
-<a name="46"><span class="lineNum">      46 </span>            :     if (ptr_type-&gt;has_qualifier(Qualifier::Slice))</a>
-<a name="47"><span class="lineNum">      47 </span>            :       ss &lt;&lt; &quot;[&quot;;</a>
-<a name="48"><span class="lineNum">      48 </span>            :   } else if (const auto* generic_type = ast_type.base_dyn_cast&lt;ty::Generic&gt;()) {</a>
-<a name="49"><span class="lineNum">      49 </span>            :     auto match = parent.subs()-&gt;find(generic_type-&gt;name());</a>
-<a name="50"><span class="lineNum">      50 </span>            :     yume_assert(match != parent.subs()-&gt;end(), &quot;Cannot mangle unsubstituted generic&quot;);</a>
-<a name="51"><span class="lineNum">      51 </span>            :     ss &lt;&lt; match-&gt;second.name();</a>
-<a name="52"><span class="lineNum">      52 </span>            :   } else {</a>
-<a name="53"><span class="lineNum">      53 </span>            :     ss &lt;&lt; ast_type.base_name();</a>
-<a name="54"><span class="lineNum">      54 </span>            :   }</a>
-<a name="55"><span class="lineNum">      55 </span>            : </a>
-<a name="56"><span class="lineNum">      56 </span>            :   if (ast_type.is_mut())</a>
-<a name="57"><span class="lineNum">      57 </span>            :     ss &lt;&lt; &quot;&amp;&quot;;</a>
-<a name="58"><span class="lineNum">      58 </span>            : </a>
-<a name="59"><span class="lineNum">      59 </span>            :   return ss.str();</a>
-<a name="60"><span class="lineNum">      60 </span>            : }</a>
-<a name="61"><span class="lineNum">      61 </span>            : </a>
-<a name="62"><span class="lineNum">      62 </span>            : } // namespace yume::mangle</a>
+<a name="46"><span class="lineNum">      46 </span>            :   } else if (const auto* generic_type = ast_type.base_dyn_cast&lt;ty::Generic&gt;()) {</a>
+<a name="47"><span class="lineNum">      47 </span>            :     auto match = parent.subs()-&gt;find(generic_type-&gt;name());</a>
+<a name="48"><span class="lineNum">      48 </span>            :     yume_assert(match != parent.subs()-&gt;end(), &quot;Cannot mangle unsubstituted generic&quot;);</a>
+<a name="49"><span class="lineNum">      49 </span>            :     ss &lt;&lt; match-&gt;second.name();</a>
+<a name="50"><span class="lineNum">      50 </span>            :   } else {</a>
+<a name="51"><span class="lineNum">      51 </span>            :     ss &lt;&lt; ast_type.base_name();</a>
+<a name="52"><span class="lineNum">      52 </span>            :   }</a>
+<a name="53"><span class="lineNum">      53 </span>            : </a>
+<a name="54"><span class="lineNum">      54 </span>            :   if (ast_type.is_mut())</a>
+<a name="55"><span class="lineNum">      55 </span>            :     ss &lt;&lt; &quot;&amp;&quot;;</a>
+<a name="56"><span class="lineNum">      56 </span>            : </a>
+<a name="57"><span class="lineNum">      57 </span>            :   return ss.str();</a>
+<a name="58"><span class="lineNum">      58 </span>            : }</a>
+<a name="59"><span class="lineNum">      59 </span>            : </a>
+<a name="60"><span class="lineNum">      60 </span>            : } // namespace yume::mangle</a>
 </pre>
       </td>
     </tr>
