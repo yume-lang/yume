@@ -43,9 +43,11 @@ public:
     return visit(*any_base, label);
   }
 
-  template <typename T> auto visit(const vector<T>& vector, const char* label = nullptr) -> Visitor& {
+  template <std::ranges::range Range>
+  auto visit(const Range& iter, const char* label = nullptr)
+      -> Visitor& requires(!std::convertible_to<Range, const char*>) {
     Visitor& vis = *this;
-    for (auto& i : vector) {
+    for (auto& i : iter) {
       vis = move(vis.visit(i, label));
     }
     return vis;

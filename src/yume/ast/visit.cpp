@@ -19,9 +19,11 @@ void ReturnStmt::visit(Visitor& visitor) const { visitor.visit(m_expr); }
 void WhileStmt::visit(Visitor& visitor) const { visitor.visit(m_cond).visit(m_body); }
 void VarDecl::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_type).visit(m_init); }
 void FnDecl::visit(Visitor& visitor) const {
-  visitor.visit(m_name).visit(m_args, "arg").visit(m_type_args, "type arg").visit(m_ret, "ret");
-  if (m_extern_linkage)
-    visitor.visit("extern linkage");
+  visitor.visit(m_name)
+      .visit(m_args, "arg")
+      .visit(m_type_args, "type arg")
+      .visit(m_annotations, "annotation")
+      .visit(m_ret, "ret");
 
   if (const auto* s = get_if<string>(&m_body); s) {
     visitor.visit(*s, "primitive");

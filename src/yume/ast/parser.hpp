@@ -94,6 +94,7 @@ static const TokenAtom KWD_PRIMITIVE = {Token::Type::Word, "__primitive__"_a};
 static const TokenAtom SYM_COMMA = {Token::Type::Symbol, ","_a};
 static const TokenAtom SYM_DOT = {Token::Type::Symbol, "."_a};
 static const TokenAtom SYM_EQ = {Token::Type::Symbol, "="_a};
+static const TokenAtom SYM_AT = {Token::Type::Symbol, "@"_a};
 static const TokenAtom SYM_LPAREN = {Token::Type::Symbol, "("_a};
 static const TokenAtom SYM_RPAREN = {Token::Type::Symbol, ")"_a};
 static const TokenAtom SYM_LBRACKET = {Token::Type::Symbol, "["_a};
