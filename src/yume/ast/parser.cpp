@@ -178,7 +178,11 @@ auto Parser::parse_type(bool implicit_self) -> unique_ptr<Type> {
       // Don't consume the `[` unless the `]` is directly after; it might be a slice literal.
       consume(SYM_LBRACKET);
       consume(SYM_RBRACKET);
-      base = ast_ptr<QualType>(entry, move(base), Qualifier::Slice);
+
+      auto slice_ty = ast_ptr<SimpleType>(entry, "Slice");
+      auto type_args = vector<AnyType>{};
+      type_args.emplace_back(move(base));
+      base = ast_ptr<TemplatedType>(entry, move(slice_ty), move(type_args));
     } else if (try_consume(SYM_LBRACE)) {
       auto type_args = vector<AnyType>{};
       consume_with_commas_until(SYM_RBRACE, [&] { type_args.emplace_back(parse_type()); });
@@ -216,7 +220,11 @@ auto Parser::try_parse_type() -> optional<unique_ptr<Type>> {
       // Don't consume the `[` unless the `]` is directly after; it might be a slice literal.
       consume(SYM_LBRACKET);
       consume(SYM_RBRACKET);
-      base = ast_ptr<QualType>(entry, move(base), Qualifier::Slice);
+
+      auto slice_ty = ast_ptr<SimpleType>(entry, "Slice");
+      auto type_args = vector<AnyType>{};
+      type_args.emplace_back(move(base));
+      base = ast_ptr<TemplatedType>(entry, move(slice_ty), move(type_args));
     } else if (try_consume(SYM_LBRACE)) {
       auto type_args = vector<AnyType>{};
       consume_with_commas_until(SYM_RBRACE, [&] { type_args.emplace_back(parse_type()); });

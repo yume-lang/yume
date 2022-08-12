@@ -58,7 +58,7 @@ template <> void TypeWalker::expression(ast::NumberExpr& expr) {
 
 template <> void TypeWalker::expression(ast::StringExpr& expr) {
   // TODO(rymiel): #18 String type
-  expr.val_ty(convert_slice_type(ty::Type(compiler.m_types.int8().u_ty)));
+  expr.val_ty(create_slice_type(ty::Type(compiler.m_types.int8().u_ty)));
 }
 
 template <> void TypeWalker::expression(ast::CharExpr& expr) { expr.val_ty(compiler.m_types.int8().u_ty); }
@@ -90,6 +90,7 @@ static inline auto for_all_instantiations(std::list<Struct>& structs, std::invoc
 template <> void TypeWalker::expression(ast::CtorExpr& expr) {
   Struct* st = nullptr;
 
+  // XXX: This is completely duplicated from convert_type!!
   if (auto* templated = dyn_cast<ast::TemplatedType>(&expr.type())) {
     auto& template_base = templated->base();
     expression(template_base);
@@ -196,7 +197,7 @@ template <> void TypeWalker::expression(ast::SliceExpr& expr) {
 
   auto& slice_base = expr.type();
   expression(slice_base);
-  auto base_type = convert_slice_type(convert_type(slice_base));
+  auto base_type = create_slice_type(convert_type(slice_base));
 
   // expr.val_ty(&base_type.known_slice());
   expr.val_ty(base_type);
@@ -498,7 +499,7 @@ void TypeWalker::body_expression(ast::Expr& expr) {
   return CRTPWalker::body_expression(expr);
 }
 
-auto TypeWalker::convert_slice_type(const ty::Type& base_type) -> ty::Type {
+auto TypeWalker::create_slice_type(const ty::Type& base_type) -> ty::Type {
   auto* struct_obj = compiler.m_slice_struct;
   Substitution subs = {{{struct_obj->type_args.at(0)->name(), base_type}}};
   auto [already_existed, inst_struct] = struct_obj->get_or_create_instantiation(subs);
@@ -519,7 +520,7 @@ auto TypeWalker::convert_slice_type(const ty::Type& base_type) -> ty::Type {
   return *inst_struct.self_ty;
 }
 
-auto TypeWalker::convert_type(const ast::Type& ast_type) -> ty::Type {
+auto TypeWalker::convert_type(ast::Type& ast_type) -> ty::Type {
   auto parent = current_decl.self_ty();
   const auto* context = static_cast<const DeclLike>(current_decl).subs();
 
@@ -533,14 +534,45 @@ auto TypeWalker::convert_type(const ast::Type& ast_type) -> ty::Type {
     auto val = compiler.m_types.known.find(name);
     if (val != compiler.m_types.known.end())
       return val->second.get();
-  } else if (const auto* qual_type = dyn_cast<ast::QualType>(&ast_type)) {
+  } else if (auto* qual_type = dyn_cast<ast::QualType>(&ast_type)) {
     auto qualifier = qual_type->qualifier();
-    if (qualifier == Qualifier::Slice)
-      return convert_slice_type(convert_type(qual_type->base()));
     return convert_type(qual_type->base()).known_qual(qualifier);
   } else if (isa<ast::SelfType>(ast_type)) {
     if (parent)
       return *parent;
+  } else if (auto* templated = dyn_cast<ast::TemplatedType>(&ast_type)) {
+    auto& template_base = templated->base();
+    expression(template_base);
+    auto base_type = convert_type(template_base);
+    auto struct_obj = std::ranges::find(compiler.m_structs, base_type, &Struct::self_ty);
+
+    if (struct_obj == compiler.m_structs.end())
+      throw std::logic_error("Can't add template arguments to non-struct types");
+
+    for (auto& i : templated->type_vars())
+      expression(*i);
+
+    // XXX: Duplicated from function overload handling
+    Substitution subs = {};
+    for (const auto& [gen, gen_sub] : llvm::zip(struct_obj->type_args, templated->type_vars()))
+      subs.try_emplace(gen->name(), gen_sub->ensure_ty());
+
+    auto [already_existed, inst_struct] = struct_obj->get_or_create_instantiation(subs);
+
+    if (!already_existed) {
+      auto& new_st = inst_struct;
+
+      with_saved_scope([&] {
+        in_depth = false;
+        current_decl = &new_st;
+        body_statement(new_st.st_ast);
+      });
+
+      if (compiler.create_struct(new_st))
+        decl_queue.push(&new_st);
+    }
+
+    return *inst_struct.self_ty;
   }
 
   throw std::runtime_error("Cannot convert AST type to actual type! "s + ast_type.kind_name() + " (" +

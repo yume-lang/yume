@@ -234,11 +234,6 @@ auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
     switch (ptr_type->qualifier()) {
     default: llvm_unreachable("Ptr type cannot hold this qualifier");
     case Qualifier::Ptr: base = llvm::PointerType::getUnqual(llvm_type(ptr_type->pointee())); break;
-    case Qualifier::Slice:
-      auto args = vector<llvm::Type*>{};
-      args.push_back(llvm::PointerType::getUnqual(llvm_type(ptr_type->pointee())));
-      args.push_back(llvm::Type::getInt64Ty(*m_context));
-      base = llvm::StructType::get(*m_context, args);
     }
   } else if (const auto* struct_type = type.base_dyn_cast<ty::Struct>()) {
     auto* memo = struct_type->memo();
@@ -266,11 +261,12 @@ void Compiler::destruct(Val val, ty::Type type) {
       return destruct(m_builder->CreateLoad(llvm_type(*deref_type), val), *deref_type);
   }
   if (const auto* ptr_type = type.base_dyn_cast<ty::Ptr>()) {
-    if (ptr_type->has_qualifier(Qualifier::Slice)) {
-      auto* ptr = m_builder->CreateExtractValue(val, 0, "sl.ptr.free");
-      auto* free = llvm::CallInst::CreateFree(ptr, m_builder->GetInsertBlock());
-      m_builder->Insert(free);
-    }
+    // TODO(rymiel): Implement is_slice() on type!!
+    // if (ptr_type->has_qualifier(Qualifier::Slice)) {
+    //   auto* ptr = m_builder->CreateExtractValue(val, 0, "sl.ptr.free");
+    //   auto* free = llvm::CallInst::CreateFree(ptr, m_builder->GetInsertBlock());
+    //   m_builder->Insert(free);
+    // }
   }
 }
 
@@ -285,11 +281,6 @@ auto Compiler::default_init(ty::Type type) -> Val {
     case Qualifier::Ptr:
       llvm::ConstantPointerNull::get(llvm::PointerType::getUnqual(llvm_type(ptr_type->pointee())));
       break;
-    case Qualifier::Slice:
-      auto* ptr_member_type = llvm::PointerType::getUnqual(llvm_type(ptr_type->pointee()));
-      auto* struct_type = cast<llvm::StructType>(llvm_type(type));
-      return llvm::ConstantStruct::get(struct_type, llvm::ConstantPointerNull::get(ptr_member_type),
-                                       m_builder->getInt64(0));
     }
   }
   if (const auto* struct_type = type.base_dyn_cast<ty::Struct>()) {
@@ -378,11 +369,8 @@ template <> void Compiler::statement(const ast::Compound& stat) {
 }
 
 static inline auto is_trivially_destructible(ty::Type type) -> bool {
-  if (type.base_isa<ty::Int>())
+  if (type.base_isa<ty::Int>() || type.base_isa<ty::Ptr>())
     return true;
-
-  if (const auto* ptr_type = type.base_dyn_cast<ty::Ptr>())
-    return !ptr_type->has_qualifier(Qualifier::Slice);
 
   if (const auto* struct_type = type.base_dyn_cast<ty::Struct>())
     return std::ranges::all_of(

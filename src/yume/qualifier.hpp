@@ -2,14 +2,12 @@
 
 namespace yume {
 enum struct Qualifier {
-  Ptr,   ///< `ptr`
-  Slice, ///< `[]`
-  Mut,   ///< `mut`
+  Ptr, ///< `ptr`
+  Mut, ///< `mut`
 };
 
 enum struct PtrLikeQualifier {
-  Ptr = static_cast<int>(Qualifier::Ptr),
-  Slice = static_cast<int>(Qualifier::Slice),
+  Ptr = static_cast<int>(Qualifier::Ptr), ///< `ptr`
   Q_END
 };
 } // namespace yume

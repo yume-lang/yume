@@ -93,7 +93,6 @@ public:
   [[nodiscard]] auto known_qual(Qualifier qual) const -> Type;
   [[nodiscard]] auto known_ptr() const -> Type { return known_qual(Qualifier::Ptr); }
   [[nodiscard]] auto known_mut() const -> Type { return known_qual(Qualifier::Mut); }
-  [[nodiscard]] auto known_slice() const -> Type { return known_qual(Qualifier::Slice); }
 
   /// The union of this and `other`. For example, the union of `T` and `T mut` is `T mut`.
   /// \returns `nullopt` if an union cannot be created.

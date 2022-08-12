@@ -43,8 +43,6 @@ auto mangle_name(ty::Type ast_type, DeclLike parent) -> string {
     ss << mangle_name(ptr_type->pointee(), parent);
     if (ptr_type->has_qualifier(Qualifier::Ptr))
       ss << "*";
-    if (ptr_type->has_qualifier(Qualifier::Slice))
-      ss << "[";
   } else if (const auto* generic_type = ast_type.base_dyn_cast<ty::Generic>()) {
     auto match = parent.subs()->find(generic_type->name());
     yume_assert(match != parent.subs()->end(), "Cannot mangle unsubstituted generic");

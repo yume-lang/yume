@@ -12,7 +12,6 @@ auto AST::describe() const -> string { return string{"unknown "} + kind_name(); 
 auto QualType::describe() const -> string {
   switch (m_qualifier) {
   case Qualifier::Ptr: return "ptr";
-  case Qualifier::Slice: return "slice";
   case Qualifier::Mut: return "mut";
   default: return "";
   }
