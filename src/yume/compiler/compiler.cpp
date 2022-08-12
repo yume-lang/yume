@@ -565,6 +565,10 @@ template <> void Compiler::statement(const ast::VarDecl& stat) {
   auto* alloc = entrypoint_builder().CreateAlloca(var_type, nullptr, "vdecl."s + stat.name());
 
   auto expr_val = body_expression(*stat.init());
+
+  if (expr_val.scope != nullptr && expr_val.scope->owning)
+    expr_val.scope->owning = false;
+
   m_builder->CreateStore(expr_val, alloc);
   m_scope.insert({stat.name(), {.value = alloc, .ast = stat, .owning = true}});
 }
@@ -741,7 +745,10 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
       destruct(target_val, target_type);
 
     auto expr_val = body_expression(*expr.value());
-    auto target_val = m_scope.at(target_var->name()).value;
+
+    if (expr_val.scope != nullptr && expr_val.scope->owning)
+      expr_val.scope->owning = false;
+
     m_builder->CreateStore(expr_val, target_val);
     return expr_val;
   }
