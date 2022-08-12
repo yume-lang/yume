@@ -79,7 +79,7 @@ template <> void TypeWalker::expression(ast::TypeName& expr) {
 
 template <> void TypeWalker::expression(ast::ImplicitCastExpr& expr) { body_expression(expr.base()); }
 
-static inline auto for_all_instantiations(std::list<Struct>& structs, std::invocable<Struct&> auto fn) {
+static inline auto for_all_instantiations(std::deque<Struct>& structs, std::invocable<Struct&> auto fn) {
   for (auto& i : structs) {
     fn(i);
     for (auto& [k, v] : i.instantiations)

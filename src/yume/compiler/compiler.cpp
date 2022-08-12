@@ -744,8 +744,6 @@ template <> auto Compiler::expression(const ast::CallExpr& expr) -> Val {
     m_builder->CreateStore(val.llvm, alloc);
     val.scope = &iter->second;
     val.scope->value = alloc;
-    llvm::outs() << expr.location().to_string() << " " << expr.name() << " -> " << ty->name() << " " << val.scope
-                 << "\n";
   }
 
   return val;

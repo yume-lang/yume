@@ -5,6 +5,7 @@
 #include "type_holder.hpp"
 #include "util.hpp"
 #include "vals.hpp"
+#include <deque>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
@@ -41,9 +42,9 @@ class BaseType;
 class Compiler : public CRTPWalker<Compiler> {
   vector<SourceFile> m_sources;
   TypeHolder m_types;
-  std::list<Fn> m_fns{};
-  std::list<Struct> m_structs{};
-  std::list<Ctor> m_ctors{};
+  std::deque<Fn> m_fns{};
+  std::deque<Struct> m_structs{};
+  std::deque<Ctor> m_ctors{};
   std::queue<DeclLike> m_decl_queue{};
   unique_ptr<semantic::TypeWalker> m_walker;
 
