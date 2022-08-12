@@ -117,7 +117,16 @@ template <typename... Ts> auto equals_ast(Ts&&... ts) {
 } // namespace
 
 namespace yume::ast {
+
+struct {
+} Slice;
+
 auto operator&(std::unique_ptr<Type> type, Qualifier qual) { return ::ast<QualType>(std::move(type), qual); }
+auto operator&(std::unique_ptr<Type> type, decltype(Slice) /* tag */) {
+  std::vector<yume::ast::AnyType> type_args = {};
+  type_args.emplace_back(std::move(type));
+  return ::ast<TemplatedType>(::ast<SimpleType>("Slice"), std::move(type_args));
+}
 } // namespace yume::ast
 
 #define CHECK_PARSER(body, ...) CHECK_THAT(*prog(body), equals_ast(__VA_ARGS__))
