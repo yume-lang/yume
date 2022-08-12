@@ -16,7 +16,6 @@ static auto qual_suffix(Qualifier qual) -> string {
   switch (qual) {
   case Qualifier::Mut: return " mut";
   case Qualifier::Ptr: return " ptr";
-  case Qualifier::Slice: return "[]";
   default: return "";
   }
 }
