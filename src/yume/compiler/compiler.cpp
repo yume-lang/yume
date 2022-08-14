@@ -79,6 +79,8 @@ Compiler::Compiler(const optional<string>& target_triple, vector<SourceFile> sou
 
   m_module->setDataLayout(m_targetMachine->createDataLayout());
   m_module->setTargetTriple(triple);
+
+  m_types.declare_size_type(*this);
 }
 
 void Compiler::declare_default_ctor(Struct& st) {
@@ -601,12 +603,13 @@ template <> auto Compiler::expression(const ast::StringExpr& expr) -> Val {
 
   auto* global_string_ptr = llvm::ConstantExpr::getBitCast(global, m_builder->getInt8PtrTy(0));
 
-  auto* slice_size = m_builder->getInt64(val.length());
+  auto* size_type = m_builder->getIntNTy(m_module->getDataLayout().getPointerSizeInBits());
+  auto* slice_size = m_builder->getIntN(m_module->getDataLayout().getPointerSizeInBits(), val.length());
   auto* slice_type = cast<llvm::StructType>(llvm_type(expr.ensure_ty()));
 
-  auto* alloc_size = llvm::ConstantExpr::getSizeOf(base_type);
-  auto* string_alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), m_builder->getInt64Ty(), base_type,
-                                                    alloc_size, slice_size, nullptr, "str.ctor.malloc");
+  auto* alloc_size = llvm::ConstantExpr::getTrunc(llvm::ConstantExpr::getSizeOf(base_type), size_type);
+  auto* string_alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), size_type, base_type, alloc_size,
+                                                    slice_size, nullptr, "str.ctor.malloc");
   m_builder->Insert(string_alloc);
   m_builder->CreateMemCpy(string_alloc, {}, global_string_ptr, {}, slice_size);
 
@@ -679,10 +682,11 @@ auto Compiler::primitive(Fn* fn, const vector<Val>& args, const vector<ty::Type>
     auto* base_type = llvm_type(base_ty_type);
     auto slice_size = args.at(1);
 
-    auto* alloc_size = llvm::ConstantExpr::getSizeOf(base_type);
-    auto* array_size = m_builder->CreateSExt(slice_size, m_builder->getInt64Ty(), "sl.ctor.size");
-    auto* array_alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), m_builder->getInt64Ty(), base_type,
-                                                     alloc_size, array_size, nullptr, "sl.ctor.malloc");
+    auto* size_type = m_builder->getIntNTy(m_module->getDataLayout().getPointerSizeInBits());
+    auto* alloc_size = llvm::ConstantExpr::getTrunc(llvm::ConstantExpr::getSizeOf(base_type), size_type);
+    auto* array_size = m_builder->CreateSExt(slice_size, size_type, "sl.ctor.size");
+    auto* array_alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), size_type, base_type, alloc_size,
+                                                     array_size, nullptr, "sl.ctor.malloc");
 
     return m_builder->Insert(array_alloc);
   }
@@ -882,15 +886,16 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {
 }
 
 template <> auto Compiler::expression(const ast::SliceExpr& expr) -> Val {
-  auto* slice_size = m_builder->getInt64(expr.args().size());
+  auto* slice_size = m_builder->getIntN(m_module->getDataLayout().getPointerSizeInBits(), expr.args().size());
 
   auto* slice_type = llvm_type(expr.ensure_ty());
   auto* base_type =
       llvm_type(expr.ensure_ty().base_cast<ty::Struct>()->fields().at(0)->ensure_ty().ensure_ptr_base()); // ???
 
-  auto* alloc_size = llvm::ConstantExpr::getSizeOf(base_type);
-  auto* ptr_alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), m_builder->getInt64Ty(), base_type,
-                                                 alloc_size, slice_size, nullptr, "sl.ctor.malloc");
+  auto* size_type = m_builder->getIntNTy(m_module->getDataLayout().getPointerSizeInBits());
+  auto* alloc_size = llvm::ConstantExpr::getTrunc(llvm::ConstantExpr::getSizeOf(base_type), size_type);
+  auto* ptr_alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), size_type, base_type, alloc_size,
+                                                 slice_size, nullptr, "sl.ctor.malloc");
   auto* data_ptr = m_builder->Insert(ptr_alloc);
 
   unsigned j = 0;

@@ -1,4 +1,5 @@
 #include "type_holder.hpp"
+#include "compiler/compiler.hpp"
 #include "ty/type.hpp"
 #include "util.hpp"
 #include <initializer_list>
@@ -23,5 +24,15 @@ TypeHolder::TypeHolder() {
   auto bool_ty = std::make_unique<ty::Int>("Bool", 1, false);
   bool_type = bool_ty.get();
   known.insert({bool_ty->name(), move(bool_ty)});
+}
+
+void TypeHolder::declare_size_type(Compiler& compiler) {
+  for (const bool is_signed : {true, false}) {
+    unsigned size_bits = compiler.module()->getDataLayout().getPointerSizeInBits();
+    const string type_name = (is_signed ? "I"s : "U"s) + "Size";
+    auto i_ty = std::make_unique<ty::Int>(type_name, size_bits, is_signed);
+    (is_signed ? size_type.s_ty : size_type.u_ty) = i_ty.get();
+    known.insert({i_ty->name(), move(i_ty)});
+  }
 }
 } // namespace yume

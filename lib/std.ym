@@ -10,9 +10,9 @@ def assert(condition Bool)
   end
 end
 
-def __builtin_slice_malloc{T}(ptr T ptr, size I64) T ptr = __primitive__(slice_malloc)
+def __builtin_slice_malloc{T}(ptr T ptr, size ISize) T ptr = __primitive__(slice_malloc)
 
-struct Slice{T}(pointer T ptr, size I64)
+struct Slice{T}(pointer T ptr, size ISize)
   def :new(pointer T ptr, ::size)
     ::pointer = __builtin_slice_malloc(pointer, size)
     copy(pointer, ::pointer, size)
@@ -20,24 +20,24 @@ struct Slice{T}(pointer T ptr, size I64)
 
   def :new(::size)
     ::pointer = __builtin_slice_malloc(::pointer, size) # TODO: this should really be an error, as ::pointer isn't initialized here yet
-    let i I64 = 0
+    let i ISize = ISize(0) # TODO: Shouldn't be necessary
     while i < ::size
       ::pointer[i].__builtin_default_init # TODO: this should just be `T()`, which requires implicit default ctors
-      i = i + 1
+      i = ISize(i + 1) # TODO: Shouldn't be necessary
     end
   end
 
-  def size(self) I64 = self::size
+  def size(self) ISize = self::size
   def unsafe_ptr(self) T ptr = self::pointer
 
-  def [](self mut, offset I64) T mut = self::pointer[offset]
-  def [](self, offset I64) T = self::pointer[offset]
-  def []=(self mut, offset I64, val T) T
+  def [](self mut, offset ISize) T mut = self::pointer[offset]
+  def [](self, offset ISize) T = self::pointer[offset]
+  def []=(self mut, offset ISize, val T) T
     self::pointer[offset] = val
     return val
   end
 
-  def dup(self, extra I64) Self
+  def dup(self, extra ISize) Self
     let dup_t Self = Self(self::size + extra)
     copy(self::pointer, dup_t::pointer, self::size)
     return dup_t
@@ -51,30 +51,43 @@ struct Slice{T}(pointer T ptr, size I64)
   end
 end
 
-def []{T}(ptr T ptr, offset I64) T mut = __primitive__(get_at)
-def []={T}(ptr T ptr, offset I64, val T) T = __primitive__(set_at)
+def []{T}(ptr T ptr, offset ISize) T mut = __primitive__(get_at)
+def []={T}(ptr T ptr, offset ISize, val T) T = __primitive__(set_at)
 def __builtin_default_init{T}(obj T mut) = __primitive__(default_init)
 
 # TODO: most of these should be templated
+def +(a I16, b I16) I16 = __primitive__(ib_add)
 def +(a I32, b I32) I32 = __primitive__(ib_add)
 def +(a I64, b I64) I64 = __primitive__(ib_add)
 def +(a U8, b U8) U8 = __primitive__(ib_add)
+def +(a U16, b U16) U16 = __primitive__(ib_add)
+
 def -(a I32, b I32) I32 = __primitive__(ib_sub)
 def -(a I64, b I64) I64 = __primitive__(ib_sub)
-def -(a I32) I32 = 0 - a
 def -(a U8, b U8) U8 = __primitive__(ib_sub)
+
+def -(a I32) I32 = 0 - a
+
 def %(a I32, b I32) I32 = __primitive__(ib_srem)
+
 def *(a I32, b I32) I32 = __primitive__(ib_mul)
+
 def //(a I32, b I32) I32 = __primitive__(ib_sdiv)
-def &(a U8, b U8) Bool = __primitive__(ib_and)
+
+def &(a U8, b U8) U8 = __primitive__(ib_and)
+
 def ==(a I64, b I64) Bool = __primitive__(ib_icmp_eq)
 def ==(a I32, b I32) Bool = __primitive__(ib_icmp_eq)
 def ==(a U8, b U8) Bool = __primitive__(ib_icmp_eq)
+
 def !=(a U8, b U8) Bool = __primitive__(ib_icmp_ne)
+
 def >(a I32, b I32) Bool = __primitive__(ib_icmp_sgt)
 def >(a I64, b I64) Bool = __primitive__(ib_icmp_sgt)
+
 def <(a I32, b I32) Bool = __primitive__(ib_icmp_slt)
 def <(a I64, b I64) Bool = __primitive__(ib_icmp_slt)
+
 def !(a Bool) Bool
   if a
     return false
@@ -83,8 +96,8 @@ def !(a Bool) Bool
   end
 end
 
-def copy{T}(source T ptr, dest T ptr, amount I64)
-  let count I64 = amount
+def copy{T}(source T ptr, dest T ptr, amount ISize)
+  let count ISize = amount
   while count > 0
     count = count - 1
     dest[count] = source[count]
@@ -94,9 +107,9 @@ end
 # TODO: type inference should be able to cast I32 to U8, having determined U8 as the replacement for T
 def c_str(str U8[]) U8[] = str.dup_append(?\0)
 
-def c_len(ptr U8 ptr) I64
+def c_len(ptr U8 ptr) ISize
   let terminated Bool = false
-  let idx I64 = 0
+  let idx ISize = 0
   while !terminated
     let chr U8 = ptr[idx]
     if chr == ?\0

@@ -120,6 +120,13 @@ auto Type::compatibility(Type other, Compat compat) const -> Compat {
   // `I32` -> `I64`. `U8` -> `I16`. An implicit integer cast with no loss of information.
   if (const auto this_int = base_dyn_cast<Int>(), other_int = other.base_dyn_cast<Int>();
       (this_int != nullptr) && (other_int != nullptr)) {
+    if (this_int->is_signed() == other_int->is_signed() && this_int->size() == other_int->size()) {
+      // The two integer types are perfect matches, but werent caught by the pointer equality check above. This is the
+      // case for conversions such as `USize` -> `U32` (on a 32-bit platform).
+      compat.valid = true;
+      return compat;
+    }
+
     if ((this_int->is_signed() == other_int->is_signed() && this_int->size() <= other_int->size()) ||
         (!this_int->is_signed() && other_int->is_signed() && this_int->size() * 2 <= other_int->size())) {
       compat.valid = true;
