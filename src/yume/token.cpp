@@ -47,31 +47,19 @@ struct TokenState {
     return val;
   }
 
-  auto accept(char chr) -> bool {
-    if (c == chr)
+  auto accept(bool ok) -> bool {
+    if (ok)
       stream.put(c);
-
-    return c == chr;
+    return ok;
   }
 
-  auto accept(char_raw_fn fn) -> bool {
-    if (fn(c)) {
-      stream.put(c);
-      return true;
-    }
-    return false;
-  }
-
-  auto accept(char_pos_fn fn) -> bool {
-    if (fn(c, index)) {
-      stream.put(c);
-      return true;
-    }
-    return false;
-  }
+  auto accept(char chr) -> bool { return accept(c == chr); }
+  auto accept(char_raw_fn fn) -> bool { return accept(fn(c)); }
+  auto accept(char_pos_fn fn) -> bool { return accept(fn(c, index)); }
 
   auto accept_validate(auto x) -> bool { return validate(accept(x)); }
 };
+
 using char_fn = std::function<bool(TokenState&)>;
 
 /// A criterion for classifying a stream of characters as a specific type of token \link Token::Type
@@ -133,7 +121,7 @@ public:
       return false;
 
     if (state.index == 0)
-      return state.accept('"');
+      return state.c == '"';
 
     if (state.c == '\\' && !escape) {
       escape = true;
@@ -149,8 +137,8 @@ public:
     return true;
   };
 
-  /// Chars begin with a question mark `?` and may contain escapes.
-  constexpr static const auto is_char = [escape = false](TokenState& state) mutable {
+  /// Character literals begin with a question mark `?` and may contain escapes.
+  constexpr static const auto is_char_lit = [escape = false](TokenState& state) mutable {
     if (state.index == 0)
       return state.c == '?';
 
@@ -182,53 +170,45 @@ public:
     return state.accept_validate(llvm::isHexDigit);
   };
 
-  template <size_t N> struct FixedString {
-    std::array<char, N> value{};
-
-    [[nodiscard]] consteval auto view() const -> std::string_view { return {value.begin(), value.end()}; }
-
-    // NOLINTNEXTLINE(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
-    consteval FixedString(const char (&str)[N]) { std::copy_n(static_cast<const char*>(str), N, value.begin()); }
+  /// Generate a criterion matching a single character from any within the string `checks`.
+  constexpr static const auto is_any_of = [](string_view checks) {
+    return [checks](TokenState& state) {
+      return state.index == 0 && state.accept_validate(checks.find(state.c) != string::npos);
+    };
   };
 
-  /// Generate a criterion matching a single character from any within the string `Checks`.
-  template <FixedString Checks>
-  constexpr static const auto is_any_of =
-      [](char c, size_t i) { return i == 0 && Checks.view().find(c) != string::npos; };
-
   /// Generate a criterion matching the string exactly.
-  constexpr static const auto is_exactly = [](string str) {
-    return [s = move(str)](TokenState& state) {
-      if (state.index == s.size())
+  constexpr static const auto is_exactly = [](string_view str) {
+    return [str](TokenState& state) {
+      if (state.index == str.size())
         return false;
-      state.valid = state.index == s.size() - 1;
-
-      bool matches = s[state.index] == state.c;
-      if (matches) {
-        state.stream.put(state.c);
-      }
-
-      return matches;
+      state.validate(state.index == str.size() - 1);
+      return state.accept(str[state.index]);
     };
+  };
+
+  /// Generate a criterion matching the singular character.
+  constexpr static const auto is_char = [](char chr) {
+    return [chr](TokenState& state) { return state.index == 0 && state.accept_validate(chr); };
   };
 
   void tokenize() {
 
     while (!m_in.eof()) {
       if (!select_characteristic({
-              {Token::Type::Separator, is_exactly("\n")},
+              {Token::Type::Separator, is_char('\n')},
               {Token::Type::Skip, llvm::isSpace},
               {Token::Type::Skip, is_comment},
               {Token::Type::Number, is_hex_num},
               {Token::Type::Number, llvm::isDigit},
               {Token::Type::Literal, is_str},
-              {Token::Type::Char, is_char},
+              {Token::Type::Char, is_char_lit},
               {Token::Type::Word, is_word},
-              {Token::Type::Symbol, is_exactly("==")},
-              {Token::Type::Symbol, is_exactly("!=")},
-              {Token::Type::Symbol, is_exactly("//")},
-              {Token::Type::Symbol, is_exactly("::")},
-              {Token::Type::Symbol, is_any_of<R"(()[]{}<>=:#%-+.,!/*&@\)">},
+              {Token::Type::Symbol, is_exactly("=="sv)},
+              {Token::Type::Symbol, is_exactly("!="sv)},
+              {Token::Type::Symbol, is_exactly("//"sv)},
+              {Token::Type::Symbol, is_exactly("::"sv)},
+              {Token::Type::Symbol, is_any_of(R"(()[]{}<>=:#%-+.,!/*&@\)"sv)},
           })) {
         string message = "Tokenizer didn't recognize ";
         message += m_last;
