@@ -148,6 +148,10 @@ TEST_CASE("Parse literals", "[parse]") {
   CHECK_PARSER("false", ast<BoolExpr>(false));
 
   CHECK_PARSER("1", 1_Num);
+  CHECK_PARSER("42", 42_Num);
+  CHECK_PARSER("0x0", 0_Num);
+  CHECK_PARSER("0x0fc", 0xfc_Num);
+  CHECK_PARSER("0x2fc", 0x2fc_Num);
 
   CHECK_PARSER("?a", 'a'_Char);
 

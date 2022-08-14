@@ -514,10 +514,13 @@ auto Parser::parse_if_stmt() -> unique_ptr<IfStmt> {
 }
 
 auto Parser::parse_number_expr() -> unique_ptr<NumberExpr> {
+  static constexpr int BASE_16 = 16;
+  static constexpr int BASE_10 = 10;
   auto entry = tokens.begin();
   expect(Number);
 
-  auto value = stoll(string(assert_payload_next()));
+  auto literal = string(assert_payload_next());
+  int64_t value = literal.starts_with("0x"sv) ? stoll(literal, nullptr, BASE_16) : stoll(literal, nullptr, BASE_10);
 
   return ast_ptr<NumberExpr>({entry, 1}, value);
 }
