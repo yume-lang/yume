@@ -92,6 +92,8 @@ public:
   /// Convert a type into its corresponding LLVM type
   auto llvm_type(ty::Type type) -> llvm::Type*;
 
+  auto ptr_bitsize() -> unsigned int;
+
   /// Default-constructs an object of specified type \p type .
   auto default_init(ty::Type type) -> Val;
   /// Destructs an object \p val of specified type \p type .
@@ -118,6 +120,9 @@ private:
   /// Run the destructors for every owned local variable in the current scope. Should be run when returning from a
   /// function in any way.
   void destruct_all_in_scope();
+
+  auto create_malloc(llvm::Type* base_type, Val slice_size, string_view name = ""sv) -> Val;
+  auto create_malloc(llvm::Type* base_type, uint64_t slice_size, string_view name = ""sv) -> Val;
 
   /// Handle all primitive, built-in functions
   auto primitive(Fn* fn, const vector<Val>& args, const vector<ty::Type>& types) -> optional<Val>;

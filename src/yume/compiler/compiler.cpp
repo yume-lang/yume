@@ -603,14 +603,10 @@ template <> auto Compiler::expression(const ast::StringExpr& expr) -> Val {
 
   auto* global_string_ptr = llvm::ConstantExpr::getBitCast(global, m_builder->getInt8PtrTy(0));
 
-  auto* size_type = m_builder->getIntNTy(m_module->getDataLayout().getPointerSizeInBits());
-  auto* slice_size = m_builder->getIntN(m_module->getDataLayout().getPointerSizeInBits(), val.length());
+  auto* slice_size = m_builder->getIntN(ptr_bitsize(), val.length());
   auto* slice_type = cast<llvm::StructType>(llvm_type(expr.ensure_ty()));
 
-  auto* alloc_size = llvm::ConstantExpr::getTrunc(llvm::ConstantExpr::getSizeOf(base_type), size_type);
-  auto* string_alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), size_type, base_type, alloc_size,
-                                                    slice_size, nullptr, "str.ctor.malloc");
-  m_builder->Insert(string_alloc);
+  Val string_alloc = create_malloc(base_type, slice_size, "str.ctor.malloc");
   m_builder->CreateMemCpy(string_alloc, {}, global_string_ptr, {}, slice_size);
 
   Val string_slice = llvm::UndefValue::get(slice_type);
@@ -682,13 +678,7 @@ auto Compiler::primitive(Fn* fn, const vector<Val>& args, const vector<ty::Type>
     auto* base_type = llvm_type(base_ty_type);
     auto slice_size = args.at(1);
 
-    auto* size_type = m_builder->getIntNTy(m_module->getDataLayout().getPointerSizeInBits());
-    auto* alloc_size = llvm::ConstantExpr::getTrunc(llvm::ConstantExpr::getSizeOf(base_type), size_type);
-    auto* array_size = m_builder->CreateSExt(slice_size, size_type, "sl.ctor.size");
-    auto* array_alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), size_type, base_type, alloc_size,
-                                                     array_size, nullptr, "sl.ctor.malloc");
-
-    return m_builder->Insert(array_alloc);
+    return create_malloc(base_type, slice_size, "sl.ctor.malloc");
   }
   if (primitive == "default_init") {
     auto base_type = types.at(0).ensure_mut_base();
@@ -885,18 +875,31 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {
   throw std::runtime_error("Can't construct non-struct, non-integer type");
 }
 
-template <> auto Compiler::expression(const ast::SliceExpr& expr) -> Val {
-  auto* slice_size = m_builder->getIntN(m_module->getDataLayout().getPointerSizeInBits(), expr.args().size());
+auto Compiler::ptr_bitsize() -> unsigned int { return m_module->getDataLayout().getPointerSizeInBits(); }
 
+auto Compiler::create_malloc(llvm::Type* base_type, Val slice_size, string_view name) -> Val {
+  auto* size_type = m_builder->getIntNTy(ptr_bitsize());
+  slice_size = m_builder->CreateSExtOrTrunc(slice_size, size_type);
+  auto* alloc_size = llvm::ConstantExpr::getTrunc(llvm::ConstantExpr::getSizeOf(base_type), size_type);
+  auto* ptr_alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), size_type, base_type, alloc_size,
+                                                 slice_size, nullptr, name);
+
+  return m_builder->Insert(ptr_alloc);
+}
+
+auto Compiler::create_malloc(llvm::Type* base_type, uint64_t slice_size, string_view name) -> Val {
+  return create_malloc(base_type, m_builder->getIntN(ptr_bitsize(), slice_size), name);
+}
+
+template <> auto Compiler::expression(const ast::SliceExpr& expr) -> Val {
+  auto* slice_size = m_builder->getIntN(ptr_bitsize(), expr.args().size());
+
+  yume_assert(expr.ensure_ty().is_slice(), "Slice expression must contain slice type");
   auto* slice_type = llvm_type(expr.ensure_ty());
   auto* base_type =
       llvm_type(expr.ensure_ty().base_cast<ty::Struct>()->fields().at(0)->ensure_ty().ensure_ptr_base()); // ???
 
-  auto* size_type = m_builder->getIntNTy(m_module->getDataLayout().getPointerSizeInBits());
-  auto* alloc_size = llvm::ConstantExpr::getTrunc(llvm::ConstantExpr::getSizeOf(base_type), size_type);
-  auto* ptr_alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), size_type, base_type, alloc_size,
-                                                 slice_size, nullptr, "sl.ctor.malloc");
-  auto* data_ptr = m_builder->Insert(ptr_alloc);
+  Val data_ptr = create_malloc(base_type, slice_size, "sl.ctor.malloc");
 
   unsigned j = 0;
   for (const auto& i : expr.args())

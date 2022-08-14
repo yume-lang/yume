@@ -28,7 +28,7 @@ TypeHolder::TypeHolder() {
 
 void TypeHolder::declare_size_type(Compiler& compiler) {
   for (const bool is_signed : {true, false}) {
-    unsigned size_bits = compiler.module()->getDataLayout().getPointerSizeInBits();
+    unsigned size_bits = compiler.ptr_bitsize();
     const string type_name = (is_signed ? "I"s : "U"s) + "Size";
     auto i_ty = std::make_unique<ty::Int>(type_name, size_bits, is_signed);
     (is_signed ? size_type.s_ty : size_type.u_ty) = i_ty.get();
