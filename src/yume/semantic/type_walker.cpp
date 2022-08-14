@@ -32,20 +32,32 @@ inline void wrap_in_implicit_cast(ast::OptionalExpr& expr, ty::Conv conv, option
   expr = move(cast_expr);
 }
 
-inline void try_implicit_conversion(ast::OptionalExpr& expr, optional<ty::Type> target_ty) {
+inline auto try_implicit_conversion(ast::OptionalExpr& expr, optional<ty::Type> target_ty) -> bool {
   if (!target_ty)
-    return;
-
+    return false;
   if (!expr)
-    return;
+    return false;
 
   auto expr_ty = expr->ensure_ty();
   auto compat = expr_ty.compatibility(*target_ty);
   if (!compat.valid)
-    throw std::runtime_error("Invalid implicit conversion ('"s + expr_ty.name() + "' -> '" + target_ty->name() + "')");
+    return false;
 
   if (!compat.conv.empty())
     wrap_in_implicit_cast(expr, compat.conv, target_ty);
+
+  return true;
+}
+
+inline void make_implicit_conversion(ast::OptionalExpr& expr, optional<ty::Type> target_ty) {
+  if (!target_ty)
+    return;
+  if (!expr)
+    return;
+
+  if (!try_implicit_conversion(expr, target_ty))
+    throw std::runtime_error("Invalid implicit conversion ('"s + expr->ensure_ty().name() + "' -> '" +
+                             target_ty->name() + "')");
 }
 
 template <> void TypeWalker::expression(ast::NumberExpr& expr) {
@@ -170,7 +182,7 @@ template <> void TypeWalker::expression(ast::AssignExpr& expr) {
   body_expression(*expr.target());
   body_expression(*expr.value());
 
-  try_implicit_conversion(expr.value(), expr.target()->ensure_ty().mut_base());
+  make_implicit_conversion(expr.value(), expr.target()->ensure_ty().mut_base());
 
   expr.target()->attach_to(expr.value().raw_ptr());
   expr.attach_to(expr.value().raw_ptr());
@@ -419,7 +431,7 @@ template <> void TypeWalker::statement(ast::ReturnStmt& stat) {
       if (auto* var_decl = dyn_cast<ast::VarDecl>(scope.at(var_expr->name())))
         stat.extend_lifetime_of(var_decl);
 
-    try_implicit_conversion(stat.expr(), current_decl.ast()->val_ty());
+    make_implicit_conversion(stat.expr(), current_decl.ast()->val_ty());
     current_decl.ast()->attach_to(stat.expr().raw_ptr());
     // TODO(rymiel): Once return type deduction exists, make sure to not return `mut` unless there is an _explicit_ type
     // annotation saying so
@@ -430,7 +442,7 @@ template <> void TypeWalker::statement(ast::VarDecl& stat) {
   body_expression(*stat.init());
   if (stat.type().has_value()) {
     expression(*stat.type());
-    try_implicit_conversion(stat.init(), stat.type()->val_ty());
+    make_implicit_conversion(stat.init(), stat.type()->val_ty());
     stat.init()->attach_to(stat.type().raw_ptr());
   }
 
