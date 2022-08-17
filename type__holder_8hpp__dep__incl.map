@@ -1,8 +1,8 @@
 <map id="src/yume/compiler/type_holder.hpp" name="src/yume/compiler/type_holder.hpp">
-<area shape="rect" id="node1" title=" " alt="" coords="279,5,435,47"/>
-<area shape="rect" id="node2" href="$compiler_8cpp.html" title=" " alt="" coords="5,191,211,218"/>
-<area shape="rect" id="node3" href="$compiler_8hpp.html" title=" " alt="" coords="185,102,391,129"/>
-<area shape="rect" id="node4" href="$type__walker_8cpp.html" title=" " alt="" coords="365,184,525,225"/>
-<area shape="rect" id="node6" href="$type__holder_8cpp.html" title=" " alt="" coords="466,95,622,136"/>
-<area shape="rect" id="node5" href="$yumec_8cpp.html" title=" " alt="" coords="235,191,341,218"/>
+<area shape="rect" id="node1" title=" " alt="" coords="305,5,461,47"/>
+<area shape="rect" id="node2" href="$compiler_8cpp.html" title=" " alt="" coords="5,177,211,203"/>
+<area shape="rect" id="node3" href="$compiler_8hpp.html" title=" " alt="" coords="351,95,556,121"/>
+<area shape="rect" id="node4" href="$type__holder_8cpp.html" title=" " alt="" coords="235,169,391,211"/>
+<area shape="rect" id="node5" href="$type__walker_8cpp.html" title=" " alt="" coords="547,169,707,211"/>
+<area shape="rect" id="node6" href="$yumec_8cpp.html" title=" " alt="" coords="416,177,523,203"/>
 </map>

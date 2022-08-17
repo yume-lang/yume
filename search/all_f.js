@@ -39,5 +39,6 @@ var searchData=
   ['program_36',['Program',['../classyume_1_1ast_1_1Program.html#a51250d0a15dcb5076bd72b57303bbeec',1,'yume::ast::Program::Program()'],['../classyume_1_1ast_1_1Program.html',1,'yume::ast::Program']]],
   ['ptr_37',['Ptr',['../classyume_1_1ty_1_1Ptr.html#acdada98061a31b152c3a696cc67c497e',1,'yume::ty::Ptr::Ptr()'],['../namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a165d3d525f6d0cbd55e42cc3058cafcc',1,'yume::Ptr()'],['../namespaceyume.html#a78788bc2c5c2654301cd41cf23cbb158a165d3d525f6d0cbd55e42cc3058cafcc',1,'yume::Ptr()'],['../classyume_1_1ty_1_1Ptr.html',1,'yume::ty::Ptr']]],
   ['ptr_5fbase_38',['ptr_base',['../classyume_1_1ty_1_1Type.html#a90a2d9819d5069d8b5090282bd2b8c14',1,'yume::ty::Type']]],
-  ['ptrlikequalifier_39',['PtrLikeQualifier',['../namespaceyume.html#a78788bc2c5c2654301cd41cf23cbb158',1,'yume']]]
+  ['ptr_5fbitsize_39',['ptr_bitsize',['../classyume_1_1Compiler.html#a39582ee7491a4d199deccc76afbe745d',1,'yume::Compiler']]],
+  ['ptrlikequalifier_40',['PtrLikeQualifier',['../namespaceyume.html#a78788bc2c5c2654301cd41cf23cbb158',1,'yume']]]
 ];

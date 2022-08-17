@@ -1,9 +1,10 @@
 <map id="src/yume/semantic/overload.hpp" name="src/yume/semantic/overload.hpp">
-<area shape="rect" id="node1" title=" " alt="" coords="109,5,319,32"/>
-<area shape="rect" id="node2" href="$overload_8cpp.html" title=" " alt="" coords="5,87,215,114"/>
-<area shape="rect" id="node3" href="$type__walker_8hpp.html" title=" " alt="" coords="239,80,399,121"/>
-<area shape="rect" id="node4" href="$compiler_8cpp.html" title=" " alt="" coords="37,251,242,278"/>
-<area shape="rect" id="node5" href="$compiler_8hpp.html" title=" " alt="" coords="217,169,422,196"/>
-<area shape="rect" id="node6" href="$type__walker_8cpp.html" title=" " alt="" coords="397,244,557,285"/>
-<area shape="rect" id="node7" href="$yumec_8cpp.html" title=" " alt="" coords="266,251,373,278"/>
+<area shape="rect" id="node1" title=" " alt="" coords="146,5,355,32"/>
+<area shape="rect" id="node2" href="$overload_8cpp.html" title=" " alt="" coords="42,87,251,114"/>
+<area shape="rect" id="node3" href="$type__walker_8hpp.html" title=" " alt="" coords="276,80,436,121"/>
+<area shape="rect" id="node4" href="$compiler_8cpp.html" title=" " alt="" coords="5,251,211,278"/>
+<area shape="rect" id="node5" href="$compiler_8hpp.html" title=" " alt="" coords="253,169,459,196"/>
+<area shape="rect" id="node7" href="$type__walker_8cpp.html" title=" " alt="" coords="547,244,707,285"/>
+<area shape="rect" id="node6" href="$type__holder_8cpp.html" title=" " alt="" coords="235,244,391,285"/>
+<area shape="rect" id="node8" href="$yumec_8cpp.html" title=" " alt="" coords="416,251,523,278"/>
 </map>
