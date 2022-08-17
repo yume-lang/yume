@@ -7,3 +7,8 @@ PointerAlignment: Left
 ColumnLimit: 120
 AllowShortCaseLabelsOnASingleLine: true
 QualifierAlignment: Left
+IndentRequiresClause: false
+SpaceBeforeParens: Custom
+SpaceBeforeParensOptions:
+  AfterControlStatements: true
+  AfterRequiresInClause: true

@@ -44,8 +44,8 @@ public:
   }
 
   template <std::ranges::range Range>
-  auto visit(const Range& iter, const char* label = nullptr)
-      -> Visitor& requires(!std::convertible_to<Range, const char*>) {
+  requires (!std::convertible_to<Range, const char*>)
+  auto visit(const Range& iter, const char* label = nullptr) -> Visitor& {
     Visitor& vis = *this;
     for (auto& i : iter) {
       vis = move(vis.visit(i, label));
