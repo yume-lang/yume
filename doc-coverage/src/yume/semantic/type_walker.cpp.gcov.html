@@ -32,12 +32,12 @@
             <td></td>
             <td class="headerItem">Lines:</td>
             <td class="headerCovTableEntry">0</td>
-            <td class="headerCovTableEntry">26</td>
+            <td class="headerCovTableEntry">28</td>
             <td class="headerCovTableEntryLo">0.0 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-08-21 19:45:14</td>
+            <td class="headerValue">2022-08-21 22:22:48</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -170,7 +170,7 @@
 <a name="112"><span class="lineNum">     112 </span>            :   expr.val_ty(base_type);</a>
 <a name="113"><span class="lineNum">     113 </span>            : </a>
 <a name="114"><span class="lineNum">     114 </span>            :   const bool consider_ctor_overloads = st != nullptr;</a>
-<a name="115"><span class="lineNum">     115 </span>            :   OverloadSet&lt;Ctor&gt; ctor_overloads{};</a>
+<a name="115"><span class="lineNum">     115 </span>            :   OverloadSet ctor_overloads{};</a>
 <a name="116"><span class="lineNum">     116 </span>            : </a>
 <a name="117"><span class="lineNum">     117 </span>            :   // XXX: Duplicated from function overload handling</a>
 <a name="118"><span class="lineNum">     118 </span>            :   if (consider_ctor_overloads) {</a>
@@ -211,12 +211,12 @@
 <a name="153"><span class="lineNum">     153 </span>            : </a>
 <a name="154"><span class="lineNum">     154 </span>            :     // XXX: STILL Duplicated from function overload handling</a>
 <a name="155"><span class="lineNum">     155 </span>            :     for (auto [target, expr_arg, compat] :</a>
-<a name="156"><span class="lineNum">     156 </span>            :          llvm::zip(selected-&gt;ast().args(), expr.args(), best_overload.compatibilities)) {</a>
+<a name="156"><span class="lineNum">     156 </span>            :          llvm::zip(selected-&gt;arg_types(), expr.args(), best_overload.compatibilities)) {</a>
 <a name="157"><span class="lineNum">     157 </span>            :       yume_assert(compat.valid, &quot;Invalid compatibility after overload already selected?????&quot;);</a>
 <a name="158"><span class="lineNum">     158 </span>            :       if (compat.conv.empty())</a>
 <a name="159"><span class="lineNum">     159 </span>            :         continue;</a>
 <a name="160"><span class="lineNum">     160 </span>            : </a>
-<a name="161"><span class="lineNum">     161 </span>            :       wrap_in_implicit_cast(expr_arg, compat.conv, Ctor::arg_type(target));</a>
+<a name="161"><span class="lineNum">     161 </span>            :       wrap_in_implicit_cast(expr_arg, compat.conv, target);</a>
 <a name="162"><span class="lineNum">     162 </span>            :     }</a>
 <a name="163"><span class="lineNum">     163 </span>            : </a>
 <a name="164"><span class="lineNum">     164 </span>            :     expr.selected_overload(selected);</a>
@@ -252,393 +252,400 @@
 <a name="194"><span class="lineNum">     194 </span>            :   expr.attach_to(scope.at(expr.name()));</a>
 <a name="195"><span class="lineNum">     195 </span>            : }</a>
 <a name="196"><span class="lineNum">     196 </span>            : </a>
-<a name="197"><span class="lineNum">     197 </span><span class="lineNoCov">          0 : template &lt;&gt; void TypeWalker::expression(ast::FieldAccessExpr&amp; expr) {</span></a>
-<a name="198"><span class="lineNum">     198 </span>            :   optional&lt;ty::Type&gt; type;</a>
-<a name="199"><span class="lineNum">     199 </span>            :   bool base_is_mut = false;</a>
-<a name="200"><span class="lineNum">     200 </span>            : </a>
-<a name="201"><span class="lineNum">     201 </span>            :   if (expr.base().has_value()) {</a>
-<a name="202"><span class="lineNum">     202 </span>            :     body_expression(*expr.base());</a>
-<a name="203"><span class="lineNum">     203 </span>            :     type = expr.base()-&gt;ensure_ty();</a>
-<a name="204"><span class="lineNum">     204 </span>            : </a>
-<a name="205"><span class="lineNum">     205 </span>            :     if (type-&gt;is_mut()) {</a>
-<a name="206"><span class="lineNum">     206 </span>            :       type = type-&gt;mut_base();</a>
-<a name="207"><span class="lineNum">     207 </span>            :       base_is_mut = true;</a>
-<a name="208"><span class="lineNum">     208 </span>            :     };</a>
-<a name="209"><span class="lineNum">     209 </span>            :   } else {</a>
-<a name="210"><span class="lineNum">     210 </span>            :     type = current_decl.self_ty();</a>
-<a name="211"><span class="lineNum">     211 </span>            :     base_is_mut = true;</a>
-<a name="212"><span class="lineNum">     212 </span>            :   }</a>
+<a name="197"><span class="lineNum">     197 </span><span class="lineNoCov">          0 : static auto find_field_ast(const ty::Struct&amp; st, string_view target_name) -&gt; std::pair&lt;nullable&lt;ast::AnyType*&gt;, int&gt; {</span></a>
+<a name="198"><span class="lineNum">     198 </span>            :   nullable&lt;ast::AnyType*&gt; target_type = nullptr;</a>
+<a name="199"><span class="lineNum">     199 </span>            :   int j = 0;</a>
+<a name="200"><span class="lineNum">     200 </span>            :   for (auto* field : st.fields()) {</a>
+<a name="201"><span class="lineNum">     201 </span>            :     if (field-&gt;name == target_name) {</a>
+<a name="202"><span class="lineNum">     202 </span>            :       target_type = &amp;field-&gt;type;</a>
+<a name="203"><span class="lineNum">     203 </span>            :       break;</a>
+<a name="204"><span class="lineNum">     204 </span>            :     }</a>
+<a name="205"><span class="lineNum">     205 </span>            :     j++;</a>
+<a name="206"><span class="lineNum">     206 </span>            :   }</a>
+<a name="207"><span class="lineNum">     207 </span>            : </a>
+<a name="208"><span class="lineNum">     208 </span>            :   if (target_type == nullptr)</a>
+<a name="209"><span class="lineNum">     209 </span>            :     j = -1;</a>
+<a name="210"><span class="lineNum">     210 </span>            : </a>
+<a name="211"><span class="lineNum">     211 </span>            :   return {target_type, j};</a>
+<a name="212"><span class="lineNum">     212 </span>            : }</a>
 <a name="213"><span class="lineNum">     213 </span>            : </a>
-<a name="214"><span class="lineNum">     214 </span>            :   const auto* struct_type = type-&gt;base_dyn_cast&lt;ty::Struct&gt;();</a>
-<a name="215"><span class="lineNum">     215 </span>            : </a>
-<a name="216"><span class="lineNum">     216 </span>            :   if (struct_type == nullptr)</a>
-<a name="217"><span class="lineNum">     217 </span>            :     throw std::runtime_error(&quot;Can't access field of expression with non-struct type&quot;);</a>
-<a name="218"><span class="lineNum">     218 </span>            : </a>
-<a name="219"><span class="lineNum">     219 </span>            :   auto target_name = expr.field();</a>
-<a name="220"><span class="lineNum">     220 </span>            :   optional&lt;ty::Type&gt; target_type;</a>
-<a name="221"><span class="lineNum">     221 </span>            :   int j = 0;</a>
-<a name="222"><span class="lineNum">     222 </span>            :   for (const auto* field : struct_type-&gt;fields()) {</a>
-<a name="223"><span class="lineNum">     223 </span>            :     if (field-&gt;name == target_name) {</a>
-<a name="224"><span class="lineNum">     224 </span>            :       target_type = field-&gt;type-&gt;val_ty();</a>
-<a name="225"><span class="lineNum">     225 </span>            :       break;</a>
-<a name="226"><span class="lineNum">     226 </span>            :     }</a>
-<a name="227"><span class="lineNum">     227 </span>            :     j++;</a>
-<a name="228"><span class="lineNum">     228 </span>            :   }</a>
-<a name="229"><span class="lineNum">     229 </span>            : </a>
-<a name="230"><span class="lineNum">     230 </span>            :   expr.offset(j);</a>
-<a name="231"><span class="lineNum">     231 </span>            :   expr.val_ty(base_is_mut ? target_type-&gt;known_mut() : target_type);</a>
-<a name="232"><span class="lineNum">     232 </span>            : }</a>
-<a name="233"><span class="lineNum">     233 </span>            : </a>
-<a name="234"><span class="lineNum">     234 </span>            : auto TypeWalker::all_fn_overloads_by_name(ast::CallExpr&amp; call) -&gt; OverloadSet&lt;Fn&gt; {</a>
-<a name="235"><span class="lineNum">     235 </span>            :   auto fns_by_name = vector&lt;Overload&lt;Fn&gt;&gt;();</a>
-<a name="236"><span class="lineNum">     236 </span>            : </a>
-<a name="237"><span class="lineNum">     237 </span>            :   for (auto&amp; fn : compiler.m_fns)</a>
-<a name="238"><span class="lineNum">     238 </span>            :     if (fn.name() == call.name())</a>
-<a name="239"><span class="lineNum">     239 </span>            :       fns_by_name.emplace_back(&amp;fn);</a>
-<a name="240"><span class="lineNum">     240 </span>            : </a>
-<a name="241"><span class="lineNum">     241 </span>            :   return OverloadSet&lt;Fn&gt;{&amp;call, fns_by_name, {}};</a>
-<a name="242"><span class="lineNum">     242 </span>            : }</a>
-<a name="243"><span class="lineNum">     243 </span>            : </a>
-<a name="244"><span class="lineNum">     244 </span>            : auto TypeWalker::all_ctor_overloads_by_type(Struct&amp; st, ast::CtorExpr&amp; call) -&gt; OverloadSet&lt;Ctor&gt; {</a>
-<a name="245"><span class="lineNum">     245 </span>            :   auto ctors_by_type = vector&lt;Overload&lt;Ctor&gt;&gt;();</a>
-<a name="246"><span class="lineNum">     246 </span>            : </a>
-<a name="247"><span class="lineNum">     247 </span>            :   for (auto&amp; ctor : compiler.m_ctors)</a>
-<a name="248"><span class="lineNum">     248 </span>            :     if (ctor.base.self_ty == st.self_ty)</a>
-<a name="249"><span class="lineNum">     249 </span>            :       ctors_by_type.emplace_back(&amp;ctor);</a>
-<a name="250"><span class="lineNum">     250 </span>            : </a>
-<a name="251"><span class="lineNum">     251 </span>            :   return OverloadSet&lt;Ctor&gt;{&amp;call, ctors_by_type, {}};</a>
-<a name="252"><span class="lineNum">     252 </span>            : }</a>
-<a name="253"><span class="lineNum">     253 </span>            : </a>
-<a name="254"><span class="lineNum">     254 </span><span class="lineNoCov">          0 : template &lt;&gt; void TypeWalker::expression(ast::CallExpr&amp; expr) {</span></a>
-<a name="255"><span class="lineNum">     255 </span>            :   auto overload_set = all_fn_overloads_by_name(expr);</a>
-<a name="256"><span class="lineNum">     256 </span>            :   auto name = expr.name();</a>
-<a name="257"><span class="lineNum">     257 </span>            : </a>
-<a name="258"><span class="lineNum">     258 </span>            :   if (overload_set.empty()) {                      // HACK</a>
-<a name="259"><span class="lineNum">     259 </span>            :     resolve_queue();                               // HACK</a>
-<a name="260"><span class="lineNum">     260 </span>            :     overload_set = all_fn_overloads_by_name(expr); // HACK</a>
-<a name="261"><span class="lineNum">     261 </span>            :   }                                                // HACK</a>
-<a name="262"><span class="lineNum">     262 </span>            : </a>
-<a name="263"><span class="lineNum">     263 </span>            :   if (overload_set.empty())</a>
-<a name="264"><span class="lineNum">     264 </span>            :     throw std::logic_error(&quot;No function overload named &quot;s + name);</a>
-<a name="265"><span class="lineNum">     265 </span>            : </a>
-<a name="266"><span class="lineNum">     266 </span>            :   for (auto&amp; i : expr.args()) {</a>
-<a name="267"><span class="lineNum">     267 </span>            :     body_expression(*i);</a>
-<a name="268"><span class="lineNum">     268 </span>            :     overload_set.args.push_back(i.raw_ptr());</a>
-<a name="269"><span class="lineNum">     269 </span>            :   }</a>
-<a name="270"><span class="lineNum">     270 </span>            : </a>
-<a name="271"><span class="lineNum">     271 </span>            : #ifdef YUME_SPEW_OVERLOAD_SELECTION</a>
-<a name="272"><span class="lineNum">     272 </span>            :   errs() &lt;&lt; &quot;\n*** BEGIN FN OVERLOAD EVALUATION ***\n&quot;;</a>
-<a name="273"><span class="lineNum">     273 </span>            :   errs() &lt;&lt; &quot;Functions with matching names:\n&quot;;</a>
-<a name="274"><span class="lineNum">     274 </span>            :   overload_set.dump(errs());</a>
-<a name="275"><span class="lineNum">     275 </span>            : #endif</a>
-<a name="276"><span class="lineNum">     276 </span>            : </a>
-<a name="277"><span class="lineNum">     277 </span>            :   overload_set.determine_valid_overloads();</a>
-<a name="278"><span class="lineNum">     278 </span>            : </a>
-<a name="279"><span class="lineNum">     279 </span>            : #ifdef YUME_SPEW_OVERLOAD_SELECTION</a>
-<a name="280"><span class="lineNum">     280 </span>            :   errs() &lt;&lt; &quot;\nViable overloads:\n&quot;;</a>
-<a name="281"><span class="lineNum">     281 </span>            :   overload_set.dump(errs(), true);</a>
-<a name="282"><span class="lineNum">     282 </span>            : #endif</a>
+<a name="214"><span class="lineNum">     214 </span><span class="lineNoCov">          0 : static auto find_field(const ty::Struct&amp; st, string_view target_name) -&gt; std::pair&lt;optional&lt;ty::Type&gt;, int&gt; {</span></a>
+<a name="215"><span class="lineNum">     215 </span>            :   optional&lt;ty::Type&gt; target_type;</a>
+<a name="216"><span class="lineNum">     216 </span>            :   auto [ast_ptr, j] = find_field_ast(st, target_name);</a>
+<a name="217"><span class="lineNum">     217 </span>            :   if (ast_ptr != nullptr)</a>
+<a name="218"><span class="lineNum">     218 </span>            :     target_type = ast_ptr-&gt;raw_ptr()-&gt;val_ty();</a>
+<a name="219"><span class="lineNum">     219 </span>            : </a>
+<a name="220"><span class="lineNum">     220 </span>            :   return {target_type, j};</a>
+<a name="221"><span class="lineNum">     221 </span>            : }</a>
+<a name="222"><span class="lineNum">     222 </span>            : </a>
+<a name="223"><span class="lineNum">     223 </span><span class="lineNoCov">          0 : template &lt;&gt; void TypeWalker::expression(ast::FieldAccessExpr&amp; expr) {</span></a>
+<a name="224"><span class="lineNum">     224 </span>            :   optional&lt;ty::Type&gt; type;</a>
+<a name="225"><span class="lineNum">     225 </span>            :   bool base_is_mut = false;</a>
+<a name="226"><span class="lineNum">     226 </span>            : </a>
+<a name="227"><span class="lineNum">     227 </span>            :   if (expr.base().has_value()) {</a>
+<a name="228"><span class="lineNum">     228 </span>            :     body_expression(*expr.base());</a>
+<a name="229"><span class="lineNum">     229 </span>            :     type = expr.base()-&gt;ensure_ty();</a>
+<a name="230"><span class="lineNum">     230 </span>            : </a>
+<a name="231"><span class="lineNum">     231 </span>            :     if (type-&gt;is_mut()) {</a>
+<a name="232"><span class="lineNum">     232 </span>            :       type = type-&gt;mut_base();</a>
+<a name="233"><span class="lineNum">     233 </span>            :       base_is_mut = true;</a>
+<a name="234"><span class="lineNum">     234 </span>            :     };</a>
+<a name="235"><span class="lineNum">     235 </span>            :   } else {</a>
+<a name="236"><span class="lineNum">     236 </span>            :     type = current_decl.self_ty();</a>
+<a name="237"><span class="lineNum">     237 </span>            :     base_is_mut = true;</a>
+<a name="238"><span class="lineNum">     238 </span>            :   }</a>
+<a name="239"><span class="lineNum">     239 </span>            : </a>
+<a name="240"><span class="lineNum">     240 </span>            :   const auto* struct_type = type-&gt;base_dyn_cast&lt;ty::Struct&gt;();</a>
+<a name="241"><span class="lineNum">     241 </span>            : </a>
+<a name="242"><span class="lineNum">     242 </span>            :   if (struct_type == nullptr)</a>
+<a name="243"><span class="lineNum">     243 </span>            :     throw std::runtime_error(&quot;Can't access field of expression with non-struct type&quot;);</a>
+<a name="244"><span class="lineNum">     244 </span>            : </a>
+<a name="245"><span class="lineNum">     245 </span>            :   auto target_name = expr.field();</a>
+<a name="246"><span class="lineNum">     246 </span>            :   auto [target_type, target_offset] = find_field(*struct_type, target_name);</a>
+<a name="247"><span class="lineNum">     247 </span>            : </a>
+<a name="248"><span class="lineNum">     248 </span>            :   expr.offset(target_offset);</a>
+<a name="249"><span class="lineNum">     249 </span>            :   expr.val_ty(base_is_mut ? target_type-&gt;known_mut() : target_type);</a>
+<a name="250"><span class="lineNum">     250 </span>            : }</a>
+<a name="251"><span class="lineNum">     251 </span>            : </a>
+<a name="252"><span class="lineNum">     252 </span>            : auto TypeWalker::all_fn_overloads_by_name(ast::CallExpr&amp; call) -&gt; OverloadSet {</a>
+<a name="253"><span class="lineNum">     253 </span>            :   auto fns_by_name = vector&lt;Overload&gt;();</a>
+<a name="254"><span class="lineNum">     254 </span>            : </a>
+<a name="255"><span class="lineNum">     255 </span>            :   for (auto&amp; fn : compiler.m_fns)</a>
+<a name="256"><span class="lineNum">     256 </span>            :     if (fn.name() == call.name())</a>
+<a name="257"><span class="lineNum">     257 </span>            :       fns_by_name.emplace_back(&amp;fn);</a>
+<a name="258"><span class="lineNum">     258 </span>            : </a>
+<a name="259"><span class="lineNum">     259 </span>            :   return OverloadSet{&amp;call, fns_by_name, {}};</a>
+<a name="260"><span class="lineNum">     260 </span>            : }</a>
+<a name="261"><span class="lineNum">     261 </span>            : </a>
+<a name="262"><span class="lineNum">     262 </span>            : auto TypeWalker::all_ctor_overloads_by_type(Struct&amp; st, ast::CtorExpr&amp; call) -&gt; OverloadSet {</a>
+<a name="263"><span class="lineNum">     263 </span>            :   auto ctors_by_type = vector&lt;Overload&gt;();</a>
+<a name="264"><span class="lineNum">     264 </span>            : </a>
+<a name="265"><span class="lineNum">     265 </span>            :   for (auto&amp; ctor : compiler.m_ctors)</a>
+<a name="266"><span class="lineNum">     266 </span>            :     if (ctor.self_ty == st.self_ty)</a>
+<a name="267"><span class="lineNum">     267 </span>            :       ctors_by_type.emplace_back(&amp;ctor);</a>
+<a name="268"><span class="lineNum">     268 </span>            : </a>
+<a name="269"><span class="lineNum">     269 </span>            :   return OverloadSet{&amp;call, ctors_by_type, {}};</a>
+<a name="270"><span class="lineNum">     270 </span>            : }</a>
+<a name="271"><span class="lineNum">     271 </span>            : </a>
+<a name="272"><span class="lineNum">     272 </span><span class="lineNoCov">          0 : template &lt;&gt; void TypeWalker::expression(ast::CallExpr&amp; expr) {</span></a>
+<a name="273"><span class="lineNum">     273 </span>            :   auto overload_set = all_fn_overloads_by_name(expr);</a>
+<a name="274"><span class="lineNum">     274 </span>            :   auto name = expr.name();</a>
+<a name="275"><span class="lineNum">     275 </span>            : </a>
+<a name="276"><span class="lineNum">     276 </span>            :   if (overload_set.empty()) {                      // HACK</a>
+<a name="277"><span class="lineNum">     277 </span>            :     resolve_queue();                               // HACK</a>
+<a name="278"><span class="lineNum">     278 </span>            :     overload_set = all_fn_overloads_by_name(expr); // HACK</a>
+<a name="279"><span class="lineNum">     279 </span>            :   }                                                // HACK</a>
+<a name="280"><span class="lineNum">     280 </span>            : </a>
+<a name="281"><span class="lineNum">     281 </span>            :   if (overload_set.empty())</a>
+<a name="282"><span class="lineNum">     282 </span>            :     throw std::logic_error(&quot;No function overload named &quot;s + name);</a>
 <a name="283"><span class="lineNum">     283 </span>            : </a>
-<a name="284"><span class="lineNum">     284 </span>            :   const auto* maybe_best_overload = overload_set.try_best_viable_overload(); // HACK</a>
-<a name="285"><span class="lineNum">     285 </span>            :   if (maybe_best_overload == nullptr &amp;&amp; !decl_queue.empty()) {               // HACK</a>
-<a name="286"><span class="lineNum">     286 </span>            :     resolve_queue();                                                         // HACK</a>
-<a name="287"><span class="lineNum">     287 </span>            :     return expression(expr);                                                 // HACK</a>
-<a name="288"><span class="lineNum">     288 </span>            :   }                                                                          // HACK</a>
-<a name="289"><span class="lineNum">     289 </span>            :   Overload best_overload = overload_set.best_viable_overload();</a>
-<a name="290"><span class="lineNum">     290 </span>            : </a>
-<a name="291"><span class="lineNum">     291 </span>            : #ifdef YUME_SPEW_OVERLOAD_SELECTION</a>
-<a name="292"><span class="lineNum">     292 </span>            :   errs() &lt;&lt; &quot;\nSelected overload:\n&quot;;</a>
-<a name="293"><span class="lineNum">     293 </span>            :   best_overload.dump(errs());</a>
-<a name="294"><span class="lineNum">     294 </span>            :   errs() &lt;&lt; &quot;\n*** END FN OVERLOAD EVALUATION ***\n\n&quot;;</a>
-<a name="295"><span class="lineNum">     295 </span>            : #endif</a>
+<a name="284"><span class="lineNum">     284 </span>            :   for (auto&amp; i : expr.args()) {</a>
+<a name="285"><span class="lineNum">     285 </span>            :     body_expression(*i);</a>
+<a name="286"><span class="lineNum">     286 </span>            :     overload_set.args.push_back(i.raw_ptr());</a>
+<a name="287"><span class="lineNum">     287 </span>            :   }</a>
+<a name="288"><span class="lineNum">     288 </span>            : </a>
+<a name="289"><span class="lineNum">     289 </span>            : #ifdef YUME_SPEW_OVERLOAD_SELECTION</a>
+<a name="290"><span class="lineNum">     290 </span>            :   errs() &lt;&lt; &quot;\n*** BEGIN FN OVERLOAD EVALUATION ***\n&quot;;</a>
+<a name="291"><span class="lineNum">     291 </span>            :   errs() &lt;&lt; &quot;Functions with matching names:\n&quot;;</a>
+<a name="292"><span class="lineNum">     292 </span>            :   overload_set.dump(errs());</a>
+<a name="293"><span class="lineNum">     293 </span>            : #endif</a>
+<a name="294"><span class="lineNum">     294 </span>            : </a>
+<a name="295"><span class="lineNum">     295 </span>            :   overload_set.determine_valid_overloads();</a>
 <a name="296"><span class="lineNum">     296 </span>            : </a>
-<a name="297"><span class="lineNum">     297 </span>            :   auto&amp; subs = best_overload.subs;</a>
-<a name="298"><span class="lineNum">     298 </span>            :   auto* selected = best_overload.fn;</a>
-<a name="299"><span class="lineNum">     299 </span>            : </a>
-<a name="300"><span class="lineNum">     300 </span>            :   // It is an instantiation of a function template</a>
-<a name="301"><span class="lineNum">     301 </span>            :   if (!subs.empty()) {</a>
-<a name="302"><span class="lineNum">     302 </span>            :     // Try to find an already existing instantiation with the same substitutions</a>
-<a name="303"><span class="lineNum">     303 </span>            :     auto [already_existed, inst_fn] = selected-&gt;get_or_create_instantiation(subs);</a>
-<a name="304"><span class="lineNum">     304 </span>            :     if (!already_existed) {</a>
-<a name="305"><span class="lineNum">     305 </span>            :       // An existing one wasn't found. We've been given a duplicate of the template's AST but without types</a>
-<a name="306"><span class="lineNum">     306 </span>            :       // The duplicate will have its types set again according to the substitutions being used.</a>
-<a name="307"><span class="lineNum">     307 </span>            :       auto&amp; new_fn = inst_fn;</a>
+<a name="297"><span class="lineNum">     297 </span>            : #ifdef YUME_SPEW_OVERLOAD_SELECTION</a>
+<a name="298"><span class="lineNum">     298 </span>            :   errs() &lt;&lt; &quot;\nViable overloads:\n&quot;;</a>
+<a name="299"><span class="lineNum">     299 </span>            :   overload_set.dump(errs(), true);</a>
+<a name="300"><span class="lineNum">     300 </span>            : #endif</a>
+<a name="301"><span class="lineNum">     301 </span>            : </a>
+<a name="302"><span class="lineNum">     302 </span>            :   const auto* maybe_best_overload = overload_set.try_best_viable_overload(); // HACK</a>
+<a name="303"><span class="lineNum">     303 </span>            :   if (maybe_best_overload == nullptr &amp;&amp; !decl_queue.empty()) {               // HACK</a>
+<a name="304"><span class="lineNum">     304 </span>            :     resolve_queue();                                                         // HACK</a>
+<a name="305"><span class="lineNum">     305 </span>            :     return expression(expr);                                                 // HACK</a>
+<a name="306"><span class="lineNum">     306 </span>            :   }                                                                          // HACK</a>
+<a name="307"><span class="lineNum">     307 </span>            :   Overload best_overload = overload_set.best_viable_overload();</a>
 <a name="308"><span class="lineNum">     308 </span>            : </a>
-<a name="309"><span class="lineNum">     309 </span>            :       // The types of the instantiated function must be set immediately (i.e. with in_depth = false)</a>
-<a name="310"><span class="lineNum">     310 </span>            :       // This is because the implicit cast logic below depends on the direct type being set here and bound type</a>
-<a name="311"><span class="lineNum">     311 </span>            :       // information doesn't propagate across ImplicitCastExpr...</a>
-<a name="312"><span class="lineNum">     312 </span>            :       // TODO(rymiel): Find a better solution; such as moving cast logic also into queue?</a>
-<a name="313"><span class="lineNum">     313 </span>            :       // However that would require evaluation of the queue very eagerly (i.e. immediately when the function is used,</a>
-<a name="314"><span class="lineNum">     314 </span>            :       // which kinda defeats the purpose of the queue). So I guess we'll just keep this until I think of a better</a>
-<a name="315"><span class="lineNum">     315 </span>            :       // solution</a>
-<a name="316"><span class="lineNum">     316 </span>            :       // TODO(rymiel): find a better solution other than the solution proposed above</a>
-<a name="317"><span class="lineNum">     317 </span>            :       with_saved_scope([&amp;] {</a>
-<a name="318"><span class="lineNum">     318 </span>            :         in_depth = false;</a>
-<a name="319"><span class="lineNum">     319 </span>            :         current_decl = &amp;new_fn;</a>
-<a name="320"><span class="lineNum">     320 </span>            :         body_statement(new_fn.ast());</a>
-<a name="321"><span class="lineNum">     321 </span>            :       });</a>
-<a name="322"><span class="lineNum">     322 </span>            : </a>
-<a name="323"><span class="lineNum">     323 </span>            :       decl_queue.push(&amp;new_fn);</a>
-<a name="324"><span class="lineNum">     324 </span>            : </a>
-<a name="325"><span class="lineNum">     325 </span>            :       selected = &amp;new_fn;</a>
-<a name="326"><span class="lineNum">     326 </span>            :     } else {</a>
-<a name="327"><span class="lineNum">     327 </span>            :       selected = &amp;inst_fn;</a>
-<a name="328"><span class="lineNum">     328 </span>            :     }</a>
-<a name="329"><span class="lineNum">     329 </span>            :   }</a>
-<a name="330"><span class="lineNum">     330 </span>            : </a>
-<a name="331"><span class="lineNum">     331 </span>            :   for (auto [target, expr_arg, compat] :</a>
-<a name="332"><span class="lineNum">     332 </span>            :        llvm::zip(selected-&gt;ast().args(), expr.args(), best_overload.compatibilities)) {</a>
-<a name="333"><span class="lineNum">     333 </span>            :     yume_assert(compat.valid, &quot;Invalid compatibility after overload already selected?????&quot;);</a>
-<a name="334"><span class="lineNum">     334 </span>            :     if (compat.conv.empty())</a>
-<a name="335"><span class="lineNum">     335 </span>            :       continue;</a>
-<a name="336"><span class="lineNum">     336 </span>            : </a>
-<a name="337"><span class="lineNum">     337 </span>            :     wrap_in_implicit_cast(expr_arg, compat.conv, target.type-&gt;val_ty());</a>
-<a name="338"><span class="lineNum">     338 </span>            :   }</a>
-<a name="339"><span class="lineNum">     339 </span>            : </a>
-<a name="340"><span class="lineNum">     340 </span>            :   // Find excess variadic arguments. Logic will probably change later, but for now, always pass by value</a>
-<a name="341"><span class="lineNum">     341 </span>            :   // TODO(rymiel): revisit</a>
-<a name="342"><span class="lineNum">     342 </span>            :   for (const auto&amp; expr_arg : llvm::enumerate(expr.args())) {</a>
-<a name="343"><span class="lineNum">     343 </span>            :     if (expr_arg.index() &gt;= selected-&gt;ast().args().size() &amp;&amp; expr_arg.value()-&gt;ensure_ty().is_mut()) {</a>
-<a name="344"><span class="lineNum">     344 </span>            :       auto target_type = expr_arg.value()-&gt;ensure_ty().mut_base();</a>
-<a name="345"><span class="lineNum">     345 </span>            :       wrap_in_implicit_cast(expr_arg.value(), ty::Conv{.dereference = true}, target_type);</a>
+<a name="309"><span class="lineNum">     309 </span>            : #ifdef YUME_SPEW_OVERLOAD_SELECTION</a>
+<a name="310"><span class="lineNum">     310 </span>            :   errs() &lt;&lt; &quot;\nSelected overload:\n&quot;;</a>
+<a name="311"><span class="lineNum">     311 </span>            :   best_overload.dump(errs());</a>
+<a name="312"><span class="lineNum">     312 </span>            :   errs() &lt;&lt; &quot;\n*** END FN OVERLOAD EVALUATION ***\n\n&quot;;</a>
+<a name="313"><span class="lineNum">     313 </span>            : #endif</a>
+<a name="314"><span class="lineNum">     314 </span>            : </a>
+<a name="315"><span class="lineNum">     315 </span>            :   auto&amp; subs = best_overload.subs;</a>
+<a name="316"><span class="lineNum">     316 </span>            :   auto* selected = best_overload.fn;</a>
+<a name="317"><span class="lineNum">     317 </span>            : </a>
+<a name="318"><span class="lineNum">     318 </span>            :   // It is an instantiation of a function template</a>
+<a name="319"><span class="lineNum">     319 </span>            :   if (!subs.empty()) {</a>
+<a name="320"><span class="lineNum">     320 </span>            :     // Try to find an already existing instantiation with the same substitutions</a>
+<a name="321"><span class="lineNum">     321 </span>            :     auto [already_existed, inst_fn] = selected-&gt;get_or_create_instantiation(subs);</a>
+<a name="322"><span class="lineNum">     322 </span>            :     if (!already_existed) {</a>
+<a name="323"><span class="lineNum">     323 </span>            :       // An existing one wasn't found. We've been given a duplicate of the template's AST but without types</a>
+<a name="324"><span class="lineNum">     324 </span>            :       // The duplicate will have its types set again according to the substitutions being used.</a>
+<a name="325"><span class="lineNum">     325 </span>            :       auto&amp; new_fn = inst_fn;</a>
+<a name="326"><span class="lineNum">     326 </span>            : </a>
+<a name="327"><span class="lineNum">     327 </span>            :       // The types of the instantiated function must be set immediately (i.e. with in_depth = false)</a>
+<a name="328"><span class="lineNum">     328 </span>            :       // This is because the implicit cast logic below depends on the direct type being set here and bound type</a>
+<a name="329"><span class="lineNum">     329 </span>            :       // information doesn't propagate across ImplicitCastExpr...</a>
+<a name="330"><span class="lineNum">     330 </span>            :       // TODO(rymiel): Find a better solution; such as moving cast logic also into queue?</a>
+<a name="331"><span class="lineNum">     331 </span>            :       // However that would require evaluation of the queue very eagerly (i.e. immediately when the function is used,</a>
+<a name="332"><span class="lineNum">     332 </span>            :       // which kinda defeats the purpose of the queue). So I guess we'll just keep this until I think of a better</a>
+<a name="333"><span class="lineNum">     333 </span>            :       // solution</a>
+<a name="334"><span class="lineNum">     334 </span>            :       // TODO(rymiel): find a better solution other than the solution proposed above</a>
+<a name="335"><span class="lineNum">     335 </span>            :       with_saved_scope([&amp;] {</a>
+<a name="336"><span class="lineNum">     336 </span>            :         in_depth = false;</a>
+<a name="337"><span class="lineNum">     337 </span>            :         current_decl = &amp;new_fn;</a>
+<a name="338"><span class="lineNum">     338 </span>            :         body_statement(new_fn.ast());</a>
+<a name="339"><span class="lineNum">     339 </span>            :       });</a>
+<a name="340"><span class="lineNum">     340 </span>            : </a>
+<a name="341"><span class="lineNum">     341 </span>            :       decl_queue.push(&amp;new_fn);</a>
+<a name="342"><span class="lineNum">     342 </span>            : </a>
+<a name="343"><span class="lineNum">     343 </span>            :       selected = &amp;new_fn;</a>
+<a name="344"><span class="lineNum">     344 </span>            :     } else {</a>
+<a name="345"><span class="lineNum">     345 </span>            :       selected = &amp;inst_fn;</a>
 <a name="346"><span class="lineNum">     346 </span>            :     }</a>
 <a name="347"><span class="lineNum">     347 </span>            :   }</a>
 <a name="348"><span class="lineNum">     348 </span>            : </a>
-<a name="349"><span class="lineNum">     349 </span>            :   if (selected-&gt;ast().ret().has_value())</a>
-<a name="350"><span class="lineNum">     350 </span>            :     expr.attach_to(&amp;selected-&gt;ast());</a>
-<a name="351"><span class="lineNum">     351 </span>            : </a>
-<a name="352"><span class="lineNum">     352 </span>            :   expr.selected_overload(selected);</a>
-<a name="353"><span class="lineNum">     353 </span>            : }</a>
-<a name="354"><span class="lineNum">     354 </span>            : </a>
-<a name="355"><span class="lineNum">     355 </span><span class="lineNoCov">          0 : template &lt;&gt; void TypeWalker::statement(ast::Compound&amp; stat) {</span></a>
-<a name="356"><span class="lineNum">     356 </span>            :   for (auto&amp; i : stat.body())</a>
-<a name="357"><span class="lineNum">     357 </span>            :     body_statement(*i);</a>
-<a name="358"><span class="lineNum">     358 </span>            : }</a>
-<a name="359"><span class="lineNum">     359 </span>            : </a>
-<a name="360"><span class="lineNum">     360 </span><span class="lineNoCov">          0 : template &lt;&gt; void TypeWalker::statement(ast::StructDecl&amp; stat) {</span></a>
-<a name="361"><span class="lineNum">     361 </span>            :   // This decl still has unsubstituted generics, can't instantiate its body</a>
-<a name="362"><span class="lineNum">     362 </span>            :   if (std::ranges::any_of(*current_decl.subs(), [](const auto&amp; sub) noexcept { return sub.second.is_generic(); }))</a>
-<a name="363"><span class="lineNum">     363 </span>            :     return;</a>
-<a name="364"><span class="lineNum">     364 </span>            : </a>
-<a name="365"><span class="lineNum">     365 </span>            :   for (auto&amp; i : stat.fields())</a>
-<a name="366"><span class="lineNum">     366 </span>            :     expression(i);</a>
-<a name="367"><span class="lineNum">     367 </span>            : }</a>
+<a name="349"><span class="lineNum">     349 </span>            :   for (auto [target, expr_arg, compat] : llvm::zip(selected-&gt;arg_types(), expr.args(), best_overload.compatibilities)) {</a>
+<a name="350"><span class="lineNum">     350 </span>            :     yume_assert(compat.valid, &quot;Invalid compatibility after overload already selected?????&quot;);</a>
+<a name="351"><span class="lineNum">     351 </span>            :     if (compat.conv.empty())</a>
+<a name="352"><span class="lineNum">     352 </span>            :       continue;</a>
+<a name="353"><span class="lineNum">     353 </span>            : </a>
+<a name="354"><span class="lineNum">     354 </span>            :     wrap_in_implicit_cast(expr_arg, compat.conv, target);</a>
+<a name="355"><span class="lineNum">     355 </span>            :   }</a>
+<a name="356"><span class="lineNum">     356 </span>            : </a>
+<a name="357"><span class="lineNum">     357 </span>            :   // Find excess variadic arguments. Logic will probably change later, but for now, always pass by value</a>
+<a name="358"><span class="lineNum">     358 </span>            :   // TODO(rymiel): revisit</a>
+<a name="359"><span class="lineNum">     359 </span>            :   for (const auto&amp; expr_arg : llvm::enumerate(expr.args())) {</a>
+<a name="360"><span class="lineNum">     360 </span>            :     if (expr_arg.index() &gt;= selected-&gt;arg_count() &amp;&amp; expr_arg.value()-&gt;ensure_ty().is_mut()) {</a>
+<a name="361"><span class="lineNum">     361 </span>            :       auto target_type = expr_arg.value()-&gt;ensure_ty().mut_base();</a>
+<a name="362"><span class="lineNum">     362 </span>            :       wrap_in_implicit_cast(expr_arg.value(), ty::Conv{.dereference = true}, target_type);</a>
+<a name="363"><span class="lineNum">     363 </span>            :     }</a>
+<a name="364"><span class="lineNum">     364 </span>            :   }</a>
+<a name="365"><span class="lineNum">     365 </span>            : </a>
+<a name="366"><span class="lineNum">     366 </span>            :   if (selected-&gt;ret().has_value())</a>
+<a name="367"><span class="lineNum">     367 </span>            :     expr.attach_to(&amp;selected-&gt;ast());</a>
 <a name="368"><span class="lineNum">     368 </span>            : </a>
-<a name="369"><span class="lineNum">     369 </span><span class="lineNoCov">          0 : template &lt;&gt; void TypeWalker::statement(ast::FnDecl&amp; stat) {</span></a>
-<a name="370"><span class="lineNum">     370 </span>            :   scope.clear();</a>
+<a name="369"><span class="lineNum">     369 </span>            :   expr.selected_overload(selected);</a>
+<a name="370"><span class="lineNum">     370 </span>            : }</a>
 <a name="371"><span class="lineNum">     371 </span>            : </a>
-<a name="372"><span class="lineNum">     372 </span>            :   for (auto&amp; i : stat.args()) {</a>
-<a name="373"><span class="lineNum">     373 </span>            :     expression(i);</a>
-<a name="374"><span class="lineNum">     374 </span>            :     scope.insert({i.name, &amp;i});</a>
-<a name="375"><span class="lineNum">     375 </span>            :   }</a>
+<a name="372"><span class="lineNum">     372 </span><span class="lineNoCov">          0 : template &lt;&gt; void TypeWalker::statement(ast::Compound&amp; stat) {</span></a>
+<a name="373"><span class="lineNum">     373 </span>            :   for (auto&amp; i : stat.body())</a>
+<a name="374"><span class="lineNum">     374 </span>            :     body_statement(*i);</a>
+<a name="375"><span class="lineNum">     375 </span>            : }</a>
 <a name="376"><span class="lineNum">     376 </span>            : </a>
-<a name="377"><span class="lineNum">     377 </span>            :   if (stat.ret().has_value()) {</a>
-<a name="378"><span class="lineNum">     378 </span>            :     expression(*stat.ret());</a>
-<a name="379"><span class="lineNum">     379 </span>            :     stat.attach_to(stat.ret().raw_ptr());</a>
-<a name="380"><span class="lineNum">     380 </span>            :   }</a>
+<a name="377"><span class="lineNum">     377 </span><span class="lineNoCov">          0 : template &lt;&gt; void TypeWalker::statement(ast::StructDecl&amp; stat) {</span></a>
+<a name="378"><span class="lineNum">     378 </span>            :   // This decl still has unsubstituted generics, can't instantiate its body</a>
+<a name="379"><span class="lineNum">     379 </span>            :   if (std::ranges::any_of(*current_decl.subs(), [](const auto&amp; sub) noexcept { return sub.second.is_generic(); }))</a>
+<a name="380"><span class="lineNum">     380 </span>            :     return;</a>
 <a name="381"><span class="lineNum">     381 </span>            : </a>
-<a name="382"><span class="lineNum">     382 </span>            :   // This decl still has unsubstituted generics, can't instantiate its body</a>
-<a name="383"><span class="lineNum">     383 </span>            :   if (std::ranges::any_of(*current_decl.subs(), [](const auto&amp; sub) noexcept { return sub.second.is_generic(); }))</a>
-<a name="384"><span class="lineNum">     384 </span>            :     return;</a>
+<a name="382"><span class="lineNum">     382 </span>            :   for (auto&amp; i : stat.fields())</a>
+<a name="383"><span class="lineNum">     383 </span>            :     expression(i);</a>
+<a name="384"><span class="lineNum">     384 </span>            : }</a>
 <a name="385"><span class="lineNum">     385 </span>            : </a>
-<a name="386"><span class="lineNum">     386 </span>            :   if (in_depth &amp;&amp; std::holds_alternative&lt;ast::Compound&gt;(stat.body()))</a>
-<a name="387"><span class="lineNum">     387 </span>            :     statement(get&lt;ast::Compound&gt;(stat.body()));</a>
-<a name="388"><span class="lineNum">     388 </span>            : }</a>
-<a name="389"><span class="lineNum">     389 </span>            : </a>
-<a name="390"><span class="lineNum">     390 </span><span class="lineNoCov">          0 : template &lt;&gt; void TypeWalker::statement(ast::CtorDecl&amp; stat) {</span></a>
-<a name="391"><span class="lineNum">     391 </span>            :   scope.clear();</a>
-<a name="392"><span class="lineNum">     392 </span>            : </a>
-<a name="393"><span class="lineNum">     393 </span>            :   const auto* struct_type = current_decl.self_ty()-&gt;without_mut().base_dyn_cast&lt;ty::Struct&gt;();</a>
-<a name="394"><span class="lineNum">     394 </span>            : </a>
-<a name="395"><span class="lineNum">     395 </span>            :   if (struct_type == nullptr)</a>
-<a name="396"><span class="lineNum">     396 </span>            :     throw std::runtime_error(&quot;Can't define constructor of non-struct type&quot;);</a>
-<a name="397"><span class="lineNum">     397 </span>            : </a>
-<a name="398"><span class="lineNum">     398 </span>            :   stat.val_ty(struct_type);</a>
-<a name="399"><span class="lineNum">     399 </span>            :   for (auto&amp; i : stat.args()) {</a>
-<a name="400"><span class="lineNum">     400 </span>            :     if (auto* type_name = std::get_if&lt;ast::TypeName&gt;(&amp;i)) {</a>
-<a name="401"><span class="lineNum">     401 </span>            :       expression(*type_name);</a>
-<a name="402"><span class="lineNum">     402 </span>            :       scope.insert({type_name-&gt;name, type_name});</a>
-<a name="403"><span class="lineNum">     403 </span>            :     } else if (auto* direct_init = std::get_if&lt;ast::FieldAccessExpr&gt;(&amp;i)) {</a>
-<a name="404"><span class="lineNum">     404 </span>            :       auto target_name = direct_init-&gt;field();</a>
-<a name="405"><span class="lineNum">     405 </span>            :       // XXX: duplicated from FieldAccessExpr handling</a>
-<a name="406"><span class="lineNum">     406 </span>            :       optional&lt;ty::Type&gt; target_type;</a>
-<a name="407"><span class="lineNum">     407 </span>            :       int j = 0;</a>
-<a name="408"><span class="lineNum">     408 </span>            :       for (const auto* field : struct_type-&gt;fields()) {</a>
-<a name="409"><span class="lineNum">     409 </span>            :         if (field-&gt;name == target_name) {</a>
-<a name="410"><span class="lineNum">     410 </span>            :           target_type = field-&gt;type-&gt;val_ty();</a>
-<a name="411"><span class="lineNum">     411 </span>            :           break;</a>
-<a name="412"><span class="lineNum">     412 </span>            :         }</a>
-<a name="413"><span class="lineNum">     413 </span>            :         j++;</a>
-<a name="414"><span class="lineNum">     414 </span>            :       }</a>
-<a name="415"><span class="lineNum">     415 </span>            : </a>
-<a name="416"><span class="lineNum">     416 </span>            :       direct_init-&gt;offset(j);</a>
-<a name="417"><span class="lineNum">     417 </span>            :       direct_init-&gt;val_ty(target_type);</a>
-<a name="418"><span class="lineNum">     418 </span>            :       scope.insert({target_name, direct_init});</a>
-<a name="419"><span class="lineNum">     419 </span>            :     }</a>
-<a name="420"><span class="lineNum">     420 </span>            :   }</a>
-<a name="421"><span class="lineNum">     421 </span>            : </a>
-<a name="422"><span class="lineNum">     422 </span>            :   if (in_depth)</a>
-<a name="423"><span class="lineNum">     423 </span>            :     statement(stat.body());</a>
-<a name="424"><span class="lineNum">     424 </span>            : }</a>
-<a name="425"><span class="lineNum">     425 </span>            : </a>
-<a name="426"><span class="lineNum">     426 </span><span class="lineNoCov">          0 : template &lt;&gt; void TypeWalker::statement(ast::ReturnStmt&amp; stat) {</span></a>
-<a name="427"><span class="lineNum">     427 </span>            :   if (stat.expr().has_value()) {</a>
-<a name="428"><span class="lineNum">     428 </span>            :     body_expression(*stat.expr());</a>
-<a name="429"><span class="lineNum">     429 </span>            :     // If we're returning a local variable, mark that it will leave the scope and should not be destructed yet.</a>
-<a name="430"><span class="lineNum">     430 </span>            :     if (auto* var_expr = dyn_cast&lt;ast::VarExpr&gt;(stat.expr().raw_ptr()))</a>
-<a name="431"><span class="lineNum">     431 </span>            :       if (auto* var_decl = dyn_cast&lt;ast::VarDecl&gt;(scope.at(var_expr-&gt;name())))</a>
-<a name="432"><span class="lineNum">     432 </span>            :         stat.extend_lifetime_of(var_decl);</a>
-<a name="433"><span class="lineNum">     433 </span>            : </a>
-<a name="434"><span class="lineNum">     434 </span>            :     make_implicit_conversion(stat.expr(), current_decl.ast()-&gt;val_ty());</a>
-<a name="435"><span class="lineNum">     435 </span>            :     current_decl.ast()-&gt;attach_to(stat.expr().raw_ptr());</a>
-<a name="436"><span class="lineNum">     436 </span>            :     // TODO(rymiel): Once return type deduction exists, make sure to not return `mut` unless there is an _explicit_ type</a>
-<a name="437"><span class="lineNum">     437 </span>            :     // annotation saying so</a>
-<a name="438"><span class="lineNum">     438 </span>            :   }</a>
-<a name="439"><span class="lineNum">     439 </span>            : }</a>
-<a name="440"><span class="lineNum">     440 </span>            : </a>
-<a name="441"><span class="lineNum">     441 </span><span class="lineNoCov">          0 : template &lt;&gt; void TypeWalker::statement(ast::VarDecl&amp; stat) {</span></a>
-<a name="442"><span class="lineNum">     442 </span>            :   body_expression(*stat.init());</a>
-<a name="443"><span class="lineNum">     443 </span>            :   if (stat.type().has_value()) {</a>
-<a name="444"><span class="lineNum">     444 </span>            :     expression(*stat.type());</a>
-<a name="445"><span class="lineNum">     445 </span>            :     make_implicit_conversion(stat.init(), stat.type()-&gt;val_ty());</a>
-<a name="446"><span class="lineNum">     446 </span>            :     stat.init()-&gt;attach_to(stat.type().raw_ptr());</a>
-<a name="447"><span class="lineNum">     447 </span>            :   }</a>
-<a name="448"><span class="lineNum">     448 </span>            : </a>
-<a name="449"><span class="lineNum">     449 </span>            :   stat.val_ty(stat.init()-&gt;ensure_ty().known_mut());</a>
-<a name="450"><span class="lineNum">     450 </span>            :   scope.insert({stat.name(), &amp;stat});</a>
-<a name="451"><span class="lineNum">     451 </span>            : }</a>
-<a name="452"><span class="lineNum">     452 </span>            : </a>
-<a name="453"><span class="lineNum">     453 </span><span class="lineNoCov">          0 : template &lt;&gt; void TypeWalker::statement(ast::IfStmt&amp; stat) {</span></a>
-<a name="454"><span class="lineNum">     454 </span>            :   for (auto&amp; i : stat.clauses()) {</a>
-<a name="455"><span class="lineNum">     455 </span>            :     body_expression(i.cond());</a>
-<a name="456"><span class="lineNum">     456 </span>            :     statement(i.body());</a>
-<a name="457"><span class="lineNum">     457 </span>            :   }</a>
-<a name="458"><span class="lineNum">     458 </span>            :   auto&amp; else_clause = stat.else_clause();</a>
-<a name="459"><span class="lineNum">     459 </span>            :   if (else_clause)</a>
-<a name="460"><span class="lineNum">     460 </span>            :     statement(*else_clause);</a>
-<a name="461"><span class="lineNum">     461 </span>            : }</a>
-<a name="462"><span class="lineNum">     462 </span>            : </a>
-<a name="463"><span class="lineNum">     463 </span><span class="lineNoCov">          0 : template &lt;&gt; void TypeWalker::statement(ast::WhileStmt&amp; stat) {</span></a>
-<a name="464"><span class="lineNum">     464 </span>            :   body_expression(stat.cond());</a>
-<a name="465"><span class="lineNum">     465 </span>            :   statement(stat.body());</a>
-<a name="466"><span class="lineNum">     466 </span>            : }</a>
-<a name="467"><span class="lineNum">     467 </span>            : </a>
-<a name="468"><span class="lineNum">     468 </span>            : void TypeWalker::body_statement(ast::Stmt&amp; stat) {</a>
-<a name="469"><span class="lineNum">     469 </span>            :   const ASTStackTrace guard(&quot;Semantic: &quot;s + stat.kind_name() + &quot; statement&quot;, stat);</a>
-<a name="470"><span class="lineNum">     470 </span>            :   return CRTPWalker::body_statement(stat);</a>
-<a name="471"><span class="lineNum">     471 </span>            : }</a>
-<a name="472"><span class="lineNum">     472 </span>            : void TypeWalker::body_expression(ast::Expr&amp; expr) {</a>
-<a name="473"><span class="lineNum">     473 </span>            :   const ASTStackTrace guard(&quot;Semantic: &quot;s + expr.kind_name() + &quot; expression&quot;, expr);</a>
-<a name="474"><span class="lineNum">     474 </span>            :   return CRTPWalker::body_expression(expr);</a>
-<a name="475"><span class="lineNum">     475 </span>            : }</a>
-<a name="476"><span class="lineNum">     476 </span>            : </a>
-<a name="477"><span class="lineNum">     477 </span>            : auto TypeWalker::create_slice_type(const ty::Type&amp; base_type) -&gt; ty::Type {</a>
-<a name="478"><span class="lineNum">     478 </span>            :   auto* struct_obj = compiler.m_slice_struct;</a>
-<a name="479"><span class="lineNum">     479 </span>            :   Substitution subs = {{{struct_obj-&gt;type_args.at(0)-&gt;name(), base_type}}};</a>
-<a name="480"><span class="lineNum">     480 </span>            :   auto [already_existed, inst_struct] = struct_obj-&gt;get_or_create_instantiation(subs);</a>
-<a name="481"><span class="lineNum">     481 </span>            : </a>
-<a name="482"><span class="lineNum">     482 </span>            :   if (!already_existed) {</a>
-<a name="483"><span class="lineNum">     483 </span>            :     auto&amp; new_st = inst_struct;</a>
-<a name="484"><span class="lineNum">     484 </span>            : </a>
-<a name="485"><span class="lineNum">     485 </span>            :     with_saved_scope([&amp;] {</a>
-<a name="486"><span class="lineNum">     486 </span>            :       in_depth = false;</a>
-<a name="487"><span class="lineNum">     487 </span>            :       current_decl = &amp;new_st;</a>
-<a name="488"><span class="lineNum">     488 </span>            :       body_statement(new_st.st_ast);</a>
-<a name="489"><span class="lineNum">     489 </span>            :     });</a>
-<a name="490"><span class="lineNum">     490 </span>            : </a>
-<a name="491"><span class="lineNum">     491 </span>            :     if (compiler.create_struct(new_st))</a>
-<a name="492"><span class="lineNum">     492 </span>            :       decl_queue.push(&amp;new_st);</a>
-<a name="493"><span class="lineNum">     493 </span>            :   }</a>
-<a name="494"><span class="lineNum">     494 </span>            : </a>
-<a name="495"><span class="lineNum">     495 </span>            :   return *inst_struct.self_ty;</a>
-<a name="496"><span class="lineNum">     496 </span>            : }</a>
-<a name="497"><span class="lineNum">     497 </span>            : </a>
-<a name="498"><span class="lineNum">     498 </span>            : auto TypeWalker::convert_type(ast::Type&amp; ast_type) -&gt; ty::Type {</a>
-<a name="499"><span class="lineNum">     499 </span>            :   auto parent = current_decl.self_ty();</a>
-<a name="500"><span class="lineNum">     500 </span>            :   const auto* context = static_cast&lt;const DeclLike&gt;(current_decl).subs();</a>
-<a name="501"><span class="lineNum">     501 </span>            : </a>
-<a name="502"><span class="lineNum">     502 </span>            :   if (const auto* simple_type = dyn_cast&lt;ast::SimpleType&gt;(&amp;ast_type)) {</a>
-<a name="503"><span class="lineNum">     503 </span>            :     auto name = simple_type-&gt;name();</a>
-<a name="504"><span class="lineNum">     504 </span>            :     if (context != nullptr) {</a>
-<a name="505"><span class="lineNum">     505 </span>            :       auto generic = context-&gt;find(name);</a>
-<a name="506"><span class="lineNum">     506 </span>            :       if (generic != context-&gt;end())</a>
-<a name="507"><span class="lineNum">     507 </span>            :         return generic-&gt;second;</a>
-<a name="508"><span class="lineNum">     508 </span>            :     }</a>
-<a name="509"><span class="lineNum">     509 </span>            :     auto val = compiler.m_types.known.find(name);</a>
-<a name="510"><span class="lineNum">     510 </span>            :     if (val != compiler.m_types.known.end())</a>
-<a name="511"><span class="lineNum">     511 </span>            :       return val-&gt;second.get();</a>
-<a name="512"><span class="lineNum">     512 </span>            :   } else if (auto* qual_type = dyn_cast&lt;ast::QualType&gt;(&amp;ast_type)) {</a>
-<a name="513"><span class="lineNum">     513 </span>            :     auto qualifier = qual_type-&gt;qualifier();</a>
-<a name="514"><span class="lineNum">     514 </span>            :     return convert_type(qual_type-&gt;base()).known_qual(qualifier);</a>
-<a name="515"><span class="lineNum">     515 </span>            :   } else if (isa&lt;ast::SelfType&gt;(ast_type)) {</a>
-<a name="516"><span class="lineNum">     516 </span>            :     if (parent)</a>
-<a name="517"><span class="lineNum">     517 </span>            :       return *parent;</a>
-<a name="518"><span class="lineNum">     518 </span>            :   } else if (auto* templated = dyn_cast&lt;ast::TemplatedType&gt;(&amp;ast_type)) {</a>
-<a name="519"><span class="lineNum">     519 </span>            :     auto&amp; template_base = templated-&gt;base();</a>
-<a name="520"><span class="lineNum">     520 </span>            :     expression(template_base);</a>
-<a name="521"><span class="lineNum">     521 </span>            :     auto base_type = convert_type(template_base);</a>
-<a name="522"><span class="lineNum">     522 </span>            :     auto struct_obj = std::ranges::find(compiler.m_structs, base_type, &amp;Struct::self_ty);</a>
-<a name="523"><span class="lineNum">     523 </span>            : </a>
-<a name="524"><span class="lineNum">     524 </span>            :     if (struct_obj == compiler.m_structs.end())</a>
-<a name="525"><span class="lineNum">     525 </span>            :       throw std::logic_error(&quot;Can't add template arguments to non-struct types&quot;);</a>
-<a name="526"><span class="lineNum">     526 </span>            : </a>
-<a name="527"><span class="lineNum">     527 </span>            :     for (auto&amp; i : templated-&gt;type_vars())</a>
-<a name="528"><span class="lineNum">     528 </span>            :       expression(*i);</a>
-<a name="529"><span class="lineNum">     529 </span>            : </a>
-<a name="530"><span class="lineNum">     530 </span>            :     // XXX: Duplicated from function overload handling</a>
-<a name="531"><span class="lineNum">     531 </span>            :     Substitution subs = {};</a>
-<a name="532"><span class="lineNum">     532 </span>            :     for (const auto&amp; [gen, gen_sub] : llvm::zip(struct_obj-&gt;type_args, templated-&gt;type_vars()))</a>
-<a name="533"><span class="lineNum">     533 </span>            :       subs.try_emplace(gen-&gt;name(), gen_sub-&gt;ensure_ty());</a>
+<a name="386"><span class="lineNum">     386 </span><span class="lineNoCov">          0 : template &lt;&gt; void TypeWalker::statement(ast::FnDecl&amp; stat) {</span></a>
+<a name="387"><span class="lineNum">     387 </span>            :   scope.clear();</a>
+<a name="388"><span class="lineNum">     388 </span>            : </a>
+<a name="389"><span class="lineNum">     389 </span>            :   for (auto&amp; i : stat.args()) {</a>
+<a name="390"><span class="lineNum">     390 </span>            :     expression(i);</a>
+<a name="391"><span class="lineNum">     391 </span>            :     scope.insert({i.name, &amp;i});</a>
+<a name="392"><span class="lineNum">     392 </span>            :   }</a>
+<a name="393"><span class="lineNum">     393 </span>            : </a>
+<a name="394"><span class="lineNum">     394 </span>            :   if (stat.ret().has_value()) {</a>
+<a name="395"><span class="lineNum">     395 </span>            :     expression(*stat.ret());</a>
+<a name="396"><span class="lineNum">     396 </span>            :     stat.attach_to(stat.ret().raw_ptr());</a>
+<a name="397"><span class="lineNum">     397 </span>            :   }</a>
+<a name="398"><span class="lineNum">     398 </span>            : </a>
+<a name="399"><span class="lineNum">     399 </span>            :   // This decl still has unsubstituted generics, can't instantiate its body</a>
+<a name="400"><span class="lineNum">     400 </span>            :   if (std::ranges::any_of(*current_decl.subs(), [](const auto&amp; sub) noexcept { return sub.second.is_generic(); }))</a>
+<a name="401"><span class="lineNum">     401 </span>            :     return;</a>
+<a name="402"><span class="lineNum">     402 </span>            : </a>
+<a name="403"><span class="lineNum">     403 </span>            :   if (in_depth &amp;&amp; std::holds_alternative&lt;ast::Compound&gt;(stat.body()))</a>
+<a name="404"><span class="lineNum">     404 </span>            :     statement(get&lt;ast::Compound&gt;(stat.body()));</a>
+<a name="405"><span class="lineNum">     405 </span>            : }</a>
+<a name="406"><span class="lineNum">     406 </span>            : </a>
+<a name="407"><span class="lineNum">     407 </span><span class="lineNoCov">          0 : template &lt;&gt; void TypeWalker::statement(ast::CtorDecl&amp; stat) {</span></a>
+<a name="408"><span class="lineNum">     408 </span>            :   scope.clear();</a>
+<a name="409"><span class="lineNum">     409 </span>            : </a>
+<a name="410"><span class="lineNum">     410 </span>            :   const auto* struct_type = current_decl.self_ty()-&gt;without_mut().base_dyn_cast&lt;ty::Struct&gt;();</a>
+<a name="411"><span class="lineNum">     411 </span>            : </a>
+<a name="412"><span class="lineNum">     412 </span>            :   if (struct_type == nullptr)</a>
+<a name="413"><span class="lineNum">     413 </span>            :     throw std::runtime_error(&quot;Can't define constructor of non-struct type&quot;);</a>
+<a name="414"><span class="lineNum">     414 </span>            : </a>
+<a name="415"><span class="lineNum">     415 </span>            :   stat.val_ty(struct_type);</a>
+<a name="416"><span class="lineNum">     416 </span>            :   for (auto&amp; i : stat.args()) {</a>
+<a name="417"><span class="lineNum">     417 </span>            :     expression(i);</a>
+<a name="418"><span class="lineNum">     418 </span>            :     scope.insert({i.name, &amp;i});</a>
+<a name="419"><span class="lineNum">     419 </span>            :   }</a>
+<a name="420"><span class="lineNum">     420 </span>            : </a>
+<a name="421"><span class="lineNum">     421 </span>            :   if (in_depth)</a>
+<a name="422"><span class="lineNum">     422 </span>            :     statement(stat.body());</a>
+<a name="423"><span class="lineNum">     423 </span>            : }</a>
+<a name="424"><span class="lineNum">     424 </span>            : </a>
+<a name="425"><span class="lineNum">     425 </span><span class="lineNoCov">          0 : template &lt;&gt; void TypeWalker::statement(ast::ReturnStmt&amp; stat) {</span></a>
+<a name="426"><span class="lineNum">     426 </span>            :   if (stat.expr().has_value()) {</a>
+<a name="427"><span class="lineNum">     427 </span>            :     body_expression(*stat.expr());</a>
+<a name="428"><span class="lineNum">     428 </span>            :     // If we're returning a local variable, mark that it will leave the scope and should not be destructed yet.</a>
+<a name="429"><span class="lineNum">     429 </span>            :     if (auto* var_expr = dyn_cast&lt;ast::VarExpr&gt;(stat.expr().raw_ptr()))</a>
+<a name="430"><span class="lineNum">     430 </span>            :       if (auto* var_decl = dyn_cast&lt;ast::VarDecl&gt;(scope.at(var_expr-&gt;name())))</a>
+<a name="431"><span class="lineNum">     431 </span>            :         stat.extend_lifetime_of(var_decl);</a>
+<a name="432"><span class="lineNum">     432 </span>            : </a>
+<a name="433"><span class="lineNum">     433 </span>            :     make_implicit_conversion(stat.expr(), current_decl.ast()-&gt;val_ty());</a>
+<a name="434"><span class="lineNum">     434 </span>            :     current_decl.ast()-&gt;attach_to(stat.expr().raw_ptr());</a>
+<a name="435"><span class="lineNum">     435 </span>            :     // TODO(rymiel): Once return type deduction exists, make sure to not return `mut` unless there is an _explicit_ type</a>
+<a name="436"><span class="lineNum">     436 </span>            :     // annotation saying so</a>
+<a name="437"><span class="lineNum">     437 </span>            :   }</a>
+<a name="438"><span class="lineNum">     438 </span>            : }</a>
+<a name="439"><span class="lineNum">     439 </span>            : </a>
+<a name="440"><span class="lineNum">     440 </span><span class="lineNoCov">          0 : template &lt;&gt; void TypeWalker::statement(ast::VarDecl&amp; stat) {</span></a>
+<a name="441"><span class="lineNum">     441 </span>            :   body_expression(*stat.init());</a>
+<a name="442"><span class="lineNum">     442 </span>            :   if (stat.type().has_value()) {</a>
+<a name="443"><span class="lineNum">     443 </span>            :     expression(*stat.type());</a>
+<a name="444"><span class="lineNum">     444 </span>            :     make_implicit_conversion(stat.init(), stat.type()-&gt;val_ty());</a>
+<a name="445"><span class="lineNum">     445 </span>            :     stat.init()-&gt;attach_to(stat.type().raw_ptr());</a>
+<a name="446"><span class="lineNum">     446 </span>            :   }</a>
+<a name="447"><span class="lineNum">     447 </span>            : </a>
+<a name="448"><span class="lineNum">     448 </span>            :   stat.val_ty(stat.init()-&gt;ensure_ty().known_mut());</a>
+<a name="449"><span class="lineNum">     449 </span>            :   scope.insert({stat.name(), &amp;stat});</a>
+<a name="450"><span class="lineNum">     450 </span>            : }</a>
+<a name="451"><span class="lineNum">     451 </span>            : </a>
+<a name="452"><span class="lineNum">     452 </span><span class="lineNoCov">          0 : template &lt;&gt; void TypeWalker::statement(ast::IfStmt&amp; stat) {</span></a>
+<a name="453"><span class="lineNum">     453 </span>            :   for (auto&amp; i : stat.clauses()) {</a>
+<a name="454"><span class="lineNum">     454 </span>            :     body_expression(i.cond());</a>
+<a name="455"><span class="lineNum">     455 </span>            :     statement(i.body());</a>
+<a name="456"><span class="lineNum">     456 </span>            :   }</a>
+<a name="457"><span class="lineNum">     457 </span>            :   auto&amp; else_clause = stat.else_clause();</a>
+<a name="458"><span class="lineNum">     458 </span>            :   if (else_clause)</a>
+<a name="459"><span class="lineNum">     459 </span>            :     statement(*else_clause);</a>
+<a name="460"><span class="lineNum">     460 </span>            : }</a>
+<a name="461"><span class="lineNum">     461 </span>            : </a>
+<a name="462"><span class="lineNum">     462 </span><span class="lineNoCov">          0 : template &lt;&gt; void TypeWalker::statement(ast::WhileStmt&amp; stat) {</span></a>
+<a name="463"><span class="lineNum">     463 </span>            :   body_expression(stat.cond());</a>
+<a name="464"><span class="lineNum">     464 </span>            :   statement(stat.body());</a>
+<a name="465"><span class="lineNum">     465 </span>            : }</a>
+<a name="466"><span class="lineNum">     466 </span>            : </a>
+<a name="467"><span class="lineNum">     467 </span>            : void TypeWalker::body_statement(ast::Stmt&amp; stat) {</a>
+<a name="468"><span class="lineNum">     468 </span>            :   const ASTStackTrace guard(&quot;Semantic: &quot;s + stat.kind_name() + &quot; statement&quot;, stat);</a>
+<a name="469"><span class="lineNum">     469 </span>            :   return CRTPWalker::body_statement(stat);</a>
+<a name="470"><span class="lineNum">     470 </span>            : }</a>
+<a name="471"><span class="lineNum">     471 </span>            : void TypeWalker::body_expression(ast::Expr&amp; expr) {</a>
+<a name="472"><span class="lineNum">     472 </span>            :   const ASTStackTrace guard(&quot;Semantic: &quot;s + expr.kind_name() + &quot; expression&quot;, expr);</a>
+<a name="473"><span class="lineNum">     473 </span>            :   return CRTPWalker::body_expression(expr);</a>
+<a name="474"><span class="lineNum">     474 </span>            : }</a>
+<a name="475"><span class="lineNum">     475 </span>            : </a>
+<a name="476"><span class="lineNum">     476 </span>            : auto TypeWalker::create_slice_type(const ty::Type&amp; base_type) -&gt; ty::Type {</a>
+<a name="477"><span class="lineNum">     477 </span>            :   auto* struct_obj = compiler.m_slice_struct;</a>
+<a name="478"><span class="lineNum">     478 </span>            :   Substitution subs = {{{struct_obj-&gt;type_args.at(0)-&gt;name(), base_type}}};</a>
+<a name="479"><span class="lineNum">     479 </span>            :   auto [already_existed, inst_struct] = struct_obj-&gt;get_or_create_instantiation(subs);</a>
+<a name="480"><span class="lineNum">     480 </span>            : </a>
+<a name="481"><span class="lineNum">     481 </span>            :   if (!already_existed) {</a>
+<a name="482"><span class="lineNum">     482 </span>            :     auto&amp; new_st = inst_struct;</a>
+<a name="483"><span class="lineNum">     483 </span>            : </a>
+<a name="484"><span class="lineNum">     484 </span>            :     with_saved_scope([&amp;] {</a>
+<a name="485"><span class="lineNum">     485 </span>            :       in_depth = false;</a>
+<a name="486"><span class="lineNum">     486 </span>            :       current_decl = &amp;new_st;</a>
+<a name="487"><span class="lineNum">     487 </span>            :       body_statement(new_st.st_ast);</a>
+<a name="488"><span class="lineNum">     488 </span>            :     });</a>
+<a name="489"><span class="lineNum">     489 </span>            : </a>
+<a name="490"><span class="lineNum">     490 </span>            :     if (compiler.create_struct(new_st))</a>
+<a name="491"><span class="lineNum">     491 </span>            :       decl_queue.push(&amp;new_st);</a>
+<a name="492"><span class="lineNum">     492 </span>            :   }</a>
+<a name="493"><span class="lineNum">     493 </span>            : </a>
+<a name="494"><span class="lineNum">     494 </span>            :   return *inst_struct.self_ty;</a>
+<a name="495"><span class="lineNum">     495 </span>            : }</a>
+<a name="496"><span class="lineNum">     496 </span>            : </a>
+<a name="497"><span class="lineNum">     497 </span>            : auto TypeWalker::convert_type(ast::Type&amp; ast_type) -&gt; ty::Type {</a>
+<a name="498"><span class="lineNum">     498 </span>            :   auto parent = current_decl.self_ty();</a>
+<a name="499"><span class="lineNum">     499 </span>            :   const auto* context = static_cast&lt;const DeclLike&gt;(current_decl).subs();</a>
+<a name="500"><span class="lineNum">     500 </span>            : </a>
+<a name="501"><span class="lineNum">     501 </span>            :   if (const auto* simple_type = dyn_cast&lt;ast::SimpleType&gt;(&amp;ast_type)) {</a>
+<a name="502"><span class="lineNum">     502 </span>            :     auto name = simple_type-&gt;name();</a>
+<a name="503"><span class="lineNum">     503 </span>            :     if (context != nullptr) {</a>
+<a name="504"><span class="lineNum">     504 </span>            :       auto generic = context-&gt;find(name);</a>
+<a name="505"><span class="lineNum">     505 </span>            :       if (generic != context-&gt;end())</a>
+<a name="506"><span class="lineNum">     506 </span>            :         return generic-&gt;second;</a>
+<a name="507"><span class="lineNum">     507 </span>            :     }</a>
+<a name="508"><span class="lineNum">     508 </span>            :     auto val = compiler.m_types.known.find(name);</a>
+<a name="509"><span class="lineNum">     509 </span>            :     if (val != compiler.m_types.known.end())</a>
+<a name="510"><span class="lineNum">     510 </span>            :       return val-&gt;second.get();</a>
+<a name="511"><span class="lineNum">     511 </span>            :   } else if (auto* qual_type = dyn_cast&lt;ast::QualType&gt;(&amp;ast_type)) {</a>
+<a name="512"><span class="lineNum">     512 </span>            :     auto qualifier = qual_type-&gt;qualifier();</a>
+<a name="513"><span class="lineNum">     513 </span>            :     return convert_type(qual_type-&gt;base()).known_qual(qualifier);</a>
+<a name="514"><span class="lineNum">     514 </span>            :   } else if (isa&lt;ast::SelfType&gt;(ast_type)) {</a>
+<a name="515"><span class="lineNum">     515 </span>            :     if (parent)</a>
+<a name="516"><span class="lineNum">     516 </span>            :       return *parent;</a>
+<a name="517"><span class="lineNum">     517 </span>            :   } else if (auto* proxy_type = dyn_cast&lt;ast::ProxyType&gt;(&amp;ast_type)) {</a>
+<a name="518"><span class="lineNum">     518 </span>            :     if (parent) {</a>
+<a name="519"><span class="lineNum">     519 </span>            :       if (const auto* parent_struct = parent-&gt;base_dyn_cast&lt;ty::Struct&gt;()) {</a>
+<a name="520"><span class="lineNum">     520 </span>            :         auto [target_type, target_offset] = find_field_ast(*parent_struct, proxy_type-&gt;field());</a>
+<a name="521"><span class="lineNum">     521 </span>            :         if (target_type != nullptr)</a>
+<a name="522"><span class="lineNum">     522 </span>            :           return convert_type(*target_type-&gt;raw_ptr());</a>
+<a name="523"><span class="lineNum">     523 </span>            :         throw std::runtime_error(&quot;Proxy type doesn't refer to a valid field?&quot;);</a>
+<a name="524"><span class="lineNum">     524 </span>            :       }</a>
+<a name="525"><span class="lineNum">     525 </span>            :     }</a>
+<a name="526"><span class="lineNum">     526 </span>            :   } else if (auto* templated = dyn_cast&lt;ast::TemplatedType&gt;(&amp;ast_type)) {</a>
+<a name="527"><span class="lineNum">     527 </span>            :     auto&amp; template_base = templated-&gt;base();</a>
+<a name="528"><span class="lineNum">     528 </span>            :     expression(template_base);</a>
+<a name="529"><span class="lineNum">     529 </span>            :     auto base_type = convert_type(template_base);</a>
+<a name="530"><span class="lineNum">     530 </span>            :     auto struct_obj = std::ranges::find(compiler.m_structs, base_type, &amp;Struct::self_ty);</a>
+<a name="531"><span class="lineNum">     531 </span>            : </a>
+<a name="532"><span class="lineNum">     532 </span>            :     if (struct_obj == compiler.m_structs.end())</a>
+<a name="533"><span class="lineNum">     533 </span>            :       throw std::logic_error(&quot;Can't add template arguments to non-struct types&quot;);</a>
 <a name="534"><span class="lineNum">     534 </span>            : </a>
-<a name="535"><span class="lineNum">     535 </span>            :     auto [already_existed, inst_struct] = struct_obj-&gt;get_or_create_instantiation(subs);</a>
-<a name="536"><span class="lineNum">     536 </span>            : </a>
-<a name="537"><span class="lineNum">     537 </span>            :     if (!already_existed) {</a>
-<a name="538"><span class="lineNum">     538 </span>            :       auto&amp; new_st = inst_struct;</a>
-<a name="539"><span class="lineNum">     539 </span>            : </a>
-<a name="540"><span class="lineNum">     540 </span>            :       with_saved_scope([&amp;] {</a>
-<a name="541"><span class="lineNum">     541 </span>            :         in_depth = false;</a>
-<a name="542"><span class="lineNum">     542 </span>            :         current_decl = &amp;new_st;</a>
-<a name="543"><span class="lineNum">     543 </span>            :         body_statement(new_st.st_ast);</a>
-<a name="544"><span class="lineNum">     544 </span>            :       });</a>
-<a name="545"><span class="lineNum">     545 </span>            : </a>
-<a name="546"><span class="lineNum">     546 </span>            :       if (compiler.create_struct(new_st))</a>
-<a name="547"><span class="lineNum">     547 </span>            :         decl_queue.push(&amp;new_st);</a>
-<a name="548"><span class="lineNum">     548 </span>            :     }</a>
-<a name="549"><span class="lineNum">     549 </span>            : </a>
-<a name="550"><span class="lineNum">     550 </span>            :     return *inst_struct.self_ty;</a>
-<a name="551"><span class="lineNum">     551 </span>            :   }</a>
-<a name="552"><span class="lineNum">     552 </span>            : </a>
-<a name="553"><span class="lineNum">     553 </span>            :   throw std::runtime_error(&quot;Cannot convert AST type to actual type! &quot;s + ast_type.kind_name() + &quot; (&quot; +</a>
-<a name="554"><span class="lineNum">     554 </span>            :                            ast_type.describe() + &quot;)&quot;);</a>
-<a name="555"><span class="lineNum">     555 </span>            : }</a>
-<a name="556"><span class="lineNum">     556 </span>            : </a>
-<a name="557"><span class="lineNum">     557 </span>            : void TypeWalker::resolve_queue() {</a>
-<a name="558"><span class="lineNum">     558 </span>            :   while (!decl_queue.empty()) {</a>
-<a name="559"><span class="lineNum">     559 </span>            :     auto next = decl_queue.front();</a>
-<a name="560"><span class="lineNum">     560 </span>            :     decl_queue.pop();</a>
-<a name="561"><span class="lineNum">     561 </span>            : </a>
-<a name="562"><span class="lineNum">     562 </span>            :     with_saved_scope([&amp;] {</a>
-<a name="563"><span class="lineNum">     563 </span>            :       next.visit_decl(</a>
-<a name="564"><span class="lineNum">     564 </span>            :           [&amp;](Fn* fn) {</a>
-<a name="565"><span class="lineNum">     565 </span>            :             in_depth = true;</a>
-<a name="566"><span class="lineNum">     566 </span>            :             compiler.declare(*fn);</a>
-<a name="567"><span class="lineNum">     567 </span>            :           },</a>
-<a name="568"><span class="lineNum">     568 </span>            :           [&amp;](Struct* st) {</a>
-<a name="569"><span class="lineNum">     569 </span>            :             for (auto&amp; i : st-&gt;body().body()) {</a>
-<a name="570"><span class="lineNum">     570 </span>            :               auto decl = compiler.decl_statement(*i, st-&gt;self_ty, st-&gt;member);</a>
-<a name="571"><span class="lineNum">     571 </span>            : </a>
-<a name="572"><span class="lineNum">     572 </span>            :               // &quot;Inherit&quot; substitutions</a>
-<a name="573"><span class="lineNum">     573 </span>            :               // TODO(rymiel): Shadowing type variables should be an error</a>
-<a name="574"><span class="lineNum">     574 </span>            :               for (auto&amp; [k, v] : st-&gt;subs)</a>
-<a name="575"><span class="lineNum">     575 </span>            :                 decl.subs()-&gt;try_emplace(k, v);</a>
-<a name="576"><span class="lineNum">     576 </span>            :               compiler.walk_types(decl);</a>
-<a name="577"><span class="lineNum">     577 </span>            :             }</a>
-<a name="578"><span class="lineNum">     578 </span>            :           },</a>
-<a name="579"><span class="lineNum">     579 </span>            :           [&amp;](Ctor* /*ctor*/) { throw std::runtime_error(&quot;Unimplemented&quot;); });</a>
-<a name="580"><span class="lineNum">     580 </span>            :     });</a>
-<a name="581"><span class="lineNum">     581 </span>            :   }</a>
-<a name="582"><span class="lineNum">     582 </span>            : }</a>
-<a name="583"><span class="lineNum">     583 </span>            : } // namespace yume::semantic</a>
+<a name="535"><span class="lineNum">     535 </span>            :     for (auto&amp; i : templated-&gt;type_vars())</a>
+<a name="536"><span class="lineNum">     536 </span>            :       expression(*i);</a>
+<a name="537"><span class="lineNum">     537 </span>            : </a>
+<a name="538"><span class="lineNum">     538 </span>            :     // XXX: Duplicated from function overload handling</a>
+<a name="539"><span class="lineNum">     539 </span>            :     Substitution subs = {};</a>
+<a name="540"><span class="lineNum">     540 </span>            :     for (const auto&amp; [gen, gen_sub] : llvm::zip(struct_obj-&gt;type_args, templated-&gt;type_vars()))</a>
+<a name="541"><span class="lineNum">     541 </span>            :       subs.try_emplace(gen-&gt;name(), gen_sub-&gt;ensure_ty());</a>
+<a name="542"><span class="lineNum">     542 </span>            : </a>
+<a name="543"><span class="lineNum">     543 </span>            :     auto [already_existed, inst_struct] = struct_obj-&gt;get_or_create_instantiation(subs);</a>
+<a name="544"><span class="lineNum">     544 </span>            : </a>
+<a name="545"><span class="lineNum">     545 </span>            :     if (!already_existed) {</a>
+<a name="546"><span class="lineNum">     546 </span>            :       auto&amp; new_st = inst_struct;</a>
+<a name="547"><span class="lineNum">     547 </span>            : </a>
+<a name="548"><span class="lineNum">     548 </span>            :       with_saved_scope([&amp;] {</a>
+<a name="549"><span class="lineNum">     549 </span>            :         in_depth = false;</a>
+<a name="550"><span class="lineNum">     550 </span>            :         current_decl = &amp;new_st;</a>
+<a name="551"><span class="lineNum">     551 </span>            :         body_statement(new_st.st_ast);</a>
+<a name="552"><span class="lineNum">     552 </span>            :       });</a>
+<a name="553"><span class="lineNum">     553 </span>            : </a>
+<a name="554"><span class="lineNum">     554 </span>            :       if (compiler.create_struct(new_st))</a>
+<a name="555"><span class="lineNum">     555 </span>            :         decl_queue.push(&amp;new_st);</a>
+<a name="556"><span class="lineNum">     556 </span>            :     }</a>
+<a name="557"><span class="lineNum">     557 </span>            : </a>
+<a name="558"><span class="lineNum">     558 </span>            :     return *inst_struct.self_ty;</a>
+<a name="559"><span class="lineNum">     559 </span>            :   }</a>
+<a name="560"><span class="lineNum">     560 </span>            : </a>
+<a name="561"><span class="lineNum">     561 </span>            :   throw std::runtime_error(&quot;Cannot convert AST type to actual type! &quot;s + ast_type.kind_name() + &quot; (&quot; +</a>
+<a name="562"><span class="lineNum">     562 </span>            :                            ast_type.describe() + &quot;)&quot;);</a>
+<a name="563"><span class="lineNum">     563 </span>            : }</a>
+<a name="564"><span class="lineNum">     564 </span>            : </a>
+<a name="565"><span class="lineNum">     565 </span>            : void TypeWalker::resolve_queue() {</a>
+<a name="566"><span class="lineNum">     566 </span>            :   while (!decl_queue.empty()) {</a>
+<a name="567"><span class="lineNum">     567 </span>            :     auto next = decl_queue.front();</a>
+<a name="568"><span class="lineNum">     568 </span>            :     decl_queue.pop();</a>
+<a name="569"><span class="lineNum">     569 </span>            : </a>
+<a name="570"><span class="lineNum">     570 </span>            :     with_saved_scope([&amp;] {</a>
+<a name="571"><span class="lineNum">     571 </span>            :       next.visit_decl(</a>
+<a name="572"><span class="lineNum">     572 </span>            :           [&amp;](Fn* fn) {</a>
+<a name="573"><span class="lineNum">     573 </span>            :             in_depth = true;</a>
+<a name="574"><span class="lineNum">     574 </span>            :             compiler.declare(*fn);</a>
+<a name="575"><span class="lineNum">     575 </span>            :           },</a>
+<a name="576"><span class="lineNum">     576 </span>            :           [&amp;](Struct* st) {</a>
+<a name="577"><span class="lineNum">     577 </span>            :             for (auto&amp; i : st-&gt;body().body()) {</a>
+<a name="578"><span class="lineNum">     578 </span>            :               auto decl = compiler.decl_statement(*i, st-&gt;self_ty, st-&gt;member);</a>
+<a name="579"><span class="lineNum">     579 </span>            : </a>
+<a name="580"><span class="lineNum">     580 </span>            :               // &quot;Inherit&quot; substitutions</a>
+<a name="581"><span class="lineNum">     581 </span>            :               // TODO(rymiel): Shadowing type variables should be an error</a>
+<a name="582"><span class="lineNum">     582 </span>            :               for (auto&amp; [k, v] : st-&gt;subs)</a>
+<a name="583"><span class="lineNum">     583 </span>            :                 decl.subs()-&gt;try_emplace(k, v);</a>
+<a name="584"><span class="lineNum">     584 </span>            :               compiler.walk_types(decl);</a>
+<a name="585"><span class="lineNum">     585 </span>            :             }</a>
+<a name="586"><span class="lineNum">     586 </span>            :           });</a>
+<a name="587"><span class="lineNum">     587 </span>            :     });</a>
+<a name="588"><span class="lineNum">     588 </span>            :   }</a>
+<a name="589"><span class="lineNum">     589 </span>            : }</a>
+<a name="590"><span class="lineNum">     590 </span>            : } // namespace yume::semantic</a>
 </pre>
       </td>
     </tr>

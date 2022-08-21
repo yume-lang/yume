@@ -32,12 +32,12 @@
             <td></td>
             <td class="headerItem">Lines:</td>
             <td class="headerCovTableEntry">16</td>
-            <td class="headerCovTableEntry">112</td>
-            <td class="headerCovTableEntryLo">14.3 %</td>
+            <td class="headerCovTableEntry">115</td>
+            <td class="headerCovTableEntryLo">13.9 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-08-21 19:45:14</td>
+            <td class="headerValue">2022-08-21 22:22:48</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -206,154 +206,159 @@
 <a name="148"><span class="lineNum">     148 </span>            :     return T(span&lt;Token&gt;{entry.base(), tokens.begin().base()}, std::forward&lt;Args&gt;(args)...);</a>
 <a name="149"><span class="lineNum">     149 </span>            :   }</a>
 <a name="150"><span class="lineNum">     150 </span>            : </a>
-<a name="151"><span class="lineNum">     151 </span><span class="lineNoCov">          0 :   constexpr static auto Symbol = Token::Type::Symbol;</span></a>
-<a name="152"><span class="lineNum">     152 </span><span class="lineNoCov">          0 :   constexpr static auto Word = Token::Type::Word;</span></a>
-<a name="153"><span class="lineNum">     153 </span><span class="lineNoCov">          0 :   constexpr static auto Separator = Token::Type::Separator;</span></a>
-<a name="154"><span class="lineNum">     154 </span><span class="lineNoCov">          0 :   constexpr static auto Number = Token::Type::Number;</span></a>
+<a name="151"><span class="lineNum">     151 </span><span class="lineNoCov">          0 :   struct FnArg {</span></a>
+<a name="152"><span class="lineNum">     152 </span><span class="lineNoCov">          0 :     unique_ptr&lt;TypeName&gt; type_name;</span></a>
+<a name="153"><span class="lineNum">     153 </span><span class="lineNoCov">          0 :     OptionalStmt extra_body;</span></a>
+<a name="154"><span class="lineNum">     154 </span>            :   };</a>
 <a name="155"><span class="lineNum">     155 </span>            : </a>
-<a name="156"><span class="lineNum">     156 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto make_guard(const string&amp; message) const -&gt; ParserStackTrace { return {message, *tokens}; }</span></a>
-<a name="157"><span class="lineNum">     157 </span>            : </a>
-<a name="158"><span class="lineNum">     158 </span><span class="lineNoCov">          0 :   static auto operators() {</span></a>
-<a name="159"><span class="lineNum">     159 </span>            :     const static array OPERATORS = {</a>
-<a name="160"><span class="lineNum">     160 </span>            :         vector{SYM_AND},</a>
-<a name="161"><span class="lineNum">     161 </span>            :         vector{SYM_EQ_EQ, SYM_NEQ, SYM_GT, SYM_LT},</a>
-<a name="162"><span class="lineNum">     162 </span>            :         vector{SYM_PLUS, SYM_MINUS},</a>
-<a name="163"><span class="lineNum">     163 </span>            :         vector{SYM_PERCENT, SYM_SLASH_SLASH, SYM_STAR},</a>
-<a name="164"><span class="lineNum">     164 </span>            :     };</a>
-<a name="165"><span class="lineNum">     165 </span>            :     return OPERATORS;</a>
-<a name="166"><span class="lineNum">     166 </span>            :   };</a>
-<a name="167"><span class="lineNum">     167 </span>            : </a>
-<a name="168"><span class="lineNum">     168 </span><span class="lineNoCov">          0 :   static auto unary_operators() {</span></a>
-<a name="169"><span class="lineNum">     169 </span>            :     const static vector UNARY_OPERATORS = {</a>
-<a name="170"><span class="lineNum">     170 </span>            :         SYM_MINUS,</a>
-<a name="171"><span class="lineNum">     171 </span>            :         SYM_PLUS,</a>
-<a name="172"><span class="lineNum">     172 </span>            :         SYM_BANG,</a>
-<a name="173"><span class="lineNum">     173 </span>            :     };</a>
-<a name="174"><span class="lineNum">     174 </span>            :     return UNARY_OPERATORS;</a>
-<a name="175"><span class="lineNum">     175 </span>            :   };</a>
-<a name="176"><span class="lineNum">     176 </span>            : </a>
-<a name="177"><span class="lineNum">     177 </span><span class="lineNoCov">          0 :   static auto to_string(Token token) -&gt; string;</span></a>
-<a name="178"><span class="lineNum">     178 </span>            : </a>
-<a name="179"><span class="lineNum">     179 </span>            :   /// Ignore any `Separator` tokens if any are present.</a>
-<a name="180"><span class="lineNum">     180 </span>            :   /// \returns true if a separator was encountered (and consumed)</a>
-<a name="181"><span class="lineNum">     181 </span><span class="lineCov">          1 :   auto ignore_separator(source_location location = source_location::current()) -&gt; bool;</span></a>
-<a name="182"><span class="lineNum">     182 </span>            : </a>
-<a name="183"><span class="lineNum">     183 </span>            :   /// If the next token doesn't have the type, `token_type`, throw a runtime exception.</a>
-<a name="184"><span class="lineNum">     184 </span><span class="lineCov">          1 :   void expect(Token::Type token_type, source_location location = source_location::current()) const;</span></a>
-<a name="185"><span class="lineNum">     185 </span>            : </a>
-<a name="186"><span class="lineNum">     186 </span>            :   /// Consume all subsequent `Separator` tokens. Throws if none were found.</a>
-<a name="187"><span class="lineNum">     187 </span><span class="lineCov">          1 :   void require_separator(source_location location = source_location::current());</span></a>
-<a name="188"><span class="lineNum">     188 </span>            : </a>
-<a name="189"><span class="lineNum">     189 </span>            :   /// Consume a token of the given type and payload. Throws if it wasn't encountered.</a>
-<a name="190"><span class="lineNum">     190 </span><span class="lineCov">          1 :   void consume(TokenAtom token_atom, source_location location = source_location::current());</span></a>
-<a name="191"><span class="lineNum">     191 </span>            : </a>
-<a name="192"><span class="lineNum">     192 </span>            :   /// Attempt to consume a token of the given type and payload. Returns false if it wasn't encountered.</a>
-<a name="193"><span class="lineNum">     193 </span><span class="lineCov">          1 :   auto try_consume(TokenAtom token_atom, source_location location = source_location::current()) -&gt; bool;</span></a>
-<a name="194"><span class="lineNum">     194 </span>            : </a>
-<a name="195"><span class="lineNum">     195 </span>            :   /// Check if the token ahead by `ahead` is of the given type and payload.</a>
-<a name="196"><span class="lineNum">     196 </span><span class="lineCov">          1 :   [[nodiscard]] auto try_peek(int ahead, TokenAtom token_atom,</span></a>
-<a name="197"><span class="lineNum">     197 </span>            :                               source_location location = source_location::current()) const -&gt; bool;</a>
-<a name="198"><span class="lineNum">     198 </span>            : </a>
-<a name="199"><span class="lineNum">     199 </span>            :   /// Check if the token ahead by `ahead` is of type `token_type`.</a>
-<a name="200"><span class="lineNum">     200 </span><span class="lineCov">          1 :   [[nodiscard]] auto try_peek(int ahead, Token::Type token_type,</span></a>
-<a name="201"><span class="lineNum">     201 </span>            :                               source_location location = source_location::current()) const -&gt; bool;</a>
-<a name="202"><span class="lineNum">     202 </span>            : </a>
-<a name="203"><span class="lineNum">     203 </span>            :   /// Consume tokens until a token of the given type and payload is encountered.</a>
-<a name="204"><span class="lineNum">     204 </span>            :   /// `action` (a no-arg function) is called every time. Between each call, a comma is expected.</a>
-<a name="205"><span class="lineNum">     205 </span><span class="lineCov">          1 :   void consume_with_commas_until(TokenAtom token_atom, std::invocable auto action,</span></a>
-<a name="206"><span class="lineNum">     206 </span>            :                                  const source_location location = source_location::current()) {</a>
-<a name="207"><span class="lineNum">     207 </span>            :     int i = 0;</a>
-<a name="208"><span class="lineNum">     208 </span>            :     while (!try_consume(token_atom, location)) {</a>
-<a name="209"><span class="lineNum">     209 </span>            :       if (i++ &gt; 0)</a>
-<a name="210"><span class="lineNum">     210 </span>            :         consume(SYM_COMMA, location);</a>
-<a name="211"><span class="lineNum">     211 </span>            :       action();</a>
-<a name="212"><span class="lineNum">     212 </span>            :     }</a>
-<a name="213"><span class="lineNum">     213 </span>            :   }</a>
-<a name="214"><span class="lineNum">     214 </span>            : </a>
-<a name="215"><span class="lineNum">     215 </span>            :   /// Return the next token and increment the iterator.</a>
-<a name="216"><span class="lineNum">     216 </span><span class="lineCov">          1 :   auto next([[maybe_unused]] source_location location = source_location::current()) -&gt; Token;</span></a>
-<a name="217"><span class="lineNum">     217 </span>            : </a>
-<a name="218"><span class="lineNum">     218 </span>            :   /// Returns the payload of the next token and increment the iterator.</a>
-<a name="219"><span class="lineNum">     219 </span>            :   /// \throws if the next token has no payload</a>
-<a name="220"><span class="lineNum">     220 </span><span class="lineCov">          1 :   auto assert_payload_next([[maybe_unused]] source_location location = source_location::current()) -&gt; Atom;</span></a>
-<a name="221"><span class="lineNum">     221 </span>            : </a>
-<a name="222"><span class="lineNum">     222 </span>            :   /// Return the payload of the next token. Throws if the next token isn't a `Word`.</a>
-<a name="223"><span class="lineNum">     223 </span><span class="lineCov">          1 :   auto consume_word(source_location location = source_location::current()) -&gt; string;</span></a>
-<a name="224"><span class="lineNum">     224 </span>            : </a>
-<a name="225"><span class="lineNum">     225 </span>            :   /// Check if the string begins with a capital letter. Used for types, as all types must be capitalized.</a>
-<a name="226"><span class="lineNum">     226 </span><span class="lineCov">          1 :   static auto is_uword(string_view word) -&gt; bool { return isupper(word.front()) != 0; }</span></a>
-<a name="227"><span class="lineNum">     227 </span>            : </a>
-<a name="228"><span class="lineNum">     228 </span>            :   /// Check if the ahead by `ahead` is a capitalized word.</a>
-<a name="229"><span class="lineNum">     229 </span><span class="lineCov">          1 :   [[nodiscard]] auto try_peek_uword(int ahead, source_location location = source_location::current()) const -&gt; bool;</span></a>
-<a name="230"><span class="lineNum">     230 </span>            : </a>
-<a name="231"><span class="lineNum">     231 </span><span class="lineNoCov">          0 :   auto parse_stmt() -&gt; unique_ptr&lt;Stmt&gt;;</span></a>
-<a name="232"><span class="lineNum">     232 </span><span class="lineNoCov">          0 :   auto parse_expr() -&gt; unique_ptr&lt;Expr&gt;;</span></a>
-<a name="233"><span class="lineNum">     233 </span>            : </a>
-<a name="234"><span class="lineNum">     234 </span><span class="lineNoCov">          0 :   auto parse_type(bool implicit_self = false) -&gt; unique_ptr&lt;Type&gt;;</span></a>
+<a name="156"><span class="lineNum">     156 </span><span class="lineNoCov">          0 :   constexpr static auto Symbol = Token::Type::Symbol;</span></a>
+<a name="157"><span class="lineNum">     157 </span><span class="lineNoCov">          0 :   constexpr static auto Word = Token::Type::Word;</span></a>
+<a name="158"><span class="lineNum">     158 </span><span class="lineNoCov">          0 :   constexpr static auto Separator = Token::Type::Separator;</span></a>
+<a name="159"><span class="lineNum">     159 </span><span class="lineNoCov">          0 :   constexpr static auto Number = Token::Type::Number;</span></a>
+<a name="160"><span class="lineNum">     160 </span>            : </a>
+<a name="161"><span class="lineNum">     161 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto make_guard(const string&amp; message) const -&gt; ParserStackTrace { return {message, *tokens}; }</span></a>
+<a name="162"><span class="lineNum">     162 </span>            : </a>
+<a name="163"><span class="lineNum">     163 </span><span class="lineNoCov">          0 :   static auto operators() {</span></a>
+<a name="164"><span class="lineNum">     164 </span>            :     const static array OPERATORS = {</a>
+<a name="165"><span class="lineNum">     165 </span>            :         vector{SYM_AND},</a>
+<a name="166"><span class="lineNum">     166 </span>            :         vector{SYM_EQ_EQ, SYM_NEQ, SYM_GT, SYM_LT},</a>
+<a name="167"><span class="lineNum">     167 </span>            :         vector{SYM_PLUS, SYM_MINUS},</a>
+<a name="168"><span class="lineNum">     168 </span>            :         vector{SYM_PERCENT, SYM_SLASH_SLASH, SYM_STAR},</a>
+<a name="169"><span class="lineNum">     169 </span>            :     };</a>
+<a name="170"><span class="lineNum">     170 </span>            :     return OPERATORS;</a>
+<a name="171"><span class="lineNum">     171 </span>            :   };</a>
+<a name="172"><span class="lineNum">     172 </span>            : </a>
+<a name="173"><span class="lineNum">     173 </span><span class="lineNoCov">          0 :   static auto unary_operators() {</span></a>
+<a name="174"><span class="lineNum">     174 </span>            :     const static vector UNARY_OPERATORS = {</a>
+<a name="175"><span class="lineNum">     175 </span>            :         SYM_MINUS,</a>
+<a name="176"><span class="lineNum">     176 </span>            :         SYM_PLUS,</a>
+<a name="177"><span class="lineNum">     177 </span>            :         SYM_BANG,</a>
+<a name="178"><span class="lineNum">     178 </span>            :     };</a>
+<a name="179"><span class="lineNum">     179 </span>            :     return UNARY_OPERATORS;</a>
+<a name="180"><span class="lineNum">     180 </span>            :   };</a>
+<a name="181"><span class="lineNum">     181 </span>            : </a>
+<a name="182"><span class="lineNum">     182 </span><span class="lineNoCov">          0 :   static auto to_string(Token token) -&gt; string;</span></a>
+<a name="183"><span class="lineNum">     183 </span>            : </a>
+<a name="184"><span class="lineNum">     184 </span>            :   /// Ignore any `Separator` tokens if any are present.</a>
+<a name="185"><span class="lineNum">     185 </span>            :   /// \returns true if a separator was encountered (and consumed)</a>
+<a name="186"><span class="lineNum">     186 </span><span class="lineCov">          1 :   auto ignore_separator(source_location location = source_location::current()) -&gt; bool;</span></a>
+<a name="187"><span class="lineNum">     187 </span>            : </a>
+<a name="188"><span class="lineNum">     188 </span>            :   /// If the next token doesn't have the type, `token_type`, throw a runtime exception.</a>
+<a name="189"><span class="lineNum">     189 </span><span class="lineCov">          1 :   void expect(Token::Type token_type, source_location location = source_location::current()) const;</span></a>
+<a name="190"><span class="lineNum">     190 </span>            : </a>
+<a name="191"><span class="lineNum">     191 </span>            :   /// Consume all subsequent `Separator` tokens. Throws if none were found.</a>
+<a name="192"><span class="lineNum">     192 </span><span class="lineCov">          1 :   void require_separator(source_location location = source_location::current());</span></a>
+<a name="193"><span class="lineNum">     193 </span>            : </a>
+<a name="194"><span class="lineNum">     194 </span>            :   /// Consume a token of the given type and payload. Throws if it wasn't encountered.</a>
+<a name="195"><span class="lineNum">     195 </span><span class="lineCov">          1 :   void consume(TokenAtom token_atom, source_location location = source_location::current());</span></a>
+<a name="196"><span class="lineNum">     196 </span>            : </a>
+<a name="197"><span class="lineNum">     197 </span>            :   /// Attempt to consume a token of the given type and payload. Returns false if it wasn't encountered.</a>
+<a name="198"><span class="lineNum">     198 </span><span class="lineCov">          1 :   auto try_consume(TokenAtom token_atom, source_location location = source_location::current()) -&gt; bool;</span></a>
+<a name="199"><span class="lineNum">     199 </span>            : </a>
+<a name="200"><span class="lineNum">     200 </span>            :   /// Check if the token ahead by `ahead` is of the given type and payload.</a>
+<a name="201"><span class="lineNum">     201 </span><span class="lineCov">          1 :   [[nodiscard]] auto try_peek(int ahead, TokenAtom token_atom,</span></a>
+<a name="202"><span class="lineNum">     202 </span>            :                               source_location location = source_location::current()) const -&gt; bool;</a>
+<a name="203"><span class="lineNum">     203 </span>            : </a>
+<a name="204"><span class="lineNum">     204 </span>            :   /// Check if the token ahead by `ahead` is of type `token_type`.</a>
+<a name="205"><span class="lineNum">     205 </span><span class="lineCov">          1 :   [[nodiscard]] auto try_peek(int ahead, Token::Type token_type,</span></a>
+<a name="206"><span class="lineNum">     206 </span>            :                               source_location location = source_location::current()) const -&gt; bool;</a>
+<a name="207"><span class="lineNum">     207 </span>            : </a>
+<a name="208"><span class="lineNum">     208 </span>            :   /// Consume tokens until a token of the given type and payload is encountered.</a>
+<a name="209"><span class="lineNum">     209 </span>            :   /// `action` (a no-arg function) is called every time. Between each call, a comma is expected.</a>
+<a name="210"><span class="lineNum">     210 </span><span class="lineCov">          1 :   void consume_with_commas_until(TokenAtom token_atom, std::invocable auto action,</span></a>
+<a name="211"><span class="lineNum">     211 </span>            :                                  const source_location location = source_location::current()) {</a>
+<a name="212"><span class="lineNum">     212 </span>            :     int i = 0;</a>
+<a name="213"><span class="lineNum">     213 </span>            :     while (!try_consume(token_atom, location)) {</a>
+<a name="214"><span class="lineNum">     214 </span>            :       if (i++ &gt; 0)</a>
+<a name="215"><span class="lineNum">     215 </span>            :         consume(SYM_COMMA, location);</a>
+<a name="216"><span class="lineNum">     216 </span>            :       action();</a>
+<a name="217"><span class="lineNum">     217 </span>            :     }</a>
+<a name="218"><span class="lineNum">     218 </span>            :   }</a>
+<a name="219"><span class="lineNum">     219 </span>            : </a>
+<a name="220"><span class="lineNum">     220 </span>            :   /// Return the next token and increment the iterator.</a>
+<a name="221"><span class="lineNum">     221 </span><span class="lineCov">          1 :   auto next([[maybe_unused]] source_location location = source_location::current()) -&gt; Token;</span></a>
+<a name="222"><span class="lineNum">     222 </span>            : </a>
+<a name="223"><span class="lineNum">     223 </span>            :   /// Returns the payload of the next token and increment the iterator.</a>
+<a name="224"><span class="lineNum">     224 </span>            :   /// \throws if the next token has no payload</a>
+<a name="225"><span class="lineNum">     225 </span><span class="lineCov">          1 :   auto assert_payload_next([[maybe_unused]] source_location location = source_location::current()) -&gt; Atom;</span></a>
+<a name="226"><span class="lineNum">     226 </span>            : </a>
+<a name="227"><span class="lineNum">     227 </span>            :   /// Return the payload of the next token. Throws if the next token isn't a `Word`.</a>
+<a name="228"><span class="lineNum">     228 </span><span class="lineCov">          1 :   auto consume_word(source_location location = source_location::current()) -&gt; string;</span></a>
+<a name="229"><span class="lineNum">     229 </span>            : </a>
+<a name="230"><span class="lineNum">     230 </span>            :   /// Check if the string begins with a capital letter. Used for types, as all types must be capitalized.</a>
+<a name="231"><span class="lineNum">     231 </span><span class="lineCov">          1 :   static auto is_uword(string_view word) -&gt; bool { return isupper(word.front()) != 0; }</span></a>
+<a name="232"><span class="lineNum">     232 </span>            : </a>
+<a name="233"><span class="lineNum">     233 </span>            :   /// Check if the ahead by `ahead` is a capitalized word.</a>
+<a name="234"><span class="lineNum">     234 </span><span class="lineCov">          1 :   [[nodiscard]] auto try_peek_uword(int ahead, source_location location = source_location::current()) const -&gt; bool;</span></a>
 <a name="235"><span class="lineNum">     235 </span>            : </a>
-<a name="236"><span class="lineNum">     236 </span><span class="lineNoCov">          0 :   auto parse_type_name() -&gt; unique_ptr&lt;TypeName&gt;;</span></a>
-<a name="237"><span class="lineNum">     237 </span>            : </a>
-<a name="238"><span class="lineNum">     238 </span><span class="lineNoCov">          0 :   auto try_parse_type() -&gt; optional&lt;unique_ptr&lt;Type&gt;&gt;;</span></a>
-<a name="239"><span class="lineNum">     239 </span>            : </a>
-<a name="240"><span class="lineNum">     240 </span><span class="lineNoCov">          0 :   auto parse_fn_name() -&gt; string;</span></a>
-<a name="241"><span class="lineNum">     241 </span>            : </a>
-<a name="242"><span class="lineNum">     242 </span><span class="lineNoCov">          0 :   auto parse_struct_decl() -&gt; unique_ptr&lt;StructDecl&gt;;</span></a>
+<a name="236"><span class="lineNum">     236 </span><span class="lineNoCov">          0 :   auto parse_stmt() -&gt; unique_ptr&lt;Stmt&gt;;</span></a>
+<a name="237"><span class="lineNum">     237 </span><span class="lineNoCov">          0 :   auto parse_expr() -&gt; unique_ptr&lt;Expr&gt;;</span></a>
+<a name="238"><span class="lineNum">     238 </span>            : </a>
+<a name="239"><span class="lineNum">     239 </span><span class="lineNoCov">          0 :   auto parse_fn_arg() -&gt; FnArg;</span></a>
+<a name="240"><span class="lineNum">     240 </span>            : </a>
+<a name="241"><span class="lineNum">     241 </span><span class="lineNoCov">          0 :   auto try_parse_type() -&gt; optional&lt;unique_ptr&lt;Type&gt;&gt;;</span></a>
+<a name="242"><span class="lineNum">     242 </span><span class="lineNoCov">          0 :   auto parse_type(bool implicit_self = false) -&gt; unique_ptr&lt;Type&gt;;</span></a>
 <a name="243"><span class="lineNum">     243 </span>            : </a>
-<a name="244"><span class="lineNum">     244 </span><span class="lineNoCov">          0 :   auto parse_fn_or_ctor_decl() -&gt; unique_ptr&lt;Stmt&gt;;</span></a>
-<a name="245"><span class="lineNum">     245 </span><span class="lineNoCov">          0 :   auto parse_fn_decl() -&gt; unique_ptr&lt;FnDecl&gt;;</span></a>
-<a name="246"><span class="lineNum">     246 </span><span class="lineNoCov">          0 :   auto parse_ctor_decl() -&gt; unique_ptr&lt;CtorDecl&gt;;</span></a>
-<a name="247"><span class="lineNum">     247 </span><span class="lineNoCov">          0 :   auto parse_type_name_or_ctor_field() -&gt; CtorDecl::arg_t;</span></a>
-<a name="248"><span class="lineNum">     248 </span>            : </a>
-<a name="249"><span class="lineNum">     249 </span><span class="lineNoCov">          0 :   auto parse_var_decl() -&gt; unique_ptr&lt;VarDecl&gt;;</span></a>
-<a name="250"><span class="lineNum">     250 </span>            : </a>
-<a name="251"><span class="lineNum">     251 </span><span class="lineNoCov">          0 :   auto parse_while_stmt() -&gt; unique_ptr&lt;WhileStmt&gt;;</span></a>
-<a name="252"><span class="lineNum">     252 </span>            : </a>
-<a name="253"><span class="lineNum">     253 </span><span class="lineNoCov">          0 :   auto parse_return_stmt() -&gt; unique_ptr&lt;ReturnStmt&gt;;</span></a>
-<a name="254"><span class="lineNum">     254 </span>            : </a>
-<a name="255"><span class="lineNum">     255 </span><span class="lineNoCov">          0 :   auto parse_if_stmt() -&gt; unique_ptr&lt;IfStmt&gt;;</span></a>
-<a name="256"><span class="lineNum">     256 </span>            : </a>
-<a name="257"><span class="lineNum">     257 </span><span class="lineNoCov">          0 :   auto parse_number_expr() -&gt; unique_ptr&lt;NumberExpr&gt;;</span></a>
-<a name="258"><span class="lineNum">     258 </span>            : </a>
-<a name="259"><span class="lineNum">     259 </span><span class="lineNoCov">          0 :   auto parse_string_expr() -&gt; unique_ptr&lt;StringExpr&gt;;</span></a>
-<a name="260"><span class="lineNum">     260 </span>            : </a>
-<a name="261"><span class="lineNum">     261 </span><span class="lineNoCov">          0 :   auto parse_char_expr() -&gt; unique_ptr&lt;CharExpr&gt;;</span></a>
-<a name="262"><span class="lineNum">     262 </span>            : </a>
-<a name="263"><span class="lineNum">     263 </span><span class="lineNoCov">          0 :   auto parse_primary() -&gt; unique_ptr&lt;Expr&gt;;</span></a>
-<a name="264"><span class="lineNum">     264 </span>            : </a>
-<a name="265"><span class="lineNum">     265 </span><span class="lineNoCov">          0 :   auto parse_receiver(unique_ptr&lt;Expr&gt; receiver, VectorTokenIterator receiver_entry) -&gt; unique_ptr&lt;Expr&gt;;</span></a>
-<a name="266"><span class="lineNum">     266 </span>            : </a>
-<a name="267"><span class="lineNum">     267 </span><span class="lineNoCov">          0 :   auto parse_receiver() -&gt; unique_ptr&lt;Expr&gt;;</span></a>
-<a name="268"><span class="lineNum">     268 </span>            : </a>
-<a name="269"><span class="lineNum">     269 </span><span class="lineNoCov">          0 :   auto parse_unary() -&gt; unique_ptr&lt;Expr&gt;;</span></a>
-<a name="270"><span class="lineNum">     270 </span>            : </a>
-<a name="271"><span class="lineNum">     271 </span><span class="lineNoCov">          0 :   template &lt;size_t N = 0&gt; auto parse_operator() -&gt; unique_ptr&lt;Expr&gt; {</span></a>
-<a name="272"><span class="lineNum">     272 </span>            :     auto entry = tokens.begin();</a>
-<a name="273"><span class="lineNum">     273 </span>            :     const auto ops = operators();</a>
-<a name="274"><span class="lineNum">     274 </span>            :     if constexpr (N == ops.size()) {</a>
-<a name="275"><span class="lineNum">     275 </span>            :       return parse_unary();</a>
-<a name="276"><span class="lineNum">     276 </span>            :     } else {</a>
-<a name="277"><span class="lineNum">     277 </span>            :       auto left = parse_operator&lt;N + 1&gt;();</a>
-<a name="278"><span class="lineNum">     278 </span>            :       while (true) {</a>
-<a name="279"><span class="lineNum">     279 </span>            :         auto found_operator = false;</a>
-<a name="280"><span class="lineNum">     280 </span>            :         for (const auto&amp; op : ops[N]) {</a>
-<a name="281"><span class="lineNum">     281 </span>            :           if (try_consume(op)) {</a>
-<a name="282"><span class="lineNum">     282 </span>            :             auto right = parse_operator&lt;N + 1&gt;();</a>
-<a name="283"><span class="lineNum">     283 </span>            :             auto args = vector&lt;AnyExpr&gt;{};</a>
-<a name="284"><span class="lineNum">     284 </span>            :             args.emplace_back(move(left));</a>
-<a name="285"><span class="lineNum">     285 </span>            :             args.emplace_back(move(right));</a>
-<a name="286"><span class="lineNum">     286 </span>            :             left = ast_ptr&lt;CallExpr&gt;(entry, string(std::get&lt;Atom&gt;(op)), move(args));</a>
-<a name="287"><span class="lineNum">     287 </span>            :             found_operator = true;</a>
-<a name="288"><span class="lineNum">     288 </span>            :             break;</a>
-<a name="289"><span class="lineNum">     289 </span>            :           }</a>
-<a name="290"><span class="lineNum">     290 </span>            :         }</a>
-<a name="291"><span class="lineNum">     291 </span>            :         if (!found_operator)</a>
-<a name="292"><span class="lineNum">     292 </span>            :           break;</a>
-<a name="293"><span class="lineNum">     293 </span>            :       }</a>
-<a name="294"><span class="lineNum">     294 </span>            :       return left;</a>
-<a name="295"><span class="lineNum">     295 </span>            :     }</a>
-<a name="296"><span class="lineNum">     296 </span>            :   }</a>
-<a name="297"><span class="lineNum">     297 </span>            : };</a>
-<a name="298"><span class="lineNum">     298 </span>            : } // namespace yume::ast::parser</a>
+<a name="244"><span class="lineNum">     244 </span><span class="lineNoCov">          0 :   auto parse_type_name() -&gt; unique_ptr&lt;TypeName&gt;;</span></a>
+<a name="245"><span class="lineNum">     245 </span>            : </a>
+<a name="246"><span class="lineNum">     246 </span><span class="lineNoCov">          0 :   auto parse_fn_name() -&gt; string;</span></a>
+<a name="247"><span class="lineNum">     247 </span>            : </a>
+<a name="248"><span class="lineNum">     248 </span><span class="lineNoCov">          0 :   auto parse_struct_decl() -&gt; unique_ptr&lt;StructDecl&gt;;</span></a>
+<a name="249"><span class="lineNum">     249 </span>            : </a>
+<a name="250"><span class="lineNum">     250 </span><span class="lineNoCov">          0 :   auto parse_fn_or_ctor_decl() -&gt; unique_ptr&lt;Stmt&gt;;</span></a>
+<a name="251"><span class="lineNum">     251 </span><span class="lineNoCov">          0 :   auto parse_fn_decl() -&gt; unique_ptr&lt;FnDecl&gt;;</span></a>
+<a name="252"><span class="lineNum">     252 </span><span class="lineNoCov">          0 :   auto parse_ctor_decl() -&gt; unique_ptr&lt;CtorDecl&gt;;</span></a>
+<a name="253"><span class="lineNum">     253 </span>            : </a>
+<a name="254"><span class="lineNum">     254 </span><span class="lineNoCov">          0 :   auto parse_var_decl() -&gt; unique_ptr&lt;VarDecl&gt;;</span></a>
+<a name="255"><span class="lineNum">     255 </span>            : </a>
+<a name="256"><span class="lineNum">     256 </span><span class="lineNoCov">          0 :   auto parse_while_stmt() -&gt; unique_ptr&lt;WhileStmt&gt;;</span></a>
+<a name="257"><span class="lineNum">     257 </span>            : </a>
+<a name="258"><span class="lineNum">     258 </span><span class="lineNoCov">          0 :   auto parse_return_stmt() -&gt; unique_ptr&lt;ReturnStmt&gt;;</span></a>
+<a name="259"><span class="lineNum">     259 </span>            : </a>
+<a name="260"><span class="lineNum">     260 </span><span class="lineNoCov">          0 :   auto parse_if_stmt() -&gt; unique_ptr&lt;IfStmt&gt;;</span></a>
+<a name="261"><span class="lineNum">     261 </span>            : </a>
+<a name="262"><span class="lineNum">     262 </span><span class="lineNoCov">          0 :   auto parse_number_expr() -&gt; unique_ptr&lt;NumberExpr&gt;;</span></a>
+<a name="263"><span class="lineNum">     263 </span>            : </a>
+<a name="264"><span class="lineNum">     264 </span><span class="lineNoCov">          0 :   auto parse_string_expr() -&gt; unique_ptr&lt;StringExpr&gt;;</span></a>
+<a name="265"><span class="lineNum">     265 </span>            : </a>
+<a name="266"><span class="lineNum">     266 </span><span class="lineNoCov">          0 :   auto parse_char_expr() -&gt; unique_ptr&lt;CharExpr&gt;;</span></a>
+<a name="267"><span class="lineNum">     267 </span>            : </a>
+<a name="268"><span class="lineNum">     268 </span><span class="lineNoCov">          0 :   auto parse_primary() -&gt; unique_ptr&lt;Expr&gt;;</span></a>
+<a name="269"><span class="lineNum">     269 </span>            : </a>
+<a name="270"><span class="lineNum">     270 </span><span class="lineNoCov">          0 :   auto parse_receiver(unique_ptr&lt;Expr&gt; receiver, VectorTokenIterator receiver_entry) -&gt; unique_ptr&lt;Expr&gt;;</span></a>
+<a name="271"><span class="lineNum">     271 </span>            : </a>
+<a name="272"><span class="lineNum">     272 </span><span class="lineNoCov">          0 :   auto parse_receiver() -&gt; unique_ptr&lt;Expr&gt;;</span></a>
+<a name="273"><span class="lineNum">     273 </span>            : </a>
+<a name="274"><span class="lineNum">     274 </span><span class="lineNoCov">          0 :   auto parse_unary() -&gt; unique_ptr&lt;Expr&gt;;</span></a>
+<a name="275"><span class="lineNum">     275 </span>            : </a>
+<a name="276"><span class="lineNum">     276 </span><span class="lineNoCov">          0 :   template &lt;size_t N = 0&gt; auto parse_operator() -&gt; unique_ptr&lt;Expr&gt; {</span></a>
+<a name="277"><span class="lineNum">     277 </span>            :     auto entry = tokens.begin();</a>
+<a name="278"><span class="lineNum">     278 </span>            :     const auto ops = operators();</a>
+<a name="279"><span class="lineNum">     279 </span>            :     if constexpr (N == ops.size()) {</a>
+<a name="280"><span class="lineNum">     280 </span>            :       return parse_unary();</a>
+<a name="281"><span class="lineNum">     281 </span>            :     } else {</a>
+<a name="282"><span class="lineNum">     282 </span>            :       auto left = parse_operator&lt;N + 1&gt;();</a>
+<a name="283"><span class="lineNum">     283 </span>            :       while (true) {</a>
+<a name="284"><span class="lineNum">     284 </span>            :         auto found_operator = false;</a>
+<a name="285"><span class="lineNum">     285 </span>            :         for (const auto&amp; op : ops[N]) {</a>
+<a name="286"><span class="lineNum">     286 </span>            :           if (try_consume(op)) {</a>
+<a name="287"><span class="lineNum">     287 </span>            :             auto right = parse_operator&lt;N + 1&gt;();</a>
+<a name="288"><span class="lineNum">     288 </span>            :             auto args = vector&lt;AnyExpr&gt;{};</a>
+<a name="289"><span class="lineNum">     289 </span>            :             args.emplace_back(move(left));</a>
+<a name="290"><span class="lineNum">     290 </span>            :             args.emplace_back(move(right));</a>
+<a name="291"><span class="lineNum">     291 </span>            :             left = ast_ptr&lt;CallExpr&gt;(entry, string(std::get&lt;Atom&gt;(op)), move(args));</a>
+<a name="292"><span class="lineNum">     292 </span>            :             found_operator = true;</a>
+<a name="293"><span class="lineNum">     293 </span>            :             break;</a>
+<a name="294"><span class="lineNum">     294 </span>            :           }</a>
+<a name="295"><span class="lineNum">     295 </span>            :         }</a>
+<a name="296"><span class="lineNum">     296 </span>            :         if (!found_operator)</a>
+<a name="297"><span class="lineNum">     297 </span>            :           break;</a>
+<a name="298"><span class="lineNum">     298 </span>            :       }</a>
+<a name="299"><span class="lineNum">     299 </span>            :       return left;</a>
+<a name="300"><span class="lineNum">     300 </span>            :     }</a>
+<a name="301"><span class="lineNum">     301 </span>            :   }</a>
+<a name="302"><span class="lineNum">     302 </span>            : };</a>
+<a name="303"><span class="lineNum">     303 </span>            : } // namespace yume::ast::parser</a>
 </pre>
       </td>
     </tr>

@@ -1,0 +1,6 @@
+<map id="yume::FnArg" name="yume::FnArg">
+<area shape="rect" id="node1" title=" " alt="" coords="112,95,207,121"/>
+<area shape="rect" id="node2" href="$classyume_1_1ty_1_1Type.html" title="A &quot;qualified&quot; type, with a non&#45;stackable qualifier, .i.e. mut." alt="" coords="5,5,108,32"/>
+<area shape="rect" id="node3" title=" " alt="" coords="132,5,187,32"/>
+<area shape="rect" id="node4" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="211,5,321,32"/>
+</map>

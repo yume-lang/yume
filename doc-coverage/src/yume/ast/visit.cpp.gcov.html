@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-08-21 19:45:14</td>
+            <td class="headerValue">2022-08-21 22:22:48</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -100,19 +100,20 @@
 <a name="42"><span class="lineNum">      42 </span>            : void SimpleType::visit(Visitor&amp; visitor) const { visitor.visit(m_name); }</a>
 <a name="43"><span class="lineNum">      43 </span>            : void QualType::visit(Visitor&amp; visitor) const { visitor.visit(m_base, describe().c_str()); }</a>
 <a name="44"><span class="lineNum">      44 </span>            : void TemplatedType::visit(Visitor&amp; visitor) const { visitor.visit(m_base).visit(m_type_args, &quot;type arg&quot;); }</a>
-<a name="45"><span class="lineNum">      45 </span>            : void TypeName::visit(Visitor&amp; visitor) const { visitor.visit(name).visit(type); }</a>
-<a name="46"><span class="lineNum">      46 </span>            : void Compound::visit(Visitor&amp; visitor) const { visitor.visit(m_body); }</a>
-<a name="47"><span class="lineNum">      47 </span>            : void VarExpr::visit(Visitor&amp; visitor) const { visitor.visit(m_name); }</a>
-<a name="48"><span class="lineNum">      48 </span>            : void CallExpr::visit(Visitor&amp; visitor) const { visitor.visit(m_name).visit(m_args); }</a>
-<a name="49"><span class="lineNum">      49 </span>            : void CtorExpr::visit(Visitor&amp; visitor) const { visitor.visit(m_type).visit(m_args); }</a>
-<a name="50"><span class="lineNum">      50 </span>            : void DtorExpr::visit(Visitor&amp; visitor) const { visitor.visit(m_base); }</a>
-<a name="51"><span class="lineNum">      51 </span>            : void SliceExpr::visit(Visitor&amp; visitor) const { visitor.visit(m_type).visit(m_args); }</a>
-<a name="52"><span class="lineNum">      52 </span>            : void AssignExpr::visit(Visitor&amp; visitor) const { visitor.visit(m_target).visit(m_value); }</a>
-<a name="53"><span class="lineNum">      53 </span>            : void FieldAccessExpr::visit(Visitor&amp; visitor) const { visitor.visit(m_base).visit(m_field); }</a>
-<a name="54"><span class="lineNum">      54 </span>            : void ImplicitCastExpr::visit(Visitor&amp; visitor) const { visitor.visit(m_conversion.to_string()).visit(m_base); }</a>
-<a name="55"><span class="lineNum">      55 </span>            : void Program::visit(Visitor&amp; visitor) const { visitor.visit(m_body); }</a>
-<a name="56"><span class="lineNum">      56 </span>            : </a>
-<a name="57"><span class="lineNum">      57 </span>            : } // namespace yume::ast</a>
+<a name="45"><span class="lineNum">      45 </span>            : void ProxyType::visit(Visitor&amp; visitor) const { visitor.visit(m_field); }</a>
+<a name="46"><span class="lineNum">      46 </span>            : void TypeName::visit(Visitor&amp; visitor) const { visitor.visit(name).visit(type); }</a>
+<a name="47"><span class="lineNum">      47 </span>            : void Compound::visit(Visitor&amp; visitor) const { visitor.visit(m_body); }</a>
+<a name="48"><span class="lineNum">      48 </span>            : void VarExpr::visit(Visitor&amp; visitor) const { visitor.visit(m_name); }</a>
+<a name="49"><span class="lineNum">      49 </span>            : void CallExpr::visit(Visitor&amp; visitor) const { visitor.visit(m_name).visit(m_args); }</a>
+<a name="50"><span class="lineNum">      50 </span>            : void CtorExpr::visit(Visitor&amp; visitor) const { visitor.visit(m_type).visit(m_args); }</a>
+<a name="51"><span class="lineNum">      51 </span>            : void DtorExpr::visit(Visitor&amp; visitor) const { visitor.visit(m_base); }</a>
+<a name="52"><span class="lineNum">      52 </span>            : void SliceExpr::visit(Visitor&amp; visitor) const { visitor.visit(m_type).visit(m_args); }</a>
+<a name="53"><span class="lineNum">      53 </span>            : void AssignExpr::visit(Visitor&amp; visitor) const { visitor.visit(m_target).visit(m_value); }</a>
+<a name="54"><span class="lineNum">      54 </span>            : void FieldAccessExpr::visit(Visitor&amp; visitor) const { visitor.visit(m_base).visit(m_field); }</a>
+<a name="55"><span class="lineNum">      55 </span>            : void ImplicitCastExpr::visit(Visitor&amp; visitor) const { visitor.visit(m_conversion.to_string()).visit(m_base); }</a>
+<a name="56"><span class="lineNum">      56 </span>            : void Program::visit(Visitor&amp; visitor) const { visitor.visit(m_body); }</a>
+<a name="57"><span class="lineNum">      57 </span>            : </a>
+<a name="58"><span class="lineNum">      58 </span>            : } // namespace yume::ast</a>
 </pre>
       </td>
     </tr>

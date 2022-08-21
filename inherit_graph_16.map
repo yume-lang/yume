@@ -1,4 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$structyume_1_1CRTPWalker.html" title=" " alt="" coords="5,5,223,47"/>
-<area shape="rect" id="node2" href="$structyume_1_1semantic_1_1TypeWalker.html" title="Determine the type information of AST nodes. This makes up most of the &quot;semantic&quot; phase of the compil..." alt="" coords="271,13,457,39"/>
+<area shape="rect" id="node1" href="$structyume_1_1CRTPWalker.html" title=" " alt="" coords="5,5,212,32"/>
+<area shape="rect" id="node2" href="$classyume_1_1Compiler.html" title="The Compiler the the primary top&#45;level type during compilation. A single instance is created during t..." alt="" coords="260,5,371,32"/>
 </map>

@@ -69,7 +69,6 @@ $(function() {
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="structyume_1_1Fn-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">yume::Fn Struct Reference</div></div>
@@ -85,19 +84,19 @@ Collaboration diagram for yume::Fn:</div>
 <div class="dyncontent">
 <div class="center"><img src="structyume_1_1Fn__coll__graph.png" border="0" usemap="#ayume_1_1Fn_coll__map" alt="Collaboration graph"/></div>
 <map name="ayume_1_1Fn_coll__map" id="ayume_1_1Fn_coll__map">
-<area shape="rect" title="A function declaration in the compiler." alt="" coords="1027,244,1101,271"/>
-<area shape="rect" href="structyume_1_1FnBase.html" title="Common values between function declarations (Fn) and constructors (Ctor), which behave very similarly..." alt="" coords="760,157,864,184"/>
-<area shape="rect" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,43,115,69"/>
-<area shape="rect" href="classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="164,68,275,95"/>
-<area shape="rect" title=" " alt="" coords="433,119,558,161"/>
-<area shape="rect" title=" " alt="" coords="186,127,253,153"/>
-<area shape="rect" href="classyume_1_1ast_1_1Program.html" title="The top level structure of a file of source code." alt="" coords="429,68,561,95"/>
-<area shape="rect" href="structyume_1_1Substitution.html" title=" " alt="" coords="431,185,559,212"/>
-<area shape="rect" href="classsubstitution__t.html" title=" " alt="" coords="169,185,269,212"/>
-<area shape="rect" title=" " alt="" coords="455,236,535,263"/>
-<area shape="rect" title=" " alt="" coords="735,237,889,278"/>
-<area shape="rect" title=" " alt="" coords="466,291,525,317"/>
-<area shape="rect" title=" " alt="" coords="727,302,897,343"/>
+<area shape="rect" title="A function declaration in the compiler." alt="" coords="740,173,815,200"/>
+<area shape="rect" href="classyume_1_1ast_1_1Decl.html" title="Base class for a named declaration." alt="" coords="471,5,580,32"/>
+<area shape="rect" href="classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="164,36,275,63"/>
+<area shape="rect" href="classyume_1_1ast_1_1Program.html" title="The top level structure of a file of source code." alt="" coords="459,56,591,83"/>
+<area shape="rect" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,36,115,63"/>
+<area shape="rect" title=" " alt="" coords="463,107,588,149"/>
+<area shape="rect" title=" " alt="" coords="186,115,253,141"/>
+<area shape="rect" href="structyume_1_1Substitution.html" title=" " alt="" coords="461,173,589,200"/>
+<area shape="rect" href="classsubstitution__t.html" title=" " alt="" coords="169,173,269,200"/>
+<area shape="rect" title=" " alt="" coords="485,224,565,251"/>
+<area shape="rect" title=" " alt="" coords="449,275,602,317"/>
+<area shape="rect" title=" " alt="" coords="190,283,249,309"/>
+<area shape="rect" title=" " alt="" coords="440,341,611,382"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -110,42 +109,68 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a621843f353191e25797da1150d725815"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a621843f353191e25797da1150d725815">Fn</a> (<a class="el" href="classyume_1_1ast_1_1FnDecl.html">ast::FnDecl</a> &amp;ast_decl, optional&lt; <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> &gt; parent=std::nullopt, <a class="el" href="classyume_1_1ast_1_1Program.html">ast::Program</a> *member=nullptr, <a class="el" href="structyume_1_1Substitution.html">Substitution</a> subs={}, vector&lt; unique_ptr&lt; <a class="el" href="classyume_1_1ty_1_1Generic.html">ty::Generic</a> &gt; &gt; <a class="el" href="structyume_1_1Fn.html#a877b194a1c37eb0b43278824020efae6">type_args</a>={}) noexcept</td></tr>
-<tr class="separator:a621843f353191e25797da1150d725815"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afe086a7c615c80d12ac94b78b53b9cd8"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#afe086a7c615c80d12ac94b78b53b9cd8">ast</a> () const noexcept -&gt; const auto &amp;</td></tr>
-<tr class="separator:afe086a7c615c80d12ac94b78b53b9cd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a94b221bf7acb5cad5c14ff13e64db464"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a94b221bf7acb5cad5c14ff13e64db464">ast</a> () noexcept -&gt; auto &amp;</td></tr>
-<tr class="separator:a94b221bf7acb5cad5c14ff13e64db464"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6dbcfd161ffe86b31947638869c23ee5"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a6dbcfd161ffe86b31947638869c23ee5">body</a> () const noexcept -&gt; const auto &amp;</td></tr>
-<tr class="separator:a6dbcfd161ffe86b31947638869c23ee5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd7e78d2fa2be83bc1ee06da02a11f6c"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#acd7e78d2fa2be83bc1ee06da02a11f6c">get_self_ty</a> () const noexcept -&gt; optional&lt; <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> &gt;</td></tr>
-<tr class="separator:acd7e78d2fa2be83bc1ee06da02a11f6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8153a84cea46d8ec2a92bea7f7333307"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a8153a84cea46d8ec2a92bea7f7333307">get_subs</a> () const noexcept -&gt; const <a class="el" href="structyume_1_1Substitution.html">Substitution</a> &amp;</td></tr>
-<tr class="separator:a8153a84cea46d8ec2a92bea7f7333307"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab0f9c669080b8d4c154b3008085289e6"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#ab0f9c669080b8d4c154b3008085289e6">get_subs</a> () noexcept -&gt; <a class="el" href="structyume_1_1Substitution.html">Substitution</a> &amp;</td></tr>
-<tr class="separator:ab0f9c669080b8d4c154b3008085289e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a175f02ac1886913600d54a40c3aebcf6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a175f02ac1886913600d54a40c3aebcf6">Fn</a> (<a class="el" href="classyume_1_1ast_1_1Decl.html">ast::Decl</a> &amp;<a class="el" href="structyume_1_1Fn.html#ae1b317636c95160d67fae062e17942e5">ast_decl</a>, optional&lt; <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> &gt; parent=std::nullopt, <a class="el" href="classyume_1_1ast_1_1Program.html">ast::Program</a> *<a class="el" href="structyume_1_1Fn.html#a005f8ee83c46d1deb914546dc3bbefce">member</a>=nullptr, <a class="el" href="structyume_1_1Substitution.html">Substitution</a> <a class="el" href="structyume_1_1Fn.html#af7aecb21bd8678c27f88e8189ff8a071">subs</a>={}, vector&lt; unique_ptr&lt; <a class="el" href="classyume_1_1ty_1_1Generic.html">ty::Generic</a> &gt; &gt; <a class="el" href="structyume_1_1Fn.html#a877b194a1c37eb0b43278824020efae6">type_args</a>={})</td></tr>
+<tr class="separator:a175f02ac1886913600d54a40c3aebcf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae472ecb2c5445a3286af71b89f8530d7"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#ae472ecb2c5445a3286af71b89f8530d7">fn_body</a> () const -&gt; const <a class="el" href="classyume_1_1ast_1_1FnDecl.html#afaf6024b81adaab666ca0a07d9eec967">ast::FnDecl::body_t</a> &amp;</td></tr>
+<tr class="separator:ae472ecb2c5445a3286af71b89f8530d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a617671e36295331bb945c46eac5dfdb8"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a617671e36295331bb945c46eac5dfdb8">compound_body</a> () const -&gt; const <a class="el" href="classyume_1_1ast_1_1Compound.html">ast::Compound</a> &amp;</td></tr>
+<tr class="separator:a617671e36295331bb945c46eac5dfdb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a00e57809020f6920357b7f3d90f0dc59"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a00e57809020f6920357b7f3d90f0dc59">ast</a> () const -&gt; const auto &amp;</td></tr>
+<tr class="separator:a00e57809020f6920357b7f3d90f0dc59"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad004581850ccdb4ceee7c2d1af52dd0b"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#ad004581850ccdb4ceee7c2d1af52dd0b">ast</a> () -&gt; auto &amp;</td></tr>
+<tr class="separator:ad004581850ccdb4ceee7c2d1af52dd0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74055817039f2933153e0374b5e247ab"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a74055817039f2933153e0374b5e247ab">get_self_ty</a> () const -&gt; optional&lt; <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> &gt;</td></tr>
+<tr class="separator:a74055817039f2933153e0374b5e247ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aefacc27a1c1ccb32260735bfebc4002d"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#aefacc27a1c1ccb32260735bfebc4002d">get_subs</a> () const -&gt; const <a class="el" href="structyume_1_1Substitution.html">Substitution</a> &amp;</td></tr>
+<tr class="separator:aefacc27a1c1ccb32260735bfebc4002d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e6e9956d8c7806ee11091c7705295bf"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a1e6e9956d8c7806ee11091c7705295bf">get_subs</a> () -&gt; <a class="el" href="structyume_1_1Substitution.html">Substitution</a> &amp;</td></tr>
+<tr class="separator:a1e6e9956d8c7806ee11091c7705295bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada0ff4fe438648c78c63b27112c093c0"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#ada0ff4fe438648c78c63b27112c093c0">ret</a> () const -&gt; optional&lt; <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> &gt;</td></tr>
+<tr class="separator:ada0ff4fe438648c78c63b27112c093c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92067c08150b7ba131c0eaed752bd652"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a92067c08150b7ba131c0eaed752bd652">arg_count</a> () const -&gt; size_t</td></tr>
+<tr class="separator:a92067c08150b7ba131c0eaed752bd652"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a76eba433fa95da20aa37d9888e21b91f"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a76eba433fa95da20aa37d9888e21b91f">arg_types</a> () const -&gt; vector&lt; <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> &gt;</td></tr>
+<tr class="separator:a76eba433fa95da20aa37d9888e21b91f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a22902810faab3278141676137a47e710"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a22902810faab3278141676137a47e710">arg_names</a> () const -&gt; vector&lt; string &gt;</td></tr>
+<tr class="separator:a22902810faab3278141676137a47e710"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad5a00fbdb923697997c568f800d21d0e"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#ad5a00fbdb923697997c568f800d21d0e">arg_nodes</a> () const -&gt; const vector&lt; <a class="el" href="structyume_1_1ast_1_1TypeName.html">ast::TypeName</a> &gt; &amp;</td></tr>
+<tr class="separator:ad5a00fbdb923697997c568f800d21d0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f59ebc6d3fd24e194dcaf7bffbbaecf"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a8f59ebc6d3fd24e194dcaf7bffbbaecf">args</a> () const -&gt; vector&lt; <a class="el" href="structyume_1_1FnArg.html">FnArg</a> &gt;</td></tr>
+<tr class="separator:a8f59ebc6d3fd24e194dcaf7bffbbaecf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a55ecbd5021974990fabe7dd3ed4d20"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a7a55ecbd5021974990fabe7dd3ed4d20">varargs</a> () const -&gt; bool</td></tr>
+<tr class="separator:a7a55ecbd5021974990fabe7dd3ed4d20"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f5fa64c533d98ef00427896ca5b1709"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a5f5fa64c533d98ef00427896ca5b1709">primitive</a> () const -&gt; bool</td></tr>
+<tr class="separator:a5f5fa64c533d98ef00427896ca5b1709"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e6e9fe6bece6252f19655a33762be02"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a6e6e9fe6bece6252f19655a33762be02">extern_decl</a> () const -&gt; bool</td></tr>
+<tr class="separator:a6e6e9fe6bece6252f19655a33762be02"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79f679d6067560e990497de1bb567524"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a79f679d6067560e990497de1bb567524">extern_linkage</a> () const -&gt; bool</td></tr>
+<tr class="separator:a79f679d6067560e990497de1bb567524"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa277ddec9fadf9f4d2bc23b3a0ee3c13"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#aa277ddec9fadf9f4d2bc23b3a0ee3c13">make_extern_linkage</a> (bool value=true)</td></tr>
+<tr class="separator:aa277ddec9fadf9f4d2bc23b3a0ee3c13"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adc644ec3786b2b3c7edc98b045f1e09f"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#adc644ec3786b2b3c7edc98b045f1e09f">name</a> () const noexcept -&gt; string</td></tr>
 <tr class="separator:adc644ec3786b2b3c7edc98b045f1e09f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a31d932303af53b081d7de0edbe66f887"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a31d932303af53b081d7de0edbe66f887">get_or_create_instantiation</a> (<a class="el" href="structyume_1_1Substitution.html">Substitution</a> &amp;subs) noexcept -&gt; std::pair&lt; bool, <a class="el" href="structyume_1_1Fn.html">Fn</a> &amp; &gt;</td></tr>
+<tr class="memitem:a31d932303af53b081d7de0edbe66f887"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a31d932303af53b081d7de0edbe66f887">get_or_create_instantiation</a> (<a class="el" href="structyume_1_1Substitution.html">Substitution</a> &amp;<a class="el" href="structyume_1_1Fn.html#af7aecb21bd8678c27f88e8189ff8a071">subs</a>) noexcept -&gt; std::pair&lt; bool, <a class="el" href="structyume_1_1Fn.html">Fn</a> &amp; &gt;</td></tr>
 <tr class="separator:a31d932303af53b081d7de0edbe66f887"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad260859e434238bf453c2fd4a2c9d913"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#ad260859e434238bf453c2fd4a2c9d913">create_instantiation</a> (<a class="el" href="structyume_1_1Substitution.html">Substitution</a> &amp;subs) noexcept -&gt; <a class="el" href="structyume_1_1Fn.html">Fn</a> &amp;</td></tr>
+<tr class="memitem:ad260859e434238bf453c2fd4a2c9d913"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#ad260859e434238bf453c2fd4a2c9d913">create_instantiation</a> (<a class="el" href="structyume_1_1Substitution.html">Substitution</a> &amp;<a class="el" href="structyume_1_1Fn.html#af7aecb21bd8678c27f88e8189ff8a071">subs</a>) noexcept -&gt; <a class="el" href="structyume_1_1Fn.html">Fn</a> &amp;</td></tr>
 <tr class="separator:ad260859e434238bf453c2fd4a2c9d913"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
-Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a81a7c1d968964a847d77cb2570843762"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a81a7c1d968964a847d77cb2570843762">overload_name</a> (const <a class="el" href="structyume_1_1Fn.html#a72e1b2d75a58efa9f2a6eeb20bfadaf2">call_t</a> &amp;<a class="el" href="structyume_1_1Fn.html#afe086a7c615c80d12ac94b78b53b9cd8">ast</a>) noexcept -&gt; string</td></tr>
-<tr class="separator:a81a7c1d968964a847d77cb2570843762"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0b94dda5a2d7fa98dd4c74ff2a165bf7"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a0b94dda5a2d7fa98dd4c74ff2a165bf7">arg_type</a> (const <a class="el" href="classyume_1_1ast_1_1FnDecl.html#a90c57adcd690037cbe17cc8b034b9957">decl_t::arg_t</a> &amp;<a class="el" href="structyume_1_1Fn.html#afe086a7c615c80d12ac94b78b53b9cd8">ast</a>) noexcept -&gt; optional&lt; <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> &gt;</td></tr>
-<tr class="separator:a0b94dda5a2d7fa98dd4c74ff2a165bf7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab07781145c2583df7a024f5860d3ce86"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#ab07781145c2583df7a024f5860d3ce86">arg_name</a> (const <a class="el" href="classyume_1_1ast_1_1FnDecl.html#a90c57adcd690037cbe17cc8b034b9957">decl_t::arg_t</a> &amp;<a class="el" href="structyume_1_1Fn.html#afe086a7c615c80d12ac94b78b53b9cd8">ast</a>) noexcept -&gt; string</td></tr>
-<tr class="separator:ab07781145c2583df7a024f5860d3ce86"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a81dfd2f1e19a803117ccb05c0c277dad"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a81dfd2f1e19a803117ccb05c0c277dad">common_ast</a> (const <a class="el" href="classyume_1_1ast_1_1FnDecl.html#a90c57adcd690037cbe17cc8b034b9957">decl_t::arg_t</a> &amp;<a class="el" href="structyume_1_1Fn.html#afe086a7c615c80d12ac94b78b53b9cd8">ast</a>) noexcept -&gt; const <a class="el" href="classyume_1_1ast_1_1AST.html">ast::AST</a> &amp;</td></tr>
-<tr class="separator:a81dfd2f1e19a803117ccb05c0c277dad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:ab0462bd4293843609ef41a547f78654b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structyume_1_1FnBase.html">FnBase</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#ab0462bd4293843609ef41a547f78654b">base</a></td></tr>
-<tr class="separator:ab0462bd4293843609ef41a547f78654b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae1b317636c95160d67fae062e17942e5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classyume_1_1ast_1_1Decl.html">ast::Decl</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#ae1b317636c95160d67fae062e17942e5">ast_decl</a></td></tr>
+<tr class="memdesc:ae1b317636c95160d67fae062e17942e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">The ast node that defines this declaration.  <a href="structyume_1_1Fn.html#ae1b317636c95160d67fae062e17942e5">More...</a><br /></td></tr>
+<tr class="separator:ae1b317636c95160d67fae062e17942e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07d168f745b90dba8815716e5800e511"><td class="memItemLeft" align="right" valign="top">optional&lt; <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a07d168f745b90dba8815716e5800e511">self_ty</a> {}</td></tr>
+<tr class="memdesc:a07d168f745b90dba8815716e5800e511"><td class="mdescLeft">&#160;</td><td class="mdescRight">If this function is in the body of a struct, this points to its type. Used for the <code>self</code> type.  <a href="structyume_1_1Fn.html#a07d168f745b90dba8815716e5800e511">More...</a><br /></td></tr>
+<tr class="separator:a07d168f745b90dba8815716e5800e511"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a005f8ee83c46d1deb914546dc3bbefce"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classyume_1_1ast_1_1Program.html">ast::Program</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a005f8ee83c46d1deb914546dc3bbefce">member</a> {}</td></tr>
+<tr class="memdesc:a005f8ee83c46d1deb914546dc3bbefce"><td class="mdescLeft">&#160;</td><td class="mdescRight">The program this declaration is a member of.  <a href="structyume_1_1Fn.html#a005f8ee83c46d1deb914546dc3bbefce">More...</a><br /></td></tr>
+<tr class="separator:a005f8ee83c46d1deb914546dc3bbefce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7aecb21bd8678c27f88e8189ff8a071"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structyume_1_1Substitution.html">Substitution</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#af7aecb21bd8678c27f88e8189ff8a071">subs</a> {}</td></tr>
+<tr class="memdesc:af7aecb21bd8678c27f88e8189ff8a071"><td class="mdescLeft">&#160;</td><td class="mdescRight">If this is an instantiation of a template, a mapping between type variables and their substitutions.  <a href="structyume_1_1Fn.html#af7aecb21bd8678c27f88e8189ff8a071">More...</a><br /></td></tr>
+<tr class="separator:af7aecb21bd8678c27f88e8189ff8a071"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a782fd88435bf09047ed6d69cad5302a0"><td class="memItemLeft" align="right" valign="top">llvm::Function *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a782fd88435bf09047ed6d69cad5302a0">llvm</a> {}</td></tr>
+<tr class="memdesc:a782fd88435bf09047ed6d69cad5302a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">The LLVM function definition corresponding to this function or constructor.  <a href="structyume_1_1Fn.html#a782fd88435bf09047ed6d69cad5302a0">More...</a><br /></td></tr>
+<tr class="separator:a782fd88435bf09047ed6d69cad5302a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a877b194a1c37eb0b43278824020efae6"><td class="memItemLeft" align="right" valign="top">vector&lt; unique_ptr&lt; <a class="el" href="classyume_1_1ty_1_1Generic.html">ty::Generic</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a877b194a1c37eb0b43278824020efae6">type_args</a> {}</td></tr>
 <tr class="separator:a877b194a1c37eb0b43278824020efae6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e93d5e55cf14fb68ef3e9809ada66bb"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="structyume_1_1Substitution.html">Substitution</a>, unique_ptr&lt; <a class="el" href="structyume_1_1Fn.html">Fn</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Fn.html#a1e93d5e55cf14fb68ef3e9809ada66bb">instantiations</a> {}</td></tr>
@@ -155,7 +180,7 @@ Public Attributes</h2></td></tr>
 <div class="textblock"><p >A function declaration in the compiler. </p>
 <p >The primary use of this structure is to bind together the AST declaration of a function (<code><a class="el" href="classyume_1_1ast_1_1FnDecl.html" title="A declaration of a function (def).">ast::FnDecl</a></code>) and the bytecode body of a function (<code>llvm::Function</code>). A function template may also be a <code><a class="el" href="structyume_1_1Fn.html" title="A function declaration in the compiler.">Fn</a></code>. Since a template doesn't actually have a body, its <code>m_llvm_fn</code> is <code>nullptr</code>. All the instantiations of a template are stored in <code>instantiations</code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00050">50</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00044">44</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a72e1b2d75a58efa9f2a6eeb20bfadaf2" name="a72e1b2d75a58efa9f2a6eeb20bfadaf2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a72e1b2d75a58efa9f2a6eeb20bfadaf2">&#9670;&nbsp;</a></span>call_t</h2>
@@ -169,7 +194,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00052">52</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00046">46</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
 </div>
 </div>
@@ -185,13 +210,13 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00051">51</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00045">45</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a621843f353191e25797da1150d725815" name="a621843f353191e25797da1150d725815"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a621843f353191e25797da1150d725815">&#9670;&nbsp;</a></span>Fn()</h2>
+<a id="a175f02ac1886913600d54a40c3aebcf6" name="a175f02ac1886913600d54a40c3aebcf6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a175f02ac1886913600d54a40c3aebcf6">&#9670;&nbsp;</a></span>Fn()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -202,7 +227,7 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="memname">yume::Fn::Fn </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classyume_1_1ast_1_1FnDecl.html">ast::FnDecl</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classyume_1_1ast_1_1Decl.html">ast::Decl</a> &amp;&#160;</td>
           <td class="paramname"><em>ast_decl</em>, </td>
         </tr>
         <tr>
@@ -237,105 +262,117 @@ Public Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00058">58</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="ab07781145c2583df7a024f5860d3ce86" name="ab07781145c2583df7a024f5860d3ce86"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab07781145c2583df7a024f5860d3ce86">&#9670;&nbsp;</a></span>arg_name()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">auto yume::Fn::arg_name </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classyume_1_1ast_1_1FnDecl.html#a90c57adcd690037cbe17cc8b034b9957">decl_t::arg_t</a> &amp;&#160;</td>
-          <td class="paramname"><em>ast</em></td><td>)</td>
-          <td> -&gt; string</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">noexcept</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="vals_8cpp_source.html#l00059">59</a> of file <a class="el" href="vals_8cpp_source.html">vals.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a0b94dda5a2d7fa98dd4c74ff2a165bf7" name="a0b94dda5a2d7fa98dd4c74ff2a165bf7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0b94dda5a2d7fa98dd4c74ff2a165bf7">&#9670;&nbsp;</a></span>arg_type()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">auto yume::Fn::arg_type </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classyume_1_1ast_1_1FnDecl.html#a90c57adcd690037cbe17cc8b034b9957">decl_t::arg_t</a> &amp;&#160;</td>
-          <td class="paramname"><em>ast</em></td><td>)</td>
-          <td> -&gt; optional&lt;<a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a>&gt;</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">noexcept</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="vals_8cpp_source.html#l00049">49</a> of file <a class="el" href="vals_8cpp_source.html">vals.cpp</a>.</p>
-
-</div>
-</div>
-<a id="afe086a7c615c80d12ac94b78b53b9cd8" name="afe086a7c615c80d12ac94b78b53b9cd8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afe086a7c615c80d12ac94b78b53b9cd8">&#9670;&nbsp;</a></span>ast() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">auto yume::Fn::ast </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const -&gt; const auto&amp; </td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00062">62</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00030">yume::FnBase::ast</a>, and <a class="el" href="vals_8hpp_source.html#l00054">base</a>.</p>
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a92067c08150b7ba131c0eaed752bd652" name="a92067c08150b7ba131c0eaed752bd652"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a92067c08150b7ba131c0eaed752bd652">&#9670;&nbsp;</a></span>arg_count()</h2>
 
-<p class="reference">Referenced by <a class="el" href="vals_8hpp_source.html#l00064">body()</a>, and <a class="el" href="vals_8cpp_source.html#l00042">name()</a>.</p>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto yume::Fn::arg_count </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const -&gt; size_t</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="vals_8cpp_source.html#l00065">65</a> of file <a class="el" href="vals_8cpp_source.html">vals.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a94b221bf7acb5cad5c14ff13e64db464" name="a94b221bf7acb5cad5c14ff13e64db464"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a94b221bf7acb5cad5c14ff13e64db464">&#9670;&nbsp;</a></span>ast() <span class="overload">[2/2]</span></h2>
+<a id="a22902810faab3278141676137a47e710" name="a22902810faab3278141676137a47e710"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a22902810faab3278141676137a47e710">&#9670;&nbsp;</a></span>arg_names()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto yume::Fn::arg_names </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const -&gt; vector&lt;string&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="vals_8cpp_source.html#l00072">72</a> of file <a class="el" href="vals_8cpp_source.html">vals.cpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00308">yume::Compiler::declare()</a>.</p>
+
+</div>
+</div>
+<a id="ad5a00fbdb923697997c568f800d21d0e" name="ad5a00fbdb923697997c568f800d21d0e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad5a00fbdb923697997c568f800d21d0e">&#9670;&nbsp;</a></span>arg_nodes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto yume::Fn::arg_nodes </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const -&gt; const vector&lt;<a class="el" href="structyume_1_1ast_1_1TypeName.html">ast::TypeName</a>&gt;&amp;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="vals_8cpp_source.html#l00073">73</a> of file <a class="el" href="vals_8cpp_source.html">vals.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a76eba433fa95da20aa37d9888e21b91f" name="a76eba433fa95da20aa37d9888e21b91f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a76eba433fa95da20aa37d9888e21b91f">&#9670;&nbsp;</a></span>arg_types()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto yume::Fn::arg_types </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const -&gt; vector&lt;<a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a>&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="vals_8cpp_source.html#l00069">69</a> of file <a class="el" href="vals_8cpp_source.html">vals.cpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00308">yume::Compiler::declare()</a>, and <a class="el" href="overload_8cpp_source.html#l00038">yume::semantic::Overload::dump()</a>.</p>
+
+</div>
+</div>
+<a id="a8f59ebc6d3fd24e194dcaf7bffbbaecf" name="a8f59ebc6d3fd24e194dcaf7bffbbaecf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f59ebc6d3fd24e194dcaf7bffbbaecf">&#9670;&nbsp;</a></span>args()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto yume::Fn::args </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const -&gt; vector&lt;<a class="el" href="structyume_1_1FnArg.html">FnArg</a>&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="vals_8cpp_source.html#l00076">76</a> of file <a class="el" href="vals_8cpp_source.html">vals.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ad004581850ccdb4ceee7c2d1af52dd0b" name="ad004581850ccdb4ceee7c2d1af52dd0b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad004581850ccdb4ceee7c2d1af52dd0b">&#9670;&nbsp;</a></span>ast() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -352,19 +389,19 @@ Public Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00063">63</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00069">69</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00030">yume::FnBase::ast</a>, and <a class="el" href="vals_8hpp_source.html#l00054">base</a>.</p>
+<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00049">ast_decl</a>.</p>
 
 </div>
 </div>
-<a id="a6dbcfd161ffe86b31947638869c23ee5" name="a6dbcfd161ffe86b31947638869c23ee5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6dbcfd161ffe86b31947638869c23ee5">&#9670;&nbsp;</a></span>body()</h2>
+<a id="a00e57809020f6920357b7f3d90f0dc59" name="a00e57809020f6920357b7f3d90f0dc59"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a00e57809020f6920357b7f3d90f0dc59">&#9670;&nbsp;</a></span>ast() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -373,7 +410,7 @@ Public Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">auto yume::Fn::body </td>
+          <td class="memname">auto yume::Fn::ast </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const -&gt; const auto&amp; </td>
@@ -381,44 +418,39 @@ Public Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00064">64</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00068">68</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00062">ast()</a>.</p>
+<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00049">ast_decl</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="vals_8cpp_source.html#l00008">create_instantiation()</a>, and <a class="el" href="compiler_8cpp_source.html#l00421">yume::Compiler::define()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00308">yume::Compiler::declare()</a>, <a class="el" href="compiler_8cpp_source.html#l00395">yume::Compiler::define()</a>, <a class="el" href="overload_8cpp_source.html#l00038">yume::semantic::Overload::dump()</a>, and <a class="el" href="vals_8cpp_source.html#l00053">name()</a>.</p>
 
 </div>
 </div>
-<a id="a81dfd2f1e19a803117ccb05c0c277dad" name="a81dfd2f1e19a803117ccb05c0c277dad"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a81dfd2f1e19a803117ccb05c0c277dad">&#9670;&nbsp;</a></span>common_ast()</h2>
+<a id="a617671e36295331bb945c46eac5dfdb8" name="a617671e36295331bb945c46eac5dfdb8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a617671e36295331bb945c46eac5dfdb8">&#9670;&nbsp;</a></span>compound_body()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">auto yume::Fn::common_ast </td>
+          <td class="memname">auto yume::Fn::compound_body </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classyume_1_1ast_1_1FnDecl.html#a90c57adcd690037cbe17cc8b034b9957">decl_t::arg_t</a> &amp;&#160;</td>
-          <td class="paramname"><em>ast</em></td><td>)</td>
-          <td> -&gt; const <a class="el" href="classyume_1_1ast_1_1AST.html">ast::AST</a>&amp;</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const -&gt; const <a class="el" href="classyume_1_1ast_1_1Compound.html">ast::Compound</a>&amp;</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">noexcept</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8cpp_source.html#l00054">54</a> of file <a class="el" href="vals_8cpp_source.html">vals.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8cpp_source.html#l00090">90</a> of file <a class="el" href="vals_8cpp_source.html">vals.cpp</a>.</p>
+
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00698">yume::ast::FnDecl::body()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00395">yume::Compiler::define()</a>.</p>
 
 </div>
 </div>
@@ -446,9 +478,76 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8cpp_source.html#l00008">8</a> of file <a class="el" href="vals_8cpp_source.html">vals.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8cpp_source.html#l00019">19</a> of file <a class="el" href="vals_8cpp_source.html">vals.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00064">body()</a>.</p>
+</div>
+</div>
+<a id="a6e6e9fe6bece6252f19655a33762be02" name="a6e6e9fe6bece6252f19655a33762be02"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e6e9fe6bece6252f19655a33762be02">&#9670;&nbsp;</a></span>extern_decl()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto yume::Fn::extern_decl </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const -&gt; bool</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="vals_8cpp_source.html#l00082">82</a> of file <a class="el" href="vals_8cpp_source.html">vals.cpp</a>.</p>
+
+<p class="reference">References <a class="el" href="vals_8cpp_source.html#l00009">yume::always_false</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00308">yume::Compiler::declare()</a>, and <a class="el" href="compiler_8cpp_source.html#l00111">yume::Compiler::run()</a>.</p>
+
+</div>
+</div>
+<a id="a79f679d6067560e990497de1bb567524" name="a79f679d6067560e990497de1bb567524"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a79f679d6067560e990497de1bb567524">&#9670;&nbsp;</a></span>extern_linkage()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto yume::Fn::extern_linkage </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const -&gt; bool</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="vals_8cpp_source.html#l00083">83</a> of file <a class="el" href="vals_8cpp_source.html">vals.cpp</a>.</p>
+
+<p class="reference">References <a class="el" href="vals_8cpp_source.html#l00009">yume::always_false</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00308">yume::Compiler::declare()</a>, and <a class="el" href="compiler_8cpp_source.html#l00111">yume::Compiler::run()</a>.</p>
+
+</div>
+</div>
+<a id="ae472ecb2c5445a3286af71b89f8530d7" name="ae472ecb2c5445a3286af71b89f8530d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae472ecb2c5445a3286af71b89f8530d7">&#9670;&nbsp;</a></span>fn_body()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto yume::Fn::fn_body </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const -&gt; const <a class="el" href="classyume_1_1ast_1_1FnDecl.html#afaf6024b81adaab666ca0a07d9eec967">ast::FnDecl::body_t</a>&amp;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="vals_8cpp_source.html#l00095">95</a> of file <a class="el" href="vals_8cpp_source.html">vals.cpp</a>.</p>
+
+<p class="reference">References <a class="el" href="vals_8cpp_source.html#l00012">yume::always_throw</a>, and <a class="el" href="ast_8hpp_source.html#l00698">yume::ast::FnDecl::body()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00395">yume::Compiler::define()</a>.</p>
 
 </div>
 </div>
@@ -476,12 +575,14 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8cpp_source.html#l00017">17</a> of file <a class="el" href="vals_8cpp_source.html">vals.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8cpp_source.html#l00028">28</a> of file <a class="el" href="vals_8cpp_source.html">vals.cpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00272">yume::semantic::TypeWalker::expression()</a>.</p>
 
 </div>
 </div>
-<a id="acd7e78d2fa2be83bc1ee06da02a11f6c" name="acd7e78d2fa2be83bc1ee06da02a11f6c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acd7e78d2fa2be83bc1ee06da02a11f6c">&#9670;&nbsp;</a></span>get_self_ty()</h2>
+<a id="a74055817039f2933153e0374b5e247ab" name="a74055817039f2933153e0374b5e247ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a74055817039f2933153e0374b5e247ab">&#9670;&nbsp;</a></span>get_self_ty()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -498,48 +599,19 @@ Public Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00065">65</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00070">70</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00054">base</a>, and <a class="el" href="vals_8hpp_source.html#l00032">yume::FnBase::self_ty</a>.</p>
-
-</div>
-</div>
-<a id="a8153a84cea46d8ec2a92bea7f7333307" name="a8153a84cea46d8ec2a92bea7f7333307"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8153a84cea46d8ec2a92bea7f7333307">&#9670;&nbsp;</a></span>get_subs() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">auto yume::Fn::get_subs </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const -&gt; const <a class="el" href="structyume_1_1Substitution.html">Substitution</a>&amp; </td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00066">66</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
-
-<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00054">base</a>, and <a class="el" href="vals_8hpp_source.html#l00036">yume::FnBase::subs</a>.</p>
+<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00051">self_ty</a>.</p>
 
 </div>
 </div>
-<a id="ab0f9c669080b8d4c154b3008085289e6" name="ab0f9c669080b8d4c154b3008085289e6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab0f9c669080b8d4c154b3008085289e6">&#9670;&nbsp;</a></span>get_subs() <span class="overload">[2/2]</span></h2>
+<a id="a1e6e9956d8c7806ee11091c7705295bf" name="a1e6e9956d8c7806ee11091c7705295bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e6e9956d8c7806ee11091c7705295bf">&#9670;&nbsp;</a></span>get_subs() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -556,14 +628,65 @@ Public Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00067">67</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00072">72</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00054">base</a>, and <a class="el" href="vals_8hpp_source.html#l00036">yume::FnBase::subs</a>.</p>
+<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00055">subs</a>.</p>
+
+</div>
+</div>
+<a id="aefacc27a1c1ccb32260735bfebc4002d" name="aefacc27a1c1ccb32260735bfebc4002d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aefacc27a1c1ccb32260735bfebc4002d">&#9670;&nbsp;</a></span>get_subs() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto yume::Fn::get_subs </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const -&gt; const <a class="el" href="structyume_1_1Substitution.html">Substitution</a>&amp; </td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00071">71</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+
+<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00055">subs</a>.</p>
+
+</div>
+</div>
+<a id="aa277ddec9fadf9f4d2bc23b3a0ee3c13" name="aa277ddec9fadf9f4d2bc23b3a0ee3c13"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa277ddec9fadf9f4d2bc23b3a0ee3c13">&#9670;&nbsp;</a></span>make_extern_linkage()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void yume::Fn::make_extern_linkage </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>value</em> = <code>true</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="vals_8cpp_source.html#l00085">85</a> of file <a class="el" href="vals_8cpp_source.html">vals.cpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00111">yume::Compiler::run()</a>.</p>
 
 </div>
 </div>
@@ -590,56 +713,101 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8cpp_source.html#l00042">42</a> of file <a class="el" href="vals_8cpp_source.html">vals.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8cpp_source.html#l00053">53</a> of file <a class="el" href="vals_8cpp_source.html">vals.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00062">ast()</a>.</p>
+<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00068">ast()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="overload_8cpp_source.html#l00038">yume::semantic::Overload::dump()</a>, and <a class="el" href="compiler_8cpp_source.html#l00111">yume::Compiler::run()</a>.</p>
 
 </div>
 </div>
-<a id="a81a7c1d968964a847d77cb2570843762" name="a81a7c1d968964a847d77cb2570843762"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a81a7c1d968964a847d77cb2570843762">&#9670;&nbsp;</a></span>overload_name()</h2>
+<a id="a5f5fa64c533d98ef00427896ca5b1709" name="a5f5fa64c533d98ef00427896ca5b1709"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f5fa64c533d98ef00427896ca5b1709">&#9670;&nbsp;</a></span>primitive()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">auto yume::Fn::overload_name </td>
+          <td class="memname">auto yume::Fn::primitive </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="structyume_1_1Fn.html#a72e1b2d75a58efa9f2a6eeb20bfadaf2">call_t</a> &amp;&#160;</td>
-          <td class="paramname"><em>ast</em></td><td>)</td>
-          <td> -&gt; string</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const -&gt; bool</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">noexcept</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8cpp_source.html#l00046">46</a> of file <a class="el" href="vals_8cpp_source.html">vals.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8cpp_source.html#l00081">81</a> of file <a class="el" href="vals_8cpp_source.html">vals.cpp</a>.</p>
+
+<p class="reference">References <a class="el" href="vals_8cpp_source.html#l00009">yume::always_false</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00308">yume::Compiler::declare()</a>.</p>
+
+</div>
+</div>
+<a id="ada0ff4fe438648c78c63b27112c093c0" name="ada0ff4fe438648c78c63b27112c093c0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada0ff4fe438648c78c63b27112c093c0">&#9670;&nbsp;</a></span>ret()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto yume::Fn::ret </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const -&gt; optional&lt;<a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a>&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="vals_8cpp_source.html#l00056">56</a> of file <a class="el" href="vals_8cpp_source.html">vals.cpp</a>.</p>
+
+<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00049">ast_decl</a>, <a class="el" href="vals_8cpp_source.html#l00056">ret()</a>, and <a class="el" href="vals_8hpp_source.html#l00051">self_ty</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00308">yume::Compiler::declare()</a>, and <a class="el" href="vals_8cpp_source.html#l00056">ret()</a>.</p>
+
+</div>
+</div>
+<a id="a7a55ecbd5021974990fabe7dd3ed4d20" name="a7a55ecbd5021974990fabe7dd3ed4d20"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7a55ecbd5021974990fabe7dd3ed4d20">&#9670;&nbsp;</a></span>varargs()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto yume::Fn::varargs </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const -&gt; bool</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="vals_8cpp_source.html#l00080">80</a> of file <a class="el" href="vals_8cpp_source.html">vals.cpp</a>.</p>
+
+<p class="reference">References <a class="el" href="vals_8cpp_source.html#l00009">yume::always_false</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00308">yume::Compiler::declare()</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="ab0462bd4293843609ef41a547f78654b" name="ab0462bd4293843609ef41a547f78654b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab0462bd4293843609ef41a547f78654b">&#9670;&nbsp;</a></span>base</h2>
+<a id="ae1b317636c95160d67fae062e17942e5" name="ae1b317636c95160d67fae062e17942e5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae1b317636c95160d67fae062e17942e5">&#9670;&nbsp;</a></span>ast_decl</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structyume_1_1FnBase.html">FnBase</a> yume::Fn::base</td>
+          <td class="memname"><a class="el" href="classyume_1_1ast_1_1Decl.html">ast::Decl</a>&amp; yume::Fn::ast_decl</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00054">54</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p>The ast node that defines this declaration. </p>
 
-<p class="reference">Referenced by <a class="el" href="vals_8hpp_source.html#l00062">ast()</a>, <a class="el" href="vals_8hpp_source.html#l00130">yume::Ctor::ast()</a>, <a class="el" href="compiler_8cpp_source.html#l00421">yume::Compiler::define()</a>, <a class="el" href="vals_8hpp_source.html#l00065">get_self_ty()</a>, <a class="el" href="vals_8hpp_source.html#l00132">yume::Ctor::get_self_ty()</a>, <a class="el" href="vals_8hpp_source.html#l00066">get_subs()</a>, and <a class="el" href="vals_8hpp_source.html#l00133">yume::Ctor::get_subs()</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00049">49</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="vals_8hpp_source.html#l00068">ast()</a>, and <a class="el" href="vals_8cpp_source.html#l00056">ret()</a>.</p>
 
 </div>
 </div>
@@ -655,7 +823,85 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00056">56</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00060">60</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a782fd88435bf09047ed6d69cad5302a0" name="a782fd88435bf09047ed6d69cad5302a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a782fd88435bf09047ed6d69cad5302a0">&#9670;&nbsp;</a></span>llvm</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">llvm::Function* yume::Fn::llvm {}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The LLVM function definition corresponding to this function or constructor. </p>
+
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00057">57</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00308">yume::Compiler::declare()</a>, <a class="el" href="compiler_8cpp_source.html#l00395">yume::Compiler::define()</a>, and <a class="el" href="compiler_8cpp_source.html#l00428">yume::Compiler::statement()</a>.</p>
+
+</div>
+</div>
+<a id="a005f8ee83c46d1deb914546dc3bbefce" name="a005f8ee83c46d1deb914546dc3bbefce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a005f8ee83c46d1deb914546dc3bbefce">&#9670;&nbsp;</a></span>member</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classyume_1_1ast_1_1Program.html">ast::Program</a>* yume::Fn::member {}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The program this declaration is a member of. </p>
+
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00053">53</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a07d168f745b90dba8815716e5800e511" name="a07d168f745b90dba8815716e5800e511"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a07d168f745b90dba8815716e5800e511">&#9670;&nbsp;</a></span>self_ty</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">optional&lt;<a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a>&gt; yume::Fn::self_ty {}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>If this function is in the body of a struct, this points to its type. Used for the <code>self</code> type. </p>
+
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00051">51</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00395">yume::Compiler::define()</a>, <a class="el" href="vals_8hpp_source.html#l00070">get_self_ty()</a>, and <a class="el" href="vals_8cpp_source.html#l00056">ret()</a>.</p>
+
+</div>
+</div>
+<a id="af7aecb21bd8678c27f88e8189ff8a071" name="af7aecb21bd8678c27f88e8189ff8a071"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af7aecb21bd8678c27f88e8189ff8a071">&#9670;&nbsp;</a></span>subs</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structyume_1_1Substitution.html">Substitution</a> yume::Fn::subs {}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>If this is an instantiation of a template, a mapping between type variables and their substitutions. </p>
+
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00055">55</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="vals_8hpp_source.html#l00071">get_subs()</a>.</p>
 
 </div>
 </div>
@@ -671,7 +917,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00055">55</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00059">59</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
 </div>
 </div>

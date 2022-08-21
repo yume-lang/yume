@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-08-21 19:45:14</td>
+            <td class="headerValue">2022-08-21 22:22:48</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -118,7 +118,7 @@
 <a name="60"><span class="lineNum">      60 </span>            : </a>
 <a name="61"><span class="lineNum">      61 </span>            : /// An user-defined struct type with associated fields.</a>
 <a name="62"><span class="lineNum">      62 </span><span class="lineCov">          1 : class Struct : public BaseType {</span></a>
-<a name="63"><span class="lineNum">      63 </span><span class="lineNoCov">          0 :   vector&lt;const ast::TypeName*&gt; m_fields;</span></a>
+<a name="63"><span class="lineNum">      63 </span><span class="lineNoCov">          0 :   vector&lt;ast::TypeName*&gt; m_fields;</span></a>
 <a name="64"><span class="lineNum">      64 </span><span class="lineNoCov">          0 :   nullable&lt;const Substitution*&gt; m_subs;</span></a>
 <a name="65"><span class="lineNum">      65 </span><span class="lineNoCov">          0 :   nullable&lt;const Struct*&gt; m_parent{};</span></a>
 <a name="66"><span class="lineNum">      66 </span><span class="lineNoCov">          0 :   mutable std::map&lt;Substitution, unique_ptr&lt;Struct&gt;&gt; m_subbed{}; // HACK</span></a>
@@ -131,7 +131,7 @@
 <a name="73"><span class="lineNum">      73 </span><span class="lineNoCov">          0 :   friend Type;</span></a>
 <a name="74"><span class="lineNum">      74 </span>            : </a>
 <a name="75"><span class="lineNum">      75 </span>            : public:</a>
-<a name="76"><span class="lineNum">      76 </span><span class="lineNoCov">          0 :   Struct(string name, vector&lt;const ast::TypeName*&gt; fields, nullable&lt;const Substitution*&gt; subs)</span></a>
+<a name="76"><span class="lineNum">      76 </span><span class="lineNoCov">          0 :   Struct(string name, vector&lt;ast::TypeName*&gt; fields, nullable&lt;const Substitution*&gt; subs)</span></a>
 <a name="77"><span class="lineNum">      77 </span>            :       : BaseType(K_Struct, move(name)), m_fields(move(fields)), m_subs(subs) {}</a>
 <a name="78"><span class="lineNum">      78 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto fields() const -&gt; const auto&amp; { return m_fields; }</span></a>
 <a name="79"><span class="lineNum">      79 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto fields() -&gt; auto&amp; { return m_fields; }</span></a>
