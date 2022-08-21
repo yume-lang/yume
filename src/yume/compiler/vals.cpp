@@ -5,7 +5,7 @@
 
 namespace yume {
 
-auto Fn::create_instantiation(Substitution& subs) -> Fn& {
+auto Fn::create_instantiation(Substitution& subs) noexcept -> Fn& {
   auto* decl_clone = ast().clone();
   base.member->body().emplace_back(decl_clone);
 
@@ -14,7 +14,7 @@ auto Fn::create_instantiation(Substitution& subs) -> Fn& {
   return *new_emplace.first->second;
 }
 
-auto Fn::get_or_create_instantiation(Substitution& subs) -> std::pair<bool, Fn&> {
+auto Fn::get_or_create_instantiation(Substitution& subs) noexcept -> std::pair<bool, Fn&> {
   auto existing_instantiation = instantiations.find(subs);
   if (existing_instantiation == instantiations.end())
     return {false, create_instantiation(subs)};
@@ -22,7 +22,7 @@ auto Fn::get_or_create_instantiation(Substitution& subs) -> std::pair<bool, Fn&>
   return {true, *existing_instantiation->second};
 }
 
-auto Struct::create_instantiation(Substitution& subs) -> Struct& {
+auto Struct::create_instantiation(Substitution& subs) noexcept -> Struct& {
   auto* decl_clone = st_ast.clone();
   member->body().emplace_back(decl_clone);
 
@@ -31,7 +31,7 @@ auto Struct::create_instantiation(Substitution& subs) -> Struct& {
   return *new_emplace.first->second;
 }
 
-auto Struct::get_or_create_instantiation(Substitution& subs) -> std::pair<bool, Struct&> {
+auto Struct::get_or_create_instantiation(Substitution& subs) noexcept -> std::pair<bool, Struct&> {
   auto existing_instantiation = instantiations.find(subs);
   if (existing_instantiation == instantiations.end())
     return {false, create_instantiation(subs)};
@@ -39,27 +39,27 @@ auto Struct::get_or_create_instantiation(Substitution& subs) -> std::pair<bool, 
   return {true, *existing_instantiation->second};
 }
 
-auto Fn::name() const -> string { return ast().name(); }
-auto Ctor::name() const -> string { return get_self_ty()->name() + ":new"; }
-auto Struct::name() const -> string { return st_ast.name(); }
+auto Fn::name() const noexcept -> string { return ast().name(); }
+auto Ctor::name() const noexcept -> string { return get_self_ty()->name() + ":new"; }
+auto Struct::name() const noexcept -> string { return st_ast.name(); }
 
-auto Fn::overload_name(const call_t& ast) -> string { return ast.name(); };
-auto Ctor::overload_name(const call_t& ast) -> string { return ast.ensure_ty().name() + ":new"; };
+auto Fn::overload_name(const call_t& ast) noexcept -> string { return ast.name(); };
+auto Ctor::overload_name(const call_t& ast) noexcept -> string { return ast.ensure_ty().name() + ":new"; };
 
-auto Fn::arg_type(const decl_t::arg_t& ast) -> optional<ty::Type> { return ast.val_ty(); };
-auto Ctor::arg_type(const decl_t::arg_t& ast) -> optional<ty::Type> {
-  return std::visit([](const auto& t) { return t.val_ty(); }, ast);
+auto Fn::arg_type(const decl_t::arg_t& ast) noexcept -> optional<ty::Type> { return ast.val_ty(); };
+auto Ctor::arg_type(const decl_t::arg_t& ast) noexcept -> optional<ty::Type> {
+  return std::visit([](const auto& t) noexcept { return t.val_ty(); }, ast);
 };
 
-auto Fn::common_ast(const decl_t::arg_t& ast) -> const ast::AST& { return ast; };
-auto Ctor::common_ast(const decl_t::arg_t& ast) -> const ast::AST& {
-  return *std::visit([](auto& t) -> const ast::AST* { return &t; }, ast);
+auto Fn::common_ast(const decl_t::arg_t& ast) noexcept -> const ast::AST& { return ast; };
+auto Ctor::common_ast(const decl_t::arg_t& ast) noexcept -> const ast::AST& {
+  return *std::visit([](auto& t) noexcept -> const ast::AST* { return &t; }, ast);
 };
 
-auto Fn::arg_name(const decl_t::arg_t& ast) -> string { return ast.name; };
-auto Ctor::arg_name(const decl_t::arg_t& ast) -> string {
+auto Fn::arg_name(const decl_t::arg_t& ast) noexcept -> string { return ast.name; };
+auto Ctor::arg_name(const decl_t::arg_t& ast) noexcept -> string {
   return std::visit(
-      []<typename T>(const T& t) {
+      []<typename T>(const T& t) noexcept {
         if constexpr (std::is_same_v<T, ast::TypeName>) {
           return t.name;
         } else {

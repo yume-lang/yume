@@ -145,7 +145,7 @@ auto Type::is_generic() const noexcept -> bool {
     return ensure_ptr_base().is_generic();
 
   if (const auto* struct_ty = base_dyn_cast<Struct>())
-    return std::ranges::any_of(struct_ty->subs(), [](const auto& sub) { return sub.second.is_generic(); });
+    return std::ranges::any_of(struct_ty->subs(), [](const auto& sub) noexcept { return sub.second.is_generic(); });
   // XXX: The above ranges call is repeated often
 
   return false;

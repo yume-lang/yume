@@ -40,7 +40,8 @@ class DotVisitor : public Visitor {
     optional<string> line_label;
     DotNode child;
 
-    DotConnection(optional<string> line_label, DotNode child) : line_label(move(line_label)), child(move(child)) {}
+    DotConnection(optional<string> line_label, DotNode child) noexcept
+        : line_label(move(line_label)), child(move(child)) {}
   };
 
   llvm::raw_ostream& m_stream;

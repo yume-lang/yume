@@ -22,7 +22,7 @@ template <typename T> struct Overload {
   bool viable = false;
 
   Overload() = default;
-  explicit Overload(T* fn) : fn{fn} {}
+  explicit Overload(T* fn) noexcept : fn{fn} {}
 
   [[nodiscard]] auto better_candidate_than(Overload other) const -> bool;
   void dump(llvm::raw_ostream& stream) const;

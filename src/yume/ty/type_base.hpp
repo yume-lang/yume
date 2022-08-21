@@ -63,13 +63,13 @@ class Type {
   bool m_mut{};
 
 public:
-  Type(nonnull<const BaseType*> base, bool mut) : m_base(base), m_mut(mut) {}
-  Type(nonnull<const BaseType*> base) : m_base(base) {}
+  Type(nonnull<const BaseType*> base, bool mut) noexcept : m_base(base), m_mut(mut) {}
+  Type(nonnull<const BaseType*> base) noexcept : m_base(base) {}
 
   auto operator<=>(const Type&) const noexcept = default;
 
-  [[nodiscard]] auto kind() const -> Kind { return m_base->kind(); };
-  [[nodiscard]] auto base() const -> nonnull<const BaseType*> { return m_base; }
+  [[nodiscard]] auto kind() const noexcept -> Kind { return m_base->kind(); };
+  [[nodiscard]] auto base() const noexcept -> nonnull<const BaseType*> { return m_base; }
   template <typename T> [[nodiscard]] auto base_cast() const noexcept -> nonnull<const T*> { return cast<T>(m_base); }
   template <typename T> [[nodiscard]] auto base_dyn_cast() const noexcept -> nullable<const T*> {
     return dyn_cast<T>(m_base);

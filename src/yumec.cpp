@@ -75,7 +75,7 @@ auto compile(const std::optional<std::string>& target_triple, std::vector<std::s
         llvm::outs() << "\n";
         llvm::outs().flush();
 
-        exit(2);
+        return 2;
       }
     }
   }

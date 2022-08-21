@@ -177,7 +177,7 @@ auto Compiler::create_struct(Struct& st) -> bool {
   yume_assert(isa<ty::Struct>(*iter->second));
   auto& existing = cast<ty::Struct>(*iter->second);
 
-  if (std::ranges::any_of(st.subs, [](const auto& sub) { return sub.second.is_generic(); }))
+  if (std::ranges::any_of(st.subs, [](const auto& sub) noexcept { return sub.second.is_generic(); }))
     return false;
 
   existing.m_fields = move(fields);

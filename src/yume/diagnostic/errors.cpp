@@ -225,7 +225,7 @@ void stacktrace_ostream::format_phase(string_view msg) {
     break;
   case Function:
     set_color(CYAN);
-    if (std::ranges::any_of(skip_lines, [&](string_view s) { return msg.find(s) != string::npos; }))
+    if (std::ranges::any_of(skip_lines, [&](string_view s) noexcept { return msg.find(s) != string::npos; }))
       m_skip = true;
     else
       simplify(msg);
@@ -268,8 +268,10 @@ void stacktrace_ostream::write_impl(const char* ptr, size_t size) {
   format_phase(msg);
 
   int counter = static_cast<int>(m_current_phase);
-  if (m_current_phase != Offset)
-    counter = ++counter % 4;
+  if (m_current_phase != Offset) {
+    ++counter;
+    counter %= 4;
+  }
 
   m_current_phase = static_cast<Phase>(counter);
   if (m_current_phase == Offset && !m_unknown)

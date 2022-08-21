@@ -105,8 +105,9 @@ struct Token {
   }
 
   explicit constexpr Token(Type type) : type(type) {}
-  constexpr Token(Type type, Payload payload) : type(type), payload(payload) {}
-  constexpr Token(Type type, Payload payload, int i, Loc loc) : type(type), payload(payload), index{i}, loc{loc} {}
+  constexpr Token(Type type, Payload payload) noexcept : type(type), payload(payload) {}
+  constexpr Token(Type type, Payload payload, int i, Loc loc) noexcept
+      : type(type), payload(payload), index{i}, loc{loc} {}
 
   friend auto operator<<(llvm::raw_ostream& os, const Token& token) -> llvm::raw_ostream&;
 };

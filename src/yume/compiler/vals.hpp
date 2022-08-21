@@ -56,24 +56,24 @@ struct Fn {
   std::map<Substitution, unique_ptr<Fn>> instantiations{};
 
   Fn(ast::FnDecl& ast_decl, optional<ty::Type> parent = std::nullopt, ast::Program* member = nullptr,
-     Substitution subs = {}, vector<unique_ptr<ty::Generic>> type_args = {})
+     Substitution subs = {}, vector<unique_ptr<ty::Generic>> type_args = {}) noexcept
       : base{ast_decl, parent, member, move(subs)}, type_args(move(type_args)) {}
 
-  [[nodiscard]] auto ast() const -> const auto& { return cast<decl_t>(base.ast); }
-  [[nodiscard]] auto ast() -> auto& { return cast<decl_t>(base.ast); }
-  [[nodiscard]] auto body() const -> const auto& { return ast().body(); }
-  [[nodiscard]] auto get_self_ty() const -> optional<ty::Type> { return base.self_ty; };
-  [[nodiscard]] auto get_subs() const -> const Substitution& { return base.subs; };
-  [[nodiscard]] auto get_subs() -> Substitution& { return base.subs; };
+  [[nodiscard]] auto ast() const noexcept -> const auto& { return cast<decl_t>(base.ast); }
+  [[nodiscard]] auto ast() noexcept -> auto& { return cast<decl_t>(base.ast); }
+  [[nodiscard]] auto body() const noexcept -> const auto& { return ast().body(); }
+  [[nodiscard]] auto get_self_ty() const noexcept -> optional<ty::Type> { return base.self_ty; };
+  [[nodiscard]] auto get_subs() const noexcept -> const Substitution& { return base.subs; };
+  [[nodiscard]] auto get_subs() noexcept -> Substitution& { return base.subs; };
 
-  [[nodiscard]] auto name() const -> string;
-  [[nodiscard]] static auto overload_name(const call_t& ast) -> string;
-  [[nodiscard]] static auto arg_type(const decl_t::arg_t& ast) -> optional<ty::Type>;
-  [[nodiscard]] static auto arg_name(const decl_t::arg_t& ast) -> string;
-  [[nodiscard]] static auto common_ast(const decl_t::arg_t& ast) -> const ast::AST&;
+  [[nodiscard]] auto name() const noexcept -> string;
+  [[nodiscard]] static auto overload_name(const call_t& ast) noexcept -> string;
+  [[nodiscard]] static auto arg_type(const decl_t::arg_t& ast) noexcept -> optional<ty::Type>;
+  [[nodiscard]] static auto arg_name(const decl_t::arg_t& ast) noexcept -> string;
+  [[nodiscard]] static auto common_ast(const decl_t::arg_t& ast) noexcept -> const ast::AST&;
 
-  [[nodiscard]] auto get_or_create_instantiation(Substitution& subs) -> std::pair<bool, Fn&>;
-  [[nodiscard]] auto create_instantiation(Substitution& subs) -> Fn&;
+  [[nodiscard]] auto get_or_create_instantiation(Substitution& subs) noexcept -> std::pair<bool, Fn&>;
+  [[nodiscard]] auto create_instantiation(Substitution& subs) noexcept -> Fn&;
 };
 
 /// A struct declaration in the compiler.
@@ -96,21 +96,21 @@ struct Struct {
   std::map<Substitution, unique_ptr<Struct>> instantiations{};
 
   Struct(ast::StructDecl& ast_decl, optional<ty::Type> type = std::nullopt, ast::Program* member = nullptr,
-         Substitution subs = {}, vector<unique_ptr<ty::Generic>> type_args = {})
+         Substitution subs = {}, vector<unique_ptr<ty::Generic>> type_args = {}) noexcept
       : st_ast(ast_decl), self_ty(type), member(member), type_args(move(type_args)), subs(move(subs)) {}
 
-  [[nodiscard]] auto ast() const -> const auto& { return st_ast; }
-  [[nodiscard]] auto ast() -> auto& { return st_ast; }
-  [[nodiscard]] auto body() const -> const auto& { return st_ast.body(); }
-  [[nodiscard]] auto body() -> auto& { return st_ast.body(); }
-  [[nodiscard]] auto get_self_ty() const -> optional<ty::Type> { return self_ty; };
-  [[nodiscard]] auto get_subs() const -> const Substitution& { return subs; };
-  [[nodiscard]] auto get_subs() -> Substitution& { return subs; };
+  [[nodiscard]] auto ast() const noexcept -> const auto& { return st_ast; }
+  [[nodiscard]] auto ast() noexcept -> auto& { return st_ast; }
+  [[nodiscard]] auto body() const noexcept -> const auto& { return st_ast.body(); }
+  [[nodiscard]] auto body() noexcept -> auto& { return st_ast.body(); }
+  [[nodiscard]] auto get_self_ty() const noexcept -> optional<ty::Type> { return self_ty; };
+  [[nodiscard]] auto get_subs() const noexcept -> const Substitution& { return subs; };
+  [[nodiscard]] auto get_subs() noexcept -> Substitution& { return subs; };
 
-  [[nodiscard]] auto name() const -> string;
+  [[nodiscard]] auto name() const noexcept -> string;
 
-  [[nodiscard]] auto get_or_create_instantiation(Substitution& subs) -> std::pair<bool, Struct&>;
-  [[nodiscard]] auto create_instantiation(Substitution& subs) -> Struct&;
+  [[nodiscard]] auto get_or_create_instantiation(Substitution& subs) noexcept -> std::pair<bool, Struct&>;
+  [[nodiscard]] auto create_instantiation(Substitution& subs) noexcept -> Struct&;
 };
 
 /// A constructor declaration in the compiler.
@@ -124,20 +124,20 @@ struct Ctor {
 
   FnBase base;
 
-  Ctor(ast::CtorDecl& ast_decl, optional<ty::Type> type = std::nullopt, ast::Program* member = nullptr)
+  Ctor(ast::CtorDecl& ast_decl, optional<ty::Type> type = std::nullopt, ast::Program* member = nullptr) noexcept
       : base{ast_decl, type, member} {}
 
-  [[nodiscard]] auto ast() const -> const auto& { return cast<decl_t>(base.ast); }
-  [[nodiscard]] auto ast() -> auto& { return cast<decl_t>(base.ast); }
-  [[nodiscard]] auto get_self_ty() const -> optional<ty::Type> { return base.self_ty; };
-  [[nodiscard]] auto get_subs() const -> const Substitution& { return base.subs; };
-  [[nodiscard]] auto get_subs() -> Substitution& { return base.subs; };
+  [[nodiscard]] auto ast() const noexcept -> const auto& { return cast<decl_t>(base.ast); }
+  [[nodiscard]] auto ast() noexcept -> auto& { return cast<decl_t>(base.ast); }
+  [[nodiscard]] auto get_self_ty() const noexcept -> optional<ty::Type> { return base.self_ty; };
+  [[nodiscard]] auto get_subs() const noexcept -> const Substitution& { return base.subs; };
+  [[nodiscard]] auto get_subs() noexcept -> Substitution& { return base.subs; };
 
-  [[nodiscard]] auto name() const -> string;
-  [[nodiscard]] static auto overload_name(const call_t& ast) -> string;
-  [[nodiscard]] static auto arg_type(const decl_t::arg_t& ast) -> optional<ty::Type>;
-  [[nodiscard]] static auto arg_name(const decl_t::arg_t& ast) -> string;
-  [[nodiscard]] static auto common_ast(const decl_t::arg_t& ast) -> const ast::AST&;
+  [[nodiscard]] auto name() const noexcept -> string;
+  [[nodiscard]] static auto overload_name(const call_t& ast) noexcept -> string;
+  [[nodiscard]] static auto arg_type(const decl_t::arg_t& ast) noexcept -> optional<ty::Type>;
+  [[nodiscard]] static auto arg_name(const decl_t::arg_t& ast) noexcept -> string;
+  [[nodiscard]] static auto common_ast(const decl_t::arg_t& ast) noexcept -> const ast::AST&;
 };
 
 using DeclLike_t = std::variant<std::monostate, Fn*, Struct*, Ctor*>;
@@ -148,7 +148,7 @@ struct DeclLike : public DeclLike_t {
 private:
   template <typename R, typename... Ts> struct DeclLikeVisitor : Ts... {
     using Ts::operator()...;
-    auto operator()(std::monostate /* ignored */) -> R { return R(); };
+    auto operator()(std::monostate /* ignored */) noexcept(noexcept(R())) -> R { return R(); };
   };
   template <typename R, typename... Ts> DeclLikeVisitor(R, Ts...) -> DeclLikeVisitor<R, Ts...>;
 
@@ -162,8 +162,8 @@ public:
     return std::visit(DeclLikeVisitor<R, Ts...>{ts...}, *this);
   }
 
-  [[nodiscard]] auto subs() const -> const Substitution* {
-    return visit_decl<const Substitution*>([](auto* decl) -> const Substitution* {
+  [[nodiscard]] auto subs() const noexcept -> const Substitution* {
+    return visit_decl<const Substitution*>([](auto* decl) noexcept -> const Substitution* {
       if (decl == nullptr)
         return nullptr;
       auto& subs = decl->get_subs();
@@ -175,24 +175,24 @@ public:
     });
   };
 
-  [[nodiscard]] auto subs() -> Substitution* {
-    return visit_decl<Substitution*>([](auto* decl) -> Substitution* {
+  [[nodiscard]] auto subs() noexcept -> Substitution* {
+    return visit_decl<Substitution*>([](auto* decl) noexcept -> Substitution* {
       if (decl == nullptr)
         return nullptr;
       return &decl->get_subs();
     });
   };
 
-  [[nodiscard]] auto ast() const -> const ast::AST* {
-    return visit_decl<const ast::AST*>([](const auto* decl) -> const ast::AST* { return &decl->ast(); });
+  [[nodiscard]] auto ast() const noexcept -> const ast::AST* {
+    return visit_decl<const ast::AST*>([](const auto* decl) noexcept -> const ast::AST* { return &decl->ast(); });
   };
 
-  [[nodiscard]] auto ast() -> ast::AST* {
-    return visit_decl<ast::AST*>([](auto* decl) -> ast::AST* { return &decl->ast(); });
+  [[nodiscard]] auto ast() noexcept -> ast::AST* {
+    return visit_decl<ast::AST*>([](auto* decl) noexcept -> ast::AST* { return &decl->ast(); });
   };
 
-  [[nodiscard]] auto self_ty() const -> optional<ty::Type> {
-    return visit_decl<optional<ty::Type>>([](const auto* decl) { return decl->get_self_ty(); });
+  [[nodiscard]] auto self_ty() const noexcept -> optional<ty::Type> {
+    return visit_decl<optional<ty::Type>>([](const auto* decl) noexcept { return decl->get_self_ty(); });
   };
 };
 
@@ -203,8 +203,8 @@ struct Val {
   llvm::Value* llvm{};
   InScope* scope{};
 
-  /* implicit */ Val(llvm::Value* llvm_val) : llvm(llvm_val) {}
-  Val(llvm::Value* llvm_val, InScope* scope_val) : llvm(llvm_val), scope(scope_val) {}
+  /* implicit */ Val(llvm::Value* llvm_val) noexcept : llvm(llvm_val) {}
+  Val(llvm::Value* llvm_val, InScope* scope_val) noexcept : llvm(llvm_val), scope(scope_val) {}
 
   /* implicit */ operator llvm::Value*() const { return llvm; }
 };

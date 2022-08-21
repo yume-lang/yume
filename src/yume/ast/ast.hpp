@@ -161,7 +161,7 @@ template <typename T> class AnyBase : public OptionalAnyBase<T> {
 public:
   AnyBase() = delete;
   explicit AnyBase(T* raw_ptr) : Super{raw_ptr} { yume_assert(raw_ptr != nullptr, "AnyBase should never be null"); }
-  template <std::convertible_to<unique_ptr<T>> U> AnyBase(U uptr) : Super{move(uptr)} {
+  template <std::convertible_to<unique_ptr<T>> U> AnyBase(U uptr) noexcept : Super{move(uptr)} {
     yume_assert(Super::m_val.get() != nullptr, "AnyBase should never be null");
   }
   AnyBase(OptionalAnyBase<T>&& other) : Super(move(other.m_val)) {}
