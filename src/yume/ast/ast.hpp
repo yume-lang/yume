@@ -661,8 +661,6 @@ public:
 /// A declaration of a function (`def`).
 class FnDecl : public Decl {
 public:
-  using arg_t = TypeName;
-
   using extern_decl_t = struct {
     string name;
     bool varargs;
@@ -675,7 +673,7 @@ public:
 private:
   string m_name;
   std::set<string> m_annotations;
-  vector<arg_t> m_args;
+  vector<TypeName> m_args;
   vector<string> m_type_args;
   OptionalType m_ret;
   /// If this function declaration refers to a primitive, this field is a string representing the name of the primitive.
@@ -684,7 +682,7 @@ private:
   body_t m_body;
 
 public:
-  FnDecl(span<Token> tok, string name, vector<arg_t> args, vector<string> type_args, OptionalType ret, body_t body,
+  FnDecl(span<Token> tok, string name, vector<TypeName> args, vector<string> type_args, OptionalType ret, body_t body,
          std::set<string> annotations)
       : Decl(K_FnDecl, tok), m_name{move(name)}, m_annotations(move(annotations)), m_args{move(args)},
         m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(body)} {}
@@ -731,15 +729,12 @@ public:
  * \endcode
  */
 class CtorDecl : public Decl {
-public:
-  using arg_t = variant<TypeName, FieldAccessExpr>;
-
 private:
-  vector<arg_t> m_args;
+  vector<TypeName> m_args;
   Compound m_body;
 
 public:
-  CtorDecl(span<Token> tok, vector<arg_t> args, Compound body)
+  CtorDecl(span<Token> tok, vector<TypeName> args, Compound body)
       : Decl(K_CtorDecl, tok), m_args{move(args)}, m_body{move(body)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;

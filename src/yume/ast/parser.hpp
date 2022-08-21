@@ -151,9 +151,6 @@ struct Parser {
   struct FnArg {
     unique_ptr<TypeName> type_name;
     OptionalStmt extra_body;
-
-    FnArg(unique_ptr<TypeName> type_name, OptionalStmt extra_body)
-        : type_name{move(type_name)}, extra_body{move(extra_body)} {}
   };
 
   constexpr static auto Symbol = Token::Type::Symbol;
@@ -239,7 +236,7 @@ struct Parser {
   auto parse_stmt() -> unique_ptr<Stmt>;
   auto parse_expr() -> unique_ptr<Expr>;
 
-  auto parse_fn_arg() -> unique_ptr<FnArg>;
+  auto parse_fn_arg() -> FnArg;
 
   auto try_parse_type() -> optional<unique_ptr<Type>>;
   auto parse_type(bool implicit_self = false) -> unique_ptr<Type>;

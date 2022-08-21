@@ -75,6 +75,7 @@ struct Fn {
   [[nodiscard]] auto arg_count() const -> size_t;
   [[nodiscard]] auto arg_types() const -> vector<ty::Type>;
   [[nodiscard]] auto arg_names() const -> vector<string>;
+  [[nodiscard]] auto arg_nodes() const -> const vector<ast::TypeName>&;
   [[nodiscard]] auto args() const -> vector<FnArg>;
   [[nodiscard]] auto varargs() const -> bool;
   [[nodiscard]] auto primitive() const -> bool;
@@ -88,6 +89,12 @@ struct Fn {
   [[nodiscard]] auto create_instantiation(Substitution& subs) noexcept -> Fn&;
 
 private:
+  template <typename Fn>
+  requires (std::invocable<Fn, ast::FnDecl&> && std::invocable<Fn, ast::CtorDecl&>)
+  auto visit_decl(Fn fn) const -> decltype(auto) {
+    return visit_decl(fn, fn);
+  }
+
   template <typename... Ts>
   auto visit_decl(std::invocable<ast::FnDecl&, Ts...> auto fn_c, std::invocable<ast::CtorDecl&, Ts...> auto ct_c,
                   Ts... ts) const -> decltype(auto) {
@@ -97,16 +104,16 @@ private:
     return ct_c(cast<ast::CtorDecl>(ast_decl), std::forward<Ts...>(ts)...);
   }
 
-  template <typename T, typename..., typename Vec = std::vector<T>>
-  auto visit_map_args(T fn_c(ast::FnDecl::arg_t&), T ct_c(ast::CtorDecl::arg_t&)) const -> Vec {
-    Vec vec = {};
+  template <std::invocable<ast::TypeName&> F, typename..., typename T = std::result_of_t<F(ast::TypeName&)>>
+  auto visit_map_args(F fn) const -> std::vector<T> {
+    std::vector<T> vec = {};
     vec.reserve(arg_count());
     if (auto* fn_decl = dyn_cast<ast::FnDecl>(&ast_decl)) {
       for (auto& i : fn_decl->args())
-        vec.emplace_back(std::move<T>(fn_c(i)));
+        vec.emplace_back(std::move<T>(fn(i)));
     } else {
       for (auto& i : cast<ast::CtorDecl>(ast_decl).args())
-        vec.emplace_back(std::move<T>(ct_c(i)));
+        vec.emplace_back(std::move<T>(fn(i)));
     }
     return vec;
   }

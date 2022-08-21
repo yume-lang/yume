@@ -317,7 +317,7 @@ auto Parser::parse_struct_decl() -> unique_ptr<StructDecl> {
   return ast_ptr<StructDecl>(entry, name, move(fields), type_args, make_ast<Compound>(body_begin, move(body)));
 }
 
-auto Parser::parse_fn_arg() -> unique_ptr<FnArg> {
+auto Parser::parse_fn_arg() -> FnArg {
   auto entry = tokens.begin();
   if (try_consume(SYM_COLON_COLON)) {
     auto field_name = consume_word();
@@ -328,10 +328,10 @@ auto Parser::parse_fn_arg() -> unique_ptr<FnArg> {
     auto arg_var = ast_ptr<VarExpr>(entry, field_name);
     auto extra_assign = ast_ptr<AssignExpr>(entry, move(implicit_field), move(arg_var));
 
-    return std::make_unique<FnArg>(move(proxied_arg), move(extra_assign));
+    return {move(proxied_arg), move(extra_assign)};
   }
 
-  return std::make_unique<FnArg>(parse_type_name(), std::nullopt);
+  return {parse_type_name(), std::nullopt};
 };
 
 auto Parser::parse_fn_or_ctor_decl() -> unique_ptr<Stmt> {
@@ -361,9 +361,9 @@ auto Parser::parse_fn_decl() -> unique_ptr<FnDecl> {
 
   consume_with_commas_until(SYM_RPAREN, [&] {
     auto arg = parse_fn_arg();
-    args.emplace_back(move(*arg->type_name));
-    if (arg->extra_body)
-      body.emplace_back(move(arg->extra_body));
+    args.emplace_back(move(*arg.type_name));
+    if (arg.extra_body)
+      body.emplace_back(move(arg.extra_body));
   });
 
   auto ret_type = OptionalType{try_parse_type()};
@@ -410,14 +410,14 @@ auto Parser::parse_ctor_decl() -> unique_ptr<CtorDecl> {
   consume(KWD_NEW);
   consume(SYM_LPAREN);
 
+  auto args = vector<TypeName>{};
   auto body = vector<AnyStmt>{};
-  auto args = vector<CtorDecl::arg_t>{};
 
   consume_with_commas_until(SYM_RPAREN, [&] {
     auto arg = parse_fn_arg();
-    args.emplace_back(move(*arg->type_name));
-    if (arg->extra_body)
-      body.emplace_back(move(arg->extra_body));
+    args.emplace_back(move(*arg.type_name));
+    if (arg.extra_body)
+      body.emplace_back(move(arg.extra_body));
   });
 
   auto body_begin = entry;

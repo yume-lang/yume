@@ -414,17 +414,8 @@ template <> void TypeWalker::statement(ast::CtorDecl& stat) {
 
   stat.val_ty(struct_type);
   for (auto& i : stat.args()) {
-    if (auto* type_name = std::get_if<ast::TypeName>(&i)) {
-      expression(*type_name);
-      scope.insert({type_name->name, type_name});
-    } else if (auto* direct_init = std::get_if<ast::FieldAccessExpr>(&i)) {
-      auto target_name = direct_init->field();
-      auto [target_type, target_offset] = find_field(*struct_type, target_name);
-
-      direct_init->offset(target_offset);
-      direct_init->val_ty(target_type);
-      scope.insert({target_name, direct_init});
-    }
+    expression(i);
+    scope.insert({i.name, &i});
   }
 
   if (in_depth)
