@@ -148,6 +148,14 @@ struct Parser {
     return T(span<Token>{entry.base(), tokens.begin().base()}, std::forward<Args>(args)...);
   }
 
+  struct FnArg {
+    unique_ptr<TypeName> type_name;
+    OptionalStmt extra_body;
+
+    FnArg(unique_ptr<TypeName> type_name, OptionalStmt extra_body)
+        : type_name{move(type_name)}, extra_body{move(extra_body)} {}
+  };
+
   constexpr static auto Symbol = Token::Type::Symbol;
   constexpr static auto Word = Token::Type::Word;
   constexpr static auto Separator = Token::Type::Separator;
@@ -231,11 +239,12 @@ struct Parser {
   auto parse_stmt() -> unique_ptr<Stmt>;
   auto parse_expr() -> unique_ptr<Expr>;
 
+  auto parse_fn_arg() -> unique_ptr<FnArg>;
+
+  auto try_parse_type() -> optional<unique_ptr<Type>>;
   auto parse_type(bool implicit_self = false) -> unique_ptr<Type>;
 
   auto parse_type_name() -> unique_ptr<TypeName>;
-
-  auto try_parse_type() -> optional<unique_ptr<Type>>;
 
   auto parse_fn_name() -> string;
 
@@ -244,7 +253,6 @@ struct Parser {
   auto parse_fn_or_ctor_decl() -> unique_ptr<Stmt>;
   auto parse_fn_decl() -> unique_ptr<FnDecl>;
   auto parse_ctor_decl() -> unique_ptr<CtorDecl>;
-  auto parse_type_name_or_ctor_field() -> CtorDecl::arg_t;
 
   auto parse_var_decl() -> unique_ptr<VarDecl>;
 
