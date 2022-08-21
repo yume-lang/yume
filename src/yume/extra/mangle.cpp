@@ -9,30 +9,15 @@ auto mangle_name(Fn& fn) -> string {
   ss << "_Ym.";
   ss << fn.ast().name();
   ss << "(";
-  for (const auto& i : llvm::enumerate(fn.ast().args())) {
+  for (const auto& i : llvm::enumerate(fn.arg_types())) {
     if (i.index() > 0)
       ss << ",";
-    ss << mangle_name(i.value().type->ensure_ty(), &fn);
+    ss << mangle_name(i.value(), &fn);
   }
   ss << ")";
   // TODO(rymiel): should mangled names even contain the return type...?
-  if (fn.ast().ret().has_value())
-    ss << mangle_name(fn.ast().ret()->ensure_ty(), &fn);
-
-  return ss.str();
-}
-
-auto mangle_name(Ctor& ctor) -> string {
-  stringstream ss{};
-  ss << "_Ym.";
-  ss << ctor.name();
-  ss << "(";
-  for (const auto& i : llvm::enumerate(ctor.ast().args())) {
-    if (i.index() > 0)
-      ss << ",";
-    ss << mangle_name(*Ctor::arg_type(i.value()), &ctor);
-  }
-  ss << ")";
+  if (auto ret = fn.ret(); ret.has_value())
+    ss << mangle_name(*ret, &fn);
 
   return ss.str();
 }

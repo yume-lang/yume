@@ -33,8 +33,8 @@ auto AST::location() const -> Loc {
   return m_tok[0].loc + m_tok[m_tok.size() - 1].loc;
 }
 
-void CtorExpr::selected_overload(Ctor* fn) { m_selected_overload = fn; }
-auto CtorExpr::selected_overload() const -> Ctor* { return m_selected_overload; }
+void CtorExpr::selected_overload(Fn* fn) { m_selected_overload = fn; }
+auto CtorExpr::selected_overload() const -> Fn* { return m_selected_overload; }
 
 void CallExpr::selected_overload(Fn* fn) { m_selected_overload = fn; }
 auto CallExpr::selected_overload() const -> Fn* { return m_selected_overload; }

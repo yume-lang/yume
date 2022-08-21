@@ -85,4 +85,13 @@ auto inline open_file(nonnull<const char*> filename) -> unique_ptr<llvm::raw_pwr
   auto delim = sv.rfind('/');
   return sv.substr(delim == string::npos ? 0 : delim + 1);
 }
+
+template <size_t N> struct StringLiteral {
+  // NOLINTNEXTLINE(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+  constexpr StringLiteral(const char (&str)[N]) { std::copy_n(str, N, value); }
+
+  char value[N]{}; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+  auto operator<=>(const StringLiteral&) const = default;
+};
+
 } // namespace yume

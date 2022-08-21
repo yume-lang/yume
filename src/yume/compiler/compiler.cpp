@@ -85,7 +85,7 @@ Compiler::Compiler(const optional<string>& target_triple, vector<SourceFile> sou
 
 void Compiler::declare_default_ctor(Struct& st) {
   const bool no_ctors_declared =
-      std::ranges::none_of(m_ctors, [&](const Ctor& ct) { return ct.get_self_ty() == st.get_self_ty(); });
+      std::ranges::none_of(m_ctors, [&](const Fn& fn) { return fn.get_self_ty() == st.get_self_ty(); });
 
   if (!no_ctors_declared)
     return; // Don't declare implicit ctors if at least one user-defined one exists
@@ -128,9 +128,9 @@ void Compiler::run() {
   vector<Fn*> extern_fns = {};
   for (auto& fn : m_fns) {
     if (fn.name() == "main")
-      fn.ast().make_extern_linkage();
+      fn.make_extern_linkage();
 
-    if (fn.ast().extern_linkage() && !fn.ast().extern_decl())
+    if (fn.extern_linkage() && !fn.extern_decl())
       extern_fns.push_back(&fn);
   }
 
@@ -143,8 +143,7 @@ void Compiler::run() {
   while (!m_decl_queue.empty()) {
     auto next = m_decl_queue.front();
     m_decl_queue.pop();
-    next.visit_decl([&](Fn* fn) { define(*fn); }, //
-                    [&](Ctor* ct) { define(*ct); },
+    next.visit_decl([&](Fn* fn) { define(*fn); },
                     [&](Struct* /*st*/) { throw std::logic_error("Cannot declare a struct"); });
   }
 }
@@ -299,69 +298,40 @@ auto Compiler::default_init(ty::Type type) -> Val {
 }
 
 auto Compiler::declare(Fn& fn) -> llvm::Function* {
-  if (fn.base.llvm != nullptr)
-    return fn.base.llvm;
-  if (fn.ast().primitive())
+  if (fn.llvm != nullptr)
+    return fn.llvm;
+  if (fn.primitive())
     return nullptr;
-  const auto& fn_decl = fn.ast();
+
   auto* llvm_ret_type = llvm::Type::getVoidTy(*m_context);
+
+  if (auto ret_ty = fn.ret())
+    llvm_ret_type = llvm_type(*ret_ty);
+
   auto llvm_args = vector<llvm::Type*>{};
-  if (fn_decl.ret())
-    llvm_ret_type = llvm_type(fn_decl.ret()->ensure_ty());
+  for (auto i : fn.arg_types())
+    llvm_args.push_back(llvm_type(i));
 
-  for (const auto& i : fn_decl.args())
-    llvm_args.push_back(llvm_type(i.ensure_ty()));
+  llvm::FunctionType* fn_t = llvm::FunctionType::get(llvm_ret_type, llvm_args, fn.varargs());
 
-  llvm::FunctionType* fn_t = llvm::FunctionType::get(llvm_ret_type, llvm_args, fn_decl.varargs());
-
-  string name = fn_decl.name();
-  if (!fn.ast().extern_linkage())
+  string name = fn.ast().name();
+  if (!fn.extern_linkage())
     name = mangle::mangle_name(fn);
 
-  auto linkage = fn.ast().extern_linkage() ? llvm::Function::ExternalLinkage : llvm::Function::InternalLinkage;
+  auto linkage = fn.extern_linkage() ? llvm::Function::ExternalLinkage : llvm::Function::InternalLinkage;
   auto* llvm_fn = llvm::Function::Create(fn_t, linkage, name, m_module.get());
-  fn.base.llvm = llvm_fn;
+  fn.llvm = llvm_fn;
 
-  for (auto [llvm_arg, decl_arg] : llvm::zip(llvm_fn->args(), fn_decl.args()))
-    llvm_arg.setName("arg."s + decl_arg.name);
+  for (auto [llvm_arg, arg_name] : llvm::zip(llvm_fn->args(), fn.arg_names()))
+    llvm_arg.setName("arg."s + arg_name);
 
   // At this point, the function prototype is declared, but not the body.
   // In the case of extern functions, a prototype is all that will be declared.
-  if (!fn_decl.extern_decl()) {
+  if (!fn.extern_decl()) {
     m_decl_queue.push(&fn);
     m_walker->current_decl = &fn;
     m_walker->body_statement(fn.ast());
   }
-  return llvm_fn;
-}
-
-auto Compiler::declare(Ctor& ctor) -> llvm::Function* {
-  if (ctor.base.llvm != nullptr)
-    return ctor.base.llvm;
-
-  const auto& ctor_decl = ctor.ast();
-  yume_assert(ctor.base.self_ty.has_value(), "Cannot declare constructor when the type being constructed is unknown");
-  // NOLINTNEXTLINE(bugprone-unchecked-optional-access): clang-tidy doesn't accept yume_assert as an assertion
-  auto* llvm_ret_type = llvm_type(*ctor.base.self_ty);
-  auto llvm_args = vector<llvm::Type*>{};
-
-  for (const auto& i : ctor_decl.args())
-    llvm_args.push_back(llvm_type(*Ctor::arg_type(i)));
-
-  llvm::FunctionType* fn_t = llvm::FunctionType::get(llvm_ret_type, llvm_args, false);
-
-  const string name = mangle::mangle_name(ctor);
-
-  auto linkage = llvm::Function::InternalLinkage;
-  auto* llvm_fn = llvm::Function::Create(fn_t, linkage, name, m_module.get());
-  ctor.base.llvm = llvm_fn;
-
-  for (auto [llvm_arg, decl_arg] : llvm::zip(llvm_fn->args(), ctor_decl.args()))
-    llvm_arg.setName("arg."s + Ctor::arg_name(decl_arg));
-
-  m_decl_queue.push(&ctor);
-  m_walker->current_decl = &ctor;
-  m_walker->body_statement(ctor.ast());
   return llvm_fn;
 }
 
@@ -391,22 +361,18 @@ void Compiler::destruct_all_in_scope() {
       destruct(v.value, v.ast.ensure_ty());
 }
 
-template <typename T> void Compiler::setup_fn_base(T& fn) {
-  m_current_fn = &fn.base;
+void Compiler::setup_fn_base(Fn& fn) {
+  m_current_fn = &fn;
   m_scope.clear();
   m_scope_ctor.reset();
-  auto* bb = llvm::BasicBlock::Create(*m_context, "entry", fn.base);
+  auto* bb = llvm::BasicBlock::Create(*m_context, "entry", fn.llvm);
   m_builder->SetInsertPoint(bb);
 
-  if constexpr (std::is_same_v<T, Ctor>) {
-    if (fn.ast().body().body().empty())
-      return; // Tiny optimization: A constructor with no body doesn't need to allocate its parameters
-  }
   // Allocate local variables for each parameter
-  for (auto [arg, ast_arg] : llvm::zip(fn.base.llvm->args(), fn.ast().args())) {
-    const ty::Type type = *T::arg_type(ast_arg);
-    auto name = T::arg_name(ast_arg);
-    auto& val = T::common_ast(ast_arg);
+  for (auto [arg, ast_arg] : llvm::zip(fn.llvm->args(), fn.args())) {
+    auto type = ast_arg.type;
+    auto name = ast_arg.name;
+    const auto& val = ast_arg.ast;
     llvm::Value* alloc = nullptr;
     if (type.is_mut()) {
       m_scope.insert({name, {.value = &arg, .ast = val, .owning = false}}); // We don't own parameters
@@ -421,55 +387,51 @@ template <typename T> void Compiler::setup_fn_base(T& fn) {
 void Compiler::define(Fn& fn) {
   setup_fn_base(fn);
 
-  if (const auto* body = get_if<ast::Compound>(&fn.body()); body != nullptr) {
-    statement(*body);
-  }
-
-  if (m_builder->GetInsertBlock()->getTerminator() == nullptr) {
-    destruct_all_in_scope();
-    m_builder->CreateRetVoid();
-  }
-
-  verifyFunction(*fn.base.llvm, &errs());
-}
-
-void Compiler::define(Ctor& ctor) {
-  setup_fn_base(ctor);
-
-  yume_assert(ctor.base.self_ty.has_value(), "Cannot declare constructor when the type being constructed is unknown");
-  // NOLINTNEXTLINE(bugprone-unchecked-optional-access): clang-tidy doesn't accept yume_assert as an assertion
-  auto* ctor_type = llvm_type(*ctor.base.self_ty);
-  Val base_value = llvm::UndefValue::get(ctor_type);
-
-  // Initialize fields for short `::x` constructor syntax
-  for (auto [arg, ast_arg] : llvm::zip(ctor.base.llvm->args(), ctor.ast().args())) {
-    if (const auto* field_access = std::get_if<ast::FieldAccessExpr>(&ast_arg)) {
-      auto base_name = field_access->field();
-      const int base_offset = field_access->offset();
-      yume_assert(base_offset >= 0, "Field access has unknown offset into struct");
-
-      base_value = m_builder->CreateInsertValue(base_value, &arg, base_offset, "ctor.wf."s + base_name);
+  if (isa<ast::FnDecl>(&fn.ast())) {
+    if (const auto* body = get_if<ast::Compound>(&fn.fn_body()); body != nullptr) {
+      statement(*body);
     }
+
+    if (m_builder->GetInsertBlock()->getTerminator() == nullptr) {
+      destruct_all_in_scope();
+      m_builder->CreateRetVoid();
+    }
+  } else {
+    yume_assert(fn.self_ty.has_value(), "Cannot define constructor when the type being constructed is unknown");
+    // NOLINTNEXTLINE(bugprone-unchecked-optional-access): clang-tidy doesn't accept yume_assert as an assertion
+    auto* ctor_type = llvm_type(*fn.self_ty);
+    Val base_value = llvm::UndefValue::get(ctor_type);
+
+    // Initialize fields for short `::x` constructor syntax
+    for (auto [arg, ast_arg] : llvm::zip(fn.llvm->args(), fn.args())) {
+      if (const auto* field_access = dyn_cast<ast::FieldAccessExpr>(&ast_arg.ast)) {
+        auto base_name = field_access->field();
+        const int base_offset = field_access->offset();
+        yume_assert(base_offset >= 0, "Field access has unknown offset into struct");
+
+        base_value = m_builder->CreateInsertValue(base_value, &arg, base_offset, "ctor.wf."s + base_name);
+      }
+    }
+    auto* base_alloc = m_builder->CreateAlloca(ctor_type, nullptr, "ctor.base");
+    m_builder->CreateStore(base_value, base_alloc);
+
+    // Act as if we don't own the object being constructed so it won't get destructed at the end of scope
+    m_scope_ctor.emplace(InScope{.value = base_alloc, .ast = fn.ast(), .owning = false});
+
+    statement(fn.compound_body());
+
+    destruct_all_in_scope();
+    auto* finalized_value = m_builder->CreateLoad(ctor_type, base_alloc);
+    m_builder->CreateRet(finalized_value);
   }
-  auto* base_alloc = m_builder->CreateAlloca(ctor_type, nullptr, "ctor.base");
-  m_builder->CreateStore(base_value, base_alloc);
 
-  // Act as if we don't own the object being constructed so it won't get destructed at the end of scope
-  m_scope_ctor.emplace(InScope{.value = base_alloc, .ast = ctor.ast(), .owning = false});
-
-  statement(ctor.ast().body());
-
-  destruct_all_in_scope();
-  auto* finalized_value = m_builder->CreateLoad(ctor_type, base_alloc);
-  m_builder->CreateRet(finalized_value);
-
-  verifyFunction(*ctor.base.llvm, &errs());
+  verifyFunction(*fn.llvm, &errs());
 }
 
 template <> void Compiler::statement(const ast::WhileStmt& stat) {
-  auto* test_bb = llvm::BasicBlock::Create(*m_context, "while.test", *m_current_fn);
-  auto* head_bb = llvm::BasicBlock::Create(*m_context, "while.head", *m_current_fn);
-  auto* merge_bb = llvm::BasicBlock::Create(*m_context, "while.merge", *m_current_fn);
+  auto* test_bb = llvm::BasicBlock::Create(*m_context, "while.test", m_current_fn->llvm);
+  auto* head_bb = llvm::BasicBlock::Create(*m_context, "while.head", m_current_fn->llvm);
+  auto* merge_bb = llvm::BasicBlock::Create(*m_context, "while.merge", m_current_fn->llvm);
   m_builder->CreateBr(test_bb);
   m_builder->SetInsertPoint(test_bb);
   auto cond_value = body_expression(stat.cond());
@@ -481,16 +443,16 @@ template <> void Compiler::statement(const ast::WhileStmt& stat) {
 }
 
 template <> void Compiler::statement(const ast::IfStmt& stat) {
-  auto* merge_bb = llvm::BasicBlock::Create(*m_context, "if.cont", *m_current_fn);
-  auto* next_test_bb = llvm::BasicBlock::Create(*m_context, "if.test", *m_current_fn, merge_bb);
+  auto* merge_bb = llvm::BasicBlock::Create(*m_context, "if.cont", m_current_fn->llvm);
+  auto* next_test_bb = llvm::BasicBlock::Create(*m_context, "if.test", m_current_fn->llvm, merge_bb);
   auto* last_branch = m_builder->CreateBr(next_test_bb);
   bool all_terminated = true;
 
   const auto& clauses = stat.clauses();
   for (const auto& clause : clauses) {
     m_builder->SetInsertPoint(next_test_bb);
-    auto* body_bb = llvm::BasicBlock::Create(*m_context, "if.then", *m_current_fn, merge_bb);
-    next_test_bb = llvm::BasicBlock::Create(*m_context, "if.test", *m_current_fn, merge_bb);
+    auto* body_bb = llvm::BasicBlock::Create(*m_context, "if.then", m_current_fn->llvm, merge_bb);
+    next_test_bb = llvm::BasicBlock::Create(*m_context, "if.test", m_current_fn->llvm, merge_bb);
     auto condition = body_expression(clause.cond());
     last_branch = m_builder->CreateCondBr(condition, body_bb, next_test_bb);
     m_builder->SetInsertPoint(body_bb);
@@ -663,13 +625,13 @@ static inline auto vals_to_llvm(const vector<Val>& in) -> vector<llvm::Value*> {
 }
 
 auto Compiler::primitive(Fn* fn, const vector<Val>& args, const vector<ty::Type>& types) -> optional<Val> {
-  if (fn->ast().extern_decl())
+  if (fn->extern_decl())
     return m_builder->CreateCall(declare(*fn), vals_to_llvm(args));
 
-  if (!fn->ast().primitive())
+  if (!fn->primitive())
     return {};
 
-  auto primitive = get<string>(fn->body());
+  auto primitive = get<string>(fn->fn_body());
 
   if (primitive == "ptrto")
     return args.at(0);
@@ -767,7 +729,7 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
         auto struct_base = field_access->base()->ensure_ty();
         return {struct_base, base};
       } // TODO(rymiel): revisit
-      if (!isa<ast::CtorDecl>(m_current_fn->ast))
+      if (!isa<ast::CtorDecl>(m_current_fn->ast()))
         throw std::logic_error("Field access without a base is only available in constructors");
 
       auto [value, ast, owning] = *m_scope_ctor;

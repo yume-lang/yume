@@ -32,16 +32,20 @@ enum Kind {
   K_TypeName, ///< `TypeName`
 
   /** subclasses of Stmt */
-  /**/ K_Stmt,       ///< `Stmt`
-  /**/ K_Compound,   ///< `Compound`
-  /**/ K_FnDecl,     ///< `FnDecl`
-  /**/ K_CtorDecl,   ///< `CtorDecl`
-  /**/ K_StructDecl, ///< `StructDecl`
-  /**/ K_VarDecl,    ///< `VarDecl`
-  /**/ K_While,      ///< `WhileStmt`
-  /**/ K_If,         ///< `IfStmt`
-  /**/ K_Return,     ///< `ReturnStmt`
-  /**/ K_Program,    ///< `Program`
+  /**/ K_Stmt,     ///< `Stmt`
+  /**/ K_Compound, ///< `Compound`
+  /**/ K_While,    ///< `WhileStmt`
+  /**/ K_If,       ///< `IfStmt`
+  /**/ K_Return,   ///< `ReturnStmt`
+  /**/ K_Program,  ///< `Program`
+
+  /**** subclasses of Decl */
+  /****/ K_Decl,       ///< `Decl`
+  /****/ K_FnDecl,     ///< `FnDecl`
+  /****/ K_CtorDecl,   ///< `CtorDecl`
+  /****/ K_StructDecl, ///< `StructDecl`
+  /****/ K_VarDecl,    ///< `VarDecl`
+  /****/ K_END_Decl,
 
   /**** subclasses of Expr */
   /****/ K_Expr,         ///< `Expr`
@@ -103,7 +107,9 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case K_Stmt:
   case K_Expr:
   case K_Type:
+  case K_Decl:
   case K_END_Expr:
+  case K_END_Decl:
   case K_END_Stmt:
   case K_END_Type: llvm_unreachable("Invalid type name for ast node");
   }
@@ -485,7 +491,7 @@ class CtorExpr : public Expr {
   vector<AnyExpr> m_args;
   /// During semantic analysis, the `TypeWalker` performs overload selection and saves the constructor declaration that
   /// this call refers to directly in the AST node, in this field.
-  Ctor* m_selected_overload{};
+  Fn* m_selected_overload{};
 
 public:
   CtorExpr(span<Token> tok, AnyType type, vector<AnyExpr> args)
@@ -498,8 +504,8 @@ public:
   [[nodiscard]] auto args() const -> const auto& { return m_args; }
   [[nodiscard]] auto args() -> auto& { return m_args; }
 
-  void selected_overload(Ctor* fn);
-  [[nodiscard]] auto selected_overload() const -> Ctor*;
+  void selected_overload(Fn* fn);
+  [[nodiscard]] auto selected_overload() const -> Fn*;
   static auto classof(const AST* a) -> bool { return a->kind() == K_Ctor; }
   [[nodiscard]] auto clone() const -> CtorExpr* override;
 };
@@ -623,8 +629,20 @@ public:
   [[nodiscard]] auto clone() const -> Compound* override;
 };
 
+/// Base class for a named declaration.
+class Decl : public Stmt {
+protected:
+  using Stmt::Stmt;
+
+public:
+  static auto classof(const AST* a) -> bool { return a->kind() >= K_Decl && a->kind() <= K_END_Decl; }
+  [[nodiscard]] auto clone() const -> Decl* override = 0;
+
+  [[nodiscard]] virtual auto name() const -> string = 0;
+};
+
 /// A declaration of a function (`def`).
-class FnDecl : public Stmt {
+class FnDecl : public Decl {
 public:
   using arg_t = TypeName;
 
@@ -651,12 +669,12 @@ private:
 public:
   FnDecl(span<Token> tok, string name, vector<arg_t> args, vector<string> type_args, OptionalType ret, body_t body,
          std::set<string> annotations)
-      : Stmt(K_FnDecl, tok), m_name{move(name)}, m_annotations(move(annotations)), m_args{move(args)},
+      : Decl(K_FnDecl, tok), m_name{move(name)}, m_annotations(move(annotations)), m_args{move(args)},
         m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(body)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] auto name() const -> string { return m_name; }
+  [[nodiscard]] auto name() const -> string override { return m_name; }
   [[nodiscard]] auto args() const -> const auto& { return m_args; }
   [[nodiscard]] auto args() -> auto& { return m_args; }
   [[nodiscard]] auto type_args() const { return m_type_args; }
@@ -695,7 +713,7 @@ public:
  * end
  * \endcode
  */
-class CtorDecl : public Stmt {
+class CtorDecl : public Decl {
 public:
   using arg_t = variant<TypeName, FieldAccessExpr>;
 
@@ -705,10 +723,11 @@ private:
 
 public:
   CtorDecl(span<Token> tok, vector<arg_t> args, Compound body)
-      : Stmt(K_CtorDecl, tok), m_args{move(args)}, m_body{move(body)} {}
+      : Decl(K_CtorDecl, tok), m_args{move(args)}, m_body{move(body)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
+  [[nodiscard]] auto name() const -> string override { return ":new"; } // TODO(rymiel): Magic value?
   [[nodiscard]] auto args() const -> const auto& { return m_args; }
   [[nodiscard]] auto args() -> auto& { return m_args; }
   [[nodiscard]] auto body() const -> const auto& { return m_body; }
@@ -718,7 +737,7 @@ public:
 };
 
 /// A declaration of a struct (`struct`).
-class StructDecl : public Stmt {
+class StructDecl : public Decl {
   string m_name;
   vector<TypeName> m_fields;
   vector<string> m_type_args;
@@ -726,12 +745,12 @@ class StructDecl : public Stmt {
 
 public:
   StructDecl(span<Token> tok, string name, vector<TypeName> fields, vector<string> type_args, Compound body)
-      : Stmt(K_StructDecl, tok), m_name{move(name)}, m_fields{move(fields)}, m_type_args{move(type_args)},
+      : Decl(K_StructDecl, tok), m_name{move(name)}, m_fields{move(fields)}, m_type_args{move(type_args)},
         m_body(move(body)) {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] auto name() const -> string { return m_name; }
+  [[nodiscard]] auto name() const -> string override { return m_name; }
   [[nodiscard]] constexpr auto fields() const -> const auto& { return m_fields; }
   [[nodiscard]] constexpr auto fields() -> auto& { return m_fields; }
   [[nodiscard]] constexpr auto body() const -> const auto& { return m_body; }
@@ -742,18 +761,18 @@ public:
 };
 
 /// A declaration of a local variable (`let`).
-class VarDecl : public Stmt {
+class VarDecl : public Decl {
   string m_name;
   OptionalType m_type;
   AnyExpr m_init;
 
 public:
   VarDecl(span<Token> tok, string name, OptionalType type, AnyExpr init)
-      : Stmt(K_VarDecl, tok), m_name{move(name)}, m_type{move(type)}, m_init(move(init)) {}
+      : Decl(K_VarDecl, tok), m_name{move(name)}, m_type{move(type)}, m_init(move(init)) {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] auto name() const -> string { return m_name; }
+  [[nodiscard]] auto name() const -> string override { return m_name; }
   [[nodiscard]] auto type() const -> const auto& { return m_type; }
   [[nodiscard]] auto type() -> auto& { return m_type; }
   [[nodiscard]] auto init() const -> const auto& { return m_init; }

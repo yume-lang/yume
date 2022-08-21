@@ -44,11 +44,11 @@ class Compiler : public CRTPWalker<Compiler> {
   TypeHolder m_types;
   std::deque<Fn> m_fns{};
   std::deque<Struct> m_structs{};
-  std::deque<Ctor> m_ctors{};
+  std::deque<Fn> m_ctors{};
   std::queue<DeclLike> m_decl_queue{};
   unique_ptr<semantic::TypeWalker> m_walker;
 
-  FnBase* m_current_fn{};
+  Fn* m_current_fn{};
   /// Local variables currently in function scope. Used for destructors
   std::map<string, InScope> m_scope{};
   /// In a constructor, the object being constructed, implicitly created by the compiler.
@@ -71,17 +71,13 @@ public:
   /// Begin compilation!
   void run();
 
-  /// Declare a function in bytecode, or get an existing declaration.
+  /// Declare a function/constructor in bytecode, or get an existing declaration.
   auto declare(Fn&) -> llvm::Function*;
-  /// Declare a constructor in bytecode, or get an existing declaration.
-  auto declare(Ctor&) -> llvm::Function*;
 
   auto create_struct(Struct&) -> bool;
 
-  /// Compile the body of a function.
+  /// Compile the body of a function or constructor.
   void define(Fn&);
-  /// Compile the body of a constructor.
-  void define(Ctor&);
 
   void body_statement(const ast::Stmt&);
   auto decl_statement(ast::Stmt&, optional<ty::Type> parent = std::nullopt, ast::Program* member = nullptr) -> DeclLike;
@@ -115,7 +111,7 @@ private:
   auto entrypoint_builder() -> llvm::IRBuilder<>;
 
   /// Common code between defining functions and constructors. \see define .
-  template <typename T> void setup_fn_base(T&);
+  void setup_fn_base(Fn&);
 
   /// Run the destructors for every owned local variable in the current scope. Should be run when returning from a
   /// function in any way.
