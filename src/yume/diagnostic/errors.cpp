@@ -104,7 +104,7 @@ constexpr DirectReplaceSimplify STRINGSTREAM_SIMPLIFY = {
     "std::__cxx11::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >", "std::stringstream"};
 constexpr DirectReplaceSimplify ANONYMOUS_NS_SIMPLIFY = {"::(anonymous namespace)::", ":::"};
 constexpr DirectReplaceSimplify DECL_LIKE_SIMPLIFY = {
-    "std::variant<std::monostate, yume::Fn*, yume::Struct*, yume::Ctor*>", "yume::DeclLike"};
+    "std::variant<std::monostate, yume::Fn*, yume::Struct*>", "yume::DeclLike"};
 
 auto stacktrace_ostream::simplify(string_view msg, ContainerLikeSimplify s) -> bool {
   constexpr static const string_view MIDDLE_END = "> >";

@@ -7,11 +7,13 @@
 #include "ty/type.hpp"
 #include "util.hpp"
 #include <compare>
+#include <functional>
 #include <iosfwd>
 #include <llvm/Support/Casting.h>
 #include <llvm/Support/raw_ostream.h>
 #include <map>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <utility>
 #include <variant>
@@ -23,21 +25,13 @@ class Value;
 } // namespace llvm
 
 namespace yume {
-/// Common values between function declarations (`Fn`) and constructors (`Ctor`), which behave very similarly.
-struct FnBase {
-  /// The ast node that defines this declaration, being `ast::FnDecl` for `Fn` and `ast::CtorDecl` for `Ctor`. Should
-  /// not be accessed directly, instead \see ast() on `Fn` and `Ctor`.
-  ast::AST& ast;
-  /// If this function is in the body of a struct, this points to its type. Used for the `self` type.
-  optional<ty::Type> self_ty{};
-  /// The program this declaration is a member of.
-  ast::Program* member{};
-  /// If this is an instantiation of a template, a mapping between type variables and their substitutions.
-  Substitution subs{};
-  /// The LLVM function definition corresponding to this function or constructor.
-  llvm::Function* llvm{};
 
-  operator llvm::Function*() const { return llvm; }
+struct FnArg {
+  ty::Type type;
+  string name;
+  const ast::AST& ast;
+
+  FnArg(ty::Type type, string name, const ast::AST& ast) : type{type}, name{move(name)}, ast{ast} {};
 };
 
 /// A function declaration in the compiler.
@@ -51,29 +45,71 @@ struct Fn {
   using decl_t = ast::FnDecl;
   using call_t = ast::CallExpr;
 
-  FnBase base;
+  /// The ast node that defines this declaration.
+  ast::Decl& ast_decl;
+  /// If this function is in the body of a struct, this points to its type. Used for the `self` type.
+  optional<ty::Type> self_ty{};
+  /// The program this declaration is a member of.
+  ast::Program* member{};
+  /// If this is an instantiation of a template, a mapping between type variables and their substitutions.
+  Substitution subs{};
+  /// The LLVM function definition corresponding to this function or constructor.
+  llvm::Function* llvm{};
+
   vector<unique_ptr<ty::Generic>> type_args{};
   std::map<Substitution, unique_ptr<Fn>> instantiations{};
 
-  Fn(ast::FnDecl& ast_decl, optional<ty::Type> parent = std::nullopt, ast::Program* member = nullptr,
-     Substitution subs = {}, vector<unique_ptr<ty::Generic>> type_args = {}) noexcept
-      : base{ast_decl, parent, member, move(subs)}, type_args(move(type_args)) {}
+  Fn(ast::Decl& ast_decl, optional<ty::Type> parent = std::nullopt, ast::Program* member = nullptr,
+     Substitution subs = {}, vector<unique_ptr<ty::Generic>> type_args = {})
+      : ast_decl{ast_decl}, self_ty{parent}, member{member}, subs{move(subs)}, type_args(move(type_args)) {}
 
-  [[nodiscard]] auto ast() const noexcept -> const auto& { return cast<decl_t>(base.ast); }
-  [[nodiscard]] auto ast() noexcept -> auto& { return cast<decl_t>(base.ast); }
-  [[nodiscard]] auto body() const noexcept -> const auto& { return ast().body(); }
-  [[nodiscard]] auto get_self_ty() const noexcept -> optional<ty::Type> { return base.self_ty; };
-  [[nodiscard]] auto get_subs() const noexcept -> const Substitution& { return base.subs; };
-  [[nodiscard]] auto get_subs() noexcept -> Substitution& { return base.subs; };
+  [[nodiscard]] auto fn_body() const -> const ast::FnDecl::body_t&;
+  [[nodiscard]] auto compound_body() const -> const ast::Compound&;
+  [[nodiscard]] auto ast() const -> const auto& { return ast_decl; }
+  [[nodiscard]] auto ast() -> auto& { return ast_decl; }
+  [[nodiscard]] auto get_self_ty() const -> optional<ty::Type> { return self_ty; }
+  [[nodiscard]] auto get_subs() const -> const Substitution& { return subs; }
+  [[nodiscard]] auto get_subs() -> Substitution& { return subs; }
+
+  [[nodiscard]] auto ret() const -> optional<ty::Type>;
+  [[nodiscard]] auto arg_count() const -> size_t;
+  [[nodiscard]] auto arg_types() const -> vector<ty::Type>;
+  [[nodiscard]] auto arg_names() const -> vector<string>;
+  [[nodiscard]] auto args() const -> vector<FnArg>;
+  [[nodiscard]] auto varargs() const -> bool;
+  [[nodiscard]] auto primitive() const -> bool;
+  [[nodiscard]] auto extern_decl() const -> bool;
+  [[nodiscard]] auto extern_linkage() const -> bool;
+  void make_extern_linkage(bool value = true);
 
   [[nodiscard]] auto name() const noexcept -> string;
-  [[nodiscard]] static auto overload_name(const call_t& ast) noexcept -> string;
-  [[nodiscard]] static auto arg_type(const decl_t::arg_t& ast) noexcept -> optional<ty::Type>;
-  [[nodiscard]] static auto arg_name(const decl_t::arg_t& ast) noexcept -> string;
-  [[nodiscard]] static auto common_ast(const decl_t::arg_t& ast) noexcept -> const ast::AST&;
 
   [[nodiscard]] auto get_or_create_instantiation(Substitution& subs) noexcept -> std::pair<bool, Fn&>;
   [[nodiscard]] auto create_instantiation(Substitution& subs) noexcept -> Fn&;
+
+private:
+  template <typename... Ts>
+  auto visit_decl(std::invocable<ast::FnDecl&, Ts...> auto fn_c, std::invocable<ast::CtorDecl&, Ts...> auto ct_c,
+                  Ts... ts) const -> decltype(auto) {
+    if (auto* fn_decl = dyn_cast<ast::FnDecl>(&ast_decl)) {
+      return fn_c(*fn_decl, std::forward<Ts...>(ts)...);
+    }
+    return ct_c(cast<ast::CtorDecl>(ast_decl), std::forward<Ts...>(ts)...);
+  }
+
+  template <typename T, typename..., typename Vec = std::vector<T>>
+  auto visit_map_args(T fn_c(ast::FnDecl::arg_t&), T ct_c(ast::CtorDecl::arg_t&)) const -> Vec {
+    Vec vec = {};
+    vec.reserve(arg_count());
+    if (auto* fn_decl = dyn_cast<ast::FnDecl>(&ast_decl)) {
+      for (auto& i : fn_decl->args())
+        vec.emplace_back(std::move<T>(fn_c(i)));
+    } else {
+      for (auto& i : cast<ast::CtorDecl>(ast_decl).args())
+        vec.emplace_back(std::move<T>(ct_c(i)));
+    }
+    return vec;
+  }
 };
 
 /// A struct declaration in the compiler.
@@ -113,36 +149,9 @@ struct Struct {
   [[nodiscard]] auto create_instantiation(Substitution& subs) noexcept -> Struct&;
 };
 
-/// A constructor declaration in the compiler.
-/**
- * Very similar to `Fn`, the primary use of this structure is to bind together the AST declaration of a struct
- * (`ast::CtorDecl`) and the bytecode body of a function (`llvm::Function`).
- */
-struct Ctor {
-  using decl_t = ast::CtorDecl;
-  using call_t = ast::CtorExpr;
+using DeclLike_t = std::variant<std::monostate, Fn*, Struct*>;
 
-  FnBase base;
-
-  Ctor(ast::CtorDecl& ast_decl, optional<ty::Type> type = std::nullopt, ast::Program* member = nullptr) noexcept
-      : base{ast_decl, type, member} {}
-
-  [[nodiscard]] auto ast() const noexcept -> const auto& { return cast<decl_t>(base.ast); }
-  [[nodiscard]] auto ast() noexcept -> auto& { return cast<decl_t>(base.ast); }
-  [[nodiscard]] auto get_self_ty() const noexcept -> optional<ty::Type> { return base.self_ty; };
-  [[nodiscard]] auto get_subs() const noexcept -> const Substitution& { return base.subs; };
-  [[nodiscard]] auto get_subs() noexcept -> Substitution& { return base.subs; };
-
-  [[nodiscard]] auto name() const noexcept -> string;
-  [[nodiscard]] static auto overload_name(const call_t& ast) noexcept -> string;
-  [[nodiscard]] static auto arg_type(const decl_t::arg_t& ast) noexcept -> optional<ty::Type>;
-  [[nodiscard]] static auto arg_name(const decl_t::arg_t& ast) noexcept -> string;
-  [[nodiscard]] static auto common_ast(const decl_t::arg_t& ast) noexcept -> const ast::AST&;
-};
-
-using DeclLike_t = std::variant<std::monostate, Fn*, Struct*, Ctor*>;
-
-/// A common base between declarations in the compiler: `Fn`, `Struct`, and `Ctor`. Its value may also be absent
+/// A common base between declarations in the compiler: `Fn` and `Struct`. Its value may also be absent
 /// (`std::monostate`).
 struct DeclLike : public DeclLike_t {
 private:

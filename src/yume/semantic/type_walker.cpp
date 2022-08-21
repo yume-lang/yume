@@ -112,7 +112,7 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
   expr.val_ty(base_type);
 
   const bool consider_ctor_overloads = st != nullptr;
-  OverloadSet<Ctor> ctor_overloads{};
+  OverloadSet ctor_overloads{};
 
   // XXX: Duplicated from function overload handling
   if (consider_ctor_overloads) {
@@ -153,12 +153,12 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
 
     // XXX: STILL Duplicated from function overload handling
     for (auto [target, expr_arg, compat] :
-         llvm::zip(selected->ast().args(), expr.args(), best_overload.compatibilities)) {
+         llvm::zip(selected->arg_types(), expr.args(), best_overload.compatibilities)) {
       yume_assert(compat.valid, "Invalid compatibility after overload already selected?????");
       if (compat.conv.empty())
         continue;
 
-      wrap_in_implicit_cast(expr_arg, compat.conv, Ctor::arg_type(target));
+      wrap_in_implicit_cast(expr_arg, compat.conv, target);
     }
 
     expr.selected_overload(selected);
@@ -231,24 +231,24 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
   expr.val_ty(base_is_mut ? target_type->known_mut() : target_type);
 }
 
-auto TypeWalker::all_fn_overloads_by_name(ast::CallExpr& call) -> OverloadSet<Fn> {
-  auto fns_by_name = vector<Overload<Fn>>();
+auto TypeWalker::all_fn_overloads_by_name(ast::CallExpr& call) -> OverloadSet {
+  auto fns_by_name = vector<Overload>();
 
   for (auto& fn : compiler.m_fns)
     if (fn.name() == call.name())
       fns_by_name.emplace_back(&fn);
 
-  return OverloadSet<Fn>{&call, fns_by_name, {}};
+  return OverloadSet{&call, fns_by_name, {}};
 }
 
-auto TypeWalker::all_ctor_overloads_by_type(Struct& st, ast::CtorExpr& call) -> OverloadSet<Ctor> {
-  auto ctors_by_type = vector<Overload<Ctor>>();
+auto TypeWalker::all_ctor_overloads_by_type(Struct& st, ast::CtorExpr& call) -> OverloadSet {
+  auto ctors_by_type = vector<Overload>();
 
   for (auto& ctor : compiler.m_ctors)
-    if (ctor.base.self_ty == st.self_ty)
+    if (ctor.self_ty == st.self_ty)
       ctors_by_type.emplace_back(&ctor);
 
-  return OverloadSet<Ctor>{&call, ctors_by_type, {}};
+  return OverloadSet{&call, ctors_by_type, {}};
 }
 
 template <> void TypeWalker::expression(ast::CallExpr& expr) {
@@ -328,25 +328,24 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
     }
   }
 
-  for (auto [target, expr_arg, compat] :
-       llvm::zip(selected->ast().args(), expr.args(), best_overload.compatibilities)) {
+  for (auto [target, expr_arg, compat] : llvm::zip(selected->arg_types(), expr.args(), best_overload.compatibilities)) {
     yume_assert(compat.valid, "Invalid compatibility after overload already selected?????");
     if (compat.conv.empty())
       continue;
 
-    wrap_in_implicit_cast(expr_arg, compat.conv, target.type->val_ty());
+    wrap_in_implicit_cast(expr_arg, compat.conv, target);
   }
 
   // Find excess variadic arguments. Logic will probably change later, but for now, always pass by value
   // TODO(rymiel): revisit
   for (const auto& expr_arg : llvm::enumerate(expr.args())) {
-    if (expr_arg.index() >= selected->ast().args().size() && expr_arg.value()->ensure_ty().is_mut()) {
+    if (expr_arg.index() >= selected->arg_count() && expr_arg.value()->ensure_ty().is_mut()) {
       auto target_type = expr_arg.value()->ensure_ty().mut_base();
       wrap_in_implicit_cast(expr_arg.value(), ty::Conv{.dereference = true}, target_type);
     }
   }
 
-  if (selected->ast().ret().has_value())
+  if (selected->ret().has_value())
     expr.attach_to(&selected->ast());
 
   expr.selected_overload(selected);
@@ -575,8 +574,7 @@ void TypeWalker::resolve_queue() {
                 decl.subs()->try_emplace(k, v);
               compiler.walk_types(decl);
             }
-          },
-          [&](Ctor* /*ctor*/) { throw std::runtime_error("Unimplemented"); });
+          });
     });
   }
 }
