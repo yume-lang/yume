@@ -152,8 +152,6 @@ public:
   [[nodiscard]] auto has_value() const -> bool { return static_cast<bool>(m_val); }
   [[nodiscard]] auto raw_ptr() const -> const T* { return m_val.get(); }
   [[nodiscard]] auto raw_ptr() -> T* { return m_val.get(); }
-
-  [[nodiscard]] auto ensure_value() -> AnyBase<T> { return AnyBase<T>(raw_ptr()); }
 };
 
 /// Represents "any" kind of ast node of type `T`. See `AnyExpr`, `AnyStmt` and `AnyType`.
