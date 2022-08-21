@@ -6,35 +6,15 @@
 #include <type_traits>
 
 namespace yume {
-
-[[nodiscard]] static auto arg_type(const ast::CtorDecl::arg_t& ast) -> optional<ty::Type> {
-  return std::visit([](const auto& t) { return t.val_ty(); }, ast);
-}
-
-[[nodiscard]] static auto arg_name(const ast::CtorDecl::arg_t& ast) -> string {
-  return std::visit(
-      []<typename T>(const T& t) {
-        if constexpr (std::is_same_v<T, ast::TypeName>) {
-          return t.name;
-        } else {
-          return t.field();
-        }
-      },
-      ast);
-}
-
-[[nodiscard]] static auto arg_ast(const ast::CtorDecl::arg_t& ast) -> const ast::AST& {
-  return *std::visit([](auto& t) -> const ast::AST* { return &t; }, ast);
-}
-
 static constexpr const auto always_false = [](auto&&... /* ignored */) { return false; };
 
 template <StringLiteral msg, typename RetT = void>
 static constexpr const auto always_throw = [](auto&&... /* ignored */) -> RetT { throw std::runtime_error(msg.value); };
 
+template <auto pm, typename R = void>
+static constexpr const auto fwd = [](auto&&... args) -> R { return std::invoke(pm, args...); };
 template <auto pm>
-requires std::is_member_function_pointer_v<decltype(pm)>
-static constexpr const auto fwd = [](auto&&... args) -> decltype(auto) { return std::invoke(pm, args...); };
+static constexpr const auto fwd<pm, void> = [](auto&&... args) -> decltype(auto) { return std::invoke(pm, args...); };
 
 auto Fn::create_instantiation(Substitution& subs) noexcept -> Fn& {
   auto* decl_clone = ast().clone();
@@ -83,22 +63,18 @@ auto Fn::ret() const -> optional<ty::Type> {
 }
 
 auto Fn::arg_count() const -> size_t {
-  return visit_decl([](ast::FnDecl& fn_decl) { return fn_decl.args().size(); },
-                    [](ast::CtorDecl& ct_decl) { return ct_decl.args().size(); });
+  return visit_decl([](auto& decl) { return decl.args().size(); });
 }
 
 auto Fn::arg_types() const -> vector<ty::Type> {
-  return visit_map_args<ty::Type>([](auto& fn_arg) { return fn_arg.ensure_ty(); },
-                                  [](auto& ct_arg) { return *arg_type(ct_arg); });
+  return visit_map_args([](auto& arg) { return arg.ensure_ty(); });
 }
-auto Fn::arg_names() const -> vector<string> {
-  return visit_map_args<string>([](auto& fn_arg) { return fn_arg.name; },
-                                [](auto& ct_arg) { return arg_name(ct_arg); });
+auto Fn::arg_names() const -> vector<string> { return visit_map_args(fwd<&ast::TypeName::name, string>); }
+auto Fn::arg_nodes() const -> const vector<ast::TypeName>& {
+  return visit_decl([](auto& fn_decl) -> const auto& { return fn_decl.args(); });
 }
 auto Fn::args() const -> vector<FnArg> {
-  return visit_map_args<FnArg>(
-      [](auto& fn_arg) { return FnArg(fn_arg.ensure_ty(), fn_arg.name, fn_arg); },
-      [](auto& ct_arg) { return FnArg(*arg_type(ct_arg), arg_name(ct_arg), arg_ast(ct_arg)); });
+  return visit_map_args([](auto& arg) { return FnArg(arg.ensure_ty(), arg.name, arg); });
 }
 
 auto Fn::varargs() const -> bool { return visit_decl(fwd<&ast::FnDecl::varargs>, always_false); }

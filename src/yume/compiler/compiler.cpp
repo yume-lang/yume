@@ -90,12 +90,20 @@ void Compiler::declare_default_ctor(Struct& st) {
   if (!no_ctors_declared)
     return; // Don't declare implicit ctors if at least one user-defined one exists
 
-  vector<ast::CtorDecl::arg_t> ctor_args;
-  for (auto& field : st.ast().fields())
-    ctor_args.emplace_back(ast::FieldAccessExpr(field.token_range(), std::nullopt, field.name));
+  vector<ast::TypeName> ctor_args;
+  vector<ast::AnyStmt> ctor_body;
+  for (auto& field : st.ast().fields()) {
+    auto tok = field.token_range();
+    ast::AnyType proxy_type = make_unique<ast::ProxyType>(tok, field.name);
+    ctor_args.emplace_back(field.token_range(), move(proxy_type), field.name);
+
+    auto implicit_field = make_unique<ast::FieldAccessExpr>(tok, std::nullopt, field.name);
+    auto arg_var = make_unique<ast::VarExpr>(tok, field.name);
+    ctor_body.emplace_back(make_unique<ast::AssignExpr>(tok, move(implicit_field), move(arg_var)));
+  }
   // TODO(rymiel): Give these things sensible locations?
   auto& new_ct = st.body().body().emplace_back(
-      std::make_unique<ast::CtorDecl>(span<Token>{}, move(ctor_args), ast::Compound({}, {})));
+      std::make_unique<ast::CtorDecl>(span<Token>{}, move(ctor_args), ast::Compound({}, move(ctor_body))));
 
   walk_types(decl_statement(*new_ct, st.get_self_ty(), st.member));
 }
@@ -401,17 +409,6 @@ void Compiler::define(Fn& fn) {
     // NOLINTNEXTLINE(bugprone-unchecked-optional-access): clang-tidy doesn't accept yume_assert as an assertion
     auto* ctor_type = llvm_type(*fn.self_ty);
     Val base_value = llvm::UndefValue::get(ctor_type);
-
-    // Initialize fields for short `::x` constructor syntax
-    for (auto [arg, ast_arg] : llvm::zip(fn.llvm->args(), fn.args())) {
-      if (const auto* field_access = dyn_cast<ast::FieldAccessExpr>(&ast_arg.ast)) {
-        auto base_name = field_access->field();
-        const int base_offset = field_access->offset();
-        yume_assert(base_offset >= 0, "Field access has unknown offset into struct");
-
-        base_value = m_builder->CreateInsertValue(base_value, &arg, base_offset, "ctor.wf."s + base_name);
-      }
-    }
     auto* base_alloc = m_builder->CreateAlloca(ctor_type, nullptr, "ctor.base");
     m_builder->CreateStore(base_value, base_alloc);
 
