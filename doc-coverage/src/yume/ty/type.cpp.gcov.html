@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-08-17 19:03:12</td>
+            <td class="headerValue">2022-08-21 19:45:14</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -203,7 +203,7 @@
 <a name="145"><span class="lineNum">     145 </span>            :     return ensure_ptr_base().is_generic();</a>
 <a name="146"><span class="lineNum">     146 </span>            : </a>
 <a name="147"><span class="lineNum">     147 </span>            :   if (const auto* struct_ty = base_dyn_cast&lt;Struct&gt;())</a>
-<a name="148"><span class="lineNum">     148 </span>            :     return std::ranges::any_of(struct_ty-&gt;subs(), [](const auto&amp; sub) { return sub.second.is_generic(); });</a>
+<a name="148"><span class="lineNum">     148 </span>            :     return std::ranges::any_of(struct_ty-&gt;subs(), [](const auto&amp; sub) noexcept { return sub.second.is_generic(); });</a>
 <a name="149"><span class="lineNum">     149 </span>            :   // XXX: The above ranges call is repeated often</a>
 <a name="150"><span class="lineNum">     150 </span>            : </a>
 <a name="151"><span class="lineNum">     151 </span>            :   return false;</a>

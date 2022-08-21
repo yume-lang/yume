@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-08-17 19:03:12</td>
+            <td class="headerValue">2022-08-21 19:45:14</td>
             <td></td>
           </tr>
           <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -163,20 +163,21 @@
 <a name="105"><span class="lineNum">     105 </span>            :   }</a>
 <a name="106"><span class="lineNum">     106 </span>            : </a>
 <a name="107"><span class="lineNum">     107 </span><span class="lineNoCov">          0 :   explicit constexpr Token(Type type) : type(type) {}</span></a>
-<a name="108"><span class="lineNum">     108 </span><span class="lineNoCov">          0 :   constexpr Token(Type type, Payload payload) : type(type), payload(payload) {}</span></a>
-<a name="109"><span class="lineNum">     109 </span><span class="lineNoCov">          0 :   constexpr Token(Type type, Payload payload, int i, Loc loc) : type(type), payload(payload), index{i}, loc{loc} {}</span></a>
-<a name="110"><span class="lineNum">     110 </span>            : </a>
-<a name="111"><span class="lineNum">     111 </span><span class="lineNoCov">          0 :   friend auto operator&lt;&lt;(llvm::raw_ostream&amp; os, const Token&amp; token) -&gt; llvm::raw_ostream&amp;;</span></a>
-<a name="112"><span class="lineNum">     112 </span>            : };</a>
-<a name="113"><span class="lineNum">     113 </span>            : </a>
-<a name="114"><span class="lineNum">     114 </span>            : /// Consume the contents of the input stream and create corresponding tokens, preserving every token, including</a>
-<a name="115"><span class="lineNum">     115 </span>            : /// whitespace. This is usually undesired.</a>
-<a name="116"><span class="lineNum">     116 </span>            : /// \sa tokenize</a>
-<a name="117"><span class="lineNum">     117 </span>            : auto tokenize_preserve_skipped(std::istream&amp; in, const string&amp; source_file) -&gt; vector&lt;Token&gt;;</a>
-<a name="118"><span class="lineNum">     118 </span>            : </a>
-<a name="119"><span class="lineNum">     119 </span>            : /// Consume the contents of the input stream and create corresponding tokens, ignoring insignificant whitespace</a>
-<a name="120"><span class="lineNum">     120 </span>            : auto tokenize(std::istream&amp; in, const string&amp; source_file) -&gt; vector&lt;Token&gt;;</a>
-<a name="121"><span class="lineNum">     121 </span>            : } // namespace yume</a>
+<a name="108"><span class="lineNum">     108 </span><span class="lineNoCov">          0 :   constexpr Token(Type type, Payload payload) noexcept : type(type), payload(payload) {}</span></a>
+<a name="109"><span class="lineNum">     109 </span><span class="lineNoCov">          0 :   constexpr Token(Type type, Payload payload, int i, Loc loc) noexcept</span></a>
+<a name="110"><span class="lineNum">     110 </span>            :       : type(type), payload(payload), index{i}, loc{loc} {}</a>
+<a name="111"><span class="lineNum">     111 </span>            : </a>
+<a name="112"><span class="lineNum">     112 </span><span class="lineNoCov">          0 :   friend auto operator&lt;&lt;(llvm::raw_ostream&amp; os, const Token&amp; token) -&gt; llvm::raw_ostream&amp;;</span></a>
+<a name="113"><span class="lineNum">     113 </span>            : };</a>
+<a name="114"><span class="lineNum">     114 </span>            : </a>
+<a name="115"><span class="lineNum">     115 </span>            : /// Consume the contents of the input stream and create corresponding tokens, preserving every token, including</a>
+<a name="116"><span class="lineNum">     116 </span>            : /// whitespace. This is usually undesired.</a>
+<a name="117"><span class="lineNum">     117 </span>            : /// \sa tokenize</a>
+<a name="118"><span class="lineNum">     118 </span>            : auto tokenize_preserve_skipped(std::istream&amp; in, const string&amp; source_file) -&gt; vector&lt;Token&gt;;</a>
+<a name="119"><span class="lineNum">     119 </span>            : </a>
+<a name="120"><span class="lineNum">     120 </span>            : /// Consume the contents of the input stream and create corresponding tokens, ignoring insignificant whitespace</a>
+<a name="121"><span class="lineNum">     121 </span>            : auto tokenize(std::istream&amp; in, const string&amp; source_file) -&gt; vector&lt;Token&gt;;</a>
+<a name="122"><span class="lineNum">     122 </span>            : } // namespace yume</a>
 </pre>
       </td>
     </tr>

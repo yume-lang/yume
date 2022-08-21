@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-08-17 19:03:12</td>
+            <td class="headerValue">2022-08-21 19:45:14</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -63,7 +63,7 @@
 <a name="5"><span class="lineNum">       5 </span>            : </a>
 <a name="6"><span class="lineNum">       6 </span>            : namespace yume {</a>
 <a name="7"><span class="lineNum">       7 </span>            : </a>
-<a name="8"><span class="lineNum">       8 </span>            : auto Fn::create_instantiation(Substitution&amp; subs) -&gt; Fn&amp; {</a>
+<a name="8"><span class="lineNum">       8 </span>            : auto Fn::create_instantiation(Substitution&amp; subs) noexcept -&gt; Fn&amp; {</a>
 <a name="9"><span class="lineNum">       9 </span>            :   auto* decl_clone = ast().clone();</a>
 <a name="10"><span class="lineNum">      10 </span>            :   base.member-&gt;body().emplace_back(decl_clone);</a>
 <a name="11"><span class="lineNum">      11 </span>            : </a>
@@ -72,7 +72,7 @@
 <a name="14"><span class="lineNum">      14 </span>            :   return *new_emplace.first-&gt;second;</a>
 <a name="15"><span class="lineNum">      15 </span>            : }</a>
 <a name="16"><span class="lineNum">      16 </span>            : </a>
-<a name="17"><span class="lineNum">      17 </span>            : auto Fn::get_or_create_instantiation(Substitution&amp; subs) -&gt; std::pair&lt;bool, Fn&amp;&gt; {</a>
+<a name="17"><span class="lineNum">      17 </span>            : auto Fn::get_or_create_instantiation(Substitution&amp; subs) noexcept -&gt; std::pair&lt;bool, Fn&amp;&gt; {</a>
 <a name="18"><span class="lineNum">      18 </span>            :   auto existing_instantiation = instantiations.find(subs);</a>
 <a name="19"><span class="lineNum">      19 </span>            :   if (existing_instantiation == instantiations.end())</a>
 <a name="20"><span class="lineNum">      20 </span>            :     return {false, create_instantiation(subs)};</a>
@@ -80,7 +80,7 @@
 <a name="22"><span class="lineNum">      22 </span>            :   return {true, *existing_instantiation-&gt;second};</a>
 <a name="23"><span class="lineNum">      23 </span>            : }</a>
 <a name="24"><span class="lineNum">      24 </span>            : </a>
-<a name="25"><span class="lineNum">      25 </span>            : auto Struct::create_instantiation(Substitution&amp; subs) -&gt; Struct&amp; {</a>
+<a name="25"><span class="lineNum">      25 </span>            : auto Struct::create_instantiation(Substitution&amp; subs) noexcept -&gt; Struct&amp; {</a>
 <a name="26"><span class="lineNum">      26 </span>            :   auto* decl_clone = st_ast.clone();</a>
 <a name="27"><span class="lineNum">      27 </span>            :   member-&gt;body().emplace_back(decl_clone);</a>
 <a name="28"><span class="lineNum">      28 </span>            : </a>
@@ -89,7 +89,7 @@
 <a name="31"><span class="lineNum">      31 </span>            :   return *new_emplace.first-&gt;second;</a>
 <a name="32"><span class="lineNum">      32 </span>            : }</a>
 <a name="33"><span class="lineNum">      33 </span>            : </a>
-<a name="34"><span class="lineNum">      34 </span>            : auto Struct::get_or_create_instantiation(Substitution&amp; subs) -&gt; std::pair&lt;bool, Struct&amp;&gt; {</a>
+<a name="34"><span class="lineNum">      34 </span>            : auto Struct::get_or_create_instantiation(Substitution&amp; subs) noexcept -&gt; std::pair&lt;bool, Struct&amp;&gt; {</a>
 <a name="35"><span class="lineNum">      35 </span>            :   auto existing_instantiation = instantiations.find(subs);</a>
 <a name="36"><span class="lineNum">      36 </span>            :   if (existing_instantiation == instantiations.end())</a>
 <a name="37"><span class="lineNum">      37 </span>            :     return {false, create_instantiation(subs)};</a>
@@ -97,27 +97,27 @@
 <a name="39"><span class="lineNum">      39 </span>            :   return {true, *existing_instantiation-&gt;second};</a>
 <a name="40"><span class="lineNum">      40 </span>            : }</a>
 <a name="41"><span class="lineNum">      41 </span>            : </a>
-<a name="42"><span class="lineNum">      42 </span>            : auto Fn::name() const -&gt; string { return ast().name(); }</a>
-<a name="43"><span class="lineNum">      43 </span>            : auto Ctor::name() const -&gt; string { return get_self_ty()-&gt;name() + &quot;:new&quot;; }</a>
-<a name="44"><span class="lineNum">      44 </span>            : auto Struct::name() const -&gt; string { return st_ast.name(); }</a>
+<a name="42"><span class="lineNum">      42 </span>            : auto Fn::name() const noexcept -&gt; string { return ast().name(); }</a>
+<a name="43"><span class="lineNum">      43 </span>            : auto Ctor::name() const noexcept -&gt; string { return get_self_ty()-&gt;name() + &quot;:new&quot;; }</a>
+<a name="44"><span class="lineNum">      44 </span>            : auto Struct::name() const noexcept -&gt; string { return st_ast.name(); }</a>
 <a name="45"><span class="lineNum">      45 </span>            : </a>
-<a name="46"><span class="lineNum">      46 </span>            : auto Fn::overload_name(const call_t&amp; ast) -&gt; string { return ast.name(); };</a>
-<a name="47"><span class="lineNum">      47 </span>            : auto Ctor::overload_name(const call_t&amp; ast) -&gt; string { return ast.ensure_ty().name() + &quot;:new&quot;; };</a>
+<a name="46"><span class="lineNum">      46 </span>            : auto Fn::overload_name(const call_t&amp; ast) noexcept -&gt; string { return ast.name(); };</a>
+<a name="47"><span class="lineNum">      47 </span>            : auto Ctor::overload_name(const call_t&amp; ast) noexcept -&gt; string { return ast.ensure_ty().name() + &quot;:new&quot;; };</a>
 <a name="48"><span class="lineNum">      48 </span>            : </a>
-<a name="49"><span class="lineNum">      49 </span>            : auto Fn::arg_type(const decl_t::arg_t&amp; ast) -&gt; optional&lt;ty::Type&gt; { return ast.val_ty(); };</a>
-<a name="50"><span class="lineNum">      50 </span>            : auto Ctor::arg_type(const decl_t::arg_t&amp; ast) -&gt; optional&lt;ty::Type&gt; {</a>
-<a name="51"><span class="lineNum">      51 </span>            :   return std::visit([](const auto&amp; t) { return t.val_ty(); }, ast);</a>
+<a name="49"><span class="lineNum">      49 </span>            : auto Fn::arg_type(const decl_t::arg_t&amp; ast) noexcept -&gt; optional&lt;ty::Type&gt; { return ast.val_ty(); };</a>
+<a name="50"><span class="lineNum">      50 </span>            : auto Ctor::arg_type(const decl_t::arg_t&amp; ast) noexcept -&gt; optional&lt;ty::Type&gt; {</a>
+<a name="51"><span class="lineNum">      51 </span>            :   return std::visit([](const auto&amp; t) noexcept { return t.val_ty(); }, ast);</a>
 <a name="52"><span class="lineNum">      52 </span>            : };</a>
 <a name="53"><span class="lineNum">      53 </span>            : </a>
-<a name="54"><span class="lineNum">      54 </span>            : auto Fn::common_ast(const decl_t::arg_t&amp; ast) -&gt; const ast::AST&amp; { return ast; };</a>
-<a name="55"><span class="lineNum">      55 </span>            : auto Ctor::common_ast(const decl_t::arg_t&amp; ast) -&gt; const ast::AST&amp; {</a>
-<a name="56"><span class="lineNum">      56 </span>            :   return *std::visit([](auto&amp; t) -&gt; const ast::AST* { return &amp;t; }, ast);</a>
+<a name="54"><span class="lineNum">      54 </span>            : auto Fn::common_ast(const decl_t::arg_t&amp; ast) noexcept -&gt; const ast::AST&amp; { return ast; };</a>
+<a name="55"><span class="lineNum">      55 </span>            : auto Ctor::common_ast(const decl_t::arg_t&amp; ast) noexcept -&gt; const ast::AST&amp; {</a>
+<a name="56"><span class="lineNum">      56 </span>            :   return *std::visit([](auto&amp; t) noexcept -&gt; const ast::AST* { return &amp;t; }, ast);</a>
 <a name="57"><span class="lineNum">      57 </span>            : };</a>
 <a name="58"><span class="lineNum">      58 </span>            : </a>
-<a name="59"><span class="lineNum">      59 </span>            : auto Fn::arg_name(const decl_t::arg_t&amp; ast) -&gt; string { return ast.name; };</a>
-<a name="60"><span class="lineNum">      60 </span>            : auto Ctor::arg_name(const decl_t::arg_t&amp; ast) -&gt; string {</a>
+<a name="59"><span class="lineNum">      59 </span>            : auto Fn::arg_name(const decl_t::arg_t&amp; ast) noexcept -&gt; string { return ast.name; };</a>
+<a name="60"><span class="lineNum">      60 </span>            : auto Ctor::arg_name(const decl_t::arg_t&amp; ast) noexcept -&gt; string {</a>
 <a name="61"><span class="lineNum">      61 </span>            :   return std::visit(</a>
-<a name="62"><span class="lineNum">      62 </span>            :       []&lt;typename T&gt;(const T&amp; t) {</a>
+<a name="62"><span class="lineNum">      62 </span>            :       []&lt;typename T&gt;(const T&amp; t) noexcept {</a>
 <a name="63"><span class="lineNum">      63 </span>            :         if constexpr (std::is_same_v&lt;T, ast::TypeName&gt;) {</a>
 <a name="64"><span class="lineNum">      64 </span>            :           return t.name;</a>
 <a name="65"><span class="lineNum">      65 </span>            :         } else {</a>

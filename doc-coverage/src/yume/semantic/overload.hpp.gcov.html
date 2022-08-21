@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-08-17 19:03:12</td>
+            <td class="headerValue">2022-08-21 19:45:14</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -80,7 +80,7 @@
 <a name="22"><span class="lineNum">      22 </span><span class="lineNoCov">          0 :   bool viable = false;</span></a>
 <a name="23"><span class="lineNum">      23 </span>            : </a>
 <a name="24"><span class="lineNum">      24 </span><span class="lineNoCov">          0 :   Overload() = default;</span></a>
-<a name="25"><span class="lineNum">      25 </span><span class="lineNoCov">          0 :   explicit Overload(T* fn) : fn{fn} {}</span></a>
+<a name="25"><span class="lineNum">      25 </span><span class="lineNoCov">          0 :   explicit Overload(T* fn) noexcept : fn{fn} {}</span></a>
 <a name="26"><span class="lineNum">      26 </span>            : </a>
 <a name="27"><span class="lineNum">      27 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto better_candidate_than(Overload other) const -&gt; bool;</span></a>
 <a name="28"><span class="lineNum">      28 </span><span class="lineNoCov">          0 :   void dump(llvm::raw_ostream&amp; stream) const;</span></a>

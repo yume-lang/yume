@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-08-17 19:03:12</td>
+            <td class="headerValue">2022-08-21 19:45:14</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -283,7 +283,7 @@
 <a name="225"><span class="lineNum">     225 </span>            :     break;</a>
 <a name="226"><span class="lineNum">     226 </span>            :   case Function:</a>
 <a name="227"><span class="lineNum">     227 </span>            :     set_color(CYAN);</a>
-<a name="228"><span class="lineNum">     228 </span>            :     if (std::ranges::any_of(skip_lines, [&amp;](string_view s) { return msg.find(s) != string::npos; }))</a>
+<a name="228"><span class="lineNum">     228 </span>            :     if (std::ranges::any_of(skip_lines, [&amp;](string_view s) noexcept { return msg.find(s) != string::npos; }))</a>
 <a name="229"><span class="lineNum">     229 </span>            :       m_skip = true;</a>
 <a name="230"><span class="lineNum">     230 </span>            :     else</a>
 <a name="231"><span class="lineNum">     231 </span>            :       simplify(msg);</a>
@@ -326,25 +326,27 @@
 <a name="268"><span class="lineNum">     268 </span>            :   format_phase(msg);</a>
 <a name="269"><span class="lineNum">     269 </span>            : </a>
 <a name="270"><span class="lineNum">     270 </span>            :   int counter = static_cast&lt;int&gt;(m_current_phase);</a>
-<a name="271"><span class="lineNum">     271 </span>            :   if (m_current_phase != Offset)</a>
-<a name="272"><span class="lineNum">     272 </span>            :     counter = ++counter % 4;</a>
-<a name="273"><span class="lineNum">     273 </span>            : </a>
-<a name="274"><span class="lineNum">     274 </span>            :   m_current_phase = static_cast&lt;Phase&gt;(counter);</a>
-<a name="275"><span class="lineNum">     275 </span>            :   if (m_current_phase == Offset &amp;&amp; !m_unknown)</a>
-<a name="276"><span class="lineNum">     276 </span>            :     m_current_phase = Index;</a>
-<a name="277"><span class="lineNum">     277 </span>            : </a>
-<a name="278"><span class="lineNum">     278 </span>            :   if (m_current_phase == Index)</a>
-<a name="279"><span class="lineNum">     279 </span>            :     clean_buffer();</a>
-<a name="280"><span class="lineNum">     280 </span>            : }</a>
-<a name="281"><span class="lineNum">     281 </span>            : </a>
-<a name="282"><span class="lineNum">     282 </span>            : } // namespace</a>
+<a name="271"><span class="lineNum">     271 </span>            :   if (m_current_phase != Offset) {</a>
+<a name="272"><span class="lineNum">     272 </span>            :     ++counter;</a>
+<a name="273"><span class="lineNum">     273 </span>            :     counter %= 4;</a>
+<a name="274"><span class="lineNum">     274 </span>            :   }</a>
+<a name="275"><span class="lineNum">     275 </span>            : </a>
+<a name="276"><span class="lineNum">     276 </span>            :   m_current_phase = static_cast&lt;Phase&gt;(counter);</a>
+<a name="277"><span class="lineNum">     277 </span>            :   if (m_current_phase == Offset &amp;&amp; !m_unknown)</a>
+<a name="278"><span class="lineNum">     278 </span>            :     m_current_phase = Index;</a>
+<a name="279"><span class="lineNum">     279 </span>            : </a>
+<a name="280"><span class="lineNum">     280 </span>            :   if (m_current_phase == Index)</a>
+<a name="281"><span class="lineNum">     281 </span>            :     clean_buffer();</a>
+<a name="282"><span class="lineNum">     282 </span>            : }</a>
 <a name="283"><span class="lineNum">     283 </span>            : </a>
-<a name="284"><span class="lineNum">     284 </span><span class="lineNoCov">          0 : void backtrace(void* /*unused*/) {</span></a>
-<a name="285"><span class="lineNum">     285 </span>            :   static stacktrace_ostream stream{};</a>
-<a name="286"><span class="lineNum">     286 </span>            :   llvm::sys::PrintStackTrace(stream);</a>
-<a name="287"><span class="lineNum">     287 </span>            :   stream.clean_buffer();</a>
-<a name="288"><span class="lineNum">     288 </span>            : }</a>
-<a name="289"><span class="lineNum">     289 </span>            : } // namespace yume</a>
+<a name="284"><span class="lineNum">     284 </span>            : } // namespace</a>
+<a name="285"><span class="lineNum">     285 </span>            : </a>
+<a name="286"><span class="lineNum">     286 </span><span class="lineNoCov">          0 : void backtrace(void* /*unused*/) {</span></a>
+<a name="287"><span class="lineNum">     287 </span>            :   static stacktrace_ostream stream{};</a>
+<a name="288"><span class="lineNum">     288 </span>            :   llvm::sys::PrintStackTrace(stream);</a>
+<a name="289"><span class="lineNum">     289 </span>            :   stream.clean_buffer();</a>
+<a name="290"><span class="lineNum">     290 </span>            : }</a>
+<a name="291"><span class="lineNum">     291 </span>            : } // namespace yume</a>
 </pre>
       </td>
     </tr>

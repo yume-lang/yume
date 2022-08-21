@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-08-17 19:03:12</td>
+            <td class="headerValue">2022-08-21 19:45:14</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -114,24 +114,24 @@
 <a name="56"><span class="lineNum">      56 </span><span class="lineNoCov">          0 :   std::map&lt;Substitution, unique_ptr&lt;Fn&gt;&gt; instantiations{};</span></a>
 <a name="57"><span class="lineNum">      57 </span>            : </a>
 <a name="58"><span class="lineNum">      58 </span><span class="lineNoCov">          0 :   Fn(ast::FnDecl&amp; ast_decl, optional&lt;ty::Type&gt; parent = std::nullopt, ast::Program* member = nullptr,</span></a>
-<a name="59"><span class="lineNum">      59 </span>            :      Substitution subs = {}, vector&lt;unique_ptr&lt;ty::Generic&gt;&gt; type_args = {})</a>
+<a name="59"><span class="lineNum">      59 </span>            :      Substitution subs = {}, vector&lt;unique_ptr&lt;ty::Generic&gt;&gt; type_args = {}) noexcept</a>
 <a name="60"><span class="lineNum">      60 </span>            :       : base{ast_decl, parent, member, move(subs)}, type_args(move(type_args)) {}</a>
 <a name="61"><span class="lineNum">      61 </span>            : </a>
-<a name="62"><span class="lineNum">      62 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() const -&gt; const auto&amp; { return cast&lt;decl_t&gt;(base.ast); }</span></a>
-<a name="63"><span class="lineNum">      63 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() -&gt; auto&amp; { return cast&lt;decl_t&gt;(base.ast); }</span></a>
-<a name="64"><span class="lineNum">      64 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto body() const -&gt; const auto&amp; { return ast().body(); }</span></a>
-<a name="65"><span class="lineNum">      65 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_self_ty() const -&gt; optional&lt;ty::Type&gt; { return base.self_ty; };</span></a>
-<a name="66"><span class="lineNum">      66 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_subs() const -&gt; const Substitution&amp; { return base.subs; };</span></a>
-<a name="67"><span class="lineNum">      67 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_subs() -&gt; Substitution&amp; { return base.subs; };</span></a>
+<a name="62"><span class="lineNum">      62 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() const noexcept -&gt; const auto&amp; { return cast&lt;decl_t&gt;(base.ast); }</span></a>
+<a name="63"><span class="lineNum">      63 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() noexcept -&gt; auto&amp; { return cast&lt;decl_t&gt;(base.ast); }</span></a>
+<a name="64"><span class="lineNum">      64 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto body() const noexcept -&gt; const auto&amp; { return ast().body(); }</span></a>
+<a name="65"><span class="lineNum">      65 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_self_ty() const noexcept -&gt; optional&lt;ty::Type&gt; { return base.self_ty; };</span></a>
+<a name="66"><span class="lineNum">      66 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_subs() const noexcept -&gt; const Substitution&amp; { return base.subs; };</span></a>
+<a name="67"><span class="lineNum">      67 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_subs() noexcept -&gt; Substitution&amp; { return base.subs; };</span></a>
 <a name="68"><span class="lineNum">      68 </span>            : </a>
-<a name="69"><span class="lineNum">      69 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto name() const -&gt; string;</span></a>
-<a name="70"><span class="lineNum">      70 </span><span class="lineNoCov">          0 :   [[nodiscard]] static auto overload_name(const call_t&amp; ast) -&gt; string;</span></a>
-<a name="71"><span class="lineNum">      71 </span><span class="lineNoCov">          0 :   [[nodiscard]] static auto arg_type(const decl_t::arg_t&amp; ast) -&gt; optional&lt;ty::Type&gt;;</span></a>
-<a name="72"><span class="lineNum">      72 </span><span class="lineNoCov">          0 :   [[nodiscard]] static auto arg_name(const decl_t::arg_t&amp; ast) -&gt; string;</span></a>
-<a name="73"><span class="lineNum">      73 </span><span class="lineNoCov">          0 :   [[nodiscard]] static auto common_ast(const decl_t::arg_t&amp; ast) -&gt; const ast::AST&amp;;</span></a>
+<a name="69"><span class="lineNum">      69 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto name() const noexcept -&gt; string;</span></a>
+<a name="70"><span class="lineNum">      70 </span><span class="lineNoCov">          0 :   [[nodiscard]] static auto overload_name(const call_t&amp; ast) noexcept -&gt; string;</span></a>
+<a name="71"><span class="lineNum">      71 </span><span class="lineNoCov">          0 :   [[nodiscard]] static auto arg_type(const decl_t::arg_t&amp; ast) noexcept -&gt; optional&lt;ty::Type&gt;;</span></a>
+<a name="72"><span class="lineNum">      72 </span><span class="lineNoCov">          0 :   [[nodiscard]] static auto arg_name(const decl_t::arg_t&amp; ast) noexcept -&gt; string;</span></a>
+<a name="73"><span class="lineNum">      73 </span><span class="lineNoCov">          0 :   [[nodiscard]] static auto common_ast(const decl_t::arg_t&amp; ast) noexcept -&gt; const ast::AST&amp;;</span></a>
 <a name="74"><span class="lineNum">      74 </span>            : </a>
-<a name="75"><span class="lineNum">      75 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_or_create_instantiation(Substitution&amp; subs) -&gt; std::pair&lt;bool, Fn&amp;&gt;;</span></a>
-<a name="76"><span class="lineNum">      76 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto create_instantiation(Substitution&amp; subs) -&gt; Fn&amp;;</span></a>
+<a name="75"><span class="lineNum">      75 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_or_create_instantiation(Substitution&amp; subs) noexcept -&gt; std::pair&lt;bool, Fn&amp;&gt;;</span></a>
+<a name="76"><span class="lineNum">      76 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto create_instantiation(Substitution&amp; subs) noexcept -&gt; Fn&amp;;</span></a>
 <a name="77"><span class="lineNum">      77 </span>            : };</a>
 <a name="78"><span class="lineNum">      78 </span>            : </a>
 <a name="79"><span class="lineNum">      79 </span>            : /// A struct declaration in the compiler.</a>
@@ -154,21 +154,21 @@
 <a name="96"><span class="lineNum">      96 </span><span class="lineNoCov">          0 :   std::map&lt;Substitution, unique_ptr&lt;Struct&gt;&gt; instantiations{};</span></a>
 <a name="97"><span class="lineNum">      97 </span>            : </a>
 <a name="98"><span class="lineNum">      98 </span><span class="lineNoCov">          0 :   Struct(ast::StructDecl&amp; ast_decl, optional&lt;ty::Type&gt; type = std::nullopt, ast::Program* member = nullptr,</span></a>
-<a name="99"><span class="lineNum">      99 </span>            :          Substitution subs = {}, vector&lt;unique_ptr&lt;ty::Generic&gt;&gt; type_args = {})</a>
+<a name="99"><span class="lineNum">      99 </span>            :          Substitution subs = {}, vector&lt;unique_ptr&lt;ty::Generic&gt;&gt; type_args = {}) noexcept</a>
 <a name="100"><span class="lineNum">     100 </span>            :       : st_ast(ast_decl), self_ty(type), member(member), type_args(move(type_args)), subs(move(subs)) {}</a>
 <a name="101"><span class="lineNum">     101 </span>            : </a>
-<a name="102"><span class="lineNum">     102 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() const -&gt; const auto&amp; { return st_ast; }</span></a>
-<a name="103"><span class="lineNum">     103 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() -&gt; auto&amp; { return st_ast; }</span></a>
-<a name="104"><span class="lineNum">     104 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto body() const -&gt; const auto&amp; { return st_ast.body(); }</span></a>
-<a name="105"><span class="lineNum">     105 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto body() -&gt; auto&amp; { return st_ast.body(); }</span></a>
-<a name="106"><span class="lineNum">     106 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_self_ty() const -&gt; optional&lt;ty::Type&gt; { return self_ty; };</span></a>
-<a name="107"><span class="lineNum">     107 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_subs() const -&gt; const Substitution&amp; { return subs; };</span></a>
-<a name="108"><span class="lineNum">     108 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_subs() -&gt; Substitution&amp; { return subs; };</span></a>
+<a name="102"><span class="lineNum">     102 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() const noexcept -&gt; const auto&amp; { return st_ast; }</span></a>
+<a name="103"><span class="lineNum">     103 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() noexcept -&gt; auto&amp; { return st_ast; }</span></a>
+<a name="104"><span class="lineNum">     104 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto body() const noexcept -&gt; const auto&amp; { return st_ast.body(); }</span></a>
+<a name="105"><span class="lineNum">     105 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto body() noexcept -&gt; auto&amp; { return st_ast.body(); }</span></a>
+<a name="106"><span class="lineNum">     106 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_self_ty() const noexcept -&gt; optional&lt;ty::Type&gt; { return self_ty; };</span></a>
+<a name="107"><span class="lineNum">     107 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_subs() const noexcept -&gt; const Substitution&amp; { return subs; };</span></a>
+<a name="108"><span class="lineNum">     108 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_subs() noexcept -&gt; Substitution&amp; { return subs; };</span></a>
 <a name="109"><span class="lineNum">     109 </span>            : </a>
-<a name="110"><span class="lineNum">     110 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto name() const -&gt; string;</span></a>
+<a name="110"><span class="lineNum">     110 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto name() const noexcept -&gt; string;</span></a>
 <a name="111"><span class="lineNum">     111 </span>            : </a>
-<a name="112"><span class="lineNum">     112 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_or_create_instantiation(Substitution&amp; subs) -&gt; std::pair&lt;bool, Struct&amp;&gt;;</span></a>
-<a name="113"><span class="lineNum">     113 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto create_instantiation(Substitution&amp; subs) -&gt; Struct&amp;;</span></a>
+<a name="112"><span class="lineNum">     112 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_or_create_instantiation(Substitution&amp; subs) noexcept -&gt; std::pair&lt;bool, Struct&amp;&gt;;</span></a>
+<a name="113"><span class="lineNum">     113 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto create_instantiation(Substitution&amp; subs) noexcept -&gt; Struct&amp;;</span></a>
 <a name="114"><span class="lineNum">     114 </span>            : };</a>
 <a name="115"><span class="lineNum">     115 </span>            : </a>
 <a name="116"><span class="lineNum">     116 </span>            : /// A constructor declaration in the compiler.</a>
@@ -182,20 +182,20 @@
 <a name="124"><span class="lineNum">     124 </span>            : </a>
 <a name="125"><span class="lineNum">     125 </span><span class="lineNoCov">          0 :   FnBase base;</span></a>
 <a name="126"><span class="lineNum">     126 </span>            : </a>
-<a name="127"><span class="lineNum">     127 </span><span class="lineNoCov">          0 :   Ctor(ast::CtorDecl&amp; ast_decl, optional&lt;ty::Type&gt; type = std::nullopt, ast::Program* member = nullptr)</span></a>
+<a name="127"><span class="lineNum">     127 </span><span class="lineNoCov">          0 :   Ctor(ast::CtorDecl&amp; ast_decl, optional&lt;ty::Type&gt; type = std::nullopt, ast::Program* member = nullptr) noexcept</span></a>
 <a name="128"><span class="lineNum">     128 </span>            :       : base{ast_decl, type, member} {}</a>
 <a name="129"><span class="lineNum">     129 </span>            : </a>
-<a name="130"><span class="lineNum">     130 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() const -&gt; const auto&amp; { return cast&lt;decl_t&gt;(base.ast); }</span></a>
-<a name="131"><span class="lineNum">     131 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() -&gt; auto&amp; { return cast&lt;decl_t&gt;(base.ast); }</span></a>
-<a name="132"><span class="lineNum">     132 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_self_ty() const -&gt; optional&lt;ty::Type&gt; { return base.self_ty; };</span></a>
-<a name="133"><span class="lineNum">     133 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_subs() const -&gt; const Substitution&amp; { return base.subs; };</span></a>
-<a name="134"><span class="lineNum">     134 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_subs() -&gt; Substitution&amp; { return base.subs; };</span></a>
+<a name="130"><span class="lineNum">     130 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() const noexcept -&gt; const auto&amp; { return cast&lt;decl_t&gt;(base.ast); }</span></a>
+<a name="131"><span class="lineNum">     131 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() noexcept -&gt; auto&amp; { return cast&lt;decl_t&gt;(base.ast); }</span></a>
+<a name="132"><span class="lineNum">     132 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_self_ty() const noexcept -&gt; optional&lt;ty::Type&gt; { return base.self_ty; };</span></a>
+<a name="133"><span class="lineNum">     133 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_subs() const noexcept -&gt; const Substitution&amp; { return base.subs; };</span></a>
+<a name="134"><span class="lineNum">     134 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_subs() noexcept -&gt; Substitution&amp; { return base.subs; };</span></a>
 <a name="135"><span class="lineNum">     135 </span>            : </a>
-<a name="136"><span class="lineNum">     136 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto name() const -&gt; string;</span></a>
-<a name="137"><span class="lineNum">     137 </span><span class="lineNoCov">          0 :   [[nodiscard]] static auto overload_name(const call_t&amp; ast) -&gt; string;</span></a>
-<a name="138"><span class="lineNum">     138 </span><span class="lineNoCov">          0 :   [[nodiscard]] static auto arg_type(const decl_t::arg_t&amp; ast) -&gt; optional&lt;ty::Type&gt;;</span></a>
-<a name="139"><span class="lineNum">     139 </span><span class="lineNoCov">          0 :   [[nodiscard]] static auto arg_name(const decl_t::arg_t&amp; ast) -&gt; string;</span></a>
-<a name="140"><span class="lineNum">     140 </span><span class="lineNoCov">          0 :   [[nodiscard]] static auto common_ast(const decl_t::arg_t&amp; ast) -&gt; const ast::AST&amp;;</span></a>
+<a name="136"><span class="lineNum">     136 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto name() const noexcept -&gt; string;</span></a>
+<a name="137"><span class="lineNum">     137 </span><span class="lineNoCov">          0 :   [[nodiscard]] static auto overload_name(const call_t&amp; ast) noexcept -&gt; string;</span></a>
+<a name="138"><span class="lineNum">     138 </span><span class="lineNoCov">          0 :   [[nodiscard]] static auto arg_type(const decl_t::arg_t&amp; ast) noexcept -&gt; optional&lt;ty::Type&gt;;</span></a>
+<a name="139"><span class="lineNum">     139 </span><span class="lineNoCov">          0 :   [[nodiscard]] static auto arg_name(const decl_t::arg_t&amp; ast) noexcept -&gt; string;</span></a>
+<a name="140"><span class="lineNum">     140 </span><span class="lineNoCov">          0 :   [[nodiscard]] static auto common_ast(const decl_t::arg_t&amp; ast) noexcept -&gt; const ast::AST&amp;;</span></a>
 <a name="141"><span class="lineNum">     141 </span>            : };</a>
 <a name="142"><span class="lineNum">     142 </span>            : </a>
 <a name="143"><span class="lineNum">     143 </span><span class="lineNoCov">          0 : using DeclLike_t = std::variant&lt;std::monostate, Fn*, Struct*, Ctor*&gt;;</span></a>
@@ -206,7 +206,7 @@
 <a name="148"><span class="lineNum">     148 </span>            : private:</a>
 <a name="149"><span class="lineNum">     149 </span><span class="lineNoCov">          0 :   template &lt;typename R, typename... Ts&gt; struct DeclLikeVisitor : Ts... {</span></a>
 <a name="150"><span class="lineNum">     150 </span>            :     using Ts::operator()...;</a>
-<a name="151"><span class="lineNum">     151 </span><span class="lineNoCov">          0 :     auto operator()(std::monostate /* ignored */) -&gt; R { return R(); };</span></a>
+<a name="151"><span class="lineNum">     151 </span><span class="lineNoCov">          0 :     auto operator()(std::monostate /* ignored */) noexcept(noexcept(R())) -&gt; R { return R(); };</span></a>
 <a name="152"><span class="lineNum">     152 </span>            :   };</a>
 <a name="153"><span class="lineNum">     153 </span><span class="lineNoCov">          0 :   template &lt;typename R, typename... Ts&gt; DeclLikeVisitor(R, Ts...) -&gt; DeclLikeVisitor&lt;R, Ts...&gt;;</span></a>
 <a name="154"><span class="lineNum">     154 </span>            : </a>
@@ -220,8 +220,8 @@
 <a name="162"><span class="lineNum">     162 </span>            :     return std::visit(DeclLikeVisitor&lt;R, Ts...&gt;{ts...}, *this);</a>
 <a name="163"><span class="lineNum">     163 </span>            :   }</a>
 <a name="164"><span class="lineNum">     164 </span>            : </a>
-<a name="165"><span class="lineNum">     165 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto subs() const -&gt; const Substitution* {</span></a>
-<a name="166"><span class="lineNum">     166 </span>            :     return visit_decl&lt;const Substitution*&gt;([](auto* decl) -&gt; const Substitution* {</a>
+<a name="165"><span class="lineNum">     165 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto subs() const noexcept -&gt; const Substitution* {</span></a>
+<a name="166"><span class="lineNum">     166 </span>            :     return visit_decl&lt;const Substitution*&gt;([](auto* decl) noexcept -&gt; const Substitution* {</a>
 <a name="167"><span class="lineNum">     167 </span>            :       if (decl == nullptr)</a>
 <a name="168"><span class="lineNum">     168 </span>            :         return nullptr;</a>
 <a name="169"><span class="lineNum">     169 </span>            :       auto&amp; subs = decl-&gt;get_subs();</a>
@@ -233,24 +233,24 @@
 <a name="175"><span class="lineNum">     175 </span>            :     });</a>
 <a name="176"><span class="lineNum">     176 </span>            :   };</a>
 <a name="177"><span class="lineNum">     177 </span>            : </a>
-<a name="178"><span class="lineNum">     178 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto subs() -&gt; Substitution* {</span></a>
-<a name="179"><span class="lineNum">     179 </span>            :     return visit_decl&lt;Substitution*&gt;([](auto* decl) -&gt; Substitution* {</a>
+<a name="178"><span class="lineNum">     178 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto subs() noexcept -&gt; Substitution* {</span></a>
+<a name="179"><span class="lineNum">     179 </span>            :     return visit_decl&lt;Substitution*&gt;([](auto* decl) noexcept -&gt; Substitution* {</a>
 <a name="180"><span class="lineNum">     180 </span>            :       if (decl == nullptr)</a>
 <a name="181"><span class="lineNum">     181 </span>            :         return nullptr;</a>
 <a name="182"><span class="lineNum">     182 </span>            :       return &amp;decl-&gt;get_subs();</a>
 <a name="183"><span class="lineNum">     183 </span>            :     });</a>
 <a name="184"><span class="lineNum">     184 </span>            :   };</a>
 <a name="185"><span class="lineNum">     185 </span>            : </a>
-<a name="186"><span class="lineNum">     186 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() const -&gt; const ast::AST* {</span></a>
-<a name="187"><span class="lineNum">     187 </span>            :     return visit_decl&lt;const ast::AST*&gt;([](const auto* decl) -&gt; const ast::AST* { return &amp;decl-&gt;ast(); });</a>
+<a name="186"><span class="lineNum">     186 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() const noexcept -&gt; const ast::AST* {</span></a>
+<a name="187"><span class="lineNum">     187 </span>            :     return visit_decl&lt;const ast::AST*&gt;([](const auto* decl) noexcept -&gt; const ast::AST* { return &amp;decl-&gt;ast(); });</a>
 <a name="188"><span class="lineNum">     188 </span>            :   };</a>
 <a name="189"><span class="lineNum">     189 </span>            : </a>
-<a name="190"><span class="lineNum">     190 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() -&gt; ast::AST* {</span></a>
-<a name="191"><span class="lineNum">     191 </span>            :     return visit_decl&lt;ast::AST*&gt;([](auto* decl) -&gt; ast::AST* { return &amp;decl-&gt;ast(); });</a>
+<a name="190"><span class="lineNum">     190 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() noexcept -&gt; ast::AST* {</span></a>
+<a name="191"><span class="lineNum">     191 </span>            :     return visit_decl&lt;ast::AST*&gt;([](auto* decl) noexcept -&gt; ast::AST* { return &amp;decl-&gt;ast(); });</a>
 <a name="192"><span class="lineNum">     192 </span>            :   };</a>
 <a name="193"><span class="lineNum">     193 </span>            : </a>
-<a name="194"><span class="lineNum">     194 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto self_ty() const -&gt; optional&lt;ty::Type&gt; {</span></a>
-<a name="195"><span class="lineNum">     195 </span>            :     return visit_decl&lt;optional&lt;ty::Type&gt;&gt;([](const auto* decl) { return decl-&gt;get_self_ty(); });</a>
+<a name="194"><span class="lineNum">     194 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto self_ty() const noexcept -&gt; optional&lt;ty::Type&gt; {</span></a>
+<a name="195"><span class="lineNum">     195 </span>            :     return visit_decl&lt;optional&lt;ty::Type&gt;&gt;([](const auto* decl) noexcept { return decl-&gt;get_self_ty(); });</a>
 <a name="196"><span class="lineNum">     196 </span>            :   };</a>
 <a name="197"><span class="lineNum">     197 </span>            : };</a>
 <a name="198"><span class="lineNum">     198 </span>            : </a>
@@ -261,8 +261,8 @@
 <a name="203"><span class="lineNum">     203 </span><span class="lineNoCov">          0 :   llvm::Value* llvm{};</span></a>
 <a name="204"><span class="lineNum">     204 </span><span class="lineNoCov">          0 :   InScope* scope{};</span></a>
 <a name="205"><span class="lineNum">     205 </span>            : </a>
-<a name="206"><span class="lineNum">     206 </span><span class="lineNoCov">          0 :   /* implicit */ Val(llvm::Value* llvm_val) : llvm(llvm_val) {}</span></a>
-<a name="207"><span class="lineNum">     207 </span><span class="lineNoCov">          0 :   Val(llvm::Value* llvm_val, InScope* scope_val) : llvm(llvm_val), scope(scope_val) {}</span></a>
+<a name="206"><span class="lineNum">     206 </span><span class="lineNoCov">          0 :   /* implicit */ Val(llvm::Value* llvm_val) noexcept : llvm(llvm_val) {}</span></a>
+<a name="207"><span class="lineNum">     207 </span><span class="lineNoCov">          0 :   Val(llvm::Value* llvm_val, InScope* scope_val) noexcept : llvm(llvm_val), scope(scope_val) {}</span></a>
 <a name="208"><span class="lineNum">     208 </span>            : </a>
 <a name="209"><span class="lineNum">     209 </span><span class="lineNoCov">          0 :   /* implicit */ operator llvm::Value*() const { return llvm; }</span></a>
 <a name="210"><span class="lineNum">     210 </span>            : };</a>

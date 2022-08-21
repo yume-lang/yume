@@ -296,7 +296,7 @@ $(function() {
 <div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>    <span class="keywordflow">break</span>;</div>
 <div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>  <span class="keywordflow">case</span> Function:</div>
 <div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>    set_color(CYAN);</div>
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="namespaceyume.html#a71865b15853a8ff7b98ed793716e21d7">std::ranges::any_of</a>(skip_lines, [&amp;](string_view s) { <span class="keywordflow">return</span> msg.find(s) != string::npos; }))</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="namespaceyume.html#a71865b15853a8ff7b98ed793716e21d7">std::ranges::any_of</a>(skip_lines, [&amp;](string_view s) <span class="keyword">noexcept</span> { <span class="keywordflow">return</span> msg.find(s) != string::npos; }))</div>
 <div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>      m_skip = <span class="keyword">true</span>;</div>
 <div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>    <span class="keywordflow">else</span></div>
 <div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>      simplify(msg);</div>
@@ -339,25 +339,27 @@ $(function() {
 <div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>  format_phase(msg);</div>
 <div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span> </div>
 <div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>  <span class="keywordtype">int</span> counter = <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(m_current_phase);</div>
-<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>  <span class="keywordflow">if</span> (m_current_phase != Offset)</div>
-<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>    counter = ++counter % 4;</div>
-<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span> </div>
-<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>  m_current_phase = <span class="keyword">static_cast&lt;</span>Phase<span class="keyword">&gt;</span>(counter);</div>
-<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>  <span class="keywordflow">if</span> (m_current_phase == Offset &amp;&amp; !m_unknown)</div>
-<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>    m_current_phase = Index;</div>
-<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span> </div>
-<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>  <span class="keywordflow">if</span> (m_current_phase == Index)</div>
-<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>    clean_buffer();</div>
-<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>}</div>
-<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span> </div>
-<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>} <span class="comment">// namespace</span></div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>  <span class="keywordflow">if</span> (m_current_phase != Offset) {</div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>    ++counter;</div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>    counter %= 4;</div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>  }</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span> </div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>  m_current_phase = <span class="keyword">static_cast&lt;</span>Phase<span class="keyword">&gt;</span>(counter);</div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>  <span class="keywordflow">if</span> (m_current_phase == Offset &amp;&amp; !m_unknown)</div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>    m_current_phase = Index;</div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span> </div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>  <span class="keywordflow">if</span> (m_current_phase == Index)</div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>    clean_buffer();</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>}</div>
 <div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span> </div>
-<div class="line"><a id="l00284" name="l00284"></a><span class="lineno"><a class="line" href="namespaceyume.html#a2f50f2670ba68fea92723cf1dd310ffe">  284</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceyume.html#a2f50f2670ba68fea92723cf1dd310ffe">backtrace</a>(<span class="keywordtype">void</span>* <span class="comment">/*unused*/</span>) {</div>
-<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>  <span class="keyword">static</span> stacktrace_ostream stream{};</div>
-<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>  llvm::sys::PrintStackTrace(stream);</div>
-<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>  stream.clean_buffer();</div>
-<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>}</div>
-<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>} <span class="comment">// namespace yume</span></div>
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>} <span class="comment">// namespace</span></div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span> </div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno"><a class="line" href="namespaceyume.html#a2f50f2670ba68fea92723cf1dd310ffe">  286</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceyume.html#a2f50f2670ba68fea92723cf1dd310ffe">backtrace</a>(<span class="keywordtype">void</span>* <span class="comment">/*unused*/</span>) {</div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>  <span class="keyword">static</span> stacktrace_ostream stream{};</div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>  llvm::sys::PrintStackTrace(stream);</div>
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>  stream.clean_buffer();</div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>}</div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>} <span class="comment">// namespace yume</span></div>
 <div class="ttc" id="aast_8hpp_html"><div class="ttname"><a href="ast_8hpp.html">ast.hpp</a></div></div>
 <div class="ttc" id="aerrors_8cpp_html_a3554b208b127a4b9c1b64f6ddc1f6d7b"><div class="ttname"><a href="errors_8cpp.html#a3554b208b127a4b9c1b64f6ddc1f6d7b">front</a></div><div class="ttdeci">string_view front</div><div class="ttdef"><b>Definition:</b> <a href="errors_8cpp_source.html#l00036">errors.cpp:36</a></div></div>
 <div class="ttc" id="aerrors_8cpp_html_a6b24c15c0679389305499191b80a5e8e"><div class="ttname"><a href="errors_8cpp.html#a6b24c15c0679389305499191b80a5e8e">middle</a></div><div class="ttdeci">string_view middle</div><div class="ttdef"><b>Definition:</b> <a href="errors_8cpp_source.html#l00037">errors.cpp:37</a></div></div>
@@ -366,7 +368,7 @@ $(function() {
 <div class="ttc" id="aerrors_8cpp_html_ae04bdbaf153fd25f2f7a8a2636fc6443"><div class="ttname"><a href="errors_8cpp.html#ae04bdbaf153fd25f2f7a8a2636fc6443">from</a></div><div class="ttdeci">string_view from</div><div class="ttdef"><b>Definition:</b> <a href="errors_8cpp_source.html#l00046">errors.cpp:46</a></div></div>
 <div class="ttc" id="aerrors_8hpp_html"><div class="ttname"><a href="errors_8hpp.html">errors.hpp</a></div></div>
 <div class="ttc" id="anamespaceyume_html"><div class="ttname"><a href="namespaceyume.html">yume</a></div><div class="ttdef"><b>Definition:</b> <a href="ast_8cpp_source.html#l00007">ast.cpp:7</a></div></div>
-<div class="ttc" id="anamespaceyume_html_a2f50f2670ba68fea92723cf1dd310ffe"><div class="ttname"><a href="namespaceyume.html#a2f50f2670ba68fea92723cf1dd310ffe">yume::backtrace</a></div><div class="ttdeci">void backtrace(void *)</div><div class="ttdef"><b>Definition:</b> <a href="errors_8cpp_source.html#l00284">errors.cpp:284</a></div></div>
+<div class="ttc" id="anamespaceyume_html_a2f50f2670ba68fea92723cf1dd310ffe"><div class="ttname"><a href="namespaceyume.html#a2f50f2670ba68fea92723cf1dd310ffe">yume::backtrace</a></div><div class="ttdeci">void backtrace(void *)</div><div class="ttdef"><b>Definition:</b> <a href="errors_8cpp_source.html#l00286">errors.cpp:286</a></div></div>
 <div class="ttc" id="anamespaceyume_html_a71865b15853a8ff7b98ed793716e21d7"><div class="ttname"><a href="namespaceyume.html#a71865b15853a8ff7b98ed793716e21d7">yume::any_of</a></div><div class="ttdeci">static constexpr any_of_fn any_of</div><div class="ttdef"><b>Definition:</b> <a href="token_8cpp_source.html#l00034">token.cpp:34</a></div></div>
 <div class="ttc" id="astructyume_1_1ASTStackTrace_html_adb8aee3865fbb9b54b96fcc03f51cce1"><div class="ttname"><a href="structyume_1_1ASTStackTrace.html#adb8aee3865fbb9b54b96fcc03f51cce1">yume::ASTStackTrace::ASTStackTrace</a></div><div class="ttdeci">ASTStackTrace(std::string message)</div></div>
 <div class="ttc" id="atoken_8hpp_html"><div class="ttname"><a href="token_8hpp.html">token.hpp</a></div></div>

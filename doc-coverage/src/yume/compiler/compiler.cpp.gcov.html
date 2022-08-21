@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-08-17 19:03:12</td>
+            <td class="headerValue">2022-08-21 19:45:14</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -235,7 +235,7 @@
 <a name="177"><span class="lineNum">     177 </span>            :   yume_assert(isa&lt;ty::Struct&gt;(*iter-&gt;second));</a>
 <a name="178"><span class="lineNum">     178 </span>            :   auto&amp; existing = cast&lt;ty::Struct&gt;(*iter-&gt;second);</a>
 <a name="179"><span class="lineNum">     179 </span>            : </a>
-<a name="180"><span class="lineNum">     180 </span>            :   if (std::ranges::any_of(st.subs, [](const auto&amp; sub) { return sub.second.is_generic(); }))</a>
+<a name="180"><span class="lineNum">     180 </span>            :   if (std::ranges::any_of(st.subs, [](const auto&amp; sub) noexcept { return sub.second.is_generic(); }))</a>
 <a name="181"><span class="lineNum">     181 </span>            :     return false;</a>
 <a name="182"><span class="lineNum">     182 </span>            : </a>
 <a name="183"><span class="lineNum">     183 </span>            :   existing.m_fields = move(fields);</a>

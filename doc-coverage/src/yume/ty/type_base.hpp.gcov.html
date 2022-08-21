@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-08-17 19:03:12</td>
+            <td class="headerValue">2022-08-21 19:45:14</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -121,13 +121,13 @@
 <a name="63"><span class="lineNum">      63 </span><span class="lineNoCov">          0 :   bool m_mut{};</span></a>
 <a name="64"><span class="lineNum">      64 </span>            : </a>
 <a name="65"><span class="lineNum">      65 </span>            : public:</a>
-<a name="66"><span class="lineNum">      66 </span><span class="lineNoCov">          0 :   Type(nonnull&lt;const BaseType*&gt; base, bool mut) : m_base(base), m_mut(mut) {}</span></a>
-<a name="67"><span class="lineNum">      67 </span><span class="lineNoCov">          0 :   Type(nonnull&lt;const BaseType*&gt; base) : m_base(base) {}</span></a>
+<a name="66"><span class="lineNum">      66 </span><span class="lineNoCov">          0 :   Type(nonnull&lt;const BaseType*&gt; base, bool mut) noexcept : m_base(base), m_mut(mut) {}</span></a>
+<a name="67"><span class="lineNum">      67 </span><span class="lineNoCov">          0 :   Type(nonnull&lt;const BaseType*&gt; base) noexcept : m_base(base) {}</span></a>
 <a name="68"><span class="lineNum">      68 </span>            : </a>
 <a name="69"><span class="lineNum">      69 </span><span class="lineNoCov">          0 :   auto operator&lt;=&gt;(const Type&amp;) const noexcept = default;</span></a>
 <a name="70"><span class="lineNum">      70 </span>            : </a>
-<a name="71"><span class="lineNum">      71 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto kind() const -&gt; Kind { return m_base-&gt;kind(); };</span></a>
-<a name="72"><span class="lineNum">      72 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto base() const -&gt; nonnull&lt;const BaseType*&gt; { return m_base; }</span></a>
+<a name="71"><span class="lineNum">      71 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto kind() const noexcept -&gt; Kind { return m_base-&gt;kind(); };</span></a>
+<a name="72"><span class="lineNum">      72 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto base() const noexcept -&gt; nonnull&lt;const BaseType*&gt; { return m_base; }</span></a>
 <a name="73"><span class="lineNum">      73 </span><span class="lineNoCov">          0 :   template &lt;typename T&gt; [[nodiscard]] auto base_cast() const noexcept -&gt; nonnull&lt;const T*&gt; { return cast&lt;T&gt;(m_base); }</span></a>
 <a name="74"><span class="lineNum">      74 </span><span class="lineNoCov">          0 :   template &lt;typename T&gt; [[nodiscard]] auto base_dyn_cast() const noexcept -&gt; nullable&lt;const T*&gt; {</span></a>
 <a name="75"><span class="lineNum">      75 </span>            :     return dyn_cast&lt;T&gt;(m_base);</a>
