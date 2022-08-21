@@ -194,6 +194,32 @@ template <> void TypeWalker::expression(ast::VarExpr& expr) {
   expr.attach_to(scope.at(expr.name()));
 }
 
+static auto find_field_ast(const ty::Struct& st, string_view target_name) -> std::pair<nullable<ast::AnyType*>, int> {
+  nullable<ast::AnyType*> target_type = nullptr;
+  int j = 0;
+  for (auto* field : st.fields()) {
+    if (field->name == target_name) {
+      target_type = &field->type;
+      break;
+    }
+    j++;
+  }
+
+  if (target_type == nullptr)
+    j = -1;
+
+  return {target_type, j};
+}
+
+static auto find_field(const ty::Struct& st, string_view target_name) -> std::pair<optional<ty::Type>, int> {
+  optional<ty::Type> target_type;
+  auto [ast_ptr, j] = find_field_ast(st, target_name);
+  if (ast_ptr != nullptr)
+    target_type = ast_ptr->raw_ptr()->val_ty();
+
+  return {target_type, j};
+}
+
 template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
   optional<ty::Type> type;
   bool base_is_mut = false;
@@ -217,17 +243,9 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
     throw std::runtime_error("Can't access field of expression with non-struct type");
 
   auto target_name = expr.field();
-  optional<ty::Type> target_type;
-  int j = 0;
-  for (const auto* field : struct_type->fields()) {
-    if (field->name == target_name) {
-      target_type = field->type->val_ty();
-      break;
-    }
-    j++;
-  }
+  auto [target_type, target_offset] = find_field(*struct_type, target_name);
 
-  expr.offset(j);
+  expr.offset(target_offset);
   expr.val_ty(base_is_mut ? target_type->known_mut() : target_type);
 }
 
@@ -401,18 +419,9 @@ template <> void TypeWalker::statement(ast::CtorDecl& stat) {
       scope.insert({type_name->name, type_name});
     } else if (auto* direct_init = std::get_if<ast::FieldAccessExpr>(&i)) {
       auto target_name = direct_init->field();
-      // XXX: duplicated from FieldAccessExpr handling
-      optional<ty::Type> target_type;
-      int j = 0;
-      for (const auto* field : struct_type->fields()) {
-        if (field->name == target_name) {
-          target_type = field->type->val_ty();
-          break;
-        }
-        j++;
-      }
+      auto [target_type, target_offset] = find_field(*struct_type, target_name);
 
-      direct_init->offset(j);
+      direct_init->offset(target_offset);
       direct_init->val_ty(target_type);
       scope.insert({target_name, direct_init});
     }
@@ -514,6 +523,15 @@ auto TypeWalker::convert_type(ast::Type& ast_type) -> ty::Type {
   } else if (isa<ast::SelfType>(ast_type)) {
     if (parent)
       return *parent;
+  } else if (auto* proxy_type = dyn_cast<ast::ProxyType>(&ast_type)) {
+    if (parent) {
+      if (const auto* parent_struct = parent->base_dyn_cast<ty::Struct>()) {
+        auto [target_type, target_offset] = find_field_ast(*parent_struct, proxy_type->field());
+        if (target_type != nullptr)
+          return convert_type(*target_type->raw_ptr());
+        throw std::runtime_error("Proxy type doesn't refer to a valid field?");
+      }
+    }
   } else if (auto* templated = dyn_cast<ast::TemplatedType>(&ast_type)) {
     auto& template_base = templated->base();
     expression(template_base);

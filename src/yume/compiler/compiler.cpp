@@ -159,9 +159,9 @@ void Compiler::walk_types(DeclLike decl_like) {
 auto Compiler::create_struct(Struct& st) -> bool {
   auto& s_decl = st.st_ast;
 
-  auto fields = vector<const ast::TypeName*>();
+  auto fields = vector<ast::TypeName*>();
   fields.reserve(s_decl.fields().size());
-  for (const auto& f : s_decl.fields())
+  for (auto& f : s_decl.fields())
     fields.push_back(&f);
 
   auto iter = m_types.known.find(s_decl.name());

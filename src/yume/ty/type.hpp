@@ -60,7 +60,7 @@ public:
 
 /// An user-defined struct type with associated fields.
 class Struct : public BaseType {
-  vector<const ast::TypeName*> m_fields;
+  vector<ast::TypeName*> m_fields;
   nullable<const Substitution*> m_subs;
   nullable<const Struct*> m_parent{};
   mutable std::map<Substitution, unique_ptr<Struct>> m_subbed{}; // HACK
@@ -73,7 +73,7 @@ class Struct : public BaseType {
   friend Type;
 
 public:
-  Struct(string name, vector<const ast::TypeName*> fields, nullable<const Substitution*> subs)
+  Struct(string name, vector<ast::TypeName*> fields, nullable<const Substitution*> subs)
       : BaseType(K_Struct, move(name)), m_fields(move(fields)), m_subs(subs) {}
   [[nodiscard]] auto fields() const -> const auto& { return m_fields; }
   [[nodiscard]] auto fields() -> auto& { return m_fields; }
