@@ -1,5 +1,6 @@
 #include "parser.hpp"
 
+#include "ast/ast.hpp"
 #include "qualifier.hpp"
 #include <algorithm>
 #include <llvm/Support/raw_ostream.h>
@@ -316,6 +317,23 @@ auto Parser::parse_struct_decl() -> unique_ptr<StructDecl> {
   return ast_ptr<StructDecl>(entry, name, move(fields), type_args, make_ast<Compound>(body_begin, move(body)));
 }
 
+auto Parser::parse_fn_arg() -> unique_ptr<FnArg> {
+  auto entry = tokens.begin();
+  if (try_consume(SYM_COLON_COLON)) {
+    auto field_name = consume_word();
+    AnyType proxy_type = ast_ptr<ProxyType>(entry, field_name);
+    auto proxied_arg = ast_ptr<TypeName>(entry, move(proxy_type), field_name);
+
+    auto implicit_field = ast_ptr<FieldAccessExpr>(entry, std::nullopt, field_name);
+    auto arg_var = ast_ptr<VarExpr>(entry, field_name);
+    auto extra_assign = ast_ptr<AssignExpr>(entry, move(implicit_field), move(arg_var));
+
+    return std::make_unique<FnArg>(move(proxied_arg), move(extra_assign));
+  }
+
+  return std::make_unique<FnArg>(parse_type_name(), std::nullopt);
+};
+
 auto Parser::parse_fn_or_ctor_decl() -> unique_ptr<Stmt> {
   if (try_peek(1, SYM_COLON))
     return parse_ctor_decl();
@@ -339,10 +357,16 @@ auto Parser::parse_fn_decl() -> unique_ptr<FnDecl> {
   consume(SYM_LPAREN);
 
   auto args = vector<TypeName>{};
-  consume_with_commas_until(SYM_RPAREN, [&] { args.push_back(move(*parse_type_name())); });
+  auto body = vector<AnyStmt>{};
+
+  consume_with_commas_until(SYM_RPAREN, [&] {
+    auto arg = parse_fn_arg();
+    args.emplace_back(move(*arg->type_name));
+    if (arg->extra_body)
+      body.emplace_back(move(arg->extra_body));
+  });
 
   auto ret_type = OptionalType{try_parse_type()};
-  auto body = vector<AnyStmt>{};
   auto body_begin = entry;
 
   if (try_consume(SYM_EQ)) { // A "short" function definition, consists of a single expression
@@ -378,14 +402,6 @@ auto Parser::parse_fn_decl() -> unique_ptr<FnDecl> {
                          move(annotations));
 }
 
-auto Parser::parse_type_name_or_ctor_field() -> CtorDecl::arg_t {
-  auto entry = tokens.begin();
-  if (try_consume(SYM_COLON_COLON))
-    return make_ast<FieldAccessExpr>(entry, std::nullopt, consume_word());
-
-  return move(*parse_type_name());
-};
-
 auto Parser::parse_ctor_decl() -> unique_ptr<CtorDecl> {
   auto entry = tokens.begin();
 
@@ -394,10 +410,16 @@ auto Parser::parse_ctor_decl() -> unique_ptr<CtorDecl> {
   consume(KWD_NEW);
   consume(SYM_LPAREN);
 
-  auto args = vector<CtorDecl::arg_t>{};
-  consume_with_commas_until(SYM_RPAREN, [&] { args.push_back(parse_type_name_or_ctor_field()); });
-
   auto body = vector<AnyStmt>{};
+  auto args = vector<CtorDecl::arg_t>{};
+
+  consume_with_commas_until(SYM_RPAREN, [&] {
+    auto arg = parse_fn_arg();
+    args.emplace_back(move(*arg->type_name));
+    if (arg->extra_body)
+      body.emplace_back(move(arg->extra_body));
+  });
+
   auto body_begin = entry;
 
   if (!try_peek(0, KWD_END)) // Allow `end` to be on the same line

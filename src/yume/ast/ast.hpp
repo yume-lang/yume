@@ -285,6 +285,8 @@ public:
 
 /// \see AnyBase
 using AnyStmt = AnyBase<Stmt>;
+/// \see OptionalAnyBase
+using OptionalStmt = OptionalAnyBase<Stmt>;
 
 /// A type **annotation**. This (`ast::Type`) is distinct from the actual type of a value (`ty::Type`).
 class Type : public AST {
