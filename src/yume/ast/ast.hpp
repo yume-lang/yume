@@ -70,6 +70,7 @@ enum Kind {
   /**/ K_QualType,      ///< `QualType`
   /**/ K_TemplatedType, ///< `TemplatedType`
   /**/ K_SelfType,      ///< `SelfType`
+  /**/ K_ProxyType,     ///< `ProxyType`
   /**/ K_END_Type,
 };
 
@@ -89,6 +90,7 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case K_QualType: return "qual type";
   case K_TemplatedType: return "templated type";
   case K_SelfType: return "self type";
+  case K_ProxyType: return "proxy type";
   case K_TypeName: return "type name";
   case K_Compound: return "compound";
   case K_While: return "while statement";
@@ -361,6 +363,21 @@ public:
   [[nodiscard]] auto describe() const -> string override;
   static auto classof(const AST* a) -> bool { return a->kind() == K_SelfType; }
   [[nodiscard]] auto clone() const -> SelfType* override;
+};
+
+/// A type which refers to a different type, specifically that of a struct field.
+class ProxyType : public Type {
+  string m_field;
+
+public:
+  explicit ProxyType(span<Token> tok, string field) : Type(K_ProxyType, tok), m_field{move(field)} {}
+  void visit(Visitor& visitor) const override;
+  [[nodiscard]] auto describe() const -> string override;
+
+  [[nodiscard]] auto field() const -> string { return m_field; }
+
+  static auto classof(const AST* a) -> bool { return a->kind() == K_ProxyType; }
+  [[nodiscard]] auto clone() const -> ProxyType* override;
 };
 
 /// A pair of a `Type` and an identifier, \e i.e. a parameter name.

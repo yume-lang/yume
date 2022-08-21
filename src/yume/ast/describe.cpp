@@ -29,6 +29,7 @@ auto TemplatedType::describe() const -> string {
 }
 auto SimpleType::describe() const -> string { return m_name; }
 auto SelfType::describe() const -> string { return "self"; }
+auto ProxyType::describe() const -> string { return m_field; }
 auto TypeName::describe() const -> string { return name; }
 auto NumberExpr::describe() const -> string { return std::to_string(m_val); }
 auto CharExpr::describe() const -> string { return std::to_string(m_val); }
