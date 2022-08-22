@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ast/crtp_walker.hpp"
+#include "compiler/scope_container.hpp"
 #include "semantic/type_walker.hpp"
 #include "type_holder.hpp"
 #include "util.hpp"
@@ -50,7 +51,7 @@ class Compiler : public CRTPWalker<Compiler> {
 
   Fn* m_current_fn{};
   /// Local variables currently in function scope. Used for destructors
-  std::map<string, InScope> m_scope{};
+  ScopeContainer<InScope> m_scope{};
   /// In a constructor, the object being constructed, implicitly created by the compiler.
   optional<InScope> m_scope_ctor{};
 

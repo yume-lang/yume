@@ -364,14 +364,17 @@ static inline auto is_trivially_destructible(ty::Type type) -> bool {
 }
 
 void Compiler::destruct_all_in_scope() {
-  for (const auto& [k, v] : m_scope)
+  for (const auto& i : m_scope.last_scope()) {
+    const auto& v = i.second;
     if (v.owning && !is_trivially_destructible(v.ast.ensure_ty()))
       destruct(v.value, v.ast.ensure_ty());
+  }
 }
 
 void Compiler::setup_fn_base(Fn& fn) {
   m_current_fn = &fn;
   m_scope.clear();
+  m_scope.push_scope();
   m_scope_ctor.reset();
   auto* bb = llvm::BasicBlock::Create(*m_context, "entry", fn.llvm);
   m_builder->SetInsertPoint(bb);
@@ -383,12 +386,12 @@ void Compiler::setup_fn_base(Fn& fn) {
     const auto& val = ast_arg.ast;
     llvm::Value* alloc = nullptr;
     if (type.is_mut()) {
-      m_scope.insert({name, {.value = &arg, .ast = val, .owning = false}}); // We don't own parameters
+      m_scope.add(name, {.value = &arg, .ast = val, .owning = false}); // We don't own parameters
       continue;
     }
     alloc = m_builder->CreateAlloca(llvm_type(type), nullptr, "lv."s + name);
     m_builder->CreateStore(&arg, alloc);
-    m_scope.insert({name, {.value = alloc, .ast = val, .owning = false}}); // We don't own parameters
+    m_scope.add(name, {.value = alloc, .ast = val, .owning = false}); // We don't own parameters
   }
 }
 
@@ -422,6 +425,8 @@ void Compiler::define(Fn& fn) {
     m_builder->CreateRet(finalized_value);
   }
 
+  yume_assert(m_scope.size() == 1, "End of function should end with only the function scope remaining");
+  m_scope.pop_scope();
   verifyFunction(*fn.llvm, &errs());
 }
 
@@ -486,7 +491,8 @@ template <> void Compiler::statement(const ast::ReturnStmt& stat) {
   if (stat.expr().has_value()) {
     // Returning a local variable also gives up ownership of it
     if (stat.extends_lifetime() != nullptr) {
-      for (auto& [k, v] : m_scope) {
+      for (auto& i : m_scope.last_scope()) {
+        auto& v = i.second;
         if (&v.ast == stat.extends_lifetime()) {
           v.owning = false;
           reset_owning = &v;
@@ -521,7 +527,7 @@ template <> void Compiler::statement(const ast::VarDecl& stat) {
 
   if (stat.init()->ensure_ty().is_mut()) {
     auto expr_val = body_expression(*stat.init());
-    m_scope.insert({stat.name(), {.value = expr_val, .ast = stat, .owning = false}});
+    m_scope.add(stat.name(), {.value = expr_val, .ast = stat, .owning = false});
     return;
   }
 
@@ -533,7 +539,7 @@ template <> void Compiler::statement(const ast::VarDecl& stat) {
     expr_val.scope->owning = false;
 
   m_builder->CreateStore(expr_val, alloc);
-  m_scope.insert({stat.name(), {.value = alloc, .ast = stat, .owning = true}});
+  m_scope.add(stat.name(), {.value = alloc, .ast = stat, .owning = true});
 }
 
 template <> auto Compiler::expression(const ast::NumberExpr& expr) -> Val {
@@ -576,11 +582,12 @@ template <> auto Compiler::expression(const ast::StringExpr& expr) -> Val {
 }
 
 template <> auto Compiler::expression(const ast::VarExpr& expr) -> Val {
-  auto& in_scope = m_scope.at(expr.name());
-  auto* val = in_scope.value.llvm;
+  auto* in_scope = m_scope.find(expr.name());
+  yume_assert(in_scope != nullptr, "Variable "s + expr.name() + " is not in scope");
+  auto* val = in_scope->value.llvm;
   // Function arguments act as locals, but they are immutable, but still behind a reference (alloca)
-  if (!in_scope.ast.ensure_ty().is_mut())
-    return m_builder->CreateLoad(llvm_type(in_scope.ast.ensure_ty()), val);
+  if (!in_scope->ast.ensure_ty().is_mut())
+    return m_builder->CreateLoad(llvm_type(in_scope->ast.ensure_ty()), val);
 
   return val;
 }
@@ -692,8 +699,7 @@ template <> auto Compiler::expression(const ast::CallExpr& expr) -> Val {
   // scope, where these temporaries would go
   if (auto ty = expr.val_ty(); ty.has_value() && !is_trivially_destructible(*ty)) {
     Val alloc = entrypoint_builder().CreateAlloca(val.llvm->getType(), nullptr, "tmp");
-    auto [iter, ok] =
-        m_scope.insert({"tmp " + expr.location().to_string(), {.value = val, .ast = expr, .owning = true}});
+    auto [iter, ok] = m_scope.add("tmp " + expr.location().to_string(), {.value = val, .ast = expr, .owning = true});
     m_builder->CreateStore(val.llvm, alloc);
     val.scope = &iter->second;
     val.scope->value = alloc;
@@ -704,7 +710,9 @@ template <> auto Compiler::expression(const ast::CallExpr& expr) -> Val {
 
 template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
   if (const auto* target_var = dyn_cast<ast::VarExpr>(expr.target().raw_ptr())) {
-    auto [target_val, target_ast, target_owning] = m_scope.at(target_var->name());
+    auto* in_scope = m_scope.find(target_var->name());
+    yume_assert(in_scope != nullptr, "Variable "s + target_var->name() + " is not in scope");
+    auto [target_val, target_ast, target_owning] = *in_scope;
     auto target_type = target_ast.ensure_ty();
 
     if (target_owning && !is_trivially_destructible(target_type))

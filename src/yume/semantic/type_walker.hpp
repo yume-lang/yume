@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ast/crtp_walker.hpp"
+#include "compiler/scope_container.hpp"
 #include "semantic/overload.hpp"
 #include "util.hpp"
 #include <map>
@@ -34,7 +35,7 @@ struct TypeWalker : public CRTPWalker<TypeWalker, false> {
 public:
   Compiler& compiler;
   DeclLike current_decl{};
-  std::map<string, ast::AST*> scope{};
+  ScopeContainer<nonnull<ast::AST*>> scope{};
 
   std::queue<DeclLike> decl_queue{};
 

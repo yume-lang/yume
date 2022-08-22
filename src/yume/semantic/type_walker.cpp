@@ -189,9 +189,9 @@ template <> void TypeWalker::expression(ast::AssignExpr& expr) {
 }
 
 template <> void TypeWalker::expression(ast::VarExpr& expr) {
-  if (!scope.contains(expr.name()))
-    throw std::runtime_error("Scope doesn't contain variable called "s + expr.name());
-  expr.attach_to(scope.at(expr.name()));
+  if (auto* var = scope.find(expr.name()); var != nullptr)
+    return expr.attach_to(*var);
+  throw std::runtime_error("Scope doesn't contain variable called "s + expr.name());
 }
 
 static auto find_field_ast(const ty::Struct& st, string_view target_name) -> std::pair<nullable<ast::AnyType*>, int> {
@@ -385,10 +385,11 @@ template <> void TypeWalker::statement(ast::StructDecl& stat) {
 
 template <> void TypeWalker::statement(ast::FnDecl& stat) {
   scope.clear();
+  auto guard = scope.push_scope_guarded();
 
   for (auto& i : stat.args()) {
     expression(i);
-    scope.insert({i.name, &i});
+    scope.add(i.name, &i);
   }
 
   if (stat.ret().has_value()) {
@@ -402,10 +403,13 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
 
   if (in_depth && std::holds_alternative<ast::Compound>(stat.body()))
     statement(get<ast::Compound>(stat.body()));
+
+  yume_assert(scope.size() == 1, "End of function should end with only the function scope remaining");
 }
 
 template <> void TypeWalker::statement(ast::CtorDecl& stat) {
   scope.clear();
+  auto guard = scope.push_scope_guarded();
 
   const auto* struct_type = current_decl.self_ty()->without_mut().base_dyn_cast<ty::Struct>();
 
@@ -415,11 +419,13 @@ template <> void TypeWalker::statement(ast::CtorDecl& stat) {
   stat.val_ty(struct_type);
   for (auto& i : stat.args()) {
     expression(i);
-    scope.insert({i.name, &i});
+    scope.add(i.name, &i);
   }
 
   if (in_depth)
     statement(stat.body());
+
+  yume_assert(scope.size() == 1, "End of function should end with only the function scope remaining");
 }
 
 template <> void TypeWalker::statement(ast::ReturnStmt& stat) {
@@ -427,8 +433,9 @@ template <> void TypeWalker::statement(ast::ReturnStmt& stat) {
     body_expression(*stat.expr());
     // If we're returning a local variable, mark that it will leave the scope and should not be destructed yet.
     if (auto* var_expr = dyn_cast<ast::VarExpr>(stat.expr().raw_ptr()))
-      if (auto* var_decl = dyn_cast<ast::VarDecl>(scope.at(var_expr->name())))
-        stat.extend_lifetime_of(var_decl);
+      if (auto** in_scope = scope.find(var_expr->name()); in_scope != nullptr)
+        if (auto* var_decl = dyn_cast<ast::VarDecl>(*in_scope))
+          stat.extend_lifetime_of(var_decl);
 
     make_implicit_conversion(stat.expr(), current_decl.ast()->val_ty());
     current_decl.ast()->attach_to(stat.expr().raw_ptr());
@@ -446,7 +453,7 @@ template <> void TypeWalker::statement(ast::VarDecl& stat) {
   }
 
   stat.val_ty(stat.init()->ensure_ty().known_mut());
-  scope.insert({stat.name(), &stat});
+  scope.add(stat.name(), &stat);
 }
 
 template <> void TypeWalker::statement(ast::IfStmt& stat) {

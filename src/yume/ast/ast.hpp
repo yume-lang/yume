@@ -245,7 +245,7 @@ public:
 
   /// Make the type of this node depend on the type of `other`.
   /// \sa Attachment
-  void attach_to(AST* other) {
+  void attach_to(nonnull<AST*> other) {
     other->m_attach->observers.insert(this);
     this->m_attach->depends.insert(other);
     unify_val_ty();
