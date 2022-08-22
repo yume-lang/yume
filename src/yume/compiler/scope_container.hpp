@@ -14,8 +14,9 @@ template <typename T> class ScopeContainer {
   std::deque<llvm::StringMap<T>> m_scopes{};
 
 public:
-  [[nodiscard]] auto last_scope() const noexcept -> const auto& { return m_scopes.front(); }
-  [[nodiscard]] auto last_scope() noexcept -> auto& { return m_scopes.front(); }
+  [[nodiscard]] auto all_scopes() const noexcept -> const auto& { return m_scopes; }
+  [[nodiscard]] auto last_scope() const noexcept -> const auto& { return m_scopes.back(); }
+  [[nodiscard]] auto last_scope() noexcept -> auto& { return m_scopes.back(); }
   [[nodiscard]] auto push_scope_guarded() noexcept -> ScopeContainerGuard<T>;
   void push_scope() noexcept { m_scopes.emplace_back(); }
   void pop_scope() noexcept { m_scopes.pop_back(); }

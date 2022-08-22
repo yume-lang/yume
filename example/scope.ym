@@ -1,0 +1,10 @@
+def main() I32
+  let i = 4
+  printf("outer i: %d\n".c_str.unsafe_ptr, i)
+  if true
+    let i = 8
+    printf("inner i: %d\n".c_str.unsafe_ptr, i)
+  end
+  printf("outer i: %d\n".c_str.unsafe_ptr, i)
+  return 0
+end

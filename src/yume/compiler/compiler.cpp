@@ -344,8 +344,12 @@ auto Compiler::declare(Fn& fn) -> llvm::Function* {
 }
 
 template <> void Compiler::statement(const ast::Compound& stat) {
+  auto guard = m_scope.push_scope_guarded();
   for (const auto& i : stat.body())
     body_statement(*i);
+
+  if (m_builder->GetInsertBlock()->getTerminator() == nullptr)
+    destruct_last_scope();
 }
 
 static inline auto is_trivially_destructible(ty::Type type) -> bool {
@@ -363,11 +367,21 @@ static inline auto is_trivially_destructible(ty::Type type) -> bool {
   throw std::logic_error("Cannot check if "s + type.name() + " is trivially destructible");
 }
 
-void Compiler::destruct_all_in_scope() {
+void Compiler::destruct_last_scope() {
   for (const auto& i : m_scope.last_scope()) {
     const auto& v = i.second;
     if (v.owning && !is_trivially_destructible(v.ast.ensure_ty()))
       destruct(v.value, v.ast.ensure_ty());
+  }
+}
+
+void Compiler::destruct_all_scopes() {
+  for (const auto& scope : llvm::reverse(m_scope.all_scopes())) {
+    for (const auto& i : scope) {
+      const auto& v = i.second;
+      if (v.owning && !is_trivially_destructible(v.ast.ensure_ty()))
+        destruct(v.value, v.ast.ensure_ty());
+    }
   }
 }
 
@@ -404,7 +418,7 @@ void Compiler::define(Fn& fn) {
     }
 
     if (m_builder->GetInsertBlock()->getTerminator() == nullptr) {
-      destruct_all_in_scope();
+      destruct_all_scopes();
       m_builder->CreateRetVoid();
     }
   } else {
@@ -420,7 +434,7 @@ void Compiler::define(Fn& fn) {
 
     statement(fn.compound_body());
 
-    destruct_all_in_scope();
+    destruct_all_scopes();
     auto* finalized_value = m_builder->CreateLoad(ctor_type, base_alloc);
     m_builder->CreateRet(finalized_value);
   }
@@ -501,7 +515,7 @@ template <> void Compiler::statement(const ast::ReturnStmt& stat) {
       }
     }
 
-    destruct_all_in_scope();
+    destruct_all_scopes();
 
     if (reset_owning != nullptr)
       reset_owning->owning = true; // The local variable may not be returned in all code paths, so reset its ownership
@@ -512,7 +526,7 @@ template <> void Compiler::statement(const ast::ReturnStmt& stat) {
     return;
   }
 
-  destruct_all_in_scope();
+  destruct_all_scopes();
   m_builder->CreateRetVoid();
 }
 
@@ -553,6 +567,19 @@ template <> auto Compiler::expression(const ast::CharExpr& expr) -> Val { return
 
 template <> auto Compiler::expression(const ast::BoolExpr& expr) -> Val { return m_builder->getInt1(expr.val()); }
 
+void Compiler::make_temporary_in_scope(Val val, const ast::AST& ast, const string& name) {
+  auto* alloc = entrypoint_builder().CreateAlloca(val.llvm->getType(), nullptr, name);
+  string tmp_name = name + " " + ast.location().to_string();
+  auto& md_ctx = alloc->getContext();
+  auto* md_node =
+      llvm::MDNode::get(md_ctx, llvm::MDString::get(md_ctx, std::to_string(m_scope.size()) + ": " + tmp_name));
+  alloc->setMetadata("yume.tmp", md_node);
+  auto [iter, ok] = m_scope.add(tmp_name, {.value = val.llvm, .ast = ast, .owning = true});
+  m_builder->CreateStore(val.llvm, alloc);
+  val.scope = &iter->second;
+  val.scope->value = alloc;
+}
+
 template <> auto Compiler::expression(const ast::StringExpr& expr) -> Val {
   auto val = expr.val();
 
@@ -577,6 +604,8 @@ template <> auto Compiler::expression(const ast::StringExpr& expr) -> Val {
   Val string_slice = llvm::UndefValue::get(slice_type);
   string_slice = m_builder->CreateInsertValue(string_slice, string_alloc, 0);
   string_slice = m_builder->CreateInsertValue(string_slice, slice_size, 1);
+
+  make_temporary_in_scope(string_slice, expr, "tmps");
 
   return string_slice;
 }
@@ -695,15 +724,8 @@ template <> auto Compiler::expression(const ast::CallExpr& expr) -> Val {
     val = m_builder->CreateCall(llvm_fn, vals_to_llvm(llvm_args));
   }
 
-  // TODO(rymiel): This still leaks memory when in a loop. This is why stuff like loops should create their own inner
-  // scope, where these temporaries would go
-  if (auto ty = expr.val_ty(); ty.has_value() && !is_trivially_destructible(*ty)) {
-    Val alloc = entrypoint_builder().CreateAlloca(val.llvm->getType(), nullptr, "tmp");
-    auto [iter, ok] = m_scope.add("tmp " + expr.location().to_string(), {.value = val, .ast = expr, .owning = true});
-    m_builder->CreateStore(val.llvm, alloc);
-    val.scope = &iter->second;
-    val.scope->value = alloc;
-  }
+  if (auto ty = expr.val_ty(); ty.has_value() && !is_trivially_destructible(*ty))
+    make_temporary_in_scope(val, expr, "tmp");
 
   return val;
 }
@@ -827,8 +849,8 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {
   // "escape analysis", however something like that might be needed to perform an optimization like shown above.
 
   // TODO(rymiel): Note that also a slice could be stack-allocated even if its size *wasn't* known at compile time,
-  // however, I simply didn't know how to do that when i wrote the above snipped. But, since its problematic anyway, it
-  // remains unfixed (and commented out); revisit later.
+  // however, I simply didn't know how to do that when i wrote the above snippet. But, since its problematic anyway,
+  // it remains unfixed (and commented out); revisit later.
 
   // TODO(rymiel): A large slice may be unfeasible to be stack-allocated anyway, so in addition to the above points,
   // slice size could also be a consideration. Perhaps we don't *want* to stack-allocate unknown-sized slices as they

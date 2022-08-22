@@ -370,6 +370,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
 }
 
 template <> void TypeWalker::statement(ast::Compound& stat) {
+  auto guard = scope.push_scope_guarded();
   for (auto& i : stat.body())
     body_statement(*i);
 }

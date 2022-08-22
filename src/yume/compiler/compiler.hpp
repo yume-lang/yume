@@ -114,9 +114,14 @@ private:
   /// Common code between defining functions and constructors. \see define .
   void setup_fn_base(Fn&);
 
-  /// Run the destructors for every owned local variable in the current scope. Should be run when returning from a
-  /// function in any way.
-  void destruct_all_in_scope();
+  /// Run the destructors for every owned local variable in the current scope. Should be run when exiting a scope.
+  void destruct_last_scope();
+  /// Run the destructors for every owned local variable in all scopes of the current function. Should be run when
+  /// returning from a function in any way.
+  void destruct_all_scopes();
+  /// Create a new temporary variable in the current scope, that will automatically be destructed at the end of the
+  /// scope.
+  void make_temporary_in_scope(Val val, const ast::AST& ast, const string& name = "tmp"s);
 
   auto create_malloc(llvm::Type* base_type, Val slice_size, string_view name = ""sv) -> Val;
   auto create_malloc(llvm::Type* base_type, uint64_t slice_size, string_view name = ""sv) -> Val;
