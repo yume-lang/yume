@@ -32,25 +32,23 @@ class TokenIterator {
   VectorTokenIterator m_end;
 
 public:
-  constexpr TokenIterator(const VectorTokenIterator& iterator, const VectorTokenIterator& end)
+  TokenIterator(const VectorTokenIterator& iterator, const VectorTokenIterator& end)
       : m_iterator{iterator}, m_end{end} {}
 
   /// Check if the iterator is at the end and no more `Token`s could possibly be read.
-  [[nodiscard]] constexpr auto at_end() const noexcept -> bool { return m_iterator == m_end; }
-  [[nodiscard]] auto constexpr operator->() const -> Token* {
+  [[nodiscard]] auto at_end() const noexcept -> bool { return m_iterator == m_end; }
+  [[nodiscard]] auto operator->() const -> Token* {
     if (at_end())
       throw std::runtime_error("Can't dereference at end");
     return m_iterator.operator->();
   }
-  [[nodiscard]] constexpr auto operator*() const -> Token {
+  [[nodiscard]] auto operator*() const -> Token {
     if (at_end())
       throw std::runtime_error("Can't dereference at end");
     return m_iterator.operator*();
   }
-  [[nodiscard]] constexpr auto operator+(int i) const noexcept -> TokenIterator {
-    return TokenIterator{m_iterator + i, m_end};
-  }
-  constexpr auto operator++() -> TokenIterator& {
+  [[nodiscard]] auto operator+(int i) const noexcept -> TokenIterator { return TokenIterator{m_iterator + i, m_end}; }
+  auto operator++() -> TokenIterator& {
     if (at_end())
       throw std::runtime_error("Can't increment past end");
 
