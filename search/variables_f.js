@@ -3,7 +3,7 @@ var searchData=
   ['s_5fmax_0',['s_max',['../structyume_1_1ty_1_1detail_1_1MinMax.html#acc99604a5fd34f96277f84601e6fa51e',1,'yume::ty::detail::MinMax']]],
   ['s_5fmin_1',['s_min',['../structyume_1_1ty_1_1detail_1_1MinMax.html#a4854895ee087d8f3eae2e401c545f398',1,'yume::ty::detail::MinMax']]],
   ['s_5fty_2',['s_ty',['../structyume_1_1TypeHolder_1_1IntTypePair.html#a331fcfe7d1928b01825b5a9df36b310c',1,'yume::TypeHolder::IntTypePair']]],
-  ['scope_3',['scope',['../structyume_1_1Val.html#aaf72ab6b90bd4b73865c80ff15b28c59',1,'yume::Val::scope()'],['../structyume_1_1semantic_1_1TypeWalker.html#adc39163e2e04aeaa13b5bb9884c94269',1,'yume::semantic::TypeWalker::scope()']]],
+  ['scope_3',['scope',['../structyume_1_1Val.html#aaf72ab6b90bd4b73865c80ff15b28c59',1,'yume::Val::scope()'],['../structyume_1_1semantic_1_1TypeWalker.html#a1a92f09b487862eaa441d52209137c00',1,'yume::semantic::TypeWalker::scope()']]],
   ['self_5fty_4',['self_ty',['../structyume_1_1Fn.html#a07d168f745b90dba8815716e5800e511',1,'yume::Fn::self_ty()'],['../structyume_1_1Struct.html#ae31d8fdc8fe87db75ef5b1e1a6ea7dc7',1,'yume::Struct::self_ty()']]],
   ['separator_5',['Separator',['../structyume_1_1ast_1_1parser_1_1Parser.html#a6ceafdaef74a531e58a75112875a027a',1,'yume::ast::parser::Parser']]],
   ['size_5ftype_6',['size_type',['../structyume_1_1TypeHolder.html#aa7573aff3d314e07ef1b5b656c046969',1,'yume::TypeHolder']]],

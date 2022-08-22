@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-08-21 22:26:10</td>
+            <td class="headerValue">2022-08-22 19:43:58</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -303,7 +303,7 @@
 <a name="245"><span class="lineNum">     245 </span>            : </a>
 <a name="246"><span class="lineNum">     246 </span>            :   /// Make the type of this node depend on the type of `other`.</a>
 <a name="247"><span class="lineNum">     247 </span>            :   /// \sa Attachment</a>
-<a name="248"><span class="lineNum">     248 </span><span class="lineCov">          1 :   void attach_to(AST* other) {</span></a>
+<a name="248"><span class="lineNum">     248 </span><span class="lineCov">          1 :   void attach_to(nonnull&lt;AST*&gt; other) {</span></a>
 <a name="249"><span class="lineNum">     249 </span>            :     other-&gt;m_attach-&gt;observers.insert(this);</a>
 <a name="250"><span class="lineNum">     250 </span>            :     this-&gt;m_attach-&gt;depends.insert(other);</a>
 <a name="251"><span class="lineNum">     251 </span>            :     unify_val_ty();</a>

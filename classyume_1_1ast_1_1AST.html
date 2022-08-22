@@ -140,9 +140,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ab31f6db6b0c90a0d3c56c923c76c0636"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7f08d44ef373c2a27db0f365dace54a2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AST.html#a7f08d44ef373c2a27db0f365dace54a2">val_ty</a> (optional&lt; <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> &gt; type)</td></tr>
 <tr class="separator:a7f08d44ef373c2a27db0f365dace54a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a82d0ba2f669b82780c23c538632366be"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AST.html#a82d0ba2f669b82780c23c538632366be">attach_to</a> (<a class="el" href="classyume_1_1ast_1_1AST.html">AST</a> *other)</td></tr>
-<tr class="memdesc:a82d0ba2f669b82780c23c538632366be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Make the type of this node depend on the type of <code>other</code>.  <a href="classyume_1_1ast_1_1AST.html#a82d0ba2f669b82780c23c538632366be">More...</a><br /></td></tr>
-<tr class="separator:a82d0ba2f669b82780c23c538632366be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07dfb2b09d2a4265ee76cd4a7b556062"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AST.html#a07dfb2b09d2a4265ee76cd4a7b556062">attach_to</a> (<a class="el" href="namespaceyume.html#ad142a07d8a149e4dfed612e8a96c0fe9">nonnull</a>&lt; <a class="el" href="classyume_1_1ast_1_1AST.html">AST</a> * &gt; other)</td></tr>
+<tr class="memdesc:a07dfb2b09d2a4265ee76cd4a7b556062"><td class="mdescLeft">&#160;</td><td class="mdescRight">Make the type of this node depend on the type of <code>other</code>.  <a href="classyume_1_1ast_1_1AST.html#a07dfb2b09d2a4265ee76cd4a7b556062">More...</a><br /></td></tr>
+<tr class="separator:a07dfb2b09d2a4265ee76cd4a7b556062"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a46b0acf3444bcdbd8d9b7359eac2c0e0"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AST.html#a46b0acf3444bcdbd8d9b7359eac2c0e0">kind</a> () const -&gt; <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406">Kind</a></td></tr>
 <tr class="separator:a46b0acf3444bcdbd8d9b7359eac2c0e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a35e3f20abd8401f7ac9b50dcc8cfff9e"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AST.html#a35e3f20abd8401f7ac9b50dcc8cfff9e">kind_name</a> () const -&gt; string</td></tr>
@@ -292,8 +292,8 @@ Protected Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a82d0ba2f669b82780c23c538632366be" name="a82d0ba2f669b82780c23c538632366be"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a82d0ba2f669b82780c23c538632366be">&#9670;&nbsp;</a></span>attach_to()</h2>
+<a id="a07dfb2b09d2a4265ee76cd4a7b556062" name="a07dfb2b09d2a4265ee76cd4a7b556062"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a07dfb2b09d2a4265ee76cd4a7b556062">&#9670;&nbsp;</a></span>attach_to()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -304,7 +304,7 @@ Protected Member Functions</h2></td></tr>
         <tr>
           <td class="memname">void yume::ast::AST::attach_to </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classyume_1_1ast_1_1AST.html">AST</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="namespaceyume.html#ad142a07d8a149e4dfed612e8a96c0fe9">nonnull</a>&lt; <a class="el" href="classyume_1_1ast_1_1AST.html">AST</a> * &gt;&#160;</td>
           <td class="paramname"><em>other</em></td><td>)</td>
           <td></td>
         </tr>
@@ -323,7 +323,7 @@ Protected Member Functions</h2></td></tr>
 
 <p class="reference">References <a class="el" href="ast_8cpp_source.html#l00009">unify_val_ty()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00086">yume::semantic::TypeWalker::expression()</a>, and <a class="el" href="type__walker_8cpp_source.html#l00386">yume::semantic::TypeWalker::statement()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00086">yume::semantic::TypeWalker::expression()</a>, and <a class="el" href="type__walker_8cpp_source.html#l00387">yume::semantic::TypeWalker::statement()</a>.</p>
 
 </div>
 </div>
@@ -414,9 +414,9 @@ Protected Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00234">234</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="util_8hpp_source.html#l00058">yume::yume_assert()</a>.</p>
+<p class="reference">References <a class="el" href="util_8hpp_source.html#l00056">yume::yume_assert()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00351">yume::is_trivially_destructible()</a>, and <a class="el" href="compiler_8cpp_source.html#l00517">yume::Compiler::statement()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00355">yume::is_trivially_destructible()</a>, and <a class="el" href="compiler_8cpp_source.html#l00537">yume::Compiler::statement()</a>.</p>
 
 </div>
 </div>
@@ -478,7 +478,7 @@ Protected Member Functions</h2></td></tr>
 
 <p class="reference">References <a class="el" href="ast_8hpp_source.html#l00254">kind()</a>, and <a class="el" href="ast_8hpp_source.html#l00077">yume::ast::kind_name()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00471">yume::semantic::TypeWalker::body_expression()</a>, <a class="el" href="type__walker_8cpp_source.html#l00467">yume::semantic::TypeWalker::body_statement()</a>, <a class="el" href="compiler_8cpp_source.html#l00927">yume::Compiler::body_statement()</a>, and <a class="el" href="describe_8cpp_source.html#l00011">describe()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00479">yume::semantic::TypeWalker::body_expression()</a>, <a class="el" href="type__walker_8cpp_source.html#l00475">yume::semantic::TypeWalker::body_statement()</a>, <a class="el" href="compiler_8cpp_source.html#l00957">yume::Compiler::body_statement()</a>, and <a class="el" href="describe_8cpp_source.html#l00011">describe()</a>.</p>
 
 </div>
 </div>
@@ -667,7 +667,7 @@ Protected Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00233">233</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00063">yume::semantic::TypeWalker::expression()</a>, and <a class="el" href="type__walker_8cpp_source.html#l00407">yume::semantic::TypeWalker::statement()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00063">yume::semantic::TypeWalker::expression()</a>, and <a class="el" href="type__walker_8cpp_source.html#l00411">yume::semantic::TypeWalker::statement()</a>.</p>
 
 </div>
 </div>

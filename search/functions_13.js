@@ -6,7 +6,7 @@ var searchData=
   ['tok_3',['tok',['../classyume_1_1ast_1_1AST.html#aef0323c4bfe9d210c3edeef11f7fa9b4',1,'yume::ast::AST']]],
   ['token_4',['Token',['../structyume_1_1Token.html#abe8a1376fcb43d484398c187bfca5c25',1,'yume::Token::Token(Type type)'],['../structyume_1_1Token.html#a6da503c3b96f1884a894dd161ceff29b',1,'yume::Token::Token(Type type, Payload payload) noexcept'],['../structyume_1_1Token.html#a1d1accb3b06a72a559bc0bc26edd06c1',1,'yume::Token::Token(Type type, Payload payload, int i, Loc loc) noexcept']]],
   ['token_5frange_5',['token_range',['../classyume_1_1ast_1_1AST.html#a7c6bcf1def2d39183937cff5e6a16e78',1,'yume::ast::AST']]],
-  ['tokeniterator_6',['TokenIterator',['../classyume_1_1ast_1_1TokenIterator.html#a30a8a8edd0acd2b99ef7579e86bff268',1,'yume::ast::TokenIterator']]],
+  ['tokeniterator_6',['TokenIterator',['../classyume_1_1ast_1_1TokenIterator.html#a83847969ddcae521f1003226a48feb82',1,'yume::ast::TokenIterator']]],
   ['tokenize_7',['tokenize',['../classyume_1_1Tokenizer.html#a22a004a45ee76d84fb7c7922909c9f72',1,'yume::Tokenizer::tokenize()'],['../namespaceyume.html#add085d2c7691142e008ebdede18cce21',1,'yume::tokenize(std::istream &amp;in, const string &amp;source_file) -&gt; vector&lt; Token &gt;']]],
   ['tokenize_5fpreserve_5fskipped_8',['tokenize_preserve_skipped',['../namespaceyume.html#a4920534072ee0bb3deb3389fce655517',1,'yume']]],
   ['tokenizer_9',['Tokenizer',['../classyume_1_1Tokenizer.html#abacd02cab431d1e520ebdada9e7fbb0e',1,'yume::Tokenizer']]],

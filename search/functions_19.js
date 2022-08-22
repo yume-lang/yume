@@ -5,5 +5,6 @@ var searchData=
   ['_7edotvisitor_2',['~DotVisitor',['../classyume_1_1diagnostic_1_1DotVisitor.html#a7f473d4bf82a6437d01230ffd3c8475b',1,'yume::diagnostic::DotVisitor']]],
   ['_7ehashvisitor_3',['~HashVisitor',['../classyume_1_1diagnostic_1_1HashVisitor.html#a72e7ef1b39977e3bfee6998af700f1f8',1,'yume::diagnostic::HashVisitor']]],
   ['_7eprintvisitor_4',['~PrintVisitor',['../classyume_1_1diagnostic_1_1PrintVisitor.html#afe516f3a2b5518c762a6e4fa6790a9e7',1,'yume::diagnostic::PrintVisitor']]],
-  ['_7evisitor_5',['~Visitor',['../classyume_1_1Visitor.html#a3abaff6b4393600030154a880bcbff3f',1,'yume::Visitor']]]
+  ['_7escopecontainerguard_5',['~ScopeContainerGuard',['../classyume_1_1ScopeContainerGuard.html#aecf94b1633be6eaecd911e0eb18959da',1,'yume::ScopeContainerGuard']]],
+  ['_7evisitor_6',['~Visitor',['../classyume_1_1Visitor.html#a3abaff6b4393600030154a880bcbff3f',1,'yume::Visitor']]]
 ];
