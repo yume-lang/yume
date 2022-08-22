@@ -567,7 +567,7 @@ template <> auto Compiler::expression(const ast::CharExpr& expr) -> Val { return
 
 template <> auto Compiler::expression(const ast::BoolExpr& expr) -> Val { return m_builder->getInt1(expr.val()); }
 
-void Compiler::make_temporary_in_scope(Val val, const ast::AST& ast, const string& name) {
+void Compiler::make_temporary_in_scope(Val& val, const ast::AST& ast, const string& name) {
   auto* alloc = entrypoint_builder().CreateAlloca(val.llvm->getType(), nullptr, name);
   string tmp_name = name + " " + ast.location().to_string();
   auto& md_ctx = alloc->getContext();

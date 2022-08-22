@@ -121,7 +121,7 @@ private:
   void destruct_all_scopes();
   /// Create a new temporary variable in the current scope, that will automatically be destructed at the end of the
   /// scope.
-  void make_temporary_in_scope(Val val, const ast::AST& ast, const string& name = "tmp"s);
+  void make_temporary_in_scope(Val& val, const ast::AST& ast, const string& name = "tmp"s);
 
   auto create_malloc(llvm::Type* base_type, Val slice_size, string_view name = ""sv) -> Val;
   auto create_malloc(llvm::Type* base_type, uint64_t slice_size, string_view name = ""sv) -> Val;
