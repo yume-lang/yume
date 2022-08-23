@@ -145,6 +145,8 @@ auto Parser::parse_stmt() -> unique_ptr<Stmt> {
     stat = parse_struct_decl();
   else if (tokens->is_a(KWD_LET))
     stat = parse_var_decl();
+  else if (tokens->is_a(KWD_CONST))
+    stat = parse_const_decl();
   else if (tokens->is_a(KWD_WHILE))
     stat = parse_while_stmt();
   else if (tokens->is_a(KWD_IF))
@@ -448,6 +450,20 @@ auto Parser::parse_var_decl() -> unique_ptr<VarDecl> {
   return ast_ptr<VarDecl>(entry, name, move(type), move(init));
 }
 
+auto Parser::parse_const_decl() -> unique_ptr<ConstDecl> {
+  auto entry = tokens.begin();
+
+  consume(KWD_CONST);
+  const string name = consume_word();
+  auto type = AnyType{parse_type()};
+
+  consume(SYM_EQ);
+
+  auto init = parse_expr();
+
+  return ast_ptr<ConstDecl>(entry, name, move(type), move(init));
+}
+
 auto Parser::parse_while_stmt() -> unique_ptr<WhileStmt> {
   auto entry = tokens.begin();
 
@@ -587,6 +603,8 @@ auto Parser::parse_primary() -> unique_ptr<Expr> {
     return ast_ptr<BoolExpr>(entry, false);
   if (try_consume(SYM_COLON_COLON))
     return ast_ptr<FieldAccessExpr>(entry, std::nullopt, consume_word());
+  if (try_consume(SYM_DOLLAR))
+    return ast_ptr<ConstExpr>(entry, consume_word());
 
   if (tokens->type == Word) {
     if (try_peek_uword(0)) {
