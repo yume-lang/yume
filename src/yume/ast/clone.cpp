@@ -65,6 +65,7 @@ auto BoolExpr::clone() const -> BoolExpr* { return new BoolExpr(tok(), m_val); }
 auto ReturnStmt::clone() const -> ReturnStmt* { return new ReturnStmt(tok(), dup(m_expr)); }
 auto WhileStmt::clone() const -> WhileStmt* { return new WhileStmt(tok(), dup(m_cond), dup(m_body)); }
 auto VarDecl::clone() const -> VarDecl* { return new VarDecl(tok(), m_name, dup(m_type), dup(m_init)); }
+auto ConstDecl::clone() const -> ConstDecl* { return new ConstDecl(tok(), m_name, dup(m_type), dup(m_init)); }
 auto FnDecl::clone() const -> FnDecl* {
   return std::visit(
       [&](auto& s) {
@@ -84,6 +85,7 @@ auto ProxyType::clone() const -> ProxyType* { return new ProxyType(tok(), m_fiel
 auto TypeName::clone() const -> TypeName* { return new TypeName(tok(), dup(type), name); }
 auto Compound::clone() const -> Compound* { return new Compound(tok(), dup(m_body)); }
 auto VarExpr::clone() const -> VarExpr* { return new VarExpr(tok(), m_name); }
+auto ConstExpr::clone() const -> ConstExpr* { return new ConstExpr(tok(), m_name); }
 auto CallExpr::clone() const -> CallExpr* { return new CallExpr(tok(), m_name, dup(m_args)); }
 auto CtorExpr::clone() const -> CtorExpr* { return new CtorExpr(tok(), dup(m_type), dup(m_args)); }
 auto DtorExpr::clone() const -> DtorExpr* { return new DtorExpr(tok(), dup(m_base)); }

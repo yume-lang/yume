@@ -18,6 +18,7 @@ void BoolExpr::visit(Visitor& visitor) const { visitor.visit(describe()); }
 void ReturnStmt::visit(Visitor& visitor) const { visitor.visit(m_expr); }
 void WhileStmt::visit(Visitor& visitor) const { visitor.visit(m_cond).visit(m_body); }
 void VarDecl::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_type).visit(m_init); }
+void ConstDecl::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_type).visit(m_init); }
 void FnDecl::visit(Visitor& visitor) const {
   visitor.visit(m_name)
       .visit(m_args, "arg")
@@ -46,6 +47,7 @@ void ProxyType::visit(Visitor& visitor) const { visitor.visit(m_field); }
 void TypeName::visit(Visitor& visitor) const { visitor.visit(name).visit(type); }
 void Compound::visit(Visitor& visitor) const { visitor.visit(m_body); }
 void VarExpr::visit(Visitor& visitor) const { visitor.visit(m_name); }
+void ConstExpr::visit(Visitor& visitor) const { visitor.visit(m_name); }
 void CallExpr::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_args); }
 void CtorExpr::visit(Visitor& visitor) const { visitor.visit(m_type).visit(m_args); }
 void DtorExpr::visit(Visitor& visitor) const { visitor.visit(m_base); }
