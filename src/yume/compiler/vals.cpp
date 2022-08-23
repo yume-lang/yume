@@ -52,6 +52,7 @@ auto Struct::get_or_create_instantiation(Substitution& subs) noexcept -> std::pa
 
 auto Fn::name() const noexcept -> string { return ast().name(); }
 auto Struct::name() const noexcept -> string { return st_ast.name(); }
+auto Const::name() const noexcept -> string { return cn_ast.name(); }
 
 auto Fn::ret() const -> optional<ty::Type> {
   if (auto* fn_decl = dyn_cast<ast::FnDecl>(&ast_decl)) {

@@ -22,6 +22,7 @@
 namespace llvm {
 class Function;
 class Value;
+class GlobalVariable;
 } // namespace llvm
 
 namespace yume {
@@ -156,7 +157,24 @@ struct Struct {
   [[nodiscard]] auto create_instantiation(Substitution& subs) noexcept -> Struct&;
 };
 
-using DeclLike_t = std::variant<std::monostate, Fn*, Struct*>;
+/// A constant declaration in the compiler.
+struct Const {
+  using decl_t = ast::ConstDecl;
+
+  ast::ConstDecl& cn_ast;
+  /// The program this declaration is a member of.
+  ast::Program* member{};
+  llvm::GlobalVariable* llvm{};
+
+  Const(ast::ConstDecl& ast_decl, ast::Program* member = nullptr) noexcept : cn_ast(ast_decl), member(member) {}
+
+  [[nodiscard]] auto ast() const noexcept -> const auto& { return cn_ast; }
+  [[nodiscard]] auto ast() noexcept -> auto& { return cn_ast; }
+
+  [[nodiscard]] auto name() const noexcept -> string;
+};
+
+using DeclLike_t = std::variant<std::monostate, Fn*, Struct*, Const*>;
 
 /// A common base between declarations in the compiler: `Fn` and `Struct`. Its value may also be absent
 /// (`std::monostate`).
@@ -179,24 +197,28 @@ public:
   }
 
   [[nodiscard]] auto subs() const noexcept -> const Substitution* {
-    return visit_decl<const Substitution*>([](auto* decl) noexcept -> const Substitution* {
-      if (decl == nullptr)
-        return nullptr;
-      auto& subs = decl->get_subs();
-      if (auto self = decl->get_self_ty(); subs.empty() && self.has_value())
-        if (auto* self_st = self->template base_dyn_cast<ty::Struct>())
-          return &self_st->subs();
+    return visit_decl<const Substitution*>( //
+        [](Const* /*cn*/) noexcept -> const Substitution* { return nullptr; },
+        [](auto* decl) noexcept -> const Substitution* {
+          if (decl == nullptr)
+            return nullptr;
+          auto& subs = decl->get_subs();
+          if (auto self = decl->get_self_ty(); subs.empty() && self.has_value())
+            if (auto* self_st = self->template base_dyn_cast<ty::Struct>())
+              return &self_st->subs();
 
-      return &subs;
-    });
+          return &subs;
+        });
   };
 
   [[nodiscard]] auto subs() noexcept -> Substitution* {
-    return visit_decl<Substitution*>([](auto* decl) noexcept -> Substitution* {
-      if (decl == nullptr)
-        return nullptr;
-      return &decl->get_subs();
-    });
+    return visit_decl<Substitution*>( //
+        [](Const* /*cn*/) noexcept -> Substitution* { return nullptr; },
+        [](auto* decl) noexcept -> Substitution* {
+          if (decl == nullptr)
+            return nullptr;
+          return &decl->get_subs();
+        });
   };
 
   [[nodiscard]] auto ast() const noexcept -> const ast::AST* {
@@ -208,7 +230,9 @@ public:
   };
 
   [[nodiscard]] auto self_ty() const noexcept -> optional<ty::Type> {
-    return visit_decl<optional<ty::Type>>([](const auto* decl) noexcept { return decl->get_self_ty(); });
+    return visit_decl<optional<ty::Type>>(
+        [](const Const* /*cn*/) noexcept -> optional<ty::Type> { return std::nullopt; },
+        [](const auto* decl) noexcept { return decl->get_self_ty(); });
   };
 };
 

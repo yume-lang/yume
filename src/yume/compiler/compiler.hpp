@@ -46,6 +46,7 @@ class Compiler : public CRTPWalker<Compiler> {
   std::deque<Fn> m_fns{};
   std::deque<Struct> m_structs{};
   std::deque<Fn> m_ctors{};
+  std::deque<Const> m_consts{};
   std::queue<DeclLike> m_decl_queue{};
   unique_ptr<semantic::TypeWalker> m_walker;
 
@@ -79,6 +80,7 @@ public:
 
   /// Compile the body of a function or constructor.
   void define(Fn&);
+  void define(Const&);
 
   void body_statement(const ast::Stmt&);
   auto decl_statement(ast::Stmt&, optional<ty::Type> parent = std::nullopt, ast::Program* member = nullptr) -> DeclLike;
