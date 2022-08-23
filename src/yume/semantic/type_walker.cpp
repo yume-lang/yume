@@ -466,12 +466,14 @@ template <> void TypeWalker::statement(ast::VarDecl& stat) {
 }
 
 template <> void TypeWalker::statement(ast::ConstDecl& stat) {
-  body_expression(*stat.init());
   expression(*stat.type());
-  // TODO(rymiel): Perform literal casts
-  make_implicit_conversion(stat.init(), stat.type()->val_ty());
-  stat.init()->attach_to(stat.type().raw_ptr());
-  stat.val_ty(stat.init()->ensure_ty());
+  if (in_depth) {
+    body_expression(*stat.init());
+    // TODO(rymiel): Perform literal casts
+    make_implicit_conversion(stat.init(), stat.type()->val_ty());
+    stat.init()->attach_to(stat.type().raw_ptr());
+  }
+  stat.val_ty(stat.type()->ensure_ty());
 }
 
 template <> void TypeWalker::statement(ast::IfStmt& stat) {
