@@ -141,8 +141,10 @@ void Compiler::run() {
   // Fifth pass: convert everything else, but only when instantiated
   m_walker->in_depth = true;
 
-  for (auto& cn : m_consts)
+  for (auto& cn : m_consts) {
+    walk_types(&cn);
     define(cn);
+  }
 
   // Find all external functions. These will be the "entrypoints".
   vector<Fn*> extern_fns = {};
