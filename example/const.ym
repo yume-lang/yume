@@ -1,0 +1,9 @@
+const FOO I32 = 5
+const BAR I16 = I16(7) # TODO: this cast shouldn't be necessary
+
+def main() I32
+  assert($FOO == 5)
+  assert($BAR == 7)
+  printf("%d + %d = %d\n".c_str.unsafe_ptr, $FOO, $BAR, $FOO + $BAR)
+  return 0
+end
