@@ -83,6 +83,7 @@ static const TokenAtom KWD_THEN = {Token::Type::Word, "then"_a};
 static const TokenAtom KWD_TRUE = {Token::Type::Word, "true"_a};
 static const TokenAtom KWD_FALSE = {Token::Type::Word, "false"_a};
 static const TokenAtom KWD_WHILE = {Token::Type::Word, "while"_a};
+static const TokenAtom KWD_CONST = {Token::Type::Word, "const"_a};
 static const TokenAtom KWD_STRUCT = {Token::Type::Word, "struct"_a};
 static const TokenAtom KWD_RETURN = {Token::Type::Word, "return"_a};
 static const TokenAtom KWD_EXTERN = {Token::Type::Word, "__extern__"_a};
@@ -112,6 +113,7 @@ static const TokenAtom SYM_STAR = {Token::Type::Symbol, "*"_a};
 static const TokenAtom SYM_BANG = {Token::Type::Symbol, "!"_a};
 static const TokenAtom SYM_COLON = {Token::Type::Symbol, ":"_a};
 static const TokenAtom SYM_COLON_COLON = {Token::Type::Symbol, "::"_a};
+static const TokenAtom SYM_DOLLAR = {Token::Type::Symbol, "$"_a};
 
 class TokenRange {
   span<Token> m_span;
@@ -250,6 +252,8 @@ struct Parser {
   auto parse_ctor_decl() -> unique_ptr<CtorDecl>;
 
   auto parse_var_decl() -> unique_ptr<VarDecl>;
+
+  auto parse_const_decl() -> unique_ptr<ConstDecl>;
 
   auto parse_while_stmt() -> unique_ptr<WhileStmt>;
 
