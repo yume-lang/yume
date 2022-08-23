@@ -194,6 +194,14 @@ template <> void TypeWalker::expression(ast::VarExpr& expr) {
   throw std::runtime_error("Scope doesn't contain variable called "s + expr.name());
 }
 
+template <> void TypeWalker::expression(ast::ConstExpr& expr) {
+  for (const auto& cn : compiler.m_consts) {
+    if (cn.name() == expr.name())
+      return expr.val_ty(cn.ast().ensure_ty());
+  }
+  throw std::runtime_error("Nonexistent constant called "s + expr.name());
+}
+
 static auto find_field_ast(const ty::Struct& st, string_view target_name) -> std::pair<nullable<ast::AnyType*>, int> {
   nullable<ast::AnyType*> target_type = nullptr;
   int j = 0;
@@ -457,6 +465,15 @@ template <> void TypeWalker::statement(ast::VarDecl& stat) {
   scope.add(stat.name(), &stat);
 }
 
+template <> void TypeWalker::statement(ast::ConstDecl& stat) {
+  body_expression(*stat.init());
+  expression(*stat.type());
+  // TODO(rymiel): Perform literal casts
+  make_implicit_conversion(stat.init(), stat.type()->val_ty());
+  stat.init()->attach_to(stat.type().raw_ptr());
+  stat.val_ty(stat.init()->ensure_ty());
+}
+
 template <> void TypeWalker::statement(ast::IfStmt& stat) {
   for (auto& i : stat.clauses()) {
     body_expression(i.cond());
@@ -576,7 +593,8 @@ void TypeWalker::resolve_queue() {
     decl_queue.pop();
 
     with_saved_scope([&] {
-      next.visit_decl(
+      next.visit_decl( //
+          [&](Const* /* cn */) {},
           [&](Fn* fn) {
             in_depth = true;
             compiler.declare(*fn);

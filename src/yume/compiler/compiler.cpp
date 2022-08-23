@@ -113,11 +113,19 @@ void Compiler::run() {
     for (auto& i : source.program->body())
       decl_statement(*i, {}, source.program.get());
 
-  // First pass: only convert structs
+  // First pass: only convert constants
+  for (auto& cn : m_consts) {
+    walk_types(&cn);
+    auto* const_ty = llvm_type(cn.ast().ensure_ty());
+    cn.llvm = new llvm::GlobalVariable(*m_module, const_ty, true, llvm::GlobalVariable::PrivateLinkage, nullptr,
+                                       ".const." + cn.name());
+  }
+
+  // Second pass: only convert structs
   for (auto& st : m_structs)
     walk_types(&st);
 
-  // Second pass: only convert user defined constructors
+  // Third pass: only convert user defined constructors
   for (auto& ct : m_ctors)
     walk_types(&ct);
 
@@ -126,13 +134,17 @@ void Compiler::run() {
   for (auto& st : m_structs)
     declare_default_ctor(st);
 
-  // Third pass: only convert function parameters
+  // Fourth pass: only convert function parameters
   for (auto& fn : m_fns)
     walk_types(&fn);
 
-  // Fourth pass: convert everything else, but only when instantiated
+  // Fifth pass: convert everything else, but only when instantiated
   m_walker->in_depth = true;
 
+  for (auto& cn : m_consts)
+    define(cn);
+
+  // Find all external functions. These will be the "entrypoints".
   vector<Fn*> extern_fns = {};
   for (auto& fn : m_fns) {
     if (fn.name() == "main")
@@ -151,8 +163,9 @@ void Compiler::run() {
   while (!m_decl_queue.empty()) {
     auto next = m_decl_queue.front();
     m_decl_queue.pop();
-    next.visit_decl([&](Fn* fn) { define(*fn); },
-                    [&](Struct* /*st*/) { throw std::logic_error("Cannot declare a struct"); });
+    next.visit_decl([&](Fn* fn) { define(*fn); }, //
+                    [&](Const* cn) { define(*cn); },
+                    [&](Struct* /*st*/) { throw std::logic_error("Cannot define a struct"); });
   }
 }
 
@@ -230,6 +243,13 @@ auto Compiler::decl_statement(ast::Stmt& stmt, optional<ty::Type> parent, ast::P
     auto& ctor = m_ctors.emplace_back(*ctor_decl, parent, member);
 
     return &ctor;
+  }
+  if (auto* const_decl = dyn_cast<ast::ConstDecl>(&stmt)) {
+    // TODO(rymiel): revisit
+    yume_assert(!parent.has_value(), "Constants must currently be at the top level;");
+    auto& cn = m_consts.emplace_back(*const_decl, member);
+
+    return &cn;
   }
 
   throw std::runtime_error("Invalid top-level statement: "s + stmt.kind_name());
@@ -407,6 +427,16 @@ void Compiler::setup_fn_base(Fn& fn) {
     m_builder->CreateStore(&arg, alloc);
     m_scope.add(name, {.value = alloc, .ast = val, .owning = false}); // We don't own parameters
   }
+}
+
+void Compiler::define(Const& cn) {
+  if (cn.llvm->hasInitializer())
+    return;
+
+  auto init = body_expression(*cn.ast().init());
+  yume_assert(isa<llvm::Constant>(init.llvm), "Constant initializer must be a constant expression");
+  auto* const_val = cast<llvm::Constant>(init.llvm);
+  cn.llvm->setInitializer(const_val);
 }
 
 void Compiler::define(Fn& fn) {
@@ -619,6 +649,15 @@ template <> auto Compiler::expression(const ast::VarExpr& expr) -> Val {
     return m_builder->CreateLoad(llvm_type(in_scope->ast.ensure_ty()), val);
 
   return val;
+}
+
+template <> auto Compiler::expression(const ast::ConstExpr& expr) -> Val {
+  for (const auto& cn : m_consts) {
+    if (cn.name() == expr.name())
+      return m_builder->CreateLoad(llvm_type(cn.ast().ensure_ty()), cn.llvm, "cn." + expr.name());
+  }
+
+  throw std::runtime_error("Nonexistent constant called "s + expr.name());
 }
 
 /// A constexpr-friendly simple string hash, for simple switches with string cases
