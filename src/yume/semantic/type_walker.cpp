@@ -196,7 +196,7 @@ template <> void TypeWalker::expression(ast::VarExpr& expr) {
 
 template <> void TypeWalker::expression(ast::ConstExpr& expr) {
   for (const auto& cn : compiler.m_consts) {
-    if (cn.name() == expr.name())
+    if (cn.referred_to_by(expr))
       return expr.val_ty(cn.ast().ensure_ty());
   }
   throw std::runtime_error("Nonexistent constant called "s + expr.name());

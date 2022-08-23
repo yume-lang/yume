@@ -85,7 +85,7 @@ auto ProxyType::clone() const -> ProxyType* { return new ProxyType(tok(), m_fiel
 auto TypeName::clone() const -> TypeName* { return new TypeName(tok(), dup(type), name); }
 auto Compound::clone() const -> Compound* { return new Compound(tok(), dup(m_body)); }
 auto VarExpr::clone() const -> VarExpr* { return new VarExpr(tok(), m_name); }
-auto ConstExpr::clone() const -> ConstExpr* { return new ConstExpr(tok(), m_name); }
+auto ConstExpr::clone() const -> ConstExpr* { return new ConstExpr(tok(), m_name, m_parent); }
 auto CallExpr::clone() const -> CallExpr* { return new CallExpr(tok(), m_name, dup(m_args)); }
 auto CtorExpr::clone() const -> CtorExpr* { return new CtorExpr(tok(), dup(m_type), dup(m_args)); }
 auto DtorExpr::clone() const -> DtorExpr* { return new DtorExpr(tok(), dup(m_base)); }

@@ -80,6 +80,8 @@ def ==(a I64, b I64) Bool = __primitive__(ib_icmp_eq)
 def ==(a I32, b I32) Bool = __primitive__(ib_icmp_eq)
 def ==(a U8, b U8) Bool = __primitive__(ib_icmp_eq)
 
+def !=(a I64, b I64) Bool = __primitive__(ib_icmp_ne)
+def !=(a I32, b I32) Bool = __primitive__(ib_icmp_ne)
 def !=(a U8, b U8) Bool = __primitive__(ib_icmp_ne)
 
 def >(a I32, b I32) Bool = __primitive__(ib_icmp_sgt)

@@ -604,10 +604,16 @@ auto Parser::parse_primary() -> unique_ptr<Expr> {
   if (try_consume(SYM_COLON_COLON))
     return ast_ptr<FieldAccessExpr>(entry, std::nullopt, consume_word());
   if (try_consume(SYM_DOLLAR))
-    return ast_ptr<ConstExpr>(entry, consume_word());
+    return ast_ptr<ConstExpr>(entry, consume_word(), std::nullopt);
 
   if (tokens->type == Word) {
     if (try_peek_uword(0)) {
+      if (try_peek(1, SYM_COLON_COLON)) {
+        auto parent = consume_word();
+        consume(SYM_COLON_COLON);
+        return ast_ptr<ConstExpr>(entry, consume_word(), parent);
+      }
+
       auto type = parse_type();
       if (try_consume(SYM_LPAREN)) {
         auto call_args = vector<AnyExpr>{};

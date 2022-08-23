@@ -1,9 +1,15 @@
 const FOO I32 = 5
-const BAR I16 = I16(7) # TODO: this cast shouldn't be necessary
+
+struct Thing()
+  const FOO I32 = 11
+  const BAR I16 = I16(7) # TODO: this cast shouldn't be necessary
+end
 
 def main() I32
   assert($FOO == 5)
-  assert($BAR == 7)
-  printf("%d + %d = %d\n".c_str.unsafe_ptr, $FOO, $BAR, $FOO + $BAR)
+  assert(Thing::BAR == 7)
+  assert(Thing::FOO == 11)
+  assert($FOO != Thing::FOO)
+  printf("%d + %d = %d\n".c_str.unsafe_ptr, $FOO, Thing::BAR, $FOO + Thing::BAR)
   return 0
 end

@@ -162,16 +162,32 @@ struct Const {
   using decl_t = ast::ConstDecl;
 
   ast::ConstDecl& cn_ast;
+  /// If this function is in the body of a struct, this points to its type.
+  optional<ty::Type> self_ty;
   /// The program this declaration is a member of.
-  ast::Program* member{};
+  ast::Program* member;
   llvm::GlobalVariable* llvm{};
 
-  Const(ast::ConstDecl& ast_decl, ast::Program* member = nullptr) noexcept : cn_ast(ast_decl), member(member) {}
+  Const(ast::ConstDecl& ast_decl, optional<ty::Type> parent = std::nullopt, ast::Program* member = nullptr) noexcept
+      : cn_ast(ast_decl), self_ty(parent), member(member) {}
 
   [[nodiscard]] auto ast() const noexcept -> const auto& { return cn_ast; }
   [[nodiscard]] auto ast() noexcept -> auto& { return cn_ast; }
+  [[nodiscard]] auto get_self_ty() const noexcept -> optional<ty::Type> { return self_ty; };
 
   [[nodiscard]] auto name() const noexcept -> string;
+  [[nodiscard]] auto referred_to_by(const ast::ConstExpr& expr) const -> bool {
+    if (name() != expr.name())
+      return false;
+
+    if (self_ty.has_value() != expr.parent().has_value())
+      return false;
+
+    if (self_ty.has_value() && expr.parent().has_value())
+      return self_ty->name() == expr.parent().value();
+
+    return true;
+  }
 };
 
 using DeclLike_t = std::variant<std::monostate, Fn*, Struct*, Const*>;
@@ -230,9 +246,7 @@ public:
   };
 
   [[nodiscard]] auto self_ty() const noexcept -> optional<ty::Type> {
-    return visit_decl<optional<ty::Type>>(
-        [](const Const* /*cn*/) noexcept -> optional<ty::Type> { return std::nullopt; },
-        [](const auto* decl) noexcept { return decl->get_self_ty(); });
+    return visit_decl<optional<ty::Type>>([](const auto* decl) noexcept { return decl->get_self_ty(); });
   };
 };
 
