@@ -33,6 +33,7 @@ public:
     case ast::K_If: return conv_statement<ast::IfStmt>(stat, args...);
     case ast::K_Return: return conv_statement<ast::ReturnStmt>(stat, args...);
     case ast::K_VarDecl: return conv_statement<ast::VarDecl>(stat, args...);
+    case ast::K_ConstDecl: return conv_statement<ast::ConstDecl>(stat, args...);
     case ast::K_FnDecl: return conv_statement<ast::FnDecl>(stat, args...);
     case ast::K_StructDecl: return conv_statement<ast::StructDecl>(stat, args...);
     case ast::K_CtorDecl: return conv_statement<ast::CtorDecl>(stat, args...);
@@ -49,6 +50,7 @@ public:
     case ast::K_Bool: return conv_expression<ast::BoolExpr>(expr, args...);
     case ast::K_Call: return conv_expression<ast::CallExpr>(expr, args...);
     case ast::K_Var: return conv_expression<ast::VarExpr>(expr, args...);
+    case ast::K_Const: return conv_expression<ast::ConstExpr>(expr, args...);
     case ast::K_Assign: return conv_expression<ast::AssignExpr>(expr, args...);
     case ast::K_Ctor: return conv_expression<ast::CtorExpr>(expr, args...);
     // case ast::K_Dtor: return conv_expression<ast::DtorExpr>(expr, args...);

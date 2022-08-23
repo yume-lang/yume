@@ -45,6 +45,7 @@ enum Kind {
   /****/ K_CtorDecl,   ///< `CtorDecl`
   /****/ K_StructDecl, ///< `StructDecl`
   /****/ K_VarDecl,    ///< `VarDecl`
+  /****/ K_ConstDecl,  ///< `ConstDecl`
   /****/ K_END_Decl,
 
   /**** subclasses of Expr */
@@ -54,6 +55,7 @@ enum Kind {
   /****/ K_Bool,         ///< `BoolExpr`
   /****/ K_String,       ///< `StringExpr`
   /****/ K_Var,          ///< `VarExpr`
+  /****/ K_Const,        ///< `ConstExpr`
   /****/ K_Call,         ///< `CallExpr`
   /****/ K_Ctor,         ///< `CtorExpr`
   /****/ K_Dtor,         ///< `DtorExpr`
@@ -84,6 +86,7 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case K_FnDecl: return "fn decl";
   case K_CtorDecl: return "ctor decl";
   case K_VarDecl: return "var decl";
+  case K_ConstDecl: return "const decl";
   case K_StructDecl: return "struct decl";
   case K_Program: return "program";
   case K_SimpleType: return "simple type";
@@ -101,6 +104,7 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case K_Dtor: return "destructor";
   case K_Slice: return "slice";
   case K_Var: return "var";
+  case K_Const: return "const";
   case K_Return: return "return statement";
   case K_Assign: return "assign";
   case K_FieldAccess: return "field access";
@@ -478,6 +482,20 @@ public:
   [[nodiscard]] auto clone() const -> VarExpr* override;
 };
 
+/// A constant. Currently global
+class ConstExpr : public Expr {
+  string m_name;
+
+public:
+  explicit ConstExpr(span<Token> tok, string name) : Expr(K_Const, tok), m_name(move(name)) {}
+  void visit(Visitor& visitor) const override;
+  [[nodiscard]] auto describe() const -> string override;
+
+  [[nodiscard]] auto name() const -> string { return m_name; }
+  static auto classof(const AST* a) -> bool { return a->kind() == K_Const; }
+  [[nodiscard]] auto clone() const -> ConstExpr* override;
+};
+
 /// A function call or operator.
 class CallExpr : public Expr {
   string m_name;
@@ -792,6 +810,28 @@ public:
 
   static auto classof(const AST* a) -> bool { return a->kind() == K_VarDecl; }
   [[nodiscard]] auto clone() const -> VarDecl* override;
+};
+
+/// A declaration of a constant (`const`).
+class ConstDecl : public Decl {
+  string m_name;
+  AnyType m_type; // TODO(rymiel): make optional?
+  AnyExpr m_init;
+
+public:
+  ConstDecl(span<Token> tok, string name, AnyType type, AnyExpr init)
+      : Decl(K_ConstDecl, tok), m_name{move(name)}, m_type{move(type)}, m_init(move(init)) {}
+  void visit(Visitor& visitor) const override;
+  [[nodiscard]] auto describe() const -> string override;
+
+  [[nodiscard]] auto name() const -> string override { return m_name; }
+  [[nodiscard]] auto type() const -> const auto& { return m_type; }
+  [[nodiscard]] auto type() -> auto& { return m_type; }
+  [[nodiscard]] auto init() const -> const auto& { return m_init; }
+  [[nodiscard]] auto init() -> auto& { return m_init; }
+
+  static auto classof(const AST* a) -> bool { return a->kind() == K_ConstDecl; }
+  [[nodiscard]] auto clone() const -> ConstDecl* override;
 };
 
 /// A while loop (`while`).

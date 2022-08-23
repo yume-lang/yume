@@ -36,6 +36,7 @@ auto CharExpr::describe() const -> string { return std::to_string(m_val); }
 auto BoolExpr::describe() const -> string { return m_val ? "true" : "false"; }
 auto StringExpr::describe() const -> string { return m_val; }
 auto VarExpr::describe() const -> string { return m_name; }
+auto ConstExpr::describe() const -> string { return m_name; }
 auto CallExpr::describe() const -> string { return m_name; }
 auto CtorExpr::describe() const -> string { return m_type->describe(); }
 auto DtorExpr::describe() const -> string { return m_base->describe(); }
@@ -44,4 +45,5 @@ auto FnDecl::describe() const -> string { return m_name; }
 auto CtorDecl::describe() const -> string { return ":new"; }
 auto StructDecl::describe() const -> string { return m_name; }
 auto VarDecl::describe() const -> string { return m_name; }
+auto ConstDecl::describe() const -> string { return m_name; }
 } // namespace yume::ast
