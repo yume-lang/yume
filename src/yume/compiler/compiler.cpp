@@ -551,7 +551,10 @@ template <> void Compiler::statement(const ast::ReturnStmt& stat) {
       reset_owning->owning = true; // The local variable may not be returned in all code paths, so reset its ownership
 
     auto val = body_expression(*stat.expr());
-    m_builder->CreateRet(val);
+    if (val.llvm->getType()->isVoidTy())
+      m_builder->CreateRetVoid();
+    else
+      m_builder->CreateRet(val);
 
     return;
   }
