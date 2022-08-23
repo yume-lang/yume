@@ -485,13 +485,15 @@ public:
 /// A constant. Currently global
 class ConstExpr : public Expr {
   string m_name;
+  optional<string> m_parent;
 
 public:
-  explicit ConstExpr(span<Token> tok, string name) : Expr(K_Const, tok), m_name(move(name)) {}
+  explicit ConstExpr(span<Token> tok, string name, optional<string> parent) : Expr(K_Const, tok), m_name(move(name)), m_parent(move(parent)) {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
   [[nodiscard]] auto name() const -> string { return m_name; }
+  [[nodiscard]] auto parent() const -> optional<string> { return m_parent; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_Const; }
   [[nodiscard]] auto clone() const -> ConstExpr* override;
 };

@@ -47,7 +47,7 @@ void ProxyType::visit(Visitor& visitor) const { visitor.visit(m_field); }
 void TypeName::visit(Visitor& visitor) const { visitor.visit(name).visit(type); }
 void Compound::visit(Visitor& visitor) const { visitor.visit(m_body); }
 void VarExpr::visit(Visitor& visitor) const { visitor.visit(m_name); }
-void ConstExpr::visit(Visitor& visitor) const { visitor.visit(m_name); }
+void ConstExpr::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_parent); }
 void CallExpr::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_args); }
 void CtorExpr::visit(Visitor& visitor) const { visitor.visit(m_type).visit(m_args); }
 void DtorExpr::visit(Visitor& visitor) const { visitor.visit(m_base); }

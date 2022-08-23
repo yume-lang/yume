@@ -247,9 +247,7 @@ auto Compiler::decl_statement(ast::Stmt& stmt, optional<ty::Type> parent, ast::P
     return &ctor;
   }
   if (auto* const_decl = dyn_cast<ast::ConstDecl>(&stmt)) {
-    // TODO(rymiel): revisit
-    yume_assert(!parent.has_value(), "Constants must currently be at the top level;");
-    auto& cn = m_consts.emplace_back(*const_decl, member);
+    auto& cn = m_consts.emplace_back(*const_decl, parent, member);
 
     return &cn;
   }
@@ -655,7 +653,7 @@ template <> auto Compiler::expression(const ast::VarExpr& expr) -> Val {
 
 template <> auto Compiler::expression(const ast::ConstExpr& expr) -> Val {
   for (const auto& cn : m_consts) {
-    if (cn.name() == expr.name())
+    if (cn.referred_to_by(expr))
       return m_builder->CreateLoad(llvm_type(cn.ast().ensure_ty()), cn.llvm, "cn." + expr.name());
   }
 
