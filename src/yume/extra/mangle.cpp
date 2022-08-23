@@ -2,7 +2,9 @@
 
 namespace yume::mangle {
 
-static auto length_encode(const string& name) -> string { return std::to_string(name.length()) + name; }
+[[maybe_unused]] static auto length_encode(const string& name) -> string {
+  return std::to_string(name.length()) + name;
+}
 
 auto mangle_name(Fn& fn) -> string {
   stringstream ss{};
