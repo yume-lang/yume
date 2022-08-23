@@ -10,7 +10,7 @@ var searchData=
   ['mangle_2ehpp_7',['mangle.hpp',['../mangle_8hpp.html',1,'']]],
   ['mangle_5fname_8',['mangle_name',['../namespaceyume_1_1mangle.html#aa4af1cc87b85baf390419a18e1a97b20',1,'yume::mangle::mangle_name(ty::Type ast_type, DeclLike parent) -&gt; string'],['../namespaceyume_1_1mangle.html#a442be92213a61e4346fc92fb8163cc76',1,'yume::mangle::mangle_name(Fn &amp;fn) -&gt; string']]],
   ['maybe_5fconst_5ft_9',['maybe_const_t',['../namespaceyume.html#a0b0665f6fd5ded9b92b0734a4985d947',1,'yume']]],
-  ['member_10',['member',['../structyume_1_1Struct.html#af560b97f6d5770c707c8aec75a3d0841',1,'yume::Struct::member()'],['../structyume_1_1Fn.html#a005f8ee83c46d1deb914546dc3bbefce',1,'yume::Fn::member()']]],
+  ['member_10',['member',['../structyume_1_1Struct.html#af560b97f6d5770c707c8aec75a3d0841',1,'yume::Struct::member()'],['../structyume_1_1Const.html#aff38555d6617ff7f58b57e6deafc71dc',1,'yume::Const::member()'],['../structyume_1_1Fn.html#a005f8ee83c46d1deb914546dc3bbefce',1,'yume::Fn::member()']]],
   ['memo_11',['memo',['../classyume_1_1ty_1_1Struct.html#a277cb85876533e746f4ff3e8f1b3409e',1,'yume::ty::Struct']]],
   ['message_12',['message',['../structyume_1_1ParserStackTrace.html#aa16cbfa542da2b1e55758c88896b00ba',1,'yume::ParserStackTrace::message()'],['../structyume_1_1ASTStackTrace.html#a771a011b556f07af8dc0feb5bd6131de',1,'yume::ASTStackTrace::message()']]],
   ['middle_13',['middle',['../errors_8cpp.html#a6b24c15c0679389305499191b80a5e8e',1,'errors.cpp']]],

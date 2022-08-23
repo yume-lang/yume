@@ -82,13 +82,14 @@ Inheritance diagram for yume::ast::Decl:</div>
 <div class="dyncontent">
 <div class="center"><img src="classyume_1_1ast_1_1Decl__inherit__graph.png" border="0" usemap="#ayume_1_1ast_1_1Decl_inherit__map" alt="Inheritance graph"/></div>
 <map name="ayume_1_1ast_1_1Decl_inherit__map" id="ayume_1_1ast_1_1Decl_inherit__map">
-<area shape="rect" title="Base class for a named declaration." alt="" coords="249,155,359,181"/>
-<area shape="rect" href="classyume_1_1ast_1_1CtorDecl.html" title="A declaration of a custom constructor (def :new)." alt="" coords="5,229,139,256"/>
-<area shape="rect" href="classyume_1_1ast_1_1FnDecl.html" title="A declaration of a function (def)." alt="" coords="163,229,287,256"/>
-<area shape="rect" href="classyume_1_1ast_1_1StructDecl.html" title="A declaration of a struct (struct)." alt="" coords="312,229,456,256"/>
-<area shape="rect" href="classyume_1_1ast_1_1VarDecl.html" title="A declaration of a local variable (let)." alt="" coords="481,229,610,256"/>
-<area shape="rect" href="classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="249,80,359,107"/>
-<area shape="rect" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="249,5,359,32"/>
+<area shape="rect" title="Base class for a named declaration." alt="" coords="321,107,431,133"/>
+<area shape="rect" href="classyume_1_1ast_1_1ConstDecl.html" title="A declaration of a constant (const)." alt="" coords="479,5,622,32"/>
+<area shape="rect" href="classyume_1_1ast_1_1CtorDecl.html" title="A declaration of a custom constructor (def :new)." alt="" coords="484,56,617,83"/>
+<area shape="rect" href="classyume_1_1ast_1_1FnDecl.html" title="A declaration of a function (def)." alt="" coords="489,107,613,133"/>
+<area shape="rect" href="classyume_1_1ast_1_1StructDecl.html" title="A declaration of a struct (struct)." alt="" coords="479,157,623,184"/>
+<area shape="rect" href="classyume_1_1ast_1_1VarDecl.html" title="A declaration of a local variable (let)." alt="" coords="486,208,615,235"/>
+<area shape="rect" href="classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="163,107,273,133"/>
+<area shape="rect" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,107,115,133"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
@@ -173,7 +174,7 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >Base class for a named declaration. </p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00650">650</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00670">670</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="aecd2122690e031b881048880238c2e68" name="aecd2122690e031b881048880238c2e68"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aecd2122690e031b881048880238c2e68">&#9670;&nbsp;</a></span>clone()</h2>
@@ -202,7 +203,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classyume_1_1ast_1_1Stmt.html#a801cf04a9226bac088593239ea3dadbb">yume::ast::Stmt</a>.</p>
 
-<p>Implemented in <a class="el" href="classyume_1_1ast_1_1CtorDecl.html#aac3a9b9960d61b0fd7ff97e5bc42b060">yume::ast::CtorDecl</a>, <a class="el" href="classyume_1_1ast_1_1FnDecl.html#a8385d36761d300e3ac5cbf8f23a1ebeb">yume::ast::FnDecl</a>, <a class="el" href="classyume_1_1ast_1_1StructDecl.html#a34faadcdcbc17434282fa002ea9a09d8">yume::ast::StructDecl</a>, and <a class="el" href="classyume_1_1ast_1_1VarDecl.html#a62bddbd495fd2cd7935de579df086c6f">yume::ast::VarDecl</a>.</p>
+<p>Implemented in <a class="el" href="classyume_1_1ast_1_1ConstDecl.html#ad599b66d052ffb4953807ea624b362ee">yume::ast::ConstDecl</a>, <a class="el" href="classyume_1_1ast_1_1CtorDecl.html#aac3a9b9960d61b0fd7ff97e5bc42b060">yume::ast::CtorDecl</a>, <a class="el" href="classyume_1_1ast_1_1FnDecl.html#a8385d36761d300e3ac5cbf8f23a1ebeb">yume::ast::FnDecl</a>, <a class="el" href="classyume_1_1ast_1_1StructDecl.html#a34faadcdcbc17434282fa002ea9a09d8">yume::ast::StructDecl</a>, and <a class="el" href="classyume_1_1ast_1_1VarDecl.html#a62bddbd495fd2cd7935de579df086c6f">yume::ast::VarDecl</a>.</p>
 
 </div>
 </div>
@@ -229,7 +230,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classyume_1_1ast_1_1FnDecl.html#acac345196ad727f34e8990d51a0bf9d3">yume::ast::FnDecl</a>, <a class="el" href="classyume_1_1ast_1_1CtorDecl.html#a230a3d5920cbba69c3c73261669224c5">yume::ast::CtorDecl</a>, <a class="el" href="classyume_1_1ast_1_1StructDecl.html#a29370d7639981d93d4f47f0e2e4fcbc8">yume::ast::StructDecl</a>, and <a class="el" href="classyume_1_1ast_1_1VarDecl.html#a4223de65538dbd3cae0b720344496930">yume::ast::VarDecl</a>.</p>
+<p>Implemented in <a class="el" href="classyume_1_1ast_1_1FnDecl.html#acac345196ad727f34e8990d51a0bf9d3">yume::ast::FnDecl</a>, <a class="el" href="classyume_1_1ast_1_1CtorDecl.html#a230a3d5920cbba69c3c73261669224c5">yume::ast::CtorDecl</a>, <a class="el" href="classyume_1_1ast_1_1StructDecl.html#a29370d7639981d93d4f47f0e2e4fcbc8">yume::ast::StructDecl</a>, <a class="el" href="classyume_1_1ast_1_1VarDecl.html#a4223de65538dbd3cae0b720344496930">yume::ast::VarDecl</a>, and <a class="el" href="classyume_1_1ast_1_1ConstDecl.html#a75fb477ecdcffa7b94c8db2cdeeecd7d">yume::ast::ConstDecl</a>.</p>
 
 </div>
 </div>

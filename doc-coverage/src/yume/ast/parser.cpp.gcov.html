@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-08-22 19:43:58</td>
+            <td class="headerValue">2022-08-23 21:04:19</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -203,557 +203,581 @@
 <a name="145"><span class="lineNum">     145 </span>            :     stat = parse_struct_decl();</a>
 <a name="146"><span class="lineNum">     146 </span>            :   else if (tokens-&gt;is_a(KWD_LET))</a>
 <a name="147"><span class="lineNum">     147 </span>            :     stat = parse_var_decl();</a>
-<a name="148"><span class="lineNum">     148 </span>            :   else if (tokens-&gt;is_a(KWD_WHILE))</a>
-<a name="149"><span class="lineNum">     149 </span>            :     stat = parse_while_stmt();</a>
-<a name="150"><span class="lineNum">     150 </span>            :   else if (tokens-&gt;is_a(KWD_IF))</a>
-<a name="151"><span class="lineNum">     151 </span>            :     stat = parse_if_stmt();</a>
-<a name="152"><span class="lineNum">     152 </span>            :   else if (tokens-&gt;is_a(KWD_RETURN))</a>
-<a name="153"><span class="lineNum">     153 </span>            :     stat = parse_return_stmt();</a>
-<a name="154"><span class="lineNum">     154 </span>            :   else</a>
-<a name="155"><span class="lineNum">     155 </span>            :     stat = parse_expr();</a>
-<a name="156"><span class="lineNum">     156 </span>            : </a>
-<a name="157"><span class="lineNum">     157 </span>            :   require_separator();</a>
-<a name="158"><span class="lineNum">     158 </span>            :   return stat;</a>
-<a name="159"><span class="lineNum">     159 </span>            : }</a>
-<a name="160"><span class="lineNum">     160 </span>            : </a>
-<a name="161"><span class="lineNum">     161 </span>            : auto Parser::parse_type(bool implicit_self) -&gt; unique_ptr&lt;Type&gt; {</a>
-<a name="162"><span class="lineNum">     162 </span>            :   auto entry = tokens.begin();</a>
-<a name="163"><span class="lineNum">     163 </span>            :   auto base = [&amp;]() -&gt; unique_ptr&lt;Type&gt; {</a>
-<a name="164"><span class="lineNum">     164 </span>            :     if (implicit_self || try_consume(KWD_SELF_TYPE))</a>
-<a name="165"><span class="lineNum">     165 </span>            :       return ast_ptr&lt;SelfType&gt;(entry);</a>
-<a name="166"><span class="lineNum">     166 </span>            : </a>
-<a name="167"><span class="lineNum">     167 </span>            :     const string name = consume_word();</a>
-<a name="168"><span class="lineNum">     168 </span>            :     if (!is_uword(name))</a>
-<a name="169"><span class="lineNum">     169 </span>            :       throw std::runtime_error(&quot;Expected capitalized payload for simple type&quot;);</a>
-<a name="170"><span class="lineNum">     170 </span>            : </a>
-<a name="171"><span class="lineNum">     171 </span>            :     return ast_ptr&lt;SimpleType&gt;(entry, name);</a>
-<a name="172"><span class="lineNum">     172 </span>            :   }();</a>
-<a name="173"><span class="lineNum">     173 </span>            :   while (true) {</a>
-<a name="174"><span class="lineNum">     174 </span>            :     if (try_consume(KWD_PTR)) {</a>
-<a name="175"><span class="lineNum">     175 </span>            :       base = ast_ptr&lt;QualType&gt;(entry, move(base), Qualifier::Ptr);</a>
-<a name="176"><span class="lineNum">     176 </span>            :     } else if (try_consume(KWD_MUT)) {</a>
-<a name="177"><span class="lineNum">     177 </span>            :       base = ast_ptr&lt;QualType&gt;(entry, move(base), Qualifier::Mut);</a>
-<a name="178"><span class="lineNum">     178 </span>            :     } else if (try_peek(0, SYM_LBRACKET) &amp;&amp; try_peek(1, SYM_RBRACKET)) {</a>
-<a name="179"><span class="lineNum">     179 </span>            :       // Don't consume the `[` unless the `]` is directly after; it might be a slice literal.</a>
-<a name="180"><span class="lineNum">     180 </span>            :       consume(SYM_LBRACKET);</a>
-<a name="181"><span class="lineNum">     181 </span>            :       consume(SYM_RBRACKET);</a>
-<a name="182"><span class="lineNum">     182 </span>            : </a>
-<a name="183"><span class="lineNum">     183 </span>            :       auto slice_ty = ast_ptr&lt;SimpleType&gt;(entry, &quot;Slice&quot;);</a>
-<a name="184"><span class="lineNum">     184 </span>            :       auto type_args = vector&lt;AnyType&gt;{};</a>
-<a name="185"><span class="lineNum">     185 </span>            :       type_args.emplace_back(move(base));</a>
-<a name="186"><span class="lineNum">     186 </span>            :       base = ast_ptr&lt;TemplatedType&gt;(entry, move(slice_ty), move(type_args));</a>
-<a name="187"><span class="lineNum">     187 </span>            :     } else if (try_consume(SYM_LBRACE)) {</a>
-<a name="188"><span class="lineNum">     188 </span>            :       auto type_args = vector&lt;AnyType&gt;{};</a>
-<a name="189"><span class="lineNum">     189 </span>            :       consume_with_commas_until(SYM_RBRACE, [&amp;] { type_args.emplace_back(parse_type()); });</a>
-<a name="190"><span class="lineNum">     190 </span>            : </a>
-<a name="191"><span class="lineNum">     191 </span>            :       base = ast_ptr&lt;TemplatedType&gt;(entry, move(base), move(type_args));</a>
-<a name="192"><span class="lineNum">     192 </span>            :     } else {</a>
-<a name="193"><span class="lineNum">     193 </span>            :       break;</a>
-<a name="194"><span class="lineNum">     194 </span>            :     }</a>
-<a name="195"><span class="lineNum">     195 </span>            :   }</a>
-<a name="196"><span class="lineNum">     196 </span>            : </a>
-<a name="197"><span class="lineNum">     197 </span>            :   return base;</a>
-<a name="198"><span class="lineNum">     198 </span>            : }</a>
-<a name="199"><span class="lineNum">     199 </span>            : </a>
-<a name="200"><span class="lineNum">     200 </span>            : auto Parser::try_parse_type() -&gt; optional&lt;unique_ptr&lt;Type&gt;&gt; {</a>
-<a name="201"><span class="lineNum">     201 </span>            :   auto entry = tokens.begin();</a>
-<a name="202"><span class="lineNum">     202 </span>            :   if (tokens-&gt;type != Word || !tokens-&gt;payload.has_value())</a>
-<a name="203"><span class="lineNum">     203 </span>            :     return {};</a>
-<a name="204"><span class="lineNum">     204 </span>            : </a>
-<a name="205"><span class="lineNum">     205 </span>            :   const string name = consume_word();</a>
-<a name="206"><span class="lineNum">     206 </span>            :   if (make_atom(name) != std::get&lt;Atom&gt;(KWD_SELF_TYPE) &amp;&amp; !is_uword(name))</a>
-<a name="207"><span class="lineNum">     207 </span>            :     return {};</a>
-<a name="208"><span class="lineNum">     208 </span>            : </a>
-<a name="209"><span class="lineNum">     209 </span>            :   unique_ptr&lt;Type&gt; base{};</a>
-<a name="210"><span class="lineNum">     210 </span>            :   if (make_atom(name) == std::get&lt;Atom&gt;(KWD_SELF_TYPE))</a>
-<a name="211"><span class="lineNum">     211 </span>            :     base = ast_ptr&lt;SelfType&gt;(entry);</a>
-<a name="212"><span class="lineNum">     212 </span>            :   else</a>
-<a name="213"><span class="lineNum">     213 </span>            :     base = ast_ptr&lt;SimpleType&gt;(entry, name);</a>
-<a name="214"><span class="lineNum">     214 </span>            : </a>
-<a name="215"><span class="lineNum">     215 </span>            :   while (true) {</a>
-<a name="216"><span class="lineNum">     216 </span>            :     if (try_consume(KWD_PTR)) {</a>
-<a name="217"><span class="lineNum">     217 </span>            :       base = ast_ptr&lt;QualType&gt;(entry, move(base), Qualifier::Ptr);</a>
-<a name="218"><span class="lineNum">     218 </span>            :     } else if (try_consume(KWD_MUT)) {</a>
-<a name="219"><span class="lineNum">     219 </span>            :       base = ast_ptr&lt;QualType&gt;(entry, move(base), Qualifier::Mut);</a>
-<a name="220"><span class="lineNum">     220 </span>            :     } else if (try_peek(0, SYM_LBRACKET) &amp;&amp; try_peek(1, SYM_RBRACKET)) {</a>
-<a name="221"><span class="lineNum">     221 </span>            :       // Don't consume the `[` unless the `]` is directly after; it might be a slice literal.</a>
-<a name="222"><span class="lineNum">     222 </span>            :       consume(SYM_LBRACKET);</a>
-<a name="223"><span class="lineNum">     223 </span>            :       consume(SYM_RBRACKET);</a>
-<a name="224"><span class="lineNum">     224 </span>            : </a>
-<a name="225"><span class="lineNum">     225 </span>            :       auto slice_ty = ast_ptr&lt;SimpleType&gt;(entry, &quot;Slice&quot;);</a>
-<a name="226"><span class="lineNum">     226 </span>            :       auto type_args = vector&lt;AnyType&gt;{};</a>
-<a name="227"><span class="lineNum">     227 </span>            :       type_args.emplace_back(move(base));</a>
-<a name="228"><span class="lineNum">     228 </span>            :       base = ast_ptr&lt;TemplatedType&gt;(entry, move(slice_ty), move(type_args));</a>
-<a name="229"><span class="lineNum">     229 </span>            :     } else if (try_consume(SYM_LBRACE)) {</a>
-<a name="230"><span class="lineNum">     230 </span>            :       auto type_args = vector&lt;AnyType&gt;{};</a>
-<a name="231"><span class="lineNum">     231 </span>            :       consume_with_commas_until(SYM_RBRACE, [&amp;] { type_args.emplace_back(parse_type()); });</a>
-<a name="232"><span class="lineNum">     232 </span>            : </a>
-<a name="233"><span class="lineNum">     233 </span>            :       base = ast_ptr&lt;TemplatedType&gt;(entry, move(base), std::move(type_args));</a>
-<a name="234"><span class="lineNum">     234 </span>            :     } else {</a>
-<a name="235"><span class="lineNum">     235 </span>            :       break;</a>
-<a name="236"><span class="lineNum">     236 </span>            :     }</a>
-<a name="237"><span class="lineNum">     237 </span>            :   }</a>
-<a name="238"><span class="lineNum">     238 </span>            : </a>
-<a name="239"><span class="lineNum">     239 </span>            :   return base;</a>
-<a name="240"><span class="lineNum">     240 </span>            : }</a>
-<a name="241"><span class="lineNum">     241 </span>            : </a>
-<a name="242"><span class="lineNum">     242 </span>            : auto Parser::parse_type_name() -&gt; unique_ptr&lt;TypeName&gt; {</a>
-<a name="243"><span class="lineNum">     243 </span>            :   auto entry = tokens.begin();</a>
-<a name="244"><span class="lineNum">     244 </span>            :   if (try_consume(KWD_SELF_ITEM)) {</a>
-<a name="245"><span class="lineNum">     245 </span>            :     unique_ptr&lt;Type&gt; type = parse_type(/* implicit_self= */ true);</a>
-<a name="246"><span class="lineNum">     246 </span>            :     return ast_ptr&lt;TypeName&gt;(entry, move(type), &quot;self&quot;);</a>
-<a name="247"><span class="lineNum">     247 </span>            :   }</a>
-<a name="248"><span class="lineNum">     248 </span>            :   const string name = consume_word();</a>
-<a name="249"><span class="lineNum">     249 </span>            :   unique_ptr&lt;Type&gt; type = parse_type();</a>
-<a name="250"><span class="lineNum">     250 </span>            :   return ast_ptr&lt;TypeName&gt;(entry, move(type), name);</a>
-<a name="251"><span class="lineNum">     251 </span>            : }</a>
-<a name="252"><span class="lineNum">     252 </span>            : </a>
-<a name="253"><span class="lineNum">     253 </span>            : auto Parser::parse_expr() -&gt; unique_ptr&lt;Expr&gt; { return parse_operator(); }</a>
+<a name="148"><span class="lineNum">     148 </span>            :   else if (tokens-&gt;is_a(KWD_CONST))</a>
+<a name="149"><span class="lineNum">     149 </span>            :     stat = parse_const_decl();</a>
+<a name="150"><span class="lineNum">     150 </span>            :   else if (tokens-&gt;is_a(KWD_WHILE))</a>
+<a name="151"><span class="lineNum">     151 </span>            :     stat = parse_while_stmt();</a>
+<a name="152"><span class="lineNum">     152 </span>            :   else if (tokens-&gt;is_a(KWD_IF))</a>
+<a name="153"><span class="lineNum">     153 </span>            :     stat = parse_if_stmt();</a>
+<a name="154"><span class="lineNum">     154 </span>            :   else if (tokens-&gt;is_a(KWD_RETURN))</a>
+<a name="155"><span class="lineNum">     155 </span>            :     stat = parse_return_stmt();</a>
+<a name="156"><span class="lineNum">     156 </span>            :   else</a>
+<a name="157"><span class="lineNum">     157 </span>            :     stat = parse_expr();</a>
+<a name="158"><span class="lineNum">     158 </span>            : </a>
+<a name="159"><span class="lineNum">     159 </span>            :   require_separator();</a>
+<a name="160"><span class="lineNum">     160 </span>            :   return stat;</a>
+<a name="161"><span class="lineNum">     161 </span>            : }</a>
+<a name="162"><span class="lineNum">     162 </span>            : </a>
+<a name="163"><span class="lineNum">     163 </span>            : auto Parser::parse_type(bool implicit_self) -&gt; unique_ptr&lt;Type&gt; {</a>
+<a name="164"><span class="lineNum">     164 </span>            :   auto entry = tokens.begin();</a>
+<a name="165"><span class="lineNum">     165 </span>            :   auto base = [&amp;]() -&gt; unique_ptr&lt;Type&gt; {</a>
+<a name="166"><span class="lineNum">     166 </span>            :     if (implicit_self || try_consume(KWD_SELF_TYPE))</a>
+<a name="167"><span class="lineNum">     167 </span>            :       return ast_ptr&lt;SelfType&gt;(entry);</a>
+<a name="168"><span class="lineNum">     168 </span>            : </a>
+<a name="169"><span class="lineNum">     169 </span>            :     const string name = consume_word();</a>
+<a name="170"><span class="lineNum">     170 </span>            :     if (!is_uword(name))</a>
+<a name="171"><span class="lineNum">     171 </span>            :       throw std::runtime_error(&quot;Expected capitalized payload for simple type&quot;);</a>
+<a name="172"><span class="lineNum">     172 </span>            : </a>
+<a name="173"><span class="lineNum">     173 </span>            :     return ast_ptr&lt;SimpleType&gt;(entry, name);</a>
+<a name="174"><span class="lineNum">     174 </span>            :   }();</a>
+<a name="175"><span class="lineNum">     175 </span>            :   while (true) {</a>
+<a name="176"><span class="lineNum">     176 </span>            :     if (try_consume(KWD_PTR)) {</a>
+<a name="177"><span class="lineNum">     177 </span>            :       base = ast_ptr&lt;QualType&gt;(entry, move(base), Qualifier::Ptr);</a>
+<a name="178"><span class="lineNum">     178 </span>            :     } else if (try_consume(KWD_MUT)) {</a>
+<a name="179"><span class="lineNum">     179 </span>            :       base = ast_ptr&lt;QualType&gt;(entry, move(base), Qualifier::Mut);</a>
+<a name="180"><span class="lineNum">     180 </span>            :     } else if (try_peek(0, SYM_LBRACKET) &amp;&amp; try_peek(1, SYM_RBRACKET)) {</a>
+<a name="181"><span class="lineNum">     181 </span>            :       // Don't consume the `[` unless the `]` is directly after; it might be a slice literal.</a>
+<a name="182"><span class="lineNum">     182 </span>            :       consume(SYM_LBRACKET);</a>
+<a name="183"><span class="lineNum">     183 </span>            :       consume(SYM_RBRACKET);</a>
+<a name="184"><span class="lineNum">     184 </span>            : </a>
+<a name="185"><span class="lineNum">     185 </span>            :       auto slice_ty = ast_ptr&lt;SimpleType&gt;(entry, &quot;Slice&quot;);</a>
+<a name="186"><span class="lineNum">     186 </span>            :       auto type_args = vector&lt;AnyType&gt;{};</a>
+<a name="187"><span class="lineNum">     187 </span>            :       type_args.emplace_back(move(base));</a>
+<a name="188"><span class="lineNum">     188 </span>            :       base = ast_ptr&lt;TemplatedType&gt;(entry, move(slice_ty), move(type_args));</a>
+<a name="189"><span class="lineNum">     189 </span>            :     } else if (try_consume(SYM_LBRACE)) {</a>
+<a name="190"><span class="lineNum">     190 </span>            :       auto type_args = vector&lt;AnyType&gt;{};</a>
+<a name="191"><span class="lineNum">     191 </span>            :       consume_with_commas_until(SYM_RBRACE, [&amp;] { type_args.emplace_back(parse_type()); });</a>
+<a name="192"><span class="lineNum">     192 </span>            : </a>
+<a name="193"><span class="lineNum">     193 </span>            :       base = ast_ptr&lt;TemplatedType&gt;(entry, move(base), move(type_args));</a>
+<a name="194"><span class="lineNum">     194 </span>            :     } else {</a>
+<a name="195"><span class="lineNum">     195 </span>            :       break;</a>
+<a name="196"><span class="lineNum">     196 </span>            :     }</a>
+<a name="197"><span class="lineNum">     197 </span>            :   }</a>
+<a name="198"><span class="lineNum">     198 </span>            : </a>
+<a name="199"><span class="lineNum">     199 </span>            :   return base;</a>
+<a name="200"><span class="lineNum">     200 </span>            : }</a>
+<a name="201"><span class="lineNum">     201 </span>            : </a>
+<a name="202"><span class="lineNum">     202 </span>            : auto Parser::try_parse_type() -&gt; optional&lt;unique_ptr&lt;Type&gt;&gt; {</a>
+<a name="203"><span class="lineNum">     203 </span>            :   auto entry = tokens.begin();</a>
+<a name="204"><span class="lineNum">     204 </span>            :   if (tokens-&gt;type != Word || !tokens-&gt;payload.has_value())</a>
+<a name="205"><span class="lineNum">     205 </span>            :     return {};</a>
+<a name="206"><span class="lineNum">     206 </span>            : </a>
+<a name="207"><span class="lineNum">     207 </span>            :   const string name = consume_word();</a>
+<a name="208"><span class="lineNum">     208 </span>            :   if (make_atom(name) != std::get&lt;Atom&gt;(KWD_SELF_TYPE) &amp;&amp; !is_uword(name))</a>
+<a name="209"><span class="lineNum">     209 </span>            :     return {};</a>
+<a name="210"><span class="lineNum">     210 </span>            : </a>
+<a name="211"><span class="lineNum">     211 </span>            :   unique_ptr&lt;Type&gt; base{};</a>
+<a name="212"><span class="lineNum">     212 </span>            :   if (make_atom(name) == std::get&lt;Atom&gt;(KWD_SELF_TYPE))</a>
+<a name="213"><span class="lineNum">     213 </span>            :     base = ast_ptr&lt;SelfType&gt;(entry);</a>
+<a name="214"><span class="lineNum">     214 </span>            :   else</a>
+<a name="215"><span class="lineNum">     215 </span>            :     base = ast_ptr&lt;SimpleType&gt;(entry, name);</a>
+<a name="216"><span class="lineNum">     216 </span>            : </a>
+<a name="217"><span class="lineNum">     217 </span>            :   while (true) {</a>
+<a name="218"><span class="lineNum">     218 </span>            :     if (try_consume(KWD_PTR)) {</a>
+<a name="219"><span class="lineNum">     219 </span>            :       base = ast_ptr&lt;QualType&gt;(entry, move(base), Qualifier::Ptr);</a>
+<a name="220"><span class="lineNum">     220 </span>            :     } else if (try_consume(KWD_MUT)) {</a>
+<a name="221"><span class="lineNum">     221 </span>            :       base = ast_ptr&lt;QualType&gt;(entry, move(base), Qualifier::Mut);</a>
+<a name="222"><span class="lineNum">     222 </span>            :     } else if (try_peek(0, SYM_LBRACKET) &amp;&amp; try_peek(1, SYM_RBRACKET)) {</a>
+<a name="223"><span class="lineNum">     223 </span>            :       // Don't consume the `[` unless the `]` is directly after; it might be a slice literal.</a>
+<a name="224"><span class="lineNum">     224 </span>            :       consume(SYM_LBRACKET);</a>
+<a name="225"><span class="lineNum">     225 </span>            :       consume(SYM_RBRACKET);</a>
+<a name="226"><span class="lineNum">     226 </span>            : </a>
+<a name="227"><span class="lineNum">     227 </span>            :       auto slice_ty = ast_ptr&lt;SimpleType&gt;(entry, &quot;Slice&quot;);</a>
+<a name="228"><span class="lineNum">     228 </span>            :       auto type_args = vector&lt;AnyType&gt;{};</a>
+<a name="229"><span class="lineNum">     229 </span>            :       type_args.emplace_back(move(base));</a>
+<a name="230"><span class="lineNum">     230 </span>            :       base = ast_ptr&lt;TemplatedType&gt;(entry, move(slice_ty), move(type_args));</a>
+<a name="231"><span class="lineNum">     231 </span>            :     } else if (try_consume(SYM_LBRACE)) {</a>
+<a name="232"><span class="lineNum">     232 </span>            :       auto type_args = vector&lt;AnyType&gt;{};</a>
+<a name="233"><span class="lineNum">     233 </span>            :       consume_with_commas_until(SYM_RBRACE, [&amp;] { type_args.emplace_back(parse_type()); });</a>
+<a name="234"><span class="lineNum">     234 </span>            : </a>
+<a name="235"><span class="lineNum">     235 </span>            :       base = ast_ptr&lt;TemplatedType&gt;(entry, move(base), std::move(type_args));</a>
+<a name="236"><span class="lineNum">     236 </span>            :     } else {</a>
+<a name="237"><span class="lineNum">     237 </span>            :       break;</a>
+<a name="238"><span class="lineNum">     238 </span>            :     }</a>
+<a name="239"><span class="lineNum">     239 </span>            :   }</a>
+<a name="240"><span class="lineNum">     240 </span>            : </a>
+<a name="241"><span class="lineNum">     241 </span>            :   return base;</a>
+<a name="242"><span class="lineNum">     242 </span>            : }</a>
+<a name="243"><span class="lineNum">     243 </span>            : </a>
+<a name="244"><span class="lineNum">     244 </span>            : auto Parser::parse_type_name() -&gt; unique_ptr&lt;TypeName&gt; {</a>
+<a name="245"><span class="lineNum">     245 </span>            :   auto entry = tokens.begin();</a>
+<a name="246"><span class="lineNum">     246 </span>            :   if (try_consume(KWD_SELF_ITEM)) {</a>
+<a name="247"><span class="lineNum">     247 </span>            :     unique_ptr&lt;Type&gt; type = parse_type(/* implicit_self= */ true);</a>
+<a name="248"><span class="lineNum">     248 </span>            :     return ast_ptr&lt;TypeName&gt;(entry, move(type), &quot;self&quot;);</a>
+<a name="249"><span class="lineNum">     249 </span>            :   }</a>
+<a name="250"><span class="lineNum">     250 </span>            :   const string name = consume_word();</a>
+<a name="251"><span class="lineNum">     251 </span>            :   unique_ptr&lt;Type&gt; type = parse_type();</a>
+<a name="252"><span class="lineNum">     252 </span>            :   return ast_ptr&lt;TypeName&gt;(entry, move(type), name);</a>
+<a name="253"><span class="lineNum">     253 </span>            : }</a>
 <a name="254"><span class="lineNum">     254 </span>            : </a>
-<a name="255"><span class="lineNum">     255 </span>            : auto Parser::parse_fn_name() -&gt; string {</a>
-<a name="256"><span class="lineNum">     256 </span>            :   string name{};</a>
-<a name="257"><span class="lineNum">     257 </span>            :   if (tokens-&gt;type == Word) {</a>
-<a name="258"><span class="lineNum">     258 </span>            :     name = consume_word();</a>
-<a name="259"><span class="lineNum">     259 </span>            :   } else if (tokens-&gt;type == Symbol) {</a>
-<a name="260"><span class="lineNum">     260 </span>            :     // Try to parse an operator name, as in `def +()`</a>
-<a name="261"><span class="lineNum">     261 </span>            :     bool found_op = false;</a>
-<a name="262"><span class="lineNum">     262 </span>            :     for (const auto&amp; op_row : operators()) {</a>
-<a name="263"><span class="lineNum">     263 </span>            :       for (const auto&amp; op : op_row) {</a>
-<a name="264"><span class="lineNum">     264 </span>            :         if (try_consume(op)) {</a>
-<a name="265"><span class="lineNum">     265 </span>            :           found_op = true;</a>
-<a name="266"><span class="lineNum">     266 </span>            :           name = std::get&lt;Atom&gt;(op);</a>
-<a name="267"><span class="lineNum">     267 </span>            :           break;</a>
-<a name="268"><span class="lineNum">     268 </span>            :         }</a>
-<a name="269"><span class="lineNum">     269 </span>            :       }</a>
-<a name="270"><span class="lineNum">     270 </span>            :       if (found_op)</a>
-<a name="271"><span class="lineNum">     271 </span>            :         break;</a>
-<a name="272"><span class="lineNum">     272 </span>            :     }</a>
-<a name="273"><span class="lineNum">     273 </span>            : </a>
-<a name="274"><span class="lineNum">     274 </span>            :     // If an operator wasn't found, try parse the operator []</a>
-<a name="275"><span class="lineNum">     275 </span>            :     if (try_consume(SYM_LBRACKET)) {</a>
-<a name="276"><span class="lineNum">     276 </span>            :       consume(SYM_RBRACKET);</a>
-<a name="277"><span class="lineNum">     277 </span>            :       name = &quot;[]&quot;;</a>
-<a name="278"><span class="lineNum">     278 </span>            :     } else if (try_consume(SYM_BANG)) {</a>
-<a name="279"><span class="lineNum">     279 </span>            :       name = &quot;!&quot;; // ! is unary, but the above operator check only checked binary ones</a>
-<a name="280"><span class="lineNum">     280 </span>            :     }</a>
-<a name="281"><span class="lineNum">     281 </span>            :   }</a>
-<a name="282"><span class="lineNum">     282 </span>            : </a>
-<a name="283"><span class="lineNum">     283 </span>            :   // Check if an equal sign follows, for fused assignement operators such as `+=` or `[]=`</a>
-<a name="284"><span class="lineNum">     284 </span>            :   if (try_consume(SYM_EQ))</a>
-<a name="285"><span class="lineNum">     285 </span>            :     name += &quot;=&quot;;</a>
-<a name="286"><span class="lineNum">     286 </span>            : </a>
-<a name="287"><span class="lineNum">     287 </span>            :   return name;</a>
-<a name="288"><span class="lineNum">     288 </span>            : }</a>
-<a name="289"><span class="lineNum">     289 </span>            : </a>
-<a name="290"><span class="lineNum">     290 </span>            : auto Parser::parse_struct_decl() -&gt; unique_ptr&lt;StructDecl&gt; {</a>
-<a name="291"><span class="lineNum">     291 </span>            :   auto entry = tokens.begin();</a>
-<a name="292"><span class="lineNum">     292 </span>            : </a>
-<a name="293"><span class="lineNum">     293 </span>            :   consume(KWD_STRUCT);</a>
-<a name="294"><span class="lineNum">     294 </span>            :   const string name = consume_word();</a>
-<a name="295"><span class="lineNum">     295 </span>            :   if (!is_uword(name))</a>
-<a name="296"><span class="lineNum">     296 </span>            :     throw std::runtime_error(&quot;Expected capitalized name for struct decl&quot;);</a>
-<a name="297"><span class="lineNum">     297 </span>            : </a>
-<a name="298"><span class="lineNum">     298 </span>            :   auto type_args = vector&lt;string&gt;{};</a>
-<a name="299"><span class="lineNum">     299 </span>            :   if (try_consume(SYM_LBRACE))</a>
-<a name="300"><span class="lineNum">     300 </span>            :     consume_with_commas_until(SYM_RBRACE, [&amp;] { type_args.push_back(consume_word()); });</a>
-<a name="301"><span class="lineNum">     301 </span>            : </a>
-<a name="302"><span class="lineNum">     302 </span>            :   consume(SYM_LPAREN);</a>
-<a name="303"><span class="lineNum">     303 </span>            :   auto fields = vector&lt;TypeName&gt;{};</a>
-<a name="304"><span class="lineNum">     304 </span>            :   consume_with_commas_until(SYM_RPAREN, [&amp;] { fields.push_back(move(*parse_type_name())); });</a>
-<a name="305"><span class="lineNum">     305 </span>            : </a>
-<a name="306"><span class="lineNum">     306 </span>            :   auto body = vector&lt;AnyStmt&gt;{};</a>
-<a name="307"><span class="lineNum">     307 </span>            :   auto body_begin = entry;</a>
-<a name="308"><span class="lineNum">     308 </span>            : </a>
-<a name="309"><span class="lineNum">     309 </span>            :   require_separator();</a>
+<a name="255"><span class="lineNum">     255 </span>            : auto Parser::parse_expr() -&gt; unique_ptr&lt;Expr&gt; { return parse_operator(); }</a>
+<a name="256"><span class="lineNum">     256 </span>            : </a>
+<a name="257"><span class="lineNum">     257 </span>            : auto Parser::parse_fn_name() -&gt; string {</a>
+<a name="258"><span class="lineNum">     258 </span>            :   string name{};</a>
+<a name="259"><span class="lineNum">     259 </span>            :   if (tokens-&gt;type == Word) {</a>
+<a name="260"><span class="lineNum">     260 </span>            :     name = consume_word();</a>
+<a name="261"><span class="lineNum">     261 </span>            :   } else if (tokens-&gt;type == Symbol) {</a>
+<a name="262"><span class="lineNum">     262 </span>            :     // Try to parse an operator name, as in `def +()`</a>
+<a name="263"><span class="lineNum">     263 </span>            :     bool found_op = false;</a>
+<a name="264"><span class="lineNum">     264 </span>            :     for (const auto&amp; op_row : operators()) {</a>
+<a name="265"><span class="lineNum">     265 </span>            :       for (const auto&amp; op : op_row) {</a>
+<a name="266"><span class="lineNum">     266 </span>            :         if (try_consume(op)) {</a>
+<a name="267"><span class="lineNum">     267 </span>            :           found_op = true;</a>
+<a name="268"><span class="lineNum">     268 </span>            :           name = std::get&lt;Atom&gt;(op);</a>
+<a name="269"><span class="lineNum">     269 </span>            :           break;</a>
+<a name="270"><span class="lineNum">     270 </span>            :         }</a>
+<a name="271"><span class="lineNum">     271 </span>            :       }</a>
+<a name="272"><span class="lineNum">     272 </span>            :       if (found_op)</a>
+<a name="273"><span class="lineNum">     273 </span>            :         break;</a>
+<a name="274"><span class="lineNum">     274 </span>            :     }</a>
+<a name="275"><span class="lineNum">     275 </span>            : </a>
+<a name="276"><span class="lineNum">     276 </span>            :     // If an operator wasn't found, try parse the operator []</a>
+<a name="277"><span class="lineNum">     277 </span>            :     if (try_consume(SYM_LBRACKET)) {</a>
+<a name="278"><span class="lineNum">     278 </span>            :       consume(SYM_RBRACKET);</a>
+<a name="279"><span class="lineNum">     279 </span>            :       name = &quot;[]&quot;;</a>
+<a name="280"><span class="lineNum">     280 </span>            :     } else if (try_consume(SYM_BANG)) {</a>
+<a name="281"><span class="lineNum">     281 </span>            :       name = &quot;!&quot;; // ! is unary, but the above operator check only checked binary ones</a>
+<a name="282"><span class="lineNum">     282 </span>            :     }</a>
+<a name="283"><span class="lineNum">     283 </span>            :   }</a>
+<a name="284"><span class="lineNum">     284 </span>            : </a>
+<a name="285"><span class="lineNum">     285 </span>            :   // Check if an equal sign follows, for fused assignement operators such as `+=` or `[]=`</a>
+<a name="286"><span class="lineNum">     286 </span>            :   if (try_consume(SYM_EQ))</a>
+<a name="287"><span class="lineNum">     287 </span>            :     name += &quot;=&quot;;</a>
+<a name="288"><span class="lineNum">     288 </span>            : </a>
+<a name="289"><span class="lineNum">     289 </span>            :   return name;</a>
+<a name="290"><span class="lineNum">     290 </span>            : }</a>
+<a name="291"><span class="lineNum">     291 </span>            : </a>
+<a name="292"><span class="lineNum">     292 </span>            : auto Parser::parse_struct_decl() -&gt; unique_ptr&lt;StructDecl&gt; {</a>
+<a name="293"><span class="lineNum">     293 </span>            :   auto entry = tokens.begin();</a>
+<a name="294"><span class="lineNum">     294 </span>            : </a>
+<a name="295"><span class="lineNum">     295 </span>            :   consume(KWD_STRUCT);</a>
+<a name="296"><span class="lineNum">     296 </span>            :   const string name = consume_word();</a>
+<a name="297"><span class="lineNum">     297 </span>            :   if (!is_uword(name))</a>
+<a name="298"><span class="lineNum">     298 </span>            :     throw std::runtime_error(&quot;Expected capitalized name for struct decl&quot;);</a>
+<a name="299"><span class="lineNum">     299 </span>            : </a>
+<a name="300"><span class="lineNum">     300 </span>            :   auto type_args = vector&lt;string&gt;{};</a>
+<a name="301"><span class="lineNum">     301 </span>            :   if (try_consume(SYM_LBRACE))</a>
+<a name="302"><span class="lineNum">     302 </span>            :     consume_with_commas_until(SYM_RBRACE, [&amp;] { type_args.push_back(consume_word()); });</a>
+<a name="303"><span class="lineNum">     303 </span>            : </a>
+<a name="304"><span class="lineNum">     304 </span>            :   consume(SYM_LPAREN);</a>
+<a name="305"><span class="lineNum">     305 </span>            :   auto fields = vector&lt;TypeName&gt;{};</a>
+<a name="306"><span class="lineNum">     306 </span>            :   consume_with_commas_until(SYM_RPAREN, [&amp;] { fields.push_back(move(*parse_type_name())); });</a>
+<a name="307"><span class="lineNum">     307 </span>            : </a>
+<a name="308"><span class="lineNum">     308 </span>            :   auto body = vector&lt;AnyStmt&gt;{};</a>
+<a name="309"><span class="lineNum">     309 </span>            :   auto body_begin = entry;</a>
 <a name="310"><span class="lineNum">     310 </span>            : </a>
-<a name="311"><span class="lineNum">     311 </span>            :   body_begin = tokens.begin();</a>
-<a name="312"><span class="lineNum">     312 </span>            :   while (!try_consume(KWD_END)) {</a>
-<a name="313"><span class="lineNum">     313 </span>            :     body.emplace_back(parse_stmt());</a>
-<a name="314"><span class="lineNum">     314 </span>            :     ignore_separator();</a>
-<a name="315"><span class="lineNum">     315 </span>            :   }</a>
-<a name="316"><span class="lineNum">     316 </span>            : </a>
-<a name="317"><span class="lineNum">     317 </span>            :   return ast_ptr&lt;StructDecl&gt;(entry, name, move(fields), type_args, make_ast&lt;Compound&gt;(body_begin, move(body)));</a>
-<a name="318"><span class="lineNum">     318 </span>            : }</a>
-<a name="319"><span class="lineNum">     319 </span>            : </a>
-<a name="320"><span class="lineNum">     320 </span>            : auto Parser::parse_fn_arg() -&gt; FnArg {</a>
-<a name="321"><span class="lineNum">     321 </span>            :   auto entry = tokens.begin();</a>
-<a name="322"><span class="lineNum">     322 </span>            :   if (try_consume(SYM_COLON_COLON)) {</a>
-<a name="323"><span class="lineNum">     323 </span>            :     auto field_name = consume_word();</a>
-<a name="324"><span class="lineNum">     324 </span>            :     AnyType proxy_type = ast_ptr&lt;ProxyType&gt;(entry, field_name);</a>
-<a name="325"><span class="lineNum">     325 </span>            :     auto proxied_arg = ast_ptr&lt;TypeName&gt;(entry, move(proxy_type), field_name);</a>
-<a name="326"><span class="lineNum">     326 </span>            : </a>
-<a name="327"><span class="lineNum">     327 </span>            :     auto implicit_field = ast_ptr&lt;FieldAccessExpr&gt;(entry, std::nullopt, field_name);</a>
-<a name="328"><span class="lineNum">     328 </span>            :     auto arg_var = ast_ptr&lt;VarExpr&gt;(entry, field_name);</a>
-<a name="329"><span class="lineNum">     329 </span>            :     auto extra_assign = ast_ptr&lt;AssignExpr&gt;(entry, move(implicit_field), move(arg_var));</a>
-<a name="330"><span class="lineNum">     330 </span>            : </a>
-<a name="331"><span class="lineNum">     331 </span>            :     return {move(proxied_arg), move(extra_assign)};</a>
-<a name="332"><span class="lineNum">     332 </span>            :   }</a>
-<a name="333"><span class="lineNum">     333 </span>            : </a>
-<a name="334"><span class="lineNum">     334 </span>            :   return {parse_type_name(), std::nullopt};</a>
-<a name="335"><span class="lineNum">     335 </span>            : };</a>
-<a name="336"><span class="lineNum">     336 </span>            : </a>
-<a name="337"><span class="lineNum">     337 </span>            : auto Parser::parse_fn_or_ctor_decl() -&gt; unique_ptr&lt;Stmt&gt; {</a>
-<a name="338"><span class="lineNum">     338 </span>            :   if (try_peek(1, SYM_COLON))</a>
-<a name="339"><span class="lineNum">     339 </span>            :     return parse_ctor_decl();</a>
-<a name="340"><span class="lineNum">     340 </span>            :   return parse_fn_decl();</a>
-<a name="341"><span class="lineNum">     341 </span>            : }</a>
-<a name="342"><span class="lineNum">     342 </span>            : </a>
-<a name="343"><span class="lineNum">     343 </span>            : auto Parser::parse_fn_decl() -&gt; unique_ptr&lt;FnDecl&gt; {</a>
-<a name="344"><span class="lineNum">     344 </span>            :   auto entry = tokens.begin();</a>
-<a name="345"><span class="lineNum">     345 </span>            : </a>
-<a name="346"><span class="lineNum">     346 </span>            :   consume(KWD_DEF);</a>
+<a name="311"><span class="lineNum">     311 </span>            :   require_separator();</a>
+<a name="312"><span class="lineNum">     312 </span>            : </a>
+<a name="313"><span class="lineNum">     313 </span>            :   body_begin = tokens.begin();</a>
+<a name="314"><span class="lineNum">     314 </span>            :   while (!try_consume(KWD_END)) {</a>
+<a name="315"><span class="lineNum">     315 </span>            :     body.emplace_back(parse_stmt());</a>
+<a name="316"><span class="lineNum">     316 </span>            :     ignore_separator();</a>
+<a name="317"><span class="lineNum">     317 </span>            :   }</a>
+<a name="318"><span class="lineNum">     318 </span>            : </a>
+<a name="319"><span class="lineNum">     319 </span>            :   return ast_ptr&lt;StructDecl&gt;(entry, name, move(fields), type_args, make_ast&lt;Compound&gt;(body_begin, move(body)));</a>
+<a name="320"><span class="lineNum">     320 </span>            : }</a>
+<a name="321"><span class="lineNum">     321 </span>            : </a>
+<a name="322"><span class="lineNum">     322 </span>            : auto Parser::parse_fn_arg() -&gt; FnArg {</a>
+<a name="323"><span class="lineNum">     323 </span>            :   auto entry = tokens.begin();</a>
+<a name="324"><span class="lineNum">     324 </span>            :   if (try_consume(SYM_COLON_COLON)) {</a>
+<a name="325"><span class="lineNum">     325 </span>            :     auto field_name = consume_word();</a>
+<a name="326"><span class="lineNum">     326 </span>            :     AnyType proxy_type = ast_ptr&lt;ProxyType&gt;(entry, field_name);</a>
+<a name="327"><span class="lineNum">     327 </span>            :     auto proxied_arg = ast_ptr&lt;TypeName&gt;(entry, move(proxy_type), field_name);</a>
+<a name="328"><span class="lineNum">     328 </span>            : </a>
+<a name="329"><span class="lineNum">     329 </span>            :     auto implicit_field = ast_ptr&lt;FieldAccessExpr&gt;(entry, std::nullopt, field_name);</a>
+<a name="330"><span class="lineNum">     330 </span>            :     auto arg_var = ast_ptr&lt;VarExpr&gt;(entry, field_name);</a>
+<a name="331"><span class="lineNum">     331 </span>            :     auto extra_assign = ast_ptr&lt;AssignExpr&gt;(entry, move(implicit_field), move(arg_var));</a>
+<a name="332"><span class="lineNum">     332 </span>            : </a>
+<a name="333"><span class="lineNum">     333 </span>            :     return {move(proxied_arg), move(extra_assign)};</a>
+<a name="334"><span class="lineNum">     334 </span>            :   }</a>
+<a name="335"><span class="lineNum">     335 </span>            : </a>
+<a name="336"><span class="lineNum">     336 </span>            :   return {parse_type_name(), std::nullopt};</a>
+<a name="337"><span class="lineNum">     337 </span>            : };</a>
+<a name="338"><span class="lineNum">     338 </span>            : </a>
+<a name="339"><span class="lineNum">     339 </span>            : auto Parser::parse_fn_or_ctor_decl() -&gt; unique_ptr&lt;Stmt&gt; {</a>
+<a name="340"><span class="lineNum">     340 </span>            :   if (try_peek(1, SYM_COLON))</a>
+<a name="341"><span class="lineNum">     341 </span>            :     return parse_ctor_decl();</a>
+<a name="342"><span class="lineNum">     342 </span>            :   return parse_fn_decl();</a>
+<a name="343"><span class="lineNum">     343 </span>            : }</a>
+<a name="344"><span class="lineNum">     344 </span>            : </a>
+<a name="345"><span class="lineNum">     345 </span>            : auto Parser::parse_fn_decl() -&gt; unique_ptr&lt;FnDecl&gt; {</a>
+<a name="346"><span class="lineNum">     346 </span>            :   auto entry = tokens.begin();</a>
 <a name="347"><span class="lineNum">     347 </span>            : </a>
-<a name="348"><span class="lineNum">     348 </span>            :   auto annotations = std::set&lt;string&gt;{};</a>
-<a name="349"><span class="lineNum">     349 </span>            :   while (try_consume(SYM_AT))</a>
-<a name="350"><span class="lineNum">     350 </span>            :     annotations.emplace(consume_word());</a>
-<a name="351"><span class="lineNum">     351 </span>            : </a>
-<a name="352"><span class="lineNum">     352 </span>            :   const string name = parse_fn_name();</a>
-<a name="353"><span class="lineNum">     353 </span>            :   auto type_args = vector&lt;string&gt;{};</a>
-<a name="354"><span class="lineNum">     354 </span>            :   if (try_consume(SYM_LBRACE))</a>
-<a name="355"><span class="lineNum">     355 </span>            :     consume_with_commas_until(SYM_RBRACE, [&amp;] { type_args.push_back(consume_word()); });</a>
-<a name="356"><span class="lineNum">     356 </span>            : </a>
-<a name="357"><span class="lineNum">     357 </span>            :   consume(SYM_LPAREN);</a>
+<a name="348"><span class="lineNum">     348 </span>            :   consume(KWD_DEF);</a>
+<a name="349"><span class="lineNum">     349 </span>            : </a>
+<a name="350"><span class="lineNum">     350 </span>            :   auto annotations = std::set&lt;string&gt;{};</a>
+<a name="351"><span class="lineNum">     351 </span>            :   while (try_consume(SYM_AT))</a>
+<a name="352"><span class="lineNum">     352 </span>            :     annotations.emplace(consume_word());</a>
+<a name="353"><span class="lineNum">     353 </span>            : </a>
+<a name="354"><span class="lineNum">     354 </span>            :   const string name = parse_fn_name();</a>
+<a name="355"><span class="lineNum">     355 </span>            :   auto type_args = vector&lt;string&gt;{};</a>
+<a name="356"><span class="lineNum">     356 </span>            :   if (try_consume(SYM_LBRACE))</a>
+<a name="357"><span class="lineNum">     357 </span>            :     consume_with_commas_until(SYM_RBRACE, [&amp;] { type_args.push_back(consume_word()); });</a>
 <a name="358"><span class="lineNum">     358 </span>            : </a>
-<a name="359"><span class="lineNum">     359 </span>            :   auto args = vector&lt;TypeName&gt;{};</a>
-<a name="360"><span class="lineNum">     360 </span>            :   auto body = vector&lt;AnyStmt&gt;{};</a>
-<a name="361"><span class="lineNum">     361 </span>            : </a>
-<a name="362"><span class="lineNum">     362 </span>            :   consume_with_commas_until(SYM_RPAREN, [&amp;] {</a>
-<a name="363"><span class="lineNum">     363 </span>            :     auto arg = parse_fn_arg();</a>
-<a name="364"><span class="lineNum">     364 </span>            :     args.emplace_back(move(*arg.type_name));</a>
-<a name="365"><span class="lineNum">     365 </span>            :     if (arg.extra_body)</a>
-<a name="366"><span class="lineNum">     366 </span>            :       body.emplace_back(move(arg.extra_body));</a>
-<a name="367"><span class="lineNum">     367 </span>            :   });</a>
-<a name="368"><span class="lineNum">     368 </span>            : </a>
-<a name="369"><span class="lineNum">     369 </span>            :   auto ret_type = OptionalType{try_parse_type()};</a>
-<a name="370"><span class="lineNum">     370 </span>            :   auto body_begin = entry;</a>
-<a name="371"><span class="lineNum">     371 </span>            : </a>
-<a name="372"><span class="lineNum">     372 </span>            :   if (try_consume(SYM_EQ)) { // A &quot;short&quot; function definition, consists of a single expression</a>
-<a name="373"><span class="lineNum">     373 </span>            :     if (try_consume(KWD_PRIMITIVE)) {</a>
-<a name="374"><span class="lineNum">     374 </span>            :       consume(SYM_LPAREN);</a>
-<a name="375"><span class="lineNum">     375 </span>            :       auto primitive = consume_word();</a>
-<a name="376"><span class="lineNum">     376 </span>            :       consume(SYM_RPAREN);</a>
-<a name="377"><span class="lineNum">     377 </span>            :       return ast_ptr&lt;FnDecl&gt;(entry, name, move(args), type_args, move(ret_type), primitive, move(annotations));</a>
-<a name="378"><span class="lineNum">     378 </span>            :     }</a>
-<a name="379"><span class="lineNum">     379 </span>            :     if (try_consume(KWD_EXTERN)) {</a>
-<a name="380"><span class="lineNum">     380 </span>            :       // consume(SYM_LPAREN);</a>
-<a name="381"><span class="lineNum">     381 </span>            :       // auto primitive = consume_word();</a>
-<a name="382"><span class="lineNum">     382 </span>            :       // consume(SYM_RPAREN);</a>
-<a name="383"><span class="lineNum">     383 </span>            :       auto varargs = try_consume(KWD_VARARGS);</a>
-<a name="384"><span class="lineNum">     384 </span>            :       return ast_ptr&lt;FnDecl&gt;(entry, name, move(args), type_args, move(ret_type), FnDecl::extern_decl_t{name, varargs},</a>
-<a name="385"><span class="lineNum">     385 </span>            :                              move(annotations));</a>
-<a name="386"><span class="lineNum">     386 </span>            :     }</a>
-<a name="387"><span class="lineNum">     387 </span>            :     body_begin = tokens.begin();</a>
-<a name="388"><span class="lineNum">     388 </span>            :     auto expr = parse_expr();</a>
-<a name="389"><span class="lineNum">     389 </span>            :     body.emplace_back(ast_ptr&lt;ReturnStmt&gt;(entry, move(expr)));</a>
-<a name="390"><span class="lineNum">     390 </span>            :   } else {</a>
-<a name="391"><span class="lineNum">     391 </span>            :     if (!try_peek(0, KWD_END)) // Allow `end` to be on the same line</a>
-<a name="392"><span class="lineNum">     392 </span>            :       require_separator();</a>
-<a name="393"><span class="lineNum">     393 </span>            : </a>
-<a name="394"><span class="lineNum">     394 </span>            :     body_begin = tokens.begin();</a>
-<a name="395"><span class="lineNum">     395 </span>            :     while (!try_consume(KWD_END)) {</a>
-<a name="396"><span class="lineNum">     396 </span>            :       body.emplace_back(parse_stmt());</a>
-<a name="397"><span class="lineNum">     397 </span>            :       ignore_separator();</a>
-<a name="398"><span class="lineNum">     398 </span>            :     }</a>
-<a name="399"><span class="lineNum">     399 </span>            :   }</a>
-<a name="400"><span class="lineNum">     400 </span>            : </a>
-<a name="401"><span class="lineNum">     401 </span>            :   return ast_ptr&lt;FnDecl&gt;(entry, name, move(args), type_args, move(ret_type), make_ast&lt;Compound&gt;(body_begin, move(body)),</a>
-<a name="402"><span class="lineNum">     402 </span>            :                          move(annotations));</a>
-<a name="403"><span class="lineNum">     403 </span>            : }</a>
-<a name="404"><span class="lineNum">     404 </span>            : </a>
-<a name="405"><span class="lineNum">     405 </span>            : auto Parser::parse_ctor_decl() -&gt; unique_ptr&lt;CtorDecl&gt; {</a>
-<a name="406"><span class="lineNum">     406 </span>            :   auto entry = tokens.begin();</a>
-<a name="407"><span class="lineNum">     407 </span>            : </a>
-<a name="408"><span class="lineNum">     408 </span>            :   consume(KWD_DEF);</a>
-<a name="409"><span class="lineNum">     409 </span>            :   consume(SYM_COLON);</a>
-<a name="410"><span class="lineNum">     410 </span>            :   consume(KWD_NEW);</a>
-<a name="411"><span class="lineNum">     411 </span>            :   consume(SYM_LPAREN);</a>
-<a name="412"><span class="lineNum">     412 </span>            : </a>
-<a name="413"><span class="lineNum">     413 </span>            :   auto args = vector&lt;TypeName&gt;{};</a>
-<a name="414"><span class="lineNum">     414 </span>            :   auto body = vector&lt;AnyStmt&gt;{};</a>
-<a name="415"><span class="lineNum">     415 </span>            : </a>
-<a name="416"><span class="lineNum">     416 </span>            :   consume_with_commas_until(SYM_RPAREN, [&amp;] {</a>
-<a name="417"><span class="lineNum">     417 </span>            :     auto arg = parse_fn_arg();</a>
-<a name="418"><span class="lineNum">     418 </span>            :     args.emplace_back(move(*arg.type_name));</a>
-<a name="419"><span class="lineNum">     419 </span>            :     if (arg.extra_body)</a>
-<a name="420"><span class="lineNum">     420 </span>            :       body.emplace_back(move(arg.extra_body));</a>
-<a name="421"><span class="lineNum">     421 </span>            :   });</a>
-<a name="422"><span class="lineNum">     422 </span>            : </a>
-<a name="423"><span class="lineNum">     423 </span>            :   auto body_begin = entry;</a>
+<a name="359"><span class="lineNum">     359 </span>            :   consume(SYM_LPAREN);</a>
+<a name="360"><span class="lineNum">     360 </span>            : </a>
+<a name="361"><span class="lineNum">     361 </span>            :   auto args = vector&lt;TypeName&gt;{};</a>
+<a name="362"><span class="lineNum">     362 </span>            :   auto body = vector&lt;AnyStmt&gt;{};</a>
+<a name="363"><span class="lineNum">     363 </span>            : </a>
+<a name="364"><span class="lineNum">     364 </span>            :   consume_with_commas_until(SYM_RPAREN, [&amp;] {</a>
+<a name="365"><span class="lineNum">     365 </span>            :     auto arg = parse_fn_arg();</a>
+<a name="366"><span class="lineNum">     366 </span>            :     args.emplace_back(move(*arg.type_name));</a>
+<a name="367"><span class="lineNum">     367 </span>            :     if (arg.extra_body)</a>
+<a name="368"><span class="lineNum">     368 </span>            :       body.emplace_back(move(arg.extra_body));</a>
+<a name="369"><span class="lineNum">     369 </span>            :   });</a>
+<a name="370"><span class="lineNum">     370 </span>            : </a>
+<a name="371"><span class="lineNum">     371 </span>            :   auto ret_type = OptionalType{try_parse_type()};</a>
+<a name="372"><span class="lineNum">     372 </span>            :   auto body_begin = entry;</a>
+<a name="373"><span class="lineNum">     373 </span>            : </a>
+<a name="374"><span class="lineNum">     374 </span>            :   if (try_consume(SYM_EQ)) { // A &quot;short&quot; function definition, consists of a single expression</a>
+<a name="375"><span class="lineNum">     375 </span>            :     if (try_consume(KWD_PRIMITIVE)) {</a>
+<a name="376"><span class="lineNum">     376 </span>            :       consume(SYM_LPAREN);</a>
+<a name="377"><span class="lineNum">     377 </span>            :       auto primitive = consume_word();</a>
+<a name="378"><span class="lineNum">     378 </span>            :       consume(SYM_RPAREN);</a>
+<a name="379"><span class="lineNum">     379 </span>            :       return ast_ptr&lt;FnDecl&gt;(entry, name, move(args), type_args, move(ret_type), primitive, move(annotations));</a>
+<a name="380"><span class="lineNum">     380 </span>            :     }</a>
+<a name="381"><span class="lineNum">     381 </span>            :     if (try_consume(KWD_EXTERN)) {</a>
+<a name="382"><span class="lineNum">     382 </span>            :       // consume(SYM_LPAREN);</a>
+<a name="383"><span class="lineNum">     383 </span>            :       // auto primitive = consume_word();</a>
+<a name="384"><span class="lineNum">     384 </span>            :       // consume(SYM_RPAREN);</a>
+<a name="385"><span class="lineNum">     385 </span>            :       auto varargs = try_consume(KWD_VARARGS);</a>
+<a name="386"><span class="lineNum">     386 </span>            :       return ast_ptr&lt;FnDecl&gt;(entry, name, move(args), type_args, move(ret_type), FnDecl::extern_decl_t{name, varargs},</a>
+<a name="387"><span class="lineNum">     387 </span>            :                              move(annotations));</a>
+<a name="388"><span class="lineNum">     388 </span>            :     }</a>
+<a name="389"><span class="lineNum">     389 </span>            :     body_begin = tokens.begin();</a>
+<a name="390"><span class="lineNum">     390 </span>            :     auto expr = parse_expr();</a>
+<a name="391"><span class="lineNum">     391 </span>            :     body.emplace_back(ast_ptr&lt;ReturnStmt&gt;(entry, move(expr)));</a>
+<a name="392"><span class="lineNum">     392 </span>            :   } else {</a>
+<a name="393"><span class="lineNum">     393 </span>            :     if (!try_peek(0, KWD_END)) // Allow `end` to be on the same line</a>
+<a name="394"><span class="lineNum">     394 </span>            :       require_separator();</a>
+<a name="395"><span class="lineNum">     395 </span>            : </a>
+<a name="396"><span class="lineNum">     396 </span>            :     body_begin = tokens.begin();</a>
+<a name="397"><span class="lineNum">     397 </span>            :     while (!try_consume(KWD_END)) {</a>
+<a name="398"><span class="lineNum">     398 </span>            :       body.emplace_back(parse_stmt());</a>
+<a name="399"><span class="lineNum">     399 </span>            :       ignore_separator();</a>
+<a name="400"><span class="lineNum">     400 </span>            :     }</a>
+<a name="401"><span class="lineNum">     401 </span>            :   }</a>
+<a name="402"><span class="lineNum">     402 </span>            : </a>
+<a name="403"><span class="lineNum">     403 </span>            :   return ast_ptr&lt;FnDecl&gt;(entry, name, move(args), type_args, move(ret_type), make_ast&lt;Compound&gt;(body_begin, move(body)),</a>
+<a name="404"><span class="lineNum">     404 </span>            :                          move(annotations));</a>
+<a name="405"><span class="lineNum">     405 </span>            : }</a>
+<a name="406"><span class="lineNum">     406 </span>            : </a>
+<a name="407"><span class="lineNum">     407 </span>            : auto Parser::parse_ctor_decl() -&gt; unique_ptr&lt;CtorDecl&gt; {</a>
+<a name="408"><span class="lineNum">     408 </span>            :   auto entry = tokens.begin();</a>
+<a name="409"><span class="lineNum">     409 </span>            : </a>
+<a name="410"><span class="lineNum">     410 </span>            :   consume(KWD_DEF);</a>
+<a name="411"><span class="lineNum">     411 </span>            :   consume(SYM_COLON);</a>
+<a name="412"><span class="lineNum">     412 </span>            :   consume(KWD_NEW);</a>
+<a name="413"><span class="lineNum">     413 </span>            :   consume(SYM_LPAREN);</a>
+<a name="414"><span class="lineNum">     414 </span>            : </a>
+<a name="415"><span class="lineNum">     415 </span>            :   auto args = vector&lt;TypeName&gt;{};</a>
+<a name="416"><span class="lineNum">     416 </span>            :   auto body = vector&lt;AnyStmt&gt;{};</a>
+<a name="417"><span class="lineNum">     417 </span>            : </a>
+<a name="418"><span class="lineNum">     418 </span>            :   consume_with_commas_until(SYM_RPAREN, [&amp;] {</a>
+<a name="419"><span class="lineNum">     419 </span>            :     auto arg = parse_fn_arg();</a>
+<a name="420"><span class="lineNum">     420 </span>            :     args.emplace_back(move(*arg.type_name));</a>
+<a name="421"><span class="lineNum">     421 </span>            :     if (arg.extra_body)</a>
+<a name="422"><span class="lineNum">     422 </span>            :       body.emplace_back(move(arg.extra_body));</a>
+<a name="423"><span class="lineNum">     423 </span>            :   });</a>
 <a name="424"><span class="lineNum">     424 </span>            : </a>
-<a name="425"><span class="lineNum">     425 </span>            :   if (!try_peek(0, KWD_END)) // Allow `end` to be on the same line</a>
-<a name="426"><span class="lineNum">     426 </span>            :     require_separator();</a>
-<a name="427"><span class="lineNum">     427 </span>            : </a>
-<a name="428"><span class="lineNum">     428 </span>            :   body_begin = tokens.begin();</a>
-<a name="429"><span class="lineNum">     429 </span>            :   while (!try_consume(KWD_END)) {</a>
-<a name="430"><span class="lineNum">     430 </span>            :     body.emplace_back(parse_stmt());</a>
-<a name="431"><span class="lineNum">     431 </span>            :     ignore_separator();</a>
-<a name="432"><span class="lineNum">     432 </span>            :   }</a>
-<a name="433"><span class="lineNum">     433 </span>            : </a>
-<a name="434"><span class="lineNum">     434 </span>            :   return ast_ptr&lt;CtorDecl&gt;(entry, move(args), make_ast&lt;Compound&gt;(body_begin, move(body)));</a>
-<a name="435"><span class="lineNum">     435 </span>            : }</a>
-<a name="436"><span class="lineNum">     436 </span>            : </a>
-<a name="437"><span class="lineNum">     437 </span>            : auto Parser::parse_var_decl() -&gt; unique_ptr&lt;VarDecl&gt; {</a>
-<a name="438"><span class="lineNum">     438 </span>            :   auto entry = tokens.begin();</a>
-<a name="439"><span class="lineNum">     439 </span>            : </a>
-<a name="440"><span class="lineNum">     440 </span>            :   consume(KWD_LET);</a>
-<a name="441"><span class="lineNum">     441 </span>            :   const string name = consume_word();</a>
-<a name="442"><span class="lineNum">     442 </span>            :   auto type = OptionalType{try_parse_type()};</a>
-<a name="443"><span class="lineNum">     443 </span>            : </a>
-<a name="444"><span class="lineNum">     444 </span>            :   consume(SYM_EQ);</a>
+<a name="425"><span class="lineNum">     425 </span>            :   auto body_begin = entry;</a>
+<a name="426"><span class="lineNum">     426 </span>            : </a>
+<a name="427"><span class="lineNum">     427 </span>            :   if (!try_peek(0, KWD_END)) // Allow `end` to be on the same line</a>
+<a name="428"><span class="lineNum">     428 </span>            :     require_separator();</a>
+<a name="429"><span class="lineNum">     429 </span>            : </a>
+<a name="430"><span class="lineNum">     430 </span>            :   body_begin = tokens.begin();</a>
+<a name="431"><span class="lineNum">     431 </span>            :   while (!try_consume(KWD_END)) {</a>
+<a name="432"><span class="lineNum">     432 </span>            :     body.emplace_back(parse_stmt());</a>
+<a name="433"><span class="lineNum">     433 </span>            :     ignore_separator();</a>
+<a name="434"><span class="lineNum">     434 </span>            :   }</a>
+<a name="435"><span class="lineNum">     435 </span>            : </a>
+<a name="436"><span class="lineNum">     436 </span>            :   return ast_ptr&lt;CtorDecl&gt;(entry, move(args), make_ast&lt;Compound&gt;(body_begin, move(body)));</a>
+<a name="437"><span class="lineNum">     437 </span>            : }</a>
+<a name="438"><span class="lineNum">     438 </span>            : </a>
+<a name="439"><span class="lineNum">     439 </span>            : auto Parser::parse_var_decl() -&gt; unique_ptr&lt;VarDecl&gt; {</a>
+<a name="440"><span class="lineNum">     440 </span>            :   auto entry = tokens.begin();</a>
+<a name="441"><span class="lineNum">     441 </span>            : </a>
+<a name="442"><span class="lineNum">     442 </span>            :   consume(KWD_LET);</a>
+<a name="443"><span class="lineNum">     443 </span>            :   const string name = consume_word();</a>
+<a name="444"><span class="lineNum">     444 </span>            :   auto type = OptionalType{try_parse_type()};</a>
 <a name="445"><span class="lineNum">     445 </span>            : </a>
-<a name="446"><span class="lineNum">     446 </span>            :   auto init = parse_expr();</a>
+<a name="446"><span class="lineNum">     446 </span>            :   consume(SYM_EQ);</a>
 <a name="447"><span class="lineNum">     447 </span>            : </a>
-<a name="448"><span class="lineNum">     448 </span>            :   return ast_ptr&lt;VarDecl&gt;(entry, name, move(type), move(init));</a>
-<a name="449"><span class="lineNum">     449 </span>            : }</a>
-<a name="450"><span class="lineNum">     450 </span>            : </a>
-<a name="451"><span class="lineNum">     451 </span>            : auto Parser::parse_while_stmt() -&gt; unique_ptr&lt;WhileStmt&gt; {</a>
-<a name="452"><span class="lineNum">     452 </span>            :   auto entry = tokens.begin();</a>
-<a name="453"><span class="lineNum">     453 </span>            : </a>
-<a name="454"><span class="lineNum">     454 </span>            :   consume(KWD_WHILE);</a>
-<a name="455"><span class="lineNum">     455 </span>            :   auto cond = parse_expr();</a>
-<a name="456"><span class="lineNum">     456 </span>            : </a>
-<a name="457"><span class="lineNum">     457 </span>            :   ignore_separator();</a>
-<a name="458"><span class="lineNum">     458 </span>            : </a>
-<a name="459"><span class="lineNum">     459 </span>            :   auto body_begin = tokens.begin();</a>
-<a name="460"><span class="lineNum">     460 </span>            :   auto body = vector&lt;AnyStmt&gt;{};</a>
-<a name="461"><span class="lineNum">     461 </span>            :   while (!try_consume(KWD_END)) {</a>
-<a name="462"><span class="lineNum">     462 </span>            :     body.emplace_back(parse_stmt());</a>
-<a name="463"><span class="lineNum">     463 </span>            :     ignore_separator();</a>
-<a name="464"><span class="lineNum">     464 </span>            :   }</a>
-<a name="465"><span class="lineNum">     465 </span>            : </a>
-<a name="466"><span class="lineNum">     466 </span>            :   auto compound = make_ast&lt;Compound&gt;(body_begin, move(body));</a>
-<a name="467"><span class="lineNum">     467 </span>            : </a>
-<a name="468"><span class="lineNum">     468 </span>            :   return ast_ptr&lt;WhileStmt&gt;(entry, move(cond), move(compound));</a>
-<a name="469"><span class="lineNum">     469 </span>            : }</a>
-<a name="470"><span class="lineNum">     470 </span>            : </a>
-<a name="471"><span class="lineNum">     471 </span>            : auto Parser::parse_return_stmt() -&gt; unique_ptr&lt;ReturnStmt&gt; {</a>
-<a name="472"><span class="lineNum">     472 </span>            :   auto entry = tokens.begin();</a>
-<a name="473"><span class="lineNum">     473 </span>            : </a>
-<a name="474"><span class="lineNum">     474 </span>            :   consume(KWD_RETURN);</a>
-<a name="475"><span class="lineNum">     475 </span>            :   if (!tokens.at_end() &amp;&amp; try_peek(0, Separator))</a>
-<a name="476"><span class="lineNum">     476 </span>            :     return ast_ptr&lt;ReturnStmt&gt;(entry, std::nullopt);</a>
-<a name="477"><span class="lineNum">     477 </span>            : </a>
-<a name="478"><span class="lineNum">     478 </span>            :   auto expr = parse_expr();</a>
-<a name="479"><span class="lineNum">     479 </span>            : </a>
-<a name="480"><span class="lineNum">     480 </span>            :   return ast_ptr&lt;ReturnStmt&gt;(entry, move(expr));</a>
-<a name="481"><span class="lineNum">     481 </span>            : }</a>
-<a name="482"><span class="lineNum">     482 </span>            : </a>
-<a name="483"><span class="lineNum">     483 </span>            : auto Parser::parse_if_stmt() -&gt; unique_ptr&lt;IfStmt&gt; {</a>
-<a name="484"><span class="lineNum">     484 </span>            :   auto entry = tokens.begin();</a>
-<a name="485"><span class="lineNum">     485 </span>            :   auto clause_begin = entry;</a>
-<a name="486"><span class="lineNum">     486 </span>            :   consume(KWD_IF);</a>
-<a name="487"><span class="lineNum">     487 </span>            :   auto cond = parse_expr();</a>
-<a name="488"><span class="lineNum">     488 </span>            :   if (!try_consume(KWD_THEN))</a>
-<a name="489"><span class="lineNum">     489 </span>            :     require_separator();</a>
-<a name="490"><span class="lineNum">     490 </span>            : </a>
-<a name="491"><span class="lineNum">     491 </span>            :   auto current_entry = tokens.begin();</a>
-<a name="492"><span class="lineNum">     492 </span>            :   auto else_entry = tokens.begin();</a>
-<a name="493"><span class="lineNum">     493 </span>            :   auto clauses = vector&lt;IfClause&gt;{};</a>
-<a name="494"><span class="lineNum">     494 </span>            :   auto current_body = vector&lt;AnyStmt&gt;{};</a>
-<a name="495"><span class="lineNum">     495 </span>            :   auto else_body = vector&lt;AnyStmt&gt;{};</a>
-<a name="496"><span class="lineNum">     496 </span>            :   bool in_else = false;</a>
-<a name="497"><span class="lineNum">     497 </span>            : </a>
-<a name="498"><span class="lineNum">     498 </span>            :   while (true) {</a>
-<a name="499"><span class="lineNum">     499 </span>            :     auto current_clause_begin = tokens.begin();</a>
-<a name="500"><span class="lineNum">     500 </span>            :     if (try_consume(KWD_END))</a>
-<a name="501"><span class="lineNum">     501 </span>            :       break;</a>
-<a name="502"><span class="lineNum">     502 </span>            :     if (try_consume(KWD_ELSE)) {</a>
-<a name="503"><span class="lineNum">     503 </span>            :       // An `else` followed by an `if` begins a new clause of the same if statement.</a>
-<a name="504"><span class="lineNum">     504 </span>            :       if (!in_else &amp;&amp; try_consume(KWD_IF)) {</a>
-<a name="505"><span class="lineNum">     505 </span>            :         clauses.emplace_back(ts(clause_begin), move(cond), make_ast&lt;Compound&gt;(current_entry, move(current_body)));</a>
-<a name="506"><span class="lineNum">     506 </span>            :         current_body = vector&lt;AnyStmt&gt;{};</a>
-<a name="507"><span class="lineNum">     507 </span>            :         cond = parse_expr();</a>
-<a name="508"><span class="lineNum">     508 </span>            :         current_entry = tokens.begin();</a>
-<a name="509"><span class="lineNum">     509 </span>            :         clause_begin = current_clause_begin;</a>
-<a name="510"><span class="lineNum">     510 </span>            :       } else {</a>
-<a name="511"><span class="lineNum">     511 </span>            :         in_else = true;</a>
-<a name="512"><span class="lineNum">     512 </span>            :         else_entry = tokens.begin();</a>
-<a name="513"><span class="lineNum">     513 </span>            :       }</a>
-<a name="514"><span class="lineNum">     514 </span>            :       if (!try_consume(KWD_THEN))</a>
-<a name="515"><span class="lineNum">     515 </span>            :         require_separator();</a>
-<a name="516"><span class="lineNum">     516 </span>            :     }</a>
-<a name="517"><span class="lineNum">     517 </span>            :     auto st = parse_stmt();</a>
-<a name="518"><span class="lineNum">     518 </span>            :     if (in_else) {</a>
-<a name="519"><span class="lineNum">     519 </span>            :       else_body.emplace_back(move(st));</a>
-<a name="520"><span class="lineNum">     520 </span>            :     } else {</a>
-<a name="521"><span class="lineNum">     521 </span>            :       current_body.emplace_back(move(st));</a>
-<a name="522"><span class="lineNum">     522 </span>            :     }</a>
-<a name="523"><span class="lineNum">     523 </span>            :   }</a>
-<a name="524"><span class="lineNum">     524 </span>            : </a>
-<a name="525"><span class="lineNum">     525 </span>            :   if (else_body.empty())</a>
-<a name="526"><span class="lineNum">     526 </span>            :     else_entry = tokens.begin();</a>
-<a name="527"><span class="lineNum">     527 </span>            : </a>
-<a name="528"><span class="lineNum">     528 </span>            :   clauses.emplace_back(ts(clause_begin, else_entry - 1), move(cond),</a>
-<a name="529"><span class="lineNum">     529 </span>            :                        Compound(ts(current_entry, else_entry - 1), move(current_body)));</a>
-<a name="530"><span class="lineNum">     530 </span>            : </a>
-<a name="531"><span class="lineNum">     531 </span>            :   auto else_clause = optional&lt;Compound&gt;{};</a>
-<a name="532"><span class="lineNum">     532 </span>            :   if (!else_body.empty())</a>
-<a name="533"><span class="lineNum">     533 </span>            :     else_clause.emplace(ts(else_entry), move(else_body));</a>
-<a name="534"><span class="lineNum">     534 </span>            : </a>
-<a name="535"><span class="lineNum">     535 </span>            :   return ast_ptr&lt;IfStmt&gt;(entry, move(clauses), move(else_clause));</a>
-<a name="536"><span class="lineNum">     536 </span>            : }</a>
-<a name="537"><span class="lineNum">     537 </span>            : </a>
-<a name="538"><span class="lineNum">     538 </span>            : auto Parser::parse_number_expr() -&gt; unique_ptr&lt;NumberExpr&gt; {</a>
-<a name="539"><span class="lineNum">     539 </span>            :   static constexpr int BASE_16 = 16;</a>
-<a name="540"><span class="lineNum">     540 </span>            :   static constexpr int BASE_10 = 10;</a>
-<a name="541"><span class="lineNum">     541 </span>            :   auto entry = tokens.begin();</a>
-<a name="542"><span class="lineNum">     542 </span>            :   expect(Number);</a>
+<a name="448"><span class="lineNum">     448 </span>            :   auto init = parse_expr();</a>
+<a name="449"><span class="lineNum">     449 </span>            : </a>
+<a name="450"><span class="lineNum">     450 </span>            :   return ast_ptr&lt;VarDecl&gt;(entry, name, move(type), move(init));</a>
+<a name="451"><span class="lineNum">     451 </span>            : }</a>
+<a name="452"><span class="lineNum">     452 </span>            : </a>
+<a name="453"><span class="lineNum">     453 </span>            : auto Parser::parse_const_decl() -&gt; unique_ptr&lt;ConstDecl&gt; {</a>
+<a name="454"><span class="lineNum">     454 </span>            :   auto entry = tokens.begin();</a>
+<a name="455"><span class="lineNum">     455 </span>            : </a>
+<a name="456"><span class="lineNum">     456 </span>            :   consume(KWD_CONST);</a>
+<a name="457"><span class="lineNum">     457 </span>            :   const string name = consume_word();</a>
+<a name="458"><span class="lineNum">     458 </span>            :   auto type = AnyType{parse_type()};</a>
+<a name="459"><span class="lineNum">     459 </span>            : </a>
+<a name="460"><span class="lineNum">     460 </span>            :   consume(SYM_EQ);</a>
+<a name="461"><span class="lineNum">     461 </span>            : </a>
+<a name="462"><span class="lineNum">     462 </span>            :   auto init = parse_expr();</a>
+<a name="463"><span class="lineNum">     463 </span>            : </a>
+<a name="464"><span class="lineNum">     464 </span>            :   return ast_ptr&lt;ConstDecl&gt;(entry, name, move(type), move(init));</a>
+<a name="465"><span class="lineNum">     465 </span>            : }</a>
+<a name="466"><span class="lineNum">     466 </span>            : </a>
+<a name="467"><span class="lineNum">     467 </span>            : auto Parser::parse_while_stmt() -&gt; unique_ptr&lt;WhileStmt&gt; {</a>
+<a name="468"><span class="lineNum">     468 </span>            :   auto entry = tokens.begin();</a>
+<a name="469"><span class="lineNum">     469 </span>            : </a>
+<a name="470"><span class="lineNum">     470 </span>            :   consume(KWD_WHILE);</a>
+<a name="471"><span class="lineNum">     471 </span>            :   auto cond = parse_expr();</a>
+<a name="472"><span class="lineNum">     472 </span>            : </a>
+<a name="473"><span class="lineNum">     473 </span>            :   ignore_separator();</a>
+<a name="474"><span class="lineNum">     474 </span>            : </a>
+<a name="475"><span class="lineNum">     475 </span>            :   auto body_begin = tokens.begin();</a>
+<a name="476"><span class="lineNum">     476 </span>            :   auto body = vector&lt;AnyStmt&gt;{};</a>
+<a name="477"><span class="lineNum">     477 </span>            :   while (!try_consume(KWD_END)) {</a>
+<a name="478"><span class="lineNum">     478 </span>            :     body.emplace_back(parse_stmt());</a>
+<a name="479"><span class="lineNum">     479 </span>            :     ignore_separator();</a>
+<a name="480"><span class="lineNum">     480 </span>            :   }</a>
+<a name="481"><span class="lineNum">     481 </span>            : </a>
+<a name="482"><span class="lineNum">     482 </span>            :   auto compound = make_ast&lt;Compound&gt;(body_begin, move(body));</a>
+<a name="483"><span class="lineNum">     483 </span>            : </a>
+<a name="484"><span class="lineNum">     484 </span>            :   return ast_ptr&lt;WhileStmt&gt;(entry, move(cond), move(compound));</a>
+<a name="485"><span class="lineNum">     485 </span>            : }</a>
+<a name="486"><span class="lineNum">     486 </span>            : </a>
+<a name="487"><span class="lineNum">     487 </span>            : auto Parser::parse_return_stmt() -&gt; unique_ptr&lt;ReturnStmt&gt; {</a>
+<a name="488"><span class="lineNum">     488 </span>            :   auto entry = tokens.begin();</a>
+<a name="489"><span class="lineNum">     489 </span>            : </a>
+<a name="490"><span class="lineNum">     490 </span>            :   consume(KWD_RETURN);</a>
+<a name="491"><span class="lineNum">     491 </span>            :   if (!tokens.at_end() &amp;&amp; try_peek(0, Separator))</a>
+<a name="492"><span class="lineNum">     492 </span>            :     return ast_ptr&lt;ReturnStmt&gt;(entry, std::nullopt);</a>
+<a name="493"><span class="lineNum">     493 </span>            : </a>
+<a name="494"><span class="lineNum">     494 </span>            :   auto expr = parse_expr();</a>
+<a name="495"><span class="lineNum">     495 </span>            : </a>
+<a name="496"><span class="lineNum">     496 </span>            :   return ast_ptr&lt;ReturnStmt&gt;(entry, move(expr));</a>
+<a name="497"><span class="lineNum">     497 </span>            : }</a>
+<a name="498"><span class="lineNum">     498 </span>            : </a>
+<a name="499"><span class="lineNum">     499 </span>            : auto Parser::parse_if_stmt() -&gt; unique_ptr&lt;IfStmt&gt; {</a>
+<a name="500"><span class="lineNum">     500 </span>            :   auto entry = tokens.begin();</a>
+<a name="501"><span class="lineNum">     501 </span>            :   auto clause_begin = entry;</a>
+<a name="502"><span class="lineNum">     502 </span>            :   consume(KWD_IF);</a>
+<a name="503"><span class="lineNum">     503 </span>            :   auto cond = parse_expr();</a>
+<a name="504"><span class="lineNum">     504 </span>            :   if (!try_consume(KWD_THEN))</a>
+<a name="505"><span class="lineNum">     505 </span>            :     require_separator();</a>
+<a name="506"><span class="lineNum">     506 </span>            : </a>
+<a name="507"><span class="lineNum">     507 </span>            :   auto current_entry = tokens.begin();</a>
+<a name="508"><span class="lineNum">     508 </span>            :   auto else_entry = tokens.begin();</a>
+<a name="509"><span class="lineNum">     509 </span>            :   auto clauses = vector&lt;IfClause&gt;{};</a>
+<a name="510"><span class="lineNum">     510 </span>            :   auto current_body = vector&lt;AnyStmt&gt;{};</a>
+<a name="511"><span class="lineNum">     511 </span>            :   auto else_body = vector&lt;AnyStmt&gt;{};</a>
+<a name="512"><span class="lineNum">     512 </span>            :   bool in_else = false;</a>
+<a name="513"><span class="lineNum">     513 </span>            : </a>
+<a name="514"><span class="lineNum">     514 </span>            :   while (true) {</a>
+<a name="515"><span class="lineNum">     515 </span>            :     auto current_clause_begin = tokens.begin();</a>
+<a name="516"><span class="lineNum">     516 </span>            :     if (try_consume(KWD_END))</a>
+<a name="517"><span class="lineNum">     517 </span>            :       break;</a>
+<a name="518"><span class="lineNum">     518 </span>            :     if (try_consume(KWD_ELSE)) {</a>
+<a name="519"><span class="lineNum">     519 </span>            :       // An `else` followed by an `if` begins a new clause of the same if statement.</a>
+<a name="520"><span class="lineNum">     520 </span>            :       if (!in_else &amp;&amp; try_consume(KWD_IF)) {</a>
+<a name="521"><span class="lineNum">     521 </span>            :         clauses.emplace_back(ts(clause_begin), move(cond), make_ast&lt;Compound&gt;(current_entry, move(current_body)));</a>
+<a name="522"><span class="lineNum">     522 </span>            :         current_body = vector&lt;AnyStmt&gt;{};</a>
+<a name="523"><span class="lineNum">     523 </span>            :         cond = parse_expr();</a>
+<a name="524"><span class="lineNum">     524 </span>            :         current_entry = tokens.begin();</a>
+<a name="525"><span class="lineNum">     525 </span>            :         clause_begin = current_clause_begin;</a>
+<a name="526"><span class="lineNum">     526 </span>            :       } else {</a>
+<a name="527"><span class="lineNum">     527 </span>            :         in_else = true;</a>
+<a name="528"><span class="lineNum">     528 </span>            :         else_entry = tokens.begin();</a>
+<a name="529"><span class="lineNum">     529 </span>            :       }</a>
+<a name="530"><span class="lineNum">     530 </span>            :       if (!try_consume(KWD_THEN))</a>
+<a name="531"><span class="lineNum">     531 </span>            :         require_separator();</a>
+<a name="532"><span class="lineNum">     532 </span>            :     }</a>
+<a name="533"><span class="lineNum">     533 </span>            :     auto st = parse_stmt();</a>
+<a name="534"><span class="lineNum">     534 </span>            :     if (in_else) {</a>
+<a name="535"><span class="lineNum">     535 </span>            :       else_body.emplace_back(move(st));</a>
+<a name="536"><span class="lineNum">     536 </span>            :     } else {</a>
+<a name="537"><span class="lineNum">     537 </span>            :       current_body.emplace_back(move(st));</a>
+<a name="538"><span class="lineNum">     538 </span>            :     }</a>
+<a name="539"><span class="lineNum">     539 </span>            :   }</a>
+<a name="540"><span class="lineNum">     540 </span>            : </a>
+<a name="541"><span class="lineNum">     541 </span>            :   if (else_body.empty())</a>
+<a name="542"><span class="lineNum">     542 </span>            :     else_entry = tokens.begin();</a>
 <a name="543"><span class="lineNum">     543 </span>            : </a>
-<a name="544"><span class="lineNum">     544 </span>            :   auto literal = string(assert_payload_next());</a>
-<a name="545"><span class="lineNum">     545 </span>            :   int64_t value = literal.starts_with(&quot;0x&quot;sv) ? stoll(literal, nullptr, BASE_16) : stoll(literal, nullptr, BASE_10);</a>
+<a name="544"><span class="lineNum">     544 </span>            :   clauses.emplace_back(ts(clause_begin, else_entry - 1), move(cond),</a>
+<a name="545"><span class="lineNum">     545 </span>            :                        Compound(ts(current_entry, else_entry - 1), move(current_body)));</a>
 <a name="546"><span class="lineNum">     546 </span>            : </a>
-<a name="547"><span class="lineNum">     547 </span>            :   return ast_ptr&lt;NumberExpr&gt;({entry, 1}, value);</a>
-<a name="548"><span class="lineNum">     548 </span>            : }</a>
-<a name="549"><span class="lineNum">     549 </span>            : </a>
-<a name="550"><span class="lineNum">     550 </span>            : auto Parser::parse_string_expr() -&gt; unique_ptr&lt;StringExpr&gt; {</a>
-<a name="551"><span class="lineNum">     551 </span>            :   auto entry = tokens.begin();</a>
-<a name="552"><span class="lineNum">     552 </span>            :   expect(Token::Type::Literal);</a>
+<a name="547"><span class="lineNum">     547 </span>            :   auto else_clause = optional&lt;Compound&gt;{};</a>
+<a name="548"><span class="lineNum">     548 </span>            :   if (!else_body.empty())</a>
+<a name="549"><span class="lineNum">     549 </span>            :     else_clause.emplace(ts(else_entry), move(else_body));</a>
+<a name="550"><span class="lineNum">     550 </span>            : </a>
+<a name="551"><span class="lineNum">     551 </span>            :   return ast_ptr&lt;IfStmt&gt;(entry, move(clauses), move(else_clause));</a>
+<a name="552"><span class="lineNum">     552 </span>            : }</a>
 <a name="553"><span class="lineNum">     553 </span>            : </a>
-<a name="554"><span class="lineNum">     554 </span>            :   auto value = string(assert_payload_next());</a>
-<a name="555"><span class="lineNum">     555 </span>            : </a>
-<a name="556"><span class="lineNum">     556 </span>            :   return ast_ptr&lt;StringExpr&gt;({entry, 1}, value);</a>
-<a name="557"><span class="lineNum">     557 </span>            : }</a>
-<a name="558"><span class="lineNum">     558 </span>            : </a>
-<a name="559"><span class="lineNum">     559 </span>            : auto Parser::parse_char_expr() -&gt; unique_ptr&lt;CharExpr&gt; {</a>
-<a name="560"><span class="lineNum">     560 </span>            :   auto entry = tokens.begin();</a>
-<a name="561"><span class="lineNum">     561 </span>            :   expect(Token::Type::Char);</a>
+<a name="554"><span class="lineNum">     554 </span>            : auto Parser::parse_number_expr() -&gt; unique_ptr&lt;NumberExpr&gt; {</a>
+<a name="555"><span class="lineNum">     555 </span>            :   static constexpr int BASE_16 = 16;</a>
+<a name="556"><span class="lineNum">     556 </span>            :   static constexpr int BASE_10 = 10;</a>
+<a name="557"><span class="lineNum">     557 </span>            :   auto entry = tokens.begin();</a>
+<a name="558"><span class="lineNum">     558 </span>            :   expect(Number);</a>
+<a name="559"><span class="lineNum">     559 </span>            : </a>
+<a name="560"><span class="lineNum">     560 </span>            :   auto literal = string(assert_payload_next());</a>
+<a name="561"><span class="lineNum">     561 </span>            :   int64_t value = literal.starts_with(&quot;0x&quot;sv) ? stoll(literal, nullptr, BASE_16) : stoll(literal, nullptr, BASE_10);</a>
 <a name="562"><span class="lineNum">     562 </span>            : </a>
-<a name="563"><span class="lineNum">     563 </span>            :   auto value = string(assert_payload_next())[0];</a>
-<a name="564"><span class="lineNum">     564 </span>            : </a>
-<a name="565"><span class="lineNum">     565 </span>            :   return ast_ptr&lt;CharExpr&gt;({entry, 1}, value);</a>
-<a name="566"><span class="lineNum">     566 </span>            : }</a>
-<a name="567"><span class="lineNum">     567 </span>            : </a>
-<a name="568"><span class="lineNum">     568 </span>            : auto Parser::parse_primary() -&gt; unique_ptr&lt;Expr&gt; {</a>
-<a name="569"><span class="lineNum">     569 </span>            :   const auto guard = make_guard(&quot;Parsing primary expression&quot;);</a>
-<a name="570"><span class="lineNum">     570 </span>            : </a>
-<a name="571"><span class="lineNum">     571 </span>            :   auto entry = tokens.begin();</a>
-<a name="572"><span class="lineNum">     572 </span>            :   if (try_consume(SYM_LPAREN)) {</a>
-<a name="573"><span class="lineNum">     573 </span>            :     auto val = parse_expr();</a>
-<a name="574"><span class="lineNum">     574 </span>            :     consume(SYM_RPAREN);</a>
-<a name="575"><span class="lineNum">     575 </span>            :     return val;</a>
-<a name="576"><span class="lineNum">     576 </span>            :   }</a>
-<a name="577"><span class="lineNum">     577 </span>            : </a>
-<a name="578"><span class="lineNum">     578 </span>            :   if (tokens-&gt;type == Number)</a>
-<a name="579"><span class="lineNum">     579 </span>            :     return parse_number_expr();</a>
-<a name="580"><span class="lineNum">     580 </span>            :   if (tokens-&gt;type == Token::Type::Literal)</a>
-<a name="581"><span class="lineNum">     581 </span>            :     return parse_string_expr();</a>
-<a name="582"><span class="lineNum">     582 </span>            :   if (tokens-&gt;type == Token::Type::Char)</a>
-<a name="583"><span class="lineNum">     583 </span>            :     return parse_char_expr();</a>
-<a name="584"><span class="lineNum">     584 </span>            :   if (try_consume(KWD_TRUE))</a>
-<a name="585"><span class="lineNum">     585 </span>            :     return ast_ptr&lt;BoolExpr&gt;(entry, true);</a>
-<a name="586"><span class="lineNum">     586 </span>            :   if (try_consume(KWD_FALSE))</a>
-<a name="587"><span class="lineNum">     587 </span>            :     return ast_ptr&lt;BoolExpr&gt;(entry, false);</a>
-<a name="588"><span class="lineNum">     588 </span>            :   if (try_consume(SYM_COLON_COLON))</a>
-<a name="589"><span class="lineNum">     589 </span>            :     return ast_ptr&lt;FieldAccessExpr&gt;(entry, std::nullopt, consume_word());</a>
-<a name="590"><span class="lineNum">     590 </span>            : </a>
-<a name="591"><span class="lineNum">     591 </span>            :   if (tokens-&gt;type == Word) {</a>
-<a name="592"><span class="lineNum">     592 </span>            :     if (try_peek_uword(0)) {</a>
-<a name="593"><span class="lineNum">     593 </span>            :       auto type = parse_type();</a>
-<a name="594"><span class="lineNum">     594 </span>            :       if (try_consume(SYM_LPAREN)) {</a>
-<a name="595"><span class="lineNum">     595 </span>            :         auto call_args = vector&lt;AnyExpr&gt;{};</a>
-<a name="596"><span class="lineNum">     596 </span>            :         consume_with_commas_until(SYM_RPAREN, [&amp;] { call_args.emplace_back(parse_expr()); });</a>
-<a name="597"><span class="lineNum">     597 </span>            :         return ast_ptr&lt;CtorExpr&gt;(entry, move(type), move(call_args));</a>
-<a name="598"><span class="lineNum">     598 </span>            :       }</a>
-<a name="599"><span class="lineNum">     599 </span>            :       if (try_consume(SYM_COLON)) {</a>
-<a name="600"><span class="lineNum">     600 </span>            :         if (try_consume(SYM_LBRACKET)) {</a>
-<a name="601"><span class="lineNum">     601 </span>            :           auto slice_members = vector&lt;AnyExpr&gt;{};</a>
-<a name="602"><span class="lineNum">     602 </span>            :           consume_with_commas_until(SYM_RBRACKET, [&amp;] { slice_members.emplace_back(parse_expr()); });</a>
-<a name="603"><span class="lineNum">     603 </span>            :           return ast_ptr&lt;SliceExpr&gt;(entry, move(type), move(slice_members));</a>
-<a name="604"><span class="lineNum">     604 </span>            :         }</a>
-<a name="605"><span class="lineNum">     605 </span>            :       }</a>
-<a name="606"><span class="lineNum">     606 </span>            : </a>
-<a name="607"><span class="lineNum">     607 </span>            :       throw std::runtime_error(&quot;Couldn't make an expression from here with a type&quot;);</a>
-<a name="608"><span class="lineNum">     608 </span>            :     }</a>
-<a name="609"><span class="lineNum">     609 </span>            :     auto name = consume_word();</a>
-<a name="610"><span class="lineNum">     610 </span>            :     if (try_consume(SYM_LPAREN)) {</a>
-<a name="611"><span class="lineNum">     611 </span>            :       auto call_args = vector&lt;AnyExpr&gt;{};</a>
-<a name="612"><span class="lineNum">     612 </span>            :       consume_with_commas_until(SYM_RPAREN, [&amp;] { call_args.emplace_back(parse_expr()); });</a>
-<a name="613"><span class="lineNum">     613 </span>            :       return ast_ptr&lt;CallExpr&gt;(entry, name, move(call_args));</a>
-<a name="614"><span class="lineNum">     614 </span>            :     }</a>
-<a name="615"><span class="lineNum">     615 </span>            :     return ast_ptr&lt;VarExpr&gt;({entry, 1}, name);</a>
-<a name="616"><span class="lineNum">     616 </span>            :   }</a>
-<a name="617"><span class="lineNum">     617 </span>            :   throw std::runtime_error(&quot;Couldn't make an expression from here&quot;);</a>
-<a name="618"><span class="lineNum">     618 </span>            : }</a>
-<a name="619"><span class="lineNum">     619 </span>            : </a>
-<a name="620"><span class="lineNum">     620 </span>            : auto Parser::parse_receiver(unique_ptr&lt;Expr&gt; receiver, VectorTokenIterator receiver_entry) -&gt; unique_ptr&lt;Expr&gt; {</a>
-<a name="621"><span class="lineNum">     621 </span>            :   auto entry = tokens.begin();</a>
-<a name="622"><span class="lineNum">     622 </span>            :   if (try_consume(SYM_DOT)) {</a>
-<a name="623"><span class="lineNum">     623 </span>            :     auto name = consume_word();</a>
-<a name="624"><span class="lineNum">     624 </span>            :     auto call_args = vector&lt;AnyExpr&gt;{};</a>
-<a name="625"><span class="lineNum">     625 </span>            :     call_args.emplace_back(move(receiver));</a>
-<a name="626"><span class="lineNum">     626 </span>            :     if (try_consume(SYM_LPAREN)) { // A call with a dot `a.b(...)`</a>
-<a name="627"><span class="lineNum">     627 </span>            :       consume_with_commas_until(SYM_RPAREN, [&amp;] { call_args.emplace_back(parse_expr()); });</a>
-<a name="628"><span class="lineNum">     628 </span>            :       auto call = ast_ptr&lt;CallExpr&gt;(entry + 1, name, move(call_args));</a>
-<a name="629"><span class="lineNum">     629 </span>            :       return parse_receiver(move(call), receiver_entry);</a>
-<a name="630"><span class="lineNum">     630 </span>            :     }</a>
-<a name="631"><span class="lineNum">     631 </span>            :     if (try_consume(SYM_EQ)) { // A setter `a.b = ...`</a>
-<a name="632"><span class="lineNum">     632 </span>            :       auto value = parse_expr();</a>
-<a name="633"><span class="lineNum">     633 </span>            :       call_args.emplace_back(move(value));</a>
-<a name="634"><span class="lineNum">     634 </span>            :       auto call = ast_ptr&lt;CallExpr&gt;(entry + 1, name + '=', move(call_args));</a>
-<a name="635"><span class="lineNum">     635 </span>            :       return parse_receiver(move(call), receiver_entry);</a>
-<a name="636"><span class="lineNum">     636 </span>            :     }</a>
-<a name="637"><span class="lineNum">     637 </span>            :     auto noarg_call = ast_ptr&lt;CallExpr&gt;(receiver_entry, name, move(call_args));</a>
-<a name="638"><span class="lineNum">     638 </span>            :     return parse_receiver(move(noarg_call), receiver_entry);</a>
-<a name="639"><span class="lineNum">     639 </span>            :   }</a>
-<a name="640"><span class="lineNum">     640 </span>            :   if (try_consume(SYM_EQ)) {</a>
-<a name="641"><span class="lineNum">     641 </span>            :     auto value = parse_expr();</a>
-<a name="642"><span class="lineNum">     642 </span>            :     auto assign = ast_ptr&lt;AssignExpr&gt;(receiver_entry, move(receiver), move(value));</a>
-<a name="643"><span class="lineNum">     643 </span>            :     return parse_receiver(move(assign), receiver_entry);</a>
-<a name="644"><span class="lineNum">     644 </span>            :   }</a>
-<a name="645"><span class="lineNum">     645 </span>            :   if (try_consume(SYM_LBRACKET)) {</a>
-<a name="646"><span class="lineNum">     646 </span>            :     auto args = vector&lt;AnyExpr&gt;{};</a>
-<a name="647"><span class="lineNum">     647 </span>            :     args.emplace_back(move(receiver));</a>
-<a name="648"><span class="lineNum">     648 </span>            :     args.emplace_back(parse_expr());</a>
-<a name="649"><span class="lineNum">     649 </span>            :     consume(SYM_RBRACKET);</a>
-<a name="650"><span class="lineNum">     650 </span>            :     if (try_consume(SYM_EQ)) {</a>
-<a name="651"><span class="lineNum">     651 </span>            :       auto value = parse_expr();</a>
-<a name="652"><span class="lineNum">     652 </span>            :       args.emplace_back(move(value));</a>
-<a name="653"><span class="lineNum">     653 </span>            :       auto call = ast_ptr&lt;CallExpr&gt;(entry, &quot;[]=&quot;, move(args));</a>
-<a name="654"><span class="lineNum">     654 </span>            :       return parse_receiver(move(call), receiver_entry);</a>
-<a name="655"><span class="lineNum">     655 </span>            :     }</a>
-<a name="656"><span class="lineNum">     656 </span>            :     auto call = ast_ptr&lt;CallExpr&gt;(entry, &quot;[]&quot;, move(args));</a>
-<a name="657"><span class="lineNum">     657 </span>            :     return parse_receiver(move(call), receiver_entry);</a>
-<a name="658"><span class="lineNum">     658 </span>            :   }</a>
-<a name="659"><span class="lineNum">     659 </span>            :   if (try_consume(SYM_COLON_COLON)) {</a>
-<a name="660"><span class="lineNum">     660 </span>            :     auto field = consume_word();</a>
-<a name="661"><span class="lineNum">     661 </span>            :     auto access = ast_ptr&lt;FieldAccessExpr&gt;(receiver_entry, move(receiver), field);</a>
-<a name="662"><span class="lineNum">     662 </span>            :     return parse_receiver(move(access), receiver_entry);</a>
+<a name="563"><span class="lineNum">     563 </span>            :   return ast_ptr&lt;NumberExpr&gt;({entry, 1}, value);</a>
+<a name="564"><span class="lineNum">     564 </span>            : }</a>
+<a name="565"><span class="lineNum">     565 </span>            : </a>
+<a name="566"><span class="lineNum">     566 </span>            : auto Parser::parse_string_expr() -&gt; unique_ptr&lt;StringExpr&gt; {</a>
+<a name="567"><span class="lineNum">     567 </span>            :   auto entry = tokens.begin();</a>
+<a name="568"><span class="lineNum">     568 </span>            :   expect(Token::Type::Literal);</a>
+<a name="569"><span class="lineNum">     569 </span>            : </a>
+<a name="570"><span class="lineNum">     570 </span>            :   auto value = string(assert_payload_next());</a>
+<a name="571"><span class="lineNum">     571 </span>            : </a>
+<a name="572"><span class="lineNum">     572 </span>            :   return ast_ptr&lt;StringExpr&gt;({entry, 1}, value);</a>
+<a name="573"><span class="lineNum">     573 </span>            : }</a>
+<a name="574"><span class="lineNum">     574 </span>            : </a>
+<a name="575"><span class="lineNum">     575 </span>            : auto Parser::parse_char_expr() -&gt; unique_ptr&lt;CharExpr&gt; {</a>
+<a name="576"><span class="lineNum">     576 </span>            :   auto entry = tokens.begin();</a>
+<a name="577"><span class="lineNum">     577 </span>            :   expect(Token::Type::Char);</a>
+<a name="578"><span class="lineNum">     578 </span>            : </a>
+<a name="579"><span class="lineNum">     579 </span>            :   auto value = string(assert_payload_next())[0];</a>
+<a name="580"><span class="lineNum">     580 </span>            : </a>
+<a name="581"><span class="lineNum">     581 </span>            :   return ast_ptr&lt;CharExpr&gt;({entry, 1}, value);</a>
+<a name="582"><span class="lineNum">     582 </span>            : }</a>
+<a name="583"><span class="lineNum">     583 </span>            : </a>
+<a name="584"><span class="lineNum">     584 </span>            : auto Parser::parse_primary() -&gt; unique_ptr&lt;Expr&gt; {</a>
+<a name="585"><span class="lineNum">     585 </span>            :   const auto guard = make_guard(&quot;Parsing primary expression&quot;);</a>
+<a name="586"><span class="lineNum">     586 </span>            : </a>
+<a name="587"><span class="lineNum">     587 </span>            :   auto entry = tokens.begin();</a>
+<a name="588"><span class="lineNum">     588 </span>            :   if (try_consume(SYM_LPAREN)) {</a>
+<a name="589"><span class="lineNum">     589 </span>            :     auto val = parse_expr();</a>
+<a name="590"><span class="lineNum">     590 </span>            :     consume(SYM_RPAREN);</a>
+<a name="591"><span class="lineNum">     591 </span>            :     return val;</a>
+<a name="592"><span class="lineNum">     592 </span>            :   }</a>
+<a name="593"><span class="lineNum">     593 </span>            : </a>
+<a name="594"><span class="lineNum">     594 </span>            :   if (tokens-&gt;type == Number)</a>
+<a name="595"><span class="lineNum">     595 </span>            :     return parse_number_expr();</a>
+<a name="596"><span class="lineNum">     596 </span>            :   if (tokens-&gt;type == Token::Type::Literal)</a>
+<a name="597"><span class="lineNum">     597 </span>            :     return parse_string_expr();</a>
+<a name="598"><span class="lineNum">     598 </span>            :   if (tokens-&gt;type == Token::Type::Char)</a>
+<a name="599"><span class="lineNum">     599 </span>            :     return parse_char_expr();</a>
+<a name="600"><span class="lineNum">     600 </span>            :   if (try_consume(KWD_TRUE))</a>
+<a name="601"><span class="lineNum">     601 </span>            :     return ast_ptr&lt;BoolExpr&gt;(entry, true);</a>
+<a name="602"><span class="lineNum">     602 </span>            :   if (try_consume(KWD_FALSE))</a>
+<a name="603"><span class="lineNum">     603 </span>            :     return ast_ptr&lt;BoolExpr&gt;(entry, false);</a>
+<a name="604"><span class="lineNum">     604 </span>            :   if (try_consume(SYM_COLON_COLON))</a>
+<a name="605"><span class="lineNum">     605 </span>            :     return ast_ptr&lt;FieldAccessExpr&gt;(entry, std::nullopt, consume_word());</a>
+<a name="606"><span class="lineNum">     606 </span>            :   if (try_consume(SYM_DOLLAR))</a>
+<a name="607"><span class="lineNum">     607 </span>            :     return ast_ptr&lt;ConstExpr&gt;(entry, consume_word(), std::nullopt);</a>
+<a name="608"><span class="lineNum">     608 </span>            : </a>
+<a name="609"><span class="lineNum">     609 </span>            :   if (tokens-&gt;type == Word) {</a>
+<a name="610"><span class="lineNum">     610 </span>            :     if (try_peek_uword(0)) {</a>
+<a name="611"><span class="lineNum">     611 </span>            :       if (try_peek(1, SYM_COLON_COLON)) {</a>
+<a name="612"><span class="lineNum">     612 </span>            :         auto parent = consume_word();</a>
+<a name="613"><span class="lineNum">     613 </span>            :         consume(SYM_COLON_COLON);</a>
+<a name="614"><span class="lineNum">     614 </span>            :         return ast_ptr&lt;ConstExpr&gt;(entry, consume_word(), parent);</a>
+<a name="615"><span class="lineNum">     615 </span>            :       }</a>
+<a name="616"><span class="lineNum">     616 </span>            : </a>
+<a name="617"><span class="lineNum">     617 </span>            :       auto type = parse_type();</a>
+<a name="618"><span class="lineNum">     618 </span>            :       if (try_consume(SYM_LPAREN)) {</a>
+<a name="619"><span class="lineNum">     619 </span>            :         auto call_args = vector&lt;AnyExpr&gt;{};</a>
+<a name="620"><span class="lineNum">     620 </span>            :         consume_with_commas_until(SYM_RPAREN, [&amp;] { call_args.emplace_back(parse_expr()); });</a>
+<a name="621"><span class="lineNum">     621 </span>            :         return ast_ptr&lt;CtorExpr&gt;(entry, move(type), move(call_args));</a>
+<a name="622"><span class="lineNum">     622 </span>            :       }</a>
+<a name="623"><span class="lineNum">     623 </span>            :       if (try_consume(SYM_COLON)) {</a>
+<a name="624"><span class="lineNum">     624 </span>            :         if (try_consume(SYM_LBRACKET)) {</a>
+<a name="625"><span class="lineNum">     625 </span>            :           auto slice_members = vector&lt;AnyExpr&gt;{};</a>
+<a name="626"><span class="lineNum">     626 </span>            :           consume_with_commas_until(SYM_RBRACKET, [&amp;] { slice_members.emplace_back(parse_expr()); });</a>
+<a name="627"><span class="lineNum">     627 </span>            :           return ast_ptr&lt;SliceExpr&gt;(entry, move(type), move(slice_members));</a>
+<a name="628"><span class="lineNum">     628 </span>            :         }</a>
+<a name="629"><span class="lineNum">     629 </span>            :       }</a>
+<a name="630"><span class="lineNum">     630 </span>            : </a>
+<a name="631"><span class="lineNum">     631 </span>            :       throw std::runtime_error(&quot;Couldn't make an expression from here with a type&quot;);</a>
+<a name="632"><span class="lineNum">     632 </span>            :     }</a>
+<a name="633"><span class="lineNum">     633 </span>            :     auto name = consume_word();</a>
+<a name="634"><span class="lineNum">     634 </span>            :     if (try_consume(SYM_LPAREN)) {</a>
+<a name="635"><span class="lineNum">     635 </span>            :       auto call_args = vector&lt;AnyExpr&gt;{};</a>
+<a name="636"><span class="lineNum">     636 </span>            :       consume_with_commas_until(SYM_RPAREN, [&amp;] { call_args.emplace_back(parse_expr()); });</a>
+<a name="637"><span class="lineNum">     637 </span>            :       return ast_ptr&lt;CallExpr&gt;(entry, name, move(call_args));</a>
+<a name="638"><span class="lineNum">     638 </span>            :     }</a>
+<a name="639"><span class="lineNum">     639 </span>            :     return ast_ptr&lt;VarExpr&gt;({entry, 1}, name);</a>
+<a name="640"><span class="lineNum">     640 </span>            :   }</a>
+<a name="641"><span class="lineNum">     641 </span>            :   throw std::runtime_error(&quot;Couldn't make an expression from here&quot;);</a>
+<a name="642"><span class="lineNum">     642 </span>            : }</a>
+<a name="643"><span class="lineNum">     643 </span>            : </a>
+<a name="644"><span class="lineNum">     644 </span>            : auto Parser::parse_receiver(unique_ptr&lt;Expr&gt; receiver, VectorTokenIterator receiver_entry) -&gt; unique_ptr&lt;Expr&gt; {</a>
+<a name="645"><span class="lineNum">     645 </span>            :   auto entry = tokens.begin();</a>
+<a name="646"><span class="lineNum">     646 </span>            :   if (try_consume(SYM_DOT)) {</a>
+<a name="647"><span class="lineNum">     647 </span>            :     auto name = consume_word();</a>
+<a name="648"><span class="lineNum">     648 </span>            :     auto call_args = vector&lt;AnyExpr&gt;{};</a>
+<a name="649"><span class="lineNum">     649 </span>            :     call_args.emplace_back(move(receiver));</a>
+<a name="650"><span class="lineNum">     650 </span>            :     if (try_consume(SYM_LPAREN)) { // A call with a dot `a.b(...)`</a>
+<a name="651"><span class="lineNum">     651 </span>            :       consume_with_commas_until(SYM_RPAREN, [&amp;] { call_args.emplace_back(parse_expr()); });</a>
+<a name="652"><span class="lineNum">     652 </span>            :       auto call = ast_ptr&lt;CallExpr&gt;(entry + 1, name, move(call_args));</a>
+<a name="653"><span class="lineNum">     653 </span>            :       return parse_receiver(move(call), receiver_entry);</a>
+<a name="654"><span class="lineNum">     654 </span>            :     }</a>
+<a name="655"><span class="lineNum">     655 </span>            :     if (try_consume(SYM_EQ)) { // A setter `a.b = ...`</a>
+<a name="656"><span class="lineNum">     656 </span>            :       auto value = parse_expr();</a>
+<a name="657"><span class="lineNum">     657 </span>            :       call_args.emplace_back(move(value));</a>
+<a name="658"><span class="lineNum">     658 </span>            :       auto call = ast_ptr&lt;CallExpr&gt;(entry + 1, name + '=', move(call_args));</a>
+<a name="659"><span class="lineNum">     659 </span>            :       return parse_receiver(move(call), receiver_entry);</a>
+<a name="660"><span class="lineNum">     660 </span>            :     }</a>
+<a name="661"><span class="lineNum">     661 </span>            :     auto noarg_call = ast_ptr&lt;CallExpr&gt;(receiver_entry, name, move(call_args));</a>
+<a name="662"><span class="lineNum">     662 </span>            :     return parse_receiver(move(noarg_call), receiver_entry);</a>
 <a name="663"><span class="lineNum">     663 </span>            :   }</a>
-<a name="664"><span class="lineNum">     664 </span>            :   return receiver;</a>
-<a name="665"><span class="lineNum">     665 </span>            : }</a>
-<a name="666"><span class="lineNum">     666 </span>            : </a>
-<a name="667"><span class="lineNum">     667 </span>            : auto Parser::parse_receiver() -&gt; unique_ptr&lt;Expr&gt; {</a>
-<a name="668"><span class="lineNum">     668 </span>            :   auto entry = tokens.begin();</a>
-<a name="669"><span class="lineNum">     669 </span>            :   return parse_receiver(parse_primary(), entry);</a>
-<a name="670"><span class="lineNum">     670 </span>            : }</a>
-<a name="671"><span class="lineNum">     671 </span>            : </a>
-<a name="672"><span class="lineNum">     672 </span>            : auto Parser::parse_unary() -&gt; unique_ptr&lt;Expr&gt; {</a>
-<a name="673"><span class="lineNum">     673 </span>            :   auto entry = tokens.begin();</a>
-<a name="674"><span class="lineNum">     674 </span>            :   for (const auto&amp; un_op : unary_operators()) {</a>
-<a name="675"><span class="lineNum">     675 </span>            :     if (try_consume(un_op)) {</a>
-<a name="676"><span class="lineNum">     676 </span>            :       auto value = parse_receiver();</a>
-<a name="677"><span class="lineNum">     677 </span>            :       auto args = vector&lt;AnyExpr&gt;{};</a>
-<a name="678"><span class="lineNum">     678 </span>            :       args.emplace_back(move(value));</a>
-<a name="679"><span class="lineNum">     679 </span>            :       return ast_ptr&lt;CallExpr&gt;(entry, string(std::get&lt;Atom&gt;(un_op)), move(args));</a>
-<a name="680"><span class="lineNum">     680 </span>            :     }</a>
-<a name="681"><span class="lineNum">     681 </span>            :   }</a>
-<a name="682"><span class="lineNum">     682 </span>            :   return parse_receiver();</a>
-<a name="683"><span class="lineNum">     683 </span>            : }</a>
-<a name="684"><span class="lineNum">     684 </span>            : } // namespace yume::ast::parser</a>
-<a name="685"><span class="lineNum">     685 </span>            : </a>
-<a name="686"><span class="lineNum">     686 </span>            : namespace yume::ast {</a>
-<a name="687"><span class="lineNum">     687 </span>            : auto Program::parse(TokenIterator&amp; tokens) -&gt; unique_ptr&lt;Program&gt; {</a>
-<a name="688"><span class="lineNum">     688 </span>            :   auto parser = parser::Parser{tokens};</a>
-<a name="689"><span class="lineNum">     689 </span>            :   parser.ignore_separator();</a>
-<a name="690"><span class="lineNum">     690 </span>            :   auto entry = tokens.begin();</a>
-<a name="691"><span class="lineNum">     691 </span>            : </a>
-<a name="692"><span class="lineNum">     692 </span>            :   auto statements = vector&lt;AnyStmt&gt;{};</a>
-<a name="693"><span class="lineNum">     693 </span>            :   while (!tokens.at_end())</a>
-<a name="694"><span class="lineNum">     694 </span>            :     statements.emplace_back(parser.parse_stmt());</a>
+<a name="664"><span class="lineNum">     664 </span>            :   if (try_consume(SYM_EQ)) {</a>
+<a name="665"><span class="lineNum">     665 </span>            :     auto value = parse_expr();</a>
+<a name="666"><span class="lineNum">     666 </span>            :     auto assign = ast_ptr&lt;AssignExpr&gt;(receiver_entry, move(receiver), move(value));</a>
+<a name="667"><span class="lineNum">     667 </span>            :     return parse_receiver(move(assign), receiver_entry);</a>
+<a name="668"><span class="lineNum">     668 </span>            :   }</a>
+<a name="669"><span class="lineNum">     669 </span>            :   if (try_consume(SYM_LBRACKET)) {</a>
+<a name="670"><span class="lineNum">     670 </span>            :     auto args = vector&lt;AnyExpr&gt;{};</a>
+<a name="671"><span class="lineNum">     671 </span>            :     args.emplace_back(move(receiver));</a>
+<a name="672"><span class="lineNum">     672 </span>            :     args.emplace_back(parse_expr());</a>
+<a name="673"><span class="lineNum">     673 </span>            :     consume(SYM_RBRACKET);</a>
+<a name="674"><span class="lineNum">     674 </span>            :     if (try_consume(SYM_EQ)) {</a>
+<a name="675"><span class="lineNum">     675 </span>            :       auto value = parse_expr();</a>
+<a name="676"><span class="lineNum">     676 </span>            :       args.emplace_back(move(value));</a>
+<a name="677"><span class="lineNum">     677 </span>            :       auto call = ast_ptr&lt;CallExpr&gt;(entry, &quot;[]=&quot;, move(args));</a>
+<a name="678"><span class="lineNum">     678 </span>            :       return parse_receiver(move(call), receiver_entry);</a>
+<a name="679"><span class="lineNum">     679 </span>            :     }</a>
+<a name="680"><span class="lineNum">     680 </span>            :     auto call = ast_ptr&lt;CallExpr&gt;(entry, &quot;[]&quot;, move(args));</a>
+<a name="681"><span class="lineNum">     681 </span>            :     return parse_receiver(move(call), receiver_entry);</a>
+<a name="682"><span class="lineNum">     682 </span>            :   }</a>
+<a name="683"><span class="lineNum">     683 </span>            :   if (try_consume(SYM_COLON_COLON)) {</a>
+<a name="684"><span class="lineNum">     684 </span>            :     auto field = consume_word();</a>
+<a name="685"><span class="lineNum">     685 </span>            :     auto access = ast_ptr&lt;FieldAccessExpr&gt;(receiver_entry, move(receiver), field);</a>
+<a name="686"><span class="lineNum">     686 </span>            :     return parse_receiver(move(access), receiver_entry);</a>
+<a name="687"><span class="lineNum">     687 </span>            :   }</a>
+<a name="688"><span class="lineNum">     688 </span>            :   return receiver;</a>
+<a name="689"><span class="lineNum">     689 </span>            : }</a>
+<a name="690"><span class="lineNum">     690 </span>            : </a>
+<a name="691"><span class="lineNum">     691 </span>            : auto Parser::parse_receiver() -&gt; unique_ptr&lt;Expr&gt; {</a>
+<a name="692"><span class="lineNum">     692 </span>            :   auto entry = tokens.begin();</a>
+<a name="693"><span class="lineNum">     693 </span>            :   return parse_receiver(parse_primary(), entry);</a>
+<a name="694"><span class="lineNum">     694 </span>            : }</a>
 <a name="695"><span class="lineNum">     695 </span>            : </a>
-<a name="696"><span class="lineNum">     696 </span>            :   return make_unique&lt;Program&gt;(parser.ts(entry), move(statements));</a>
-<a name="697"><span class="lineNum">     697 </span>            : }</a>
-<a name="698"><span class="lineNum">     698 </span>            : } // namespace yume::ast</a>
+<a name="696"><span class="lineNum">     696 </span>            : auto Parser::parse_unary() -&gt; unique_ptr&lt;Expr&gt; {</a>
+<a name="697"><span class="lineNum">     697 </span>            :   auto entry = tokens.begin();</a>
+<a name="698"><span class="lineNum">     698 </span>            :   for (const auto&amp; un_op : unary_operators()) {</a>
+<a name="699"><span class="lineNum">     699 </span>            :     if (try_consume(un_op)) {</a>
+<a name="700"><span class="lineNum">     700 </span>            :       auto value = parse_receiver();</a>
+<a name="701"><span class="lineNum">     701 </span>            :       auto args = vector&lt;AnyExpr&gt;{};</a>
+<a name="702"><span class="lineNum">     702 </span>            :       args.emplace_back(move(value));</a>
+<a name="703"><span class="lineNum">     703 </span>            :       return ast_ptr&lt;CallExpr&gt;(entry, string(std::get&lt;Atom&gt;(un_op)), move(args));</a>
+<a name="704"><span class="lineNum">     704 </span>            :     }</a>
+<a name="705"><span class="lineNum">     705 </span>            :   }</a>
+<a name="706"><span class="lineNum">     706 </span>            :   return parse_receiver();</a>
+<a name="707"><span class="lineNum">     707 </span>            : }</a>
+<a name="708"><span class="lineNum">     708 </span>            : } // namespace yume::ast::parser</a>
+<a name="709"><span class="lineNum">     709 </span>            : </a>
+<a name="710"><span class="lineNum">     710 </span>            : namespace yume::ast {</a>
+<a name="711"><span class="lineNum">     711 </span>            : auto Program::parse(TokenIterator&amp; tokens) -&gt; unique_ptr&lt;Program&gt; {</a>
+<a name="712"><span class="lineNum">     712 </span>            :   auto parser = parser::Parser{tokens};</a>
+<a name="713"><span class="lineNum">     713 </span>            :   parser.ignore_separator();</a>
+<a name="714"><span class="lineNum">     714 </span>            :   auto entry = tokens.begin();</a>
+<a name="715"><span class="lineNum">     715 </span>            : </a>
+<a name="716"><span class="lineNum">     716 </span>            :   auto statements = vector&lt;AnyStmt&gt;{};</a>
+<a name="717"><span class="lineNum">     717 </span>            :   while (!tokens.at_end())</a>
+<a name="718"><span class="lineNum">     718 </span>            :     statements.emplace_back(parser.parse_stmt());</a>
+<a name="719"><span class="lineNum">     719 </span>            : </a>
+<a name="720"><span class="lineNum">     720 </span>            :   return make_unique&lt;Program&gt;(parser.ts(entry), move(statements));</a>
+<a name="721"><span class="lineNum">     721 </span>            : }</a>
+<a name="722"><span class="lineNum">     722 </span>            : } // namespace yume::ast</a>
 </pre>
       </td>
     </tr>
