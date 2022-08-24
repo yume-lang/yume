@@ -7,6 +7,7 @@
 #include "util.hpp"
 #include "vals.hpp"
 #include <deque>
+#include <llvm/IR/DIBuilder.h>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
@@ -66,7 +67,8 @@ class Compiler : public CRTPWalker<Compiler> {
   unique_ptr<llvm::LLVMContext> m_context;
   unique_ptr<llvm::IRBuilder<>> m_builder;
   unique_ptr<llvm::Module> m_module;
-  unique_ptr<llvm::TargetMachine> m_targetMachine;
+  unique_ptr<llvm::TargetMachine> m_target_machine;
+  unique_ptr<llvm::DIBuilder> m_debug;
 
   friend semantic::TypeWalker;
   friend CRTPWalker;

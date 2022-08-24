@@ -20,11 +20,13 @@
 #include <llvm/ADT/StringRef.h>
 #include <llvm/ADT/Twine.h>
 #include <llvm/ADT/iterator.h>
+#include <llvm/BinaryFormat/Dwarf.h>
 #include <llvm/IR/Argument.h>
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/CallingConv.h>
 #include <llvm/IR/Constant.h>
 #include <llvm/IR/Constants.h>
+#include <llvm/IR/DIBuilder.h>
 #include <llvm/IR/DerivedTypes.h>
 #include <llvm/IR/Function.h>
 #include <llvm/IR/GlobalValue.h>
@@ -87,6 +89,9 @@ Compiler::Compiler(const optional<string>& target_triple, vector<SourceFile> sou
     : m_sources(move(source_files)), m_walker(std::make_unique<semantic::TypeWalker>(*this)) {
   m_context = std::make_unique<llvm::LLVMContext>();
   m_module = std::make_unique<llvm::Module>("yume", *m_context);
+  m_debug = std::make_unique<llvm::DIBuilder>(*m_module);
+  m_module->addModuleFlag(llvm::Module::Warning, "Debug Info Version", llvm::DEBUG_METADATA_VERSION);
+
   m_builder = std::make_unique<llvm::IRBuilder<>>(*m_context);
 
   llvm::InitializeNativeTarget();
@@ -104,10 +109,10 @@ Compiler::Compiler(const optional<string>& target_triple, vector<SourceFile> sou
   const char* feat = "";
 
   const llvm::TargetOptions opt;
-  m_targetMachine =
+  m_target_machine =
       unique_ptr<llvm::TargetMachine>(target->createTargetMachine(triple, cpu, feat, opt, llvm::Reloc::Model::PIC_));
 
-  m_module->setDataLayout(m_targetMachine->createDataLayout());
+  m_module->setDataLayout(m_target_machine->createDataLayout());
   m_module->setTargetTriple(triple);
 
   m_types.declare_size_type(*this);
@@ -240,6 +245,8 @@ void Compiler::run() {
   m_builder->SetInsertPoint(&m_global_dtor_fn->getEntryBlock(), m_global_dtor_fn->getEntryBlock().begin());
   destruct_last_scope();
   m_scope.clear();
+  m_debug->finalize();
+  m_module->print(errs(), nullptr);
 }
 
 void Compiler::walk_types(DeclLike decl_like) {
@@ -1511,7 +1518,7 @@ void Compiler::write_object(const char* filename, bool binary) {
   llvm::legacy::PassManager pass;
   auto file_type = binary ? llvm::CGFT_ObjectFile : llvm::CGFT_AssemblyFile;
 
-  if (m_targetMachine->addPassesToEmitFile(pass, *dest, nullptr, file_type)) {
+  if (m_target_machine->addPassesToEmitFile(pass, *dest, nullptr, file_type)) {
     errs() << "TargetMachine can't emit a file of this type";
     throw std::exception();
   }
