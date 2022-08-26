@@ -3,6 +3,7 @@
 #include "diagnostic/source_location.hpp"
 #include <array>
 #include <cstddef>
+#include <filesystem>
 #include <llvm/Support/Casting.h>
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/raw_ostream.h>
@@ -21,6 +22,7 @@
 namespace yume {
 using namespace std::literals::string_literals;
 using namespace std::literals::string_view_literals;
+namespace fs = std::filesystem;
 using std::array;
 using std::optional;
 using std::span;
@@ -103,7 +105,7 @@ auto inline open_file(nonnull<const char*> filename) -> unique_ptr<llvm::raw_pwr
 /// \brief The stem of a path-like string, which is the component after the last slash.
 ///
 /// "foo/bar/file.txt" -> "file.txt"
-[[nodiscard]] auto inline stem(std::string_view sv) -> std::string_view {
+[[nodiscard, deprecated]] auto inline stem(std::string_view sv) -> std::string_view {
   auto delim = sv.rfind('/');
   return sv.substr(delim == string::npos ? 0 : delim + 1);
 }

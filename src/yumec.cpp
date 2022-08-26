@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <exception>
+#include <filesystem>
 #include <fstream>
 #include <iterator>
 #include <llvm/ADT/StringRef.h>
@@ -96,8 +97,9 @@ auto compile(const std::optional<std::string>& target_triple, std::vector<std::s
 
     for (auto& src_input : inputs) {
       auto src_name = src_input->getBufferIdentifier().str();
+      auto src_path = src_name == "-" ? std::filesystem::path{} : std::filesystem::absolute(src_name);
       auto src_stream = std::stringstream(std::string(src_input->getBufferStart(), src_input->getBufferSize()));
-      auto& source = source_files.emplace_back(src_stream, src_name);
+      auto& source = source_files.emplace_back(src_stream, src_path);
 
       if (flags & CompilerFlags::EmitUntypedDot) {
         dot_visitor->visit(*source.program, "");
@@ -130,10 +132,10 @@ auto compile(const std::optional<std::string>& target_triple, std::vector<std::s
 
   if (flags & CompilerFlags::EmitDot) {
     for (const auto& i : compiler.source_files()) {
-      const std::string full_name = "output_"s + std::string(yume::stem(i.name)) + ".dot";
+      const std::string full_name = "output_"s + i.path.stem().native() + ".dot";
       auto dot = yume::open_file(full_name.c_str());
       auto visitor = yume::diagnostic::DotVisitor{*dot};
-      visitor.visit(*i.program, "");
+      visitor.visit(*i.program, nullptr);
     }
   }
 

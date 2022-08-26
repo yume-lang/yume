@@ -47,7 +47,7 @@ struct Loc {
   [[nodiscard]] auto to_string() const -> string {
     stringstream ss{};
     if (file != nullptr) {
-      ss << stem(file);
+      ss << fs::path(file).stem().native();
     }
 
     if (!valid()) {

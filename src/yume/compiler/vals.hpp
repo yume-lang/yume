@@ -270,13 +270,17 @@ struct InScope {
 
 /// A source file with its associated Syntax Tree.
 struct SourceFile {
-  const string name;
+  fs::path path;
+  string name;
   vector<yume::Token> tokens;
   ast::TokenIterator iterator;
   unique_ptr<ast::Program> program;
 
-  SourceFile(std::istream& in, string name)
-      : name(move(name)), tokens(yume::tokenize(in, this->name)), iterator{tokens.begin(), tokens.end()} {
+  static auto name_or_stdin(const fs::path& path) -> string { return path.empty() ? path.native() : "<stdin>"s; }
+
+  SourceFile(std::istream& in, fs::path path)
+      : path(move(path)), name(name_or_stdin(this->path)),
+        tokens(yume::tokenize(in, this->name)), iterator{tokens.begin(), tokens.end()} {
 #ifdef YUME_SPEW_LIST_TOKENS
     llvm::outs() << "tokens:\n";
     for (auto& i : tokens) {
