@@ -64,6 +64,8 @@ class Compiler : public CRTPWalker<Compiler> {
 
   ast::AST* m_return_value{};
 
+  std::map<ast::Program*, llvm::DICompileUnit*> m_source_mapping{};
+
   unique_ptr<llvm::LLVMContext> m_context;
   unique_ptr<llvm::IRBuilder<>> m_builder;
   unique_ptr<llvm::Module> m_module;

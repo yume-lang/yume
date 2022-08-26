@@ -108,6 +108,12 @@ Compiler::Compiler(const optional<string>& target_triple, vector<SourceFile> sou
   const char* cpu = "generic";
   const char* feat = "";
 
+  for (const auto& src_file : m_sources) {
+    auto* debug_file = m_debug->createFile(src_file.path.filename().native(), src_file.path.parent_path().native());
+    auto* compile_unit = m_debug->createCompileUnit(llvm::dwarf::DW_LANG_C, debug_file, "yumec", false, "", 0);
+    m_source_mapping.try_emplace(src_file.program.get(), compile_unit);
+  }
+
   const llvm::TargetOptions opt;
   m_target_machine =
       unique_ptr<llvm::TargetMachine>(target->createTargetMachine(triple, cpu, feat, opt, llvm::Reloc::Model::PIC_));
@@ -246,7 +252,7 @@ void Compiler::run() {
   destruct_last_scope();
   m_scope.clear();
   m_debug->finalize();
-  m_module->print(errs(), nullptr);
+  llvm::verifyModule(*m_module, &errs());
 }
 
 void Compiler::walk_types(DeclLike decl_like) {
@@ -527,6 +533,17 @@ auto Compiler::declare(Fn& fn) -> llvm::Function* {
   // At this point, the function prototype is declared, but not the body.
   // In the case of extern or local functions, a prototype is all that will be declared.
   if (!fn.extern_decl() && !fn.local()) {
+    auto* fn_unit = m_source_mapping.at(fn.member);
+    auto* fn_file = m_debug->createFile(fn_unit->getFilename(), fn_unit->getDirectory());
+    llvm::DIScope* f_context = fn_file;
+    unsigned line_no = fn.ast().location().begin_line;
+    unsigned scope_line = line_no;
+    auto types = m_debug->getOrCreateTypeArray({}); // TODO(rymiel)
+    llvm::DISubprogram* subprogram =
+        m_debug->createFunction(f_context, fn.name(), name, fn_file, line_no, m_debug->createSubroutineType(types),
+                                scope_line, llvm::DINode::FlagPrototyped, llvm::DISubprogram::SPFlagDefinition);
+    fn.llvm->setSubprogram(subprogram);
+
     m_decl_queue.emplace(&fn);
     m_walker->current_decl = &fn;
     m_walker->body_statement(fn.ast());
@@ -584,6 +601,7 @@ void Compiler::setup_fn_base(Fn& fn) {
   m_scope_ctor.reset();
   auto* bb = llvm::BasicBlock::Create(*m_context, "entry", fn.llvm);
   m_builder->SetInsertPoint(bb);
+  m_builder->SetCurrentDebugLocation({});
 
   if (fn.abstract())
     return; // Abstract methods don't have a real body and thus have no need to meaningfully use params as locals
@@ -703,7 +721,7 @@ void Compiler::define(Fn& fn) {
 
   m_scope.pop_scope();
   yume_assert(m_scope.size() == 1, "End of function should end with only the global scope remaining");
-  verifyFunction(*fn.llvm, &errs());
+  // llvm::verifyFunction(*fn.llvm, &errs());
 }
 
 template <> void Compiler::statement(ast::WhileStmt& stat) {
@@ -1529,11 +1547,19 @@ void Compiler::write_object(const char* filename, bool binary) {
 
 void Compiler::body_statement(ast::Stmt& stat) {
   const ASTStackTrace guard("Codegen: "s + stat.kind_name() + " statement", stat);
+  m_builder->SetCurrentDebugLocation({});
   return CRTPWalker::body_statement(stat);
 }
 
 auto Compiler::body_expression(ast::Expr& expr) -> Val {
   const ASTStackTrace guard("Codegen: "s + expr.kind_name() + " expression", expr);
+  m_builder->SetCurrentDebugLocation({});
+  if (m_current_fn != nullptr && m_current_fn->llvm != nullptr) {
+    if (llvm::DIScope* scope = m_current_fn->llvm->getSubprogram(); scope != nullptr) {
+      m_builder->SetCurrentDebugLocation(
+          llvm::DILocation::get(scope->getContext(), expr.location().begin_line, expr.location().begin_col, scope));
+    }
+  }
   return CRTPWalker::body_expression(expr);
 }
 } // namespace yume

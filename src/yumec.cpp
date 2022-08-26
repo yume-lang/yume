@@ -97,7 +97,8 @@ auto compile(const std::optional<std::string>& target_triple, std::vector<std::s
 
     for (auto& src_input : inputs) {
       auto src_name = src_input->getBufferIdentifier().str();
-      auto src_path = src_name == "-" ? std::filesystem::path{} : std::filesystem::absolute(src_name);
+      auto src_path =
+          src_name == "-" ? std::filesystem::path{} : std::filesystem::canonical(std::filesystem::absolute(src_name));
       auto src_stream = std::stringstream(std::string(src_input->getBufferStart(), src_input->getBufferSize()));
       auto& source = source_files.emplace_back(src_stream, src_path);
 
@@ -135,7 +136,7 @@ auto compile(const std::optional<std::string>& target_triple, std::vector<std::s
       const std::string full_name = "output_"s + i.path.stem().native() + ".dot";
       auto dot = yume::open_file(full_name.c_str());
       auto visitor = yume::diagnostic::DotVisitor{*dot};
-      visitor.visit(*i.program, nullptr);
+      visitor.visit(*i.program, "");
     }
   }
 
