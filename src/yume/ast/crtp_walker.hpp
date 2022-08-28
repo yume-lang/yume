@@ -51,6 +51,8 @@ public:
     case ast::K_Call: return conv_expression<ast::CallExpr>(expr, args...);
     case ast::K_Var: return conv_expression<ast::VarExpr>(expr, args...);
     case ast::K_Const: return conv_expression<ast::ConstExpr>(expr, args...);
+    case ast::K_Lambda: return conv_expression<ast::LambdaExpr>(expr, args...);
+    case ast::K_DirectCall: return conv_expression<ast::DirectCallExpr>(expr, args...);
     case ast::K_Assign: return conv_expression<ast::AssignExpr>(expr, args...);
     case ast::K_Ctor: return conv_expression<ast::CtorExpr>(expr, args...);
     // case ast::K_Dtor: return conv_expression<ast::DtorExpr>(expr, args...);

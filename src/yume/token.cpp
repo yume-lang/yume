@@ -208,6 +208,7 @@ public:
               {Token::Type::Symbol, is_exactly("!="sv)},
               {Token::Type::Symbol, is_exactly("//"sv)},
               {Token::Type::Symbol, is_exactly("::"sv)},
+              {Token::Type::Symbol, is_exactly("->"sv)},
               {Token::Type::Symbol, is_any_of(R"(()[]{}<>=:#%-+.,!/*&@$\)"sv)},
           })) {
         string message = "Tokenizer didn't recognize ";

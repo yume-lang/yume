@@ -136,7 +136,7 @@ auto Parser::try_peek_uword(int ahead, [[maybe_unused]] const source_location lo
   return token->type == Word && payload.has_value() && is_uword(payload.value());
 }
 
-auto Parser::parse_stmt() -> unique_ptr<Stmt> {
+auto Parser::parse_stmt(bool require_sep) -> unique_ptr<Stmt> {
   auto stat = unique_ptr<Stmt>();
 
   if (tokens->is_a(KWD_DEF))
@@ -156,7 +156,8 @@ auto Parser::parse_stmt() -> unique_ptr<Stmt> {
   else
     stat = parse_expr();
 
-  require_separator();
+  if (require_sep)
+    require_separator();
   return stat;
 }
 
@@ -688,10 +689,38 @@ auto Parser::parse_receiver(unique_ptr<Expr> receiver, VectorTokenIterator recei
     auto access = ast_ptr<FieldAccessExpr>(receiver_entry, move(receiver), field);
     return parse_receiver(move(access), receiver_entry);
   }
+  if (try_consume(SYM_ARROW)) {
+    consume(SYM_LPAREN);
+    auto call_args = vector<AnyExpr>{};
+    consume_with_commas_until(SYM_RPAREN, [&] { call_args.emplace_back(parse_expr()); });
+    auto call = ast_ptr<DirectCallExpr>(entry, move(receiver), move(call_args));
+    return parse_receiver(move(call), receiver_entry);
+  }
   return receiver;
 }
 
+auto Parser::parse_lambda() -> unique_ptr<LambdaExpr> {
+  auto entry = tokens.begin();
+
+  consume(SYM_ARROW);
+  consume(SYM_LPAREN);
+
+  auto args = vector<TypeName>{};
+  consume_with_commas_until(SYM_RPAREN, [&] {
+    auto arg = parse_type_name();
+    args.emplace_back(move(*arg));
+  });
+
+  auto ret_type = OptionalType{try_parse_type()};
+  AnyStmt body = parse_stmt(false);
+
+  return ast_ptr<LambdaExpr>(entry, move(args), move(ret_type), move(body));
+}
+
 auto Parser::parse_receiver() -> unique_ptr<Expr> {
+  if (tokens->is_a(SYM_ARROW))
+    return parse_lambda();
+
   auto entry = tokens.begin();
   return parse_receiver(parse_primary(), entry);
 }
