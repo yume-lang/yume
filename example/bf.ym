@@ -1,6 +1,14 @@
 # TODO #5
 # This would be a lot clearer if i had enums
 struct Instruction(type I32, payload I32)
+  def :new(::type, ::payload) end
+  def :new(::type)
+    ::payload = 0
+  end
+  def :new()
+    ::type = 0
+    ::payload = 0
+  end
 end
 
 def parse(input U8[]) Instruction[]
@@ -15,15 +23,15 @@ def parse(input U8[]) Instruction[]
   # to a for-each loop
   while i < input.size
     let chr = input[i]
-    let instruction = Instruction(0, 0)
+    let instruction = Instruction()
     # TODO
     # This could be simplified if I had switch-like stuff
-    if      chr == ?> then instruction = Instruction(1, 0)
-    else if chr == ?< then instruction = Instruction(2, 0)
-    else if chr == ?+ then instruction = Instruction(3, 0)
-    else if chr == ?- then instruction = Instruction(4, 0)
-    else if chr == ?. then instruction = Instruction(5, 0)
-    else if chr == ?, then instruction = Instruction(6, 0)
+    if      chr == ?> then instruction = Instruction(1)
+    else if chr == ?< then instruction = Instruction(2)
+    else if chr == ?+ then instruction = Instruction(3)
+    else if chr == ?- then instruction = Instruction(4)
+    else if chr == ?. then instruction = Instruction(5)
+    else if chr == ?, then instruction = Instruction(6)
     else if chr == ?[
       instruction = Instruction(7, -1)
       stack[stack_i] = i
