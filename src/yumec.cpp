@@ -35,8 +35,25 @@ static constexpr std::string_view GIT_SHORTHASH = "???";
 
 using namespace std::string_literals;
 
-auto compile(const std::optional<std::string>& target_triple, std::vector<std::string> src_file_names, bool do_link)
-    -> int {
+enum struct CompilerFlags {
+  None = 0,
+  DoLink = 1 << 0,
+  EmitDot = 1 << 1,
+  EmitUntypedDot = 1 << 2,
+};
+
+inline auto operator|(CompilerFlags a, CompilerFlags b) -> CompilerFlags {
+  return static_cast<CompilerFlags>(static_cast<int>(a) | static_cast<int>(b));
+}
+
+inline auto operator|=(CompilerFlags& a, CompilerFlags b) -> CompilerFlags { return a = a | b; }
+
+inline auto operator&(CompilerFlags a, CompilerFlags b) -> bool {
+  return (static_cast<int>(a) & static_cast<int>(b)) != 0;
+}
+
+auto compile(const std::optional<std::string>& target_triple, std::vector<std::string> src_file_names,
+             CompilerFlags flags) -> int {
   src_file_names.insert(src_file_names.begin(), std::string(YUME_LIB_DIR) + "std.ym");
 
   std::vector<yume::SourceFile> source_files{};
@@ -45,10 +62,13 @@ auto compile(const std::optional<std::string>& target_triple, std::vector<std::s
   {
     std::vector<std::unique_ptr<llvm::MemoryBuffer>> inputs{};
     inputs.reserve(src_file_names.size());
-#ifdef YUME_EMIT_DOT
-    auto dot = yume::open_file("output_untyped.dot");
-    auto visitor = yume::diagnostic::DotVisitor{*dot};
-#endif
+
+    std::unique_ptr<llvm::raw_ostream> dot_file{};
+    std::unique_ptr<yume::diagnostic::DotVisitor> dot_visitor{};
+    if (flags & CompilerFlags::EmitUntypedDot) {
+      dot_file = yume::open_file("output_untyped.dot");
+      dot_visitor = std::make_unique<yume::diagnostic::DotVisitor>(*dot_file);
+    }
 
     for (const auto& i : src_file_names) {
       auto buffer = llvm::MemoryBuffer::getFileOrSTDIN(i);
@@ -62,9 +82,9 @@ auto compile(const std::optional<std::string>& target_triple, std::vector<std::s
       auto src_name = src_input->getBufferIdentifier().str();
       auto src_stream = std::stringstream(std::string(src_input->getBufferStart(), src_input->getBufferSize()));
       auto& source = source_files.emplace_back(src_stream, src_name);
-#ifdef YUME_EMIT_DOT
-      visitor.visit(*source.program, nullptr);
-#endif
+      if (flags & CompilerFlags::EmitUntypedDot) {
+        dot_visitor->visit(*source.program, nullptr);
+      }
 
       auto token_it = source.iterator;
       if (!token_it.at_end()) {
@@ -83,20 +103,20 @@ auto compile(const std::optional<std::string>& target_triple, std::vector<std::s
   auto compiler = yume::Compiler{target_triple, std::move(source_files)};
   compiler.run();
 
-#ifdef YUME_EMIT_DOT
-  for (const auto& i : compiler.source_files()) {
-    const std::string full_name = "output_"s + std::string(yume::stem(i.name)) + ".dot";
-    auto dot = yume::open_file(full_name.c_str());
-    auto visitor = yume::diagnostic::DotVisitor{*dot};
-    visitor.visit(*i.program, nullptr);
+  if (flags & CompilerFlags::EmitDot) {
+    for (const auto& i : compiler.source_files()) {
+      const std::string full_name = "output_"s + std::string(yume::stem(i.name)) + ".dot";
+      auto dot = yume::open_file(full_name.c_str());
+      auto visitor = yume::diagnostic::DotVisitor{*dot};
+      visitor.visit(*i.program, nullptr);
+    }
   }
-#endif
 
   compiler.module()->print(*yume::open_file("output.ll"), nullptr);
   compiler.write_object("output.s", false);
   compiler.write_object("output.o", true);
   llvm::outs().flush();
-  if (do_link)
+  if (flags & CompilerFlags::DoLink)
     std::system("cc output.o -o yume.out");
 
   return EXIT_SUCCESS;
@@ -112,10 +132,21 @@ auto main(int argc, const char* argv[]) -> int {
   auto raw_args = std::span(argv, argc);
   auto args = raw_args.subspan(1); // omit argv 0 (program name)
 
+  auto fatal_error = [&]() -> auto& {
+    emit_version();
+    llvm::outs() << "\n";
+    llvm::outs().changeColor(llvm::raw_ostream::WHITE, true) << raw_args[0];
+    llvm::outs().resetColor() << ": ";
+    llvm::outs().changeColor(llvm::raw_ostream::RED) << "error";
+    llvm::outs().resetColor() << ": ";
+    return llvm::outs();
+  };
+
   std::optional<std::string> target_triple = {};
   std::vector<std::string> source_file_names = {};
   bool consuming_target = false;
-  bool do_link = true;
+  bool done_with_flags = false;
+  auto flags = CompilerFlags::None;
 
   for (const auto& arg : args) {
     if (consuming_target) {
@@ -127,23 +158,27 @@ auto main(int argc, const char* argv[]) -> int {
       emit_version();
       return EXIT_SUCCESS;
     }
-    if (arg == "--target"s) {
+    if (arg == "--target"s)
       consuming_target = true;
-      continue;
+    else if (arg == "-c"s)
+      flags |= CompilerFlags::DoLink;
+    else if (arg == "--emit-dot"s)
+      flags |= CompilerFlags::EmitDot;
+    else if (arg == "--emit-untyped-dot"s)
+      flags |= CompilerFlags::EmitUntypedDot;
+    else if (arg == "--"s)
+      done_with_flags = true;
+    else if (!done_with_flags && std::string(arg).starts_with('-')) {
+      fatal_error() << "unknown flag " << arg << "\n";
+      return 3;
+    } else {
+      source_file_names.emplace_back(arg);
     }
-    if (arg == "-c"s) {
-      do_link = false;
-      continue;
-    }
-    source_file_names.emplace_back(arg);
   }
 
   if (source_file_names.empty()) {
-    emit_version();
-    llvm::outs() << "\n";
-    llvm::outs() << raw_args[0] << ": error: provide at least one source file\n";
-
-    return EXIT_FAILURE;
+    fatal_error() << "provide at least one source file\n";
+    return 1;
   }
 
   std::set_terminate(yume::print_exception);
@@ -151,5 +186,5 @@ auto main(int argc, const char* argv[]) -> int {
   llvm::setBugReportMsg("");
   llvm::sys::AddSignalHandler(yume::backtrace, args.data());
 
-  return compile(target_triple, source_file_names, do_link);
+  return compile(target_triple, source_file_names, flags);
 }

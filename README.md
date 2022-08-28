@@ -22,7 +22,6 @@ To apply these switches, add them to the cmake command when building
 
 Debug:  
 `-DYUME_SANITIZE=1`: add `-fsanitize` flags  
-`-DYUME_EMIT_DOT=1`: emit pretty GraphViz .dot files for AST output  
 `-DYUME_SPEW=1`: very verbose output (higher numbers mean more output)  
 `-DYUME_FORCE_LLVM_VERSION=13`: if the system has multiple versions of LLVM, specify which one to use
 

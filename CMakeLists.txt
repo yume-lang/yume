@@ -53,10 +53,6 @@ if(YUME_SPEW GREATER 0)
   target_compile_definitions(yume PUBLIC YUME_SPEW_OVERLOAD_SELECTION)
 endif()
 
-if(YUME_EMIT_DOT)
-  target_compile_definitions(yume PUBLIC YUME_EMIT_DOT)
-endif()
-
 if(YUME_FORCE_COLOR)
   if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     target_compile_options(yume PUBLIC -fcolor-diagnostics)
