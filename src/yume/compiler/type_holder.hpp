@@ -29,5 +29,7 @@ struct TypeHolder {
   constexpr auto int16() -> IntTypePair { return int_types[1]; }
   constexpr auto int32() -> IntTypePair { return int_types[2]; }
   constexpr auto int64() -> IntTypePair { return int_types[3]; }
+
+  auto find_or_create_fn_type(const vector<ty::Type>& args, optional<ty::Type> ret) -> ty::Function*;
 };
 } // namespace yume

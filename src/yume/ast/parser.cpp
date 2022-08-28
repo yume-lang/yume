@@ -161,7 +161,23 @@ auto Parser::parse_stmt(bool require_sep) -> unique_ptr<Stmt> {
   return stat;
 }
 
+auto Parser::try_parse_function_type() -> optional<unique_ptr<FunctionType>> {
+  auto entry = tokens.begin();
+  if (try_consume(SYM_ARROW)) {
+    consume(SYM_LPAREN);
+    auto args = vector<AnyType>{};
+    consume_with_commas_until(SYM_RPAREN, [&] { args.emplace_back(parse_type()); });
+    auto ret = OptionalType{try_parse_type()};
+    return ast_ptr<FunctionType>(entry, move(ret), move(args));
+  }
+  return {};
+}
+
 auto Parser::parse_type(bool implicit_self) -> unique_ptr<Type> {
+  if (!implicit_self)
+    if (auto maybe_fn_type = try_parse_function_type(); maybe_fn_type.has_value())
+      return move(*maybe_fn_type);
+
   auto entry = tokens.begin();
   auto base = [&]() -> unique_ptr<Type> {
     if (implicit_self || try_consume(KWD_SELF_TYPE))
@@ -201,6 +217,9 @@ auto Parser::parse_type(bool implicit_self) -> unique_ptr<Type> {
 }
 
 auto Parser::try_parse_type() -> optional<unique_ptr<Type>> {
+  if (auto maybe_fn_type = try_parse_function_type(); maybe_fn_type.has_value())
+    return maybe_fn_type;
+
   auto entry = tokens.begin();
   if (tokens->type != Word || !tokens->payload.has_value())
     return {};

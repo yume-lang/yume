@@ -30,6 +30,19 @@ auto TemplatedType::describe() const -> string {
 auto SimpleType::describe() const -> string { return m_name; }
 auto SelfType::describe() const -> string { return "self"; }
 auto ProxyType::describe() const -> string { return m_field; }
+auto FunctionType::describe() const -> string {
+  stringstream ss{};
+  ss << "->(";
+  for (const auto& i : llvm::enumerate(m_args)) {
+    if (i.index() > 0)
+      ss << ",";
+    ss << i.value()->describe();
+  }
+  ss << ")";
+  if (m_ret.has_value())
+    ss << m_ret->describe();
+  return ss.str();
+}
 auto TypeName::describe() const -> string { return name; }
 auto NumberExpr::describe() const -> string { return std::to_string(m_val); }
 auto CharExpr::describe() const -> string { return std::to_string(m_val); }

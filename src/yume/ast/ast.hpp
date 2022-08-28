@@ -73,6 +73,7 @@ enum Kind {
   /**/ K_SimpleType,    ///< `SimpleType`
   /**/ K_QualType,      ///< `QualType`
   /**/ K_TemplatedType, ///< `TemplatedType`
+  /**/ K_FunctionType,  ///< `TemplatedType`
   /**/ K_SelfType,      ///< `SelfType`
   /**/ K_ProxyType,     ///< `ProxyType`
   /**/ K_END_Type,
@@ -94,6 +95,7 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case K_SimpleType: return "simple type";
   case K_QualType: return "qual type";
   case K_TemplatedType: return "templated type";
+  case K_FunctionType: return "function type";
   case K_SelfType: return "self type";
   case K_ProxyType: return "proxy type";
   case K_TypeName: return "type name";
@@ -386,6 +388,25 @@ public:
 
   static auto classof(const AST* a) -> bool { return a->kind() == K_ProxyType; }
   [[nodiscard]] auto clone() const -> ProxyType* override;
+};
+
+/// A function type \e i.e. `->(Foo,Bar)Baz`.
+class FunctionType : public Type {
+  OptionalType m_ret;
+  vector<AnyType> m_args;
+
+public:
+  FunctionType(span<Token> tok, OptionalType ret, vector<AnyType> args)
+      : Type(K_FunctionType, tok), m_ret{move(ret)}, m_args{move(args)} {}
+  void visit(Visitor& visitor) const override;
+  [[nodiscard]] auto describe() const -> string override;
+
+  [[nodiscard]] auto ret() const -> const auto& { return m_ret; }
+  [[nodiscard]] auto ret() -> auto& { return m_ret; }
+  [[nodiscard]] auto args() const -> const auto& { return m_args; }
+  [[nodiscard]] auto args() -> auto& { return m_args; }
+  static auto classof(const AST* a) -> bool { return a->kind() == K_FunctionType; }
+  [[nodiscard]] auto clone() const -> FunctionType* override;
 };
 
 /// A pair of a `Type` and an identifier, \e i.e. a parameter name.

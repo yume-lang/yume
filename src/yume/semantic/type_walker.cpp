@@ -199,9 +199,7 @@ template <> void TypeWalker::expression(ast::LambdaExpr& expr) {
 
     body_statement(*expr.body());
 
-    // TODO(rymiel): This creates new function types any type. Also they cannot be actually used.
-    auto& fn_type = compiler.m_types.fn_types.emplace_back(std::make_unique<ty::Function>("", arg_types, ret_type));
-    expr.val_ty(ty::Type{fn_type.get()});
+    expr.val_ty(compiler.m_types.find_or_create_fn_type(arg_types, ret_type));
   });
 }
 
@@ -587,6 +585,16 @@ auto TypeWalker::convert_type(ast::Type& ast_type) -> ty::Type {
         throw std::runtime_error("Proxy type doesn't refer to a valid field?");
       }
     }
+  } else if (auto* fn_type = dyn_cast<ast::FunctionType>(&ast_type)) {
+    auto ret = optional<ty::Type>{};
+    auto args = vector<ty::Type>{};
+    if (auto& ast_ret = fn_type->ret(); ast_ret.has_value())
+      ret = convert_type(*ast_ret);
+
+    for (auto& ast_arg : fn_type->args())
+      args.push_back(convert_type(*ast_arg));
+
+    return compiler.m_types.find_or_create_fn_type(args, ret);
   } else if (auto* templated = dyn_cast<ast::TemplatedType>(&ast_type)) {
     auto& template_base = templated->base();
     expression(template_base);
