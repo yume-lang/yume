@@ -68,6 +68,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#namespaces">Namespaces</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">yumec.cpp File Reference</div></div>
@@ -163,10 +164,27 @@ Namespaces</h2></td></tr>
 <tr class="memitem:namespaceyume"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html">yume</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:a665cc981876467e139eaaad2ce2ca1ea"><td class="memItemLeft" align="right" valign="top">enum struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1ea">CompilerFlags</a> { <a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1eaa6adf97f83acf6453d4a6a4b1070f3754">None</a> = 0
+, <a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1eaa1bb1118a9456bdd6604a6efcca89e600">NoLink</a> = 1 &lt;&lt; 0
+, <a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1eaa9f2e0429572e60526008b2fd7d3ce812">EmitDot</a> = 1 &lt;&lt; 1
+, <a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1eaa1be3fe6b0fc83b7f804b65ba8a96b0f8">EmitUntypedDot</a> = 1 &lt;&lt; 2
+ }</td></tr>
+<tr class="separator:a665cc981876467e139eaaad2ce2ca1ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a56afb85f7dba4c139bb3461f12947e81"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="yumec_8cpp.html#a56afb85f7dba4c139bb3461f12947e81">compile</a> (const std::optional&lt; std::string &gt; &amp;target_triple, std::vector&lt; std::string &gt; src_file_names, bool do_link) -&gt; int</td></tr>
-<tr class="separator:a56afb85f7dba4c139bb3461f12947e81"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3194a1db2243396e761b47f7f9fdaf8f"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="yumec_8cpp.html#a3194a1db2243396e761b47f7f9fdaf8f">operator|</a> (<a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1ea">CompilerFlags</a> a, <a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1ea">CompilerFlags</a> b) -&gt; <a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1ea">CompilerFlags</a></td></tr>
+<tr class="separator:a3194a1db2243396e761b47f7f9fdaf8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad0681985a51480c4427fb6747f6605fa"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="yumec_8cpp.html#ad0681985a51480c4427fb6747f6605fa">operator|=</a> (<a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1ea">CompilerFlags</a> &amp;a, <a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1ea">CompilerFlags</a> b) -&gt; <a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1ea">CompilerFlags</a></td></tr>
+<tr class="separator:ad0681985a51480c4427fb6747f6605fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adaa34b51116105d5e0fc1c8f35af362a"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="yumec_8cpp.html#adaa34b51116105d5e0fc1c8f35af362a">operator~</a> (<a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1ea">CompilerFlags</a> a) -&gt; <a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1ea">CompilerFlags</a></td></tr>
+<tr class="separator:adaa34b51116105d5e0fc1c8f35af362a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acdf900bc924b65131a37feffc90b11a4"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="yumec_8cpp.html#acdf900bc924b65131a37feffc90b11a4">operator&amp;</a> (<a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1ea">CompilerFlags</a> a, <a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1ea">CompilerFlags</a> b) -&gt; bool</td></tr>
+<tr class="separator:acdf900bc924b65131a37feffc90b11a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af640be284e2d9be345e06abb50f7e6f9"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="yumec_8cpp.html#af640be284e2d9be345e06abb50f7e6f9">compile</a> (const std::optional&lt; std::string &gt; &amp;target_triple, std::vector&lt; std::string &gt; src_file_names, <a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1ea">CompilerFlags</a> flags) -&gt; int</td></tr>
+<tr class="separator:af640be284e2d9be345e06abb50f7e6f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a8e321a3310f5f588c8e2105b00d53e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="yumec_8cpp.html#a7a8e321a3310f5f588c8e2105b00d53e">emit_version</a> ()</td></tr>
 <tr class="separator:a7a8e321a3310f5f588c8e2105b00d53e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9d6b8cae4881c54db1d2df3da92c712f"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="yumec_8cpp.html#a9d6b8cae4881c54db1d2df3da92c712f">main</a> (int argc, const char *argv[]) -&gt; int</td></tr>
@@ -179,9 +197,40 @@ Variables</h2></td></tr>
 <tr class="memitem:abdc1b94ef97d3e392b1984f7919265c9"><td class="memItemLeft" align="right" valign="top">static constexpr std::string_view&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#abdc1b94ef97d3e392b1984f7919265c9">yume::GIT_SHORTHASH</a> = &quot;???&quot;</td></tr>
 <tr class="separator:abdc1b94ef97d3e392b1984f7919265c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="a665cc981876467e139eaaad2ce2ca1ea" name="a665cc981876467e139eaaad2ce2ca1ea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a665cc981876467e139eaaad2ce2ca1ea">&#9670;&nbsp;</a></span>CompilerFlags</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum struct <a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1ea">CompilerFlags</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a665cc981876467e139eaaad2ce2ca1eaa6adf97f83acf6453d4a6a4b1070f3754" name="a665cc981876467e139eaaad2ce2ca1eaa6adf97f83acf6453d4a6a4b1070f3754"></a>None&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a665cc981876467e139eaaad2ce2ca1eaa1bb1118a9456bdd6604a6efcca89e600" name="a665cc981876467e139eaaad2ce2ca1eaa1bb1118a9456bdd6604a6efcca89e600"></a>NoLink&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a665cc981876467e139eaaad2ce2ca1eaa9f2e0429572e60526008b2fd7d3ce812" name="a665cc981876467e139eaaad2ce2ca1eaa9f2e0429572e60526008b2fd7d3ce812"></a>EmitDot&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a665cc981876467e139eaaad2ce2ca1eaa1be3fe6b0fc83b7f804b65ba8a96b0f8" name="a665cc981876467e139eaaad2ce2ca1eaa1be3fe6b0fc83b7f804b65ba8a96b0f8"></a>EmitUntypedDot&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="yumec_8cpp_source.html#l00038">38</a> of file <a class="el" href="yumec_8cpp_source.html">yumec.cpp</a>.</p>
+
+</div>
+</div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a56afb85f7dba4c139bb3461f12947e81" name="a56afb85f7dba4c139bb3461f12947e81"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a56afb85f7dba4c139bb3461f12947e81">&#9670;&nbsp;</a></span>compile()</h2>
+<a id="af640be284e2d9be345e06abb50f7e6f9" name="af640be284e2d9be345e06abb50f7e6f9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af640be284e2d9be345e06abb50f7e6f9">&#9670;&nbsp;</a></span>compile()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -201,8 +250,8 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>do_link</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1ea">CompilerFlags</a>&#160;</td>
+          <td class="paramname"><em>flags</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -212,11 +261,11 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="yumec_8cpp_source.html#l00038">38</a> of file <a class="el" href="yumec_8cpp_source.html">yumec.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="yumec_8cpp_source.html#l00057">57</a> of file <a class="el" href="yumec_8cpp_source.html">yumec.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="util_8hpp_source.html#l00066">yume::open_file()</a>, <a class="el" href="compiler_8cpp_source.html#l00111">yume::Compiler::run()</a>, <a class="el" href="util_8hpp_source.html#l00082">yume::stem()</a>, and <a class="el" href="dot__visitor_8cpp_source.html#l00084">yume::diagnostic::DotVisitor::visit()</a>.</p>
+<p class="reference">References <a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1eaa9f2e0429572e60526008b2fd7d3ce812">EmitDot</a>, <a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1eaa1be3fe6b0fc83b7f804b65ba8a96b0f8">EmitUntypedDot</a>, <a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1eaa1bb1118a9456bdd6604a6efcca89e600">NoLink</a>, <a class="el" href="util_8hpp_source.html#l00066">yume::open_file()</a>, <a class="el" href="compiler_8cpp_source.html#l00111">yume::Compiler::run()</a>, <a class="el" href="util_8hpp_source.html#l00082">yume::stem()</a>, and <a class="el" href="dot__visitor_8cpp_source.html#l00084">yume::diagnostic::DotVisitor::visit()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="yumec_8cpp_source.html#l00111">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="yumec_8cpp_source.html#l00133">main()</a>.</p>
 
 </div>
 </div>
@@ -235,11 +284,11 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="yumec_8cpp_source.html#l00105">105</a> of file <a class="el" href="yumec_8cpp_source.html">yumec.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="yumec_8cpp_source.html#l00127">127</a> of file <a class="el" href="yumec_8cpp_source.html">yumec.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="yumec_8cpp_source.html#l00032">yume::GIT_SHORTHASH</a>, and <a class="el" href="yumec_8cpp_source.html#l00031">yume::VERSION</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="yumec_8cpp_source.html#l00111">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="yumec_8cpp_source.html#l00133">main()</a>.</p>
 
 </div>
 </div>
@@ -269,9 +318,151 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="yumec_8cpp_source.html#l00111">111</a> of file <a class="el" href="yumec_8cpp_source.html">yumec.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="yumec_8cpp_source.html#l00133">133</a> of file <a class="el" href="yumec_8cpp_source.html">yumec.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="errors_8cpp_source.html#l00286">yume::backtrace()</a>, <a class="el" href="yumec_8cpp_source.html#l00038">compile()</a>, <a class="el" href="yumec_8cpp_source.html#l00105">emit_version()</a>, and <a class="el" href="errors_8hpp_source.html#l00041">yume::print_exception()</a>.</p>
+<p class="reference">References <a class="el" href="errors_8cpp_source.html#l00286">yume::backtrace()</a>, <a class="el" href="yumec_8cpp_source.html#l00057">compile()</a>, <a class="el" href="yumec_8cpp_source.html#l00127">emit_version()</a>, <a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1eaa9f2e0429572e60526008b2fd7d3ce812">EmitDot</a>, <a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1eaa1be3fe6b0fc83b7f804b65ba8a96b0f8">EmitUntypedDot</a>, <a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1eaa1bb1118a9456bdd6604a6efcca89e600">NoLink</a>, <a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1eaa6adf97f83acf6453d4a6a4b1070f3754">None</a>, and <a class="el" href="errors_8hpp_source.html#l00041">yume::print_exception()</a>.</p>
+
+</div>
+</div>
+<a id="acdf900bc924b65131a37feffc90b11a4" name="acdf900bc924b65131a37feffc90b11a4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acdf900bc924b65131a37feffc90b11a4">&#9670;&nbsp;</a></span>operator&amp;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto operator&amp; </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1ea">CompilerFlags</a>&#160;</td>
+          <td class="paramname"><em>a</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1ea">CompilerFlags</a>&#160;</td>
+          <td class="paramname"><em>b</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> -&gt; bool </td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="yumec_8cpp_source.html#l00053">53</a> of file <a class="el" href="yumec_8cpp_source.html">yumec.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a3194a1db2243396e761b47f7f9fdaf8f" name="a3194a1db2243396e761b47f7f9fdaf8f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3194a1db2243396e761b47f7f9fdaf8f">&#9670;&nbsp;</a></span>operator|()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto operator| </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1ea">CompilerFlags</a>&#160;</td>
+          <td class="paramname"><em>a</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1ea">CompilerFlags</a>&#160;</td>
+          <td class="paramname"><em>b</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> -&gt; <a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1ea">CompilerFlags</a> </td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="yumec_8cpp_source.html#l00045">45</a> of file <a class="el" href="yumec_8cpp_source.html">yumec.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ad0681985a51480c4427fb6747f6605fa" name="ad0681985a51480c4427fb6747f6605fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad0681985a51480c4427fb6747f6605fa">&#9670;&nbsp;</a></span>operator|=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto operator|= </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1ea">CompilerFlags</a> &amp;&#160;</td>
+          <td class="paramname"><em>a</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1ea">CompilerFlags</a>&#160;</td>
+          <td class="paramname"><em>b</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> -&gt; <a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1ea">CompilerFlags</a> </td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="yumec_8cpp_source.html#l00049">49</a> of file <a class="el" href="yumec_8cpp_source.html">yumec.cpp</a>.</p>
+
+</div>
+</div>
+<a id="adaa34b51116105d5e0fc1c8f35af362a" name="adaa34b51116105d5e0fc1c8f35af362a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adaa34b51116105d5e0fc1c8f35af362a">&#9670;&nbsp;</a></span>operator~()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto operator~ </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1ea">CompilerFlags</a>&#160;</td>
+          <td class="paramname"><em>a</em></td><td>)</td>
+          <td> -&gt; <a class="el" href="yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1ea">CompilerFlags</a> </td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="yumec_8cpp_source.html#l00051">51</a> of file <a class="el" href="yumec_8cpp_source.html">yumec.cpp</a>.</p>
 
 </div>
 </div>

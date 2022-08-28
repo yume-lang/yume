@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['int_0',['Int',['../structyume_1_1ty_1_1Conv.html#a52dc705eb4433198881d0a5b76ad7aa6a1686a6c336b71b36d77354cea19a8b52',1,'yume::ty::Conv']]]
+  ['emitdot_0',['EmitDot',['../yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1eaa9f2e0429572e60526008b2fd7d3ce812',1,'yumec.cpp']]],
+  ['emituntypeddot_1',['EmitUntypedDot',['../yumec_8cpp.html#a665cc981876467e139eaaad2ce2ca1eaa1be3fe6b0fc83b7f804b65ba8a96b0f8',1,'yumec.cpp']]]
 ];
