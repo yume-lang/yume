@@ -2,7 +2,8 @@ def main() I32
   let lambda = ->(i I32) I32 i + 1
   let x I32 = lambda->(2)
   assert(x == 3)
-  let y I32 = lambda->(lambda->(4))
+  let lambda2 ->(I32)I32 = lambda
+  let y I32 = lambda2->(lambda2->(4))
   assert(y == 6)
   return 0
 end

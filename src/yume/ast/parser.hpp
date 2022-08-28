@@ -239,6 +239,7 @@ struct Parser {
 
   auto parse_fn_arg() -> FnArg;
 
+  auto try_parse_function_type() -> optional<unique_ptr<FunctionType>>;
   auto try_parse_type() -> optional<unique_ptr<Type>>;
   auto parse_type(bool implicit_self = false) -> unique_ptr<Type>;
 

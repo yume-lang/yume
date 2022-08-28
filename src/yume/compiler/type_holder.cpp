@@ -35,4 +35,13 @@ void TypeHolder::declare_size_type(Compiler& compiler) {
     known.insert({i_ty->name(), move(i_ty)});
   }
 }
+
+auto TypeHolder::find_or_create_fn_type(const vector<ty::Type>& args, optional<ty::Type> ret) -> ty::Function* {
+  for (const auto& i : fn_types)
+    if (i->ret() == ret && i->args() == args)
+      return i.get();
+
+  auto& new_fn = fn_types.emplace_back(std::make_unique<ty::Function>("", args, ret));
+  return new_fn.get();
+}
 } // namespace yume
