@@ -18,6 +18,7 @@ struct TypeHolder {
   ty::Int* bool_type{};
   IntTypePair size_type{};
   llvm::StringMap<unique_ptr<ty::BaseType>> known{};
+  std::vector<unique_ptr<ty::Function>> fn_types{};
   std::vector<unique_ptr<ty::BaseType>> template_instantiations{};
 
   TypeHolder();

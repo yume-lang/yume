@@ -178,6 +178,43 @@ template <> void TypeWalker::expression(ast::SliceExpr& expr) {
   expr.val_ty(base_type);
 }
 
+template <> void TypeWalker::expression(ast::LambdaExpr& expr) {
+  with_saved_scope([&] {
+    scope.clear();
+    auto guard = scope.push_scope_guarded();
+
+    auto arg_types = vector<ty::Type>{};
+    auto ret_type = optional<ty::Type>{};
+
+    for (auto& i : expr.args()) {
+      expression(i);
+      scope.add(i.name, &i);
+      arg_types.push_back(i.ensure_ty());
+    }
+
+    if (expr.ret().has_value()) {
+      expression(*expr.ret());
+      ret_type = expr.ret()->ensure_ty();
+    }
+
+    body_statement(*expr.body());
+
+    // TODO(rymiel): This creates new function types any type. Also they cannot be actually used.
+    auto& fn_type = compiler.m_types.fn_types.emplace_back(std::make_unique<ty::Function>("", arg_types, ret_type));
+    expr.val_ty(ty::Type{fn_type.get()});
+  });
+}
+
+template <> void TypeWalker::expression(ast::DirectCallExpr& expr) {
+  body_expression(*expr.base());
+  yume_assert(expr.base()->ensure_ty().base_isa<ty::Function>(), "Direct call target must be a function type");
+
+  for (auto& i : expr.args())
+    body_expression(*i);
+
+  expr.val_ty(expr.base()->ensure_ty().base_cast<ty::Function>()->ret());
+}
+
 template <> void TypeWalker::expression(ast::AssignExpr& expr) {
   body_expression(*expr.target());
   body_expression(*expr.value());

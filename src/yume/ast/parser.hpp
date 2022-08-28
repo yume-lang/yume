@@ -113,6 +113,7 @@ static const TokenAtom SYM_STAR = {Token::Type::Symbol, "*"_a};
 static const TokenAtom SYM_BANG = {Token::Type::Symbol, "!"_a};
 static const TokenAtom SYM_COLON = {Token::Type::Symbol, ":"_a};
 static const TokenAtom SYM_COLON_COLON = {Token::Type::Symbol, "::"_a};
+static const TokenAtom SYM_ARROW = {Token::Type::Symbol, "->"_a};
 static const TokenAtom SYM_DOLLAR = {Token::Type::Symbol, "$"_a};
 
 class TokenRange {
@@ -233,7 +234,7 @@ struct Parser {
   /// Check if the ahead by `ahead` is a capitalized word.
   [[nodiscard]] auto try_peek_uword(int ahead, source_location location = source_location::current()) const -> bool;
 
-  auto parse_stmt() -> unique_ptr<Stmt>;
+  auto parse_stmt(bool require_sep = true) -> unique_ptr<Stmt>;
   auto parse_expr() -> unique_ptr<Expr>;
 
   auto parse_fn_arg() -> FnArg;
@@ -274,6 +275,8 @@ struct Parser {
   auto parse_receiver() -> unique_ptr<Expr>;
 
   auto parse_unary() -> unique_ptr<Expr>;
+
+  auto parse_lambda() -> unique_ptr<LambdaExpr>;
 
   template <size_t N = 0> auto parse_operator() -> unique_ptr<Expr> {
     auto entry = tokens.begin();

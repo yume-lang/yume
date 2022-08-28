@@ -13,11 +13,12 @@ struct Sub;
 class Type;
 
 enum Kind {
-  K_Unknown, ///< `UnknownType`, default, zero value. Hopefully never encountered!
-  K_Int,     ///< `Int`
-  K_Ptr,     ///< `Ptr`
-  K_Struct,  ///< `Struct`
-  K_Generic, ///< `Generic`
+  K_Unknown,  ///< `UnknownType`, default, zero value. Hopefully never encountered!
+  K_Int,      ///< `Int`
+  K_Ptr,      ///< `Ptr`
+  K_Struct,   ///< `Struct`
+  K_Function, ///< `Function`
+  K_Generic,  ///< `Generic`
 };
 
 /// Represents a type in the type system.

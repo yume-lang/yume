@@ -60,6 +60,8 @@ enum Kind {
   /****/ K_Ctor,         ///< `CtorExpr`
   /****/ K_Dtor,         ///< `DtorExpr`
   /****/ K_Slice,        ///< `SliceExpr`
+  /****/ K_Lambda,       ///< `LambdaExpr`
+  /****/ K_DirectCall,   ///< `DirectCallExpr`
   /****/ K_Assign,       ///< `AssignExpr`
   /****/ K_FieldAccess,  ///< `FieldAccessExpr`
   /****/ K_ImplicitCast, ///< `ImplicitCastExpr`
@@ -105,6 +107,8 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case K_Slice: return "slice";
   case K_Var: return "var";
   case K_Const: return "const";
+  case K_Lambda: return "lambda";
+  case K_DirectCall: return "direct call";
   case K_Return: return "return statement";
   case K_Assign: return "assign";
   case K_FieldAccess: return "field access";
@@ -488,7 +492,8 @@ class ConstExpr final : public Expr {
   optional<string> m_parent;
 
 public:
-  explicit ConstExpr(span<Token> tok, string name, optional<string> parent) : Expr(K_Const, tok), m_name(move(name)), m_parent(move(parent)) {}
+  ConstExpr(span<Token> tok, string name, optional<string> parent)
+      : Expr(K_Const, tok), m_name(move(name)), m_parent(move(parent)) {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
@@ -584,6 +589,49 @@ public:
   [[nodiscard]] constexpr auto args() -> auto& { return m_args; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_Slice; }
   [[nodiscard]] auto clone() const -> SliceExpr* override;
+};
+
+/// A local definition of an anonymous function
+class LambdaExpr : public Expr {
+  vector<TypeName> m_args;
+  OptionalType m_ret;
+  AnyStmt m_body;
+
+public:
+  LambdaExpr(span<Token> tok, vector<TypeName> args, OptionalType ret, AnyStmt body)
+      : Expr(K_Lambda, tok), m_args(move(args)), m_ret(move(ret)), m_body(move(body)) {}
+  void visit(Visitor& visitor) const override;
+  // [[nodiscard]] auto describe() const -> string override; // TODO(rymiel)
+
+  [[nodiscard]] auto args() const -> const auto& { return m_args; }
+  [[nodiscard]] auto args() -> auto& { return m_args; }
+  [[nodiscard]] auto ret() const -> const auto& { return m_ret; }
+  [[nodiscard]] auto ret() -> auto& { return m_ret; }
+  [[nodiscard]] auto body() const -> const auto& { return m_body; }
+  [[nodiscard]] auto body() -> auto& { return m_body; }
+
+  static auto classof(const AST* a) -> bool { return a->kind() == K_Lambda; }
+  [[nodiscard]] auto clone() const -> LambdaExpr* override;
+};
+
+/// A "direct" call to an anonymous function
+class DirectCallExpr : public Expr {
+  AnyExpr m_base;
+  vector<AnyExpr> m_args;
+
+public:
+  DirectCallExpr(span<Token> tok, AnyExpr base, vector<AnyExpr> args)
+      : Expr(K_DirectCall, tok), m_base{move(base)}, m_args{move(args)} {}
+  void visit(Visitor& visitor) const override;
+  // [[nodiscard]] auto describe() const -> string override; // TODO(rymiel)
+
+  [[nodiscard]] auto base() const -> const auto& { return m_base; }
+  [[nodiscard]] auto base() -> auto& { return m_base; }
+  [[nodiscard]] auto args() const -> const auto& { return m_args; }
+  [[nodiscard]] auto args() -> auto& { return m_args; }
+
+  static auto classof(const AST* a) -> bool { return a->kind() == K_DirectCall; }
+  [[nodiscard]] auto clone() const -> DirectCallExpr* override;
 };
 
 /// An assignment (`=`).

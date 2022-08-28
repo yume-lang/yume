@@ -14,13 +14,14 @@
 
 namespace llvm {
 class StructType;
-}
+class FunctionType;
+} // namespace llvm
 namespace yume {
 class Compiler;
 struct Instantiation;
 namespace ast {
 struct TypeName;
-}
+} // namespace ast
 } // namespace yume
 
 namespace yume::ty {
@@ -81,6 +82,30 @@ public:
   [[nodiscard]] auto name() const -> string override;
   [[nodiscard]] auto memo() const -> auto* { return m_memo; }
   static auto classof(const BaseType* a) -> bool { return a->kind() == K_Struct; }
+};
+
+/// A function pointer type
+class Function : public BaseType {
+  vector<Type> m_args;
+  optional<Type> m_ret;
+
+  mutable llvm::FunctionType* m_memo{};
+  void memo(llvm::FunctionType* memo) const { m_memo = memo; }
+
+  friend Compiler;
+  friend BaseType;
+  friend Type;
+
+public:
+  Function(string name, vector<Type> args, optional<Type> ret)
+      : BaseType(K_Function, move(name)), m_args(move(args)), m_ret(ret) {}
+  [[nodiscard]] auto args() const -> const auto& { return m_args; }
+  [[nodiscard]] auto args() -> auto& { return m_args; }
+  [[nodiscard]] auto ret() const -> const auto& { return m_ret; }
+  [[nodiscard]] auto name() const -> string override;
+
+  [[nodiscard]] auto memo() const -> auto* { return m_memo; }
+  static auto classof(const BaseType* a) -> bool { return a->kind() == K_Function; }
 };
 
 /// An unsubstituted generic type variable, usually something like `T`.

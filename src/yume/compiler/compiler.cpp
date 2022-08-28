@@ -277,6 +277,22 @@ auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
     }
 
     base = memo;
+  } else if (const auto* function_type = type.base_dyn_cast<ty::Function>()) {
+    auto* memo = function_type->memo();
+    if (memo == nullptr) {
+      auto args = vector<llvm::Type*>{};
+      for (const auto& i : function_type->args())
+        args.push_back(llvm_type(i));
+
+      auto* return_type = llvm::Type::getVoidTy(*m_context);
+      if (function_type->m_ret.has_value())
+        return_type = llvm_type(*function_type->m_ret);
+
+      memo = llvm::FunctionType::get(return_type, args, false);
+      function_type->memo(memo);
+    }
+
+    base = memo->getPointerTo();
   }
 
   if (type.is_mut())
@@ -373,7 +389,7 @@ template <> void Compiler::statement(const ast::Compound& stat) {
 }
 
 static inline auto is_trivially_destructible(ty::Type type) -> bool {
-  if (type.base_isa<ty::Int>() || type.base_isa<ty::Ptr>())
+  if (type.base_isa<ty::Int>() || type.base_isa<ty::Ptr>() || type.base_isa<ty::Function>())
     return true;
 
   if (type.is_slice())
@@ -820,6 +836,73 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
     return expr_val;
   }
   throw std::runtime_error("Can't assign to target "s + expr.target()->kind_name());
+}
+
+template <> auto Compiler::expression(const ast::LambdaExpr& expr) -> Val {
+  const auto* fn_ty = expr.ensure_ty().base_cast<ty::Function>();
+  auto* llvm_fn_ty = fn_ty->memo();
+  // TODO(rymiel): Most of this is copied from setup_fn_base. Perhaps these lambdas could also use Fn, and thus reuse
+  // regular function declaration/definition logic.
+  auto linkage = llvm::Function::PrivateLinkage;
+  auto* llvm_fn = llvm::Function::Create(llvm_fn_ty, linkage, "", m_module.get());
+
+  auto saved_scope = m_scope;
+  auto* saved_insert_point = m_builder->GetInsertBlock();
+
+  m_scope.clear();
+  m_scope.push_scope();
+  auto* bb = llvm::BasicBlock::Create(*m_context, "entry", llvm_fn);
+  m_builder->SetInsertPoint(bb);
+
+  // Allocate local variables for each parameter
+  for (auto [arg, ast_arg] : llvm::zip(llvm_fn->args(), expr.args())) {
+    auto type = ast_arg.ensure_ty();
+    auto name = ast_arg.name;
+    const auto& val = ast_arg;
+    llvm::Value* alloc = nullptr;
+    if (type.is_mut()) {
+      m_scope.add(name, {.value = &arg, .ast = val, .owning = false}); // We don't own parameters
+      continue;
+    }
+    alloc = m_builder->CreateAlloca(llvm_type(type), nullptr, "lv."s + name);
+    m_builder->CreateStore(&arg, alloc);
+    m_scope.add(name, {.value = alloc, .ast = val, .owning = false}); // We don't own parameters
+  }
+
+  if (const auto* body_expr = dyn_cast<ast::Expr>(expr.body().raw_ptr())) {
+    auto expr_val = body_expression(*body_expr);
+    if (m_builder->GetInsertBlock()->getTerminator() == nullptr) {
+      if (fn_ty->m_ret.has_value())
+        m_builder->CreateRet(expr_val);
+      else
+        m_builder->CreateRetVoid();
+    }
+  } else {
+    body_statement(*expr.body());
+  }
+
+  m_scope = saved_scope;
+  m_builder->SetInsertPoint(saved_insert_point);
+
+  return llvm_fn;
+}
+
+template <> auto Compiler::expression(const ast::DirectCallExpr& expr) -> Val {
+  auto call_target_ty = expr.base()->ensure_ty();
+  auto* llvm_fn_ty = call_target_ty.base_cast<ty::Function>()->memo();
+  auto* llvm_fn_ptr_ty = llvm_type(call_target_ty.without_mut());
+
+  auto base = body_expression(*expr.base());
+  if (call_target_ty.is_mut())
+    base = m_builder->CreateLoad(llvm_fn_ptr_ty, base.llvm, "indir.fnptr.deref");
+
+  vector<llvm::Value*> args{};
+  args.reserve(expr.args().size());
+
+  for (const auto& i : expr.args())
+    args.push_back(body_expression(*i));
+
+  return m_builder->CreateCall(llvm_fn_ty, base, args, "indir.call");
 }
 
 template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {

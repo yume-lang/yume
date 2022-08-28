@@ -277,6 +277,21 @@ auto Struct::name() const -> string {
   return ss.str();
 }
 
+auto Function::name() const -> string {
+  auto ss = stringstream{};
+  ss << "->" << base_name() << "(";
+  for (const auto& i : llvm::enumerate(m_args)) {
+    if (i.index() > 0)
+      ss << ",";
+    ss << i.value().name();
+  }
+  ss << ")";
+  if (m_ret.has_value())
+    ss << m_ret->name();
+
+  return ss.str();
+}
+
 namespace detail {
 static constexpr size_t BITSIZE_8 = 8;
 static constexpr size_t BITSIZE_16 = 16;
