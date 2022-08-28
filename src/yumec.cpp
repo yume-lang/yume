@@ -37,7 +37,7 @@ using namespace std::string_literals;
 
 enum struct CompilerFlags {
   None = 0,
-  DoLink = 1 << 0,
+  NoLink = 1 << 0,
   EmitDot = 1 << 1,
   EmitUntypedDot = 1 << 2,
 };
@@ -47,6 +47,8 @@ inline auto operator|(CompilerFlags a, CompilerFlags b) -> CompilerFlags {
 }
 
 inline auto operator|=(CompilerFlags& a, CompilerFlags b) -> CompilerFlags { return a = a | b; }
+
+inline auto operator~(CompilerFlags a) -> CompilerFlags { return static_cast<CompilerFlags>(~static_cast<int>(a)); }
 
 inline auto operator&(CompilerFlags a, CompilerFlags b) -> bool {
   return (static_cast<int>(a) & static_cast<int>(b)) != 0;
@@ -116,7 +118,7 @@ auto compile(const std::optional<std::string>& target_triple, std::vector<std::s
   compiler.write_object("output.s", false);
   compiler.write_object("output.o", true);
   llvm::outs().flush();
-  if (flags & CompilerFlags::DoLink)
+  if (~flags & CompilerFlags::NoLink)
     std::system("cc output.o -o yume.out");
 
   return EXIT_SUCCESS;
@@ -161,7 +163,7 @@ auto main(int argc, const char* argv[]) -> int {
     if (arg == "--target"s)
       consuming_target = true;
     else if (arg == "-c"s)
-      flags |= CompilerFlags::DoLink;
+      flags |= CompilerFlags::NoLink;
     else if (arg == "--emit-dot"s)
       flags |= CompilerFlags::EmitDot;
     else if (arg == "--emit-untyped-dot"s)
