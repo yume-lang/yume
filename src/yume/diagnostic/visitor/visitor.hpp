@@ -26,11 +26,11 @@ public:
 
   virtual auto visit(const string&, const char*) -> Visitor& = 0;
 
-  virtual auto visit(const ast::AST& expr) -> Visitor& { return visit(expr, static_cast<const char*>(nullptr)); }
+  virtual auto visit(const ast::AST& expr) -> Visitor& final { return visit(expr, static_cast<const char*>(nullptr)); }
 
-  virtual auto visit(std::nullptr_t) -> Visitor& { return visit(nullptr, static_cast<const char*>(nullptr)); }
+  virtual auto visit(std::nullptr_t) -> Visitor& final { return visit(nullptr, static_cast<const char*>(nullptr)); }
 
-  virtual auto visit(const string& str) -> Visitor& { return visit(str, static_cast<const char*>(nullptr)); }
+  virtual auto visit(const string& str) -> Visitor& final { return visit(str, static_cast<const char*>(nullptr)); }
 
   template <typename T> auto visit(const ast::OptionalAnyBase<T>& any_base, const char* label = nullptr) -> Visitor& {
     if (any_base.raw_ptr() != nullptr)

@@ -16,7 +16,7 @@ class AST;
 }
 
 namespace yume::diagnostic {
-class DotVisitor : public Visitor {
+class DotVisitor final : public Visitor {
   static constexpr const char* AST_KEY = "ym_ast_";
 
   struct DotConnection;

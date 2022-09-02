@@ -824,7 +824,7 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
 
 template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {
   auto type = expr.ensure_ty();
-  if (const auto* struct_type = type.without_mut().base_dyn_cast<ty::Struct>()) {
+  if (type.without_mut().base_isa<ty::Struct>()) {
     // TODO(rymiel): #4 determine what kind of allocation must be done, and if at all. It'll probably require a
     // complicated semantic step to determine object lifetime, which would probably be evaluated before compilation of
     // these expressions.

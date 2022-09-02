@@ -28,7 +28,7 @@ class Type;
 struct Sub;
 
 /// A built-in integral type, such as I32 or Bool.
-class Int : public BaseType {
+class Int final : public BaseType {
   int m_size;
   bool m_signed;
 
@@ -59,7 +59,7 @@ public:
 };
 
 /// An user-defined struct type with associated fields.
-class Struct : public BaseType {
+class Struct final : public BaseType {
   vector<ast::TypeName*> m_fields;
   nullable<const Substitution*> m_subs;
   nullable<const Struct*> m_parent{};
@@ -86,7 +86,7 @@ public:
 /// An unsubstituted generic type variable, usually something like `T`.
 ///
 /// Note that two different functions with the same name for a type variable use two different instances of `Generic`.
-class Generic : public BaseType {
+class Generic final : public BaseType {
 public:
   explicit Generic(string name) : BaseType(K_Generic, move(name)) {}
   [[nodiscard]] auto name() const -> string override { return base_name(); };

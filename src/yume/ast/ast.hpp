@@ -309,7 +309,7 @@ using AnyType = AnyBase<Type>;
 using OptionalType = OptionalAnyBase<Type>;
 
 /// Just the name of a type, always capitalized.
-class SimpleType : public Type {
+class SimpleType final : public Type {
   string m_name;
 
 public:
@@ -323,7 +323,7 @@ public:
 };
 
 /// A type with a `Qualifier` like `mut` or `[]` following.
-class QualType : public Type {
+class QualType final : public Type {
   AnyType m_base;
   Qualifier m_qualifier;
 
@@ -341,7 +341,7 @@ public:
 };
 
 /// A type with explicit type parameters \e i.e. `Foo<Bar,Baz>`.
-class TemplatedType : public Type {
+class TemplatedType final : public Type {
   AnyType m_base;
   vector<AnyType> m_type_args;
 
@@ -360,7 +360,7 @@ public:
 };
 
 /// The `self` type.
-class SelfType : public Type {
+class SelfType final : public Type {
 public:
   explicit SelfType(span<Token> tok) : Type(K_SelfType, tok) {}
   void visit([[maybe_unused]] Visitor& visitor) const override {}
@@ -370,7 +370,7 @@ public:
 };
 
 /// A type which refers to a different type, specifically that of a struct field.
-class ProxyType : public Type {
+class ProxyType final : public Type {
   string m_field;
 
 public:
@@ -385,7 +385,7 @@ public:
 };
 
 /// A pair of a `Type` and an identifier, \e i.e. a parameter name.
-struct TypeName : public AST {
+struct TypeName final : public AST {
   AnyType type;
   string name;
 
@@ -413,7 +413,7 @@ using AnyExpr = AnyBase<Expr>;
 using OptionalExpr = OptionalAnyBase<Expr>;
 
 /// Number literals.
-class NumberExpr : public Expr {
+class NumberExpr final : public Expr {
   int64_t m_val;
 
 public:
@@ -427,7 +427,7 @@ public:
 };
 
 /// Char literals.
-class CharExpr : public Expr {
+class CharExpr final : public Expr {
   uint8_t m_val;
 
 public:
@@ -441,7 +441,7 @@ public:
 };
 
 /// Bool literals (`true` or `false`).
-class BoolExpr : public Expr {
+class BoolExpr final : public Expr {
   bool m_val;
 
 public:
@@ -455,7 +455,7 @@ public:
 };
 
 /// String literals.
-class StringExpr : public Expr {
+class StringExpr final : public Expr {
   string m_val;
 
 public:
@@ -469,7 +469,7 @@ public:
 };
 
 /// A variable, \e i.e. just an identifier.
-class VarExpr : public Expr {
+class VarExpr final : public Expr {
   string m_name;
 
 public:
@@ -483,7 +483,7 @@ public:
 };
 
 /// A constant. Currently global
-class ConstExpr : public Expr {
+class ConstExpr final : public Expr {
   string m_name;
   optional<string> m_parent;
 
@@ -499,7 +499,7 @@ public:
 };
 
 /// A function call or operator.
-class CallExpr : public Expr {
+class CallExpr final : public Expr {
   string m_name;
   vector<AnyExpr> m_args;
   /// During semantic analysis, the `TypeWalker` performs overload selection and saves the function declaration or
@@ -523,7 +523,7 @@ public:
 };
 
 /// A construction of a struct or cast of a primitive.
-class CtorExpr : public Expr {
+class CtorExpr final : public Expr {
   AnyType m_type;
   vector<AnyExpr> m_args;
   /// During semantic analysis, the `TypeWalker` performs overload selection and saves the constructor declaration that
@@ -552,7 +552,7 @@ public:
  * This is currently marked deprecated as it is unused, however it is likely to be used again in the future, thus its
  * logic remains here to avoid redeclaring it in the future.
  */
-class [[deprecated]] DtorExpr : public Expr {
+class [[deprecated]] DtorExpr final : public Expr {
   AnyExpr m_base;
 
 public:
@@ -568,7 +568,7 @@ public:
 };
 
 /// A slice literal, \e i.e. an array.
-class SliceExpr : public Expr {
+class SliceExpr final : public Expr {
   AnyType m_type;
   vector<AnyExpr> m_args;
 
@@ -592,7 +592,7 @@ public:
  * The target may be multiple things, such as a variable `VarExpr` or field `FieldAccessExpr`.
  * Note that some things such as indexed assignment `[]=` become a `CallExpr` instead.
  */
-class AssignExpr : public Expr {
+class AssignExpr final : public Expr {
   AnyExpr m_target;
   AnyExpr m_value;
 
@@ -610,7 +610,7 @@ public:
 };
 
 /// Direct access of a field of a struct (`::`).
-class FieldAccessExpr : public Expr {
+class FieldAccessExpr final : public Expr {
   OptionalExpr m_base;
   string m_field;
   int m_offset = -1;
@@ -634,7 +634,7 @@ public:
  * Note that implicit casts have no direct "textual" representation in actual source code, they are only materialized
  * during semantic analysis.
  */
-class ImplicitCastExpr : public Expr {
+class ImplicitCastExpr final : public Expr {
   AnyExpr m_base;
   /// The conversion steps performed during this cast.
   ty::Conv m_conversion;
@@ -653,7 +653,7 @@ public:
 };
 
 /// A statement consisting of multiple other statements, \e i.e. the body of a function.
-class Compound : public Stmt {
+class Compound final : public Stmt {
   vector<AnyStmt> m_body;
 
 public:
@@ -679,7 +679,7 @@ public:
 };
 
 /// A declaration of a function (`def`).
-class FnDecl : public Decl {
+class FnDecl final : public Decl {
 public:
   using extern_decl_t = struct {
     string name;
@@ -748,7 +748,7 @@ public:
  * end
  * \endcode
  */
-class CtorDecl : public Decl {
+class CtorDecl final : public Decl {
 private:
   vector<TypeName> m_args;
   Compound m_body;
@@ -769,7 +769,7 @@ public:
 };
 
 /// A declaration of a struct (`struct`).
-class StructDecl : public Decl {
+class StructDecl final : public Decl {
   string m_name;
   vector<TypeName> m_fields;
   vector<string> m_type_args;
@@ -793,7 +793,7 @@ public:
 };
 
 /// A declaration of a local variable (`let`).
-class VarDecl : public Decl {
+class VarDecl final : public Decl {
   string m_name;
   OptionalType m_type;
   AnyExpr m_init;
@@ -815,7 +815,7 @@ public:
 };
 
 /// A declaration of a constant (`const`).
-class ConstDecl : public Decl {
+class ConstDecl final : public Decl {
   string m_name;
   AnyType m_type; // TODO(rymiel): make optional?
   AnyExpr m_init;
@@ -837,7 +837,7 @@ public:
 };
 
 /// A while loop (`while`).
-class WhileStmt : public Stmt {
+class WhileStmt final : public Stmt {
   AnyExpr m_cond;
   Compound m_body;
 
@@ -855,7 +855,7 @@ public:
 };
 
 /// Clauses of an if statement `IfStmt`.
-class IfClause : public AST {
+class IfClause final : public AST {
   AnyExpr m_cond;
   Compound m_body;
 
@@ -873,7 +873,7 @@ public:
 };
 
 /// An if statement (`if`), with one or more `IfClause`s, and optionally an else clause.
-class IfStmt : public Stmt {
+class IfStmt final : public Stmt {
   vector<IfClause> m_clauses;
   optional<Compound> m_else_clause;
 
@@ -891,7 +891,7 @@ public:
 };
 
 /// Return from a function body.
-class ReturnStmt : public Stmt {
+class ReturnStmt final : public Stmt {
   OptionalExpr m_expr;
   VarDecl* m_extends_lifetime{};
 
@@ -910,7 +910,7 @@ public:
 };
 
 /// The top level structure of a file of source code.
-class Program : public Stmt {
+class Program final : public Stmt {
   vector<AnyStmt> m_body;
 
 public:
