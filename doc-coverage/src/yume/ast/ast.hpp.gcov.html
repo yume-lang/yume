@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-08-28 14:30:57</td>
+            <td class="headerValue">2022-09-02 16:56:51</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -367,7 +367,7 @@
 <a name="309"><span class="lineNum">     309 </span><span class="lineCov">          1 : using OptionalType = OptionalAnyBase&lt;Type&gt;;</span></a>
 <a name="310"><span class="lineNum">     310 </span>            : </a>
 <a name="311"><span class="lineNum">     311 </span>            : /// Just the name of a type, always capitalized.</a>
-<a name="312"><span class="lineNum">     312 </span><span class="lineCov">          1 : class SimpleType : public Type {</span></a>
+<a name="312"><span class="lineNum">     312 </span><span class="lineCov">          1 : class SimpleType final : public Type {</span></a>
 <a name="313"><span class="lineNum">     313 </span><span class="lineNoCov">          0 :   string m_name;</span></a>
 <a name="314"><span class="lineNum">     314 </span>            : </a>
 <a name="315"><span class="lineNum">     315 </span>            : public:</a>
@@ -381,7 +381,7 @@
 <a name="323"><span class="lineNum">     323 </span>            : };</a>
 <a name="324"><span class="lineNum">     324 </span>            : </a>
 <a name="325"><span class="lineNum">     325 </span>            : /// A type with a `Qualifier` like `mut` or `[]` following.</a>
-<a name="326"><span class="lineNum">     326 </span><span class="lineCov">          1 : class QualType : public Type {</span></a>
+<a name="326"><span class="lineNum">     326 </span><span class="lineCov">          1 : class QualType final : public Type {</span></a>
 <a name="327"><span class="lineNum">     327 </span><span class="lineNoCov">          0 :   AnyType m_base;</span></a>
 <a name="328"><span class="lineNum">     328 </span><span class="lineNoCov">          0 :   Qualifier m_qualifier;</span></a>
 <a name="329"><span class="lineNum">     329 </span>            : </a>
@@ -399,7 +399,7 @@
 <a name="341"><span class="lineNum">     341 </span>            : };</a>
 <a name="342"><span class="lineNum">     342 </span>            : </a>
 <a name="343"><span class="lineNum">     343 </span>            : /// A type with explicit type parameters \e i.e. `Foo&lt;Bar,Baz&gt;`.</a>
-<a name="344"><span class="lineNum">     344 </span><span class="lineCov">          1 : class TemplatedType : public Type {</span></a>
+<a name="344"><span class="lineNum">     344 </span><span class="lineCov">          1 : class TemplatedType final : public Type {</span></a>
 <a name="345"><span class="lineNum">     345 </span><span class="lineNoCov">          0 :   AnyType m_base;</span></a>
 <a name="346"><span class="lineNum">     346 </span><span class="lineNoCov">          0 :   vector&lt;AnyType&gt; m_type_args;</span></a>
 <a name="347"><span class="lineNum">     347 </span>            : </a>
@@ -418,7 +418,7 @@
 <a name="360"><span class="lineNum">     360 </span>            : };</a>
 <a name="361"><span class="lineNum">     361 </span>            : </a>
 <a name="362"><span class="lineNum">     362 </span>            : /// The `self` type.</a>
-<a name="363"><span class="lineNum">     363 </span><span class="lineCov">          1 : class SelfType : public Type {</span></a>
+<a name="363"><span class="lineNum">     363 </span><span class="lineCov">          1 : class SelfType final : public Type {</span></a>
 <a name="364"><span class="lineNum">     364 </span>            : public:</a>
 <a name="365"><span class="lineNum">     365 </span><span class="lineNoCov">          0 :   explicit SelfType(span&lt;Token&gt; tok) : Type(K_SelfType, tok) {}</span></a>
 <a name="366"><span class="lineNum">     366 </span><span class="lineCov">          1 :   void visit([[maybe_unused]] Visitor&amp; visitor) const override {}</span></a>
@@ -428,7 +428,7 @@
 <a name="370"><span class="lineNum">     370 </span>            : };</a>
 <a name="371"><span class="lineNum">     371 </span>            : </a>
 <a name="372"><span class="lineNum">     372 </span>            : /// A type which refers to a different type, specifically that of a struct field.</a>
-<a name="373"><span class="lineNum">     373 </span><span class="lineCov">          1 : class ProxyType : public Type {</span></a>
+<a name="373"><span class="lineNum">     373 </span><span class="lineCov">          1 : class ProxyType final : public Type {</span></a>
 <a name="374"><span class="lineNum">     374 </span><span class="lineNoCov">          0 :   string m_field;</span></a>
 <a name="375"><span class="lineNum">     375 </span>            : </a>
 <a name="376"><span class="lineNum">     376 </span>            : public:</a>
@@ -443,7 +443,7 @@
 <a name="385"><span class="lineNum">     385 </span>            : };</a>
 <a name="386"><span class="lineNum">     386 </span>            : </a>
 <a name="387"><span class="lineNum">     387 </span>            : /// A pair of a `Type` and an identifier, \e i.e. a parameter name.</a>
-<a name="388"><span class="lineNum">     388 </span><span class="lineCov">          1 : struct TypeName : public AST {</span></a>
+<a name="388"><span class="lineNum">     388 </span><span class="lineCov">          1 : struct TypeName final : public AST {</span></a>
 <a name="389"><span class="lineNum">     389 </span><span class="lineNoCov">          0 :   AnyType type;</span></a>
 <a name="390"><span class="lineNum">     390 </span><span class="lineNoCov">          0 :   string name;</span></a>
 <a name="391"><span class="lineNum">     391 </span>            : </a>
@@ -471,7 +471,7 @@
 <a name="413"><span class="lineNum">     413 </span><span class="lineCov">          1 : using OptionalExpr = OptionalAnyBase&lt;Expr&gt;;</span></a>
 <a name="414"><span class="lineNum">     414 </span>            : </a>
 <a name="415"><span class="lineNum">     415 </span>            : /// Number literals.</a>
-<a name="416"><span class="lineNum">     416 </span><span class="lineCov">          1 : class NumberExpr : public Expr {</span></a>
+<a name="416"><span class="lineNum">     416 </span><span class="lineCov">          1 : class NumberExpr final : public Expr {</span></a>
 <a name="417"><span class="lineNum">     417 </span><span class="lineNoCov">          0 :   int64_t m_val;</span></a>
 <a name="418"><span class="lineNum">     418 </span>            : </a>
 <a name="419"><span class="lineNum">     419 </span>            : public:</a>
@@ -485,7 +485,7 @@
 <a name="427"><span class="lineNum">     427 </span>            : };</a>
 <a name="428"><span class="lineNum">     428 </span>            : </a>
 <a name="429"><span class="lineNum">     429 </span>            : /// Char literals.</a>
-<a name="430"><span class="lineNum">     430 </span><span class="lineCov">          1 : class CharExpr : public Expr {</span></a>
+<a name="430"><span class="lineNum">     430 </span><span class="lineCov">          1 : class CharExpr final : public Expr {</span></a>
 <a name="431"><span class="lineNum">     431 </span><span class="lineNoCov">          0 :   uint8_t m_val;</span></a>
 <a name="432"><span class="lineNum">     432 </span>            : </a>
 <a name="433"><span class="lineNum">     433 </span>            : public:</a>
@@ -499,7 +499,7 @@
 <a name="441"><span class="lineNum">     441 </span>            : };</a>
 <a name="442"><span class="lineNum">     442 </span>            : </a>
 <a name="443"><span class="lineNum">     443 </span>            : /// Bool literals (`true` or `false`).</a>
-<a name="444"><span class="lineNum">     444 </span><span class="lineCov">          1 : class BoolExpr : public Expr {</span></a>
+<a name="444"><span class="lineNum">     444 </span><span class="lineCov">          1 : class BoolExpr final : public Expr {</span></a>
 <a name="445"><span class="lineNum">     445 </span><span class="lineNoCov">          0 :   bool m_val;</span></a>
 <a name="446"><span class="lineNum">     446 </span>            : </a>
 <a name="447"><span class="lineNum">     447 </span>            : public:</a>
@@ -513,7 +513,7 @@
 <a name="455"><span class="lineNum">     455 </span>            : };</a>
 <a name="456"><span class="lineNum">     456 </span>            : </a>
 <a name="457"><span class="lineNum">     457 </span>            : /// String literals.</a>
-<a name="458"><span class="lineNum">     458 </span><span class="lineCov">          1 : class StringExpr : public Expr {</span></a>
+<a name="458"><span class="lineNum">     458 </span><span class="lineCov">          1 : class StringExpr final : public Expr {</span></a>
 <a name="459"><span class="lineNum">     459 </span><span class="lineNoCov">          0 :   string m_val;</span></a>
 <a name="460"><span class="lineNum">     460 </span>            : </a>
 <a name="461"><span class="lineNum">     461 </span>            : public:</a>
@@ -527,7 +527,7 @@
 <a name="469"><span class="lineNum">     469 </span>            : };</a>
 <a name="470"><span class="lineNum">     470 </span>            : </a>
 <a name="471"><span class="lineNum">     471 </span>            : /// A variable, \e i.e. just an identifier.</a>
-<a name="472"><span class="lineNum">     472 </span><span class="lineCov">          1 : class VarExpr : public Expr {</span></a>
+<a name="472"><span class="lineNum">     472 </span><span class="lineCov">          1 : class VarExpr final : public Expr {</span></a>
 <a name="473"><span class="lineNum">     473 </span><span class="lineNoCov">          0 :   string m_name;</span></a>
 <a name="474"><span class="lineNum">     474 </span>            : </a>
 <a name="475"><span class="lineNum">     475 </span>            : public:</a>
@@ -541,7 +541,7 @@
 <a name="483"><span class="lineNum">     483 </span>            : };</a>
 <a name="484"><span class="lineNum">     484 </span>            : </a>
 <a name="485"><span class="lineNum">     485 </span>            : /// A constant. Currently global</a>
-<a name="486"><span class="lineNum">     486 </span><span class="lineCov">          1 : class ConstExpr : public Expr {</span></a>
+<a name="486"><span class="lineNum">     486 </span><span class="lineCov">          1 : class ConstExpr final : public Expr {</span></a>
 <a name="487"><span class="lineNum">     487 </span><span class="lineNoCov">          0 :   string m_name;</span></a>
 <a name="488"><span class="lineNum">     488 </span><span class="lineNoCov">          0 :   optional&lt;string&gt; m_parent;</span></a>
 <a name="489"><span class="lineNum">     489 </span>            : </a>
@@ -557,7 +557,7 @@
 <a name="499"><span class="lineNum">     499 </span>            : };</a>
 <a name="500"><span class="lineNum">     500 </span>            : </a>
 <a name="501"><span class="lineNum">     501 </span>            : /// A function call or operator.</a>
-<a name="502"><span class="lineNum">     502 </span><span class="lineCov">          1 : class CallExpr : public Expr {</span></a>
+<a name="502"><span class="lineNum">     502 </span><span class="lineCov">          1 : class CallExpr final : public Expr {</span></a>
 <a name="503"><span class="lineNum">     503 </span><span class="lineNoCov">          0 :   string m_name;</span></a>
 <a name="504"><span class="lineNum">     504 </span><span class="lineNoCov">          0 :   vector&lt;AnyExpr&gt; m_args;</span></a>
 <a name="505"><span class="lineNum">     505 </span>            :   /// During semantic analysis, the `TypeWalker` performs overload selection and saves the function declaration or</a>
@@ -581,7 +581,7 @@
 <a name="523"><span class="lineNum">     523 </span>            : };</a>
 <a name="524"><span class="lineNum">     524 </span>            : </a>
 <a name="525"><span class="lineNum">     525 </span>            : /// A construction of a struct or cast of a primitive.</a>
-<a name="526"><span class="lineNum">     526 </span><span class="lineCov">          1 : class CtorExpr : public Expr {</span></a>
+<a name="526"><span class="lineNum">     526 </span><span class="lineCov">          1 : class CtorExpr final : public Expr {</span></a>
 <a name="527"><span class="lineNum">     527 </span><span class="lineNoCov">          0 :   AnyType m_type;</span></a>
 <a name="528"><span class="lineNum">     528 </span><span class="lineNoCov">          0 :   vector&lt;AnyExpr&gt; m_args;</span></a>
 <a name="529"><span class="lineNum">     529 </span>            :   /// During semantic analysis, the `TypeWalker` performs overload selection and saves the constructor declaration that</a>
@@ -610,7 +610,7 @@
 <a name="552"><span class="lineNum">     552 </span>            :  * This is currently marked deprecated as it is unused, however it is likely to be used again in the future, thus its</a>
 <a name="553"><span class="lineNum">     553 </span>            :  * logic remains here to avoid redeclaring it in the future.</a>
 <a name="554"><span class="lineNum">     554 </span>            :  */</a>
-<a name="555"><span class="lineNum">     555 </span><span class="lineCov">          1 : class [[deprecated]] DtorExpr : public Expr {</span></a>
+<a name="555"><span class="lineNum">     555 </span><span class="lineCov">          1 : class [[deprecated]] DtorExpr final : public Expr {</span></a>
 <a name="556"><span class="lineNum">     556 </span><span class="lineNoCov">          0 :   AnyExpr m_base;</span></a>
 <a name="557"><span class="lineNum">     557 </span>            : </a>
 <a name="558"><span class="lineNum">     558 </span>            : public:</a>
@@ -626,7 +626,7 @@
 <a name="568"><span class="lineNum">     568 </span>            : };</a>
 <a name="569"><span class="lineNum">     569 </span>            : </a>
 <a name="570"><span class="lineNum">     570 </span>            : /// A slice literal, \e i.e. an array.</a>
-<a name="571"><span class="lineNum">     571 </span><span class="lineCov">          1 : class SliceExpr : public Expr {</span></a>
+<a name="571"><span class="lineNum">     571 </span><span class="lineCov">          1 : class SliceExpr final : public Expr {</span></a>
 <a name="572"><span class="lineNum">     572 </span><span class="lineNoCov">          0 :   AnyType m_type;</span></a>
 <a name="573"><span class="lineNum">     573 </span><span class="lineNoCov">          0 :   vector&lt;AnyExpr&gt; m_args;</span></a>
 <a name="574"><span class="lineNum">     574 </span>            : </a>
@@ -650,7 +650,7 @@
 <a name="592"><span class="lineNum">     592 </span>            :  * The target may be multiple things, such as a variable `VarExpr` or field `FieldAccessExpr`.</a>
 <a name="593"><span class="lineNum">     593 </span>            :  * Note that some things such as indexed assignment `[]=` become a `CallExpr` instead.</a>
 <a name="594"><span class="lineNum">     594 </span>            :  */</a>
-<a name="595"><span class="lineNum">     595 </span><span class="lineCov">          1 : class AssignExpr : public Expr {</span></a>
+<a name="595"><span class="lineNum">     595 </span><span class="lineCov">          1 : class AssignExpr final : public Expr {</span></a>
 <a name="596"><span class="lineNum">     596 </span><span class="lineNoCov">          0 :   AnyExpr m_target;</span></a>
 <a name="597"><span class="lineNum">     597 </span><span class="lineNoCov">          0 :   AnyExpr m_value;</span></a>
 <a name="598"><span class="lineNum">     598 </span>            : </a>
@@ -668,7 +668,7 @@
 <a name="610"><span class="lineNum">     610 </span>            : };</a>
 <a name="611"><span class="lineNum">     611 </span>            : </a>
 <a name="612"><span class="lineNum">     612 </span>            : /// Direct access of a field of a struct (`::`).</a>
-<a name="613"><span class="lineNum">     613 </span><span class="lineCov">          1 : class FieldAccessExpr : public Expr {</span></a>
+<a name="613"><span class="lineNum">     613 </span><span class="lineCov">          1 : class FieldAccessExpr final : public Expr {</span></a>
 <a name="614"><span class="lineNum">     614 </span><span class="lineNoCov">          0 :   OptionalExpr m_base;</span></a>
 <a name="615"><span class="lineNum">     615 </span><span class="lineNoCov">          0 :   string m_field;</span></a>
 <a name="616"><span class="lineNum">     616 </span><span class="lineNoCov">          0 :   int m_offset = -1;</span></a>
@@ -692,7 +692,7 @@
 <a name="634"><span class="lineNum">     634 </span>            :  * Note that implicit casts have no direct &quot;textual&quot; representation in actual source code, they are only materialized</a>
 <a name="635"><span class="lineNum">     635 </span>            :  * during semantic analysis.</a>
 <a name="636"><span class="lineNum">     636 </span>            :  */</a>
-<a name="637"><span class="lineNum">     637 </span><span class="lineCov">          1 : class ImplicitCastExpr : public Expr {</span></a>
+<a name="637"><span class="lineNum">     637 </span><span class="lineCov">          1 : class ImplicitCastExpr final : public Expr {</span></a>
 <a name="638"><span class="lineNum">     638 </span><span class="lineNoCov">          0 :   AnyExpr m_base;</span></a>
 <a name="639"><span class="lineNum">     639 </span>            :   /// The conversion steps performed during this cast.</a>
 <a name="640"><span class="lineNum">     640 </span><span class="lineCov">          1 :   ty::Conv m_conversion;</span></a>
@@ -711,7 +711,7 @@
 <a name="653"><span class="lineNum">     653 </span>            : };</a>
 <a name="654"><span class="lineNum">     654 </span>            : </a>
 <a name="655"><span class="lineNum">     655 </span>            : /// A statement consisting of multiple other statements, \e i.e. the body of a function.</a>
-<a name="656"><span class="lineNum">     656 </span><span class="lineCov">          1 : class Compound : public Stmt {</span></a>
+<a name="656"><span class="lineNum">     656 </span><span class="lineCov">          1 : class Compound final : public Stmt {</span></a>
 <a name="657"><span class="lineNum">     657 </span><span class="lineNoCov">          0 :   vector&lt;AnyStmt&gt; m_body;</span></a>
 <a name="658"><span class="lineNum">     658 </span>            : </a>
 <a name="659"><span class="lineNum">     659 </span>            : public:</a>
@@ -737,7 +737,7 @@
 <a name="679"><span class="lineNum">     679 </span>            : };</a>
 <a name="680"><span class="lineNum">     680 </span>            : </a>
 <a name="681"><span class="lineNum">     681 </span>            : /// A declaration of a function (`def`).</a>
-<a name="682"><span class="lineNum">     682 </span><span class="lineCov">          1 : class FnDecl : public Decl {</span></a>
+<a name="682"><span class="lineNum">     682 </span><span class="lineCov">          1 : class FnDecl final : public Decl {</span></a>
 <a name="683"><span class="lineNum">     683 </span>            : public:</a>
 <a name="684"><span class="lineNum">     684 </span><span class="lineNoCov">          0 :   using extern_decl_t = struct {</span></a>
 <a name="685"><span class="lineNum">     685 </span>            :     string name;</a>
@@ -806,7 +806,7 @@
 <a name="748"><span class="lineNum">     748 </span>            :  * end</a>
 <a name="749"><span class="lineNum">     749 </span>            :  * \endcode</a>
 <a name="750"><span class="lineNum">     750 </span>            :  */</a>
-<a name="751"><span class="lineNum">     751 </span><span class="lineCov">          1 : class CtorDecl : public Decl {</span></a>
+<a name="751"><span class="lineNum">     751 </span><span class="lineCov">          1 : class CtorDecl final : public Decl {</span></a>
 <a name="752"><span class="lineNum">     752 </span>            : private:</a>
 <a name="753"><span class="lineNum">     753 </span><span class="lineNoCov">          0 :   vector&lt;TypeName&gt; m_args;</span></a>
 <a name="754"><span class="lineNum">     754 </span><span class="lineNoCov">          0 :   Compound m_body;</span></a>
@@ -827,7 +827,7 @@
 <a name="769"><span class="lineNum">     769 </span>            : };</a>
 <a name="770"><span class="lineNum">     770 </span>            : </a>
 <a name="771"><span class="lineNum">     771 </span>            : /// A declaration of a struct (`struct`).</a>
-<a name="772"><span class="lineNum">     772 </span><span class="lineCov">          1 : class StructDecl : public Decl {</span></a>
+<a name="772"><span class="lineNum">     772 </span><span class="lineCov">          1 : class StructDecl final : public Decl {</span></a>
 <a name="773"><span class="lineNum">     773 </span><span class="lineNoCov">          0 :   string m_name;</span></a>
 <a name="774"><span class="lineNum">     774 </span><span class="lineNoCov">          0 :   vector&lt;TypeName&gt; m_fields;</span></a>
 <a name="775"><span class="lineNum">     775 </span><span class="lineNoCov">          0 :   vector&lt;string&gt; m_type_args;</span></a>
@@ -851,7 +851,7 @@
 <a name="793"><span class="lineNum">     793 </span>            : };</a>
 <a name="794"><span class="lineNum">     794 </span>            : </a>
 <a name="795"><span class="lineNum">     795 </span>            : /// A declaration of a local variable (`let`).</a>
-<a name="796"><span class="lineNum">     796 </span><span class="lineCov">          1 : class VarDecl : public Decl {</span></a>
+<a name="796"><span class="lineNum">     796 </span><span class="lineCov">          1 : class VarDecl final : public Decl {</span></a>
 <a name="797"><span class="lineNum">     797 </span><span class="lineNoCov">          0 :   string m_name;</span></a>
 <a name="798"><span class="lineNum">     798 </span><span class="lineNoCov">          0 :   OptionalType m_type;</span></a>
 <a name="799"><span class="lineNum">     799 </span><span class="lineNoCov">          0 :   AnyExpr m_init;</span></a>
@@ -873,7 +873,7 @@
 <a name="815"><span class="lineNum">     815 </span>            : };</a>
 <a name="816"><span class="lineNum">     816 </span>            : </a>
 <a name="817"><span class="lineNum">     817 </span>            : /// A declaration of a constant (`const`).</a>
-<a name="818"><span class="lineNum">     818 </span><span class="lineCov">          1 : class ConstDecl : public Decl {</span></a>
+<a name="818"><span class="lineNum">     818 </span><span class="lineCov">          1 : class ConstDecl final : public Decl {</span></a>
 <a name="819"><span class="lineNum">     819 </span><span class="lineNoCov">          0 :   string m_name;</span></a>
 <a name="820"><span class="lineNum">     820 </span><span class="lineNoCov">          0 :   AnyType m_type; // TODO(rymiel): make optional?</span></a>
 <a name="821"><span class="lineNum">     821 </span><span class="lineNoCov">          0 :   AnyExpr m_init;</span></a>
@@ -895,7 +895,7 @@
 <a name="837"><span class="lineNum">     837 </span>            : };</a>
 <a name="838"><span class="lineNum">     838 </span>            : </a>
 <a name="839"><span class="lineNum">     839 </span>            : /// A while loop (`while`).</a>
-<a name="840"><span class="lineNum">     840 </span><span class="lineCov">          1 : class WhileStmt : public Stmt {</span></a>
+<a name="840"><span class="lineNum">     840 </span><span class="lineCov">          1 : class WhileStmt final : public Stmt {</span></a>
 <a name="841"><span class="lineNum">     841 </span><span class="lineNoCov">          0 :   AnyExpr m_cond;</span></a>
 <a name="842"><span class="lineNum">     842 </span><span class="lineNoCov">          0 :   Compound m_body;</span></a>
 <a name="843"><span class="lineNum">     843 </span>            : </a>
@@ -913,7 +913,7 @@
 <a name="855"><span class="lineNum">     855 </span>            : };</a>
 <a name="856"><span class="lineNum">     856 </span>            : </a>
 <a name="857"><span class="lineNum">     857 </span>            : /// Clauses of an if statement `IfStmt`.</a>
-<a name="858"><span class="lineNum">     858 </span><span class="lineCov">          1 : class IfClause : public AST {</span></a>
+<a name="858"><span class="lineNum">     858 </span><span class="lineCov">          1 : class IfClause final : public AST {</span></a>
 <a name="859"><span class="lineNum">     859 </span><span class="lineNoCov">          0 :   AnyExpr m_cond;</span></a>
 <a name="860"><span class="lineNum">     860 </span><span class="lineNoCov">          0 :   Compound m_body;</span></a>
 <a name="861"><span class="lineNum">     861 </span>            : </a>
@@ -931,7 +931,7 @@
 <a name="873"><span class="lineNum">     873 </span>            : };</a>
 <a name="874"><span class="lineNum">     874 </span>            : </a>
 <a name="875"><span class="lineNum">     875 </span>            : /// An if statement (`if`), with one or more `IfClause`s, and optionally an else clause.</a>
-<a name="876"><span class="lineNum">     876 </span><span class="lineCov">          1 : class IfStmt : public Stmt {</span></a>
+<a name="876"><span class="lineNum">     876 </span><span class="lineCov">          1 : class IfStmt final : public Stmt {</span></a>
 <a name="877"><span class="lineNum">     877 </span><span class="lineNoCov">          0 :   vector&lt;IfClause&gt; m_clauses;</span></a>
 <a name="878"><span class="lineNum">     878 </span><span class="lineNoCov">          0 :   optional&lt;Compound&gt; m_else_clause;</span></a>
 <a name="879"><span class="lineNum">     879 </span>            : </a>
@@ -949,7 +949,7 @@
 <a name="891"><span class="lineNum">     891 </span>            : };</a>
 <a name="892"><span class="lineNum">     892 </span>            : </a>
 <a name="893"><span class="lineNum">     893 </span>            : /// Return from a function body.</a>
-<a name="894"><span class="lineNum">     894 </span><span class="lineCov">          1 : class ReturnStmt : public Stmt {</span></a>
+<a name="894"><span class="lineNum">     894 </span><span class="lineCov">          1 : class ReturnStmt final : public Stmt {</span></a>
 <a name="895"><span class="lineNum">     895 </span><span class="lineNoCov">          0 :   OptionalExpr m_expr;</span></a>
 <a name="896"><span class="lineNum">     896 </span><span class="lineNoCov">          0 :   VarDecl* m_extends_lifetime{};</span></a>
 <a name="897"><span class="lineNum">     897 </span>            : </a>
@@ -968,7 +968,7 @@
 <a name="910"><span class="lineNum">     910 </span>            : };</a>
 <a name="911"><span class="lineNum">     911 </span>            : </a>
 <a name="912"><span class="lineNum">     912 </span>            : /// The top level structure of a file of source code.</a>
-<a name="913"><span class="lineNum">     913 </span><span class="lineCov">          1 : class Program : public Stmt {</span></a>
+<a name="913"><span class="lineNum">     913 </span><span class="lineCov">          1 : class Program final : public Stmt {</span></a>
 <a name="914"><span class="lineNum">     914 </span><span class="lineNoCov">          0 :   vector&lt;AnyStmt&gt; m_body;</span></a>
 <a name="915"><span class="lineNum">     915 </span>            : </a>
 <a name="916"><span class="lineNum">     916 </span>            : public:</a>

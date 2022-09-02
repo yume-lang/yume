@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-08-28 14:30:57</td>
+            <td class="headerValue">2022-09-02 16:56:51</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -882,7 +882,7 @@
 <a name="824"><span class="lineNum">     824 </span>            : </a>
 <a name="825"><span class="lineNum">     825 </span><span class="lineNoCov">          0 : template &lt;&gt; auto Compiler::expression(const ast::CtorExpr&amp; expr) -&gt; Val {</span></a>
 <a name="826"><span class="lineNum">     826 </span>            :   auto type = expr.ensure_ty();</a>
-<a name="827"><span class="lineNum">     827 </span>            :   if (const auto* struct_type = type.without_mut().base_dyn_cast&lt;ty::Struct&gt;()) {</a>
+<a name="827"><span class="lineNum">     827 </span>            :   if (type.without_mut().base_isa&lt;ty::Struct&gt;()) {</a>
 <a name="828"><span class="lineNum">     828 </span>            :     // TODO(rymiel): #4 determine what kind of allocation must be done, and if at all. It'll probably require a</a>
 <a name="829"><span class="lineNum">     829 </span>            :     // complicated semantic step to determine object lifetime, which would probably be evaluated before compilation of</a>
 <a name="830"><span class="lineNum">     830 </span>            :     // these expressions.</a>

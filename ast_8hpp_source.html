@@ -380,7 +380,7 @@ $(function() {
 <div class="line"><a id="l00309" name="l00309"></a><span class="lineno"><a class="line" href="namespaceyume_1_1ast.html#abbe8370067fd80e7639b21ac03c4c7f1">  309</a></span><span class="comment"></span>using <a class="code hl_class" href="classyume_1_1ast_1_1OptionalAnyBase.html">OptionalType</a> = <a class="code hl_class" href="classyume_1_1ast_1_1OptionalAnyBase.html">OptionalAnyBase</a>&lt;<a class="code hl_class" href="classyume_1_1ast_1_1Type.html">Type</a>&gt;;</div>
 <div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span><span class="comment"></span> </div>
 <div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span><span class="comment">/// Just the name of a type, always capitalized.</span></div>
-<div class="line"><a id="l00312" name="l00312"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1SimpleType.html">  312</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1SimpleType.html">SimpleType</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Type.html">Type</a> {</div>
+<div class="line"><a id="l00312" name="l00312"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1SimpleType.html">  312</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1SimpleType.html">SimpleType</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Type.html">Type</a> {</div>
 <div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>  <span class="keywordtype">string</span> m_name;</div>
 <div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span> </div>
 <div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span><span class="keyword">public</span>:</div>
@@ -394,7 +394,7 @@ $(function() {
 <div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span>};</div>
 <div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span><span class="comment"></span> </div>
 <div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span><span class="comment">/// A type with a `Qualifier` like `mut` or `[]` following.</span></div>
-<div class="line"><a id="l00326" name="l00326"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1QualType.html">  326</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1QualType.html">QualType</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Type.html">Type</a> {</div>
+<div class="line"><a id="l00326" name="l00326"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1QualType.html">  326</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1QualType.html">QualType</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Type.html">Type</a> {</div>
 <div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>  <a class="code hl_class" href="classyume_1_1ast_1_1AnyBase.html">AnyType</a> m_base;</div>
 <div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>  <a class="code hl_enumeration" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706">Qualifier</a> m_qualifier;</div>
 <div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span> </div>
@@ -412,7 +412,7 @@ $(function() {
 <div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>};</div>
 <div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span><span class="comment"></span> </div>
 <div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span><span class="comment">/// A type with explicit type parameters \e i.e. `Foo&lt;Bar,Baz&gt;`.</span></div>
-<div class="line"><a id="l00344" name="l00344"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1TemplatedType.html">  344</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1TemplatedType.html">TemplatedType</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Type.html">Type</a> {</div>
+<div class="line"><a id="l00344" name="l00344"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1TemplatedType.html">  344</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1TemplatedType.html">TemplatedType</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Type.html">Type</a> {</div>
 <div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span>  <a class="code hl_class" href="classyume_1_1ast_1_1AnyBase.html">AnyType</a> m_base;</div>
 <div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span>  vector&lt;AnyType&gt; m_type_args;</div>
 <div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span> </div>
@@ -431,7 +431,7 @@ $(function() {
 <div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span>};</div>
 <div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span><span class="comment"></span> </div>
 <div class="line"><a id="l00362" name="l00362"></a><span class="lineno">  362</span><span class="comment">/// The `self` type.</span></div>
-<div class="line"><a id="l00363" name="l00363"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1SelfType.html">  363</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1SelfType.html">SelfType</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Type.html">Type</a> {</div>
+<div class="line"><a id="l00363" name="l00363"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1SelfType.html">  363</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1SelfType.html">SelfType</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Type.html">Type</a> {</div>
 <div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00365" name="l00365"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1SelfType.html#ac024229f88a70223f9db565432d2b4bc">  365</a></span>  <span class="keyword">explicit</span> <a class="code hl_function" href="classyume_1_1ast_1_1SelfType.html#ac024229f88a70223f9db565432d2b4bc">SelfType</a>(span&lt;Token&gt; <a class="code hl_function" href="classyume_1_1ast_1_1AST.html#aef0323c4bfe9d210c3edeef11f7fa9b4">tok</a>) : <a class="code hl_class" href="classyume_1_1ast_1_1Type.html">Type</a>(<a class="code hl_enumvalue" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a99beb458aa18de10514d9e4a6a8f2e98">K_SelfType</a>, <a class="code hl_function" href="classyume_1_1ast_1_1AST.html#aef0323c4bfe9d210c3edeef11f7fa9b4">tok</a>) {}</div>
 <div class="line"><a id="l00366" name="l00366"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1SelfType.html#aa7ee5585c9d9e923dc59830589f2024e">  366</a></span>  <span class="keywordtype">void</span> <a class="code hl_function" href="classyume_1_1ast_1_1SelfType.html#aa7ee5585c9d9e923dc59830589f2024e">visit</a>([[maybe_unused]] <a class="code hl_class" href="classyume_1_1Visitor.html">Visitor</a>&amp; visitor)<span class="keyword"> const override </span>{}</div>
@@ -441,7 +441,7 @@ $(function() {
 <div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>};</div>
 <div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span><span class="comment"></span> </div>
 <div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span><span class="comment">/// A type which refers to a different type, specifically that of a struct field.</span></div>
-<div class="line"><a id="l00373" name="l00373"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1ProxyType.html">  373</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1ProxyType.html">ProxyType</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Type.html">Type</a> {</div>
+<div class="line"><a id="l00373" name="l00373"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1ProxyType.html">  373</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1ProxyType.html">ProxyType</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Type.html">Type</a> {</div>
 <div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>  <span class="keywordtype">string</span> m_field;</div>
 <div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span> </div>
 <div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span><span class="keyword">public</span>:</div>
@@ -456,7 +456,7 @@ $(function() {
 <div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>};</div>
 <div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span><span class="comment"></span> </div>
 <div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span><span class="comment">/// A pair of a `Type` and an identifier, \e i.e. a parameter name.</span></div>
-<div class="line"><a id="l00388" name="l00388"></a><span class="lineno"><a class="line" href="structyume_1_1ast_1_1TypeName.html">  388</a></span><span class="comment"></span>struct <a class="code hl_struct" href="structyume_1_1ast_1_1TypeName.html">TypeName</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1AST.html">AST</a> {</div>
+<div class="line"><a id="l00388" name="l00388"></a><span class="lineno"><a class="line" href="structyume_1_1ast_1_1TypeName.html">  388</a></span><span class="comment"></span>struct <a class="code hl_struct" href="structyume_1_1ast_1_1TypeName.html">TypeName</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1AST.html">AST</a> {</div>
 <div class="line"><a id="l00389" name="l00389"></a><span class="lineno"><a class="line" href="structyume_1_1ast_1_1TypeName.html#a6a7ff1a04f48e943c55cbfb924eb3db2">  389</a></span>  <a class="code hl_class" href="classyume_1_1ast_1_1AnyBase.html">AnyType</a> <a class="code hl_variable" href="structyume_1_1ast_1_1TypeName.html#a6a7ff1a04f48e943c55cbfb924eb3db2">type</a>;</div>
 <div class="line"><a id="l00390" name="l00390"></a><span class="lineno"><a class="line" href="structyume_1_1ast_1_1TypeName.html#a65382308810e028e19f976fb32c55c3c">  390</a></span>  <span class="keywordtype">string</span> <a class="code hl_variable" href="structyume_1_1ast_1_1TypeName.html#a65382308810e028e19f976fb32c55c3c">name</a>;</div>
 <div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span> </div>
@@ -484,7 +484,7 @@ $(function() {
 <div class="line"><a id="l00413" name="l00413"></a><span class="lineno"><a class="line" href="namespaceyume_1_1ast.html#af4e6788ee8c32918650276c689d849a2">  413</a></span><span class="comment"></span>using <a class="code hl_class" href="classyume_1_1ast_1_1OptionalAnyBase.html">OptionalExpr</a> = <a class="code hl_class" href="classyume_1_1ast_1_1OptionalAnyBase.html">OptionalAnyBase</a>&lt;<a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">Expr</a>&gt;;</div>
 <div class="line"><a id="l00414" name="l00414"></a><span class="lineno">  414</span><span class="comment"></span> </div>
 <div class="line"><a id="l00415" name="l00415"></a><span class="lineno">  415</span><span class="comment">/// Number literals.</span></div>
-<div class="line"><a id="l00416" name="l00416"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1NumberExpr.html">  416</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1NumberExpr.html">NumberExpr</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">Expr</a> {</div>
+<div class="line"><a id="l00416" name="l00416"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1NumberExpr.html">  416</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1NumberExpr.html">NumberExpr</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">Expr</a> {</div>
 <div class="line"><a id="l00417" name="l00417"></a><span class="lineno">  417</span>  int64_t m_val;</div>
 <div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span> </div>
 <div class="line"><a id="l00419" name="l00419"></a><span class="lineno">  419</span><span class="keyword">public</span>:</div>
@@ -498,7 +498,7 @@ $(function() {
 <div class="line"><a id="l00427" name="l00427"></a><span class="lineno">  427</span>};</div>
 <div class="line"><a id="l00428" name="l00428"></a><span class="lineno">  428</span><span class="comment"></span> </div>
 <div class="line"><a id="l00429" name="l00429"></a><span class="lineno">  429</span><span class="comment">/// Char literals.</span></div>
-<div class="line"><a id="l00430" name="l00430"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1CharExpr.html">  430</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1CharExpr.html">CharExpr</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">Expr</a> {</div>
+<div class="line"><a id="l00430" name="l00430"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1CharExpr.html">  430</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1CharExpr.html">CharExpr</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">Expr</a> {</div>
 <div class="line"><a id="l00431" name="l00431"></a><span class="lineno">  431</span>  uint8_t m_val;</div>
 <div class="line"><a id="l00432" name="l00432"></a><span class="lineno">  432</span> </div>
 <div class="line"><a id="l00433" name="l00433"></a><span class="lineno">  433</span><span class="keyword">public</span>:</div>
@@ -512,7 +512,7 @@ $(function() {
 <div class="line"><a id="l00441" name="l00441"></a><span class="lineno">  441</span>};</div>
 <div class="line"><a id="l00442" name="l00442"></a><span class="lineno">  442</span><span class="comment"></span> </div>
 <div class="line"><a id="l00443" name="l00443"></a><span class="lineno">  443</span><span class="comment">/// Bool literals (`true` or `false`).</span></div>
-<div class="line"><a id="l00444" name="l00444"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1BoolExpr.html">  444</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1BoolExpr.html">BoolExpr</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">Expr</a> {</div>
+<div class="line"><a id="l00444" name="l00444"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1BoolExpr.html">  444</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1BoolExpr.html">BoolExpr</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">Expr</a> {</div>
 <div class="line"><a id="l00445" name="l00445"></a><span class="lineno">  445</span>  <span class="keywordtype">bool</span> m_val;</div>
 <div class="line"><a id="l00446" name="l00446"></a><span class="lineno">  446</span> </div>
 <div class="line"><a id="l00447" name="l00447"></a><span class="lineno">  447</span><span class="keyword">public</span>:</div>
@@ -526,7 +526,7 @@ $(function() {
 <div class="line"><a id="l00455" name="l00455"></a><span class="lineno">  455</span>};</div>
 <div class="line"><a id="l00456" name="l00456"></a><span class="lineno">  456</span><span class="comment"></span> </div>
 <div class="line"><a id="l00457" name="l00457"></a><span class="lineno">  457</span><span class="comment">/// String literals.</span></div>
-<div class="line"><a id="l00458" name="l00458"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1StringExpr.html">  458</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1StringExpr.html">StringExpr</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">Expr</a> {</div>
+<div class="line"><a id="l00458" name="l00458"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1StringExpr.html">  458</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1StringExpr.html">StringExpr</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">Expr</a> {</div>
 <div class="line"><a id="l00459" name="l00459"></a><span class="lineno">  459</span>  <span class="keywordtype">string</span> m_val;</div>
 <div class="line"><a id="l00460" name="l00460"></a><span class="lineno">  460</span> </div>
 <div class="line"><a id="l00461" name="l00461"></a><span class="lineno">  461</span><span class="keyword">public</span>:</div>
@@ -540,7 +540,7 @@ $(function() {
 <div class="line"><a id="l00469" name="l00469"></a><span class="lineno">  469</span>};</div>
 <div class="line"><a id="l00470" name="l00470"></a><span class="lineno">  470</span><span class="comment"></span> </div>
 <div class="line"><a id="l00471" name="l00471"></a><span class="lineno">  471</span><span class="comment">/// A variable, \e i.e. just an identifier.</span></div>
-<div class="line"><a id="l00472" name="l00472"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1VarExpr.html">  472</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1VarExpr.html">VarExpr</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">Expr</a> {</div>
+<div class="line"><a id="l00472" name="l00472"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1VarExpr.html">  472</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1VarExpr.html">VarExpr</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">Expr</a> {</div>
 <div class="line"><a id="l00473" name="l00473"></a><span class="lineno">  473</span>  <span class="keywordtype">string</span> m_name;</div>
 <div class="line"><a id="l00474" name="l00474"></a><span class="lineno">  474</span> </div>
 <div class="line"><a id="l00475" name="l00475"></a><span class="lineno">  475</span><span class="keyword">public</span>:</div>
@@ -554,7 +554,7 @@ $(function() {
 <div class="line"><a id="l00483" name="l00483"></a><span class="lineno">  483</span>};</div>
 <div class="line"><a id="l00484" name="l00484"></a><span class="lineno">  484</span><span class="comment"></span> </div>
 <div class="line"><a id="l00485" name="l00485"></a><span class="lineno">  485</span><span class="comment">/// A constant. Currently global</span></div>
-<div class="line"><a id="l00486" name="l00486"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1ConstExpr.html">  486</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1ConstExpr.html">ConstExpr</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">Expr</a> {</div>
+<div class="line"><a id="l00486" name="l00486"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1ConstExpr.html">  486</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1ConstExpr.html">ConstExpr</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">Expr</a> {</div>
 <div class="line"><a id="l00487" name="l00487"></a><span class="lineno">  487</span>  <span class="keywordtype">string</span> m_name;</div>
 <div class="line"><a id="l00488" name="l00488"></a><span class="lineno">  488</span>  optional&lt;string&gt; m_parent;</div>
 <div class="line"><a id="l00489" name="l00489"></a><span class="lineno">  489</span> </div>
@@ -570,7 +570,7 @@ $(function() {
 <div class="line"><a id="l00499" name="l00499"></a><span class="lineno">  499</span>};</div>
 <div class="line"><a id="l00500" name="l00500"></a><span class="lineno">  500</span><span class="comment"></span> </div>
 <div class="line"><a id="l00501" name="l00501"></a><span class="lineno">  501</span><span class="comment">/// A function call or operator.</span></div>
-<div class="line"><a id="l00502" name="l00502"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1CallExpr.html">  502</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1CallExpr.html">CallExpr</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">Expr</a> {</div>
+<div class="line"><a id="l00502" name="l00502"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1CallExpr.html">  502</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1CallExpr.html">CallExpr</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">Expr</a> {</div>
 <div class="line"><a id="l00503" name="l00503"></a><span class="lineno">  503</span>  <span class="keywordtype">string</span> m_name;</div>
 <div class="line"><a id="l00504" name="l00504"></a><span class="lineno">  504</span>  vector&lt;AnyExpr&gt; m_args;<span class="comment"></span></div>
 <div class="line"><a id="l00505" name="l00505"></a><span class="lineno">  505</span><span class="comment">  /// During semantic analysis, the `TypeWalker` performs overload selection and saves the function declaration or</span></div>
@@ -594,7 +594,7 @@ $(function() {
 <div class="line"><a id="l00523" name="l00523"></a><span class="lineno">  523</span>};</div>
 <div class="line"><a id="l00524" name="l00524"></a><span class="lineno">  524</span><span class="comment"></span> </div>
 <div class="line"><a id="l00525" name="l00525"></a><span class="lineno">  525</span><span class="comment">/// A construction of a struct or cast of a primitive.</span></div>
-<div class="line"><a id="l00526" name="l00526"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1CtorExpr.html">  526</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1CtorExpr.html">CtorExpr</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">Expr</a> {</div>
+<div class="line"><a id="l00526" name="l00526"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1CtorExpr.html">  526</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1CtorExpr.html">CtorExpr</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">Expr</a> {</div>
 <div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>  <a class="code hl_class" href="classyume_1_1ast_1_1AnyBase.html">AnyType</a> m_type;</div>
 <div class="line"><a id="l00528" name="l00528"></a><span class="lineno">  528</span>  vector&lt;AnyExpr&gt; m_args;<span class="comment"></span></div>
 <div class="line"><a id="l00529" name="l00529"></a><span class="lineno">  529</span><span class="comment">  /// During semantic analysis, the `TypeWalker` performs overload selection and saves the constructor declaration that</span></div>
@@ -623,7 +623,7 @@ $(function() {
 <div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span><span class="comment"> * This is currently marked deprecated as it is unused, however it is likely to be used again in the future, thus its</span></div>
 <div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span><span class="comment"> * logic remains here to avoid redeclaring it in the future.</span></div>
 <div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00555" name="l00555"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1DtorExpr.html">  555</a></span>class [[deprecated]] <a class="code hl_class" href="classyume_1_1ast_1_1DtorExpr.html">DtorExpr</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">Expr</a> {</div>
+<div class="line"><a id="l00555" name="l00555"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1DtorExpr.html">  555</a></span>class [[deprecated]] <a class="code hl_class" href="classyume_1_1ast_1_1DtorExpr.html">DtorExpr</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">Expr</a> {</div>
 <div class="line"><a id="l00556" name="l00556"></a><span class="lineno">  556</span>  <a class="code hl_class" href="classyume_1_1ast_1_1AnyBase.html">AnyExpr</a> m_base;</div>
 <div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span> </div>
 <div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span><span class="keyword">public</span>:</div>
@@ -639,7 +639,7 @@ $(function() {
 <div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span>};</div>
 <div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span><span class="comment"></span> </div>
 <div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span><span class="comment">/// A slice literal, \e i.e. an array.</span></div>
-<div class="line"><a id="l00571" name="l00571"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1SliceExpr.html">  571</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1SliceExpr.html">SliceExpr</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">Expr</a> {</div>
+<div class="line"><a id="l00571" name="l00571"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1SliceExpr.html">  571</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1SliceExpr.html">SliceExpr</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">Expr</a> {</div>
 <div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span>  <a class="code hl_class" href="classyume_1_1ast_1_1AnyBase.html">AnyType</a> m_type;</div>
 <div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>  vector&lt;AnyExpr&gt; m_args;</div>
 <div class="line"><a id="l00574" name="l00574"></a><span class="lineno">  574</span> </div>
@@ -663,7 +663,7 @@ $(function() {
 <div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span><span class="comment"> * The target may be multiple things, such as a variable `VarExpr` or field `FieldAccessExpr`.</span></div>
 <div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span><span class="comment"> * Note that some things such as indexed assignment `[]=` become a `CallExpr` instead.</span></div>
 <div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00595" name="l00595"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1AssignExpr.html">  595</a></span>class <a class="code hl_class" href="classyume_1_1ast_1_1AssignExpr.html">AssignExpr</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">Expr</a> {</div>
+<div class="line"><a id="l00595" name="l00595"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1AssignExpr.html">  595</a></span>class <a class="code hl_class" href="classyume_1_1ast_1_1AssignExpr.html">AssignExpr</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">Expr</a> {</div>
 <div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>  <a class="code hl_class" href="classyume_1_1ast_1_1AnyBase.html">AnyExpr</a> m_target;</div>
 <div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span>  <a class="code hl_class" href="classyume_1_1ast_1_1AnyBase.html">AnyExpr</a> m_value;</div>
 <div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span> </div>
@@ -681,7 +681,7 @@ $(function() {
 <div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span>};</div>
 <div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span><span class="comment"></span> </div>
 <div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span><span class="comment">/// Direct access of a field of a struct (`::`).</span></div>
-<div class="line"><a id="l00613" name="l00613"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1FieldAccessExpr.html">  613</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1FieldAccessExpr.html">FieldAccessExpr</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">Expr</a> {</div>
+<div class="line"><a id="l00613" name="l00613"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1FieldAccessExpr.html">  613</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1FieldAccessExpr.html">FieldAccessExpr</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">Expr</a> {</div>
 <div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span>  <a class="code hl_class" href="classyume_1_1ast_1_1OptionalAnyBase.html">OptionalExpr</a> m_base;</div>
 <div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span>  <span class="keywordtype">string</span> m_field;</div>
 <div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span>  <span class="keywordtype">int</span> m_offset = -1;</div>
@@ -705,7 +705,7 @@ $(function() {
 <div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span><span class="comment"> * Note that implicit casts have no direct &quot;textual&quot; representation in actual source code, they are only materialized</span></div>
 <div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span><span class="comment"> * during semantic analysis.</span></div>
 <div class="line"><a id="l00636" name="l00636"></a><span class="lineno">  636</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00637" name="l00637"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1ImplicitCastExpr.html">  637</a></span>class <a class="code hl_class" href="classyume_1_1ast_1_1ImplicitCastExpr.html">ImplicitCastExpr</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">Expr</a> {</div>
+<div class="line"><a id="l00637" name="l00637"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1ImplicitCastExpr.html">  637</a></span>class <a class="code hl_class" href="classyume_1_1ast_1_1ImplicitCastExpr.html">ImplicitCastExpr</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Expr.html">Expr</a> {</div>
 <div class="line"><a id="l00638" name="l00638"></a><span class="lineno">  638</span>  <a class="code hl_class" href="classyume_1_1ast_1_1AnyBase.html">AnyExpr</a> m_base;<span class="comment"></span></div>
 <div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span><span class="comment">  /// The conversion steps performed during this cast.</span></div>
 <div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span><span class="comment"></span>  <a class="code hl_struct" href="structyume_1_1ty_1_1Conv.html">ty::Conv</a> m_conversion;</div>
@@ -724,7 +724,7 @@ $(function() {
 <div class="line"><a id="l00653" name="l00653"></a><span class="lineno">  653</span>};</div>
 <div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span><span class="comment"></span> </div>
 <div class="line"><a id="l00655" name="l00655"></a><span class="lineno">  655</span><span class="comment">/// A statement consisting of multiple other statements, \e i.e. the body of a function.</span></div>
-<div class="line"><a id="l00656" name="l00656"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1Compound.html">  656</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1Compound.html">Compound</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Stmt.html">Stmt</a> {</div>
+<div class="line"><a id="l00656" name="l00656"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1Compound.html">  656</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1Compound.html">Compound</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Stmt.html">Stmt</a> {</div>
 <div class="line"><a id="l00657" name="l00657"></a><span class="lineno">  657</span>  vector&lt;AnyStmt&gt; m_body;</div>
 <div class="line"><a id="l00658" name="l00658"></a><span class="lineno">  658</span> </div>
 <div class="line"><a id="l00659" name="l00659"></a><span class="lineno">  659</span><span class="keyword">public</span>:</div>
@@ -750,7 +750,7 @@ $(function() {
 <div class="line"><a id="l00679" name="l00679"></a><span class="lineno">  679</span>};</div>
 <div class="line"><a id="l00680" name="l00680"></a><span class="lineno">  680</span><span class="comment"></span> </div>
 <div class="line"><a id="l00681" name="l00681"></a><span class="lineno">  681</span><span class="comment">/// A declaration of a function (`def`).</span></div>
-<div class="line"><a id="l00682" name="l00682"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1FnDecl.html">  682</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1FnDecl.html">FnDecl</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Decl.html">Decl</a> {</div>
+<div class="line"><a id="l00682" name="l00682"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1FnDecl.html">  682</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1FnDecl.html">FnDecl</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Decl.html">Decl</a> {</div>
 <div class="line"><a id="l00683" name="l00683"></a><span class="lineno">  683</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00684" name="l00684"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1FnDecl.html#a820c4e210d50bfc3a2799e994c87dc29">  684</a></span>  <span class="keyword">using </span><a class="code hl_typedef" href="classyume_1_1ast_1_1FnDecl.html#a820c4e210d50bfc3a2799e994c87dc29">extern_decl_t</a> = <span class="keyword">struct </span>{</div>
 <div class="line"><a id="l00685" name="l00685"></a><span class="lineno">  685</span>    <span class="keywordtype">string</span> name;</div>
@@ -819,7 +819,7 @@ $(function() {
 <div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span><span class="comment"> * end</span></div>
 <div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span><span class="comment"> * \endcode</span></div>
 <div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00751" name="l00751"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1CtorDecl.html">  751</a></span>class <a class="code hl_class" href="classyume_1_1ast_1_1CtorDecl.html">CtorDecl</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Decl.html">Decl</a> {</div>
+<div class="line"><a id="l00751" name="l00751"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1CtorDecl.html">  751</a></span>class <a class="code hl_class" href="classyume_1_1ast_1_1CtorDecl.html">CtorDecl</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Decl.html">Decl</a> {</div>
 <div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span><span class="keyword">private</span>:</div>
 <div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>  vector&lt;TypeName&gt; m_args;</div>
 <div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span>  <a class="code hl_class" href="classyume_1_1ast_1_1Compound.html">Compound</a> m_body;</div>
@@ -840,7 +840,7 @@ $(function() {
 <div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>};</div>
 <div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span><span class="comment"></span> </div>
 <div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span><span class="comment">/// A declaration of a struct (`struct`).</span></div>
-<div class="line"><a id="l00772" name="l00772"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1StructDecl.html">  772</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1StructDecl.html">StructDecl</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Decl.html">Decl</a> {</div>
+<div class="line"><a id="l00772" name="l00772"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1StructDecl.html">  772</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1StructDecl.html">StructDecl</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Decl.html">Decl</a> {</div>
 <div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>  <span class="keywordtype">string</span> m_name;</div>
 <div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>  vector&lt;TypeName&gt; m_fields;</div>
 <div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span>  vector&lt;string&gt; m_type_args;</div>
@@ -864,7 +864,7 @@ $(function() {
 <div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>};</div>
 <div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span><span class="comment"></span> </div>
 <div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span><span class="comment">/// A declaration of a local variable (`let`).</span></div>
-<div class="line"><a id="l00796" name="l00796"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1VarDecl.html">  796</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1VarDecl.html">VarDecl</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Decl.html">Decl</a> {</div>
+<div class="line"><a id="l00796" name="l00796"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1VarDecl.html">  796</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1VarDecl.html">VarDecl</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Decl.html">Decl</a> {</div>
 <div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>  <span class="keywordtype">string</span> m_name;</div>
 <div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>  <a class="code hl_class" href="classyume_1_1ast_1_1OptionalAnyBase.html">OptionalType</a> m_type;</div>
 <div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span>  <a class="code hl_class" href="classyume_1_1ast_1_1AnyBase.html">AnyExpr</a> m_init;</div>
@@ -886,7 +886,7 @@ $(function() {
 <div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>};</div>
 <div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span><span class="comment"></span> </div>
 <div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span><span class="comment">/// A declaration of a constant (`const`).</span></div>
-<div class="line"><a id="l00818" name="l00818"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1ConstDecl.html">  818</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1ConstDecl.html">ConstDecl</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Decl.html">Decl</a> {</div>
+<div class="line"><a id="l00818" name="l00818"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1ConstDecl.html">  818</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1ConstDecl.html">ConstDecl</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Decl.html">Decl</a> {</div>
 <div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>  <span class="keywordtype">string</span> m_name;</div>
 <div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>  <a class="code hl_class" href="classyume_1_1ast_1_1AnyBase.html">AnyType</a> m_type; <span class="comment">// TODO(rymiel): make optional?</span></div>
 <div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>  <a class="code hl_class" href="classyume_1_1ast_1_1AnyBase.html">AnyExpr</a> m_init;</div>
@@ -908,7 +908,7 @@ $(function() {
 <div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>};</div>
 <div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span><span class="comment"></span> </div>
 <div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span><span class="comment">/// A while loop (`while`).</span></div>
-<div class="line"><a id="l00840" name="l00840"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1WhileStmt.html">  840</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1WhileStmt.html">WhileStmt</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Stmt.html">Stmt</a> {</div>
+<div class="line"><a id="l00840" name="l00840"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1WhileStmt.html">  840</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1WhileStmt.html">WhileStmt</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Stmt.html">Stmt</a> {</div>
 <div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>  <a class="code hl_class" href="classyume_1_1ast_1_1AnyBase.html">AnyExpr</a> m_cond;</div>
 <div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span>  <a class="code hl_class" href="classyume_1_1ast_1_1Compound.html">Compound</a> m_body;</div>
 <div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span> </div>
@@ -926,7 +926,7 @@ $(function() {
 <div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span>};</div>
 <div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span><span class="comment"></span> </div>
 <div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span><span class="comment">/// Clauses of an if statement `IfStmt`.</span></div>
-<div class="line"><a id="l00858" name="l00858"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1IfClause.html">  858</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1IfClause.html">IfClause</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1AST.html">AST</a> {</div>
+<div class="line"><a id="l00858" name="l00858"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1IfClause.html">  858</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1IfClause.html">IfClause</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1AST.html">AST</a> {</div>
 <div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span>  <a class="code hl_class" href="classyume_1_1ast_1_1AnyBase.html">AnyExpr</a> m_cond;</div>
 <div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span>  <a class="code hl_class" href="classyume_1_1ast_1_1Compound.html">Compound</a> m_body;</div>
 <div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span> </div>
@@ -944,7 +944,7 @@ $(function() {
 <div class="line"><a id="l00873" name="l00873"></a><span class="lineno">  873</span>};</div>
 <div class="line"><a id="l00874" name="l00874"></a><span class="lineno">  874</span><span class="comment"></span> </div>
 <div class="line"><a id="l00875" name="l00875"></a><span class="lineno">  875</span><span class="comment">/// An if statement (`if`), with one or more `IfClause`s, and optionally an else clause.</span></div>
-<div class="line"><a id="l00876" name="l00876"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1IfStmt.html">  876</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1IfStmt.html">IfStmt</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Stmt.html">Stmt</a> {</div>
+<div class="line"><a id="l00876" name="l00876"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1IfStmt.html">  876</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1IfStmt.html">IfStmt</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Stmt.html">Stmt</a> {</div>
 <div class="line"><a id="l00877" name="l00877"></a><span class="lineno">  877</span>  vector&lt;IfClause&gt; m_clauses;</div>
 <div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span>  optional&lt;Compound&gt; m_else_clause;</div>
 <div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span> </div>
@@ -962,7 +962,7 @@ $(function() {
 <div class="line"><a id="l00891" name="l00891"></a><span class="lineno">  891</span>};</div>
 <div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span><span class="comment"></span> </div>
 <div class="line"><a id="l00893" name="l00893"></a><span class="lineno">  893</span><span class="comment">/// Return from a function body.</span></div>
-<div class="line"><a id="l00894" name="l00894"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1ReturnStmt.html">  894</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1ReturnStmt.html">ReturnStmt</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Stmt.html">Stmt</a> {</div>
+<div class="line"><a id="l00894" name="l00894"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1ReturnStmt.html">  894</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1ReturnStmt.html">ReturnStmt</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Stmt.html">Stmt</a> {</div>
 <div class="line"><a id="l00895" name="l00895"></a><span class="lineno">  895</span>  <a class="code hl_class" href="classyume_1_1ast_1_1OptionalAnyBase.html">OptionalExpr</a> m_expr;</div>
 <div class="line"><a id="l00896" name="l00896"></a><span class="lineno">  896</span>  <a class="code hl_class" href="classyume_1_1ast_1_1VarDecl.html">VarDecl</a>* m_extends_lifetime{};</div>
 <div class="line"><a id="l00897" name="l00897"></a><span class="lineno">  897</span> </div>
@@ -981,7 +981,7 @@ $(function() {
 <div class="line"><a id="l00910" name="l00910"></a><span class="lineno">  910</span>};</div>
 <div class="line"><a id="l00911" name="l00911"></a><span class="lineno">  911</span><span class="comment"></span> </div>
 <div class="line"><a id="l00912" name="l00912"></a><span class="lineno">  912</span><span class="comment">/// The top level structure of a file of source code.</span></div>
-<div class="line"><a id="l00913" name="l00913"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1Program.html">  913</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1Program.html">Program</a> : public <a class="code hl_class" href="classyume_1_1ast_1_1Stmt.html">Stmt</a> {</div>
+<div class="line"><a id="l00913" name="l00913"></a><span class="lineno"><a class="line" href="classyume_1_1ast_1_1Program.html">  913</a></span><span class="comment"></span>class <a class="code hl_class" href="classyume_1_1ast_1_1Program.html">Program</a> final : public <a class="code hl_class" href="classyume_1_1ast_1_1Stmt.html">Stmt</a> {</div>
 <div class="line"><a id="l00914" name="l00914"></a><span class="lineno">  914</span>  vector&lt;AnyStmt&gt; m_body;</div>
 <div class="line"><a id="l00915" name="l00915"></a><span class="lineno">  915</span> </div>
 <div class="line"><a id="l00916" name="l00916"></a><span class="lineno">  916</span><span class="keyword">public</span>:</div>
