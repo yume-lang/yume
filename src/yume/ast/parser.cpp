@@ -204,6 +204,9 @@ auto Parser::try_parse_type() -> optional<unique_ptr<Type>> {
   if (tokens->type != Word || !tokens->payload.has_value())
     return {};
 
+  if (!try_peek_uword(0))
+    return {};
+
   const string name = consume_word();
   if (make_atom(name) != std::get<Atom>(KWD_SELF_TYPE) && !is_uword(name))
     return {};
