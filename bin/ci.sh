@@ -9,10 +9,10 @@ case $1 in
     status=0
     for i in example/*; do
       [[ -f "${i}" ]] || continue
-      echo "Running example ${i}"
+      echo "[INFO] Running example ${i}"
       "${BUILD_DIR}"/yumec "${i}" || { status=1; continue; }
       mv output.ll result-"$(basename "${i}")".ll
-      ./yume.out || { status=1; continue; }
+      ./yume.out || { status=$?; echo "[FAIL] ${i} exited with $?"; continue; }
     done
     exit "${status}";;
 
