@@ -33,9 +33,17 @@ struct TypeWalker : public CRTPWalker<TypeWalker, false> {
   friend CRTPWalker;
 
 public:
+  struct ASTWithName {
+    ast::AST* ast;
+    string name;
+  };
+
   Compiler& compiler;
   DeclLike current_decl{};
-  ScopeContainer<nonnull<ast::AST*>> scope{};
+  using scope_t = ScopeContainer<nonnull<ast::AST*>>;
+  scope_t scope{};
+  vector<scope_t> enclosing_scopes{};
+  vector<ASTWithName> closured{};
 
   std::queue<DeclLike> decl_queue{};
 
@@ -63,10 +71,12 @@ private:
     auto saved_scope = scope;
     auto saved_current_decl = current_decl;
     auto saved_depth = in_depth;
+    auto saved_closured = closured;
 
     callback();
 
     // Restore again
+    closured = saved_closured;
     in_depth = saved_depth;
     current_decl = saved_current_decl;
     scope = saved_scope;

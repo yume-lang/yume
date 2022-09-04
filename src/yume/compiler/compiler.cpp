@@ -280,7 +280,20 @@ auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
   } else if (const auto* function_type = type.base_dyn_cast<ty::Function>()) {
     auto* memo = function_type->memo();
     if (memo == nullptr) {
+      auto closured = vector<llvm::Type*>{};
+      for (const auto& i : function_type->closure())
+        closured.push_back(llvm_type(i));
+      if (closured.empty()) // Can't have an empty closure type
+        closured.push_back(m_builder->getInt8Ty());
+
+      // Closures are type-erased to just a bag of bits. We store the "real type" of the closure within the function
+      // type for better retreival, but in practice, they're always passed around bitcasted. Note that the bitcasting
+      // is not required when opaque pointers are in play
+      auto* closure_ty = llvm::StructType::create(closured, "closure");
+      auto* erased_closure_ty = m_builder->getInt8PtrTy();
+
       auto args = vector<llvm::Type*>{};
+      args.push_back(erased_closure_ty); // Lambda takes a closure as the first parameter
       for (const auto& i : function_type->args())
         args.push_back(llvm_type(i));
 
@@ -288,11 +301,16 @@ auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
       if (function_type->m_ret.has_value())
         return_type = llvm_type(*function_type->m_ret);
 
-      memo = llvm::FunctionType::get(return_type, args, false);
+      auto* fn_ty = llvm::FunctionType::get(return_type, args, false);
+
+      memo = llvm::StructType::get(fn_ty->getPointerTo(), erased_closure_ty);
+
+      function_type->fn_memo(fn_ty);
+      function_type->closure_memo(closure_ty);
       function_type->memo(memo);
     }
 
-    base = memo->getPointerTo();
+    base = memo;
   }
 
   if (type.is_mut())
@@ -840,11 +858,35 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
 
 template <> auto Compiler::expression(const ast::LambdaExpr& expr) -> Val {
   const auto* fn_ty = expr.ensure_ty().base_cast<ty::Function>();
-  auto* llvm_fn_ty = fn_ty->memo();
+  auto* llvm_fn_ty = fn_ty->fn_memo();
+  auto* llvm_closure_ty = fn_ty->closure_memo();
+  auto* llvm_bundle_ty = fn_ty->memo();
+
+  Val fn_bundle = llvm::UndefValue::get(llvm_bundle_ty);
+
   // TODO(rymiel): Most of this is copied from setup_fn_base. Perhaps these lambdas could also use Fn, and thus reuse
   // regular function declaration/definition logic.
   auto linkage = llvm::Function::PrivateLinkage;
   auto* llvm_fn = llvm::Function::Create(llvm_fn_ty, linkage, "", m_module.get());
+  fn_bundle = m_builder->CreateInsertValue(fn_bundle, llvm_fn, 0);
+
+  auto* llvm_closure = m_builder->CreateAlloca(llvm_closure_ty);
+
+  // Capture every closured local in the closure object
+  for (const auto& i : llvm::enumerate(llvm::zip(expr.closured_names(), expr.closured_nodes()))) {
+    auto [name, ast_arg] = i.value();
+    auto type = ast_arg->ensure_ty();
+    auto* val = m_scope.find(name);
+    yume_assert(val != nullptr, "Captured variable not found in outer scope");
+    yume_assert(val->ast.ensure_ty() == type, "Capture variable does not match expected type: wanted "s + type.name() +
+                                                  ", but got " + val->ast.ensure_ty().name());
+
+    m_builder->CreateStore(val->value,
+                           m_builder->CreateConstInBoundsGEP2_32(llvm_closure_ty, llvm_closure, 0, i.index()));
+  }
+
+  fn_bundle =
+      m_builder->CreateInsertValue(fn_bundle, m_builder->CreateBitCast(llvm_closure, m_builder->getInt8PtrTy()), 1);
 
   auto saved_scope = m_scope;
   auto* saved_insert_point = m_builder->GetInsertBlock();
@@ -854,8 +896,13 @@ template <> auto Compiler::expression(const ast::LambdaExpr& expr) -> Val {
   auto* bb = llvm::BasicBlock::Create(*m_context, "entry", llvm_fn);
   m_builder->SetInsertPoint(bb);
 
+  // Skip the first argument when allocating local parameters. It is the closure type and unpacked earlier.
+  auto llvm_fn_args = llvm::make_range(llvm_fn->arg_begin() + 1, llvm_fn->arg_end());
+  Val closure_val =
+      m_builder->CreateLoad(llvm_closure_ty, m_builder->CreateBitCast(llvm_fn->arg_begin(), m_builder->getInt8PtrTy()));
+
   // Allocate local variables for each parameter
-  for (auto [arg, ast_arg] : llvm::zip(llvm_fn->args(), expr.args())) {
+  for (auto [arg, ast_arg] : llvm::zip(llvm_fn_args, expr.args())) {
     auto type = ast_arg.ensure_ty();
     auto name = ast_arg.name;
     const auto& val = ast_arg;
@@ -866,6 +913,23 @@ template <> auto Compiler::expression(const ast::LambdaExpr& expr) -> Val {
     }
     alloc = m_builder->CreateAlloca(llvm_type(type), nullptr, "lv."s + name);
     m_builder->CreateStore(&arg, alloc);
+    m_scope.add(name, {.value = alloc, .ast = val, .owning = false}); // We don't own parameters
+  }
+
+  // Add local variables for every captured variable
+  for (const auto& i : llvm::enumerate(llvm::zip(expr.closured_names(), expr.closured_nodes()))) {
+    auto [name, ast_arg] = i.value();
+    auto type = ast_arg->ensure_ty();
+
+    Val arg = m_builder->CreateExtractValue(closure_val, i.index());
+    const auto& val = *ast_arg;
+    llvm::Value* alloc = nullptr;
+    if (type.is_mut()) {
+      m_scope.add(name, {.value = arg, .ast = val, .owning = false}); // We don't own parameters
+      continue;
+    }
+    alloc = m_builder->CreateAlloca(llvm_type(type), nullptr, "lv."s + name);
+    m_builder->CreateStore(arg, alloc);
     m_scope.add(name, {.value = alloc, .ast = val, .owning = false}); // We don't own parameters
   }
 
@@ -884,25 +948,30 @@ template <> auto Compiler::expression(const ast::LambdaExpr& expr) -> Val {
   m_scope = saved_scope;
   m_builder->SetInsertPoint(saved_insert_point);
 
-  return llvm_fn;
+  return fn_bundle;
 }
 
 template <> auto Compiler::expression(const ast::DirectCallExpr& expr) -> Val {
   auto call_target_ty = expr.base()->ensure_ty();
-  auto* llvm_fn_ty = call_target_ty.base_cast<ty::Function>()->memo();
-  auto* llvm_fn_ptr_ty = llvm_type(call_target_ty.without_mut());
+  auto* llvm_fn_ty = call_target_ty.base_cast<ty::Function>()->fn_memo();
+  auto* llvm_fn_bundle_ty = llvm_type(call_target_ty.without_mut());
 
   auto base = body_expression(*expr.base());
   if (call_target_ty.is_mut())
-    base = m_builder->CreateLoad(llvm_fn_ptr_ty, base.llvm, "indir.fnptr.deref");
+    base = m_builder->CreateLoad(llvm_fn_bundle_ty, base.llvm, "indir.fnptr.deref");
+
+  auto* llvm_fn_ptr = m_builder->CreateExtractValue(base, 0, "fnptr.fn");
+  auto* llvm_fn_closure = m_builder->CreateExtractValue(base, 1, "fnptr.closure");
 
   vector<llvm::Value*> args{};
   args.reserve(expr.args().size());
+  args.push_back(llvm_fn_closure);
 
   for (const auto& i : expr.args())
     args.push_back(body_expression(*i));
 
-  return m_builder->CreateCall(llvm_fn_ty, base, args, "indir.call");
+  return m_builder->CreateCall(llvm_fn_ty, llvm_fn_ptr, args,
+                               llvm_fn_ty->getReturnType()->isVoidTy() ? "" : "indir.call");
 }
 
 template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {

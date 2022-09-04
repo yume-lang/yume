@@ -111,7 +111,7 @@ auto Type::compatibility(Type other, Compat compat) const -> Compat {
 
   // `Foo mut` -> `Foo`.
   // Note that the base types are also compared, so `I32 mut` -> `I64`.
-  if (is_mut() && !other.is_mut()) {
+  if (this->is_mut() && !other.is_mut()) {
     compat.conv.dereference = true;
     compat = ensure_mut_base().compatibility(other, compat);
     return compat;
@@ -134,6 +134,16 @@ auto Type::compatibility(Type other, Compat compat) const -> Compat {
       return compat;
     }
   }
+
+  // A function type with captures can be converted to a matching function type without captures
+  if (const auto this_fn = base_dyn_cast<Function>(), other_fn = other.base_dyn_cast<Function>();
+      (this_fn != nullptr) && (other_fn != nullptr)) {
+    if (this_fn->m_args == other_fn->m_args && this_fn->m_ret == other_fn->m_ret && other_fn->m_closure.empty()) {
+      compat.valid = true;
+      return compat;
+    }
+  }
+
   return compat;
 }
 
@@ -279,7 +289,17 @@ auto Struct::name() const -> string {
 
 auto Function::name() const -> string {
   auto ss = stringstream{};
-  ss << "->" << base_name() << "(";
+  ss << "->" << base_name();
+  if (!m_closure.empty()) {
+    ss << "[";
+    for (const auto& i : llvm::enumerate(m_closure)) {
+      if (i.index() > 0)
+        ss << ",";
+      ss << i.value().name();
+    }
+    ss << "]";
+  }
+  ss << "(";
   for (const auto& i : llvm::enumerate(m_args)) {
     if (i.index() > 0)
       ss << ",";

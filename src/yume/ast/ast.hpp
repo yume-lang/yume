@@ -617,6 +617,8 @@ class LambdaExpr : public Expr {
   vector<TypeName> m_args;
   OptionalType m_ret;
   AnyStmt m_body;
+  vector<string> m_closured_names{};
+  vector<AST*> m_closured_nodes{};
 
 public:
   LambdaExpr(span<Token> tok, vector<TypeName> args, OptionalType ret, AnyStmt body)
@@ -630,6 +632,10 @@ public:
   [[nodiscard]] auto ret() -> auto& { return m_ret; }
   [[nodiscard]] auto body() const -> const auto& { return m_body; }
   [[nodiscard]] auto body() -> auto& { return m_body; }
+  [[nodiscard]] auto closured_names() const -> const auto& { return m_closured_names; }
+  [[nodiscard]] auto closured_names() -> auto& { return m_closured_names; }
+  [[nodiscard]] auto closured_nodes() const -> const auto& { return m_closured_nodes; }
+  [[nodiscard]] auto closured_nodes() -> auto& { return m_closured_nodes; }
 
   static auto classof(const AST* a) -> bool { return a->kind() == K_Lambda; }
   [[nodiscard]] auto clone() const -> LambdaExpr* override;

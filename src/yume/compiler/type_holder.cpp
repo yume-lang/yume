@@ -36,12 +36,13 @@ void TypeHolder::declare_size_type(Compiler& compiler) {
   }
 }
 
-auto TypeHolder::find_or_create_fn_type(const vector<ty::Type>& args, optional<ty::Type> ret) -> ty::Function* {
+auto TypeHolder::find_or_create_fn_type(const vector<ty::Type>& args, optional<ty::Type> ret,
+                                        const vector<ty::Type>& closure) -> ty::Function* {
   for (const auto& i : fn_types)
-    if (i->ret() == ret && i->args() == args)
+    if (i->ret() == ret && i->args() == args && i->closure() == closure)
       return i.get();
 
-  auto& new_fn = fn_types.emplace_back(std::make_unique<ty::Function>("", args, ret));
+  auto& new_fn = fn_types.emplace_back(std::make_unique<ty::Function>("", args, ret, closure));
   return new_fn.get();
 }
 } // namespace yume

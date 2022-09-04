@@ -44,6 +44,7 @@ public:
 
 /// A "qualified" type, with a stackable qualifier, \e i.e. `ptr`.
 class Ptr : public BaseType {
+  // TODO(rymiel): why are these here?
   friend BaseType;
 
 private:
@@ -69,6 +70,7 @@ class Struct final : public BaseType {
   mutable llvm::StructType* m_memo{};
   void memo(llvm::StructType* memo) const { m_memo = memo; }
 
+  // TODO(rymiel): why are these here?
   friend Compiler;
   friend BaseType;
   friend Type;
@@ -88,22 +90,32 @@ public:
 class Function : public BaseType {
   vector<Type> m_args;
   optional<Type> m_ret;
+  vector<Type> m_closure;
 
-  mutable llvm::FunctionType* m_memo{};
-  void memo(llvm::FunctionType* memo) const { m_memo = memo; }
+  mutable llvm::FunctionType* m_fn_memo{};
+  void fn_memo(llvm::FunctionType* memo) const { m_fn_memo = memo; }
+  mutable llvm::StructType* m_closure_memo{};
+  void closure_memo(llvm::StructType* memo) const { m_closure_memo = memo; }
+  mutable llvm::StructType* m_memo{};
+  void memo(llvm::StructType* memo) const { m_memo = memo; }
 
+  // TODO(rymiel): why are these here?
   friend Compiler;
   friend BaseType;
   friend Type;
 
 public:
-  Function(string name, vector<Type> args, optional<Type> ret)
-      : BaseType(K_Function, move(name)), m_args(move(args)), m_ret(ret) {}
+  Function(string name, vector<Type> args, optional<Type> ret, vector<Type> closure)
+      : BaseType(K_Function, move(name)), m_args(move(args)), m_ret(ret), m_closure(move(closure)) {}
   [[nodiscard]] auto args() const -> const auto& { return m_args; }
   [[nodiscard]] auto args() -> auto& { return m_args; }
+  [[nodiscard]] auto closure() const -> const auto& { return m_closure; }
+  [[nodiscard]] auto closure() -> auto& { return m_closure; }
   [[nodiscard]] auto ret() const -> const auto& { return m_ret; }
   [[nodiscard]] auto name() const -> string override;
 
+  [[nodiscard]] auto fn_memo() const -> auto* { return m_fn_memo; }
+  [[nodiscard]] auto closure_memo() const -> auto* { return m_closure_memo; }
   [[nodiscard]] auto memo() const -> auto* { return m_memo; }
   static auto classof(const BaseType* a) -> bool { return a->kind() == K_Function; }
 };
