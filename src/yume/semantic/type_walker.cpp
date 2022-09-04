@@ -179,6 +179,7 @@ template <> void TypeWalker::expression(ast::SliceExpr& expr) {
 }
 
 template <> void TypeWalker::expression(ast::LambdaExpr& expr) {
+  enclosing_scopes.push_back(scope);
   with_saved_scope([&] {
     scope.clear();
     auto guard = scope.push_scope_guarded();
@@ -199,8 +200,16 @@ template <> void TypeWalker::expression(ast::LambdaExpr& expr) {
 
     body_statement(*expr.body());
 
-    expr.val_ty(compiler.m_types.find_or_create_fn_type(arg_types, ret_type));
+    auto closured_types = vector<ty::Type>();
+    for (const auto& i : closured) {
+      closured_types.push_back(i.ast->ensure_ty());
+      expr.closured_names().push_back(i.name);
+      expr.closured_nodes().push_back(i.ast);
+    }
+
+    expr.val_ty(compiler.m_types.find_or_create_fn_type(arg_types, ret_type, closured_types));
   });
+  enclosing_scopes.pop_back();
 }
 
 template <> void TypeWalker::expression(ast::DirectCallExpr& expr) {
@@ -224,8 +233,20 @@ template <> void TypeWalker::expression(ast::AssignExpr& expr) {
 }
 
 template <> void TypeWalker::expression(ast::VarExpr& expr) {
-  if (auto* var = scope.find(expr.name()); var != nullptr)
+  if (auto** var = scope.find(expr.name()); var != nullptr)
     return expr.attach_to(*var);
+
+  // If we're inside of a lambda body, check if the variable maybe refers to one from an outer scope that can be
+  // included in the closure of the current lambda
+  for (auto& outer_scope : enclosing_scopes) {
+    if (auto** var = outer_scope.find(expr.name()); var != nullptr) {
+      // It was found, include it in the current scope so we don't need to look for it again
+      scope.add(expr.name(), *var);
+      closured.push_back({*var, expr.name()});
+      return expr.attach_to(*var);
+    }
+  }
+
   throw std::runtime_error("Scope doesn't contain variable called "s + expr.name());
 }
 
@@ -594,7 +615,7 @@ auto TypeWalker::convert_type(ast::Type& ast_type) -> ty::Type {
     for (auto& ast_arg : fn_type->args())
       args.push_back(convert_type(*ast_arg));
 
-    return compiler.m_types.find_or_create_fn_type(args, ret);
+    return compiler.m_types.find_or_create_fn_type(args, ret, {});
   } else if (auto* templated = dyn_cast<ast::TemplatedType>(&ast_type)) {
     auto& template_base = templated->base();
     expression(template_base);
