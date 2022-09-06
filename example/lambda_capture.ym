@@ -7,5 +7,10 @@ def main() I32
   let lambda = ->(j I32) i = i + j
   invoke(lambda)
   assert(i == 2)
+
+  let slice = I32:[1, 2, 3]
+  slice.each(lambda)
+  assert(i == 8)
+
   return 0
 end
