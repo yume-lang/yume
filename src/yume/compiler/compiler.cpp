@@ -40,6 +40,7 @@
 #include <llvm/Support/TargetSelect.h>
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/Target/TargetOptions.h>
+// TODO(LLVM MIN >= 14): remove workaround
 #if __has_include(<llvm/MC/TargetRegistry.h>)
 #include <llvm/MC/TargetRegistry.h>
 #else
@@ -885,6 +886,7 @@ template <> auto Compiler::expression(const ast::LambdaExpr& expr) -> Val {
                            m_builder->CreateConstInBoundsGEP2_32(llvm_closure_ty, llvm_closure, 0, i.index()));
   }
 
+  // TODO(LLVM MIN >= 15): BitCast obsoleted by opaque pointers
   fn_bundle =
       m_builder->CreateInsertValue(fn_bundle, m_builder->CreateBitCast(llvm_closure, m_builder->getInt8PtrTy()), 1);
 
@@ -898,6 +900,7 @@ template <> auto Compiler::expression(const ast::LambdaExpr& expr) -> Val {
 
   // Skip the first argument when allocating local parameters. It is the closure type and unpacked earlier.
   auto llvm_fn_args = llvm::make_range(llvm_fn->arg_begin() + 1, llvm_fn->arg_end());
+  // TODO(LLVM MIN >= 15): BitCast obsoleted by opaque pointers
   Val closure_val =
       m_builder->CreateLoad(llvm_closure_ty, m_builder->CreateBitCast(llvm_fn->arg_begin(), m_builder->getInt8PtrTy()));
 
