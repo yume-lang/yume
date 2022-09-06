@@ -215,11 +215,20 @@ template <> void TypeWalker::expression(ast::LambdaExpr& expr) {
 template <> void TypeWalker::expression(ast::DirectCallExpr& expr) {
   body_expression(*expr.base());
   yume_assert(expr.base()->ensure_ty().base_isa<ty::Function>(), "Direct call target must be a function type");
+  const auto* base_ptr_ty = expr.base()->ensure_ty().base_cast<ty::Function>();
 
-  for (auto& i : expr.args())
-    body_expression(*i);
+  for (auto [target, expr_arg] : llvm::zip(base_ptr_ty->args(), expr.args())) {
+    body_expression(*expr_arg);
 
-  expr.val_ty(expr.base()->ensure_ty().base_cast<ty::Function>()->ret());
+    auto compat = expr_arg->ensure_ty().compatibility(target);
+    yume_assert(compat.valid, "Invalid direct call with incompatible argument types");
+    if (compat.conv.empty())
+      continue;
+
+    wrap_in_implicit_cast(expr_arg, compat.conv, target);
+  }
+
+  expr.val_ty(base_ptr_ty->ret());
 }
 
 template <> void TypeWalker::expression(ast::AssignExpr& expr) {
