@@ -1,5 +1,5 @@
 def main() I32
-  let lambda = ->(i I32) I32 i + 1
+  let lambda = def(i I32) I32 = i + 1
   let x I32 = lambda->(2)
   assert(x == 3)
   let lambda2 ->(I32)I32 = lambda

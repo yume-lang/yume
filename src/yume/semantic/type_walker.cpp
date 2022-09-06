@@ -198,7 +198,7 @@ template <> void TypeWalker::expression(ast::LambdaExpr& expr) {
       ret_type = expr.ret()->ensure_ty();
     }
 
-    body_statement(*expr.body());
+    body_statement(expr.body());
 
     auto closured_types = vector<ty::Type>();
     for (const auto& i : closured) {

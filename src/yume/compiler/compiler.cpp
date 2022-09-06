@@ -918,17 +918,9 @@ template <> auto Compiler::expression(const ast::LambdaExpr& expr) -> Val {
     expose_parameter_as_local(type, name, *ast_arg, arg);
   }
 
-  if (const auto* body_expr = dyn_cast<ast::Expr>(expr.body().raw_ptr())) {
-    auto expr_val = body_expression(*body_expr);
-    if (m_builder->GetInsertBlock()->getTerminator() == nullptr) {
-      if (fn_ty->m_ret.has_value())
-        m_builder->CreateRet(expr_val);
-      else
-        m_builder->CreateRetVoid();
-    }
-  } else {
-    body_statement(*expr.body());
-  }
+  body_statement(expr.body());
+  if (m_builder->GetInsertBlock()->getTerminator() == nullptr && !fn_ty->m_ret.has_value())
+    m_builder->CreateRetVoid();
 
   m_scope = saved_scope;
   m_builder->SetInsertPoint(saved_insert_point);
