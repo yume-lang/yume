@@ -125,6 +125,8 @@ private:
   /// scope.
   void make_temporary_in_scope(Val& val, const ast::AST& ast, const string& name = "tmp"s);
 
+  void expose_parameter_as_local(ty::Type type, const string& name, const ast::AST& ast, Val val);
+
   auto create_malloc(llvm::Type* base_type, Val slice_size, string_view name = ""sv) -> Val;
   auto create_malloc(llvm::Type* base_type, uint64_t slice_size, string_view name = ""sv) -> Val;
 

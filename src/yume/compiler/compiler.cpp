@@ -440,6 +440,17 @@ void Compiler::destruct_all_scopes() {
   }
 }
 
+void Compiler::expose_parameter_as_local(ty::Type type, const string& name, const ast::AST& ast, Val val) {
+  Val alloc = nullptr;
+  if (type.is_mut()) {
+    m_scope.add(name, {.value = val, .ast = ast, .owning = false}); // We don't own parameters
+    return;
+  }
+  alloc = m_builder->CreateAlloca(llvm_type(type), nullptr, "lv."s + name);
+  m_builder->CreateStore(val, alloc);
+  m_scope.add(name, {.value = alloc, .ast = ast, .owning = false}); // We don't own parameters
+}
+
 void Compiler::setup_fn_base(Fn& fn) {
   m_current_fn = &fn;
   m_scope.clear();
@@ -450,17 +461,7 @@ void Compiler::setup_fn_base(Fn& fn) {
 
   // Allocate local variables for each parameter
   for (auto [arg, ast_arg] : llvm::zip(fn.llvm->args(), fn.args())) {
-    auto type = ast_arg.type;
-    auto name = ast_arg.name;
-    const auto& val = ast_arg.ast;
-    llvm::Value* alloc = nullptr;
-    if (type.is_mut()) {
-      m_scope.add(name, {.value = &arg, .ast = val, .owning = false}); // We don't own parameters
-      continue;
-    }
-    alloc = m_builder->CreateAlloca(llvm_type(type), nullptr, "lv."s + name);
-    m_builder->CreateStore(&arg, alloc);
-    m_scope.add(name, {.value = alloc, .ast = val, .owning = false}); // We don't own parameters
+    expose_parameter_as_local(ast_arg.type, ast_arg.name, ast_arg.ast, &arg);
   }
 }
 
@@ -906,34 +907,15 @@ template <> auto Compiler::expression(const ast::LambdaExpr& expr) -> Val {
 
   // Allocate local variables for each parameter
   for (auto [arg, ast_arg] : llvm::zip(llvm_fn_args, expr.args())) {
-    auto type = ast_arg.ensure_ty();
-    auto name = ast_arg.name;
-    const auto& val = ast_arg;
-    llvm::Value* alloc = nullptr;
-    if (type.is_mut()) {
-      m_scope.add(name, {.value = &arg, .ast = val, .owning = false}); // We don't own parameters
-      continue;
-    }
-    alloc = m_builder->CreateAlloca(llvm_type(type), nullptr, "lv."s + name);
-    m_builder->CreateStore(&arg, alloc);
-    m_scope.add(name, {.value = alloc, .ast = val, .owning = false}); // We don't own parameters
+    expose_parameter_as_local(ast_arg.ensure_ty(), ast_arg.name, ast_arg, &arg);
   }
 
   // Add local variables for every captured variable
   for (const auto& i : llvm::enumerate(llvm::zip(expr.closured_names(), expr.closured_nodes()))) {
     auto [name, ast_arg] = i.value();
     auto type = ast_arg->ensure_ty();
-
     Val arg = m_builder->CreateExtractValue(closure_val, i.index());
-    const auto& val = *ast_arg;
-    llvm::Value* alloc = nullptr;
-    if (type.is_mut()) {
-      m_scope.add(name, {.value = arg, .ast = val, .owning = false}); // We don't own parameters
-      continue;
-    }
-    alloc = m_builder->CreateAlloca(llvm_type(type), nullptr, "lv."s + name);
-    m_builder->CreateStore(arg, alloc);
-    m_scope.add(name, {.value = alloc, .ast = val, .owning = false}); // We don't own parameters
+    expose_parameter_as_local(type, name, *ast_arg, arg);
   }
 
   if (const auto* body_expr = dyn_cast<ast::Expr>(expr.body().raw_ptr())) {
