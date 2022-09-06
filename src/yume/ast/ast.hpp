@@ -612,35 +612,6 @@ public:
   [[nodiscard]] auto clone() const -> SliceExpr* override;
 };
 
-/// A local definition of an anonymous function
-class LambdaExpr : public Expr {
-  vector<TypeName> m_args;
-  OptionalType m_ret;
-  AnyStmt m_body;
-  vector<string> m_closured_names{};
-  vector<AST*> m_closured_nodes{};
-
-public:
-  LambdaExpr(span<Token> tok, vector<TypeName> args, OptionalType ret, AnyStmt body)
-      : Expr(K_Lambda, tok), m_args(move(args)), m_ret(move(ret)), m_body(move(body)) {}
-  void visit(Visitor& visitor) const override;
-  // [[nodiscard]] auto describe() const -> string override; // TODO(rymiel)
-
-  [[nodiscard]] auto args() const -> const auto& { return m_args; }
-  [[nodiscard]] auto args() -> auto& { return m_args; }
-  [[nodiscard]] auto ret() const -> const auto& { return m_ret; }
-  [[nodiscard]] auto ret() -> auto& { return m_ret; }
-  [[nodiscard]] auto body() const -> const auto& { return m_body; }
-  [[nodiscard]] auto body() -> auto& { return m_body; }
-  [[nodiscard]] auto closured_names() const -> const auto& { return m_closured_names; }
-  [[nodiscard]] auto closured_names() -> auto& { return m_closured_names; }
-  [[nodiscard]] auto closured_nodes() const -> const auto& { return m_closured_nodes; }
-  [[nodiscard]] auto closured_nodes() -> auto& { return m_closured_nodes; }
-
-  static auto classof(const AST* a) -> bool { return a->kind() == K_Lambda; }
-  [[nodiscard]] auto clone() const -> LambdaExpr* override;
-};
-
 /// A "direct" call to an anonymous function
 class DirectCallExpr : public Expr {
   AnyExpr m_base;
@@ -739,6 +710,35 @@ public:
   [[nodiscard]] auto body() -> auto& { return m_body; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_Compound; }
   [[nodiscard]] auto clone() const -> Compound* override;
+};
+
+/// A local definition of an anonymous function
+class LambdaExpr final : public Expr {
+  vector<TypeName> m_args;
+  OptionalType m_ret;
+  Compound m_body;
+  vector<string> m_closured_names{};
+  vector<AST*> m_closured_nodes{};
+
+public:
+  LambdaExpr(span<Token> tok, vector<TypeName> args, OptionalType ret, Compound body)
+      : Expr(K_Lambda, tok), m_args(move(args)), m_ret(move(ret)), m_body(move(body)) {}
+  void visit(Visitor& visitor) const override;
+  // [[nodiscard]] auto describe() const -> string override; // TODO(rymiel)
+
+  [[nodiscard]] auto args() const -> const auto& { return m_args; }
+  [[nodiscard]] auto args() -> auto& { return m_args; }
+  [[nodiscard]] auto ret() const -> const auto& { return m_ret; }
+  [[nodiscard]] auto ret() -> auto& { return m_ret; }
+  [[nodiscard]] auto body() const -> const auto& { return m_body; }
+  [[nodiscard]] auto body() -> auto& { return m_body; }
+  [[nodiscard]] auto closured_names() const -> const auto& { return m_closured_names; }
+  [[nodiscard]] auto closured_names() -> auto& { return m_closured_names; }
+  [[nodiscard]] auto closured_nodes() const -> const auto& { return m_closured_nodes; }
+  [[nodiscard]] auto closured_nodes() -> auto& { return m_closured_nodes; }
+
+  static auto classof(const AST* a) -> bool { return a->kind() == K_Lambda; }
+  [[nodiscard]] auto clone() const -> LambdaExpr* override;
 };
 
 /// Base class for a named declaration.

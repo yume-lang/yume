@@ -721,7 +721,7 @@ auto Parser::parse_receiver(unique_ptr<Expr> receiver, VectorTokenIterator recei
 auto Parser::parse_lambda() -> unique_ptr<LambdaExpr> {
   auto entry = tokens.begin();
 
-  consume(SYM_ARROW);
+  consume(KWD_DEF);
   consume(SYM_LPAREN);
 
   auto args = vector<TypeName>{};
@@ -731,13 +731,29 @@ auto Parser::parse_lambda() -> unique_ptr<LambdaExpr> {
   });
 
   auto ret_type = OptionalType{try_parse_type()};
-  AnyStmt body = parse_stmt(false);
+  auto body_begin = entry;
+  auto body = vector<AnyStmt>{};
 
-  return ast_ptr<LambdaExpr>(entry, move(args), move(ret_type), move(body));
+  if (try_consume(SYM_EQ)) { // A "short" function definition, consists of a single expression
+    body_begin = tokens.begin();
+    auto expr = parse_expr();
+    body.emplace_back(ast_ptr<ReturnStmt>(entry, move(expr)));
+  } else {
+    if (!try_peek(0, KWD_END)) // Allow `end` to be on the same line
+      require_separator();
+
+    body_begin = tokens.begin();
+    while (!try_consume(KWD_END)) {
+      body.emplace_back(parse_stmt());
+      ignore_separator();
+    }
+  }
+
+  return ast_ptr<LambdaExpr>(entry, move(args), move(ret_type), make_ast<Compound>(body_begin, move(body)));
 }
 
 auto Parser::parse_receiver() -> unique_ptr<Expr> {
-  if (tokens->is_a(SYM_ARROW))
+  if (tokens->is_a(KWD_DEF))
     return parse_lambda();
 
   auto entry = tokens.begin();
