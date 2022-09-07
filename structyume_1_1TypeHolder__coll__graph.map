@@ -1,10 +1,11 @@
 <map id="yume::TypeHolder" name="yume::TypeHolder">
-<area shape="rect" id="node1" title=" " alt="" coords="827,143,952,169"/>
+<area shape="rect" id="node1" title=" " alt="" coords="827,172,952,199"/>
 <area shape="rect" id="node2" title=" " alt="" coords="461,14,625,55"/>
 <area shape="rect" id="node3" title=" " alt="" coords="208,21,259,48"/>
 <area shape="rect" id="node4" href="$classyume_1_1ty_1_1Int.html" title="A built&#45;in integral type, such as I32 or Bool." alt="" coords="188,108,279,135"/>
 <area shape="rect" id="node6" href="$structyume_1_1TypeHolder_1_1IntTypePair.html" title=" " alt="" coords="444,143,641,169"/>
 <area shape="rect" id="node5" href="$classyume_1_1ty_1_1BaseType.html" title="Represents a type in the type system. NOTE: that this isn&#39;t the class to use for type introspection,..." alt="" coords="5,108,139,135"/>
 <area shape="rect" id="node7" title=" " alt="" coords="459,194,626,235"/>
-<area shape="rect" id="node8" title=" " alt="" coords="459,259,626,301"/>
+<area shape="rect" id="node8" title=" " alt="" coords="463,259,622,301"/>
+<area shape="rect" id="node9" title=" " alt="" coords="459,325,626,366"/>
 </map>

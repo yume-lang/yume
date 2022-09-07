@@ -32,12 +32,12 @@
             <td></td>
             <td class="headerItem">Lines:</td>
             <td class="headerCovTableEntry">3</td>
-            <td class="headerCovTableEntry">19</td>
-            <td class="headerCovTableEntryLo">15.8 %</td>
+            <td class="headerCovTableEntry">25</td>
+            <td class="headerCovTableEntryLo">12.0 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-09-04 22:45:23</td>
+            <td class="headerValue">2022-09-07 02:04:56</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -91,55 +91,65 @@
 <a name="33"><span class="lineNum">      33 </span><span class="lineNoCov">          0 :   friend CRTPWalker;</span></a>
 <a name="34"><span class="lineNum">      34 </span>            : </a>
 <a name="35"><span class="lineNum">      35 </span>            : public:</a>
-<a name="36"><span class="lineNum">      36 </span><span class="lineNoCov">          0 :   Compiler&amp; compiler;</span></a>
-<a name="37"><span class="lineNum">      37 </span><span class="lineNoCov">          0 :   DeclLike current_decl{};</span></a>
-<a name="38"><span class="lineNum">      38 </span><span class="lineNoCov">          0 :   ScopeContainer&lt;nonnull&lt;ast::AST*&gt;&gt; scope{};</span></a>
-<a name="39"><span class="lineNum">      39 </span>            : </a>
-<a name="40"><span class="lineNum">      40 </span><span class="lineNoCov">          0 :   std::queue&lt;DeclLike&gt; decl_queue{};</span></a>
-<a name="41"><span class="lineNum">      41 </span>            : </a>
-<a name="42"><span class="lineNum">      42 </span>            :   /// Whether or not to compile the bodies of methods.  Initially, on the parameter types of methods are traversed and</a>
-<a name="43"><span class="lineNum">      43 </span>            :   /// converted, then everything else in a second pass.</a>
-<a name="44"><span class="lineNum">      44 </span><span class="lineCov">          1 :   bool in_depth = false;</span></a>
-<a name="45"><span class="lineNum">      45 </span>            : </a>
-<a name="46"><span class="lineNum">      46 </span><span class="lineNoCov">          0 :   explicit TypeWalker(Compiler&amp; compiler) : compiler(compiler) {}</span></a>
+<a name="36"><span class="lineNum">      36 </span><span class="lineNoCov">          0 :   struct ASTWithName {</span></a>
+<a name="37"><span class="lineNum">      37 </span><span class="lineNoCov">          0 :     ast::AST* ast;</span></a>
+<a name="38"><span class="lineNum">      38 </span><span class="lineNoCov">          0 :     string name;</span></a>
+<a name="39"><span class="lineNum">      39 </span>            :   };</a>
+<a name="40"><span class="lineNum">      40 </span>            : </a>
+<a name="41"><span class="lineNum">      41 </span><span class="lineNoCov">          0 :   Compiler&amp; compiler;</span></a>
+<a name="42"><span class="lineNum">      42 </span><span class="lineNoCov">          0 :   DeclLike current_decl{};</span></a>
+<a name="43"><span class="lineNum">      43 </span><span class="lineNoCov">          0 :   using scope_t = ScopeContainer&lt;nonnull&lt;ast::AST*&gt;&gt;;</span></a>
+<a name="44"><span class="lineNum">      44 </span><span class="lineNoCov">          0 :   scope_t scope{};</span></a>
+<a name="45"><span class="lineNum">      45 </span><span class="lineNoCov">          0 :   vector&lt;scope_t&gt; enclosing_scopes{};</span></a>
+<a name="46"><span class="lineNum">      46 </span><span class="lineNoCov">          0 :   vector&lt;ASTWithName&gt; closured{};</span></a>
 <a name="47"><span class="lineNum">      47 </span>            : </a>
-<a name="48"><span class="lineNum">      48 </span><span class="lineNoCov">          0 :   void body_statement(ast::Stmt&amp;);</span></a>
-<a name="49"><span class="lineNum">      49 </span><span class="lineNoCov">          0 :   void body_expression(ast::Expr&amp;);</span></a>
-<a name="50"><span class="lineNum">      50 </span>            : </a>
-<a name="51"><span class="lineNum">      51 </span><span class="lineNoCov">          0 :   void resolve_queue();</span></a>
-<a name="52"><span class="lineNum">      52 </span>            : </a>
-<a name="53"><span class="lineNum">      53 </span>            : private:</a>
-<a name="54"><span class="lineNum">      54 </span>            :   /// Convert an ast type (`ast::Type`) into a type in the type system (`ty::Type`).</a>
-<a name="55"><span class="lineNum">      55 </span><span class="lineCov">          1 :   auto convert_type(ast::Type&amp; ast_type) -&gt; ty::Type;</span></a>
-<a name="56"><span class="lineNum">      56 </span><span class="lineNoCov">          0 :   auto create_slice_type(const ty::Type&amp; base_type) -&gt; ty::Type;</span></a>
-<a name="57"><span class="lineNum">      57 </span>            : </a>
-<a name="58"><span class="lineNum">      58 </span><span class="lineNoCov">          0 :   auto all_fn_overloads_by_name(ast::CallExpr&amp; call) -&gt; OverloadSet;</span></a>
-<a name="59"><span class="lineNum">      59 </span><span class="lineNoCov">          0 :   auto all_ctor_overloads_by_type(Struct&amp; st, ast::CtorExpr&amp; call) -&gt; OverloadSet;</span></a>
+<a name="48"><span class="lineNum">      48 </span><span class="lineNoCov">          0 :   std::queue&lt;DeclLike&gt; decl_queue{};</span></a>
+<a name="49"><span class="lineNum">      49 </span>            : </a>
+<a name="50"><span class="lineNum">      50 </span>            :   /// Whether or not to compile the bodies of methods.  Initially, on the parameter types of methods are traversed and</a>
+<a name="51"><span class="lineNum">      51 </span>            :   /// converted, then everything else in a second pass.</a>
+<a name="52"><span class="lineNum">      52 </span><span class="lineCov">          1 :   bool in_depth = false;</span></a>
+<a name="53"><span class="lineNum">      53 </span>            : </a>
+<a name="54"><span class="lineNum">      54 </span><span class="lineNoCov">          0 :   explicit TypeWalker(Compiler&amp; compiler) : compiler(compiler) {}</span></a>
+<a name="55"><span class="lineNum">      55 </span>            : </a>
+<a name="56"><span class="lineNum">      56 </span><span class="lineNoCov">          0 :   void body_statement(ast::Stmt&amp;);</span></a>
+<a name="57"><span class="lineNum">      57 </span><span class="lineNoCov">          0 :   void body_expression(ast::Expr&amp;);</span></a>
+<a name="58"><span class="lineNum">      58 </span>            : </a>
+<a name="59"><span class="lineNum">      59 </span><span class="lineNoCov">          0 :   void resolve_queue();</span></a>
 <a name="60"><span class="lineNum">      60 </span>            : </a>
-<a name="61"><span class="lineNum">      61 </span><span class="lineNoCov">          0 :   auto with_saved_scope(auto&amp;&amp; callback) {</span></a>
-<a name="62"><span class="lineNum">      62 </span>            :     // Save everything pertaining to the old context</a>
-<a name="63"><span class="lineNum">      63 </span>            :     auto saved_scope = scope;</a>
-<a name="64"><span class="lineNum">      64 </span>            :     auto saved_current_decl = current_decl;</a>
-<a name="65"><span class="lineNum">      65 </span>            :     auto saved_depth = in_depth;</a>
-<a name="66"><span class="lineNum">      66 </span>            : </a>
-<a name="67"><span class="lineNum">      67 </span>            :     callback();</a>
+<a name="61"><span class="lineNum">      61 </span>            : private:</a>
+<a name="62"><span class="lineNum">      62 </span>            :   /// Convert an ast type (`ast::Type`) into a type in the type system (`ty::Type`).</a>
+<a name="63"><span class="lineNum">      63 </span><span class="lineCov">          1 :   auto convert_type(ast::Type&amp; ast_type) -&gt; ty::Type;</span></a>
+<a name="64"><span class="lineNum">      64 </span><span class="lineNoCov">          0 :   auto create_slice_type(const ty::Type&amp; base_type) -&gt; ty::Type;</span></a>
+<a name="65"><span class="lineNum">      65 </span>            : </a>
+<a name="66"><span class="lineNum">      66 </span><span class="lineNoCov">          0 :   auto all_fn_overloads_by_name(ast::CallExpr&amp; call) -&gt; OverloadSet;</span></a>
+<a name="67"><span class="lineNum">      67 </span><span class="lineNoCov">          0 :   auto all_ctor_overloads_by_type(Struct&amp; st, ast::CtorExpr&amp; call) -&gt; OverloadSet;</span></a>
 <a name="68"><span class="lineNum">      68 </span>            : </a>
-<a name="69"><span class="lineNum">      69 </span>            :     // Restore again</a>
-<a name="70"><span class="lineNum">      70 </span>            :     in_depth = saved_depth;</a>
-<a name="71"><span class="lineNum">      71 </span>            :     current_decl = saved_current_decl;</a>
-<a name="72"><span class="lineNum">      72 </span>            :     scope = saved_scope;</a>
-<a name="73"><span class="lineNum">      73 </span>            :   }</a>
-<a name="74"><span class="lineNum">      74 </span>            : </a>
-<a name="75"><span class="lineNum">      75 </span><span class="lineNoCov">          0 :   template &lt;typename T&gt; void statement([[maybe_unused]] T&amp; stat) {</span></a>
-<a name="76"><span class="lineNum">      76 </span>            :     throw std::runtime_error(&quot;Type walker stubbed on statement &quot;s + stat.kind_name());</a>
-<a name="77"><span class="lineNum">      77 </span>            :   }</a>
-<a name="78"><span class="lineNum">      78 </span>            : </a>
-<a name="79"><span class="lineNum">      79 </span><span class="lineNoCov">          0 :   template &lt;typename T&gt; void expression([[maybe_unused]] T&amp; expr) {</span></a>
-<a name="80"><span class="lineNum">      80 </span>            :     throw std::runtime_error(&quot;Type walker stubbed on expression &quot;s + expr.kind_name());</a>
-<a name="81"><span class="lineNum">      81 </span>            :   }</a>
-<a name="82"><span class="lineNum">      82 </span>            : };</a>
-<a name="83"><span class="lineNum">      83 </span>            : </a>
-<a name="84"><span class="lineNum">      84 </span>            : } // namespace yume::semantic</a>
+<a name="69"><span class="lineNum">      69 </span><span class="lineNoCov">          0 :   auto with_saved_scope(auto&amp;&amp; callback) {</span></a>
+<a name="70"><span class="lineNum">      70 </span>            :     // Save everything pertaining to the old context</a>
+<a name="71"><span class="lineNum">      71 </span>            :     auto saved_scope = scope;</a>
+<a name="72"><span class="lineNum">      72 </span>            :     auto saved_current_decl = current_decl;</a>
+<a name="73"><span class="lineNum">      73 </span>            :     auto saved_depth = in_depth;</a>
+<a name="74"><span class="lineNum">      74 </span>            :     auto saved_closured = closured;</a>
+<a name="75"><span class="lineNum">      75 </span>            : </a>
+<a name="76"><span class="lineNum">      76 </span>            :     callback();</a>
+<a name="77"><span class="lineNum">      77 </span>            : </a>
+<a name="78"><span class="lineNum">      78 </span>            :     // Restore again</a>
+<a name="79"><span class="lineNum">      79 </span>            :     closured = saved_closured;</a>
+<a name="80"><span class="lineNum">      80 </span>            :     in_depth = saved_depth;</a>
+<a name="81"><span class="lineNum">      81 </span>            :     current_decl = saved_current_decl;</a>
+<a name="82"><span class="lineNum">      82 </span>            :     scope = saved_scope;</a>
+<a name="83"><span class="lineNum">      83 </span>            :   }</a>
+<a name="84"><span class="lineNum">      84 </span>            : </a>
+<a name="85"><span class="lineNum">      85 </span><span class="lineNoCov">          0 :   template &lt;typename T&gt; void statement([[maybe_unused]] T&amp; stat) {</span></a>
+<a name="86"><span class="lineNum">      86 </span>            :     throw std::runtime_error(&quot;Type walker stubbed on statement &quot;s + stat.kind_name());</a>
+<a name="87"><span class="lineNum">      87 </span>            :   }</a>
+<a name="88"><span class="lineNum">      88 </span>            : </a>
+<a name="89"><span class="lineNum">      89 </span><span class="lineNoCov">          0 :   template &lt;typename T&gt; void expression([[maybe_unused]] T&amp; expr) {</span></a>
+<a name="90"><span class="lineNum">      90 </span>            :     throw std::runtime_error(&quot;Type walker stubbed on expression &quot;s + expr.kind_name());</a>
+<a name="91"><span class="lineNum">      91 </span>            :   }</a>
+<a name="92"><span class="lineNum">      92 </span>            : };</a>
+<a name="93"><span class="lineNum">      93 </span>            : </a>
+<a name="94"><span class="lineNum">      94 </span>            : } // namespace yume::semantic</a>
 </pre>
       </td>
     </tr>

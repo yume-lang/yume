@@ -1,7 +1,7 @@
 var searchData=
 [
   ['scopecontainer_0',['ScopeContainer',['../classyume_1_1ScopeContainer.html',1,'yume']]],
-  ['scopecontainer_3c_20nonnull_3c_20yume_3a_3aast_3a_3aast_20_2a_20_3e_20_3e_1',['ScopeContainer&lt; nonnull&lt; yume::ast::AST * &gt; &gt;',['../classyume_1_1ScopeContainer.html',1,'yume']]],
+  ['scopecontainer_3c_20nonnull_3c_20ast_3a_3aast_20_2a_20_3e_20_3e_1',['ScopeContainer&lt; nonnull&lt; ast::AST * &gt; &gt;',['../classyume_1_1ScopeContainer.html',1,'yume']]],
   ['scopecontainer_3c_20yume_3a_3ainscope_20_3e_2',['ScopeContainer&lt; yume::InScope &gt;',['../classyume_1_1ScopeContainer.html',1,'yume']]],
   ['scopecontainerguard_3',['ScopeContainerGuard',['../classyume_1_1ScopeContainerGuard.html',1,'yume']]],
   ['selftype_4',['SelfType',['../classyume_1_1ast_1_1SelfType.html',1,'yume::ast']]],

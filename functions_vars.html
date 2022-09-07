@@ -67,7 +67,7 @@ $(function() {
 <h3><a id="index_a" name="index_a"></a>- a -</h3><ul>
 <li>ANN_EXTERN&#160;:&#160;<a class="el" href="classyume_1_1ast_1_1FnDecl.html#a5cde2f96fd5bbc781c490c452bb2fd7e">yume::ast::FnDecl</a></li>
 <li>args&#160;:&#160;<a class="el" href="structyume_1_1semantic_1_1OverloadSet.html#a7c08481939d7169b001b583608744ff3">yume::semantic::OverloadSet</a></li>
-<li>ast&#160;:&#160;<a class="el" href="structyume_1_1FnArg.html#a0db19654028210f63b817dab022a3ae6">yume::FnArg</a>, <a class="el" href="structyume_1_1InScope.html#ae800171328045061b17fc4533dde9fb5">yume::InScope</a></li>
+<li>ast&#160;:&#160;<a class="el" href="structyume_1_1FnArg.html#a0db19654028210f63b817dab022a3ae6">yume::FnArg</a>, <a class="el" href="structyume_1_1InScope.html#ae800171328045061b17fc4533dde9fb5">yume::InScope</a>, <a class="el" href="structyume_1_1semantic_1_1TypeWalker_1_1ASTWithName.html#ac7ba5f6d32c2b05dfb7d744518ae4ef5">yume::semantic::TypeWalker::ASTWithName</a></li>
 <li>ast_decl&#160;:&#160;<a class="el" href="structyume_1_1Fn.html#ae1b317636c95160d67fae062e17942e5">yume::Fn</a></li>
 </ul>
 
@@ -82,6 +82,7 @@ $(function() {
 <h3><a id="index_c" name="index_c"></a>- c -</h3><ul>
 <li>c&#160;:&#160;<a class="el" href="structyume_1_1TokenState.html#ab16d2b443e6ec5541f8ac00bec9a333f">yume::TokenState</a></li>
 <li>call&#160;:&#160;<a class="el" href="structyume_1_1semantic_1_1OverloadSet.html#a8ec5872154aebab74808be6f4d491454">yume::semantic::OverloadSet</a></li>
+<li>closured&#160;:&#160;<a class="el" href="structyume_1_1semantic_1_1TypeWalker.html#ab48d82cab7fb33d0784cd3c06a557a9d">yume::semantic::TypeWalker</a></li>
 <li>cn_ast&#160;:&#160;<a class="el" href="structyume_1_1Const.html#ae1ebe3d4a8ece16969789df6bcb069e0">yume::Const</a></li>
 <li>compatibilities&#160;:&#160;<a class="el" href="structyume_1_1semantic_1_1Overload.html#a671e03f61e4161feb846bcbdbb73447e">yume::semantic::Overload</a></li>
 <li>compiler&#160;:&#160;<a class="el" href="structyume_1_1semantic_1_1TypeWalker.html#a6053cbc38e92823c902b934bf51fd76e">yume::semantic::TypeWalker</a></li>
@@ -99,6 +100,7 @@ $(function() {
 
 
 <h3><a id="index_e" name="index_e"></a>- e -</h3><ul>
+<li>enclosing_scopes&#160;:&#160;<a class="el" href="structyume_1_1semantic_1_1TypeWalker.html#ad571be365719ea8cf5f583677a8f9d3b">yume::semantic::TypeWalker</a></li>
 <li>end_col&#160;:&#160;<a class="el" href="structyume_1_1Loc.html#a076b7241c476c3be6daedb78c871b31c">yume::Loc</a></li>
 <li>end_line&#160;:&#160;<a class="el" href="structyume_1_1Loc.html#ae662b2b5d46b62bb1d0d30529af15a61">yume::Loc</a></li>
 <li>extra_body&#160;:&#160;<a class="el" href="structyume_1_1ast_1_1parser_1_1Parser_1_1FnArg.html#affd1d526c0740555a76e1d44de512111">yume::ast::parser::Parser::FnArg</a></li>
@@ -108,6 +110,7 @@ $(function() {
 <h3><a id="index_f" name="index_f"></a>- f -</h3><ul>
 <li>file&#160;:&#160;<a class="el" href="structyume_1_1Loc.html#ae685ff30e970aec8b2a7b1888b625911">yume::Loc</a></li>
 <li>fn&#160;:&#160;<a class="el" href="structyume_1_1Characteristic.html#a4d5e545b8cf086da2d42db943c99bdcf">yume::Characteristic</a>, <a class="el" href="structyume_1_1semantic_1_1Overload.html#a07105cd62d1c347def93df342ca31e54">yume::semantic::Overload</a></li>
+<li>fn_types&#160;:&#160;<a class="el" href="structyume_1_1TypeHolder.html#af5ab4ba3333a76c3623668133b5c5f1f">yume::TypeHolder</a></li>
 </ul>
 
 
@@ -147,7 +150,7 @@ $(function() {
 
 
 <h3><a id="index_n" name="index_n"></a>- n -</h3><ul>
-<li>name&#160;:&#160;<a class="el" href="structyume_1_1ast_1_1TypeName.html#a65382308810e028e19f976fb32c55c3c">yume::ast::TypeName</a>, <a class="el" href="structyume_1_1FnArg.html#a27aacacefa317b1a0764b5a662ac40f6">yume::FnArg</a>, <a class="el" href="structyume_1_1SourceFile.html#a33c2d4da7ba7954a2a80287f9db42ece">yume::SourceFile</a></li>
+<li>name&#160;:&#160;<a class="el" href="structyume_1_1ast_1_1TypeName.html#a65382308810e028e19f976fb32c55c3c">yume::ast::TypeName</a>, <a class="el" href="structyume_1_1FnArg.html#a27aacacefa317b1a0764b5a662ac40f6">yume::FnArg</a>, <a class="el" href="structyume_1_1semantic_1_1TypeWalker_1_1ASTWithName.html#a070cfa40899f24d469010f9ec2d4cc86">yume::semantic::TypeWalker::ASTWithName</a>, <a class="el" href="structyume_1_1SourceFile.html#a33c2d4da7ba7954a2a80287f9db42ece">yume::SourceFile</a></li>
 <li>Number&#160;:&#160;<a class="el" href="structyume_1_1ast_1_1parser_1_1Parser.html#a87bee482304c6f93e340edc94e1581ab">yume::ast::parser::Parser</a></li>
 </ul>
 
@@ -174,7 +177,7 @@ $(function() {
 <li>s_max&#160;:&#160;<a class="el" href="structyume_1_1ty_1_1detail_1_1MinMax.html#acc99604a5fd34f96277f84601e6fa51e">yume::ty::detail::MinMax</a></li>
 <li>s_min&#160;:&#160;<a class="el" href="structyume_1_1ty_1_1detail_1_1MinMax.html#a4854895ee087d8f3eae2e401c545f398">yume::ty::detail::MinMax</a></li>
 <li>s_ty&#160;:&#160;<a class="el" href="structyume_1_1TypeHolder_1_1IntTypePair.html#a331fcfe7d1928b01825b5a9df36b310c">yume::TypeHolder::IntTypePair</a></li>
-<li>scope&#160;:&#160;<a class="el" href="structyume_1_1semantic_1_1TypeWalker.html#a1a92f09b487862eaa441d52209137c00">yume::semantic::TypeWalker</a>, <a class="el" href="structyume_1_1Val.html#aaf72ab6b90bd4b73865c80ff15b28c59">yume::Val</a></li>
+<li>scope&#160;:&#160;<a class="el" href="structyume_1_1semantic_1_1TypeWalker.html#a0ac3583d17c915b2e90fd391ddc00926">yume::semantic::TypeWalker</a>, <a class="el" href="structyume_1_1Val.html#aaf72ab6b90bd4b73865c80ff15b28c59">yume::Val</a></li>
 <li>self_ty&#160;:&#160;<a class="el" href="structyume_1_1Const.html#a2c3167a7fff2ed42e3901a0f3fae3402">yume::Const</a>, <a class="el" href="structyume_1_1Fn.html#a07d168f745b90dba8815716e5800e511">yume::Fn</a>, <a class="el" href="structyume_1_1Struct.html#ae31d8fdc8fe87db75ef5b1e1a6ea7dc7">yume::Struct</a></li>
 <li>Separator&#160;:&#160;<a class="el" href="structyume_1_1ast_1_1parser_1_1Parser.html#a6ceafdaef74a531e58a75112875a027a">yume::ast::parser::Parser</a></li>
 <li>size_type&#160;:&#160;<a class="el" href="structyume_1_1TypeHolder.html#aa7573aff3d314e07ef1b5b656c046969">yume::TypeHolder</a></li>

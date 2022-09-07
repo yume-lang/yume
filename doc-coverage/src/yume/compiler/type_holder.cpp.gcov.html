@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-09-04 22:45:23</td>
+            <td class="headerValue">2022-09-07 02:04:56</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -93,7 +93,17 @@
 <a name="35"><span class="lineNum">      35 </span>            :     known.insert({i_ty-&gt;name(), move(i_ty)});</a>
 <a name="36"><span class="lineNum">      36 </span>            :   }</a>
 <a name="37"><span class="lineNum">      37 </span>            : }</a>
-<a name="38"><span class="lineNum">      38 </span>            : } // namespace yume</a>
+<a name="38"><span class="lineNum">      38 </span>            : </a>
+<a name="39"><span class="lineNum">      39 </span>            : auto TypeHolder::find_or_create_fn_type(const vector&lt;ty::Type&gt;&amp; args, optional&lt;ty::Type&gt; ret,</a>
+<a name="40"><span class="lineNum">      40 </span>            :                                         const vector&lt;ty::Type&gt;&amp; closure) -&gt; ty::Function* {</a>
+<a name="41"><span class="lineNum">      41 </span>            :   for (const auto&amp; i : fn_types)</a>
+<a name="42"><span class="lineNum">      42 </span>            :     if (i-&gt;ret() == ret &amp;&amp; i-&gt;args() == args &amp;&amp; i-&gt;closure() == closure)</a>
+<a name="43"><span class="lineNum">      43 </span>            :       return i.get();</a>
+<a name="44"><span class="lineNum">      44 </span>            : </a>
+<a name="45"><span class="lineNum">      45 </span>            :   auto&amp; new_fn = fn_types.emplace_back(std::make_unique&lt;ty::Function&gt;(&quot;&quot;, args, ret, closure));</a>
+<a name="46"><span class="lineNum">      46 </span>            :   return new_fn.get();</a>
+<a name="47"><span class="lineNum">      47 </span>            : }</a>
+<a name="48"><span class="lineNum">      48 </span>            : } // namespace yume</a>
 </pre>
       </td>
     </tr>

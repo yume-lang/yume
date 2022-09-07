@@ -122,6 +122,9 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1Decl.html">Decl</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base class for a named declaration.  <a href="classyume_1_1ast_1_1Decl.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1DirectCallExpr.html">DirectCallExpr</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A "direct" call to an anonymous function.  <a href="classyume_1_1ast_1_1DirectCallExpr.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1DtorExpr.html">DtorExpr</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A destruction of an object upon leaving its scope.  <a href="classyume_1_1ast_1_1DtorExpr.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -134,6 +137,9 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1FnDecl.html">FnDecl</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A declaration of a function (<code>def</code>).  <a href="classyume_1_1ast_1_1FnDecl.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1FunctionType.html">FunctionType</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A function type <em>i.e</em>. <code>-&gt;(Foo,Bar)Baz</code>.  <a href="classyume_1_1ast_1_1FunctionType.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1IfClause.html">IfClause</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clauses of an if statement <code><a class="el" href="classyume_1_1ast_1_1IfStmt.html" title="An if statement (if), with one or more IfClauses, and optionally an else clause.">IfStmt</a></code>.  <a href="classyume_1_1ast_1_1IfClause.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -142,6 +148,9 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1ImplicitCastExpr.html">ImplicitCastExpr</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents an implicit cast to a different type, performed during semantic analysis.  <a href="classyume_1_1ast_1_1ImplicitCastExpr.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1LambdaExpr.html">LambdaExpr</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A local definition of an anonymous function.  <a href="classyume_1_1ast_1_1LambdaExpr.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1NumberExpr.html">NumberExpr</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number literals.  <a href="classyume_1_1ast_1_1NumberExpr.html#details">More...</a><br /></td></tr>
@@ -254,20 +263,24 @@ Enumerations</h2></td></tr>
 &#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406affbe8ac10c90f57aeefdf6b190308d56">K_Ctor</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a1d139dc28bf472f6091c749830ca5d07">K_Dtor</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a50d806f5bf631e958002cc257d257d70">K_Slice</a>
+, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406af7e69d346e5f7f28960b580d12e487cd">K_Lambda</a>
+, <br />
+&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a24f82e6623bbdb947f6f745c0e624235">K_DirectCall</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a1026a7cd3d739e73716b6a5e19fe06b5">K_Assign</a>
-, <br />
-&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a57e69957d24d6a173fa460b59e03cee6">K_FieldAccess</a>
+, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a57e69957d24d6a173fa460b59e03cee6">K_FieldAccess</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a46d6f0de014831d0e4403caf1aeb67eb">K_ImplicitCast</a>
-, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a2307bd6b4d1a28171ee71c082ff26068">K_END_Expr</a>
+, <br />
+&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a2307bd6b4d1a28171ee71c082ff26068">K_END_Expr</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406acea44ee55acceb084545a22e9c544e06">K_END_Stmt</a>
-, <br />
-&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a59e9625693ebd150640e6ea809dbe880">K_Type</a>
+, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a59e9625693ebd150640e6ea809dbe880">K_Type</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406ab0fa7ff866aa3d6b6a48364da9a18729">K_SimpleType</a>
-, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a548d359a0e552680a68ba7f0e99a469f">K_QualType</a>
-, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a3ee321004266cc8caae4081094acdcd4">K_TemplatedType</a>
 , <br />
-&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a99beb458aa18de10514d9e4a6a8f2e98">K_SelfType</a>
-, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a3c80ff47a160d774fcaa24e9cc76a024">K_ProxyType</a>
+&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a548d359a0e552680a68ba7f0e99a469f">K_QualType</a>
+, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a3ee321004266cc8caae4081094acdcd4">K_TemplatedType</a>
+, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a7bc385a752e350de8d57f0a7118fd8bf">K_FunctionType</a>
+, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a99beb458aa18de10514d9e4a6a8f2e98">K_SelfType</a>
+, <br />
+&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a3c80ff47a160d774fcaa24e9cc76a024">K_ProxyType</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406ad9d288944a156bf921fc6213308b308f">K_END_Type</a>
 <br />
  }</td></tr>
@@ -292,7 +305,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="classyume_1_1ast_1_1AnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T. See AnyExpr, AnyStmt and AnyType.">AnyBase</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00411">411</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00436">436</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -309,7 +322,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="classyume_1_1ast_1_1AnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T. See AnyExpr, AnyStmt and AnyType.">AnyBase</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00291">291</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00297">297</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -326,7 +339,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="classyume_1_1ast_1_1AnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T. See AnyExpr, AnyStmt and AnyType.">AnyBase</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00306">306</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00312">312</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -343,7 +356,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="classyume_1_1ast_1_1OptionalAnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T, or the absence of one. See OptionalExpr and OptionalType...">OptionalAnyBase</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00413">413</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00438">438</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -360,7 +373,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="classyume_1_1ast_1_1OptionalAnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T, or the absence of one. See OptionalExpr and OptionalType...">OptionalAnyBase</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00293">293</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00299">299</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -377,7 +390,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="classyume_1_1ast_1_1OptionalAnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T, or the absence of one. See OptionalExpr and OptionalType...">OptionalAnyBase</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00309">309</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00315">315</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -464,6 +477,10 @@ Functions</h2></td></tr>
 </td></tr>
 <tr><td class="fieldname"><a id="a39181752a224556ace8d0e9f43ac0406a50d806f5bf631e958002cc257d257d70" name="a39181752a224556ace8d0e9f43ac0406a50d806f5bf631e958002cc257d257d70"></a>K_Slice&#160;</td><td class="fielddoc"><p ><code><a class="el" href="classyume_1_1ast_1_1SliceExpr.html" title="A slice literal, i.e. an array.">SliceExpr</a></code> </p>
 </td></tr>
+<tr><td class="fieldname"><a id="a39181752a224556ace8d0e9f43ac0406af7e69d346e5f7f28960b580d12e487cd" name="a39181752a224556ace8d0e9f43ac0406af7e69d346e5f7f28960b580d12e487cd"></a>K_Lambda&#160;</td><td class="fielddoc"><p ><code><a class="el" href="classyume_1_1ast_1_1LambdaExpr.html" title="A local definition of an anonymous function.">LambdaExpr</a></code> </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a39181752a224556ace8d0e9f43ac0406a24f82e6623bbdb947f6f745c0e624235" name="a39181752a224556ace8d0e9f43ac0406a24f82e6623bbdb947f6f745c0e624235"></a>K_DirectCall&#160;</td><td class="fielddoc"><p ><code><a class="el" href="classyume_1_1ast_1_1DirectCallExpr.html" title="A &quot;direct&quot; call to an anonymous function.">DirectCallExpr</a></code> </p>
+</td></tr>
 <tr><td class="fieldname"><a id="a39181752a224556ace8d0e9f43ac0406a1026a7cd3d739e73716b6a5e19fe06b5" name="a39181752a224556ace8d0e9f43ac0406a1026a7cd3d739e73716b6a5e19fe06b5"></a>K_Assign&#160;</td><td class="fielddoc"><p ><code><a class="el" href="classyume_1_1ast_1_1AssignExpr.html" title="An assignment (=).">AssignExpr</a></code> </p>
 </td></tr>
 <tr><td class="fieldname"><a id="a39181752a224556ace8d0e9f43ac0406a57e69957d24d6a173fa460b59e03cee6" name="a39181752a224556ace8d0e9f43ac0406a57e69957d24d6a173fa460b59e03cee6"></a>K_FieldAccess&#160;</td><td class="fielddoc"><p ><code><a class="el" href="classyume_1_1ast_1_1FieldAccessExpr.html" title="Direct access of a field of a struct (::).">FieldAccessExpr</a></code> </p>
@@ -480,6 +497,8 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="a39181752a224556ace8d0e9f43ac0406a548d359a0e552680a68ba7f0e99a469f" name="a39181752a224556ace8d0e9f43ac0406a548d359a0e552680a68ba7f0e99a469f"></a>K_QualType&#160;</td><td class="fielddoc"><p ><code><a class="el" href="classyume_1_1ast_1_1QualType.html" title="A type with a Qualifier like mut or [] following.">QualType</a></code> </p>
 </td></tr>
 <tr><td class="fieldname"><a id="a39181752a224556ace8d0e9f43ac0406a3ee321004266cc8caae4081094acdcd4" name="a39181752a224556ace8d0e9f43ac0406a3ee321004266cc8caae4081094acdcd4"></a>K_TemplatedType&#160;</td><td class="fielddoc"><p ><code><a class="el" href="classyume_1_1ast_1_1TemplatedType.html" title="A type with explicit type parameters i.e. Foo&lt;Bar,Baz&gt;.">TemplatedType</a></code> </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a39181752a224556ace8d0e9f43ac0406a7bc385a752e350de8d57f0a7118fd8bf" name="a39181752a224556ace8d0e9f43ac0406a7bc385a752e350de8d57f0a7118fd8bf"></a>K_FunctionType&#160;</td><td class="fielddoc"><p ><code><a class="el" href="classyume_1_1ast_1_1TemplatedType.html" title="A type with explicit type parameters i.e. Foo&lt;Bar,Baz&gt;.">TemplatedType</a></code> </p>
 </td></tr>
 <tr><td class="fieldname"><a id="a39181752a224556ace8d0e9f43ac0406a99beb458aa18de10514d9e4a6a8f2e98" name="a39181752a224556ace8d0e9f43ac0406a99beb458aa18de10514d9e4a6a8f2e98"></a>K_SelfType&#160;</td><td class="fielddoc"><p ><code><a class="el" href="classyume_1_1ast_1_1SelfType.html" title="The self type.">SelfType</a></code> </p>
 </td></tr>
@@ -517,11 +536,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00079">79</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00082">82</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00063">K_Assign</a>, <a class="el" href="ast_8hpp_source.html#l00055">K_Bool</a>, <a class="el" href="ast_8hpp_source.html#l00059">K_Call</a>, <a class="el" href="ast_8hpp_source.html#l00054">K_Char</a>, <a class="el" href="ast_8hpp_source.html#l00036">K_Compound</a>, <a class="el" href="ast_8hpp_source.html#l00058">K_Const</a>, <a class="el" href="ast_8hpp_source.html#l00048">K_ConstDecl</a>, <a class="el" href="ast_8hpp_source.html#l00060">K_Ctor</a>, <a class="el" href="ast_8hpp_source.html#l00045">K_CtorDecl</a>, <a class="el" href="ast_8hpp_source.html#l00043">K_Decl</a>, <a class="el" href="ast_8hpp_source.html#l00061">K_Dtor</a>, <a class="el" href="ast_8hpp_source.html#l00049">K_END_Decl</a>, <a class="el" href="ast_8hpp_source.html#l00066">K_END_Expr</a>, <a class="el" href="ast_8hpp_source.html#l00067">K_END_Stmt</a>, <a class="el" href="ast_8hpp_source.html#l00076">K_END_Type</a>, <a class="el" href="ast_8hpp_source.html#l00052">K_Expr</a>, <a class="el" href="ast_8hpp_source.html#l00064">K_FieldAccess</a>, <a class="el" href="ast_8hpp_source.html#l00044">K_FnDecl</a>, <a class="el" href="ast_8hpp_source.html#l00038">K_If</a>, <a class="el" href="ast_8hpp_source.html#l00031">K_IfClause</a>, <a class="el" href="ast_8hpp_source.html#l00065">K_ImplicitCast</a>, <a class="el" href="ast_8hpp_source.html#l00053">K_Number</a>, <a class="el" href="ast_8hpp_source.html#l00040">K_Program</a>, <a class="el" href="ast_8hpp_source.html#l00075">K_ProxyType</a>, <a class="el" href="ast_8hpp_source.html#l00072">K_QualType</a>, <a class="el" href="ast_8hpp_source.html#l00039">K_Return</a>, <a class="el" href="ast_8hpp_source.html#l00074">K_SelfType</a>, <a class="el" href="ast_8hpp_source.html#l00071">K_SimpleType</a>, <a class="el" href="ast_8hpp_source.html#l00062">K_Slice</a>, <a class="el" href="ast_8hpp_source.html#l00035">K_Stmt</a>, <a class="el" href="ast_8hpp_source.html#l00056">K_String</a>, <a class="el" href="ast_8hpp_source.html#l00046">K_StructDecl</a>, <a class="el" href="ast_8hpp_source.html#l00073">K_TemplatedType</a>, <a class="el" href="ast_8hpp_source.html#l00070">K_Type</a>, <a class="el" href="ast_8hpp_source.html#l00032">K_TypeName</a>, <a class="el" href="ast_8hpp_source.html#l00030">K_Unknown</a>, <a class="el" href="ast_8hpp_source.html#l00057">K_Var</a>, <a class="el" href="ast_8hpp_source.html#l00047">K_VarDecl</a>, and <a class="el" href="ast_8hpp_source.html#l00037">K_While</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00065">K_Assign</a>, <a class="el" href="ast_8hpp_source.html#l00055">K_Bool</a>, <a class="el" href="ast_8hpp_source.html#l00059">K_Call</a>, <a class="el" href="ast_8hpp_source.html#l00054">K_Char</a>, <a class="el" href="ast_8hpp_source.html#l00036">K_Compound</a>, <a class="el" href="ast_8hpp_source.html#l00058">K_Const</a>, <a class="el" href="ast_8hpp_source.html#l00048">K_ConstDecl</a>, <a class="el" href="ast_8hpp_source.html#l00060">K_Ctor</a>, <a class="el" href="ast_8hpp_source.html#l00045">K_CtorDecl</a>, <a class="el" href="ast_8hpp_source.html#l00043">K_Decl</a>, <a class="el" href="ast_8hpp_source.html#l00064">K_DirectCall</a>, <a class="el" href="ast_8hpp_source.html#l00061">K_Dtor</a>, <a class="el" href="ast_8hpp_source.html#l00049">K_END_Decl</a>, <a class="el" href="ast_8hpp_source.html#l00068">K_END_Expr</a>, <a class="el" href="ast_8hpp_source.html#l00069">K_END_Stmt</a>, <a class="el" href="ast_8hpp_source.html#l00079">K_END_Type</a>, <a class="el" href="ast_8hpp_source.html#l00052">K_Expr</a>, <a class="el" href="ast_8hpp_source.html#l00066">K_FieldAccess</a>, <a class="el" href="ast_8hpp_source.html#l00044">K_FnDecl</a>, <a class="el" href="ast_8hpp_source.html#l00076">K_FunctionType</a>, <a class="el" href="ast_8hpp_source.html#l00038">K_If</a>, <a class="el" href="ast_8hpp_source.html#l00031">K_IfClause</a>, <a class="el" href="ast_8hpp_source.html#l00067">K_ImplicitCast</a>, <a class="el" href="ast_8hpp_source.html#l00063">K_Lambda</a>, <a class="el" href="ast_8hpp_source.html#l00053">K_Number</a>, <a class="el" href="ast_8hpp_source.html#l00040">K_Program</a>, <a class="el" href="ast_8hpp_source.html#l00078">K_ProxyType</a>, <a class="el" href="ast_8hpp_source.html#l00074">K_QualType</a>, <a class="el" href="ast_8hpp_source.html#l00039">K_Return</a>, <a class="el" href="ast_8hpp_source.html#l00077">K_SelfType</a>, <a class="el" href="ast_8hpp_source.html#l00073">K_SimpleType</a>, <a class="el" href="ast_8hpp_source.html#l00062">K_Slice</a>, <a class="el" href="ast_8hpp_source.html#l00035">K_Stmt</a>, <a class="el" href="ast_8hpp_source.html#l00056">K_String</a>, <a class="el" href="ast_8hpp_source.html#l00046">K_StructDecl</a>, <a class="el" href="ast_8hpp_source.html#l00075">K_TemplatedType</a>, <a class="el" href="ast_8hpp_source.html#l00072">K_Type</a>, <a class="el" href="ast_8hpp_source.html#l00032">K_TypeName</a>, <a class="el" href="ast_8hpp_source.html#l00030">K_Unknown</a>, <a class="el" href="ast_8hpp_source.html#l00057">K_Var</a>, <a class="el" href="ast_8hpp_source.html#l00047">K_VarDecl</a>, and <a class="el" href="ast_8hpp_source.html#l00037">K_While</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8hpp_source.html#l00260">yume::ast::AST::kind_name()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8hpp_source.html#l00266">yume::ast::AST::kind_name()</a>.</p>
 
 </div>
 </div>
