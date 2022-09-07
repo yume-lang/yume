@@ -451,6 +451,7 @@ void Compiler::expose_parameter_as_local(ty::Type type, const string& name, cons
 
 void Compiler::setup_fn_base(Fn& fn) {
   m_current_fn = &fn;
+  m_current_llvm = fn.llvm;
   m_scope.clear();
   m_scope.push_scope();
   m_scope_ctor.reset();
@@ -509,9 +510,9 @@ void Compiler::define(Fn& fn) {
 }
 
 template <> void Compiler::statement(const ast::WhileStmt& stat) {
-  auto* test_bb = llvm::BasicBlock::Create(*m_context, "while.test", m_current_fn->llvm);
-  auto* head_bb = llvm::BasicBlock::Create(*m_context, "while.head", m_current_fn->llvm);
-  auto* merge_bb = llvm::BasicBlock::Create(*m_context, "while.merge", m_current_fn->llvm);
+  auto* test_bb = llvm::BasicBlock::Create(*m_context, "while.test", m_current_llvm);
+  auto* head_bb = llvm::BasicBlock::Create(*m_context, "while.head", m_current_llvm);
+  auto* merge_bb = llvm::BasicBlock::Create(*m_context, "while.merge", m_current_llvm);
   m_builder->CreateBr(test_bb);
   m_builder->SetInsertPoint(test_bb);
   auto cond_value = body_expression(stat.cond());
@@ -523,16 +524,16 @@ template <> void Compiler::statement(const ast::WhileStmt& stat) {
 }
 
 template <> void Compiler::statement(const ast::IfStmt& stat) {
-  auto* merge_bb = llvm::BasicBlock::Create(*m_context, "if.cont", m_current_fn->llvm);
-  auto* next_test_bb = llvm::BasicBlock::Create(*m_context, "if.test", m_current_fn->llvm, merge_bb);
+  auto* merge_bb = llvm::BasicBlock::Create(*m_context, "if.cont", m_current_llvm);
+  auto* next_test_bb = llvm::BasicBlock::Create(*m_context, "if.test", m_current_llvm, merge_bb);
   auto* last_branch = m_builder->CreateBr(next_test_bb);
   bool all_terminated = true;
 
   const auto& clauses = stat.clauses();
   for (const auto& clause : clauses) {
     m_builder->SetInsertPoint(next_test_bb);
-    auto* body_bb = llvm::BasicBlock::Create(*m_context, "if.then", m_current_fn->llvm, merge_bb);
-    next_test_bb = llvm::BasicBlock::Create(*m_context, "if.test", m_current_fn->llvm, merge_bb);
+    auto* body_bb = llvm::BasicBlock::Create(*m_context, "if.then", m_current_llvm, merge_bb);
+    next_test_bb = llvm::BasicBlock::Create(*m_context, "if.test", m_current_llvm, merge_bb);
     auto condition = body_expression(clause.cond());
     last_branch = m_builder->CreateCondBr(condition, body_bb, next_test_bb);
     m_builder->SetInsertPoint(body_bb);
@@ -598,7 +599,7 @@ template <> void Compiler::statement(const ast::ReturnStmt& stat) {
 }
 
 auto Compiler::entrypoint_builder() -> llvm::IRBuilder<> {
-  return {&m_current_fn->llvm->getEntryBlock(), m_current_fn->llvm->getEntryBlock().begin()};
+  return {&m_current_llvm->getEntryBlock(), m_current_llvm->getEntryBlock().begin()};
 }
 
 template <> void Compiler::statement(const ast::VarDecl& stat) {
@@ -858,6 +859,7 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
 
 template <> auto Compiler::expression(const ast::LambdaExpr& expr) -> Val {
   const auto* fn_ty = expr.ensure_ty().base_cast<ty::Function>();
+  (void)llvm_type(expr.ensure_ty()); // Ensure we've created a function type for this lambda
   auto* llvm_fn_ty = fn_ty->fn_memo();
   auto* llvm_closure_ty = fn_ty->closure_memo();
   auto* llvm_bundle_ty = fn_ty->memo();
@@ -894,6 +896,7 @@ template <> auto Compiler::expression(const ast::LambdaExpr& expr) -> Val {
 
   m_scope.clear();
   m_scope.push_scope();
+  m_current_llvm = llvm_fn;
   auto* bb = llvm::BasicBlock::Create(*m_context, "entry", llvm_fn);
   m_builder->SetInsertPoint(bb);
 
@@ -922,6 +925,7 @@ template <> auto Compiler::expression(const ast::LambdaExpr& expr) -> Val {
 
   m_scope = saved_scope;
   m_builder->SetInsertPoint(saved_insert_point);
+  m_current_llvm = m_current_fn->llvm;
 
   return fn_bundle;
 }
