@@ -262,10 +262,8 @@ auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
   if (const auto* int_type = type.base_dyn_cast<ty::Int>())
     base = llvm::Type::getIntNTy(*m_context, int_type->size());
   else if (const auto* ptr_type = type.base_dyn_cast<ty::Ptr>()) {
-    switch (ptr_type->qualifier()) {
-    default: llvm_unreachable("Ptr type cannot hold this qualifier");
-    case Qualifier::Ptr: base = llvm::PointerType::getUnqual(llvm_type(ptr_type->pointee())); break;
-    }
+    yume_assert(ptr_type->qualifier() == Qualifier::Ptr, "Ptr type must hold pointer");
+    base = llvm::PointerType::getUnqual(llvm_type(ptr_type->pointee()));
   } else if (const auto* struct_type = type.base_dyn_cast<ty::Struct>()) {
     auto* memo = struct_type->memo();
     if (memo == nullptr) {
