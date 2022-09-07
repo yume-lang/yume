@@ -38,8 +38,10 @@ using namespace std::string_literals;
 enum struct CompilerFlags {
   None = 0,
   NoLink = 1 << 0,
-  EmitDot = 1 << 1,
-  EmitUntypedDot = 1 << 2,
+  EmitLLVM = 1 << 1,
+  EmitASM = 1 << 2,
+  EmitDot = 1 << 3,
+  EmitUntypedDot = 1 << 4,
 };
 
 inline auto operator|(CompilerFlags a, CompilerFlags b) -> CompilerFlags {
@@ -114,8 +116,10 @@ auto compile(const std::optional<std::string>& target_triple, std::vector<std::s
     }
   }
 
-  compiler.module()->print(*yume::open_file("output.ll"), nullptr);
-  compiler.write_object("output.s", false);
+  if (flags & CompilerFlags::EmitLLVM)
+    compiler.module()->print(*yume::open_file("output.ll"), nullptr);
+  if (flags & CompilerFlags::EmitASM)
+    compiler.write_object("output.s", false);
   compiler.write_object("output.o", true);
   llvm::outs().flush();
   if (~flags & CompilerFlags::NoLink)
@@ -164,6 +168,10 @@ auto main(int argc, const char* argv[]) -> int {
       consuming_target = true;
     else if (arg == "-c"s)
       flags |= CompilerFlags::NoLink;
+    else if (arg == "--emit-llvm"s)
+      flags |= CompilerFlags::EmitLLVM;
+    else if (arg == "--emit-asm"s)
+      flags |= CompilerFlags::EmitASM;
     else if (arg == "--emit-dot"s)
       flags |= CompilerFlags::EmitDot;
     else if (arg == "--emit-untyped-dot"s)

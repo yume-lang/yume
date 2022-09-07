@@ -10,7 +10,7 @@ case $1 in
     for i in example/*; do
       [[ -f "${i}" ]] || continue
       echo "[INFO] Running example ${i}"
-      "${BUILD_DIR}"/yumec "${i}" || { status=1; continue; }
+      "${BUILD_DIR}"/yumec --emit-llvm "${i}" || { status=1; continue; }
       mv output.ll result-"$(basename "${i}")".ll
       ./yume.out || { status=$?; echo "[FAIL] ${i} exited with $?"; continue; }
     done
