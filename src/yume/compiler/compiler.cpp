@@ -20,6 +20,7 @@
 #include <llvm/ADT/iterator.h>
 #include <llvm/IR/Argument.h>
 #include <llvm/IR/BasicBlock.h>
+#include <llvm/IR/CallingConv.h>
 #include <llvm/IR/Constant.h>
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/DerivedTypes.h>
@@ -1139,6 +1140,8 @@ template <> auto Compiler::expression(const ast::ImplicitCastExpr& expr) -> Val 
 
     auto linkage = llvm::Function::PrivateLinkage;
     auto* llvm_fn = llvm::Function::Create(fn_ptr_ty, linkage, "", m_module.get());
+    if (lambda_expr.annotations().contains("interrupt"))
+      llvm_fn->setCallingConv(llvm::CallingConv::X86_INTR);
     auto* saved_insert_point = m_builder->GetInsertBlock();
 
     auto* bb = llvm::BasicBlock::Create(*m_context, "entry", llvm_fn);

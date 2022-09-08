@@ -720,12 +720,13 @@ class LambdaExpr final : public Expr {
   vector<TypeName> m_args;
   OptionalType m_ret;
   Compound m_body;
+  std::set<string> m_annotations;
   vector<string> m_closured_names{};
   vector<AST*> m_closured_nodes{};
 
 public:
-  LambdaExpr(span<Token> tok, vector<TypeName> args, OptionalType ret, Compound body)
-      : Expr(K_Lambda, tok), m_args(move(args)), m_ret(move(ret)), m_body(move(body)) {}
+  LambdaExpr(span<Token> tok, vector<TypeName> args, OptionalType ret, Compound body, std::set<string> annotations)
+      : Expr(K_Lambda, tok), m_args(move(args)), m_ret(move(ret)), m_body(move(body)), m_annotations(move(annotations)) {}
   void visit(Visitor& visitor) const override;
   // [[nodiscard]] auto describe() const -> string override; // TODO(rymiel)
 
@@ -735,6 +736,8 @@ public:
   [[nodiscard]] auto ret() -> auto& { return m_ret; }
   [[nodiscard]] auto body() const -> const auto& { return m_body; }
   [[nodiscard]] auto body() -> auto& { return m_body; }
+  [[nodiscard]] auto annotations() const -> const auto& { return m_annotations; }
+  [[nodiscard]] auto annotations() -> auto& { return m_annotations; }
   [[nodiscard]] auto closured_names() const -> const auto& { return m_closured_names; }
   [[nodiscard]] auto closured_names() -> auto& { return m_closured_names; }
   [[nodiscard]] auto closured_nodes() const -> const auto& { return m_closured_nodes; }

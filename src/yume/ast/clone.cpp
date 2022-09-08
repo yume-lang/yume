@@ -91,7 +91,9 @@ auto CallExpr::clone() const -> CallExpr* { return new CallExpr(tok(), m_name, d
 auto CtorExpr::clone() const -> CtorExpr* { return new CtorExpr(tok(), dup(m_type), dup(m_args)); }
 auto DtorExpr::clone() const -> DtorExpr* { return new DtorExpr(tok(), dup(m_base)); }
 auto SliceExpr::clone() const -> SliceExpr* { return new SliceExpr(tok(), dup(m_type), dup(m_args)); }
-auto LambdaExpr::clone() const -> LambdaExpr* { return new LambdaExpr(tok(), dup(m_args), dup(m_ret), dup(m_body)); }
+auto LambdaExpr::clone() const -> LambdaExpr* {
+  return new LambdaExpr(tok(), dup(m_args), dup(m_ret), dup(m_body), dup(m_annotations));
+}
 auto DirectCallExpr::clone() const -> DirectCallExpr* { return new DirectCallExpr(tok(), dup(m_base), dup(m_args)); }
 auto AssignExpr::clone() const -> AssignExpr* { return new AssignExpr(tok(), dup(m_target), dup(m_value)); }
 auto FieldAccessExpr::clone() const -> FieldAccessExpr* { return new FieldAccessExpr(tok(), dup(m_base), m_field); }

@@ -57,7 +57,9 @@ void CallExpr::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_arg
 void CtorExpr::visit(Visitor& visitor) const { visitor.visit(m_type).visit(m_args); }
 void DtorExpr::visit(Visitor& visitor) const { visitor.visit(m_base); }
 void SliceExpr::visit(Visitor& visitor) const { visitor.visit(m_type).visit(m_args); }
-void LambdaExpr::visit(Visitor& visitor) const { visitor.visit(m_args).visit(m_ret).visit(m_body); }
+void LambdaExpr::visit(Visitor& visitor) const {
+  visitor.visit(m_args).visit(m_annotations, "annotation").visit(m_ret).visit(m_body);
+}
 void DirectCallExpr::visit(Visitor& visitor) const { visitor.visit(m_base).visit(m_args); }
 void AssignExpr::visit(Visitor& visitor) const { visitor.visit(m_target).visit(m_value); }
 void FieldAccessExpr::visit(Visitor& visitor) const { visitor.visit(m_base).visit(m_field); }

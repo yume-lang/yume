@@ -723,6 +723,11 @@ auto Parser::parse_lambda() -> unique_ptr<LambdaExpr> {
   auto entry = tokens.begin();
 
   consume(KWD_DEF);
+
+  auto annotations = std::set<string>{};
+  while (try_consume(SYM_AT))
+    annotations.emplace(consume_word());
+
   consume(SYM_LPAREN);
 
   auto args = vector<TypeName>{};
@@ -750,7 +755,8 @@ auto Parser::parse_lambda() -> unique_ptr<LambdaExpr> {
     }
   }
 
-  return ast_ptr<LambdaExpr>(entry, move(args), move(ret_type), make_ast<Compound>(body_begin, move(body)));
+  return ast_ptr<LambdaExpr>(entry, move(args), move(ret_type), make_ast<Compound>(body_begin, move(body)),
+                             move(annotations));
 }
 
 auto Parser::parse_receiver() -> unique_ptr<Expr> {
