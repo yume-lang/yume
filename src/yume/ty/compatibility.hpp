@@ -9,7 +9,7 @@ class Generic;
 class BaseType;
 
 struct Conv {
-  enum struct Kind : uint8_t { None, Int };
+  enum struct Kind : uint8_t { None, Int, FnPtr };
 
   using Kind::Int;
   using Kind::None;
@@ -28,6 +28,8 @@ struct Conv {
       ss << "deref ";
     if (kind == Int)
       ss << "int ";
+    else if (kind == Kind::FnPtr)
+      ss << "fnptr ";
     return ss.str();
   }
 };

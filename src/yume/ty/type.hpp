@@ -15,6 +15,7 @@
 namespace llvm {
 class StructType;
 class FunctionType;
+class Type;
 } // namespace llvm
 namespace yume {
 class Compiler;
@@ -91,13 +92,14 @@ class Function : public BaseType {
   vector<Type> m_args;
   optional<Type> m_ret;
   vector<Type> m_closure;
+  bool m_fn_ptr;
 
   mutable llvm::FunctionType* m_fn_memo{};
   void fn_memo(llvm::FunctionType* memo) const { m_fn_memo = memo; }
   mutable llvm::StructType* m_closure_memo{};
   void closure_memo(llvm::StructType* memo) const { m_closure_memo = memo; }
-  mutable llvm::StructType* m_memo{};
-  void memo(llvm::StructType* memo) const { m_memo = memo; }
+  mutable llvm::Type* m_memo{};
+  void memo(llvm::Type* memo) const { m_memo = memo; }
 
   // TODO(rymiel): why are these here?
   friend Compiler;
@@ -105,13 +107,14 @@ class Function : public BaseType {
   friend Type;
 
 public:
-  Function(string name, vector<Type> args, optional<Type> ret, vector<Type> closure)
-      : BaseType(K_Function, move(name)), m_args(move(args)), m_ret(ret), m_closure(move(closure)) {}
+  Function(string name, vector<Type> args, optional<Type> ret, vector<Type> closure, bool fn_ptr)
+      : BaseType(K_Function, move(name)), m_args(move(args)), m_ret(ret), m_closure(move(closure)), m_fn_ptr(fn_ptr) {}
   [[nodiscard]] auto args() const -> const auto& { return m_args; }
   [[nodiscard]] auto args() -> auto& { return m_args; }
   [[nodiscard]] auto closure() const -> const auto& { return m_closure; }
   [[nodiscard]] auto closure() -> auto& { return m_closure; }
   [[nodiscard]] auto ret() const -> const auto& { return m_ret; }
+  [[nodiscard]] auto is_fn_ptr() const { return m_fn_ptr; }
   [[nodiscard]] auto name() const -> string override;
 
   [[nodiscard]] auto fn_memo() const -> auto* { return m_fn_memo; }

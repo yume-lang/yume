@@ -135,11 +135,19 @@ auto Type::compatibility(Type other, Compat compat) const -> Compat {
     }
   }
 
-  // A function type with captures can be converted to a matching function type without captures
+  // A function type with captures can be converted to a matching function type without captures.
+  // A function type without captures can be converted to a matching function *pointer* type.
   if (const auto this_fn = base_dyn_cast<Function>(), other_fn = other.base_dyn_cast<Function>();
       (this_fn != nullptr) && (other_fn != nullptr)) {
-    if (this_fn->m_args == other_fn->m_args && this_fn->m_ret == other_fn->m_ret && other_fn->m_closure.empty()) {
+    if (this_fn->m_args == other_fn->m_args && this_fn->m_ret == other_fn->m_ret && other_fn->m_closure.empty() &&
+        this_fn->m_fn_ptr == other_fn->m_fn_ptr) {
       compat.valid = true;
+      return compat;
+    }
+    if (this_fn->m_args == other_fn->m_args && this_fn->m_ret == other_fn->m_ret && this_fn->m_closure.empty() &&
+        !this_fn->m_fn_ptr && other_fn->m_fn_ptr) {
+      compat.valid = true;
+      compat.conv.kind = Conv::Kind::FnPtr;
       return compat;
     }
   }
@@ -298,6 +306,8 @@ auto Function::name() const -> string {
       ss << i.value().name();
     }
     ss << "]";
+  } else if (m_fn_ptr) {
+    ss << "ptr";
   }
   ss << "(";
   for (const auto& i : llvm::enumerate(m_args)) {

@@ -47,6 +47,7 @@ class Compiler : public CRTPWalker<Compiler> {
   std::deque<Struct> m_structs{};
   std::deque<Fn> m_ctors{};
   std::deque<Const> m_consts{};
+  std::deque<std::pair<const ast::LambdaExpr*, llvm::Function*>> m_lambdas{};
   std::queue<DeclLike> m_decl_queue{};
   unique_ptr<semantic::TypeWalker> m_walker;
 

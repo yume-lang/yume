@@ -277,36 +277,52 @@ auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
 
     base = memo;
   } else if (const auto* function_type = type.base_dyn_cast<ty::Function>()) {
-    auto* memo = function_type->memo();
+    llvm::Type* memo = function_type->memo();
     if (memo == nullptr) {
-      auto closured = vector<llvm::Type*>{};
-      for (const auto& i : function_type->closure())
-        closured.push_back(llvm_type(i));
-      if (closured.empty()) // Can't have an empty closure type
-        closured.push_back(m_builder->getInt8Ty());
+      if (function_type->is_fn_ptr()) {
+        auto args = vector<llvm::Type*>{};
+        for (const auto& i : function_type->args())
+          args.push_back(llvm_type(i));
 
-      // Closures are type-erased to just a bag of bits. We store the "real type" of the closure within the function
-      // type for better retreival, but in practice, they're always passed around bitcasted. Note that the bitcasting
-      // is not required when opaque pointers are in play
-      auto* closure_ty = llvm::StructType::create(closured, "closure");
-      auto* erased_closure_ty = m_builder->getInt8PtrTy();
+        auto* return_type = llvm::Type::getVoidTy(*m_context);
+        if (function_type->m_ret.has_value())
+          return_type = llvm_type(*function_type->m_ret);
 
-      auto args = vector<llvm::Type*>{};
-      args.push_back(erased_closure_ty); // Lambda takes a closure as the first parameter
-      for (const auto& i : function_type->args())
-        args.push_back(llvm_type(i));
+        auto* fn_ty = llvm::FunctionType::get(return_type, args, false);
+        memo = fn_ty->getPointerTo();
+        function_type->fn_memo(fn_ty);
+        function_type->closure_memo(nullptr);
+        function_type->memo(memo);
+      } else {
+        auto closured = vector<llvm::Type*>{};
+        for (const auto& i : function_type->closure())
+          closured.push_back(llvm_type(i));
+        if (closured.empty()) // Can't have an empty closure type
+          closured.push_back(m_builder->getInt8Ty());
 
-      auto* return_type = llvm::Type::getVoidTy(*m_context);
-      if (function_type->m_ret.has_value())
-        return_type = llvm_type(*function_type->m_ret);
+        // Closures are type-erased to just a bag of bits. We store the "real type" of the closure within the function
+        // type for better retreival, but in practice, they're always passed around bitcasted. Note that the bitcasting
+        // is not required when opaque pointers are in play
+        auto* closure_ty = llvm::StructType::create(closured, "closure");
+        auto* erased_closure_ty = m_builder->getInt8PtrTy();
 
-      auto* fn_ty = llvm::FunctionType::get(return_type, args, false);
+        auto args = vector<llvm::Type*>{};
+        args.push_back(erased_closure_ty); // Lambda takes a closure as the first parameter
+        for (const auto& i : function_type->args())
+          args.push_back(llvm_type(i));
 
-      memo = llvm::StructType::get(fn_ty->getPointerTo(), erased_closure_ty);
+        auto* return_type = llvm::Type::getVoidTy(*m_context);
+        if (function_type->m_ret.has_value())
+          return_type = llvm_type(*function_type->m_ret);
 
-      function_type->fn_memo(fn_ty);
-      function_type->closure_memo(closure_ty);
-      function_type->memo(memo);
+        auto* fn_ty = llvm::FunctionType::get(return_type, args, false);
+
+        memo = llvm::StructType::get(fn_ty->getPointerTo(), erased_closure_ty);
+
+        function_type->fn_memo(fn_ty);
+        function_type->closure_memo(closure_ty);
+        function_type->memo(memo);
+      }
     }
 
     base = memo;
@@ -870,6 +886,7 @@ template <> auto Compiler::expression(const ast::LambdaExpr& expr) -> Val {
   // regular function declaration/definition logic.
   auto linkage = llvm::Function::PrivateLinkage;
   auto* llvm_fn = llvm::Function::Create(llvm_fn_ty, linkage, "", m_module.get());
+  m_lambdas.emplace_back(&expr, llvm_fn);
   fn_bundle = m_builder->CreateInsertValue(fn_bundle, llvm_fn, 0);
 
   auto* llvm_closure = m_builder->CreateAlloca(llvm_closure_ty);
@@ -1107,6 +1124,39 @@ template <> auto Compiler::expression(const ast::ImplicitCastExpr& expr) -> Val 
 
   if (expr.conversion().kind == ty::Conv::Int) {
     return m_builder->CreateIntCast(base, llvm_type(target_ty), current_ty.base_cast<ty::Int>()->is_signed(), "ic.int");
+  }
+
+  if (expr.conversion().kind == ty::Conv::Kind::FnPtr) {
+    yume_assert(current_ty.base_isa<ty::Function>(), "fnptr conversion source must be a function type");
+    yume_assert(isa<ast::LambdaExpr>(expr.base()), "fnptr conversion source must be a lambda");
+    yume_assert(target_ty.base_isa<ty::Function>(), "fnptr conversion target must be a function type");
+    (void)llvm_type(target_ty);
+    (void)llvm_type(current_ty);
+    const auto& lambda_expr = cast<ast::LambdaExpr>(expr.base());
+    auto* lambda_fn = std::ranges::find(m_lambdas, &lambda_expr, [](const auto& pair) { return pair.first; })->second;
+    auto* fn_lambda_ty = current_ty.base_cast<ty::Function>()->fn_memo();
+    auto* fn_ptr_ty = target_ty.base_cast<ty::Function>()->fn_memo();
+
+    auto linkage = llvm::Function::PrivateLinkage;
+    auto* llvm_fn = llvm::Function::Create(fn_ptr_ty, linkage, "", m_module.get());
+    auto* saved_insert_point = m_builder->GetInsertBlock();
+
+    auto* bb = llvm::BasicBlock::Create(*m_context, "entry", llvm_fn);
+    m_builder->SetInsertPoint(bb);
+
+    auto* dummy_closure = llvm::UndefValue::get(m_builder->getInt8PtrTy());
+    auto passthrough = vector<llvm::Value*>();
+    passthrough.push_back(dummy_closure);
+    for (auto& arg : llvm_fn->args())
+      passthrough.push_back(&arg);
+    auto* result = m_builder->CreateCall(fn_lambda_ty, lambda_fn, passthrough);
+    if (fn_lambda_ty->getReturnType()->isVoidTy())
+      m_builder->CreateRetVoid();
+    else
+      m_builder->CreateRet(result);
+
+    m_builder->SetInsertPoint(saved_insert_point);
+    return llvm_fn;
   }
 
   return base;

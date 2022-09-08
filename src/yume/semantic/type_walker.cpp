@@ -624,6 +624,8 @@ auto TypeWalker::convert_type(ast::Type& ast_type) -> ty::Type {
     for (auto& ast_arg : fn_type->args())
       args.push_back(convert_type(*ast_arg));
 
+    if (fn_type->is_fn_ptr())
+      return compiler.m_types.find_or_create_fn_ptr_type(args, ret);
     return compiler.m_types.find_or_create_fn_type(args, ret, {});
   } else if (auto* templated = dyn_cast<ast::TemplatedType>(&ast_type)) {
     auto& template_base = templated->base();

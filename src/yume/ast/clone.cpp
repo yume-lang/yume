@@ -82,7 +82,7 @@ auto QualType::clone() const -> QualType* { return new QualType(tok(), dup(m_bas
 auto TemplatedType::clone() const -> TemplatedType* { return new TemplatedType(tok(), dup(m_base), dup(m_type_args)); }
 auto SelfType::clone() const -> SelfType* { return new SelfType(tok()); }
 auto ProxyType::clone() const -> ProxyType* { return new ProxyType(tok(), m_field); }
-auto FunctionType::clone() const -> FunctionType* { return new FunctionType(tok(), dup(m_ret), dup(m_args)); }
+auto FunctionType::clone() const -> FunctionType* { return new FunctionType(tok(), dup(m_ret), dup(m_args), m_fn_ptr); }
 auto TypeName::clone() const -> TypeName* { return new TypeName(tok(), dup(type), name); }
 auto Compound::clone() const -> Compound* { return new Compound(tok(), dup(m_body)); }
 auto VarExpr::clone() const -> VarExpr* { return new VarExpr(tok(), m_name); }
