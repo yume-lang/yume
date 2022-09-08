@@ -105,7 +105,7 @@ private:
     return ct_c(cast<ast::CtorDecl>(ast_decl), std::forward<Ts...>(ts)...);
   }
 
-  template <std::invocable<ast::TypeName&> F, typename..., typename T = std::result_of_t<F(ast::TypeName&)>>
+  template <std::invocable<ast::TypeName&> F, typename..., typename T = std::invoke_result_t<F, ast::TypeName&>>
   auto visit_map_args(F fn) const -> std::vector<T> {
     std::vector<T> vec = {};
     vec.reserve(arg_count());
