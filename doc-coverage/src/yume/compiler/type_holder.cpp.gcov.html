@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-09-07 07:24:17</td>
+            <td class="headerValue">2022-09-08 23:31:42</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -97,13 +97,22 @@
 <a name="39"><span class="lineNum">      39 </span>            : auto TypeHolder::find_or_create_fn_type(const vector&lt;ty::Type&gt;&amp; args, optional&lt;ty::Type&gt; ret,</a>
 <a name="40"><span class="lineNum">      40 </span>            :                                         const vector&lt;ty::Type&gt;&amp; closure) -&gt; ty::Function* {</a>
 <a name="41"><span class="lineNum">      41 </span>            :   for (const auto&amp; i : fn_types)</a>
-<a name="42"><span class="lineNum">      42 </span>            :     if (i-&gt;ret() == ret &amp;&amp; i-&gt;args() == args &amp;&amp; i-&gt;closure() == closure)</a>
+<a name="42"><span class="lineNum">      42 </span>            :     if (i-&gt;ret() == ret &amp;&amp; i-&gt;args() == args &amp;&amp; i-&gt;closure() == closure &amp;&amp; !i-&gt;is_fn_ptr())</a>
 <a name="43"><span class="lineNum">      43 </span>            :       return i.get();</a>
 <a name="44"><span class="lineNum">      44 </span>            : </a>
-<a name="45"><span class="lineNum">      45 </span>            :   auto&amp; new_fn = fn_types.emplace_back(std::make_unique&lt;ty::Function&gt;(&quot;&quot;, args, ret, closure));</a>
+<a name="45"><span class="lineNum">      45 </span>            :   auto&amp; new_fn = fn_types.emplace_back(std::make_unique&lt;ty::Function&gt;(&quot;&quot;, args, ret, closure, false));</a>
 <a name="46"><span class="lineNum">      46 </span>            :   return new_fn.get();</a>
 <a name="47"><span class="lineNum">      47 </span>            : }</a>
-<a name="48"><span class="lineNum">      48 </span>            : } // namespace yume</a>
+<a name="48"><span class="lineNum">      48 </span>            : </a>
+<a name="49"><span class="lineNum">      49 </span>            : auto TypeHolder::find_or_create_fn_ptr_type(const vector&lt;ty::Type&gt;&amp; args, optional&lt;ty::Type&gt; ret) -&gt; ty::Function* {</a>
+<a name="50"><span class="lineNum">      50 </span>            :   for (const auto&amp; i : fn_types)</a>
+<a name="51"><span class="lineNum">      51 </span>            :     if (i-&gt;ret() == ret &amp;&amp; i-&gt;args() == args &amp;&amp; i-&gt;closure().empty() &amp;&amp; i-&gt;is_fn_ptr())</a>
+<a name="52"><span class="lineNum">      52 </span>            :       return i.get();</a>
+<a name="53"><span class="lineNum">      53 </span>            : </a>
+<a name="54"><span class="lineNum">      54 </span>            :   auto&amp; new_fn = fn_types.emplace_back(std::make_unique&lt;ty::Function&gt;(&quot;&quot;, args, ret, vector&lt;ty::Type&gt;{}, true));</a>
+<a name="55"><span class="lineNum">      55 </span>            :   return new_fn.get();</a>
+<a name="56"><span class="lineNum">      56 </span>            : }</a>
+<a name="57"><span class="lineNum">      57 </span>            : } // namespace yume</a>
 </pre>
       </td>
     </tr>

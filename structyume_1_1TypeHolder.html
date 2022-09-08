@@ -114,6 +114,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a0ca37f69476c54ccaae1acbcd87bd8de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa2991e82ab6887445598ad1ddfc5ad7f"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1TypeHolder.html#aa2991e82ab6887445598ad1ddfc5ad7f">find_or_create_fn_type</a> (const vector&lt; <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> &gt; &amp;args, optional&lt; <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> &gt; ret, const vector&lt; <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> &gt; &amp;closure) -&gt; <a class="el" href="classyume_1_1ty_1_1Function.html">ty::Function</a> *</td></tr>
 <tr class="separator:aa2991e82ab6887445598ad1ddfc5ad7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d94fe9b6c1302b49f1b266c061a8948"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1TypeHolder.html#a3d94fe9b6c1302b49f1b266c061a8948">find_or_create_fn_ptr_type</a> (const vector&lt; <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> &gt; &amp;args, optional&lt; <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> &gt; ret) -&gt; <a class="el" href="classyume_1_1ty_1_1Function.html">ty::Function</a> *</td></tr>
+<tr class="separator:a3d94fe9b6c1302b49f1b266c061a8948"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -174,9 +176,39 @@ Public Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="type__holder_8cpp_source.html#l00029">29</a> of file <a class="el" href="type__holder_8cpp_source.html">type_holder.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="type__holder_8hpp_source.html#l00020">known</a>, <a class="el" href="compiler_8cpp_source.html#l01040">yume::Compiler::ptr_bitsize()</a>, <a class="el" href="type__holder_8hpp_source.html#l00013">yume::TypeHolder::IntTypePair::s_ty</a>, <a class="el" href="type__holder_8hpp_source.html#l00019">size_type</a>, and <a class="el" href="type__holder_8hpp_source.html#l00014">yume::TypeHolder::IntTypePair::u_ty</a>.</p>
+<p class="reference">References <a class="el" href="type__holder_8hpp_source.html#l00020">known</a>, <a class="el" href="compiler_8cpp_source.html#l01058">yume::Compiler::ptr_bitsize()</a>, <a class="el" href="type__holder_8hpp_source.html#l00013">yume::TypeHolder::IntTypePair::s_ty</a>, <a class="el" href="type__holder_8hpp_source.html#l00019">size_type</a>, and <a class="el" href="type__holder_8hpp_source.html#l00014">yume::TypeHolder::IntTypePair::u_ty</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00057">yume::Compiler::Compiler()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00058">yume::Compiler::Compiler()</a>.</p>
+
+</div>
+</div>
+<a id="a3d94fe9b6c1302b49f1b266c061a8948" name="a3d94fe9b6c1302b49f1b266c061a8948"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3d94fe9b6c1302b49f1b266c061a8948">&#9670;&nbsp;</a></span>find_or_create_fn_ptr_type()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto yume::TypeHolder::find_or_create_fn_ptr_type </td>
+          <td>(</td>
+          <td class="paramtype">const vector&lt; <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>args</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">optional&lt; <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> &gt;&#160;</td>
+          <td class="paramname"><em>ret</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> -&gt; <a class="el" href="classyume_1_1ty_1_1Function.html">ty::Function</a>*</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="type__holder_8cpp_source.html#l00049">49</a> of file <a class="el" href="type__holder_8cpp_source.html">type_holder.cpp</a>.</p>
 
 </div>
 </div>

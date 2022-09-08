@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['val_0',['Val',['../structyume_1_1Val.html#aff21bb2b8bde53a54e8f4f07603afc43',1,'yume::Val']]],
-  ['val_1',['val',['../classyume_1_1ast_1_1NumberExpr.html#ad7d6983c442cc8275d6420881a19ca51',1,'yume::ast::NumberExpr::val()'],['../classyume_1_1ast_1_1CharExpr.html#aa93a521c54a97350a426ed08b3eed687',1,'yume::ast::CharExpr::val()'],['../classyume_1_1ast_1_1BoolExpr.html#a47337b71e5d7808a3c90501680525265',1,'yume::ast::BoolExpr::val()'],['../classyume_1_1ast_1_1StringExpr.html#a967b03b25f93ce771e484eb7a2a2593b',1,'yume::ast::StringExpr::val()']]],
-  ['val_2',['Val',['../structyume_1_1Val.html#af91d0a0df2bca1a4c435cdded399cf58',1,'yume::Val']]],
+  ['val_0',['val',['../classyume_1_1ast_1_1CharExpr.html#aa93a521c54a97350a426ed08b3eed687',1,'yume::ast::CharExpr::val()'],['../classyume_1_1ast_1_1BoolExpr.html#a47337b71e5d7808a3c90501680525265',1,'yume::ast::BoolExpr::val()'],['../classyume_1_1ast_1_1StringExpr.html#a967b03b25f93ce771e484eb7a2a2593b',1,'yume::ast::StringExpr::val()']]],
+  ['val_1',['Val',['../structyume_1_1Val.html#af91d0a0df2bca1a4c435cdded399cf58',1,'yume::Val::Val(llvm::Value *llvm_val) noexcept'],['../structyume_1_1Val.html#aff21bb2b8bde53a54e8f4f07603afc43',1,'yume::Val::Val(llvm::Value *llvm_val, InScope *scope_val) noexcept']]],
+  ['val_2',['val',['../classyume_1_1ast_1_1NumberExpr.html#ad7d6983c442cc8275d6420881a19ca51',1,'yume::ast::NumberExpr']]],
   ['val_5fty_3',['val_ty',['../classyume_1_1ast_1_1AST.html#a0f5bac08572a30ad500ac1b34f2eface',1,'yume::ast::AST::val_ty() const noexcept -&gt; optional&lt; ty::Type &gt;'],['../classyume_1_1ast_1_1AST.html#a7f08d44ef373c2a27db0f365dace54a2',1,'yume::ast::AST::val_ty(optional&lt; ty::Type &gt; type)']]],
   ['valid_4',['valid',['../structyume_1_1Loc.html#a5d7d786b093077b0f0ce213ce86023a8',1,'yume::Loc']]],
   ['validate_5',['validate',['../structyume_1_1TokenState.html#aa0de4ffa608c6e9097e729ae9bb56937',1,'yume::TokenState']]],

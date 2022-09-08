@@ -14,11 +14,12 @@ var searchData=
   ['intersect_11',['intersect',['../classyume_1_1ty_1_1Type.html#a50dcbc0e9c6f72495a31cdcf2338c90f',1,'yume::ty::Type']]],
   ['intersect_5fgenerics_12',['intersect_generics',['../namespaceyume_1_1ty.html#a4ec73eb24ffdf445c2f71362589c5e3c',1,'yume::ty']]],
   ['is_5fa_13',['is_a',['../structyume_1_1Token.html#ac5667608eae86918686364d74e67c428',1,'yume::Token']]],
-  ['is_5fgeneric_14',['is_generic',['../classyume_1_1ty_1_1Type.html#acb2b46ef76643db2258a240ba9f90f8a',1,'yume::ty::Type']]],
-  ['is_5fmut_15',['is_mut',['../classyume_1_1ty_1_1Type.html#a166456eb3f36b9ea2dfb9eb0598e75ed',1,'yume::ty::Type']]],
-  ['is_5fsigned_16',['is_signed',['../classyume_1_1ty_1_1Int.html#acb504b970d97dd2ebbd28de842b9f527',1,'yume::ty::Int']]],
-  ['is_5fslice_17',['is_slice',['../classyume_1_1ty_1_1Type.html#a052aea6a7bafc6a8a2afd7dfbe0bc913',1,'yume::ty::Type']]],
-  ['is_5ftrivially_5fdestructible_18',['is_trivially_destructible',['../namespaceyume.html#a4910537b7fcaa9c73e9264602bf00eb9',1,'yume']]],
-  ['is_5fuword_19',['is_uword',['../structyume_1_1ast_1_1parser_1_1Parser.html#a07147187a346b21a257648b3960bfa9c',1,'yume::ast::parser::Parser']]],
-  ['is_5fvalid_5foverload_20',['is_valid_overload',['../structyume_1_1semantic_1_1OverloadSet.html#aee4829f5888429522113e9188da82ea5',1,'yume::semantic::OverloadSet']]]
+  ['is_5ffn_5fptr_14',['is_fn_ptr',['../classyume_1_1ast_1_1FunctionType.html#a5a68f363b577c4694eb69d058b9752b5',1,'yume::ast::FunctionType::is_fn_ptr()'],['../classyume_1_1ty_1_1Function.html#a81b8e67f84fdad5d50d2f90ae6d4bf43',1,'yume::ty::Function::is_fn_ptr()']]],
+  ['is_5fgeneric_15',['is_generic',['../classyume_1_1ty_1_1Type.html#acb2b46ef76643db2258a240ba9f90f8a',1,'yume::ty::Type']]],
+  ['is_5fmut_16',['is_mut',['../classyume_1_1ty_1_1Type.html#a166456eb3f36b9ea2dfb9eb0598e75ed',1,'yume::ty::Type']]],
+  ['is_5fsigned_17',['is_signed',['../classyume_1_1ty_1_1Int.html#acb504b970d97dd2ebbd28de842b9f527',1,'yume::ty::Int']]],
+  ['is_5fslice_18',['is_slice',['../classyume_1_1ty_1_1Type.html#a052aea6a7bafc6a8a2afd7dfbe0bc913',1,'yume::ty::Type']]],
+  ['is_5ftrivially_5fdestructible_19',['is_trivially_destructible',['../namespaceyume.html#a4910537b7fcaa9c73e9264602bf00eb9',1,'yume']]],
+  ['is_5fuword_20',['is_uword',['../structyume_1_1ast_1_1parser_1_1Parser.html#a07147187a346b21a257648b3960bfa9c',1,'yume::ast::parser::Parser']]],
+  ['is_5fvalid_5foverload_21',['is_valid_overload',['../structyume_1_1semantic_1_1OverloadSet.html#aee4829f5888429522113e9188da82ea5',1,'yume::semantic::OverloadSet']]]
 ];
