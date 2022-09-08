@@ -176,7 +176,7 @@ $(function() {
 <div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    <span class="keywordflow">return</span> ct_c(cast&lt;ast::CtorDecl&gt;(<a class="code hl_variable" href="structyume_1_1Fn.html#ae1b317636c95160d67fae062e17942e5">ast_decl</a>), std::forward&lt;Ts...&gt;(ts)...);</div>
 <div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>  }</div>
 <div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span> </div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>  <span class="keyword">template</span> &lt;std::invocable&lt;ast::TypeName&amp;&gt; F, <span class="keyword">typename</span>..., <span class="keyword">typename</span> T = std::result_of_t&lt;F(ast::TypeName&amp;)&gt;&gt;</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>  <span class="keyword">template</span> &lt;std::invocable&lt;ast::TypeName&amp;&gt; F, <span class="keyword">typename</span>..., <span class="keyword">typename</span> T = std::invoke_result_t&lt;F, ast::TypeName&amp;&gt;&gt;</div>
 <div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>  <span class="keyword">auto</span> visit_map_args(F fn) <span class="keyword">const</span> -&gt; std::vector&lt;T&gt; {</div>
 <div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    std::vector&lt;T&gt; vec = {};</div>
 <div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    vec.reserve(<a class="code hl_function" href="structyume_1_1Fn.html#a92067c08150b7ba131c0eaed752bd652">arg_count</a>());</div>

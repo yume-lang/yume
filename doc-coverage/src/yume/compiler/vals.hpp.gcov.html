@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-09-08 23:31:42</td>
+            <td class="headerValue">2022-09-08 23:42:45</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -163,7 +163,7 @@
 <a name="105"><span class="lineNum">     105 </span>            :     return ct_c(cast&lt;ast::CtorDecl&gt;(ast_decl), std::forward&lt;Ts...&gt;(ts)...);</a>
 <a name="106"><span class="lineNum">     106 </span>            :   }</a>
 <a name="107"><span class="lineNum">     107 </span>            : </a>
-<a name="108"><span class="lineNum">     108 </span>            :   template &lt;std::invocable&lt;ast::TypeName&amp;&gt; F, typename..., typename T = std::result_of_t&lt;F(ast::TypeName&amp;)&gt;&gt;</a>
+<a name="108"><span class="lineNum">     108 </span>            :   template &lt;std::invocable&lt;ast::TypeName&amp;&gt; F, typename..., typename T = std::invoke_result_t&lt;F, ast::TypeName&amp;&gt;&gt;</a>
 <a name="109"><span class="lineNum">     109 </span><span class="lineNoCov">          0 :   auto visit_map_args(F fn) const -&gt; std::vector&lt;T&gt; {</span></a>
 <a name="110"><span class="lineNum">     110 </span>            :     std::vector&lt;T&gt; vec = {};</a>
 <a name="111"><span class="lineNum">     111 </span>            :     vec.reserve(arg_count());</a>
