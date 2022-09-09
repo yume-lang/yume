@@ -565,9 +565,7 @@ void TypeWalker::body_expression(ast::Expr& expr) {
   return CRTPWalker::body_expression(expr);
 }
 
-auto TypeWalker::create_slice_type(const ty::Type& base_type) -> ty::Type {
-  auto* struct_obj = compiler.m_slice_struct;
-  Substitution subs = {{{struct_obj->type_args.at(0)->name(), base_type}}};
+auto TypeWalker::get_or_declare_instantiation(Struct* struct_obj, Substitution subs) -> ty::Type {
   auto [already_existed, inst_struct] = struct_obj->get_or_create_instantiation(subs);
 
   if (!already_existed) {
@@ -584,6 +582,12 @@ auto TypeWalker::create_slice_type(const ty::Type& base_type) -> ty::Type {
   }
 
   return *inst_struct.self_ty;
+}
+
+auto TypeWalker::create_slice_type(const ty::Type& base_type) -> ty::Type {
+  auto* struct_obj = compiler.m_slice_struct;
+  Substitution subs = {{{struct_obj->type_args.at(0)->name(), base_type}}};
+  return get_or_declare_instantiation(struct_obj, subs);
 }
 
 auto TypeWalker::convert_type(ast::Type& ast_type) -> ty::Type {
@@ -639,27 +643,11 @@ auto TypeWalker::convert_type(ast::Type& ast_type) -> ty::Type {
     for (auto& i : templated->type_vars())
       expression(*i);
 
-    // XXX: Duplicated from function overload handling
     Substitution subs = {};
     for (const auto& [gen, gen_sub] : llvm::zip(struct_obj->type_args, templated->type_vars()))
       subs.try_emplace(gen->name(), gen_sub->ensure_ty());
 
-    auto [already_existed, inst_struct] = struct_obj->get_or_create_instantiation(subs);
-
-    if (!already_existed) {
-      auto& new_st = inst_struct;
-
-      with_saved_scope([&] {
-        in_depth = false;
-        current_decl = &new_st;
-        body_statement(new_st.st_ast);
-      });
-
-      if (compiler.create_struct(new_st))
-        decl_queue.push(&new_st);
-    }
-
-    return *inst_struct.self_ty;
+    return get_or_declare_instantiation(&*struct_obj, subs);
   }
 
   throw std::runtime_error("Cannot convert AST type to actual type! "s + ast_type.kind_name() + " (" +

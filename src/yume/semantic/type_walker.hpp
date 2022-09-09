@@ -63,6 +63,8 @@ private:
   auto convert_type(ast::Type& ast_type) -> ty::Type;
   auto create_slice_type(const ty::Type& base_type) -> ty::Type;
 
+  auto get_or_declare_instantiation(Struct* struct_obj, Substitution subs) -> ty::Type;
+
   auto all_fn_overloads_by_name(ast::CallExpr& call) -> OverloadSet;
   auto all_ctor_overloads_by_type(Struct& st, ast::CtorExpr& call) -> OverloadSet;
 
