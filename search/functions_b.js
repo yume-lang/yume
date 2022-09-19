@@ -5,6 +5,8 @@ var searchData=
   ['length_5fencode_2',['length_encode',['../namespaceyume_1_1mangle.html#a26c93ccd0928575bc097357d84076ef4',1,'yume::mangle']]],
   ['line_3',['line',['../structyume_1_1source__location.html#aab0d6844edb685a00dec71f910da06b4',1,'yume::source_location']]],
   ['literal_5fcast_4',['literal_cast',['../namespaceyume_1_1semantic.html#aad840cb24751dfb444717162926adbb3',1,'yume::semantic']]],
-  ['llvm_5ftype_5',['llvm_type',['../classyume_1_1Compiler.html#aff8ab7afe4b0189e59ad3deb01682f71',1,'yume::Compiler']]],
-  ['location_6',['location',['../classyume_1_1ast_1_1AST.html#ab30cf0f1bcb19522b1a27a95098c4cc2',1,'yume::ast::AST']]]
+  ['llvm_5ffn_5',['llvm_fn',['../classyume_1_1ast_1_1LambdaExpr.html#acc4f5a7967c5e0e71a906f6ad60c3fc8',1,'yume::ast::LambdaExpr::llvm_fn(llvm::Function *fn)'],['../classyume_1_1ast_1_1LambdaExpr.html#a5ca3e82e7aa7058c0078e73ffbe6dd9f',1,'yume::ast::LambdaExpr::llvm_fn() const -&gt; llvm::Function *']]],
+  ['llvm_5ftype_6',['llvm_type',['../classyume_1_1Compiler.html#aff8ab7afe4b0189e59ad3deb01682f71',1,'yume::Compiler']]],
+  ['local_7',['local',['../structyume_1_1Fn.html#a64eb58a91efe94480573d8250a15cc2e',1,'yume::Fn']]],
+  ['location_8',['location',['../classyume_1_1ast_1_1AST.html#ab30cf0f1bcb19522b1a27a95098c4cc2',1,'yume::ast::AST']]]
 ];

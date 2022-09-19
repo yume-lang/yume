@@ -1,5 +1,5 @@
 <map id="yume::Compiler" name="yume::Compiler">
-<area shape="rect" id="node1" title="The Compiler the the primary top&#45;level type during compilation. A single instance is created during t..." alt="" coords="53,185,164,212"/>
-<area shape="rect" id="node2" href="$structyume_1_1CRTPWalker.html" title=" " alt="" coords="5,109,212,136"/>
-<area shape="rect" id="node3" href="$structyume_1_1CRTPWalker.html" title="A helper template to walk the Abstract Syntax Tree (AST), utilizing the Curiously Recurring Template ..." alt="" coords="12,5,205,47"/>
+<area shape="rect" id="node1" title="The Compiler the the primary top&#45;level type during compilation. A single instance is created during t..." alt="" coords="53,171,164,197"/>
+<area shape="rect" id="node2" href="$structyume_1_1CRTPWalker.html" title=" " alt="" coords="5,95,212,121"/>
+<area shape="rect" id="node3" href="$structyume_1_1CRTPWalker.html" title="A helper template to walk the Abstract Syntax Tree (AST), utilizing the Curiously Recurring Template ..." alt="" coords="9,5,209,32"/>
 </map>

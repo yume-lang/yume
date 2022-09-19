@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-09-08 23:42:45</td>
+            <td class="headerValue">2022-09-19 23:02:48</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -67,7 +67,7 @@
 <a name="9"><span class="lineNum">       9 </span><span class="lineNoCov">          0 : auto mangle_name(Fn&amp; fn) -&gt; string {</span></a>
 <a name="10"><span class="lineNum">      10 </span>            :   stringstream ss{};</a>
 <a name="11"><span class="lineNum">      11 </span>            :   ss &lt;&lt; &quot;_Ym.&quot;;</a>
-<a name="12"><span class="lineNum">      12 </span>            :   ss &lt;&lt; fn.ast().name();</a>
+<a name="12"><span class="lineNum">      12 </span>            :   ss &lt;&lt; fn.name();</a>
 <a name="13"><span class="lineNum">      13 </span>            :   ss &lt;&lt; &quot;(&quot;;</a>
 <a name="14"><span class="lineNum">      14 </span>            :   for (const auto&amp; i : llvm::enumerate(fn.arg_types())) {</a>
 <a name="15"><span class="lineNum">      15 </span>            :     if (i.index() &gt; 0)</a>

@@ -1,7 +1,7 @@
-<map id="yume::CRTPWalker&lt; Derived, Const &gt;" name="yume::CRTPWalker&lt; Derived, Const &gt;">
-<area shape="rect" id="node1" title="A helper template to walk the Abstract Syntax Tree (AST), utilizing the Curiously Recurring Template ..." alt="" coords="129,5,323,47"/>
-<area shape="rect" id="node2" href="$structyume_1_1CRTPWalker.html" title=" " alt="" coords="5,117,212,143"/>
-<area shape="rect" id="node4" href="$structyume_1_1CRTPWalker.html" title=" " alt="" coords="236,109,453,151"/>
-<area shape="rect" id="node3" href="$classyume_1_1Compiler.html" title="The Compiler the the primary top&#45;level type during compilation. A single instance is created during t..." alt="" coords="53,200,164,227"/>
-<area shape="rect" id="node5" href="$structyume_1_1semantic_1_1TypeWalker.html" title="Determine the type information of AST nodes. This makes up most of the &quot;semantic&quot; phase of the compil..." alt="" coords="251,200,438,227"/>
+<map id="yume::CRTPWalker&lt; Derived &gt;" name="yume::CRTPWalker&lt; Derived &gt;">
+<area shape="rect" id="node1" title="A helper template to walk the Abstract Syntax Tree (AST), utilizing the Curiously Recurring Template ..." alt="" coords="127,5,327,32"/>
+<area shape="rect" id="node2" href="$structyume_1_1CRTPWalker.html" title=" " alt="" coords="5,95,212,121"/>
+<area shape="rect" id="node4" href="$structyume_1_1CRTPWalker.html" title=" " alt="" coords="237,95,461,121"/>
+<area shape="rect" id="node3" href="$classyume_1_1Compiler.html" title="The Compiler the the primary top&#45;level type during compilation. A single instance is created during t..." alt="" coords="53,171,164,197"/>
+<area shape="rect" id="node5" href="$structyume_1_1semantic_1_1TypeWalker.html" title="Determine the type information of AST nodes. This makes up most of the &quot;semantic&quot; phase of the compil..." alt="" coords="255,171,442,197"/>
 </map>

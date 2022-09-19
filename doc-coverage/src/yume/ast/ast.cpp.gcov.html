@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-09-08 23:42:45</td>
+            <td class="headerValue">2022-09-19 23:02:48</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -96,7 +96,10 @@
 <a name="38"><span class="lineNum">      38 </span>            : </a>
 <a name="39"><span class="lineNum">      39 </span>            : void CallExpr::selected_overload(Fn* fn) { m_selected_overload = fn; }</a>
 <a name="40"><span class="lineNum">      40 </span>            : auto CallExpr::selected_overload() const -&gt; Fn* { return m_selected_overload; }</a>
-<a name="41"><span class="lineNum">      41 </span>            : } // namespace yume::ast</a>
+<a name="41"><span class="lineNum">      41 </span>            : </a>
+<a name="42"><span class="lineNum">      42 </span>            : void LambdaExpr::llvm_fn(llvm::Function* fn) { m_llvm_fn = fn; }</a>
+<a name="43"><span class="lineNum">      43 </span>            : auto LambdaExpr::llvm_fn() const -&gt; llvm::Function* { return m_llvm_fn; }</a>
+<a name="44"><span class="lineNum">      44 </span>            : } // namespace yume::ast</a>
 </pre>
       </td>
     </tr>

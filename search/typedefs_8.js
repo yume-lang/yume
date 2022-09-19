@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['payload_0',['Payload',['../structyume_1_1Token.html#a45fbde9023f1f51b4d48b9b14470685e',1,'yume::Token']]]
+  ['scope_5ft_0',['scope_t',['../structyume_1_1semantic_1_1TypeWalker.html#a489a061b4edf0bc8dc42fa99f79608e6',1,'yume::semantic::TypeWalker']]],
+  ['substitution_5ft_1',['substitution_t',['../namespaceyume.html#a5dc96a3ee2ac1f563d1451989a1c11e9',1,'yume']]]
 ];

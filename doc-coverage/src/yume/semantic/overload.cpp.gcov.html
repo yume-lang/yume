@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-09-08 23:42:45</td>
+            <td class="headerValue">2022-09-19 23:02:48</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -107,7 +107,7 @@
 <a name="49"><span class="lineNum">      49 </span>            :       stream &lt;&lt; k &lt;&lt; &quot; = &quot; &lt;&lt; v.name();</a>
 <a name="50"><span class="lineNum">      50 </span>            :     }</a>
 <a name="51"><span class="lineNum">      51 </span>            :   }</a>
-<a name="52"><span class="lineNum">      52 </span>            : };</a>
+<a name="52"><span class="lineNum">      52 </span>            : }</a>
 <a name="53"><span class="lineNum">      53 </span>            : </a>
 <a name="54"><span class="lineNum">      54 </span>            : void OverloadSet::dump(llvm::raw_ostream&amp; stream, bool hide_invalid) const {</a>
 <a name="55"><span class="lineNum">      55 </span>            :   stream &lt;&lt; overload_name(call) &lt;&lt; &quot;(&quot;;</a>
@@ -120,7 +120,7 @@
 <a name="62"><span class="lineNum">      62 </span>            :     i_s.dump(stream);</a>
 <a name="63"><span class="lineNum">      63 </span>            :     stream &lt;&lt; &quot;\n&quot;;</a>
 <a name="64"><span class="lineNum">      64 </span>            :   }</a>
-<a name="65"><span class="lineNum">      65 </span>            : };</a>
+<a name="65"><span class="lineNum">      65 </span>            : }</a>
 <a name="66"><span class="lineNum">      66 </span>            : </a>
 <a name="67"><span class="lineNum">      67 </span><span class="lineNoCov">          0 : static auto literal_cast(ast::AST&amp; arg, ty::Type target_type) -&gt; ty::Compat {</span></a>
 <a name="68"><span class="lineNum">      68 </span>            :   if (arg.val_ty() == target_type)</a>
@@ -204,107 +204,105 @@
 <a name="146"><span class="lineNum">     146 </span>            : }</a>
 <a name="147"><span class="lineNum">     147 </span>            : </a>
 <a name="148"><span class="lineNum">     148 </span>            : void OverloadSet::determine_valid_overloads() {</a>
-<a name="149"><span class="lineNum">     149 </span>            :   auto&amp; [call_expr, overloads, args] = *this;</a>
-<a name="150"><span class="lineNum">     150 </span>            : </a>
-<a name="151"><span class="lineNum">     151 </span>            :   // All `Overload`s are determined to not be viable by default, so determine the ones which actually are</a>
-<a name="152"><span class="lineNum">     152 </span>            :   // TODO(rymiel): #17 Actually keep track of *why* a type is not viable, for diagnostics.</a>
-<a name="153"><span class="lineNum">     153 </span>            :   for (auto&amp; i : overloads)</a>
-<a name="154"><span class="lineNum">     154 </span>            :     i.viable = is_valid_overload(i);</a>
-<a name="155"><span class="lineNum">     155 </span>            : }</a>
+<a name="149"><span class="lineNum">     149 </span>            :   // All `Overload`s are determined to not be viable by default, so determine the ones which actually are</a>
+<a name="150"><span class="lineNum">     150 </span>            :   // TODO(rymiel): #17 Actually keep track of *why* a type is not viable, for diagnostics.</a>
+<a name="151"><span class="lineNum">     151 </span>            :   for (auto&amp; i : overloads)</a>
+<a name="152"><span class="lineNum">     152 </span>            :     i.viable = is_valid_overload(i);</a>
+<a name="153"><span class="lineNum">     153 </span>            : }</a>
+<a name="154"><span class="lineNum">     154 </span>            : </a>
+<a name="155"><span class="lineNum">     155 </span><span class="lineNoCov">          0 : static auto cmp(bool a, bool b) -&gt; std::strong_ordering { return static_cast&lt;int&gt;(a) &lt;=&gt; static_cast&lt;int&gt;(b); }</span></a>
 <a name="156"><span class="lineNum">     156 </span>            : </a>
-<a name="157"><span class="lineNum">     157 </span><span class="lineNoCov">          0 : static auto cmp(bool a, bool b) -&gt; std::strong_ordering { return static_cast&lt;int&gt;(a) &lt;=&gt; static_cast&lt;int&gt;(b); }</span></a>
-<a name="158"><span class="lineNum">     158 </span>            : </a>
-<a name="159"><span class="lineNum">     159 </span><span class="lineNoCov">          0 : static auto compare_implicit_conversions(ty::Conv a, ty::Conv b) -&gt; std::weak_ordering {</span></a>
-<a name="160"><span class="lineNum">     160 </span>            :   const auto&amp; equal = std::strong_ordering::equal;</a>
-<a name="161"><span class="lineNum">     161 </span>            : </a>
-<a name="162"><span class="lineNum">     162 </span>            :   // No conversion is better than some conversion</a>
-<a name="163"><span class="lineNum">     163 </span>            :   if (auto c = cmp(a.kind == ty::Conv::None, b.kind == ty::Conv::None); c != equal)</a>
-<a name="164"><span class="lineNum">     164 </span>            :     return c;</a>
-<a name="165"><span class="lineNum">     165 </span>            : </a>
-<a name="166"><span class="lineNum">     166 </span>            :   // No dereference is better than performing a dereference</a>
-<a name="167"><span class="lineNum">     167 </span>            :   if (auto c = cmp(!a.dereference, !b.dereference); c != equal)</a>
-<a name="168"><span class="lineNum">     168 </span>            :     return c;</a>
-<a name="169"><span class="lineNum">     169 </span>            : </a>
-<a name="170"><span class="lineNum">     170 </span>            :   // Cannot distinguish!</a>
-<a name="171"><span class="lineNum">     171 </span>            :   return equal;</a>
-<a name="172"><span class="lineNum">     172 </span>            : }</a>
-<a name="173"><span class="lineNum">     173 </span>            : </a>
-<a name="174"><span class="lineNum">     174 </span>            : auto Overload::better_candidate_than(Overload other) const -&gt; bool {</a>
-<a name="175"><span class="lineNum">     175 </span>            :   // Viable candidates are always better than non-viable ones</a>
-<a name="176"><span class="lineNum">     176 </span>            :   if (!other.viable)</a>
-<a name="177"><span class="lineNum">     177 </span>            :     return viable;</a>
-<a name="178"><span class="lineNum">     178 </span>            :   if (!viable)</a>
-<a name="179"><span class="lineNum">     179 </span>            :     return false;</a>
-<a name="180"><span class="lineNum">     180 </span>            : </a>
-<a name="181"><span class="lineNum">     181 </span>            :   // For each argument, determine which candidate has a &quot;better&quot; conversion.</a>
-<a name="182"><span class="lineNum">     182 </span>            :   for (const auto&amp; [self_compat, other_compat] : llvm::zip_first(compatibilities, other.compatibilities)) {</a>
-<a name="183"><span class="lineNum">     183 </span>            :     auto comparison = compare_implicit_conversions(self_compat.conv, other_compat.conv);</a>
-<a name="184"><span class="lineNum">     184 </span>            : </a>
-<a name="185"><span class="lineNum">     185 </span>            :     if (is_gt(comparison))</a>
-<a name="186"><span class="lineNum">     186 </span>            :       return true;</a>
-<a name="187"><span class="lineNum">     187 </span>            :     if (is_lt(comparison))</a>
-<a name="188"><span class="lineNum">     188 </span>            :       return false;</a>
-<a name="189"><span class="lineNum">     189 </span>            : </a>
-<a name="190"><span class="lineNum">     190 </span>            :     // Cannot distinguish between these ones, try the next arguments</a>
-<a name="191"><span class="lineNum">     191 </span>            :   }</a>
-<a name="192"><span class="lineNum">     192 </span>            : </a>
-<a name="193"><span class="lineNum">     193 </span>            :   // If we got to here, it means all arguments were identical. Neither overload is better than the other</a>
-<a name="194"><span class="lineNum">     194 </span>            :   return false;</a>
-<a name="195"><span class="lineNum">     195 </span>            : }</a>
-<a name="196"><span class="lineNum">     196 </span>            : </a>
-<a name="197"><span class="lineNum">     197 </span>            : auto OverloadSet::try_best_viable_overload() const -&gt; const Overload* {</a>
-<a name="198"><span class="lineNum">     198 </span>            :   const Overload* best = nullptr;</a>
-<a name="199"><span class="lineNum">     199 </span>            : </a>
-<a name="200"><span class="lineNum">     200 </span>            :   for (const auto&amp; candidate : overloads)</a>
-<a name="201"><span class="lineNum">     201 </span>            :     if (candidate.viable)</a>
-<a name="202"><span class="lineNum">     202 </span>            :       if (best == nullptr || candidate.better_candidate_than(*best))</a>
-<a name="203"><span class="lineNum">     203 </span>            :         best = &amp;candidate;</a>
-<a name="204"><span class="lineNum">     204 </span>            : </a>
-<a name="205"><span class="lineNum">     205 </span>            :   return best;</a>
-<a name="206"><span class="lineNum">     206 </span>            : }</a>
-<a name="207"><span class="lineNum">     207 </span>            : </a>
-<a name="208"><span class="lineNum">     208 </span>            : auto OverloadSet::best_viable_overload() const -&gt; Overload {</a>
-<a name="209"><span class="lineNum">     209 </span>            :   const auto* best = try_best_viable_overload();</a>
-<a name="210"><span class="lineNum">     210 </span>            : </a>
-<a name="211"><span class="lineNum">     211 </span>            :   if (best == nullptr) {</a>
-<a name="212"><span class="lineNum">     212 </span>            :     string str{};</a>
-<a name="213"><span class="lineNum">     213 </span>            :     llvm::raw_string_ostream ss{str};</a>
-<a name="214"><span class="lineNum">     214 </span>            :     ss &lt;&lt; &quot;No viable overload for &quot; &lt;&lt; overload_name(call) &lt;&lt; &quot; with argument types &quot;;</a>
-<a name="215"><span class="lineNum">     215 </span>            :     join_args(args, get_val_ty, ss);</a>
-<a name="216"><span class="lineNum">     216 </span>            :     ss &lt;&lt; &quot;\nNone of the following overloads were suitable:\n&quot;;</a>
-<a name="217"><span class="lineNum">     217 </span>            :     for (const auto&amp; i : overloads) {</a>
-<a name="218"><span class="lineNum">     218 </span>            :       i.dump(ss);</a>
-<a name="219"><span class="lineNum">     219 </span>            :       ss &lt;&lt; &quot;\n&quot;;</a>
-<a name="220"><span class="lineNum">     220 </span>            :     }</a>
-<a name="221"><span class="lineNum">     221 </span>            :     throw std::logic_error(str);</a>
-<a name="222"><span class="lineNum">     222 </span>            :   }</a>
+<a name="157"><span class="lineNum">     157 </span><span class="lineNoCov">          0 : static auto compare_implicit_conversions(ty::Conv a, ty::Conv b) -&gt; std::weak_ordering {</span></a>
+<a name="158"><span class="lineNum">     158 </span>            :   const auto&amp; equal = std::strong_ordering::equal;</a>
+<a name="159"><span class="lineNum">     159 </span>            : </a>
+<a name="160"><span class="lineNum">     160 </span>            :   // No conversion is better than some conversion</a>
+<a name="161"><span class="lineNum">     161 </span>            :   if (auto c = cmp(a.kind == ty::Conv::None, b.kind == ty::Conv::None); c != equal)</a>
+<a name="162"><span class="lineNum">     162 </span>            :     return c;</a>
+<a name="163"><span class="lineNum">     163 </span>            : </a>
+<a name="164"><span class="lineNum">     164 </span>            :   // No dereference is better than performing a dereference</a>
+<a name="165"><span class="lineNum">     165 </span>            :   if (auto c = cmp(!a.dereference, !b.dereference); c != equal)</a>
+<a name="166"><span class="lineNum">     166 </span>            :     return c;</a>
+<a name="167"><span class="lineNum">     167 </span>            : </a>
+<a name="168"><span class="lineNum">     168 </span>            :   // Cannot distinguish!</a>
+<a name="169"><span class="lineNum">     169 </span>            :   return equal;</a>
+<a name="170"><span class="lineNum">     170 </span>            : }</a>
+<a name="171"><span class="lineNum">     171 </span>            : </a>
+<a name="172"><span class="lineNum">     172 </span>            : auto Overload::better_candidate_than(Overload other) const -&gt; bool {</a>
+<a name="173"><span class="lineNum">     173 </span>            :   // Viable candidates are always better than non-viable ones</a>
+<a name="174"><span class="lineNum">     174 </span>            :   if (!other.viable)</a>
+<a name="175"><span class="lineNum">     175 </span>            :     return viable;</a>
+<a name="176"><span class="lineNum">     176 </span>            :   if (!viable)</a>
+<a name="177"><span class="lineNum">     177 </span>            :     return false;</a>
+<a name="178"><span class="lineNum">     178 </span>            : </a>
+<a name="179"><span class="lineNum">     179 </span>            :   // For each argument, determine which candidate has a &quot;better&quot; conversion.</a>
+<a name="180"><span class="lineNum">     180 </span>            :   for (const auto&amp; [self_compat, other_compat] : llvm::zip_first(compatibilities, other.compatibilities)) {</a>
+<a name="181"><span class="lineNum">     181 </span>            :     auto comparison = compare_implicit_conversions(self_compat.conv, other_compat.conv);</a>
+<a name="182"><span class="lineNum">     182 </span>            : </a>
+<a name="183"><span class="lineNum">     183 </span>            :     if (is_gt(comparison))</a>
+<a name="184"><span class="lineNum">     184 </span>            :       return true;</a>
+<a name="185"><span class="lineNum">     185 </span>            :     if (is_lt(comparison))</a>
+<a name="186"><span class="lineNum">     186 </span>            :       return false;</a>
+<a name="187"><span class="lineNum">     187 </span>            : </a>
+<a name="188"><span class="lineNum">     188 </span>            :     // Cannot distinguish between these, try the next arguments</a>
+<a name="189"><span class="lineNum">     189 </span>            :   }</a>
+<a name="190"><span class="lineNum">     190 </span>            : </a>
+<a name="191"><span class="lineNum">     191 </span>            :   // If we got to here, it means all arguments were identical. Neither overload is better than the other</a>
+<a name="192"><span class="lineNum">     192 </span>            :   return false;</a>
+<a name="193"><span class="lineNum">     193 </span>            : }</a>
+<a name="194"><span class="lineNum">     194 </span>            : </a>
+<a name="195"><span class="lineNum">     195 </span>            : auto OverloadSet::try_best_viable_overload() const -&gt; const Overload* {</a>
+<a name="196"><span class="lineNum">     196 </span>            :   const Overload* best = nullptr;</a>
+<a name="197"><span class="lineNum">     197 </span>            : </a>
+<a name="198"><span class="lineNum">     198 </span>            :   for (const auto&amp; candidate : overloads)</a>
+<a name="199"><span class="lineNum">     199 </span>            :     if (candidate.viable)</a>
+<a name="200"><span class="lineNum">     200 </span>            :       if (best == nullptr || candidate.better_candidate_than(*best))</a>
+<a name="201"><span class="lineNum">     201 </span>            :         best = &amp;candidate;</a>
+<a name="202"><span class="lineNum">     202 </span>            : </a>
+<a name="203"><span class="lineNum">     203 </span>            :   return best;</a>
+<a name="204"><span class="lineNum">     204 </span>            : }</a>
+<a name="205"><span class="lineNum">     205 </span>            : </a>
+<a name="206"><span class="lineNum">     206 </span>            : auto OverloadSet::best_viable_overload() const -&gt; Overload {</a>
+<a name="207"><span class="lineNum">     207 </span>            :   const auto* best = try_best_viable_overload();</a>
+<a name="208"><span class="lineNum">     208 </span>            : </a>
+<a name="209"><span class="lineNum">     209 </span>            :   if (best == nullptr) {</a>
+<a name="210"><span class="lineNum">     210 </span>            :     string str{};</a>
+<a name="211"><span class="lineNum">     211 </span>            :     llvm::raw_string_ostream ss{str};</a>
+<a name="212"><span class="lineNum">     212 </span>            :     ss &lt;&lt; &quot;No viable overload for &quot; &lt;&lt; overload_name(call) &lt;&lt; &quot; with argument types &quot;;</a>
+<a name="213"><span class="lineNum">     213 </span>            :     join_args(args, get_val_ty, ss);</a>
+<a name="214"><span class="lineNum">     214 </span>            :     ss &lt;&lt; &quot;\nNone of the following overloads were suitable:\n&quot;;</a>
+<a name="215"><span class="lineNum">     215 </span>            :     for (const auto&amp; i : overloads) {</a>
+<a name="216"><span class="lineNum">     216 </span>            :       i.dump(ss);</a>
+<a name="217"><span class="lineNum">     217 </span>            :       ss &lt;&lt; &quot;\n&quot;;</a>
+<a name="218"><span class="lineNum">     218 </span>            :     }</a>
+<a name="219"><span class="lineNum">     219 </span>            :     throw std::logic_error(str);</a>
+<a name="220"><span class="lineNum">     220 </span>            :   }</a>
+<a name="221"><span class="lineNum">     221 </span>            : </a>
+<a name="222"><span class="lineNum">     222 </span>            :   vector&lt;const Overload*&gt; ambiguous;</a>
 <a name="223"><span class="lineNum">     223 </span>            : </a>
-<a name="224"><span class="lineNum">     224 </span>            :   vector&lt;const Overload*&gt; ambiguous;</a>
-<a name="225"><span class="lineNum">     225 </span>            : </a>
-<a name="226"><span class="lineNum">     226 </span>            :   for (const auto&amp; candidate : overloads)</a>
-<a name="227"><span class="lineNum">     227 </span>            :     if (candidate.viable &amp;&amp; &amp;candidate != best)</a>
-<a name="228"><span class="lineNum">     228 </span>            :       if (!best-&gt;better_candidate_than(candidate))</a>
-<a name="229"><span class="lineNum">     229 </span>            :         ambiguous.push_back(&amp;candidate);</a>
-<a name="230"><span class="lineNum">     230 </span>            : </a>
-<a name="231"><span class="lineNum">     231 </span>            :   if (ambiguous.empty())</a>
-<a name="232"><span class="lineNum">     232 </span>            :     return *best;</a>
+<a name="224"><span class="lineNum">     224 </span>            :   for (const auto&amp; candidate : overloads)</a>
+<a name="225"><span class="lineNum">     225 </span>            :     if (candidate.viable &amp;&amp; &amp;candidate != best)</a>
+<a name="226"><span class="lineNum">     226 </span>            :       if (!best-&gt;better_candidate_than(candidate))</a>
+<a name="227"><span class="lineNum">     227 </span>            :         ambiguous.push_back(&amp;candidate);</a>
+<a name="228"><span class="lineNum">     228 </span>            : </a>
+<a name="229"><span class="lineNum">     229 </span>            :   if (ambiguous.empty())</a>
+<a name="230"><span class="lineNum">     230 </span>            :     return *best;</a>
+<a name="231"><span class="lineNum">     231 </span>            : </a>
+<a name="232"><span class="lineNum">     232 </span>            :   ambiguous.push_back(best);</a>
 <a name="233"><span class="lineNum">     233 </span>            : </a>
-<a name="234"><span class="lineNum">     234 </span>            :   ambiguous.push_back(best);</a>
-<a name="235"><span class="lineNum">     235 </span>            : </a>
-<a name="236"><span class="lineNum">     236 </span>            :   string str{};</a>
-<a name="237"><span class="lineNum">     237 </span>            :   llvm::raw_string_ostream ss{str};</a>
-<a name="238"><span class="lineNum">     238 </span>            :   ss &lt;&lt; &quot;Ambigious call for &quot; &lt;&lt; overload_name(call) &lt;&lt; &quot; with argument types &quot;;</a>
-<a name="239"><span class="lineNum">     239 </span>            :   join_args(args, get_val_ty, ss);</a>
-<a name="240"><span class="lineNum">     240 </span>            :   ss &lt;&lt; &quot;\nCouldn't pick between the following overloads:\n&quot;;</a>
-<a name="241"><span class="lineNum">     241 </span>            :   for (const auto* i : ambiguous) {</a>
-<a name="242"><span class="lineNum">     242 </span>            :     i-&gt;dump(ss);</a>
-<a name="243"><span class="lineNum">     243 </span>            :     ss &lt;&lt; &quot;\n&quot;;</a>
-<a name="244"><span class="lineNum">     244 </span>            :   }</a>
-<a name="245"><span class="lineNum">     245 </span>            : </a>
-<a name="246"><span class="lineNum">     246 </span>            :   throw std::logic_error(str);</a>
-<a name="247"><span class="lineNum">     247 </span>            : }</a>
-<a name="248"><span class="lineNum">     248 </span>            : </a>
-<a name="249"><span class="lineNum">     249 </span>            : } // namespace yume::semantic</a>
+<a name="234"><span class="lineNum">     234 </span>            :   string str{};</a>
+<a name="235"><span class="lineNum">     235 </span>            :   llvm::raw_string_ostream ss{str};</a>
+<a name="236"><span class="lineNum">     236 </span>            :   ss &lt;&lt; &quot;Ambiguous call for &quot; &lt;&lt; overload_name(call) &lt;&lt; &quot; with argument types &quot;;</a>
+<a name="237"><span class="lineNum">     237 </span>            :   join_args(args, get_val_ty, ss);</a>
+<a name="238"><span class="lineNum">     238 </span>            :   ss &lt;&lt; &quot;\nCouldn't pick between the following overloads:\n&quot;;</a>
+<a name="239"><span class="lineNum">     239 </span>            :   for (const auto* i : ambiguous) {</a>
+<a name="240"><span class="lineNum">     240 </span>            :     i-&gt;dump(ss);</a>
+<a name="241"><span class="lineNum">     241 </span>            :     ss &lt;&lt; &quot;\n&quot;;</a>
+<a name="242"><span class="lineNum">     242 </span>            :   }</a>
+<a name="243"><span class="lineNum">     243 </span>            : </a>
+<a name="244"><span class="lineNum">     244 </span>            :   throw std::logic_error(str);</a>
+<a name="245"><span class="lineNum">     245 </span>            : }</a>
+<a name="246"><span class="lineNum">     246 </span>            : </a>
+<a name="247"><span class="lineNum">     247 </span>            : } // namespace yume::semantic</a>
 </pre>
       </td>
     </tr>
