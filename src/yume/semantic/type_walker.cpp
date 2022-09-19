@@ -182,7 +182,7 @@ template <> void TypeWalker::expression(ast::LambdaExpr& expr) {
   enclosing_scopes.push_back(scope);
   with_saved_scope([&] {
     scope.clear();
-    auto guard = scope.push_scope_guarded();
+    [[maybe_unused]] auto guard = scope.push_scope_guarded();
 
     auto arg_types = vector<ty::Type>{};
     auto ret_type = optional<ty::Type>{};
@@ -245,11 +245,11 @@ template <> void TypeWalker::expression(ast::VarExpr& expr) {
   if (auto** var = scope.find(expr.name()); var != nullptr)
     return expr.attach_to(*var);
 
-  // If we're inside of a lambda body, check if the variable maybe refers to one from an outer scope that can be
+  // If we're inside a lambda body, check if the variable maybe refers to one from an outer scope that can be
   // included in the closure of the current lambda
   for (auto& outer_scope : enclosing_scopes) {
     if (auto** var = outer_scope.find(expr.name()); var != nullptr) {
-      // It was found, include it in the current scope so we don't need to look for it again
+      // It was found, include it in the current scope, so we don't need to look for it again
       scope.add(expr.name(), *var);
       closured.push_back({*var, expr.name()});
       return expr.attach_to(*var);
@@ -401,7 +401,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
       // This is because the implicit cast logic below depends on the direct type being set here and bound type
       // information doesn't propagate across ImplicitCastExpr...
       // TODO(rymiel): Find a better solution; such as moving cast logic also into queue?
-      // However that would require evaluation of the queue very eagerly (i.e. immediately when the function is used,
+      // However, that would require evaluation of the queue very eagerly (i.e. immediately when the function is used,
       // which kinda defeats the purpose of the queue). So I guess we'll just keep this until I think of a better
       // solution
       // TODO(rymiel): find a better solution other than the solution proposed above
@@ -443,7 +443,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
 }
 
 template <> void TypeWalker::statement(ast::Compound& stat) {
-  auto guard = scope.push_scope_guarded();
+  [[maybe_unused]] auto guard = scope.push_scope_guarded();
   for (auto& i : stat.body())
     body_statement(*i);
 }
@@ -459,7 +459,7 @@ template <> void TypeWalker::statement(ast::StructDecl& stat) {
 
 template <> void TypeWalker::statement(ast::FnDecl& stat) {
   scope.clear();
-  auto guard = scope.push_scope_guarded();
+  [[maybe_unused]] auto guard = scope.push_scope_guarded();
 
   for (auto& i : stat.args()) {
     expression(i);
@@ -483,7 +483,7 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
 
 template <> void TypeWalker::statement(ast::CtorDecl& stat) {
   scope.clear();
-  auto guard = scope.push_scope_guarded();
+  [[maybe_unused]] auto guard = scope.push_scope_guarded();
 
   const auto* struct_type = current_decl.self_ty()->without_mut().base_dyn_cast<ty::Struct>();
 

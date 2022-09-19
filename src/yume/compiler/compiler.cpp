@@ -302,7 +302,7 @@ auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
           closured.push_back(m_builder->getInt8Ty());
 
         // Closures are type-erased to just a bag of bits. We store the "real type" of the closure within the function
-        // type for better retreival, but in practice, they're always passed around bitcasted. Note that the bitcasting
+        // type for better retrieval, but in practice, they're always passed around bitcasted. Note that the bitcasting
         // is not required when opaque pointers are in play
         auto* closure_ty = llvm::StructType::create(closured, "closure");
         auto* erased_closure_ty = m_builder->getInt8PtrTy();

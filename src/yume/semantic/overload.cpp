@@ -49,7 +49,7 @@ void Overload::dump(llvm::raw_ostream& stream) const {
       stream << k << " = " << v.name();
     }
   }
-};
+}
 
 void OverloadSet::dump(llvm::raw_ostream& stream, bool hide_invalid) const {
   stream << overload_name(call) << "(";
@@ -62,7 +62,7 @@ void OverloadSet::dump(llvm::raw_ostream& stream, bool hide_invalid) const {
     i_s.dump(stream);
     stream << "\n";
   }
-};
+}
 
 static auto literal_cast(ast::AST& arg, ty::Type target_type) -> ty::Compat {
   if (arg.val_ty() == target_type)
@@ -146,8 +146,6 @@ auto OverloadSet::is_valid_overload(Overload& overload) const -> bool {
 }
 
 void OverloadSet::determine_valid_overloads() {
-  auto& [call_expr, overloads, args] = *this;
-
   // All `Overload`s are determined to not be viable by default, so determine the ones which actually are
   // TODO(rymiel): #17 Actually keep track of *why* a type is not viable, for diagnostics.
   for (auto& i : overloads)
@@ -187,7 +185,7 @@ auto Overload::better_candidate_than(Overload other) const -> bool {
     if (is_lt(comparison))
       return false;
 
-    // Cannot distinguish between these ones, try the next arguments
+    // Cannot distinguish between these, try the next arguments
   }
 
   // If we got to here, it means all arguments were identical. Neither overload is better than the other
@@ -235,7 +233,7 @@ auto OverloadSet::best_viable_overload() const -> Overload {
 
   string str{};
   llvm::raw_string_ostream ss{str};
-  ss << "Ambigious call for " << overload_name(call) << " with argument types ";
+  ss << "Ambiguous call for " << overload_name(call) << " with argument types ";
   join_args(args, get_val_ty, ss);
   ss << "\nCouldn't pick between the following overloads:\n";
   for (const auto* i : ambiguous) {

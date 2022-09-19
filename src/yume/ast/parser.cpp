@@ -306,7 +306,7 @@ auto Parser::parse_fn_name() -> string {
     }
   }
 
-  // Check if an equal sign follows, for fused assignement operators such as `+=` or `[]=`
+  // Check if an equal sign follows, for fused assignment operators such as `+=` or `[]=`
   if (try_consume(SYM_EQ))
     name += "=";
 
@@ -329,12 +329,10 @@ auto Parser::parse_struct_decl() -> unique_ptr<StructDecl> {
   auto fields = vector<TypeName>{};
   consume_with_commas_until(SYM_RPAREN, [&] { fields.push_back(move(*parse_type_name())); });
 
-  auto body = vector<AnyStmt>{};
-  auto body_begin = entry;
-
   require_separator();
 
-  body_begin = tokens.begin();
+  auto body = vector<AnyStmt>{};
+  auto body_begin = tokens.begin();
   while (!try_consume(KWD_END)) {
     body.emplace_back(parse_stmt());
     ignore_separator();
@@ -358,7 +356,7 @@ auto Parser::parse_fn_arg() -> FnArg {
   }
 
   return {parse_type_name(), std::nullopt};
-};
+}
 
 auto Parser::parse_fn_or_ctor_decl() -> unique_ptr<Stmt> {
   if (try_peek(1, SYM_COLON))
@@ -446,12 +444,10 @@ auto Parser::parse_ctor_decl() -> unique_ptr<CtorDecl> {
       body.emplace_back(move(arg.extra_body));
   });
 
-  auto body_begin = entry;
-
   if (!try_peek(0, KWD_END)) // Allow `end` to be on the same line
     require_separator();
 
-  body_begin = tokens.begin();
+  auto body_begin = tokens.begin();
   while (!try_consume(KWD_END)) {
     body.emplace_back(parse_stmt());
     ignore_separator();

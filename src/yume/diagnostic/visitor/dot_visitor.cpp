@@ -95,7 +95,7 @@ auto DotVisitor::visit(const ast::AST& expr, const char* label) -> DotVisitor& {
   expr.visit(*this);
   m_parent = restore_parent;
 
-  // This node had no parent, which means its a root node.
+  // This node had no parent, which means it's a root node.
   if (restore_parent == nullptr) {
     node.write(m_stream);
     m_root.reset();

@@ -135,7 +135,7 @@ auto stacktrace_ostream::simplify(string_view msg, ContainerLikeSimplify s) -> b
   simplify(msg.substr(uptr_end));
 
   return true;
-};
+}
 
 auto stacktrace_ostream::simplify(string_view msg, SpanLikeSimplify s) -> bool {
   constexpr static const string_view END = ">";
@@ -158,7 +158,7 @@ auto stacktrace_ostream::simplify(string_view msg, SpanLikeSimplify s) -> bool {
   simplify(msg.substr(span_end));
 
   return true;
-};
+}
 
 auto stacktrace_ostream::simplify(string_view msg, DirectReplaceSimplify s) -> bool {
   auto start = msg.find(s.from);
@@ -207,7 +207,7 @@ void stacktrace_ostream::simplify(string_view msg) {
 void stacktrace_ostream::set_color(llvm::raw_ostream::Colors color) {
   if (color != RESET && use_color)
     m_buffer << llvm::sys::Process::OutputColor(static_cast<char>(color), false, false);
-};
+}
 
 void stacktrace_ostream::format_phase(string_view msg) {
   static array skip_lines = {"yume::CRTPWalker<"sv, "__libc_start_"sv};
@@ -239,7 +239,7 @@ void stacktrace_ostream::format_phase(string_view msg) {
     } else {
       m_buffer << normal_path;
     }
-  };
+  }
 
   if (use_color)
     m_buffer << llvm::sys::Process::ResetColor();
@@ -257,7 +257,6 @@ void stacktrace_ostream::write_impl(const char* ptr, size_t size) {
   if (m_unknown) {
     m_unknown = msg.at(0) != ')';
   } else if (msg.at(0) == '(') {
-    m_skip = m_current_phase == Function;
     m_unknown = true;
     m_skip = true;
     m_current_phase = Offset;

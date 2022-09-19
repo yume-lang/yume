@@ -726,7 +726,8 @@ class LambdaExpr final : public Expr {
 
 public:
   LambdaExpr(span<Token> tok, vector<TypeName> args, OptionalType ret, Compound body, std::set<string> annotations)
-      : Expr(K_Lambda, tok), m_args(move(args)), m_ret(move(ret)), m_body(move(body)), m_annotations(move(annotations)) {}
+      : Expr(K_Lambda, tok), m_args(move(args)), m_ret(move(ret)), m_body(move(body)),
+        m_annotations(move(annotations)) {}
   void visit(Visitor& visitor) const override;
   // [[nodiscard]] auto describe() const -> string override; // TODO(rymiel)
 
