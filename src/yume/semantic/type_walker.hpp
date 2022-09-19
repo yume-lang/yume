@@ -29,7 +29,7 @@ namespace yume::semantic {
 
 /// Determine the type information of AST nodes.
 /// This makes up most of the "semantic" phase of the compiler.
-struct TypeWalker : public CRTPWalker<TypeWalker, false> {
+struct TypeWalker : public CRTPWalker<TypeWalker> {
   friend CRTPWalker;
 
 public:

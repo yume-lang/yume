@@ -84,9 +84,9 @@ public:
   void define(Fn&);
   void define(Const&);
 
-  void body_statement(const ast::Stmt&);
+  void body_statement(ast::Stmt&);
   auto decl_statement(ast::Stmt&, optional<ty::Type> parent = std::nullopt, ast::Program* member = nullptr) -> DeclLike;
-  auto body_expression(const ast::Expr& expr) -> Val;
+  auto body_expression(ast::Expr& expr) -> Val;
 
   void write_object(const char* filename, bool binary);
 
@@ -103,11 +103,15 @@ public:
   [[nodiscard]] auto source_files() -> const auto& { return m_sources; }
 
 private:
-  template <typename T> void statement(const T& stat) {
+  template <typename T>
+  requires (!std::is_const_v<T>)
+  void statement(T& stat) {
     throw std::runtime_error("Unknown statement "s + stat.kind_name());
   }
 
-  template <typename T> auto expression(const T& expr) -> Val {
+  template <typename T>
+  requires (!std::is_const_v<T>)
+  auto expression(T& expr) -> Val {
     throw std::runtime_error("Unknown expression "s + expr.kind_name());
   }
 

@@ -413,9 +413,9 @@ auto Compiler::declare(Fn& fn) -> llvm::Function* {
   return llvm_fn;
 }
 
-template <> void Compiler::statement(const ast::Compound& stat) {
+template <> void Compiler::statement(ast::Compound& stat) {
   auto guard = m_scope.push_scope_guarded();
-  for (const auto& i : stat.body())
+  for (auto& i : stat.body())
     body_statement(*i);
 
   if (m_builder->GetInsertBlock()->getTerminator() == nullptr)
@@ -495,7 +495,7 @@ void Compiler::define(Fn& fn) {
   setup_fn_base(fn);
 
   if (isa<ast::FnDecl>(&fn.ast())) {
-    if (const auto* body = get_if<ast::Compound>(&fn.fn_body()); body != nullptr) {
+    if (auto* body = get_if<ast::Compound>(&fn.fn_body()); body != nullptr) {
       statement(*body);
     }
 
@@ -526,7 +526,7 @@ void Compiler::define(Fn& fn) {
   verifyFunction(*fn.llvm, &errs());
 }
 
-template <> void Compiler::statement(const ast::WhileStmt& stat) {
+template <> void Compiler::statement(ast::WhileStmt& stat) {
   auto* test_bb = llvm::BasicBlock::Create(*m_context, "while.test", m_current_llvm);
   auto* head_bb = llvm::BasicBlock::Create(*m_context, "while.head", m_current_llvm);
   auto* merge_bb = llvm::BasicBlock::Create(*m_context, "while.merge", m_current_llvm);
@@ -540,17 +540,17 @@ template <> void Compiler::statement(const ast::WhileStmt& stat) {
   m_builder->SetInsertPoint(merge_bb);
 }
 
-template <> void Compiler::statement(const ast::IfStmt& stat) {
-  auto* merge_bb = llvm::BasicBlock::Create(*m_context, "if.cont", m_current_llvm);
-  auto* next_test_bb = llvm::BasicBlock::Create(*m_context, "if.test", m_current_llvm, merge_bb);
+template <> void Compiler::statement(ast::IfStmt& stat) {
+  auto* merge_bb = llvm::BasicBlock::Create(*m_context, "if.cont", m_current_fn->llvm);
+  auto* next_test_bb = llvm::BasicBlock::Create(*m_context, "if.test", m_current_fn->llvm, merge_bb);
   auto* last_branch = m_builder->CreateBr(next_test_bb);
   bool all_terminated = true;
 
-  const auto& clauses = stat.clauses();
-  for (const auto& clause : clauses) {
+  auto& clauses = stat.clauses();
+  for (auto& clause : clauses) {
     m_builder->SetInsertPoint(next_test_bb);
-    auto* body_bb = llvm::BasicBlock::Create(*m_context, "if.then", m_current_llvm, merge_bb);
-    next_test_bb = llvm::BasicBlock::Create(*m_context, "if.test", m_current_llvm, merge_bb);
+    auto* body_bb = llvm::BasicBlock::Create(*m_context, "if.then", m_current_fn->llvm, merge_bb);
+    next_test_bb = llvm::BasicBlock::Create(*m_context, "if.test", m_current_fn->llvm, merge_bb);
     auto condition = body_expression(clause.cond());
     last_branch = m_builder->CreateCondBr(condition, body_bb, next_test_bb);
     m_builder->SetInsertPoint(body_bb);
@@ -561,7 +561,7 @@ template <> void Compiler::statement(const ast::IfStmt& stat) {
     }
   }
 
-  const auto& else_clause = stat.else_clause();
+  auto& else_clause = stat.else_clause();
   if (else_clause.has_value()) {
     next_test_bb->setName("if.else");
     m_builder->SetInsertPoint(next_test_bb);
@@ -581,7 +581,7 @@ template <> void Compiler::statement(const ast::IfStmt& stat) {
     m_builder->SetInsertPoint(merge_bb);
 }
 
-template <> void Compiler::statement(const ast::ReturnStmt& stat) {
+template <> void Compiler::statement(ast::ReturnStmt& stat) {
   InScope* reset_owning = nullptr;
 
   if (stat.expr().has_value()) {
@@ -619,7 +619,7 @@ auto Compiler::entrypoint_builder() -> llvm::IRBuilder<> {
   return {&m_current_llvm->getEntryBlock(), m_current_llvm->getEntryBlock().begin()};
 }
 
-template <> void Compiler::statement(const ast::VarDecl& stat) {
+template <> void Compiler::statement(ast::VarDecl& stat) {
   // Locals are currently always mut, get the base type instead
   // TODO(rymiel): revisit, probably extract logic
   auto* var_type = llvm_type(stat.ensure_ty().ensure_mut_base());
@@ -641,16 +641,16 @@ template <> void Compiler::statement(const ast::VarDecl& stat) {
   m_scope.add(stat.name(), {.value = alloc, .ast = stat, .owning = true});
 }
 
-template <> auto Compiler::expression(const ast::NumberExpr& expr) -> Val {
+template <> auto Compiler::expression(ast::NumberExpr& expr) -> Val {
   auto val = expr.val();
   if (expr.ensure_ty().base() == m_types.int64().s_ty)
     return m_builder->getInt64(val);
   return m_builder->getInt32(val);
 }
 
-template <> auto Compiler::expression(const ast::CharExpr& expr) -> Val { return m_builder->getInt8(expr.val()); }
+template <> auto Compiler::expression(ast::CharExpr& expr) -> Val { return m_builder->getInt8(expr.val()); }
 
-template <> auto Compiler::expression(const ast::BoolExpr& expr) -> Val { return m_builder->getInt1(expr.val()); }
+template <> auto Compiler::expression(ast::BoolExpr& expr) -> Val { return m_builder->getInt1(expr.val()); }
 
 void Compiler::make_temporary_in_scope(Val& val, const ast::AST& ast, const string& name) {
   auto* alloc = entrypoint_builder().CreateAlloca(val.llvm->getType(), nullptr, name);
@@ -665,7 +665,7 @@ void Compiler::make_temporary_in_scope(Val& val, const ast::AST& ast, const stri
   val.scope->value = alloc;
 }
 
-template <> auto Compiler::expression(const ast::StringExpr& expr) -> Val {
+template <> auto Compiler::expression(ast::StringExpr& expr) -> Val {
   auto val = expr.val();
 
   vector<llvm::Constant*> chars(val.length());
@@ -695,7 +695,7 @@ template <> auto Compiler::expression(const ast::StringExpr& expr) -> Val {
   return string_slice;
 }
 
-template <> auto Compiler::expression(const ast::VarExpr& expr) -> Val {
+template <> auto Compiler::expression(ast::VarExpr& expr) -> Val {
   auto* in_scope = m_scope.find(expr.name());
   yume_assert(in_scope != nullptr, "Variable "s + expr.name() + " is not in scope");
   auto* val = in_scope->value.llvm;
@@ -706,7 +706,7 @@ template <> auto Compiler::expression(const ast::VarExpr& expr) -> Val {
   return val;
 }
 
-template <> auto Compiler::expression(const ast::ConstExpr& expr) -> Val {
+template <> auto Compiler::expression(ast::ConstExpr& expr) -> Val {
   for (const auto& cn : m_consts) {
     if (cn.referred_to_by(expr))
       return m_builder->CreateLoad(llvm_type(cn.ast().ensure_ty()), cn.llvm, "cn." + expr.name());
@@ -793,7 +793,7 @@ auto Compiler::primitive(Fn* fn, const vector<Val>& args, const vector<ty::Type>
   throw std::runtime_error("Unknown primitive "s + primitive);
 }
 
-template <> auto Compiler::expression(const ast::CallExpr& expr) -> Val {
+template <> auto Compiler::expression(ast::CallExpr& expr) -> Val {
   auto* selected = expr.selected_overload();
   llvm::Function* llvm_fn = nullptr;
 
@@ -801,7 +801,7 @@ template <> auto Compiler::expression(const ast::CallExpr& expr) -> Val {
   vector<ty::Type> arg_types{};
   vector<Val> llvm_args{};
 
-  for (const auto& i : expr.args()) {
+  for (auto& i : expr.args()) {
     auto arg = body_expression(*i);
     args.push_back(arg);
     llvm_args.emplace_back(arg.llvm);
@@ -824,7 +824,7 @@ template <> auto Compiler::expression(const ast::CallExpr& expr) -> Val {
   return val;
 }
 
-template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
+template <> auto Compiler::expression(ast::AssignExpr& expr) -> Val {
   if (const auto* target_var = dyn_cast<ast::VarExpr>(expr.target().raw_ptr())) {
     auto* in_scope = m_scope.find(target_var->name());
     yume_assert(in_scope != nullptr, "Variable "s + target_var->name() + " is not in scope");
@@ -842,8 +842,8 @@ template <> auto Compiler::expression(const ast::AssignExpr& expr) -> Val {
     m_builder->CreateStore(expr_val, target_val);
     return expr_val;
   }
-  if (const auto* field_access = dyn_cast<ast::FieldAccessExpr>(expr.target().raw_ptr())) {
-    const auto& field_base = field_access->base();
+  if (auto* field_access = dyn_cast<ast::FieldAccessExpr>(expr.target().raw_ptr())) {
+    auto& field_base = field_access->base();
     const auto [struct_base, base] = [&]() -> tuple<ty::Type, Val> {
       if (field_base.has_value()) {
         auto base = body_expression(*field_base);
@@ -964,14 +964,14 @@ template <> auto Compiler::expression(const ast::DirectCallExpr& expr) -> Val {
   args.reserve(expr.args().size());
   args.push_back(llvm_fn_closure);
 
-  for (const auto& i : expr.args())
+  for (auto& i : expr.args())
     args.push_back(body_expression(*i));
 
   return m_builder->CreateCall(llvm_fn_ty, llvm_fn_ptr, args,
                                llvm_fn_ty->getReturnType()->isVoidTy() ? "" : "indir.call");
 }
 
-template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {
+template <> auto Compiler::expression(ast::CtorExpr& expr) -> Val {
   auto type = expr.ensure_ty();
   if (type.without_mut().base_isa<ty::Struct>()) {
     // TODO(rymiel): #4 determine what kind of allocation must be done, and if at all. It'll probably require a
@@ -994,7 +994,7 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {
 
     auto* llvm_fn = declare(*selected_ctor_overload);
     vector<llvm::Value*> llvm_args{};
-    for (const auto& i : expr.args()) {
+    for (auto& i : expr.args()) {
       auto arg = body_expression(*i);
       llvm_args.push_back(arg.llvm);
     }
@@ -1010,7 +1010,7 @@ template <> auto Compiler::expression(const ast::CtorExpr& expr) -> Val {
   }
   if (auto int_type = type.without_mut().try_as<ty::Int>()) {
     yume_assert(expr.args().size() == 1, "Numeric cast can only contain a single argument");
-    const auto& cast_from = expr.args()[0];
+    auto& cast_from = expr.args()[0];
     yume_assert(cast_from->ensure_ty().without_mut().base_isa<ty::Int>(), "Numeric cast must convert from int");
     auto base = body_expression(*cast_from);
     if (cast_from->ensure_ty().without_mut().base_cast<ty::Int>()->is_signed()) {
@@ -1071,7 +1071,7 @@ auto Compiler::create_malloc(llvm::Type* base_type, uint64_t slice_size, string_
   return create_malloc(base_type, m_builder->getIntN(ptr_bitsize(), slice_size), name);
 }
 
-template <> auto Compiler::expression(const ast::SliceExpr& expr) -> Val {
+template <> auto Compiler::expression(ast::SliceExpr& expr) -> Val {
   auto* slice_size = m_builder->getIntN(ptr_bitsize(), expr.args().size());
 
   yume_assert(expr.ensure_ty().is_slice(), "Slice expression must contain slice type");
@@ -1082,7 +1082,7 @@ template <> auto Compiler::expression(const ast::SliceExpr& expr) -> Val {
   Val data_ptr = create_malloc(base_type, slice_size, "sl.ctor.malloc");
 
   unsigned j = 0;
-  for (const auto& i : expr.args())
+  for (auto& i : expr.args())
     m_builder->CreateStore(body_expression(*i), m_builder->CreateConstInBoundsGEP1_32(base_type, data_ptr, j++));
 
   Val slice_inst = llvm::UndefValue::get(slice_type);
@@ -1092,7 +1092,7 @@ template <> auto Compiler::expression(const ast::SliceExpr& expr) -> Val {
   return slice_inst;
 }
 
-template <> auto Compiler::expression(const ast::FieldAccessExpr& expr) -> Val {
+template <> auto Compiler::expression(ast::FieldAccessExpr& expr) -> Val {
   optional<Val> base;
   optional<ty::Type> base_type;
   if (expr.base().has_value()) {
@@ -1112,7 +1112,7 @@ template <> auto Compiler::expression(const ast::FieldAccessExpr& expr) -> Val {
   return m_builder->CreateStructGEP(llvm_type(base_type.value()), *base, base_offset, "s.field.m."s + base_name);
 }
 
-template <> auto Compiler::expression(const ast::ImplicitCastExpr& expr) -> Val {
+template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
   auto target_ty = expr.ensure_ty();
   auto current_ty = expr.base().ensure_ty();
   Val base = body_expression(expr.base());
@@ -1180,12 +1180,12 @@ void Compiler::write_object(const char* filename, bool binary) {
   dest->flush();
 }
 
-void Compiler::body_statement(const ast::Stmt& stat) {
+void Compiler::body_statement(ast::Stmt& stat) {
   const ASTStackTrace guard("Codegen: "s + stat.kind_name() + " statement", stat);
   return CRTPWalker::body_statement(stat);
 }
 
-auto Compiler::body_expression(const ast::Expr& expr) -> Val {
+auto Compiler::body_expression(ast::Expr& expr) -> Val {
   const ASTStackTrace guard("Codegen: "s + expr.kind_name() + " expression", expr);
   return CRTPWalker::body_expression(expr);
 }
