@@ -46,12 +46,15 @@ auto TypeHolder::find_or_create_fn_type(const vector<ty::Type>& args, optional<t
   return new_fn.get();
 }
 
-auto TypeHolder::find_or_create_fn_ptr_type(const vector<ty::Type>& args, optional<ty::Type> ret) -> ty::Function* {
+auto TypeHolder::find_or_create_fn_ptr_type(const vector<ty::Type>& args, optional<ty::Type> ret, bool c_varargs)
+    -> ty::Function* {
   for (const auto& i : fn_types)
-    if (i->ret() == ret && i->args() == args && i->closure().empty() && i->is_fn_ptr())
+    if (i->ret() == ret && i->args() == args && c_varargs == i->is_c_varargs() && i->closure().empty() &&
+        i->is_fn_ptr())
       return i.get();
 
-  auto& new_fn = fn_types.emplace_back(std::make_unique<ty::Function>("", args, ret, vector<ty::Type>{}, true));
+  auto& new_fn =
+      fn_types.emplace_back(std::make_unique<ty::Function>("", args, ret, vector<ty::Type>{}, true, c_varargs));
   return new_fn.get();
 }
 } // namespace yume

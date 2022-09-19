@@ -32,6 +32,7 @@ struct TypeHolder {
 
   auto find_or_create_fn_type(const vector<ty::Type>& args, optional<ty::Type> ret, const vector<ty::Type>& closure)
       -> ty::Function*;
-  auto find_or_create_fn_ptr_type(const vector<ty::Type>& args, optional<ty::Type> ret) -> ty::Function*;
+  auto find_or_create_fn_ptr_type(const vector<ty::Type>& args, optional<ty::Type> ret, bool c_varargs = false)
+      -> ty::Function*;
 };
 } // namespace yume

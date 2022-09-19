@@ -306,7 +306,7 @@ auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
       if (function_type->m_ret.has_value())
         return_type = llvm_type(*function_type->m_ret);
 
-      auto* fn_ty = llvm::FunctionType::get(return_type, args, false);
+      auto* fn_ty = llvm::FunctionType::get(return_type, args, function_type->is_c_varargs());
 
       if (function_type->is_fn_ptr()) {
         memo = fn_ty->getPointerTo();

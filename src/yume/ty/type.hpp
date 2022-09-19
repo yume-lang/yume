@@ -93,6 +93,7 @@ class Function : public BaseType {
   optional<Type> m_ret;
   vector<Type> m_closure;
   bool m_fn_ptr;
+  bool m_c_varargs;
 
   mutable llvm::FunctionType* m_fn_memo{};
   void fn_memo(llvm::FunctionType* memo) const { m_fn_memo = memo; }
@@ -107,14 +108,17 @@ class Function : public BaseType {
   friend Type;
 
 public:
-  Function(string name, vector<Type> args, optional<Type> ret, vector<Type> closure, bool fn_ptr)
-      : BaseType(K_Function, move(name)), m_args(move(args)), m_ret(ret), m_closure(move(closure)), m_fn_ptr(fn_ptr) {}
+  Function(string name, vector<Type> args, optional<Type> ret, vector<Type> closure, bool fn_ptr,
+           bool c_varargs = false)
+      : BaseType(K_Function, move(name)), m_args(move(args)), m_ret(ret), m_closure(move(closure)), m_fn_ptr(fn_ptr),
+        m_c_varargs(c_varargs) {}
   [[nodiscard]] auto args() const -> const auto& { return m_args; }
   [[nodiscard]] auto args() -> auto& { return m_args; }
   [[nodiscard]] auto closure() const -> const auto& { return m_closure; }
   [[nodiscard]] auto closure() -> auto& { return m_closure; }
   [[nodiscard]] auto ret() const -> const auto& { return m_ret; }
   [[nodiscard]] auto is_fn_ptr() const { return m_fn_ptr; }
+  [[nodiscard]] auto is_c_varargs() const { return m_c_varargs; }
   [[nodiscard]] auto name() const -> string override;
 
   [[nodiscard]] auto fn_memo() const -> auto* { return m_fn_memo; }
