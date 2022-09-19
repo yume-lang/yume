@@ -493,6 +493,7 @@ template <> void TypeWalker::statement(ast::CtorDecl& stat) {
   [[maybe_unused]] auto guard = scope.push_scope_guarded();
 
   const auto* struct_type = current_decl.self_ty()->without_mut().base_dyn_cast<ty::Struct>();
+  auto args = vector<ty::Type>();
 
   if (struct_type == nullptr)
     throw std::runtime_error("Can't define constructor of non-struct type");
@@ -501,7 +502,15 @@ template <> void TypeWalker::statement(ast::CtorDecl& stat) {
   for (auto& i : stat.args()) {
     expression(i);
     scope.add(i.name, &i);
+    args.push_back(i.ensure_ty());
   }
+
+  for (auto& i : stat.args()) {
+    expression(i);
+    scope.add(i.name, &i);
+  }
+
+  std::get<Fn*>(current_decl)->fn_ty = compiler.m_types.find_or_create_fn_ptr_type(args, current_decl.self_ty());
 
   if (in_depth)
     statement(stat.body());
