@@ -467,8 +467,11 @@ void Compiler::setup_fn_base(Fn& fn) {
   auto* bb = llvm::BasicBlock::Create(*m_context, "entry", fn.llvm);
   m_builder->SetInsertPoint(bb);
 
+  // If this function has a closure, it is the first parameter and will be skipped below
+  auto arg_offset = fn.fn_ty->closure_memo() == nullptr ? 0 : 1;
+  auto llvm_fn_args = llvm::make_range(fn.llvm->arg_begin() + arg_offset, fn.llvm->arg_end());
   // Allocate local variables for each parameter
-  for (auto [arg, ast_arg] : llvm::zip(fn.llvm->args(), fn.args())) {
+  for (auto [arg, ast_arg] : llvm::zip(llvm_fn_args, fn.args())) {
     expose_parameter_as_local(ast_arg.type, ast_arg.name, ast_arg.ast, &arg);
   }
 }
@@ -866,22 +869,17 @@ template <> auto Compiler::expression(ast::AssignExpr& expr) -> Val {
   throw std::runtime_error("Can't assign to target "s + expr.target()->kind_name());
 }
 
-template <> auto Compiler::expression(const ast::LambdaExpr& expr) -> Val {
-  const auto* fn_ty = expr.ensure_ty().base_cast<ty::Function>();
-  (void)llvm_type(expr.ensure_ty()); // Ensure we've created a function type for this lambda
-  auto* llvm_fn_ty = fn_ty->fn_memo();
-  auto* llvm_closure_ty = fn_ty->closure_memo();
-  auto* llvm_bundle_ty = fn_ty->memo();
+template <> auto Compiler::expression(ast::LambdaExpr& expr) -> Val {
+  auto fn = Fn{&expr, m_current_fn->member, m_current_fn->self_ty};
+  fn.fn_ty = expr.ensure_ty().base_cast<ty::Function>();
 
-  Val fn_bundle = llvm::UndefValue::get(llvm_bundle_ty);
+  declare(fn);
+  expr.llvm_fn(fn.llvm);
 
-  // TODO(rymiel): Most of this is copied from setup_fn_base. Perhaps these lambdas could also use Fn, and thus reuse
-  // regular function declaration/definition logic.
-  auto linkage = llvm::Function::PrivateLinkage;
-  auto* llvm_fn = llvm::Function::Create(llvm_fn_ty, linkage, "", m_module.get());
-  m_lambdas.emplace_back(&expr, llvm_fn);
-  fn_bundle = m_builder->CreateInsertValue(fn_bundle, llvm_fn, 0);
+  Val fn_bundle = llvm::UndefValue::get(fn.fn_ty->memo());
+  fn_bundle = m_builder->CreateInsertValue(fn_bundle, fn.llvm, 0);
 
+  auto* llvm_closure_ty = fn.fn_ty->closure_memo();
   auto* llvm_closure = m_builder->CreateAlloca(llvm_closure_ty);
 
   // Capture every closured local in the closure object
@@ -903,23 +901,13 @@ template <> auto Compiler::expression(const ast::LambdaExpr& expr) -> Val {
 
   auto saved_scope = m_scope;
   auto* saved_insert_point = m_builder->GetInsertBlock();
+  auto* saved_fn = m_current_fn;
 
-  m_scope.clear();
-  m_scope.push_scope();
-  m_current_llvm = llvm_fn;
-  auto* bb = llvm::BasicBlock::Create(*m_context, "entry", llvm_fn);
-  m_builder->SetInsertPoint(bb);
+  setup_fn_base(fn);
 
-  // Skip the first argument when allocating local parameters. It is the closure type and unpacked earlier.
-  auto llvm_fn_args = llvm::make_range(llvm_fn->arg_begin() + 1, llvm_fn->arg_end());
   // TODO(LLVM MIN >= 15): BitCast obsoleted by opaque pointers
-  Val closure_val =
-      m_builder->CreateLoad(llvm_closure_ty, m_builder->CreateBitCast(llvm_fn->arg_begin(), m_builder->getInt8PtrTy()));
-
-  // Allocate local variables for each parameter
-  for (auto [arg, ast_arg] : llvm::zip(llvm_fn_args, expr.args())) {
-    expose_parameter_as_local(ast_arg.ensure_ty(), ast_arg.name, ast_arg, &arg);
-  }
+  Val closure_val = m_builder->CreateLoad(
+      llvm_closure_ty, m_builder->CreateBitCast(fn.llvm->arg_begin(), llvm_closure_ty->getPointerTo()), "closure");
 
   // Add local variables for every captured variable
   for (const auto& i : llvm::enumerate(llvm::zip(expr.closured_names(), expr.closured_nodes()))) {
@@ -930,17 +918,17 @@ template <> auto Compiler::expression(const ast::LambdaExpr& expr) -> Val {
   }
 
   body_statement(expr.body());
-  if (m_builder->GetInsertBlock()->getTerminator() == nullptr && !fn_ty->m_ret.has_value())
+  if (m_builder->GetInsertBlock()->getTerminator() == nullptr && !fn.fn_ty->m_ret.has_value())
     m_builder->CreateRetVoid();
 
   m_scope = saved_scope;
   m_builder->SetInsertPoint(saved_insert_point);
-  m_current_llvm = m_current_fn->llvm;
+  m_current_fn = saved_fn;
 
   return fn_bundle;
 }
 
-template <> auto Compiler::expression(const ast::DirectCallExpr& expr) -> Val {
+template <> auto Compiler::expression(ast::DirectCallExpr& expr) -> Val {
   auto call_target_ty = expr.base()->ensure_ty();
   auto* llvm_fn_ty = call_target_ty.base_cast<ty::Function>()->fn_memo();
   auto* llvm_fn_bundle_ty = llvm_type(call_target_ty.without_mut());
@@ -1123,35 +1111,28 @@ template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
     yume_assert(current_ty.base_isa<ty::Function>(), "fnptr conversion source must be a function type");
     yume_assert(isa<ast::LambdaExpr>(expr.base()), "fnptr conversion source must be a lambda");
     yume_assert(target_ty.base_isa<ty::Function>(), "fnptr conversion target must be a function type");
-    (void)llvm_type(target_ty);
-    (void)llvm_type(current_ty);
-    const auto& lambda_expr = cast<ast::LambdaExpr>(expr.base());
-    auto* lambda_fn = std::ranges::find(m_lambdas, &lambda_expr, [](const auto& pair) { return pair.first; })->second;
-    auto* fn_lambda_ty = current_ty.base_cast<ty::Function>()->fn_memo();
-    auto* fn_ptr_ty = target_ty.base_cast<ty::Function>()->fn_memo();
+    auto& lambda_expr = cast<ast::LambdaExpr>(expr.base());
 
-    auto linkage = llvm::Function::PrivateLinkage;
-    auto* llvm_fn = llvm::Function::Create(fn_ptr_ty, linkage, "", m_module.get());
-    if (lambda_expr.annotations().contains("interrupt"))
-      llvm_fn->setCallingConv(llvm::CallingConv::X86_INTR);
+    auto fn = Fn{&lambda_expr, nullptr};
+    fn.fn_ty = target_ty.base_cast<ty::Function>();
+
+    declare(fn);
+
+    auto saved_scope = m_scope;
     auto* saved_insert_point = m_builder->GetInsertBlock();
+    auto* saved_fn = m_current_fn;
 
-    auto* bb = llvm::BasicBlock::Create(*m_context, "entry", llvm_fn);
-    m_builder->SetInsertPoint(bb);
+    setup_fn_base(fn);
 
-    auto* dummy_closure = llvm::UndefValue::get(m_builder->getInt8PtrTy());
-    auto passthrough = vector<llvm::Value*>();
-    passthrough.push_back(dummy_closure);
-    for (auto& arg : llvm_fn->args())
-      passthrough.push_back(&arg);
-    auto* result = m_builder->CreateCall(fn_lambda_ty, lambda_fn, passthrough);
-    if (fn_lambda_ty->getReturnType()->isVoidTy())
+    body_statement(lambda_expr.body());
+    if (m_builder->GetInsertBlock()->getTerminator() == nullptr && !fn.fn_ty->m_ret.has_value())
       m_builder->CreateRetVoid();
-    else
-      m_builder->CreateRet(result);
 
+    m_scope = saved_scope;
     m_builder->SetInsertPoint(saved_insert_point);
-    return llvm_fn;
+    m_current_fn = saved_fn;
+
+    return fn.llvm;
   }
 
   return base;
