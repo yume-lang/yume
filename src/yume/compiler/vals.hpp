@@ -35,6 +35,25 @@ struct FnArg {
   FnArg(ty::Type type, string name, const ast::AST& ast) : type{type}, name{move(name)}, ast{ast} {};
 };
 
+using Def_t = std::variant<ast::FnDecl*, ast::CtorDecl*, ast::LambdaExpr*>;
+struct Def : public Def_t {
+private:
+  template <typename R, typename... Ts> struct DefVisitor : Ts... {
+    using Ts::operator()...;
+  };
+  template <typename R, typename... Ts> DefVisitor(R, Ts...) -> DefVisitor<R, Ts...>;
+
+public:
+  using Def_t::Def_t;
+
+  template <typename R = void, typename... Ts> auto visit_def(Ts... ts) -> decltype(auto) {
+    return std::visit(DefVisitor<R, Ts...>{ts...}, *this);
+  }
+  template <typename R = void, typename... Ts> [[nodiscard]] auto visit_def(Ts... ts) const -> decltype(auto) {
+    return std::visit(DefVisitor<R, Ts...>{ts...}, *this);
+  }
+};
+
 /// A function declaration in the compiler.
 /**
  * The primary use of this structure is to bind together the AST declaration of a function (`ast::FnDecl`) and the
@@ -43,11 +62,9 @@ struct FnArg {
  * All the instantiations of a template are stored in `instantiations`.
  */
 struct Fn {
-  using decl_t = ast::FnDecl;
-  using call_t = ast::CallExpr;
-
   /// The ast node that defines this declaration.
-  ast::Decl& ast_decl;
+  Def def;
+  const ty::Function* fn_ty{};
   /// If this function is in the body of a struct, this points to its type. Used for the `self` type.
   optional<ty::Type> self_ty{};
   /// The program this declaration is a member of.
@@ -60,14 +77,14 @@ struct Fn {
   vector<unique_ptr<ty::Generic>> type_args{};
   std::map<Substitution, unique_ptr<Fn>> instantiations{};
 
-  Fn(ast::Decl& ast_decl, optional<ty::Type> parent = std::nullopt, ast::Program* member = nullptr,
-     Substitution subs = {}, vector<unique_ptr<ty::Generic>> type_args = {})
-      : ast_decl{ast_decl}, self_ty{parent}, member{member}, subs{move(subs)}, type_args(move(type_args)) {}
+  Fn(Def def, ast::Program* member, optional<ty::Type> parent = std::nullopt, Substitution subs = {},
+     vector<unique_ptr<ty::Generic>> type_args = {})
+      : def{def}, self_ty{parent}, member{member}, subs{move(subs)}, type_args(move(type_args)) {}
 
-  [[nodiscard]] auto fn_body() const -> const ast::FnDecl::body_t&;
-  [[nodiscard]] auto compound_body() const -> const ast::Compound&;
-  [[nodiscard]] auto ast() const -> const auto& { return ast_decl; }
-  [[nodiscard]] auto ast() -> auto& { return ast_decl; }
+  [[nodiscard]] auto fn_body() -> ast::FnDecl::body_t&;
+  [[nodiscard]] auto compound_body() -> ast::Compound&;
+  [[nodiscard]] auto ast() const -> const ast::Stmt&;
+  [[nodiscard]] auto ast() -> ast::Stmt&;
   [[nodiscard]] auto get_self_ty() const -> optional<ty::Type> { return self_ty; }
   [[nodiscard]] auto get_subs() const -> const Substitution& { return subs; }
   [[nodiscard]] auto get_subs() -> Substitution& { return subs; }
@@ -81,8 +98,10 @@ struct Fn {
   [[nodiscard]] auto varargs() const -> bool;
   [[nodiscard]] auto primitive() const -> bool;
   [[nodiscard]] auto extern_decl() const -> bool;
+  [[nodiscard]] auto local() const -> bool;
   [[nodiscard]] auto extern_linkage() const -> bool;
   void make_extern_linkage(bool value = true);
+  [[nodiscard]] auto has_annotation(const string& name) const -> bool;
 
   [[nodiscard]] auto name() const noexcept -> string;
 
@@ -90,32 +109,14 @@ struct Fn {
   [[nodiscard]] auto create_instantiation(Substitution& subs) noexcept -> Fn&;
 
 private:
-  template <typename Fn>
-  requires (std::invocable<Fn, ast::FnDecl&> && std::invocable<Fn, ast::CtorDecl&>)
-  auto visit_decl(Fn fn) const -> decltype(auto) {
-    return visit_decl(fn, fn);
-  }
-
-  template <typename... Ts>
-  auto visit_decl(std::invocable<ast::FnDecl&, Ts...> auto fn_c, std::invocable<ast::CtorDecl&, Ts...> auto ct_c,
-                  Ts... ts) const -> decltype(auto) {
-    if (auto* fn_decl = dyn_cast<ast::FnDecl>(&ast_decl)) {
-      return fn_c(*fn_decl, std::forward<Ts...>(ts)...);
-    }
-    return ct_c(cast<ast::CtorDecl>(ast_decl), std::forward<Ts...>(ts)...);
-  }
-
   template <std::invocable<ast::TypeName&> F, typename..., typename T = std::invoke_result_t<F, ast::TypeName&>>
   auto visit_map_args(F fn) const -> std::vector<T> {
     std::vector<T> vec = {};
     vec.reserve(arg_count());
-    if (auto* fn_decl = dyn_cast<ast::FnDecl>(&ast_decl)) {
-      for (auto& i : fn_decl->args())
+    def.visit_def([&](auto* ast) {
+      for (auto& i : ast->args())
         vec.emplace_back(std::move<T>(fn(i)));
-    } else {
-      for (auto& i : cast<ast::CtorDecl>(ast_decl).args())
-        vec.emplace_back(std::move<T>(fn(i)));
-    }
+    });
     return vec;
   }
 };
@@ -127,8 +128,6 @@ private:
  * instantiations of a template are stored in `instantiations`.
  */
 struct Struct {
-  using decl_t = ast::StructDecl;
-
   ast::StructDecl& st_ast;
   /// The type of this struct. Used for the `self` type.
   optional<ty::Type> self_ty{};
@@ -139,7 +138,7 @@ struct Struct {
   Substitution subs{};
   std::map<Substitution, unique_ptr<Struct>> instantiations{};
 
-  Struct(ast::StructDecl& ast_decl, optional<ty::Type> type = std::nullopt, ast::Program* member = nullptr,
+  Struct(ast::StructDecl& ast_decl, ast::Program* member, optional<ty::Type> type = std::nullopt,
          Substitution subs = {}, vector<unique_ptr<ty::Generic>> type_args = {}) noexcept
       : st_ast(ast_decl), self_ty(type), member(member), type_args(move(type_args)), subs(move(subs)) {}
 
@@ -159,8 +158,6 @@ struct Struct {
 
 /// A constant declaration in the compiler.
 struct Const {
-  using decl_t = ast::ConstDecl;
-
   ast::ConstDecl& cn_ast;
   /// If this function is in the body of a struct, this points to its type.
   optional<ty::Type> self_ty;
@@ -168,7 +165,7 @@ struct Const {
   ast::Program* member;
   llvm::GlobalVariable* llvm{};
 
-  Const(ast::ConstDecl& ast_decl, optional<ty::Type> parent = std::nullopt, ast::Program* member = nullptr) noexcept
+  Const(ast::ConstDecl& ast_decl, ast::Program* member = nullptr, optional<ty::Type> parent = std::nullopt) noexcept
       : cn_ast(ast_decl), self_ty(parent), member(member) {}
 
   [[nodiscard]] auto ast() const noexcept -> const auto& { return cn_ast; }

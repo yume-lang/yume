@@ -461,14 +461,19 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
   scope.clear();
   [[maybe_unused]] auto guard = scope.push_scope_guarded();
 
+  auto args = vector<ty::Type>();
+  auto ret = optional<ty::Type>();
+
   for (auto& i : stat.args()) {
     expression(i);
     scope.add(i.name, &i);
+    args.push_back(i.ensure_ty());
   }
 
   if (stat.ret().has_value()) {
     expression(*stat.ret());
     stat.attach_to(stat.ret().raw_ptr());
+    ret = stat.ret()->ensure_ty();
   }
 
   // This decl still has unsubstituted generics, can't instantiate its body

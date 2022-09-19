@@ -9,7 +9,7 @@ namespace yume::mangle {
 auto mangle_name(Fn& fn) -> string {
   stringstream ss{};
   ss << "_Ym.";
-  ss << fn.ast().name();
+  ss << fn.name();
   ss << "(";
   for (const auto& i : llvm::enumerate(fn.arg_types())) {
     if (i.index() > 0)

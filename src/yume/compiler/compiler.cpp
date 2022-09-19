@@ -217,7 +217,7 @@ auto Compiler::decl_statement(ast::Stmt& stmt, optional<ty::Type> parent, ast::P
       auto& gen = type_args.emplace_back(std::make_unique<ty::Generic>(i));
       subs.try_emplace(i, gen.get());
     }
-    auto& fn = m_fns.emplace_back(*fn_decl, parent, member, move(subs), move(type_args));
+    auto& fn = m_fns.emplace_back(fn_decl, member, parent, move(subs), move(type_args));
 
     return &fn;
   }
@@ -228,7 +228,7 @@ auto Compiler::decl_statement(ast::Stmt& stmt, optional<ty::Type> parent, ast::P
       auto& gen = type_args.emplace_back(std::make_unique<ty::Generic>(i));
       subs.try_emplace(i, gen.get());
     }
-    auto& st = m_structs.emplace_back(*s_decl, std::nullopt, member, subs, move(type_args));
+    auto& st = m_structs.emplace_back(*s_decl, member, std::nullopt, subs, move(type_args));
     if (!create_struct(st)) {
       m_structs.pop_back();
       return {};
@@ -244,12 +244,12 @@ auto Compiler::decl_statement(ast::Stmt& stmt, optional<ty::Type> parent, ast::P
     return &st;
   }
   if (auto* ctor_decl = dyn_cast<ast::CtorDecl>(&stmt)) {
-    auto& ctor = m_ctors.emplace_back(*ctor_decl, parent, member);
+    auto& ctor = m_ctors.emplace_back(ctor_decl, member, parent);
 
     return &ctor;
   }
   if (auto* const_decl = dyn_cast<ast::ConstDecl>(&stmt)) {
-    auto& cn = m_consts.emplace_back(*const_decl, parent, member);
+    auto& cn = m_consts.emplace_back(*const_decl, member, parent);
 
     return &cn;
   }
@@ -468,7 +468,6 @@ void Compiler::expose_parameter_as_local(ty::Type type, const string& name, cons
 
 void Compiler::setup_fn_base(Fn& fn) {
   m_current_fn = &fn;
-  m_current_llvm = fn.llvm;
   m_scope.clear();
   m_scope.push_scope();
   m_scope_ctor.reset();
@@ -527,9 +526,9 @@ void Compiler::define(Fn& fn) {
 }
 
 template <> void Compiler::statement(ast::WhileStmt& stat) {
-  auto* test_bb = llvm::BasicBlock::Create(*m_context, "while.test", m_current_llvm);
-  auto* head_bb = llvm::BasicBlock::Create(*m_context, "while.head", m_current_llvm);
-  auto* merge_bb = llvm::BasicBlock::Create(*m_context, "while.merge", m_current_llvm);
+  auto* test_bb = llvm::BasicBlock::Create(*m_context, "while.test", m_current_fn->llvm);
+  auto* head_bb = llvm::BasicBlock::Create(*m_context, "while.head", m_current_fn->llvm);
+  auto* merge_bb = llvm::BasicBlock::Create(*m_context, "while.merge", m_current_fn->llvm);
   m_builder->CreateBr(test_bb);
   m_builder->SetInsertPoint(test_bb);
   auto cond_value = body_expression(stat.cond());
@@ -616,7 +615,7 @@ template <> void Compiler::statement(ast::ReturnStmt& stat) {
 }
 
 auto Compiler::entrypoint_builder() -> llvm::IRBuilder<> {
-  return {&m_current_llvm->getEntryBlock(), m_current_llvm->getEntryBlock().begin()};
+  return {&m_current_fn->llvm->getEntryBlock(), m_current_fn->llvm->getEntryBlock().begin()};
 }
 
 template <> void Compiler::statement(ast::VarDecl& stat) {
