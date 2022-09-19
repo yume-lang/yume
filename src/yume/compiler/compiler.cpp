@@ -280,21 +280,10 @@ auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
   } else if (const auto* function_type = type.base_dyn_cast<ty::Function>()) {
     llvm::Type* memo = function_type->memo();
     if (memo == nullptr) {
-      if (function_type->is_fn_ptr()) {
-        auto args = vector<llvm::Type*>{};
-        for (const auto& i : function_type->args())
-          args.push_back(llvm_type(i));
+      llvm::StructType* closure_ty = nullptr;
+      auto* erased_closure_ty = m_builder->getInt8PtrTy();
 
-        auto* return_type = llvm::Type::getVoidTy(*m_context);
-        if (function_type->m_ret.has_value())
-          return_type = llvm_type(*function_type->m_ret);
-
-        auto* fn_ty = llvm::FunctionType::get(return_type, args, false);
-        memo = fn_ty->getPointerTo();
-        function_type->fn_memo(fn_ty);
-        function_type->closure_memo(nullptr);
-        function_type->memo(memo);
-      } else {
+      if (!function_type->is_fn_ptr()) {
         auto closured = vector<llvm::Type*>{};
         for (const auto& i : function_type->closure())
           closured.push_back(llvm_type(i));
@@ -304,26 +293,30 @@ auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
         // Closures are type-erased to just a bag of bits. We store the "real type" of the closure within the function
         // type for better retrieval, but in practice, they're always passed around bitcasted. Note that the bitcasting
         // is not required when opaque pointers are in play
-        auto* closure_ty = llvm::StructType::create(closured, "closure");
-        auto* erased_closure_ty = m_builder->getInt8PtrTy();
-
-        auto args = vector<llvm::Type*>{};
-        args.push_back(erased_closure_ty); // Lambda takes a closure as the first parameter
-        for (const auto& i : function_type->args())
-          args.push_back(llvm_type(i));
-
-        auto* return_type = llvm::Type::getVoidTy(*m_context);
-        if (function_type->m_ret.has_value())
-          return_type = llvm_type(*function_type->m_ret);
-
-        auto* fn_ty = llvm::FunctionType::get(return_type, args, false);
-
-        memo = llvm::StructType::get(fn_ty->getPointerTo(), erased_closure_ty);
-
-        function_type->fn_memo(fn_ty);
-        function_type->closure_memo(closure_ty);
-        function_type->memo(memo);
+        closure_ty = llvm::StructType::create(closured, "closure");
       }
+
+      auto args = vector<llvm::Type*>{};
+      if (closure_ty != nullptr)
+        args.push_back(erased_closure_ty); // Lambda takes a closure as the first parameter
+      for (const auto& i : function_type->args())
+        args.push_back(llvm_type(i));
+
+      auto* return_type = llvm::Type::getVoidTy(*m_context);
+      if (function_type->m_ret.has_value())
+        return_type = llvm_type(*function_type->m_ret);
+
+      auto* fn_ty = llvm::FunctionType::get(return_type, args, false);
+
+      if (function_type->is_fn_ptr()) {
+        memo = fn_ty->getPointerTo();
+      } else {
+        memo = llvm::StructType::get(fn_ty->getPointerTo(), erased_closure_ty);
+      }
+
+      function_type->fn_memo(fn_ty);
+      function_type->closure_memo(closure_ty);
+      function_type->memo(memo);
     }
 
     base = memo;
@@ -381,31 +374,31 @@ auto Compiler::declare(Fn& fn) -> llvm::Function* {
   if (fn.primitive())
     return nullptr;
 
-  auto* llvm_ret_type = llvm::Type::getVoidTy(*m_context);
+  yume_assert(fn.fn_ty != nullptr, "Function declaration "s + fn.name() + " has no function type set");
+  (void)llvm_type(fn.fn_ty); // Ensure we've created a function type
+  llvm::FunctionType* fn_t = fn.fn_ty->fn_memo();
 
-  if (auto ret_ty = fn.ret())
-    llvm_ret_type = llvm_type(*ret_ty);
-
-  auto llvm_args = vector<llvm::Type*>{};
-  for (auto i : fn.arg_types())
-    llvm_args.push_back(llvm_type(i));
-
-  llvm::FunctionType* fn_t = llvm::FunctionType::get(llvm_ret_type, llvm_args, fn.varargs());
-
-  string name = fn.ast().name();
-  if (!fn.extern_linkage())
+  string name = fn.name();
+  if (!fn.extern_linkage() && !fn.local())
     name = mangle::mangle_name(fn);
 
-  auto linkage = fn.extern_linkage() ? llvm::Function::ExternalLinkage : llvm::Function::InternalLinkage;
+  auto linkage = fn.extern_linkage() ? llvm::Function::ExternalLinkage
+                 : fn.local()        ? llvm::Function::PrivateLinkage
+                                     : llvm::Function::InternalLinkage;
   auto* llvm_fn = llvm::Function::Create(fn_t, linkage, name, m_module.get());
+  if (fn.has_annotation("interrupt") && fn.fn_ty->closure_memo() == nullptr) // HACK
+    llvm_fn->setCallingConv(llvm::CallingConv::X86_INTR);
   fn.llvm = llvm_fn;
 
-  for (auto [llvm_arg, arg_name] : llvm::zip(llvm_fn->args(), fn.arg_names()))
+  auto arg_names = fn.arg_names();
+  if (fn.fn_ty->closure_memo() != nullptr)
+    arg_names.insert(arg_names.begin(), "<closure>"); // For functions with closures, it is the first argument
+  for (auto [llvm_arg, arg_name] : llvm::zip(llvm_fn->args(), arg_names))
     llvm_arg.setName("arg."s + arg_name);
 
   // At this point, the function prototype is declared, but not the body.
-  // In the case of extern functions, a prototype is all that will be declared.
-  if (!fn.extern_decl()) {
+  // In the case of extern or local functions, a prototype is all that will be declared.
+  if (!fn.extern_decl() && !fn.local()) {
     m_decl_queue.push(&fn);
     m_walker->current_decl = &fn;
     m_walker->body_statement(fn.ast());

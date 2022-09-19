@@ -476,6 +476,8 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
     ret = stat.ret()->ensure_ty();
   }
 
+  std::get<Fn*>(current_decl)->fn_ty = compiler.m_types.find_or_create_fn_ptr_type(args, ret);
+
   // This decl still has unsubstituted generics, can't instantiate its body
   if (std::ranges::any_of(*current_decl.subs(), [](const auto& sub) noexcept { return sub.second.is_generic(); }))
     return;
