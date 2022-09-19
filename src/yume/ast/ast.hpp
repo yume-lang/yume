@@ -18,6 +18,10 @@
 #include <variant>
 #include <vector>
 
+namespace llvm {
+class Function;
+}
+
 namespace yume {
 class Visitor;
 struct Fn;
@@ -723,6 +727,7 @@ class LambdaExpr final : public Expr {
   std::set<string> m_annotations;
   vector<string> m_closured_names{};
   vector<AST*> m_closured_nodes{};
+  llvm::Function* m_llvm_fn{};
 
 public:
   LambdaExpr(span<Token> tok, vector<TypeName> args, OptionalType ret, Compound body, std::set<string> annotations)
@@ -743,6 +748,8 @@ public:
   [[nodiscard]] auto closured_names() -> auto& { return m_closured_names; }
   [[nodiscard]] auto closured_nodes() const -> const auto& { return m_closured_nodes; }
   [[nodiscard]] auto closured_nodes() -> auto& { return m_closured_nodes; }
+  void llvm_fn(llvm::Function* fn);
+  [[nodiscard]] auto llvm_fn() const -> llvm::Function*;
 
   static auto classof(const AST* a) -> bool { return a->kind() == K_Lambda; }
   [[nodiscard]] auto clone() const -> LambdaExpr* override;
@@ -802,6 +809,8 @@ public:
   [[nodiscard]] auto varargs() const -> bool { return extern_decl() && std::get<extern_decl_t>(m_body).varargs; }
   [[nodiscard]] auto primitive() const -> bool { return holds_alternative<string>(m_body); }
   [[nodiscard]] auto extern_decl() const -> bool { return holds_alternative<extern_decl_t>(m_body); }
+  [[nodiscard]] auto annotations() const -> const auto& { return m_annotations; }
+  [[nodiscard]] auto annotations() -> auto& { return m_annotations; }
   [[nodiscard]] auto extern_linkage() const -> bool { return extern_decl() || m_annotations.contains(ANN_EXTERN); }
   void make_extern_linkage(bool value = true) {
     if (value)
