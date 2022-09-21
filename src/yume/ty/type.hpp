@@ -96,11 +96,8 @@ class Function : public BaseType {
   bool m_c_varargs;
 
   mutable llvm::FunctionType* m_fn_memo{};
-  void fn_memo(llvm::FunctionType* memo) const { m_fn_memo = memo; }
   mutable llvm::StructType* m_closure_memo{};
-  void closure_memo(llvm::StructType* memo) const { m_closure_memo = memo; }
   mutable llvm::Type* m_memo{};
-  void memo(llvm::Type* memo) const { m_memo = memo; }
 
   // TODO(rymiel): why are these here?
   friend Compiler;
@@ -124,6 +121,11 @@ public:
   [[nodiscard]] auto fn_memo() const -> auto* { return m_fn_memo; }
   [[nodiscard]] auto closure_memo() const -> auto* { return m_closure_memo; }
   [[nodiscard]] auto memo() const -> auto* { return m_memo; }
+
+  void fn_memo(Compiler& /* key */, llvm::FunctionType* memo) const { m_fn_memo = memo; }
+  void closure_memo(Compiler& /* key */, llvm::StructType* memo) const { m_closure_memo = memo; }
+  void memo(Compiler& /* key */, llvm::Type* memo) const { m_memo = memo; }
+
   static auto classof(const BaseType* a) -> bool { return a->kind() == K_Function; }
 };
 
