@@ -257,6 +257,48 @@ auto Compiler::decl_statement(ast::Stmt& stmt, optional<ty::Type> parent, ast::P
   throw std::runtime_error("Invalid top-level statement: "s + stmt.kind_name());
 }
 
+static auto build_function_type(Compiler& compiler, const ty::Function& type) -> llvm::Type* {
+  llvm::StructType* closure_ty = nullptr;
+  llvm::Type* memo = nullptr;
+  auto* erased_closure_ty = compiler.builder()->getInt8PtrTy();
+
+  if (!type.is_fn_ptr()) {
+    auto closured = vector<llvm::Type*>{};
+    for (const auto& i : type.closure())
+      closured.push_back(compiler.llvm_type(i));
+    if (closured.empty()) // Can't have an empty closure type
+      closured.push_back(compiler.builder()->getInt8Ty());
+
+    // Closures are type-erased to just a bag of bits. We store the "real type" of the closure within the function
+    // type for better retrieval, but in practice, they're always passed around bitcasted. Note that the bitcasting
+    // is not required when opaque pointers are in play
+    closure_ty = llvm::StructType::create(closured, "closure");
+  }
+
+  auto args = vector<llvm::Type*>{};
+  if (closure_ty != nullptr)
+    args.push_back(erased_closure_ty); // Lambda takes a closure as the first parameter
+  for (const auto& i : type.args())
+    args.push_back(compiler.llvm_type(i));
+
+  auto* return_type = compiler.builder()->getVoidTy();
+  if (type.ret().has_value())
+    return_type = compiler.llvm_type(*type.ret());
+
+  auto* fn_ty = llvm::FunctionType::get(return_type, args, type.is_c_varargs());
+
+  if (type.is_fn_ptr()) {
+    memo = fn_ty->getPointerTo();
+  } else {
+    memo = llvm::StructType::get(fn_ty->getPointerTo(), erased_closure_ty);
+  }
+
+  type.fn_memo(compiler, fn_ty);
+  type.closure_memo(compiler, closure_ty);
+  type.memo(compiler, memo);
+  return memo;
+}
+
 auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
   auto* base = llvm::Type::getVoidTy(*m_context);
 
@@ -279,45 +321,8 @@ auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
     base = memo;
   } else if (const auto* function_type = type.base_dyn_cast<ty::Function>()) {
     llvm::Type* memo = function_type->memo();
-    if (memo == nullptr) {
-      llvm::StructType* closure_ty = nullptr;
-      auto* erased_closure_ty = m_builder->getInt8PtrTy();
-
-      if (!function_type->is_fn_ptr()) {
-        auto closured = vector<llvm::Type*>{};
-        for (const auto& i : function_type->closure())
-          closured.push_back(llvm_type(i));
-        if (closured.empty()) // Can't have an empty closure type
-          closured.push_back(m_builder->getInt8Ty());
-
-        // Closures are type-erased to just a bag of bits. We store the "real type" of the closure within the function
-        // type for better retrieval, but in practice, they're always passed around bitcasted. Note that the bitcasting
-        // is not required when opaque pointers are in play
-        closure_ty = llvm::StructType::create(closured, "closure");
-      }
-
-      auto args = vector<llvm::Type*>{};
-      if (closure_ty != nullptr)
-        args.push_back(erased_closure_ty); // Lambda takes a closure as the first parameter
-      for (const auto& i : function_type->args())
-        args.push_back(llvm_type(i));
-
-      auto* return_type = llvm::Type::getVoidTy(*m_context);
-      if (function_type->m_ret.has_value())
-        return_type = llvm_type(*function_type->m_ret);
-
-      auto* fn_ty = llvm::FunctionType::get(return_type, args, function_type->is_c_varargs());
-
-      if (function_type->is_fn_ptr()) {
-        memo = fn_ty->getPointerTo();
-      } else {
-        memo = llvm::StructType::get(fn_ty->getPointerTo(), erased_closure_ty);
-      }
-
-      function_type->fn_memo(fn_ty);
-      function_type->closure_memo(closure_ty);
-      function_type->memo(memo);
-    }
+    if (memo == nullptr)
+      memo = build_function_type(*this, *function_type);
 
     base = memo;
   }
