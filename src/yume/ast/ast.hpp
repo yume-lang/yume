@@ -706,15 +706,13 @@ public:
 };
 
 /// A statement consisting of multiple other statements, \e i.e. the body of a function.
-class Compound final : public Stmt {
-  vector<AnyStmt> m_body;
-
+struct Compound final : public Stmt {
 public:
-  void visit(Visitor& visitor) const override;
-  explicit Compound(span<Token> tok, vector<AnyStmt> body) : Stmt(K_Compound, tok), m_body{move(body)} {}
+  vector<AnyStmt> body;
 
-  [[nodiscard]] auto body() const -> const auto& { return m_body; }
-  [[nodiscard]] auto body() -> auto& { return m_body; }
+  void visit(Visitor& visitor) const override;
+  explicit Compound(span<Token> tok, vector<AnyStmt> body) : Stmt(K_Compound, tok), body{move(body)} {}
+
   static auto classof(const AST* a) -> bool { return a->kind() == K_Compound; }
   [[nodiscard]] auto clone() const -> Compound* override;
 };
