@@ -911,22 +911,17 @@ public:
 
 /// A declaration of a constant (`const`).
 class ConstDecl final : public Decl {
-  string m_name;
-  AnyType m_type; // TODO(rymiel): make optional?
-  AnyExpr m_init;
-
 public:
+  string name;
+  AnyType type; // TODO(rymiel): make optional?
+  AnyExpr init;
+
   ConstDecl(span<Token> tok, string name, AnyType type, AnyExpr init)
-      : Decl(K_ConstDecl, tok), m_name{move(name)}, m_type{move(type)}, m_init(move(init)) {}
+      : Decl(K_ConstDecl, tok), name{move(name)}, type{move(type)}, init(move(init)) {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] auto name() const -> string { return m_name; }
-  [[nodiscard]] auto decl_name() const -> string override { return m_name; }
-  [[nodiscard]] auto type() const -> const auto& { return m_type; }
-  [[nodiscard]] auto type() -> auto& { return m_type; }
-  [[nodiscard]] auto init() const -> const auto& { return m_init; }
-  [[nodiscard]] auto init() -> auto& { return m_init; }
+  [[nodiscard]] auto decl_name() const -> string override { return name; }
 
   static auto classof(const AST* a) -> bool { return a->kind() == K_ConstDecl; }
   [[nodiscard]] auto clone() const -> ConstDecl* override;

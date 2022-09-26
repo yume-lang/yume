@@ -485,7 +485,7 @@ void Compiler::define(Const& cn) {
   if (cn.llvm->hasInitializer())
     return;
 
-  auto init = body_expression(*cn.ast().init());
+  auto init = body_expression(*cn.ast().init);
   yume_assert(isa<llvm::Constant>(init.llvm), "Constant initializer must be a constant expression");
   auto* const_val = cast<llvm::Constant>(init.llvm);
   cn.llvm->setInitializer(const_val);

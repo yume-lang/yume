@@ -58,7 +58,7 @@ auto Fn::name() const noexcept -> string {
                        [](auto* ast) { return ast->name(); });
 }
 auto Struct::name() const noexcept -> string { return st_ast.name(); }
-auto Const::name() const noexcept -> string { return cn_ast.name(); }
+auto Const::name() const noexcept -> string { return cn_ast.name; }
 
 auto Fn::ast() -> ast::Stmt& {
   return *def.visit_def([](auto* ast) -> ast::Stmt* { return ast; });
