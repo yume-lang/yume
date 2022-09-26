@@ -20,20 +20,20 @@ void WhileStmt::visit(Visitor& visitor) const { visitor.visit(cond).visit(body);
 void VarDecl::visit(Visitor& visitor) const { visitor.visit(name).visit(type).visit(init); }
 void ConstDecl::visit(Visitor& visitor) const { visitor.visit(name).visit(type).visit(init); }
 void FnDecl::visit(Visitor& visitor) const {
-  visitor.visit(m_name)
-      .visit(m_args, "arg")
-      .visit(m_type_args, "type arg")
-      .visit(m_annotations, "annotation")
-      .visit(m_ret, "ret");
+  visitor.visit(name)
+      .visit(args, "arg")
+      .visit(type_args, "type arg")
+      .visit(annotations, "annotation")
+      .visit(ret, "ret");
 
-  if (const auto* s = get_if<string>(&m_body); s) {
+  if (const auto* s = get_if<string>(&body); s) {
     visitor.visit(*s, "primitive");
-  } else if (const auto* s = get_if<extern_decl_t>(&m_body); s) {
+  } else if (const auto* s = get_if<extern_decl_t>(&body); s) {
     visitor.visit(s->name, "extern");
     if (s->varargs)
       visitor.visit("varargs");
   } else {
-    visitor.visit(get<Compound>(m_body));
+    visitor.visit(get<Compound>(body));
   }
 }
 void CtorDecl::visit(Visitor& visitor) const { visitor.visit(args, "arg").visit(body); }

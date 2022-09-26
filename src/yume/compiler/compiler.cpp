@@ -213,7 +213,7 @@ auto Compiler::decl_statement(ast::Stmt& stmt, optional<ty::Type> parent, ast::P
   if (auto* fn_decl = dyn_cast<ast::FnDecl>(&stmt)) {
     vector<unique_ptr<ty::Generic>> type_args{};
     Substitution subs{};
-    for (auto& i : fn_decl->type_args()) {
+    for (auto& i : fn_decl->type_args) {
       auto& gen = type_args.emplace_back(std::make_unique<ty::Generic>(i));
       subs.try_emplace(i, gen.get());
     }

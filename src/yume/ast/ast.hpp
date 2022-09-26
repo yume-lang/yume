@@ -768,7 +768,7 @@ public:
 };
 
 /// A declaration of a function (`def`).
-class FnDecl final : public Decl {
+struct FnDecl final : public Decl {
 public:
   using extern_decl_t = struct {
     string name;
@@ -779,45 +779,34 @@ public:
 
   static constexpr auto ANN_EXTERN = "extern";
 
-private:
-  string m_name;
-  std::set<string> m_annotations;
-  vector<TypeName> m_args;
-  vector<string> m_type_args;
-  OptionalType m_ret;
+  string name;
+  std::set<string> annotations;
+  vector<TypeName> args;
+  vector<string> type_args;
+  OptionalType ret;
   /// If this function declaration refers to a primitive, this field is a string representing the name of the primitive.
   /// If it's an external method, this field is a pair of the extern name and whether the method is varargs.
   /// Otherise, this function declaration refers to a regular function and this field holds the body of that function.
-  body_t m_body;
+  body_t body;
 
-public:
   FnDecl(span<Token> tok, string name, vector<TypeName> args, vector<string> type_args, OptionalType ret, body_t body,
          std::set<string> annotations)
-      : Decl(K_FnDecl, tok), m_name{move(name)}, m_annotations(move(annotations)), m_args{move(args)},
-        m_type_args{move(type_args)}, m_ret{move(ret)}, m_body{move(body)} {}
+      : Decl(K_FnDecl, tok), name{move(name)}, annotations(move(annotations)), args{move(args)},
+        type_args{move(type_args)}, ret{move(ret)}, body{move(body)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] auto name() const -> string { return m_name; }
-  [[nodiscard]] auto decl_name() const -> string override { return m_name; }
-  [[nodiscard]] auto args() const -> const auto& { return m_args; }
-  [[nodiscard]] auto args() -> auto& { return m_args; }
-  [[nodiscard]] auto type_args() const { return m_type_args; }
-  [[nodiscard]] auto ret() const -> const auto& { return m_ret; }
-  [[nodiscard]] auto ret() -> auto& { return m_ret; }
-  [[nodiscard]] auto body() const -> const auto& { return m_body; }
-  [[nodiscard]] auto body() -> auto& { return m_body; }
-  [[nodiscard]] auto varargs() const -> bool { return extern_decl() && std::get<extern_decl_t>(m_body).varargs; }
-  [[nodiscard]] auto primitive() const -> bool { return holds_alternative<string>(m_body); }
-  [[nodiscard]] auto extern_decl() const -> bool { return holds_alternative<extern_decl_t>(m_body); }
-  [[nodiscard]] auto annotations() const -> const auto& { return m_annotations; }
-  [[nodiscard]] auto annotations() -> auto& { return m_annotations; }
-  [[nodiscard]] auto extern_linkage() const -> bool { return extern_decl() || m_annotations.contains(ANN_EXTERN); }
+  [[nodiscard]] auto decl_name() const -> string override { return name; }
+
+  [[nodiscard]] auto varargs() const -> bool { return extern_decl() && std::get<extern_decl_t>(body).varargs; }
+  [[nodiscard]] auto primitive() const -> bool { return holds_alternative<string>(body); }
+  [[nodiscard]] auto extern_decl() const -> bool { return holds_alternative<extern_decl_t>(body); }
+  [[nodiscard]] auto extern_linkage() const -> bool { return extern_decl() || annotations.contains(ANN_EXTERN); }
   void make_extern_linkage(bool value = true) {
     if (value)
-      m_annotations.emplace(ANN_EXTERN);
+      annotations.emplace(ANN_EXTERN);
     else
-      m_annotations.erase(ANN_EXTERN);
+      annotations.erase(ANN_EXTERN);
   }
   static auto classof(const AST* a) -> bool { return a->kind() == K_FnDecl; }
   [[nodiscard]] auto clone() const -> FnDecl* override;
