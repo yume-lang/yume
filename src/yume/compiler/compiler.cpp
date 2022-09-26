@@ -584,12 +584,12 @@ template <> void Compiler::statement(ast::IfStmt& stat) {
 template <> void Compiler::statement(ast::ReturnStmt& stat) {
   InScope* reset_owning = nullptr;
 
-  if (stat.expr().has_value()) {
+  if (stat.expr.has_value()) {
     // Returning a local variable also gives up ownership of it
-    if (stat.extends_lifetime() != nullptr) {
+    if (stat.extends_lifetime != nullptr) {
       for (auto& i : m_scope.last_scope()) {
         auto& v = i.second;
-        if (&v.ast == stat.extends_lifetime()) {
+        if (&v.ast == stat.extends_lifetime) {
           v.owning = false;
           reset_owning = &v;
           break;
@@ -602,7 +602,7 @@ template <> void Compiler::statement(ast::ReturnStmt& stat) {
     if (reset_owning != nullptr)
       reset_owning->owning = true; // The local variable may not be returned in all code paths, so reset its ownership
 
-    auto val = body_expression(*stat.expr());
+    auto val = body_expression(*stat.expr);
     if (val.llvm->getType()->isVoidTy())
       m_builder->CreateRetVoid();
     else

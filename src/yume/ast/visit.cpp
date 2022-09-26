@@ -15,7 +15,7 @@ void NumberExpr::visit(Visitor& visitor) const { visitor.visit(describe()); }
 void StringExpr::visit(Visitor& visitor) const { visitor.visit(m_val); }
 void CharExpr::visit(Visitor& visitor) const { visitor.visit(string{static_cast<char>(m_val)}); }
 void BoolExpr::visit(Visitor& visitor) const { visitor.visit(describe()); }
-void ReturnStmt::visit(Visitor& visitor) const { visitor.visit(m_expr); }
+void ReturnStmt::visit(Visitor& visitor) const { visitor.visit(expr); }
 void WhileStmt::visit(Visitor& visitor) const { visitor.visit(m_cond).visit(m_body); }
 void VarDecl::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_type).visit(m_init); }
 void ConstDecl::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_type).visit(m_init); }
