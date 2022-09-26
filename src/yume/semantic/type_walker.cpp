@@ -411,7 +411,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
         body_statement(new_fn.ast());
       });
 
-      decl_queue.push(&new_fn);
+      decl_queue.emplace(&new_fn);
 
       selected = &new_fn;
     } else {
@@ -594,7 +594,7 @@ auto TypeWalker::get_or_declare_instantiation(Struct* struct_obj, Substitution s
     });
 
     if (compiler.create_struct(new_st))
-      decl_queue.push(&new_st);
+      decl_queue.emplace(&new_st);
   }
 
   return *inst_struct.self_ty;

@@ -319,7 +319,7 @@ using AnyType = AnyBase<Type>;
 using OptionalType = OptionalAnyBase<Type>;
 
 /// Just the name of a type, always capitalized.
-class SimpleType final : public Type {
+struct SimpleType final : public Type {
 public:
   string name;
 
@@ -332,7 +332,7 @@ public:
 };
 
 /// A type with a `Qualifier` like `mut` or `[]` following.
-class QualType final : public Type {
+struct QualType final : public Type {
 public:
   AnyType base;
   Qualifier qualifier;
@@ -347,7 +347,7 @@ public:
 };
 
 /// A type with explicit type parameters \e i.e. `Foo<Bar,Baz>`.
-class TemplatedType final : public Type {
+struct TemplatedType final : public Type {
 public:
   AnyType base;
   vector<AnyType> type_args;
@@ -362,7 +362,7 @@ public:
 };
 
 /// The `self` type.
-class SelfType final : public Type {
+struct SelfType final : public Type {
 public:
   explicit SelfType(span<Token> tok) : Type(K_SelfType, tok) {}
   void visit([[maybe_unused]] Visitor& visitor) const override {}
@@ -372,7 +372,7 @@ public:
 };
 
 /// A type which refers to a different type, specifically that of a struct field.
-class ProxyType final : public Type {
+struct ProxyType final : public Type {
 public:
   string field;
 
@@ -385,7 +385,7 @@ public:
 };
 
 /// A function type \e i.e. `->(Foo,Bar)Baz`.
-class FunctionType : public Type {
+struct FunctionType : public Type {
 public:
   OptionalType ret;
   vector<AnyType> args;
@@ -429,7 +429,7 @@ using AnyExpr = AnyBase<Expr>;
 using OptionalExpr = OptionalAnyBase<Expr>;
 
 /// Number literals.
-class NumberExpr final : public Expr {
+struct NumberExpr final : public Expr {
 public:
   int64_t val;
 
@@ -442,7 +442,7 @@ public:
 };
 
 /// Char literals.
-class CharExpr final : public Expr {
+struct CharExpr final : public Expr {
 public:
   uint8_t val;
 
