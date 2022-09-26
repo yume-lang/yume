@@ -104,7 +104,7 @@ void Compiler::declare_default_ctor(Struct& st) {
     ctor_body.emplace_back(make_unique<ast::AssignExpr>(tok, move(implicit_field), move(arg_var)));
   }
   // TODO(rymiel): Give these things sensible locations?
-  auto& new_ct = st.body().body().emplace_back(
+  auto& new_ct = st.body().body.emplace_back(
       std::make_unique<ast::CtorDecl>(span<Token>{}, move(ctor_args), ast::Compound({}, move(ctor_body))));
 
   walk_types(decl_statement(*new_ct, st.get_self_ty(), st.member));
@@ -237,7 +237,7 @@ auto Compiler::decl_statement(ast::Stmt& stmt, optional<ty::Type> parent, ast::P
     if (st.name() == "Slice") // TODO(rymiel): magic value?
       m_slice_struct = &st;
 
-    for (auto& f : s_decl->body.body())
+    for (auto& f : s_decl->body.body)
       if (st.type_args.empty() || isa<ast::CtorDecl>(*f))
         decl_statement(*f, st.self_ty, member);
 
@@ -413,7 +413,7 @@ auto Compiler::declare(Fn& fn) -> llvm::Function* {
 
 template <> void Compiler::statement(ast::Compound& stat) {
   auto guard = m_scope.push_scope_guarded();
-  for (auto& i : stat.body())
+  for (auto& i : stat.body)
     body_statement(*i);
 
   if (m_builder->GetInsertBlock()->getTerminator() == nullptr)

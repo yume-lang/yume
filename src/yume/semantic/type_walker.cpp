@@ -444,7 +444,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
 
 template <> void TypeWalker::statement(ast::Compound& stat) {
   [[maybe_unused]] auto guard = scope.push_scope_guarded();
-  for (auto& i : stat.body())
+  for (auto& i : stat.body)
     body_statement(*i);
 }
 
@@ -683,7 +683,7 @@ void TypeWalker::resolve_queue() {
             compiler.declare(*fn);
           },
           [&](Struct* st) {
-            for (auto& i : st->body().body()) {
+            for (auto& i : st->body().body) {
               auto decl = compiler.decl_statement(*i, st->self_ty, st->member);
 
               // "Inherit" substitutions
