@@ -601,20 +601,16 @@ public:
 };
 
 /// A slice literal, \e i.e. an array.
-class SliceExpr final : public Expr {
-  AnyType m_type;
-  vector<AnyExpr> m_args;
-
+struct SliceExpr final : public Expr {
 public:
+  AnyType type;
+  vector<AnyExpr> args;
+
   SliceExpr(span<Token> tok, AnyType type, vector<AnyExpr> args)
-      : Expr(K_Slice, tok), m_type{move(type)}, m_args{move(args)} {}
+      : Expr(K_Slice, tok), type{move(type)}, args{move(args)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] auto type() const -> const auto& { return *m_type; }
-  [[nodiscard]] auto type() -> auto& { return *m_type; }
-  [[nodiscard]] constexpr auto args() const -> const auto& { return m_args; }
-  [[nodiscard]] constexpr auto args() -> auto& { return m_args; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_Slice; }
   [[nodiscard]] auto clone() const -> SliceExpr* override;
 };
