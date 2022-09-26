@@ -638,13 +638,13 @@ auto TypeWalker::convert_type(ast::Type& ast_type) -> ty::Type {
   } else if (auto* fn_type = dyn_cast<ast::FunctionType>(&ast_type)) {
     auto ret = optional<ty::Type>{};
     auto args = vector<ty::Type>{};
-    if (auto& ast_ret = fn_type->ret(); ast_ret.has_value())
+    if (auto& ast_ret = fn_type->ret; ast_ret.has_value())
       ret = convert_type(*ast_ret);
 
-    for (auto& ast_arg : fn_type->args())
+    for (auto& ast_arg : fn_type->args)
       args.push_back(convert_type(*ast_arg));
 
-    if (fn_type->is_fn_ptr())
+    if (fn_type->fn_ptr)
       return compiler.m_types.find_or_create_fn_ptr_type(args, ret);
     return compiler.m_types.find_or_create_fn_type(args, ret, {});
   } else if (auto* templated = dyn_cast<ast::TemplatedType>(&ast_type)) {
