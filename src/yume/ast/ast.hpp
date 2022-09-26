@@ -446,56 +446,52 @@ using OptionalExpr = OptionalAnyBase<Expr>;
 
 /// Number literals.
 class NumberExpr final : public Expr {
-  int64_t m_val;
-
 public:
-  explicit NumberExpr(span<Token> tok, int64_t val) : Expr(K_Number, tok), m_val(val) {}
+  int64_t val;
+
+  explicit NumberExpr(span<Token> tok, int64_t val) : Expr(K_Number, tok), val(val) {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] auto val() const -> int64_t { return m_val; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_Number; }
   [[nodiscard]] auto clone() const -> NumberExpr* override;
 };
 
 /// Char literals.
 class CharExpr final : public Expr {
-  uint8_t m_val;
-
 public:
-  explicit CharExpr(span<Token> tok, uint8_t val) : Expr(K_Char, tok), m_val(val) {}
+  uint8_t val;
+
+  explicit CharExpr(span<Token> tok, uint8_t val) : Expr(K_Char, tok), val(val) {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] auto val() const -> uint8_t { return m_val; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_Char; }
   [[nodiscard]] auto clone() const -> CharExpr* override;
 };
 
 /// Bool literals (`true` or `false`).
-class BoolExpr final : public Expr {
-  bool m_val;
-
+struct BoolExpr final : public Expr {
 public:
-  explicit BoolExpr(span<Token> tok, bool val) : Expr(K_Bool, tok), m_val(val) {}
+  bool val;
+
+  explicit BoolExpr(span<Token> tok, bool val) : Expr(K_Bool, tok), val(val) {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] auto val() const -> bool { return m_val; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_Bool; }
   [[nodiscard]] auto clone() const -> BoolExpr* override;
 };
 
 /// String literals.
-class StringExpr final : public Expr {
-  string m_val;
-
+struct StringExpr final : public Expr {
 public:
-  explicit StringExpr(span<Token> tok, string val) : Expr(K_String, tok), m_val(move(val)) {}
+  string val;
+
+  explicit StringExpr(span<Token> tok, string val) : Expr(K_String, tok), val(move(val)) {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] auto val() const -> string { return m_val; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_String; }
   [[nodiscard]] auto clone() const -> StringExpr* override;
 };

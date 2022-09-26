@@ -642,15 +642,15 @@ template <> void Compiler::statement(ast::VarDecl& stat) {
 }
 
 template <> auto Compiler::expression(ast::NumberExpr& expr) -> Val {
-  auto val = expr.val();
+  auto val = expr.val;
   if (expr.ensure_ty().base() == m_types.int64().s_ty)
     return m_builder->getInt64(val);
   return m_builder->getInt32(val);
 }
 
-template <> auto Compiler::expression(ast::CharExpr& expr) -> Val { return m_builder->getInt8(expr.val()); }
+template <> auto Compiler::expression(ast::CharExpr& expr) -> Val { return m_builder->getInt8(expr.val); }
 
-template <> auto Compiler::expression(ast::BoolExpr& expr) -> Val { return m_builder->getInt1(expr.val()); }
+template <> auto Compiler::expression(ast::BoolExpr& expr) -> Val { return m_builder->getInt1(expr.val); }
 
 void Compiler::make_temporary_in_scope(Val& val, const ast::AST& ast, const string& name) {
   auto* alloc = entrypoint_builder().CreateAlloca(val.llvm->getType(), nullptr, name);
@@ -666,7 +666,7 @@ void Compiler::make_temporary_in_scope(Val& val, const ast::AST& ast, const stri
 }
 
 template <> auto Compiler::expression(ast::StringExpr& expr) -> Val {
-  auto val = expr.val();
+  auto val = expr.val;
 
   vector<llvm::Constant*> chars(val.length());
   for (unsigned int i = 0; i < val.size(); i++)

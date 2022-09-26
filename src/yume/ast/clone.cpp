@@ -56,10 +56,10 @@ template <typename T> auto dup(const vector<T>& items) {
 
 auto IfStmt::clone() const -> IfStmt* { return new IfStmt(tok(), dup(clauses), dup(else_clause)); }
 auto IfClause::clone() const -> IfClause* { return new IfClause(tok(), dup(cond), dup(body)); }
-auto NumberExpr::clone() const -> NumberExpr* { return new NumberExpr(tok(), m_val); }
-auto StringExpr::clone() const -> StringExpr* { return new StringExpr(tok(), m_val); }
-auto CharExpr::clone() const -> CharExpr* { return new CharExpr(tok(), m_val); }
-auto BoolExpr::clone() const -> BoolExpr* { return new BoolExpr(tok(), m_val); }
+auto NumberExpr::clone() const -> NumberExpr* { return new NumberExpr(tok(), val); }
+auto StringExpr::clone() const -> StringExpr* { return new StringExpr(tok(), val); }
+auto CharExpr::clone() const -> CharExpr* { return new CharExpr(tok(), val); }
+auto BoolExpr::clone() const -> BoolExpr* { return new BoolExpr(tok(), val); }
 auto ReturnStmt::clone() const -> ReturnStmt* { return new ReturnStmt(tok(), dup(expr)); }
 auto WhileStmt::clone() const -> WhileStmt* { return new WhileStmt(tok(), dup(cond), dup(body)); }
 auto VarDecl::clone() const -> VarDecl* { return new VarDecl(tok(), name, dup(type), dup(init)); }

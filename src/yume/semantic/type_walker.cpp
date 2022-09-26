@@ -61,7 +61,7 @@ inline void make_implicit_conversion(ast::OptionalExpr& expr, optional<ty::Type>
 }
 
 template <> void TypeWalker::expression(ast::NumberExpr& expr) {
-  auto val = expr.val();
+  auto val = expr.val;
   if (val > std::numeric_limits<int32_t>::max())
     expr.val_ty(compiler.m_types.int64().s_ty);
   else
