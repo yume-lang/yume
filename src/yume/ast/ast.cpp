@@ -32,7 +32,4 @@ auto AST::location() const -> Loc {
 
   return m_tok[0].loc + m_tok[m_tok.size() - 1].loc;
 }
-
-void CallExpr::selected_overload(Fn* fn) { m_selected_overload = fn; }
-auto CallExpr::selected_overload() const -> Fn* { return m_selected_overload; }
 } // namespace yume::ast

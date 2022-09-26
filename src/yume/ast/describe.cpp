@@ -50,7 +50,7 @@ auto BoolExpr::describe() const -> string { return m_val ? "true" : "false"; }
 auto StringExpr::describe() const -> string { return m_val; }
 auto VarExpr::describe() const -> string { return m_name; }
 auto ConstExpr::describe() const -> string { return m_name; }
-auto CallExpr::describe() const -> string { return m_name; }
+auto CallExpr::describe() const -> string { return name; }
 auto CtorExpr::describe() const -> string { return type->describe(); }
 auto DtorExpr::describe() const -> string { return base->describe(); }
 auto SliceExpr::describe() const -> string { return type->describe(); }

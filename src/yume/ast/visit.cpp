@@ -53,7 +53,7 @@ void TypeName::visit(Visitor& visitor) const { visitor.visit(name).visit(type); 
 void Compound::visit(Visitor& visitor) const { visitor.visit(body); }
 void VarExpr::visit(Visitor& visitor) const { visitor.visit(m_name); }
 void ConstExpr::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_parent); }
-void CallExpr::visit(Visitor& visitor) const { visitor.visit(m_name).visit(m_args); }
+void CallExpr::visit(Visitor& visitor) const { visitor.visit(name).visit(args); }
 void CtorExpr::visit(Visitor& visitor) const { visitor.visit(type).visit(args); }
 void DtorExpr::visit(Visitor& visitor) const { visitor.visit(base); }
 void SliceExpr::visit(Visitor& visitor) const { visitor.visit(type).visit(args); }
