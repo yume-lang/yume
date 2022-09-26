@@ -58,5 +58,5 @@ auto FnDecl::describe() const -> string { return m_name; }
 auto CtorDecl::describe() const -> string { return ":new"; }
 auto StructDecl::describe() const -> string { return m_name; }
 auto VarDecl::describe() const -> string { return m_name; }
-auto ConstDecl::describe() const -> string { return m_name; }
+auto ConstDecl::describe() const -> string { return name; }
 } // namespace yume::ast
