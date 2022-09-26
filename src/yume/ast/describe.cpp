@@ -27,9 +27,6 @@ auto TemplatedType::describe() const -> string {
   ss << "}";
   return ss.str();
 }
-auto SimpleType::describe() const -> string { return name; }
-auto SelfType::describe() const -> string { return "self"; }
-auto ProxyType::describe() const -> string { return field; }
 auto FunctionType::describe() const -> string {
   stringstream ss{};
   ss << "->(";
@@ -43,20 +40,4 @@ auto FunctionType::describe() const -> string {
     ss << ret->describe();
   return ss.str();
 }
-auto TypeName::describe() const -> string { return name; }
-auto NumberExpr::describe() const -> string { return std::to_string(val); }
-auto CharExpr::describe() const -> string { return std::to_string(val); }
-auto BoolExpr::describe() const -> string { return val ? "true" : "false"; }
-auto StringExpr::describe() const -> string { return val; }
-auto VarExpr::describe() const -> string { return name; }
-auto ConstExpr::describe() const -> string { return name; }
-auto CallExpr::describe() const -> string { return name; }
-auto CtorExpr::describe() const -> string { return type->describe(); }
-auto DtorExpr::describe() const -> string { return base->describe(); }
-auto SliceExpr::describe() const -> string { return type->describe(); }
-auto FnDecl::describe() const -> string { return name; }
-auto CtorDecl::describe() const -> string { return ":new"; }
-auto StructDecl::describe() const -> string { return name; }
-auto VarDecl::describe() const -> string { return name; }
-auto ConstDecl::describe() const -> string { return name; }
 } // namespace yume::ast
