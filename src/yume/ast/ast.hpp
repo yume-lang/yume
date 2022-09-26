@@ -982,19 +982,13 @@ public:
 };
 
 /// Return from a function body.
-class ReturnStmt final : public Stmt {
-  OptionalExpr m_expr;
-  VarDecl* m_extends_lifetime{};
-
+struct ReturnStmt final : public Stmt {
 public:
-  explicit ReturnStmt(span<Token> tok, OptionalExpr expr) : Stmt(K_Return, tok), m_expr{move(expr)} {}
+  OptionalExpr expr;
+  VarDecl* extends_lifetime{};
+
+  explicit ReturnStmt(span<Token> tok, OptionalExpr expr) : Stmt(K_Return, tok), expr{move(expr)} {}
   void visit(Visitor& visitor) const override;
-
-  [[nodiscard]] auto expr() const -> const auto& { return m_expr; }
-  [[nodiscard]] auto expr() -> auto& { return m_expr; }
-
-  [[nodiscard]] auto extends_lifetime() const -> const auto* { return m_extends_lifetime; }
-  auto extend_lifetime_of(VarDecl* decl) { m_extends_lifetime = decl; }
 
   static auto classof(const AST* a) -> bool { return a->kind() == K_Return; }
   [[nodiscard]] auto clone() const -> ReturnStmt* override;

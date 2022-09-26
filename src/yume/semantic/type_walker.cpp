@@ -519,16 +519,16 @@ template <> void TypeWalker::statement(ast::CtorDecl& stat) {
 }
 
 template <> void TypeWalker::statement(ast::ReturnStmt& stat) {
-  if (stat.expr().has_value()) {
-    body_expression(*stat.expr());
+  if (stat.expr.has_value()) {
+    body_expression(*stat.expr);
     // If we're returning a local variable, mark that it will leave the scope and should not be destructed yet.
-    if (auto* var_expr = dyn_cast<ast::VarExpr>(stat.expr().raw_ptr()))
+    if (auto* var_expr = dyn_cast<ast::VarExpr>(stat.expr.raw_ptr()))
       if (auto** in_scope = scope.find(var_expr->name()); in_scope != nullptr)
         if (auto* var_decl = dyn_cast<ast::VarDecl>(*in_scope))
-          stat.extend_lifetime_of(var_decl);
+          stat.extends_lifetime = var_decl;
 
-    make_implicit_conversion(stat.expr(), current_decl.ast()->val_ty());
-    current_decl.ast()->attach_to(stat.expr().raw_ptr());
+    make_implicit_conversion(stat.expr, current_decl.ast()->val_ty());
+    current_decl.ast()->attach_to(stat.expr.raw_ptr());
     // TODO(rymiel): Once return type deduction exists, make sure to not return `mut` unless there is an _explicit_ type
     // annotation saying so
   }
