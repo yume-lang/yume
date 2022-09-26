@@ -556,26 +556,19 @@ public:
 };
 
 /// A construction of a struct or cast of a primitive.
-class CtorExpr final : public Expr {
-  AnyType m_type;
-  vector<AnyExpr> m_args;
+struct CtorExpr final : public Expr {
+public:
+  AnyType type;
+  vector<AnyExpr> args;
   /// During semantic analysis, the `TypeWalker` performs overload selection and saves the constructor declaration that
   /// this call refers to directly in the AST node, in this field.
-  Fn* m_selected_overload{};
+  Fn* selected_overload{};
 
-public:
   CtorExpr(span<Token> tok, AnyType type, vector<AnyExpr> args)
-      : Expr(K_Ctor, tok), m_type{move(type)}, m_args{move(args)} {}
+      : Expr(K_Ctor, tok), type{move(type)}, args{move(args)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] auto type() const -> const auto& { return *m_type; }
-  [[nodiscard]] auto type() -> auto& { return *m_type; }
-  [[nodiscard]] auto args() const -> const auto& { return m_args; }
-  [[nodiscard]] auto args() -> auto& { return m_args; }
-
-  void selected_overload(Fn* fn);
-  [[nodiscard]] auto selected_overload() const -> Fn*;
   static auto classof(const AST* a) -> bool { return a->kind() == K_Ctor; }
   [[nodiscard]] auto clone() const -> CtorExpr* override;
 };
@@ -585,16 +578,13 @@ public:
  * This is currently marked deprecated as it is unused, however it is likely to be used again in the future, thus its
  * logic remains here to avoid redeclaring it in the future.
  */
-class [[deprecated]] DtorExpr final : public Expr {
-  AnyExpr m_base;
-
+struct [[deprecated]] DtorExpr final : public Expr {
 public:
-  DtorExpr(span<Token> tok, AnyExpr base) : Expr(K_Dtor, tok), m_base{move(base)} {}
+  AnyExpr base;
+
+  DtorExpr(span<Token> tok, AnyExpr base) : Expr(K_Dtor, tok), base{move(base)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
-
-  [[nodiscard]] auto base() const -> const auto& { return *m_base; }
-  [[nodiscard]] auto base() -> auto& { return *m_base; }
 
   static auto classof(const AST* a) -> bool { return a->kind() == K_Dtor; }
   [[nodiscard]] auto clone() const -> DtorExpr* override;
