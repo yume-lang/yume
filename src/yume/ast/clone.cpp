@@ -56,8 +56,8 @@ template <typename T> auto dup(const vector<T>& items) {
 }
 } // namespace
 
-auto IfStmt::clone() const -> IfStmt* { return new IfStmt(tok(), dup(m_clauses), dup(m_else_clause)); }
-auto IfClause::clone() const -> IfClause* { return new IfClause(tok(), dup(m_cond), dup(m_body)); }
+auto IfStmt::clone() const -> IfStmt* { return new IfStmt(tok(), dup(clauses), dup(else_clause)); }
+auto IfClause::clone() const -> IfClause* { return new IfClause(tok(), dup(cond), dup(body)); }
 auto NumberExpr::clone() const -> NumberExpr* { return new NumberExpr(tok(), m_val); }
 auto StringExpr::clone() const -> StringExpr* { return new StringExpr(tok(), m_val); }
 auto CharExpr::clone() const -> CharExpr* { return new CharExpr(tok(), m_val); }

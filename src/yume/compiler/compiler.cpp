@@ -546,22 +546,22 @@ template <> void Compiler::statement(ast::IfStmt& stat) {
   auto* last_branch = m_builder->CreateBr(next_test_bb);
   bool all_terminated = true;
 
-  auto& clauses = stat.clauses();
+  auto& clauses = stat.clauses;
   for (auto& clause : clauses) {
     m_builder->SetInsertPoint(next_test_bb);
     auto* body_bb = llvm::BasicBlock::Create(*m_context, "if.then", m_current_fn->llvm, merge_bb);
     next_test_bb = llvm::BasicBlock::Create(*m_context, "if.test", m_current_fn->llvm, merge_bb);
-    auto condition = body_expression(clause.cond());
+    auto condition = body_expression(*clause.cond);
     last_branch = m_builder->CreateCondBr(condition, body_bb, next_test_bb);
     m_builder->SetInsertPoint(body_bb);
-    statement(clause.body());
+    statement(clause.body);
     if (m_builder->GetInsertBlock()->getTerminator() == nullptr) {
       all_terminated = false;
       m_builder->CreateBr(merge_bb);
     }
   }
 
-  auto& else_clause = stat.else_clause();
+  auto& else_clause = stat.else_clause;
   if (else_clause.has_value()) {
     next_test_bb->setName("if.else");
     m_builder->SetInsertPoint(next_test_bb);
