@@ -264,7 +264,7 @@ template <> void TypeWalker::expression(ast::ConstExpr& expr) {
     if (cn.referred_to_by(expr))
       return expr.val_ty(cn.ast().ensure_ty());
   }
-  throw std::runtime_error("Nonexistent constant called "s + expr.name());
+  throw std::runtime_error("Nonexistent constant called "s + expr.name);
 }
 
 static auto find_field_ast(const ty::Struct& st, string_view target_name) -> std::pair<nullable<ast::AnyType*>, int> {

@@ -709,10 +709,10 @@ template <> auto Compiler::expression(ast::VarExpr& expr) -> Val {
 template <> auto Compiler::expression(ast::ConstExpr& expr) -> Val {
   for (const auto& cn : m_consts) {
     if (cn.referred_to_by(expr))
-      return m_builder->CreateLoad(llvm_type(cn.ast().ensure_ty()), cn.llvm, "cn." + expr.name());
+      return m_builder->CreateLoad(llvm_type(cn.ast().ensure_ty()), cn.llvm, "cn." + expr.name);
   }
 
-  throw std::runtime_error("Nonexistent constant called "s + expr.name());
+  throw std::runtime_error("Nonexistent constant called "s + expr.name);
 }
 
 /// A constexpr-friendly simple string hash, for simple switches with string cases

@@ -515,18 +515,16 @@ public:
 };
 
 /// A constant. Currently global
-class ConstExpr final : public Expr {
-  string m_name;
-  optional<string> m_parent;
-
+struct ConstExpr final : public Expr {
 public:
+  string name;
+  optional<string> parent;
+
   ConstExpr(span<Token> tok, string name, optional<string> parent)
-      : Expr(K_Const, tok), m_name(move(name)), m_parent(move(parent)) {}
+      : Expr(K_Const, tok), name(move(name)), parent(move(parent)) {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] auto name() const -> string { return m_name; }
-  [[nodiscard]] auto parent() const -> optional<string> { return m_parent; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_Const; }
   [[nodiscard]] auto clone() const -> ConstExpr* override;
 };
