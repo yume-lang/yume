@@ -558,11 +558,11 @@ template <> void TypeWalker::statement(ast::ConstDecl& stat) {
 }
 
 template <> void TypeWalker::statement(ast::IfStmt& stat) {
-  for (auto& i : stat.clauses()) {
-    body_expression(i.cond());
-    statement(i.body());
+  for (auto& i : stat.clauses) {
+    body_expression(*i.cond);
+    statement(i.body);
   }
-  auto& else_clause = stat.else_clause();
+  auto& else_clause = stat.else_clause;
   if (else_clause)
     statement(*else_clause);
 }

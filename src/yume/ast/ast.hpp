@@ -946,37 +946,29 @@ public:
 };
 
 /// Clauses of an if statement `IfStmt`.
-class IfClause final : public AST {
-  AnyExpr m_cond;
-  Compound m_body;
-
+struct IfClause final : public AST {
 public:
+  AnyExpr cond;
+  Compound body;
+
   IfClause(span<Token> tok, AnyExpr cond, Compound body)
-      : AST(K_IfClause, tok), m_cond{move(cond)}, m_body{move(body)} {}
+      : AST(K_IfClause, tok), cond{move(cond)}, body{move(body)} {}
   void visit(Visitor& visitor) const override;
 
-  [[nodiscard]] auto cond() const -> const auto& { return *m_cond; }
-  [[nodiscard]] auto cond() -> auto& { return *m_cond; }
-  [[nodiscard]] auto body() const -> const auto& { return m_body; }
-  [[nodiscard]] auto body() -> auto& { return m_body; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_IfClause; }
   [[nodiscard]] auto clone() const -> IfClause* override;
 };
 
 /// An if statement (`if`), with one or more `IfClause`s, and optionally an else clause.
-class IfStmt final : public Stmt {
-  vector<IfClause> m_clauses;
-  optional<Compound> m_else_clause;
-
+struct IfStmt final : public Stmt {
 public:
+  vector<IfClause> clauses;
+  optional<Compound> else_clause;
+
   IfStmt(span<Token> tok, vector<IfClause> clauses, optional<Compound> else_clause)
-      : Stmt(K_If, tok), m_clauses{move(clauses)}, m_else_clause{move(else_clause)} {}
+      : Stmt(K_If, tok), clauses{move(clauses)}, else_clause{move(else_clause)} {}
   void visit(Visitor& visitor) const override;
 
-  [[nodiscard]] auto clauses() const -> const auto& { return m_clauses; }
-  [[nodiscard]] auto clauses() -> auto& { return m_clauses; }
-  [[nodiscard]] auto else_clause() const -> const auto& { return m_else_clause; }
-  [[nodiscard]] auto else_clause() -> auto& { return m_else_clause; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_If; }
   [[nodiscard]] auto clone() const -> IfStmt* override;
 };

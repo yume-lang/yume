@@ -9,8 +9,8 @@
 
 namespace yume::ast {
 
-void IfStmt::visit(Visitor& visitor) const { visitor.visit(m_clauses).visit(m_else_clause, "else"); }
-void IfClause::visit(Visitor& visitor) const { visitor.visit(m_cond).visit(m_body); }
+void IfStmt::visit(Visitor& visitor) const { visitor.visit(clauses).visit(else_clause, "else"); }
+void IfClause::visit(Visitor& visitor) const { visitor.visit(cond).visit(body); }
 void NumberExpr::visit(Visitor& visitor) const { visitor.visit(describe()); }
 void StringExpr::visit(Visitor& visitor) const { visitor.visit(m_val); }
 void CharExpr::visit(Visitor& visitor) const { visitor.visit(string{static_cast<char>(m_val)}); }
