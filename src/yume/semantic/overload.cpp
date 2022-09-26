@@ -28,7 +28,7 @@ static auto join_args(const auto& iter, auto fn, llvm::raw_ostream& stream = err
 
 static auto overload_name(const ast::AST* ast) -> std::string {
   if (const auto* call = dyn_cast<ast::CallExpr>(ast))
-    return call->name();
+    return call->name;
   if (const auto* ctor = dyn_cast<ast::CtorExpr>(ast))
     return ctor->ensure_ty().name() + ":new";
 

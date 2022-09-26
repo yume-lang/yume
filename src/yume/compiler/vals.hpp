@@ -175,14 +175,14 @@ struct Const {
 
   [[nodiscard]] auto name() const noexcept -> string;
   [[nodiscard]] auto referred_to_by(const ast::ConstExpr& expr) const -> bool {
-    if (name() != expr.name())
+    if (name() != expr.name)
       return false;
 
-    if (self_ty.has_value() != expr.parent().has_value())
+    if (self_ty.has_value() != expr.parent.has_value())
       return false;
 
-    if (self_ty.has_value() && expr.parent().has_value())
-      return self_ty->name() == expr.parent().value();
+    if (self_ty.has_value() && expr.parent.has_value())
+      return self_ty->name() == expr.parent.value();
 
     return true;
   }
