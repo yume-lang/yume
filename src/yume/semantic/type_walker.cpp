@@ -152,8 +152,7 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
     yume_assert(subs.empty(), "Constructors cannot be generic"); // TODO(rymiel): revisit?
 
     // XXX: STILL Duplicated from function overload handling
-    for (auto [target, expr_arg, compat] :
-         llvm::zip(selected->arg_types(), expr.args, best_overload.compatibilities)) {
+    for (auto [target, expr_arg, compat] : llvm::zip(selected->arg_types(), expr.args, best_overload.compatibilities)) {
       yume_assert(compat.valid, "Invalid compatibility after overload already selected?????");
       if (compat.conv.empty())
         continue;
