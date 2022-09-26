@@ -19,7 +19,7 @@ static constexpr const auto fwd<pm, void> = [](auto&&... args) -> decltype(auto)
 auto Fn::create_instantiation(Substitution& subs) noexcept -> Fn& {
   auto def_clone = def.visit_def([this](auto* ast) -> Def {
     auto* cloned = ast->clone();
-    member->body().emplace_back(cloned);
+    member->body.emplace_back(cloned);
     return cloned;
   });
 
@@ -38,7 +38,7 @@ auto Fn::get_or_create_instantiation(Substitution& subs) noexcept -> std::pair<b
 
 auto Struct::create_instantiation(Substitution& subs) noexcept -> Struct& {
   auto* decl_clone = st_ast.clone();
-  member->body().emplace_back(decl_clone);
+  member->body.emplace_back(decl_clone);
 
   auto st_ptr = std::make_unique<Struct>(*decl_clone, member, self_ty, subs);
   auto new_emplace = instantiations.emplace(subs, move(st_ptr));

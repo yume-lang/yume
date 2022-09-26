@@ -29,7 +29,7 @@ namespace yume {
 namespace ast {
 class AST;
 class Expr;
-class Program;
+struct Program;
 class StructDecl;
 class Stmt;
 } // namespace ast

@@ -1001,16 +1001,14 @@ public:
 };
 
 /// The top level structure of a file of source code.
-class Program final : public Stmt {
-  vector<AnyStmt> m_body;
-
+struct Program final : public Stmt {
 public:
-  explicit Program(span<Token> tok, vector<AnyStmt> body) : Stmt(K_Program, tok), m_body{move(body)} {}
+  vector<AnyStmt> body;
+
+  explicit Program(span<Token> tok, vector<AnyStmt> body) : Stmt(K_Program, tok), body{move(body)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<Program>;
 
-  [[nodiscard]] constexpr auto body() const -> const auto& { return m_body; }
-  [[nodiscard]] constexpr auto body() -> auto& { return m_body; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_Program; }
   [[nodiscard]] auto clone() const -> Program* override;
 };
