@@ -568,8 +568,8 @@ template <> void TypeWalker::statement(ast::IfStmt& stat) {
 }
 
 template <> void TypeWalker::statement(ast::WhileStmt& stat) {
-  body_expression(stat.cond());
-  statement(stat.body());
+  body_expression(*stat.cond);
+  statement(stat.body);
 }
 
 void TypeWalker::body_statement(ast::Stmt& stat) {

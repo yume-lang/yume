@@ -532,10 +532,10 @@ template <> void Compiler::statement(ast::WhileStmt& stat) {
   auto* merge_bb = llvm::BasicBlock::Create(*m_context, "while.merge", m_current_fn->llvm);
   m_builder->CreateBr(test_bb);
   m_builder->SetInsertPoint(test_bb);
-  auto cond_value = body_expression(stat.cond());
+  auto cond_value = body_expression(*stat.cond);
   m_builder->CreateCondBr(cond_value, head_bb, merge_bb);
   m_builder->SetInsertPoint(head_bb);
-  body_statement(stat.body());
+  body_statement(stat.body);
   m_builder->CreateBr(test_bb);
   m_builder->SetInsertPoint(merge_bb);
 }
