@@ -1099,24 +1099,24 @@ template <> auto Compiler::expression(ast::FieldAccessExpr& expr) -> Val {
 
 template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
   auto target_ty = expr.ensure_ty();
-  auto current_ty = expr.base().ensure_ty();
-  Val base = body_expression(expr.base());
+  auto current_ty = expr.base->ensure_ty();
+  Val base = body_expression(*expr.base);
 
-  if (expr.conversion().dereference) {
+  if (expr.conversion.dereference) {
     yume_assert(current_ty.is_mut(), "Source type must be mutable when implicitly derefencing");
     current_ty = current_ty.ensure_mut_base();
     base.llvm = m_builder->CreateLoad(llvm_type(current_ty), base, "ic.deref");
   }
 
-  if (expr.conversion().kind == ty::Conv::Int) {
+  if (expr.conversion.kind == ty::Conv::Int) {
     return m_builder->CreateIntCast(base, llvm_type(target_ty), current_ty.base_cast<ty::Int>()->is_signed(), "ic.int");
   }
 
-  if (expr.conversion().kind == ty::Conv::Kind::FnPtr) {
+  if (expr.conversion.kind == ty::Conv::Kind::FnPtr) {
     yume_assert(current_ty.base_isa<ty::Function>(), "fnptr conversion source must be a function type");
-    yume_assert(isa<ast::LambdaExpr>(expr.base()), "fnptr conversion source must be a lambda");
+    yume_assert(isa<ast::LambdaExpr>(*expr.base), "fnptr conversion source must be a lambda");
     yume_assert(target_ty.base_isa<ty::Function>(), "fnptr conversion target must be a function type");
-    auto& lambda_expr = cast<ast::LambdaExpr>(expr.base());
+    auto& lambda_expr = cast<ast::LambdaExpr>(*expr.base);
 
     auto fn = Fn{&lambda_expr, nullptr};
     fn.fn_ty = target_ty.base_cast<ty::Function>();
