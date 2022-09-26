@@ -396,21 +396,15 @@ public:
 
 /// A function type \e i.e. `->(Foo,Bar)Baz`.
 class FunctionType : public Type {
-  OptionalType m_ret;
-  vector<AnyType> m_args;
-  bool m_fn_ptr;
-
 public:
+  OptionalType ret;
+  vector<AnyType> args;
+  bool fn_ptr;
+
   FunctionType(span<Token> tok, OptionalType ret, vector<AnyType> args, bool fn_ptr)
-      : Type(K_FunctionType, tok), m_ret{move(ret)}, m_args{move(args)}, m_fn_ptr(fn_ptr) {}
+      : Type(K_FunctionType, tok), ret{move(ret)}, args{move(args)}, fn_ptr(fn_ptr) {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
-
-  [[nodiscard]] auto ret() const -> const auto& { return m_ret; }
-  [[nodiscard]] auto ret() -> auto& { return m_ret; }
-  [[nodiscard]] auto args() const -> const auto& { return m_args; }
-  [[nodiscard]] auto args() -> auto& { return m_args; }
-  [[nodiscard]] auto is_fn_ptr() const { return m_fn_ptr; }
 
   static auto classof(const AST* a) -> bool { return a->kind() == K_FunctionType; }
   [[nodiscard]] auto clone() const -> FunctionType* override;
