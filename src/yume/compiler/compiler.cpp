@@ -794,14 +794,14 @@ auto Compiler::primitive(Fn* fn, const vector<Val>& args, const vector<ty::Type>
 }
 
 template <> auto Compiler::expression(ast::CallExpr& expr) -> Val {
-  auto* selected = expr.selected_overload();
+  auto* selected = expr.selected_overload;
   llvm::Function* llvm_fn = nullptr;
 
   vector<Val> args{};
   vector<ty::Type> arg_types{};
   vector<Val> llvm_args{};
 
-  for (auto& i : expr.args()) {
+  for (auto& i : expr.args) {
     auto arg = body_expression(*i);
     args.push_back(arg);
     llvm_args.emplace_back(arg.llvm);

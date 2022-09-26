@@ -532,25 +532,19 @@ public:
 };
 
 /// A function call or operator.
-class CallExpr final : public Expr {
-  string m_name;
-  vector<AnyExpr> m_args;
+struct CallExpr final : public Expr {
+public:
+  string name;
+  vector<AnyExpr> args;
   /// During semantic analysis, the `TypeWalker` performs overload selection and saves the function declaration or
   /// instantiation that this call refers to directly in the AST node, in this field.
-  Fn* m_selected_overload{};
+  Fn* selected_overload{};
 
-public:
   CallExpr(span<Token> tok, string name, vector<AnyExpr> args)
-      : Expr(K_Call, tok), m_name{move(name)}, m_args{move(args)} {}
+      : Expr(K_Call, tok), name{move(name)}, args{move(args)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] auto name() const -> string { return m_name; }
-  [[nodiscard]] auto args() const -> const auto& { return m_args; }
-  [[nodiscard]] auto args() -> auto& { return m_args; }
-
-  void selected_overload(Fn* fn);
-  [[nodiscard]] auto selected_overload() const -> Fn*;
   static auto classof(const AST* a) -> bool { return a->kind() == K_Call; }
   [[nodiscard]] auto clone() const -> CallExpr* override;
 };

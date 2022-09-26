@@ -326,7 +326,7 @@ auto TypeWalker::all_fn_overloads_by_name(ast::CallExpr& call) -> OverloadSet {
   auto fns_by_name = vector<Overload>();
 
   for (auto& fn : compiler.m_fns)
-    if (fn.name() == call.name())
+    if (fn.name() == call.name)
       fns_by_name.emplace_back(&fn);
 
   return OverloadSet{&call, fns_by_name, {}};
@@ -344,7 +344,7 @@ auto TypeWalker::all_ctor_overloads_by_type(Struct& st, ast::CtorExpr& call) -> 
 
 template <> void TypeWalker::expression(ast::CallExpr& expr) {
   auto overload_set = all_fn_overloads_by_name(expr);
-  auto name = expr.name();
+  auto name = expr.name;
 
   if (overload_set.empty()) {                      // HACK
     resolve_queue();                               // HACK
@@ -354,7 +354,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
   if (overload_set.empty())
     throw std::logic_error("No function overload named "s + name);
 
-  for (auto& i : expr.args()) {
+  for (auto& i : expr.args) {
     body_expression(*i);
     overload_set.args.push_back(i.raw_ptr());
   }
@@ -419,7 +419,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
     }
   }
 
-  for (auto [target, expr_arg, compat] : llvm::zip(selected->arg_types(), expr.args(), best_overload.compatibilities)) {
+  for (auto [target, expr_arg, compat] : llvm::zip(selected->arg_types(), expr.args, best_overload.compatibilities)) {
     yume_assert(compat.valid, "Invalid compatibility after overload already selected?????");
     if (compat.conv.empty())
       continue;
@@ -429,7 +429,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
 
   // Find excess variadic arguments. Logic will probably change later, but for now, always pass by value
   // TODO(rymiel): revisit
-  for (const auto& expr_arg : llvm::enumerate(expr.args())) {
+  for (const auto& expr_arg : llvm::enumerate(expr.args)) {
     if (expr_arg.index() >= selected->arg_count() && expr_arg.value()->ensure_ty().is_mut()) {
       auto target_type = expr_arg.value()->ensure_ty().mut_base();
       wrap_in_implicit_cast(expr_arg.value(), ty::Conv{.dereference = true}, target_type);
@@ -439,7 +439,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
   if (selected->ret().has_value())
     expr.attach_to(&selected->ast());
 
-  expr.selected_overload(selected);
+  expr.selected_overload = selected;
 }
 
 template <> void TypeWalker::statement(ast::Compound& stat) {

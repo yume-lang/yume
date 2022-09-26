@@ -79,7 +79,7 @@ auto TypeName::clone() const -> TypeName* { return new TypeName(tok(), dup(type)
 auto Compound::clone() const -> Compound* { return new Compound(tok(), dup(body)); }
 auto VarExpr::clone() const -> VarExpr* { return new VarExpr(tok(), m_name); }
 auto ConstExpr::clone() const -> ConstExpr* { return new ConstExpr(tok(), m_name, m_parent); }
-auto CallExpr::clone() const -> CallExpr* { return new CallExpr(tok(), m_name, dup(m_args)); }
+auto CallExpr::clone() const -> CallExpr* { return new CallExpr(tok(), name, dup(args)); }
 auto CtorExpr::clone() const -> CtorExpr* { return new CtorExpr(tok(), dup(type), dup(args)); }
 auto DtorExpr::clone() const -> DtorExpr* { return new DtorExpr(tok(), dup(base)); }
 auto SliceExpr::clone() const -> SliceExpr* { return new SliceExpr(tok(), dup(type), dup(args)); }
