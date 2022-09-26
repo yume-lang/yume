@@ -48,7 +48,7 @@ auto NumberExpr::describe() const -> string { return std::to_string(m_val); }
 auto CharExpr::describe() const -> string { return std::to_string(m_val); }
 auto BoolExpr::describe() const -> string { return m_val ? "true" : "false"; }
 auto StringExpr::describe() const -> string { return m_val; }
-auto VarExpr::describe() const -> string { return m_name; }
+auto VarExpr::describe() const -> string { return name; }
 auto ConstExpr::describe() const -> string { return name; }
 auto CallExpr::describe() const -> string { return name; }
 auto CtorExpr::describe() const -> string { return type->describe(); }

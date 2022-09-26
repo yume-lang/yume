@@ -501,15 +501,14 @@ public:
 };
 
 /// A variable, \e i.e. just an identifier.
-class VarExpr final : public Expr {
-  string m_name;
-
+struct VarExpr final : public Expr {
 public:
-  explicit VarExpr(span<Token> tok, string name) : Expr(K_Var, tok), m_name(move(name)) {}
+  string name;
+
+  explicit VarExpr(span<Token> tok, string name) : Expr(K_Var, tok), name(move(name)) {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] auto name() const -> string { return m_name; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_Var; }
   [[nodiscard]] auto clone() const -> VarExpr* override;
 };

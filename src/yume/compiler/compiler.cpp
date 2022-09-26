@@ -696,8 +696,8 @@ template <> auto Compiler::expression(ast::StringExpr& expr) -> Val {
 }
 
 template <> auto Compiler::expression(ast::VarExpr& expr) -> Val {
-  auto* in_scope = m_scope.find(expr.name());
-  yume_assert(in_scope != nullptr, "Variable "s + expr.name() + " is not in scope");
+  auto* in_scope = m_scope.find(expr.name);
+  yume_assert(in_scope != nullptr, "Variable "s + expr.name + " is not in scope");
   auto* val = in_scope->value.llvm;
   // Function arguments act as locals, but they are immutable, but still behind a reference (alloca)
   if (!in_scope->ast.ensure_ty().is_mut())
@@ -826,8 +826,8 @@ template <> auto Compiler::expression(ast::CallExpr& expr) -> Val {
 
 template <> auto Compiler::expression(ast::AssignExpr& expr) -> Val {
   if (const auto* target_var = dyn_cast<ast::VarExpr>(expr.target.raw_ptr())) {
-    auto* in_scope = m_scope.find(target_var->name());
-    yume_assert(in_scope != nullptr, "Variable "s + target_var->name() + " is not in scope");
+    auto* in_scope = m_scope.find(target_var->name);
+    yume_assert(in_scope != nullptr, "Variable "s + target_var->name + " is not in scope");
     auto [target_val, target_ast, target_owning] = *in_scope;
     auto target_type = target_ast.ensure_ty();
 
