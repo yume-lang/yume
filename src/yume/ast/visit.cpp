@@ -42,7 +42,7 @@ void StructDecl::visit(Visitor& visitor) const {
 }
 void SimpleType::visit(Visitor& visitor) const { visitor.visit(m_name); }
 void QualType::visit(Visitor& visitor) const { visitor.visit(m_base, describe().c_str()); }
-void TemplatedType::visit(Visitor& visitor) const { visitor.visit(m_base).visit(m_type_args, "type arg"); }
+void TemplatedType::visit(Visitor& visitor) const { visitor.visit(base).visit(type_args, "type arg"); }
 void FunctionType::visit(Visitor& visitor) const {
   visitor.visit(ret).visit(args);
   if (fn_ptr)

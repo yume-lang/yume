@@ -352,19 +352,15 @@ public:
 
 /// A type with explicit type parameters \e i.e. `Foo<Bar,Baz>`.
 class TemplatedType final : public Type {
-  AnyType m_base;
-  vector<AnyType> m_type_args;
-
 public:
+  AnyType base;
+  vector<AnyType> type_args;
+
   TemplatedType(span<Token> tok, AnyType base, vector<AnyType> type_args)
-      : Type(K_TemplatedType, tok), m_base{move(base)}, m_type_args{move(type_args)} {}
+      : Type(K_TemplatedType, tok), base{move(base)}, type_args{move(type_args)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] auto type_vars() const -> const auto& { return m_type_args; }
-  [[nodiscard]] auto type_vars() -> auto& { return m_type_args; }
-  [[nodiscard]] auto base() const -> const auto& { return *m_base; }
-  [[nodiscard]] auto base() -> auto& { return *m_base; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_TemplatedType; }
   [[nodiscard]] auto clone() const -> TemplatedType* override;
 };
