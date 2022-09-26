@@ -27,7 +27,7 @@ auto TemplatedType::describe() const -> string {
   ss << "}";
   return ss.str();
 }
-auto SimpleType::describe() const -> string { return m_name; }
+auto SimpleType::describe() const -> string { return name; }
 auto SelfType::describe() const -> string { return "self"; }
 auto ProxyType::describe() const -> string { return field; }
 auto FunctionType::describe() const -> string {

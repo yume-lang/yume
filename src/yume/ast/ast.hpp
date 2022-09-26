@@ -320,14 +320,13 @@ using OptionalType = OptionalAnyBase<Type>;
 
 /// Just the name of a type, always capitalized.
 class SimpleType final : public Type {
-  string m_name;
-
 public:
-  explicit SimpleType(span<Token> tok, string name) : Type(K_SimpleType, tok), m_name{move(name)} {}
+  string name;
+
+  explicit SimpleType(span<Token> tok, string name) : Type(K_SimpleType, tok), name{move(name)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] auto name() const -> string { return m_name; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_SimpleType; }
   [[nodiscard]] auto clone() const -> SimpleType* override;
 };
