@@ -41,7 +41,7 @@ void StructDecl::visit(Visitor& visitor) const {
   visitor.visit(name).visit(fields, "field").visit(type_args, "type arg").visit(body);
 }
 void SimpleType::visit(Visitor& visitor) const { visitor.visit(m_name); }
-void QualType::visit(Visitor& visitor) const { visitor.visit(m_base, describe().c_str()); }
+void QualType::visit(Visitor& visitor) const { visitor.visit(base, describe().c_str()); }
 void TemplatedType::visit(Visitor& visitor) const { visitor.visit(base).visit(type_args, "type arg"); }
 void FunctionType::visit(Visitor& visitor) const {
   visitor.visit(ret).visit(args);
