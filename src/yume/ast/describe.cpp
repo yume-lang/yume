@@ -19,7 +19,7 @@ auto QualType::describe() const -> string {
 auto TemplatedType::describe() const -> string {
   stringstream ss{};
   ss << "{";
-  for (const auto& i : llvm::enumerate(m_type_args)) {
+  for (const auto& i : llvm::enumerate(type_args)) {
     if (i.index() > 0)
       ss << ",";
     ss << i.value()->describe();
