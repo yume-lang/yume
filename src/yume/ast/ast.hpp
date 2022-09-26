@@ -764,7 +764,7 @@ public:
   static auto classof(const AST* a) -> bool { return a->kind() >= K_Decl && a->kind() <= K_END_Decl; }
   [[nodiscard]] auto clone() const -> Decl* override = 0;
 
-  [[nodiscard]] virtual auto name() const -> string = 0;
+  [[nodiscard]] virtual auto decl_name() const -> string = 0;
 };
 
 /// A declaration of a function (`def`).
@@ -798,7 +798,8 @@ public:
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] auto name() const -> string override { return m_name; }
+  [[nodiscard]] auto name() const -> string { return m_name; }
+  [[nodiscard]] auto decl_name() const -> string override { return m_name; }
   [[nodiscard]] auto args() const -> const auto& { return m_args; }
   [[nodiscard]] auto args() -> auto& { return m_args; }
   [[nodiscard]] auto type_args() const { return m_type_args; }
@@ -850,7 +851,8 @@ public:
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] auto name() const -> string override { return ":new"; } // TODO(rymiel): Magic value?
+  [[nodiscard]] auto name() const -> string { return ":new"; } // TODO(rymiel): Magic value?
+  [[nodiscard]] auto decl_name() const -> string override { return ":new"; } // TODO(rymiel): Magic value?
   [[nodiscard]] auto args() const -> const auto& { return m_args; }
   [[nodiscard]] auto args() -> auto& { return m_args; }
   [[nodiscard]] auto body() const -> const auto& { return m_body; }
@@ -873,7 +875,8 @@ public:
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] auto name() const -> string override { return m_name; }
+  [[nodiscard]] auto name() const -> string { return m_name; }
+  [[nodiscard]] auto decl_name() const -> string override { return m_name; }
   [[nodiscard]] constexpr auto fields() const -> const auto& { return m_fields; }
   [[nodiscard]] constexpr auto fields() -> auto& { return m_fields; }
   [[nodiscard]] constexpr auto body() const -> const auto& { return m_body; }
@@ -895,7 +898,8 @@ public:
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] auto name() const -> string override { return m_name; }
+  [[nodiscard]] auto name() const -> string { return m_name; }
+  [[nodiscard]] auto decl_name() const -> string override { return m_name; }
   [[nodiscard]] auto type() const -> const auto& { return m_type; }
   [[nodiscard]] auto type() -> auto& { return m_type; }
   [[nodiscard]] auto init() const -> const auto& { return m_init; }
@@ -917,7 +921,8 @@ public:
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] auto name() const -> string override { return m_name; }
+  [[nodiscard]] auto name() const -> string { return m_name; }
+  [[nodiscard]] auto decl_name() const -> string override { return m_name; }
   [[nodiscard]] auto type() const -> const auto& { return m_type; }
   [[nodiscard]] auto type() -> auto& { return m_type; }
   [[nodiscard]] auto init() const -> const auto& { return m_init; }
