@@ -334,18 +334,15 @@ public:
 
 /// A type with a `Qualifier` like `mut` or `[]` following.
 class QualType final : public Type {
-  AnyType m_base;
-  Qualifier m_qualifier;
-
 public:
+  AnyType base;
+  Qualifier qualifier;
+
   QualType(span<Token> tok, AnyType base, Qualifier qualifier)
-      : Type(K_QualType, tok), m_base{move(base)}, m_qualifier{qualifier} {}
+      : Type(K_QualType, tok), base{move(base)}, qualifier{qualifier} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] constexpr auto qualifier() const -> Qualifier { return m_qualifier; }
-  [[nodiscard]] auto base() const -> const auto& { return *m_base; }
-  [[nodiscard]] auto base() -> auto& { return *m_base; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_QualType; }
   [[nodiscard]] auto clone() const -> QualType* override;
 };

@@ -80,7 +80,7 @@ template <> void TypeWalker::expression(ast::BoolExpr& expr) { expr.val_ty(compi
 template <> void TypeWalker::expression(ast::Type& expr) {
   expr.val_ty(convert_type(expr));
   if (auto* qual_type = dyn_cast<ast::QualType>(&expr))
-    expression(qual_type->base());
+    expression(*qual_type->base);
 }
 
 template <> void TypeWalker::expression(ast::TypeName& expr) {
@@ -621,8 +621,8 @@ auto TypeWalker::convert_type(ast::Type& ast_type) -> ty::Type {
     if (val != compiler.m_types.known.end())
       return val->second.get();
   } else if (auto* qual_type = dyn_cast<ast::QualType>(&ast_type)) {
-    auto qualifier = qual_type->qualifier();
-    return convert_type(qual_type->base()).known_qual(qualifier);
+    auto qualifier = qual_type->qualifier;
+    return convert_type(*qual_type->base).known_qual(qualifier);
   } else if (isa<ast::SelfType>(ast_type)) {
     if (parent)
       return *parent;

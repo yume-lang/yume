@@ -10,7 +10,7 @@ namespace yume::ast {
 
 auto AST::describe() const -> string { return string{"unknown "} + kind_name(); }
 auto QualType::describe() const -> string {
-  switch (m_qualifier) {
+  switch (qualifier) {
   case Qualifier::Ptr: return "ptr";
   case Qualifier::Mut: return "mut";
   default: return "";
