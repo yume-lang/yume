@@ -237,7 +237,7 @@ auto Compiler::decl_statement(ast::Stmt& stmt, optional<ty::Type> parent, ast::P
     if (st.name() == "Slice") // TODO(rymiel): magic value?
       m_slice_struct = &st;
 
-    for (auto& f : s_decl->body.body)
+    for (auto& f : s_decl->body)
       if (st.type_args.empty() || isa<ast::CtorDecl>(*f))
         decl_statement(*f, st.self_ty, member);
 
@@ -413,7 +413,7 @@ auto Compiler::declare(Fn& fn) -> llvm::Function* {
 
 template <> void Compiler::statement(ast::Compound& stat) {
   auto guard = m_scope.push_scope_guarded();
-  for (auto& i : stat.body)
+  for (auto& i : stat)
     body_statement(*i);
 
   if (m_builder->GetInsertBlock()->getTerminator() == nullptr)

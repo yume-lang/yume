@@ -713,6 +713,11 @@ public:
   void visit(Visitor& visitor) const override;
   explicit Compound(span<Token> tok, vector<AnyStmt> body) : Stmt(K_Compound, tok), body{move(body)} {}
 
+  [[nodiscard]] auto begin() { return body.begin(); }
+  [[nodiscard]] auto end() { return body.end(); }
+  [[nodiscard]] auto begin() const { return body.begin(); }
+  [[nodiscard]] auto end() const { return body.end(); }
+
   static auto classof(const AST* a) -> bool { return a->kind() == K_Compound; }
   [[nodiscard]] auto clone() const -> Compound* override;
 };
