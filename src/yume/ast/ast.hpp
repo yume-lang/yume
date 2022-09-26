@@ -381,14 +381,12 @@ public:
 
 /// A type which refers to a different type, specifically that of a struct field.
 class ProxyType final : public Type {
-  string m_field;
-
 public:
-  explicit ProxyType(span<Token> tok, string field) : Type(K_ProxyType, tok), m_field{move(field)} {}
+  string field;
+
+  explicit ProxyType(span<Token> tok, string field) : Type(K_ProxyType, tok), field{move(field)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
-
-  [[nodiscard]] auto field() const -> string { return m_field; }
 
   static auto classof(const AST* a) -> bool { return a->kind() == K_ProxyType; }
   [[nodiscard]] auto clone() const -> ProxyType* override;

@@ -629,7 +629,7 @@ auto TypeWalker::convert_type(ast::Type& ast_type) -> ty::Type {
   } else if (auto* proxy_type = dyn_cast<ast::ProxyType>(&ast_type)) {
     if (parent) {
       if (const auto* parent_struct = parent->base_dyn_cast<ty::Struct>()) {
-        auto [target_type, target_offset] = find_field_ast(*parent_struct, proxy_type->field());
+        auto [target_type, target_offset] = find_field_ast(*parent_struct, proxy_type->field);
         if (target_type != nullptr)
           return convert_type(*target_type->raw_ptr());
         throw std::runtime_error("Proxy type doesn't refer to a valid field?");
