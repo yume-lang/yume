@@ -64,7 +64,7 @@ auto CharExpr::clone() const -> CharExpr* { return new CharExpr(tok(), m_val); }
 auto BoolExpr::clone() const -> BoolExpr* { return new BoolExpr(tok(), m_val); }
 auto ReturnStmt::clone() const -> ReturnStmt* { return new ReturnStmt(tok(), dup(expr)); }
 auto WhileStmt::clone() const -> WhileStmt* { return new WhileStmt(tok(), dup(cond), dup(body)); }
-auto VarDecl::clone() const -> VarDecl* { return new VarDecl(tok(), m_name, dup(m_type), dup(m_init)); }
+auto VarDecl::clone() const -> VarDecl* { return new VarDecl(tok(), name, dup(type), dup(init)); }
 auto ConstDecl::clone() const -> ConstDecl* { return new ConstDecl(tok(), name, dup(type), dup(init)); }
 auto FnDecl::clone() const -> FnDecl* {
   return std::visit(

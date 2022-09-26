@@ -535,15 +535,15 @@ template <> void TypeWalker::statement(ast::ReturnStmt& stat) {
 }
 
 template <> void TypeWalker::statement(ast::VarDecl& stat) {
-  body_expression(*stat.init());
-  if (stat.type().has_value()) {
-    expression(*stat.type());
-    make_implicit_conversion(stat.init(), stat.type()->val_ty());
-    stat.init()->attach_to(stat.type().raw_ptr());
+  body_expression(*stat.init);
+  if (stat.type.has_value()) {
+    expression(*stat.type);
+    make_implicit_conversion(stat.init, stat.type->val_ty());
+    stat.init->attach_to(stat.type.raw_ptr());
   }
 
-  stat.val_ty(stat.init()->ensure_ty().known_mut());
-  scope.add(stat.name(), &stat);
+  stat.val_ty(stat.init->ensure_ty().known_mut());
+  scope.add(stat.name, &stat);
 }
 
 template <> void TypeWalker::statement(ast::ConstDecl& stat) {
