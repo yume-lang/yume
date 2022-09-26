@@ -624,21 +624,21 @@ template <> void Compiler::statement(ast::VarDecl& stat) {
   // TODO(rymiel): revisit, probably extract logic
   auto* var_type = llvm_type(stat.ensure_ty().ensure_mut_base());
 
-  if (stat.init()->ensure_ty().is_mut()) {
-    auto expr_val = body_expression(*stat.init());
-    m_scope.add(stat.name(), {.value = expr_val, .ast = stat, .owning = false});
+  if (stat.init->ensure_ty().is_mut()) {
+    auto expr_val = body_expression(*stat.init);
+    m_scope.add(stat.name, {.value = expr_val, .ast = stat, .owning = false});
     return;
   }
 
-  auto* alloc = entrypoint_builder().CreateAlloca(var_type, nullptr, "vdecl."s + stat.name());
+  auto* alloc = entrypoint_builder().CreateAlloca(var_type, nullptr, "vdecl."s + stat.name);
 
-  auto expr_val = body_expression(*stat.init());
+  auto expr_val = body_expression(*stat.init);
 
   if (expr_val.scope != nullptr && expr_val.scope->owning)
     expr_val.scope->owning = false;
 
   m_builder->CreateStore(expr_val, alloc);
-  m_scope.add(stat.name(), {.value = alloc, .ast = stat, .owning = true});
+  m_scope.add(stat.name, {.value = alloc, .ast = stat, .owning = true});
 }
 
 template <> auto Compiler::expression(ast::NumberExpr& expr) -> Val {

@@ -887,30 +887,25 @@ public:
 };
 
 /// A declaration of a local variable (`let`).
-class VarDecl final : public Decl {
-  string m_name;
-  OptionalType m_type;
-  AnyExpr m_init;
-
+struct VarDecl final : public Decl {
 public:
+  string name;
+  OptionalType type;
+  AnyExpr init;
+
   VarDecl(span<Token> tok, string name, OptionalType type, AnyExpr init)
-      : Decl(K_VarDecl, tok), m_name{move(name)}, m_type{move(type)}, m_init(move(init)) {}
+      : Decl(K_VarDecl, tok), name{move(name)}, type{move(type)}, init(move(init)) {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] auto name() const -> string { return m_name; }
-  [[nodiscard]] auto decl_name() const -> string override { return m_name; }
-  [[nodiscard]] auto type() const -> const auto& { return m_type; }
-  [[nodiscard]] auto type() -> auto& { return m_type; }
-  [[nodiscard]] auto init() const -> const auto& { return m_init; }
-  [[nodiscard]] auto init() -> auto& { return m_init; }
+  [[nodiscard]] auto decl_name() const -> string override { return name; }
 
   static auto classof(const AST* a) -> bool { return a->kind() == K_VarDecl; }
   [[nodiscard]] auto clone() const -> VarDecl* override;
 };
 
 /// A declaration of a constant (`const`).
-class ConstDecl final : public Decl {
+struct ConstDecl final : public Decl {
 public:
   string name;
   AnyType type; // TODO(rymiel): make optional?
