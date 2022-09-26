@@ -453,7 +453,7 @@ template <> void TypeWalker::statement(ast::StructDecl& stat) {
   if (std::ranges::any_of(*current_decl.subs(), [](const auto& sub) noexcept { return sub.second.is_generic(); }))
     return;
 
-  for (auto& i : stat.fields())
+  for (auto& i : stat.fields)
     expression(i);
 }
 

@@ -57,7 +57,7 @@ auto Fn::name() const noexcept -> string {
   return def.visit_def([](ast::LambdaExpr* /*lambda*/) { return "<lambda>"s; }, // TODO(rymiel): Magic value?
                        [](auto* ast) { return ast->name(); });
 }
-auto Struct::name() const noexcept -> string { return st_ast.name(); }
+auto Struct::name() const noexcept -> string { return st_ast.name; }
 auto Const::name() const noexcept -> string { return cn_ast.name; }
 
 auto Fn::ast() -> ast::Stmt& {

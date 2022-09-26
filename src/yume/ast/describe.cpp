@@ -56,7 +56,7 @@ auto DtorExpr::describe() const -> string { return m_base->describe(); }
 auto SliceExpr::describe() const -> string { return m_type->describe(); }
 auto FnDecl::describe() const -> string { return m_name; }
 auto CtorDecl::describe() const -> string { return ":new"; }
-auto StructDecl::describe() const -> string { return m_name; }
+auto StructDecl::describe() const -> string { return name; }
 auto VarDecl::describe() const -> string { return name; }
 auto ConstDecl::describe() const -> string { return name; }
 } // namespace yume::ast
