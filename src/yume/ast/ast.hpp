@@ -645,19 +645,15 @@ public:
  * The target may be multiple things, such as a variable `VarExpr` or field `FieldAccessExpr`.
  * Note that some things such as indexed assignment `[]=` become a `CallExpr` instead.
  */
-class AssignExpr final : public Expr {
-  AnyExpr m_target;
-  AnyExpr m_value;
-
+struct AssignExpr final : public Expr {
 public:
+  AnyExpr target;
+  AnyExpr value;
+
   AssignExpr(span<Token> tok, AnyExpr target, AnyExpr value)
-      : Expr(K_Assign, tok), m_target{move(target)}, m_value{move(value)} {}
+      : Expr(K_Assign, tok), target{move(target)}, value{move(value)} {}
   void visit(Visitor& visitor) const override;
 
-  [[nodiscard]] auto target() const -> const auto& { return m_target; }
-  [[nodiscard]] auto target() -> auto& { return m_target; }
-  [[nodiscard]] auto value() const -> const auto& { return m_value; }
-  [[nodiscard]] auto value() -> auto& { return m_value; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_Assign; }
   [[nodiscard]] auto clone() const -> AssignExpr* override;
 };

@@ -825,7 +825,7 @@ template <> auto Compiler::expression(ast::CallExpr& expr) -> Val {
 }
 
 template <> auto Compiler::expression(ast::AssignExpr& expr) -> Val {
-  if (const auto* target_var = dyn_cast<ast::VarExpr>(expr.target().raw_ptr())) {
+  if (const auto* target_var = dyn_cast<ast::VarExpr>(expr.target.raw_ptr())) {
     auto* in_scope = m_scope.find(target_var->name());
     yume_assert(in_scope != nullptr, "Variable "s + target_var->name() + " is not in scope");
     auto [target_val, target_ast, target_owning] = *in_scope;
@@ -834,7 +834,7 @@ template <> auto Compiler::expression(ast::AssignExpr& expr) -> Val {
     if (target_owning && !is_trivially_destructible(target_type))
       destruct(target_val, target_type);
 
-    auto expr_val = body_expression(*expr.value());
+    auto expr_val = body_expression(*expr.value);
 
     if (expr_val.scope != nullptr && expr_val.scope->owning)
       expr_val.scope->owning = false;
@@ -842,7 +842,7 @@ template <> auto Compiler::expression(ast::AssignExpr& expr) -> Val {
     m_builder->CreateStore(expr_val, target_val);
     return expr_val;
   }
-  if (auto* field_access = dyn_cast<ast::FieldAccessExpr>(expr.target().raw_ptr())) {
+  if (auto* field_access = dyn_cast<ast::FieldAccessExpr>(expr.target.raw_ptr())) {
     auto& field_base = field_access->base;
     const auto [struct_base, base] = [&]() -> tuple<ty::Type, Val> {
       if (field_base.has_value()) {
@@ -862,7 +862,7 @@ template <> auto Compiler::expression(ast::AssignExpr& expr) -> Val {
     const string base_name = field_access->field;
     const int base_offset = field_access->offset;
 
-    auto expr_val = body_expression(*expr.value());
+    auto expr_val = body_expression(*expr.value);
     auto* struct_type = llvm_type(struct_base.ensure_mut_base().base_cast<ty::Struct>());
 
     yume_assert(base_offset >= 0, "Field access has unknown offset into struct");
@@ -871,7 +871,7 @@ template <> auto Compiler::expression(ast::AssignExpr& expr) -> Val {
     m_builder->CreateStore(expr_val, gep);
     return expr_val;
   }
-  throw std::runtime_error("Can't assign to target "s + expr.target()->kind_name());
+  throw std::runtime_error("Can't assign to target "s + expr.target->kind_name());
 }
 
 template <> auto Compiler::expression(ast::LambdaExpr& expr) -> Val {

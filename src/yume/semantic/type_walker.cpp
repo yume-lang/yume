@@ -232,13 +232,13 @@ template <> void TypeWalker::expression(ast::DirectCallExpr& expr) {
 }
 
 template <> void TypeWalker::expression(ast::AssignExpr& expr) {
-  body_expression(*expr.target());
-  body_expression(*expr.value());
+  body_expression(*expr.target);
+  body_expression(*expr.value);
 
-  make_implicit_conversion(expr.value(), expr.target()->ensure_ty().mut_base());
+  make_implicit_conversion(expr.value, expr.target->ensure_ty().mut_base());
 
-  expr.target()->attach_to(expr.value().raw_ptr());
-  expr.attach_to(expr.value().raw_ptr());
+  expr.target->attach_to(expr.value.raw_ptr());
+  expr.attach_to(expr.value.raw_ptr());
 }
 
 template <> void TypeWalker::expression(ast::VarExpr& expr) {
