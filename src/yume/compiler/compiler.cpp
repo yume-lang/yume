@@ -1057,7 +1057,7 @@ auto Compiler::create_malloc(llvm::Type* base_type, uint64_t slice_size, string_
 }
 
 template <> auto Compiler::expression(ast::SliceExpr& expr) -> Val {
-  auto* slice_size = m_builder->getIntN(ptr_bitsize(), expr.args().size());
+  auto* slice_size = m_builder->getIntN(ptr_bitsize(), expr.args.size());
 
   yume_assert(expr.ensure_ty().is_slice(), "Slice expression must contain slice type");
   auto* slice_type = llvm_type(expr.ensure_ty());
@@ -1067,7 +1067,7 @@ template <> auto Compiler::expression(ast::SliceExpr& expr) -> Val {
   Val data_ptr = create_malloc(base_type, slice_size, "sl.ctor.malloc");
 
   unsigned j = 0;
-  for (auto& i : expr.args())
+  for (auto& i : expr.args)
     m_builder->CreateStore(body_expression(*i), m_builder->CreateConstInBoundsGEP1_32(base_type, data_ptr, j++));
 
   Val slice_inst = llvm::UndefValue::get(slice_type);

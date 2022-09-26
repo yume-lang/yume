@@ -166,11 +166,11 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
 }
 
 template <> void TypeWalker::expression(ast::SliceExpr& expr) {
-  for (auto& i : expr.args()) {
+  for (auto& i : expr.args) {
     body_expression(*i);
   }
 
-  auto& slice_base = expr.type();
+  auto& slice_base = *expr.type;
   expression(slice_base);
   auto base_type = create_slice_type(convert_type(slice_base));
 
