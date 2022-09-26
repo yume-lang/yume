@@ -242,21 +242,21 @@ template <> void TypeWalker::expression(ast::AssignExpr& expr) {
 }
 
 template <> void TypeWalker::expression(ast::VarExpr& expr) {
-  if (auto** var = scope.find(expr.name()); var != nullptr)
+  if (auto** var = scope.find(expr.name); var != nullptr)
     return expr.attach_to(*var);
 
   // If we're inside a lambda body, check if the variable maybe refers to one from an outer scope that can be
   // included in the closure of the current lambda
   for (auto& outer_scope : enclosing_scopes) {
-    if (auto** var = outer_scope.find(expr.name()); var != nullptr) {
+    if (auto** var = outer_scope.find(expr.name); var != nullptr) {
       // It was found, include it in the current scope, so we don't need to look for it again
-      scope.add(expr.name(), *var);
-      closured.push_back({*var, expr.name()});
+      scope.add(expr.name, *var);
+      closured.push_back({*var, expr.name});
       return expr.attach_to(*var);
     }
   }
 
-  throw std::runtime_error("Scope doesn't contain variable called "s + expr.name());
+  throw std::runtime_error("Scope doesn't contain variable called "s + expr.name);
 }
 
 template <> void TypeWalker::expression(ast::ConstExpr& expr) {
@@ -523,7 +523,7 @@ template <> void TypeWalker::statement(ast::ReturnStmt& stat) {
     body_expression(*stat.expr);
     // If we're returning a local variable, mark that it will leave the scope and should not be destructed yet.
     if (auto* var_expr = dyn_cast<ast::VarExpr>(stat.expr.raw_ptr()))
-      if (auto** in_scope = scope.find(var_expr->name()); in_scope != nullptr)
+      if (auto** in_scope = scope.find(var_expr->name); in_scope != nullptr)
         if (auto* var_decl = dyn_cast<ast::VarDecl>(*in_scope))
           stat.extends_lifetime = var_decl;
 
