@@ -75,7 +75,7 @@ static auto literal_cast(ast::AST& arg, ty::Type target_type) -> ty::Compat {
     if (int_type->size() == 1)
       return {}; // Can't implicitly cast to Bool
 
-    auto in_range = int_type->in_range(num_arg.val());
+    auto in_range = int_type->in_range(num_arg.val);
 
     if (in_range)
       return {.valid = true, .conv = {.dereference = false, .kind = ty::Conv::Int}};

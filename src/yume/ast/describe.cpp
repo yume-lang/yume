@@ -44,10 +44,10 @@ auto FunctionType::describe() const -> string {
   return ss.str();
 }
 auto TypeName::describe() const -> string { return name; }
-auto NumberExpr::describe() const -> string { return std::to_string(m_val); }
-auto CharExpr::describe() const -> string { return std::to_string(m_val); }
-auto BoolExpr::describe() const -> string { return m_val ? "true" : "false"; }
-auto StringExpr::describe() const -> string { return m_val; }
+auto NumberExpr::describe() const -> string { return std::to_string(val); }
+auto CharExpr::describe() const -> string { return std::to_string(val); }
+auto BoolExpr::describe() const -> string { return val ? "true" : "false"; }
+auto StringExpr::describe() const -> string { return val; }
 auto VarExpr::describe() const -> string { return name; }
 auto ConstExpr::describe() const -> string { return name; }
 auto CallExpr::describe() const -> string { return name; }
