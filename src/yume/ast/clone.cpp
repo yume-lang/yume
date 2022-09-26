@@ -87,7 +87,7 @@ auto LambdaExpr::clone() const -> LambdaExpr* {
   return new LambdaExpr(tok(), dup(args), dup(ret), dup(body), dup(annotations));
 }
 auto DirectCallExpr::clone() const -> DirectCallExpr* { return new DirectCallExpr(tok(), dup(m_base), dup(m_args)); }
-auto AssignExpr::clone() const -> AssignExpr* { return new AssignExpr(tok(), dup(m_target), dup(m_value)); }
+auto AssignExpr::clone() const -> AssignExpr* { return new AssignExpr(tok(), dup(target), dup(value)); }
 auto FieldAccessExpr::clone() const -> FieldAccessExpr* { return new FieldAccessExpr(tok(), dup(base), field); }
 auto ImplicitCastExpr::clone() const -> ImplicitCastExpr* {
   return new ImplicitCastExpr(tok(), dup(base), conversion);
