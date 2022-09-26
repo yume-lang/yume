@@ -211,7 +211,7 @@ void stacktrace_ostream::set_color(llvm::raw_ostream::Colors color) {
 
 void stacktrace_ostream::format_phase(string_view msg) {
   static array skip_lines = {"yume::CRTPWalker<"sv, "__libc_start_"sv};
-  static string source_dir = YUME_SRC_DIR;
+  static const string SOURCE_DIR = YUME_SRC_DIR;
 
   switch (m_current_phase) {
   case Address: m_buffer << msg; break;
@@ -233,9 +233,9 @@ void stacktrace_ostream::format_phase(string_view msg) {
   case Source:
     set_color(YELLOW);
     if (auto normal_path = std::filesystem::path(msg).lexically_normal().native();
-        normal_path.starts_with(source_dir) && use_color) {
+        normal_path.starts_with(SOURCE_DIR) && use_color) {
       m_buffer << llvm::sys::Process::OutputBold(false);
-      m_buffer << static_cast<string_view>(normal_path).substr(source_dir.size());
+      m_buffer << static_cast<string_view>(normal_path).substr(SOURCE_DIR.size());
     } else {
       m_buffer << normal_path;
     }

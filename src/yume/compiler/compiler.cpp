@@ -282,8 +282,8 @@ static auto build_function_type(Compiler& compiler, const ty::Function& type) ->
     args.push_back(compiler.llvm_type(i));
 
   auto* return_type = compiler.builder()->getVoidTy();
-  if (type.ret().has_value())
-    return_type = compiler.llvm_type(*type.ret());
+  if (auto ret = type.ret(); ret.has_value())
+    return_type = compiler.llvm_type(*ret);
 
   auto* fn_ty = llvm::FunctionType::get(return_type, args, type.is_c_varargs());
 
@@ -404,7 +404,7 @@ auto Compiler::declare(Fn& fn) -> llvm::Function* {
   // At this point, the function prototype is declared, but not the body.
   // In the case of extern or local functions, a prototype is all that will be declared.
   if (!fn.extern_decl() && !fn.local()) {
-    m_decl_queue.push(&fn);
+    m_decl_queue.emplace(&fn);
     m_walker->current_decl = &fn;
     m_walker->body_statement(fn.ast());
   }
@@ -507,7 +507,7 @@ void Compiler::define(Fn& fn) {
     yume_assert(fn.self_ty.has_value(), "Cannot define constructor when the type being constructed is unknown");
     // NOLINTNEXTLINE(bugprone-unchecked-optional-access): clang-tidy doesn't accept yume_assert as an assertion
     auto* ctor_type = llvm_type(*fn.self_ty);
-    Val base_value = llvm::UndefValue::get(ctor_type);
+    const Val base_value = llvm::UndefValue::get(ctor_type);
     auto* base_alloc = m_builder->CreateAlloca(ctor_type, nullptr, "ctor.base");
     m_builder->CreateStore(base_value, base_alloc);
 
@@ -654,7 +654,7 @@ template <> auto Compiler::expression(ast::BoolExpr& expr) -> Val { return m_bui
 
 void Compiler::make_temporary_in_scope(Val& val, const ast::AST& ast, const string& name) {
   auto* alloc = entrypoint_builder().CreateAlloca(val.llvm->getType(), nullptr, name);
-  string tmp_name = name + " " + ast.location().to_string();
+  const string tmp_name = name + " " + ast.location().to_string();
   auto& md_ctx = alloc->getContext();
   auto* md_node =
       llvm::MDNode::get(md_ctx, llvm::MDString::get(md_ctx, std::to_string(m_scope.size()) + ": " + tmp_name));
@@ -683,7 +683,7 @@ template <> auto Compiler::expression(ast::StringExpr& expr) -> Val {
   auto* slice_size = m_builder->getIntN(ptr_bitsize(), val.length());
   auto* slice_type = cast<llvm::StructType>(llvm_type(expr.ensure_ty()));
 
-  Val string_alloc = create_malloc(base_type, slice_size, "str.ctor.malloc");
+  const Val string_alloc = create_malloc(base_type, slice_size, "str.ctor.malloc");
   m_builder->CreateMemCpy(string_alloc, {}, global_string_ptr, {}, slice_size);
 
   Val string_slice = llvm::UndefValue::get(slice_type);
@@ -911,14 +911,14 @@ template <> auto Compiler::expression(ast::LambdaExpr& expr) -> Val {
   setup_fn_base(fn);
 
   // TODO(LLVM MIN >= 15): BitCast obsoleted by opaque pointers
-  Val closure_val = m_builder->CreateLoad(
+  const Val closure_val = m_builder->CreateLoad(
       llvm_closure_ty, m_builder->CreateBitCast(fn.llvm->arg_begin(), llvm_closure_ty->getPointerTo()), "closure");
 
   // Add local variables for every captured variable
   for (const auto& i : llvm::enumerate(llvm::zip(expr.closured_names, expr.closured_nodes))) {
     auto [name, ast_arg] = i.value();
     auto type = ast_arg->ensure_ty();
-    Val arg = m_builder->CreateExtractValue(closure_val, i.index());
+    const Val arg = m_builder->CreateExtractValue(closure_val, i.index());
     expose_parameter_as_local(type, name, *ast_arg, arg);
   }
 
@@ -1064,7 +1064,7 @@ template <> auto Compiler::expression(ast::SliceExpr& expr) -> Val {
   auto* base_type =
       llvm_type(expr.ensure_ty().base_cast<ty::Struct>()->fields().at(0)->ensure_ty().ensure_ptr_base()); // ???
 
-  Val data_ptr = create_malloc(base_type, slice_size, "sl.ctor.malloc");
+  const Val data_ptr = create_malloc(base_type, slice_size, "sl.ctor.malloc");
 
   unsigned j = 0;
   for (auto& i : expr.args)
@@ -1084,6 +1084,8 @@ template <> auto Compiler::expression(ast::FieldAccessExpr& expr) -> Val {
     base = body_expression(*expr.base);
     base_type = expr.base->ensure_ty().mut_base();
   } else {
+    yume_assert(m_scope_ctor.has_value(), "Cannot access field without receiver outside of a constructor");
+    // NOLINTNEXTLINE(bugprone-unchecked-optional-access): clang-tidy doesn't accept yume_assert as an assertion
     base = m_scope_ctor->value;
     base_type = m_current_fn->self_ty;
   }
@@ -1094,6 +1096,8 @@ template <> auto Compiler::expression(ast::FieldAccessExpr& expr) -> Val {
   if (!expr.ensure_ty().is_mut())
     return m_builder->CreateExtractValue(*base, base_offset, "s.field.nm."s + base_name);
 
+  yume_assert(base_type.has_value(), "Cannot access field of unknown type");
+  // NOLINTNEXTLINE(bugprone-unchecked-optional-access): clang-tidy doesn't accept yume_assert as an assertion
   return m_builder->CreateStructGEP(llvm_type(base_type.value()), *base, base_offset, "s.field.m."s + base_name);
 }
 

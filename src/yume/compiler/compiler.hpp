@@ -30,7 +30,7 @@ namespace ast {
 class AST;
 class Expr;
 struct Program;
-class StructDecl;
+struct StructDecl;
 class Stmt;
 } // namespace ast
 namespace ty {
