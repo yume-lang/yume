@@ -112,7 +112,7 @@ void Compiler::declare_default_ctor(Struct& st) {
 
 void Compiler::run() {
   for (const auto& source : m_sources)
-    for (auto& i : source.program->body())
+    for (auto& i : source.program->body)
       decl_statement(*i, {}, source.program.get());
 
   // First pass: only convert constants

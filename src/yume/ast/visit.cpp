@@ -64,6 +64,6 @@ void DirectCallExpr::visit(Visitor& visitor) const { visitor.visit(m_base).visit
 void AssignExpr::visit(Visitor& visitor) const { visitor.visit(m_target).visit(m_value); }
 void FieldAccessExpr::visit(Visitor& visitor) const { visitor.visit(m_base).visit(m_field); }
 void ImplicitCastExpr::visit(Visitor& visitor) const { visitor.visit(m_conversion.to_string()).visit(m_base); }
-void Program::visit(Visitor& visitor) const { visitor.visit(m_body); }
+void Program::visit(Visitor& visitor) const { visitor.visit(body); }
 
 } // namespace yume::ast

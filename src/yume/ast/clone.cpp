@@ -100,6 +100,6 @@ auto FieldAccessExpr::clone() const -> FieldAccessExpr* { return new FieldAccess
 auto ImplicitCastExpr::clone() const -> ImplicitCastExpr* {
   return new ImplicitCastExpr(tok(), dup(m_base), m_conversion);
 }
-auto Program::clone() const -> Program* { return new Program(tok(), dup(m_body)); }
+auto Program::clone() const -> Program* { return new Program(tok(), dup(body)); }
 
 } // namespace yume::ast
