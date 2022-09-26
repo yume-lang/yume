@@ -687,19 +687,15 @@ public:
  * Note that implicit casts have no direct "textual" representation in actual source code, they are only materialized
  * during semantic analysis.
  */
-class ImplicitCastExpr final : public Expr {
-  AnyExpr m_base;
-  /// The conversion steps performed during this cast.
-  ty::Conv m_conversion;
-
+struct ImplicitCastExpr final : public Expr {
 public:
-  ImplicitCastExpr(span<Token> tok, AnyExpr base, ty::Conv conversion)
-      : Expr(K_ImplicitCast, tok), m_base{move(base)}, m_conversion{conversion} {}
-  void visit(Visitor& visitor) const override;
+  AnyExpr base;
+  /// The conversion steps performed during this cast.
+  ty::Conv conversion;
 
-  [[nodiscard]] auto base() const -> const auto& { return *m_base; }
-  [[nodiscard]] auto base() -> auto& { return *m_base; }
-  [[nodiscard]] auto conversion() const { return m_conversion; }
+  ImplicitCastExpr(span<Token> tok, AnyExpr base, ty::Conv conversion)
+      : Expr(K_ImplicitCast, tok), base{move(base)}, conversion{conversion} {}
+  void visit(Visitor& visitor) const override;
 
   static auto classof(const AST* a) -> bool { return a->kind() == K_ImplicitCast; }
   [[nodiscard]] auto clone() const -> ImplicitCastExpr* override;
