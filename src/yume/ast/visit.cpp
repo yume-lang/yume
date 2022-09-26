@@ -48,7 +48,7 @@ void FunctionType::visit(Visitor& visitor) const {
   if (fn_ptr)
     visitor.visit("fn ptr");
 }
-void ProxyType::visit(Visitor& visitor) const { visitor.visit(m_field); }
+void ProxyType::visit(Visitor& visitor) const { visitor.visit(field); }
 void TypeName::visit(Visitor& visitor) const { visitor.visit(name).visit(type); }
 void Compound::visit(Visitor& visitor) const { visitor.visit(body); }
 void VarExpr::visit(Visitor& visitor) const { visitor.visit(name); }

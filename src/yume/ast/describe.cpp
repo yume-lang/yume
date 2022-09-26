@@ -29,7 +29,7 @@ auto TemplatedType::describe() const -> string {
 }
 auto SimpleType::describe() const -> string { return m_name; }
 auto SelfType::describe() const -> string { return "self"; }
-auto ProxyType::describe() const -> string { return m_field; }
+auto ProxyType::describe() const -> string { return field; }
 auto FunctionType::describe() const -> string {
   stringstream ss{};
   ss << "->(";
