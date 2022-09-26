@@ -36,7 +36,7 @@ void FnDecl::visit(Visitor& visitor) const {
     visitor.visit(get<Compound>(m_body));
   }
 }
-void CtorDecl::visit(Visitor& visitor) const { visitor.visit(m_args, "arg").visit(m_body); }
+void CtorDecl::visit(Visitor& visitor) const { visitor.visit(args, "arg").visit(body); }
 void StructDecl::visit(Visitor& visitor) const {
   visitor.visit(name).visit(fields, "field").visit(type_args, "type arg").visit(body);
 }

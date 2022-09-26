@@ -499,13 +499,13 @@ template <> void TypeWalker::statement(ast::CtorDecl& stat) {
     throw std::runtime_error("Can't define constructor of non-struct type");
 
   stat.val_ty(struct_type);
-  for (auto& i : stat.args()) {
+  for (auto& i : stat.args) {
     expression(i);
     scope.add(i.name, &i);
     args.push_back(i.ensure_ty());
   }
 
-  for (auto& i : stat.args()) {
+  for (auto& i : stat.args) {
     expression(i);
     scope.add(i.name, &i);
   }
@@ -513,7 +513,7 @@ template <> void TypeWalker::statement(ast::CtorDecl& stat) {
   std::get<Fn*>(current_decl)->fn_ty = compiler.m_types.find_or_create_fn_ptr_type(args, current_decl.self_ty());
 
   if (in_depth)
-    statement(stat.body());
+    statement(stat.body);
 
   yume_assert(scope.size() == 1, "End of function should end with only the function scope remaining");
 }

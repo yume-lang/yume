@@ -840,23 +840,18 @@ public:
  * end
  * \endcode
  */
-class CtorDecl final : public Decl {
-private:
-  vector<TypeName> m_args;
-  Compound m_body;
-
+struct CtorDecl final : public Decl {
 public:
+  vector<TypeName> args;
+  Compound body;
+
   CtorDecl(span<Token> tok, vector<TypeName> args, Compound body)
-      : Decl(K_CtorDecl, tok), m_args{move(args)}, m_body{move(body)} {}
+      : Decl(K_CtorDecl, tok), args{move(args)}, body{move(body)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] auto name() const -> string { return ":new"; }               // TODO(rymiel): Magic value?
   [[nodiscard]] auto decl_name() const -> string override { return ":new"; } // TODO(rymiel): Magic value?
-  [[nodiscard]] auto args() const -> const auto& { return m_args; }
-  [[nodiscard]] auto args() -> auto& { return m_args; }
-  [[nodiscard]] auto body() const -> const auto& { return m_body; }
-  [[nodiscard]] auto body() -> auto& { return m_body; }
+
   static auto classof(const AST* a) -> bool { return a->kind() == K_CtorDecl; }
   [[nodiscard]] auto clone() const -> CtorDecl* override;
 };
