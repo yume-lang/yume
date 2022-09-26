@@ -113,10 +113,19 @@ private:
   auto visit_map_args(F fn) const -> std::vector<T> {
     std::vector<T> vec = {};
     vec.reserve(arg_count());
-    def.visit_def([&](auto* ast) {
-      for (auto& i : ast->args())
-        vec.emplace_back(std::move<T>(fn(i)));
-    });
+    def.visit_def(
+        [&](ast::FnDecl* ast) {
+          for (auto& i : ast->args)
+            vec.emplace_back(std::move<T>(fn(i)));
+        },
+        [&](ast::CtorDecl* ast) {
+          for (auto& i : ast->args)
+            vec.emplace_back(std::move<T>(fn(i)));
+        },
+        [&](auto* ast) {
+          for (auto& i : ast->args())
+            vec.emplace_back(std::move<T>(fn(i)));
+        });
     return vec;
   }
 };

@@ -464,16 +464,16 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
   auto args = vector<ty::Type>();
   auto ret = optional<ty::Type>();
 
-  for (auto& i : stat.args()) {
+  for (auto& i : stat.args) {
     expression(i);
     scope.add(i.name, &i);
     args.push_back(i.ensure_ty());
   }
 
-  if (stat.ret().has_value()) {
-    expression(*stat.ret());
-    stat.attach_to(stat.ret().raw_ptr());
-    ret = stat.ret()->ensure_ty();
+  if (stat.ret.has_value()) {
+    expression(*stat.ret);
+    stat.attach_to(stat.ret.raw_ptr());
+    ret = stat.ret->ensure_ty();
   }
 
   std::get<Fn*>(current_decl)->fn_ty = compiler.m_types.find_or_create_fn_ptr_type(args, ret, stat.varargs());
@@ -482,8 +482,8 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
   if (std::ranges::any_of(*current_decl.subs(), [](const auto& sub) noexcept { return sub.second.is_generic(); }))
     return;
 
-  if (in_depth && std::holds_alternative<ast::Compound>(stat.body()))
-    statement(get<ast::Compound>(stat.body()));
+  if (in_depth && std::holds_alternative<ast::Compound>(stat.body))
+    statement(get<ast::Compound>(stat.body));
 
   yume_assert(scope.size() == 1, "End of function should end with only the function scope remaining");
 }

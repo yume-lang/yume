@@ -35,10 +35,8 @@ template <std::derived_from<ast::AST> T> auto dup(const T& ast) -> T {
 
 template <std::copy_constructible T> auto dup(const T& obj) -> T { return T(obj); }
 
-template <typename T, typename U> auto dup(const std::variant<T, U>& var) -> std::variant<T, U> {
-  if (std::holds_alternative<T>(var))
-    return dup(std::get<T>(var));
-  return dup(std::get<U>(var));
+template <typename... Ts> auto dup(const std::variant<Ts...>& var) -> std::variant<Ts...> {
+  return std::visit([](auto&& x) { return std::variant<Ts...>{dup(std::forward<decltype(x)>(x))}; }, var);
 }
 
 template <typename T> auto dup(const optional<T>& opt) {
@@ -67,11 +65,7 @@ auto WhileStmt::clone() const -> WhileStmt* { return new WhileStmt(tok(), dup(co
 auto VarDecl::clone() const -> VarDecl* { return new VarDecl(tok(), name, dup(type), dup(init)); }
 auto ConstDecl::clone() const -> ConstDecl* { return new ConstDecl(tok(), name, dup(type), dup(init)); }
 auto FnDecl::clone() const -> FnDecl* {
-  return std::visit(
-      [&](auto& s) {
-        return new FnDecl(tok(), m_name, dup(m_args), m_type_args, dup(m_ret), dup(s), dup(m_annotations));
-      },
-      m_body);
+  return new FnDecl(tok(), name, dup(args), type_args, dup(ret), dup(body), dup(annotations));
 }
 auto CtorDecl::clone() const -> CtorDecl* { return new CtorDecl(tok(), dup(args), dup(body)); }
 auto StructDecl::clone() const -> StructDecl* { return new StructDecl(tok(), name, dup(fields), type_args, dup(body)); }
