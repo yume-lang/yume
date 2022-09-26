@@ -69,30 +69,21 @@ auto Fn::ast() const -> const ast::Stmt& {
 
 auto Fn::ret() const -> optional<ty::Type> {
   return def.visit_def([this](ast::CtorDecl* /*ctor*/) { return self_ty; },
-                       [](ast::FnDecl* ast) -> optional<ty::Type> {
-                         if (auto& ret = ast->ret; ret.has_value())
-                           return ret->val_ty();
-                         return {};
-                       },
                        [](auto* ast) -> optional<ty::Type> {
-                         if (auto& ret = ast->ret(); ret.has_value())
+                         if (auto& ret = ast->ret; ret.has_value())
                            return ret->val_ty();
                          return {};
                        });
 }
 
 auto Fn::arg_count() const -> size_t {
-  return def.visit_def([](ast::CtorDecl* ct_decl) { return ct_decl->args.size(); },
-                       [](ast::FnDecl* fn_decl) { return fn_decl->args.size(); },
-                       [](auto* decl) { return decl->args().size(); });
+  return def.visit_def([](auto* decl) { return decl->args.size(); });
 }
 
 auto Fn::arg_types() const -> vector<ty::Type> { return visit_map_args(fwd<&ast::TypeName::ensure_ty, ty::Type>); }
 auto Fn::arg_names() const -> vector<string> { return visit_map_args(fwd<&ast::TypeName::name, string>); }
 auto Fn::arg_nodes() const -> const vector<ast::TypeName>& {
-  return def.visit_def([](ast::CtorDecl* ct_decl) -> const auto& { return ct_decl->args; },
-                       [](ast::FnDecl* fn_decl) -> const auto& { return fn_decl->args; },
-                       [](auto* ast) -> const auto& { return ast->args(); });
+  return def.visit_def([](auto* ast) -> const auto& { return ast->args; });
 }
 auto Fn::args() const -> vector<FnArg> {
   return visit_map_args([](auto& arg) { return FnArg(arg.ensure_ty(), arg.name, arg); });
@@ -115,8 +106,7 @@ auto Fn::extern_linkage() const -> bool {
 }
 auto Fn::has_annotation(const string& name) const -> bool {
   return def.visit_def([](ast::CtorDecl* /*ctor*/) { return false; },
-                       [&name](ast::FnDecl* fn) { return fn->annotations.contains(name); },
-                       [&name](auto* ast) { return ast->annotations().contains(name); });
+                       [&name](auto* ast) { return ast->annotations.contains(name); });
 }
 
 void Fn::make_extern_linkage(bool value) {
@@ -127,7 +117,7 @@ void Fn::make_extern_linkage(bool value) {
 auto Fn::compound_body() -> ast::Compound& {
   return def.visit_def([](ast::FnDecl* fn_decl) -> auto& { return get<ast::Compound>(fn_decl->body); },
                        [](ast::CtorDecl* ct_decl) -> auto& { return ct_decl->body; },
-                       [](ast::LambdaExpr* lambda) -> auto& { return lambda->body(); });
+                       [](ast::LambdaExpr* lambda) -> auto& { return lambda->body; });
 }
 
 auto Fn::fn_body() -> ast::FnDecl::body_t& {

@@ -187,24 +187,24 @@ template <> void TypeWalker::expression(ast::LambdaExpr& expr) {
     auto arg_types = vector<ty::Type>{};
     auto ret_type = optional<ty::Type>{};
 
-    for (auto& i : expr.args()) {
+    for (auto& i : expr.args) {
       expression(i);
       scope.add(i.name, &i);
       arg_types.push_back(i.ensure_ty());
     }
 
-    if (expr.ret().has_value()) {
-      expression(*expr.ret());
-      ret_type = expr.ret()->ensure_ty();
+    if (expr.ret.has_value()) {
+      expression(*expr.ret);
+      ret_type = expr.ret->ensure_ty();
     }
 
-    body_statement(expr.body());
+    body_statement(expr.body);
 
     auto closured_types = vector<ty::Type>();
     for (const auto& i : closured) {
       closured_types.push_back(i.ast->ensure_ty());
-      expr.closured_names().push_back(i.name);
-      expr.closured_nodes().push_back(i.ast);
+      expr.closured_names.push_back(i.name);
+      expr.closured_nodes.push_back(i.ast);
     }
 
     expr.val_ty(compiler.m_types.find_or_create_fn_type(arg_types, ret_type, closured_types));

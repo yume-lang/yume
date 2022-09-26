@@ -879,7 +879,7 @@ template <> auto Compiler::expression(ast::LambdaExpr& expr) -> Val {
   fn.fn_ty = expr.ensure_ty().base_cast<ty::Function>();
 
   declare(fn);
-  expr.llvm_fn(fn.llvm);
+  expr.llvm_fn = fn.llvm;
 
   Val fn_bundle = llvm::UndefValue::get(fn.fn_ty->memo());
   fn_bundle = m_builder->CreateInsertValue(fn_bundle, fn.llvm, 0);
@@ -888,7 +888,7 @@ template <> auto Compiler::expression(ast::LambdaExpr& expr) -> Val {
   auto* llvm_closure = m_builder->CreateAlloca(llvm_closure_ty);
 
   // Capture every closured local in the closure object
-  for (const auto& i : llvm::enumerate(llvm::zip(expr.closured_names(), expr.closured_nodes()))) {
+  for (const auto& i : llvm::enumerate(llvm::zip(expr.closured_names, expr.closured_nodes))) {
     auto [name, ast_arg] = i.value();
     auto type = ast_arg->ensure_ty();
     auto* val = m_scope.find(name);
@@ -915,14 +915,14 @@ template <> auto Compiler::expression(ast::LambdaExpr& expr) -> Val {
       llvm_closure_ty, m_builder->CreateBitCast(fn.llvm->arg_begin(), llvm_closure_ty->getPointerTo()), "closure");
 
   // Add local variables for every captured variable
-  for (const auto& i : llvm::enumerate(llvm::zip(expr.closured_names(), expr.closured_nodes()))) {
+  for (const auto& i : llvm::enumerate(llvm::zip(expr.closured_names, expr.closured_nodes))) {
     auto [name, ast_arg] = i.value();
     auto type = ast_arg->ensure_ty();
     Val arg = m_builder->CreateExtractValue(closure_val, i.index());
     expose_parameter_as_local(type, name, *ast_arg, arg);
   }
 
-  body_statement(expr.body());
+  body_statement(expr.body);
   if (m_builder->GetInsertBlock()->getTerminator() == nullptr && !fn.fn_ty->m_ret.has_value())
     m_builder->CreateRetVoid();
 
@@ -1129,7 +1129,7 @@ template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
 
     setup_fn_base(fn);
 
-    body_statement(lambda_expr.body());
+    body_statement(lambda_expr.body);
     if (m_builder->GetInsertBlock()->getTerminator() == nullptr && !fn.fn_ty->m_ret.has_value())
       m_builder->CreateRetVoid();
 
