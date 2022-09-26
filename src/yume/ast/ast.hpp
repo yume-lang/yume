@@ -673,8 +673,7 @@ public:
   llvm::Function* llvm_fn{};
 
   LambdaExpr(span<Token> tok, vector<TypeName> args, OptionalType ret, Compound body, std::set<string> annotations)
-      : Expr(K_Lambda, tok), args(move(args)), ret(move(ret)), body(move(body)),
-        annotations(move(annotations)) {}
+      : Expr(K_Lambda, tok), args(move(args)), ret(move(ret)), body(move(body)), annotations(move(annotations)) {}
   void visit(Visitor& visitor) const override;
   // [[nodiscard]] auto describe() const -> string override; // TODO(rymiel)
 
@@ -718,8 +717,9 @@ public:
 
   FnDecl(span<Token> tok, string name, vector<TypeName> args, vector<string> type_args, OptionalType ret, body_t body,
          std::set<string> annotations)
-      : Decl(K_FnDecl, tok), name{move(name)}, annotations(move(annotations)), args{move(args)},
-        type_args{move(type_args)}, ret{move(ret)}, body{move(body)} {}
+      : Decl(K_FnDecl, tok), name{move(name)},
+        annotations(move(annotations)), args{move(args)}, type_args{move(type_args)}, ret{move(ret)}, body{move(body)} {
+  }
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
