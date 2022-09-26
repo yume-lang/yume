@@ -720,36 +720,21 @@ public:
 };
 
 /// A local definition of an anonymous function
-class LambdaExpr final : public Expr {
-  vector<TypeName> m_args;
-  OptionalType m_ret;
-  Compound m_body;
-  std::set<string> m_annotations;
-  vector<string> m_closured_names{};
-  vector<AST*> m_closured_nodes{};
-  llvm::Function* m_llvm_fn{};
-
+struct LambdaExpr final : public Expr {
 public:
+  vector<TypeName> args;
+  OptionalType ret;
+  Compound body;
+  std::set<string> annotations;
+  vector<string> closured_names{};
+  vector<AST*> closured_nodes{};
+  llvm::Function* llvm_fn{};
+
   LambdaExpr(span<Token> tok, vector<TypeName> args, OptionalType ret, Compound body, std::set<string> annotations)
-      : Expr(K_Lambda, tok), m_args(move(args)), m_ret(move(ret)), m_body(move(body)),
-        m_annotations(move(annotations)) {}
+      : Expr(K_Lambda, tok), args(move(args)), ret(move(ret)), body(move(body)),
+        annotations(move(annotations)) {}
   void visit(Visitor& visitor) const override;
   // [[nodiscard]] auto describe() const -> string override; // TODO(rymiel)
-
-  [[nodiscard]] auto args() const -> const auto& { return m_args; }
-  [[nodiscard]] auto args() -> auto& { return m_args; }
-  [[nodiscard]] auto ret() const -> const auto& { return m_ret; }
-  [[nodiscard]] auto ret() -> auto& { return m_ret; }
-  [[nodiscard]] auto body() const -> const auto& { return m_body; }
-  [[nodiscard]] auto body() -> auto& { return m_body; }
-  [[nodiscard]] auto annotations() const -> const auto& { return m_annotations; }
-  [[nodiscard]] auto annotations() -> auto& { return m_annotations; }
-  [[nodiscard]] auto closured_names() const -> const auto& { return m_closured_names; }
-  [[nodiscard]] auto closured_names() -> auto& { return m_closured_names; }
-  [[nodiscard]] auto closured_nodes() const -> const auto& { return m_closured_nodes; }
-  [[nodiscard]] auto closured_nodes() -> auto& { return m_closured_nodes; }
-  void llvm_fn(llvm::Function* fn);
-  [[nodiscard]] auto llvm_fn() const -> llvm::Function*;
 
   static auto classof(const AST* a) -> bool { return a->kind() == K_Lambda; }
   [[nodiscard]] auto clone() const -> LambdaExpr* override;

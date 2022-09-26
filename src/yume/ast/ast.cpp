@@ -38,7 +38,4 @@ auto CtorExpr::selected_overload() const -> Fn* { return m_selected_overload; }
 
 void CallExpr::selected_overload(Fn* fn) { m_selected_overload = fn; }
 auto CallExpr::selected_overload() const -> Fn* { return m_selected_overload; }
-
-void LambdaExpr::llvm_fn(llvm::Function* fn) { m_llvm_fn = fn; }
-auto LambdaExpr::llvm_fn() const -> llvm::Function* { return m_llvm_fn; }
 } // namespace yume::ast
