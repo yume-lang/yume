@@ -611,7 +611,7 @@ auto TypeWalker::convert_type(ast::Type& ast_type) -> ty::Type {
   const auto* context = static_cast<const DeclLike>(current_decl).subs();
 
   if (const auto* simple_type = dyn_cast<ast::SimpleType>(&ast_type)) {
-    auto name = simple_type->name();
+    auto name = simple_type->name;
     if (context != nullptr) {
       auto generic = context->find(name);
       if (generic != context->end())
