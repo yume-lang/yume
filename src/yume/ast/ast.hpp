@@ -928,19 +928,15 @@ public:
 };
 
 /// A while loop (`while`).
-class WhileStmt final : public Stmt {
-  AnyExpr m_cond;
-  Compound m_body;
-
+struct WhileStmt final : public Stmt {
 public:
+  AnyExpr cond;
+  Compound body;
+
   WhileStmt(span<Token> tok, AnyExpr cond, Compound body)
-      : Stmt(K_While, tok), m_cond{move(cond)}, m_body{move(body)} {}
+      : Stmt(K_While, tok), cond{move(cond)}, body{move(body)} {}
   void visit(Visitor& visitor) const override;
 
-  [[nodiscard]] auto cond() const -> const auto& { return *m_cond; }
-  [[nodiscard]] auto cond() -> auto& { return *m_cond; }
-  [[nodiscard]] auto body() const -> const auto& { return m_body; }
-  [[nodiscard]] auto body() -> auto& { return m_body; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_While; }
   [[nodiscard]] auto clone() const -> WhileStmt* override;
 };
