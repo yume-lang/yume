@@ -934,11 +934,11 @@ template <> auto Compiler::expression(ast::LambdaExpr& expr) -> Val {
 }
 
 template <> auto Compiler::expression(ast::DirectCallExpr& expr) -> Val {
-  auto call_target_ty = expr.base()->ensure_ty();
+  auto call_target_ty = expr.base->ensure_ty();
   auto* llvm_fn_ty = call_target_ty.base_cast<ty::Function>()->fn_memo();
   auto* llvm_fn_bundle_ty = llvm_type(call_target_ty.without_mut());
 
-  auto base = body_expression(*expr.base());
+  auto base = body_expression(*expr.base);
   if (call_target_ty.is_mut())
     base = m_builder->CreateLoad(llvm_fn_bundle_ty, base.llvm, "indir.fnptr.deref");
 
@@ -946,10 +946,10 @@ template <> auto Compiler::expression(ast::DirectCallExpr& expr) -> Val {
   auto* llvm_fn_closure = m_builder->CreateExtractValue(base, 1, "fnptr.closure");
 
   vector<llvm::Value*> args{};
-  args.reserve(expr.args().size());
+  args.reserve(expr.args.size());
   args.push_back(llvm_fn_closure);
 
-  for (auto& i : expr.args())
+  for (auto& i : expr.args)
     args.push_back(body_expression(*i));
 
   return m_builder->CreateCall(llvm_fn_ty, llvm_fn_ptr, args,

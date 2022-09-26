@@ -620,20 +620,15 @@ public:
 };
 
 /// A "direct" call to an anonymous function
-class DirectCallExpr : public Expr {
-  AnyExpr m_base;
-  vector<AnyExpr> m_args;
-
+struct DirectCallExpr : public Expr {
 public:
+  AnyExpr base;
+  vector<AnyExpr> args;
+
   DirectCallExpr(span<Token> tok, AnyExpr base, vector<AnyExpr> args)
-      : Expr(K_DirectCall, tok), m_base{move(base)}, m_args{move(args)} {}
+      : Expr(K_DirectCall, tok), base{move(base)}, args{move(args)} {}
   void visit(Visitor& visitor) const override;
   // [[nodiscard]] auto describe() const -> string override; // TODO(rymiel)
-
-  [[nodiscard]] auto base() const -> const auto& { return m_base; }
-  [[nodiscard]] auto base() -> auto& { return m_base; }
-  [[nodiscard]] auto args() const -> const auto& { return m_args; }
-  [[nodiscard]] auto args() -> auto& { return m_args; }
 
   static auto classof(const AST* a) -> bool { return a->kind() == K_DirectCall; }
   [[nodiscard]] auto clone() const -> DirectCallExpr* override;
