@@ -62,7 +62,7 @@ void LambdaExpr::visit(Visitor& visitor) const {
 }
 void DirectCallExpr::visit(Visitor& visitor) const { visitor.visit(m_base).visit(m_args); }
 void AssignExpr::visit(Visitor& visitor) const { visitor.visit(m_target).visit(m_value); }
-void FieldAccessExpr::visit(Visitor& visitor) const { visitor.visit(m_base).visit(m_field); }
+void FieldAccessExpr::visit(Visitor& visitor) const { visitor.visit(base).visit(field); }
 void ImplicitCastExpr::visit(Visitor& visitor) const { visitor.visit(conversion.to_string()).visit(base); }
 void Program::visit(Visitor& visitor) const { visitor.visit(body); }
 

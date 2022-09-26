@@ -663,21 +663,16 @@ public:
 };
 
 /// Direct access of a field of a struct (`::`).
-class FieldAccessExpr final : public Expr {
-  OptionalExpr m_base;
-  string m_field;
-  int m_offset = -1;
-
+struct FieldAccessExpr final : public Expr {
 public:
+  OptionalExpr base;
+  string field;
+  int offset = -1;
+
   FieldAccessExpr(span<Token> tok, OptionalExpr base, string field)
-      : Expr(K_FieldAccess, tok), m_base{move(base)}, m_field{move(field)} {}
+      : Expr(K_FieldAccess, tok), base{move(base)}, field{move(field)} {}
   void visit(Visitor& visitor) const override;
 
-  [[nodiscard]] auto base() const -> const auto& { return m_base; }
-  [[nodiscard]] auto base() -> auto& { return m_base; }
-  [[nodiscard]] auto field() const -> string { return m_field; }
-  void offset(int offset) { m_offset = offset; }
-  [[nodiscard]] auto offset() const -> int { return m_offset; }
   static auto classof(const AST* a) -> bool { return a->kind() == K_FieldAccess; }
   [[nodiscard]] auto clone() const -> FieldAccessExpr* override;
 };

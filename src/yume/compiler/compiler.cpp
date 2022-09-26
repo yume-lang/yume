@@ -843,11 +843,11 @@ template <> auto Compiler::expression(ast::AssignExpr& expr) -> Val {
     return expr_val;
   }
   if (auto* field_access = dyn_cast<ast::FieldAccessExpr>(expr.target().raw_ptr())) {
-    auto& field_base = field_access->base();
+    auto& field_base = field_access->base;
     const auto [struct_base, base] = [&]() -> tuple<ty::Type, Val> {
       if (field_base.has_value()) {
         auto base = body_expression(*field_base);
-        auto struct_base = field_access->base()->ensure_ty();
+        auto struct_base = field_access->base->ensure_ty();
         return {struct_base, base};
       } // TODO(rymiel): revisit
       if (!isa<ast::CtorDecl>(m_current_fn->ast()))
@@ -859,8 +859,8 @@ template <> auto Compiler::expression(ast::AssignExpr& expr) -> Val {
 
     yume_assert(struct_base.is_mut(), "Cannot assign into field of immutable structure");
 
-    const string base_name = field_access->field();
-    const int base_offset = field_access->offset();
+    const string base_name = field_access->field;
+    const int base_offset = field_access->offset;
 
     auto expr_val = body_expression(*expr.value());
     auto* struct_type = llvm_type(struct_base.ensure_mut_base().base_cast<ty::Struct>());
@@ -1080,16 +1080,16 @@ template <> auto Compiler::expression(ast::SliceExpr& expr) -> Val {
 template <> auto Compiler::expression(ast::FieldAccessExpr& expr) -> Val {
   optional<Val> base;
   optional<ty::Type> base_type;
-  if (expr.base().has_value()) {
-    base = body_expression(*expr.base());
-    base_type = expr.base()->ensure_ty().mut_base();
+  if (expr.base.has_value()) {
+    base = body_expression(*expr.base);
+    base_type = expr.base->ensure_ty().mut_base();
   } else {
     base = m_scope_ctor->value;
     base_type = m_current_fn->self_ty;
   }
 
-  const string base_name = expr.field();
-  const int base_offset = expr.offset();
+  const string base_name = expr.field;
+  const int base_offset = expr.offset;
 
   if (!expr.ensure_ty().is_mut())
     return m_builder->CreateExtractValue(*base, base_offset, "s.field.nm."s + base_name);

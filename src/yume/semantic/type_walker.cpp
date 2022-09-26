@@ -297,9 +297,9 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
   optional<ty::Type> type;
   bool base_is_mut = false;
 
-  if (expr.base().has_value()) {
-    body_expression(*expr.base());
-    type = expr.base()->ensure_ty();
+  if (expr.base.has_value()) {
+    body_expression(*expr.base);
+    type = expr.base->ensure_ty();
 
     if (type->is_mut()) {
       type = type->mut_base();
@@ -315,10 +315,10 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
   if (struct_type == nullptr)
     throw std::runtime_error("Can't access field of expression with non-struct type");
 
-  auto target_name = expr.field();
+  auto target_name = expr.field;
   auto [target_type, target_offset] = find_field(*struct_type, target_name);
 
-  expr.offset(target_offset);
+  expr.offset = target_offset;
   expr.val_ty(base_is_mut ? target_type->known_mut() : target_type);
 }
 
