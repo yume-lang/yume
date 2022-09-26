@@ -38,7 +38,7 @@ void FnDecl::visit(Visitor& visitor) const {
 }
 void CtorDecl::visit(Visitor& visitor) const { visitor.visit(m_args, "arg").visit(m_body); }
 void StructDecl::visit(Visitor& visitor) const {
-  visitor.visit(m_name).visit(m_fields, "field").visit(m_type_args, "type arg").visit(m_body);
+  visitor.visit(name).visit(fields, "field").visit(type_args, "type arg").visit(body);
 }
 void SimpleType::visit(Visitor& visitor) const { visitor.visit(m_name); }
 void QualType::visit(Visitor& visitor) const { visitor.visit(m_base, describe().c_str()); }

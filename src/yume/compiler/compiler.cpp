@@ -94,7 +94,7 @@ void Compiler::declare_default_ctor(Struct& st) {
 
   vector<ast::TypeName> ctor_args;
   vector<ast::AnyStmt> ctor_body;
-  for (auto& field : st.ast().fields()) {
+  for (auto& field : st.ast().fields) {
     auto tok = field.token_range();
     ast::AnyType proxy_type = make_unique<ast::ProxyType>(tok, field.name);
     ctor_args.emplace_back(field.token_range(), move(proxy_type), field.name);
@@ -185,14 +185,14 @@ auto Compiler::create_struct(Struct& st) -> bool {
   auto& s_decl = st.st_ast;
 
   auto fields = vector<ast::TypeName*>();
-  fields.reserve(s_decl.fields().size());
-  for (auto& f : s_decl.fields())
+  fields.reserve(s_decl.fields.size());
+  for (auto& f : s_decl.fields)
     fields.push_back(&f);
 
-  auto iter = m_types.known.find(s_decl.name());
+  auto iter = m_types.known.find(s_decl.name);
   if (iter == m_types.known.end()) {
     auto empl =
-        m_types.known.try_emplace(s_decl.name(), std::make_unique<ty::Struct>(s_decl.name(), move(fields), &st.subs));
+        m_types.known.try_emplace(s_decl.name, std::make_unique<ty::Struct>(s_decl.name, move(fields), &st.subs));
     yume_assert(isa<ty::Struct>(*empl.first->second));
     st.self_ty = &*empl.first->second;
     return true;
@@ -224,7 +224,7 @@ auto Compiler::decl_statement(ast::Stmt& stmt, optional<ty::Type> parent, ast::P
   if (auto* s_decl = dyn_cast<ast::StructDecl>(&stmt)) {
     vector<unique_ptr<ty::Generic>> type_args{};
     Substitution subs{};
-    for (auto& i : s_decl->type_args()) {
+    for (auto& i : s_decl->type_args) {
       auto& gen = type_args.emplace_back(std::make_unique<ty::Generic>(i));
       subs.try_emplace(i, gen.get());
     }
@@ -237,7 +237,7 @@ auto Compiler::decl_statement(ast::Stmt& stmt, optional<ty::Type> parent, ast::P
     if (st.name() == "Slice") // TODO(rymiel): magic value?
       m_slice_struct = &st;
 
-    for (auto& f : s_decl->body().body())
+    for (auto& f : s_decl->body.body())
       if (st.type_args.empty() || isa<ast::CtorDecl>(*f))
         decl_statement(*f, st.self_ty, member);
 

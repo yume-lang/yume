@@ -144,8 +144,8 @@ struct Struct {
 
   [[nodiscard]] auto ast() const noexcept -> const auto& { return st_ast; }
   [[nodiscard]] auto ast() noexcept -> auto& { return st_ast; }
-  [[nodiscard]] auto body() const noexcept -> const auto& { return st_ast.body(); }
-  [[nodiscard]] auto body() noexcept -> auto& { return st_ast.body(); }
+  [[nodiscard]] auto body() const noexcept -> const auto& { return st_ast.body; }
+  [[nodiscard]] auto body() noexcept -> auto& { return st_ast.body; }
   [[nodiscard]] auto get_self_ty() const noexcept -> optional<ty::Type> { return self_ty; };
   [[nodiscard]] auto get_subs() const noexcept -> const Substitution& { return subs; };
   [[nodiscard]] auto get_subs() noexcept -> Substitution& { return subs; };

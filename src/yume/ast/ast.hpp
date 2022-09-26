@@ -851,7 +851,7 @@ public:
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] auto name() const -> string { return ":new"; } // TODO(rymiel): Magic value?
+  [[nodiscard]] auto name() const -> string { return ":new"; }               // TODO(rymiel): Magic value?
   [[nodiscard]] auto decl_name() const -> string override { return ":new"; } // TODO(rymiel): Magic value?
   [[nodiscard]] auto args() const -> const auto& { return m_args; }
   [[nodiscard]] auto args() -> auto& { return m_args; }
@@ -862,26 +862,20 @@ public:
 };
 
 /// A declaration of a struct (`struct`).
-class StructDecl final : public Decl {
-  string m_name;
-  vector<TypeName> m_fields;
-  vector<string> m_type_args;
-  Compound m_body;
-
+struct StructDecl final : public Decl {
 public:
+  string name;
+  vector<TypeName> fields;
+  vector<string> type_args;
+  Compound body;
+
   StructDecl(span<Token> tok, string name, vector<TypeName> fields, vector<string> type_args, Compound body)
-      : Decl(K_StructDecl, tok), m_name{move(name)}, m_fields{move(fields)}, m_type_args{move(type_args)},
-        m_body(move(body)) {}
+      : Decl(K_StructDecl, tok), name{move(name)}, fields{move(fields)}, type_args{move(type_args)}, body(move(body)) {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override;
 
-  [[nodiscard]] auto name() const -> string { return m_name; }
-  [[nodiscard]] auto decl_name() const -> string override { return m_name; }
-  [[nodiscard]] constexpr auto fields() const -> const auto& { return m_fields; }
-  [[nodiscard]] constexpr auto fields() -> auto& { return m_fields; }
-  [[nodiscard]] constexpr auto body() const -> const auto& { return m_body; }
-  [[nodiscard]] constexpr auto body() -> auto& { return m_body; }
-  [[nodiscard]] auto type_args() const { return m_type_args; }
+  [[nodiscard]] auto decl_name() const -> string override { return name; }
+
   static auto classof(const AST* a) -> bool { return a->kind() == K_StructDecl; }
   [[nodiscard]] auto clone() const -> StructDecl* override;
 };
@@ -928,8 +922,7 @@ public:
   AnyExpr cond;
   Compound body;
 
-  WhileStmt(span<Token> tok, AnyExpr cond, Compound body)
-      : Stmt(K_While, tok), cond{move(cond)}, body{move(body)} {}
+  WhileStmt(span<Token> tok, AnyExpr cond, Compound body) : Stmt(K_While, tok), cond{move(cond)}, body{move(body)} {}
   void visit(Visitor& visitor) const override;
 
   static auto classof(const AST* a) -> bool { return a->kind() == K_While; }
@@ -942,8 +935,7 @@ public:
   AnyExpr cond;
   Compound body;
 
-  IfClause(span<Token> tok, AnyExpr cond, Compound body)
-      : AST(K_IfClause, tok), cond{move(cond)}, body{move(body)} {}
+  IfClause(span<Token> tok, AnyExpr cond, Compound body) : AST(K_IfClause, tok), cond{move(cond)}, body{move(body)} {}
   void visit(Visitor& visitor) const override;
 
   static auto classof(const AST* a) -> bool { return a->kind() == K_IfClause; }
