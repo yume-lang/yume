@@ -975,11 +975,11 @@ template <> auto Compiler::expression(ast::CtorExpr& expr) -> Val {
     // alloc = m_builder->CreateAlloca(llvm_struct_type, 0, nullptr, "s.ctor.alloca");
 
     //// Value allocation
-    auto* selected_ctor_overload = expr.selected_overload();
+    auto* selected_ctor_overload = expr.selected_overload;
 
     auto* llvm_fn = declare(*selected_ctor_overload);
     vector<llvm::Value*> llvm_args{};
-    for (auto& i : expr.args()) {
+    for (auto& i : expr.args) {
       auto arg = body_expression(*i);
       llvm_args.push_back(arg.llvm);
     }
@@ -994,8 +994,8 @@ template <> auto Compiler::expression(ast::CtorExpr& expr) -> Val {
     return base_value;
   }
   if (auto int_type = type.without_mut().try_as<ty::Int>()) {
-    yume_assert(expr.args().size() == 1, "Numeric cast can only contain a single argument");
-    auto& cast_from = expr.args()[0];
+    yume_assert(expr.args.size() == 1, "Numeric cast can only contain a single argument");
+    auto& cast_from = expr.args[0];
     yume_assert(cast_from->ensure_ty().without_mut().base_isa<ty::Int>(), "Numeric cast must convert from int");
     auto base = body_expression(*cast_from);
     if (cast_from->ensure_ty().without_mut().base_cast<ty::Int>()->is_signed()) {

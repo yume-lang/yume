@@ -80,8 +80,8 @@ auto Compound::clone() const -> Compound* { return new Compound(tok(), dup(body)
 auto VarExpr::clone() const -> VarExpr* { return new VarExpr(tok(), m_name); }
 auto ConstExpr::clone() const -> ConstExpr* { return new ConstExpr(tok(), m_name, m_parent); }
 auto CallExpr::clone() const -> CallExpr* { return new CallExpr(tok(), m_name, dup(m_args)); }
-auto CtorExpr::clone() const -> CtorExpr* { return new CtorExpr(tok(), dup(m_type), dup(m_args)); }
-auto DtorExpr::clone() const -> DtorExpr* { return new DtorExpr(tok(), dup(m_base)); }
+auto CtorExpr::clone() const -> CtorExpr* { return new CtorExpr(tok(), dup(type), dup(args)); }
+auto DtorExpr::clone() const -> DtorExpr* { return new DtorExpr(tok(), dup(base)); }
 auto SliceExpr::clone() const -> SliceExpr* { return new SliceExpr(tok(), dup(type), dup(args)); }
 auto LambdaExpr::clone() const -> LambdaExpr* {
   return new LambdaExpr(tok(), dup(args), dup(ret), dup(body), dup(annotations));

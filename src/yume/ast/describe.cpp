@@ -51,8 +51,8 @@ auto StringExpr::describe() const -> string { return m_val; }
 auto VarExpr::describe() const -> string { return m_name; }
 auto ConstExpr::describe() const -> string { return m_name; }
 auto CallExpr::describe() const -> string { return m_name; }
-auto CtorExpr::describe() const -> string { return m_type->describe(); }
-auto DtorExpr::describe() const -> string { return m_base->describe(); }
+auto CtorExpr::describe() const -> string { return type->describe(); }
+auto DtorExpr::describe() const -> string { return base->describe(); }
 auto SliceExpr::describe() const -> string { return type->describe(); }
 auto FnDecl::describe() const -> string { return name; }
 auto CtorDecl::describe() const -> string { return ":new"; }

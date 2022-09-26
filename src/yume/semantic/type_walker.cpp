@@ -102,8 +102,8 @@ static inline auto for_all_instantiations(std::deque<Struct>& structs, std::invo
 template <> void TypeWalker::expression(ast::CtorExpr& expr) {
   Struct* st = nullptr;
 
-  expression(expr.type());
-  auto base_type = convert_type(expr.type());
+  expression(*expr.type);
+  auto base_type = convert_type(*expr.type);
 
   for_all_instantiations(compiler.m_structs, [&](Struct& i) {
     if (i.self_ty == base_type)
@@ -120,7 +120,7 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
     ctor_overloads = all_ctor_overloads_by_type(*st, expr);
   }
 
-  for (auto& i : expr.args()) {
+  for (auto& i : expr.args) {
     body_expression(*i);
     ctor_overloads.args.push_back(i.raw_ptr());
   }
@@ -153,7 +153,7 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
 
     // XXX: STILL Duplicated from function overload handling
     for (auto [target, expr_arg, compat] :
-         llvm::zip(selected->arg_types(), expr.args(), best_overload.compatibilities)) {
+         llvm::zip(selected->arg_types(), expr.args, best_overload.compatibilities)) {
       yume_assert(compat.valid, "Invalid compatibility after overload already selected?????");
       if (compat.conv.empty())
         continue;
@@ -161,7 +161,7 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
       wrap_in_implicit_cast(expr_arg, compat.conv, target);
     }
 
-    expr.selected_overload(selected);
+    expr.selected_overload = selected;
   }
 }
 
