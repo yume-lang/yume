@@ -106,12 +106,12 @@ constexpr auto ast_comparison = [](const yume::ast::Program& a,
   {
     yume::diagnostic::HashVisitor visitor(expected_seed);
     for (const auto& i : a.body)
-      visitor.visit(*i, nullptr);
+      visitor.visit(*i, "");
   }
   {
     yume::diagnostic::HashVisitor visitor(actual_seed);
     for (const auto& i : b)
-      visitor.visit(*i, nullptr);
+      visitor.visit(*i, "");
   }
   return expected_seed == actual_seed;
 };

@@ -81,7 +81,7 @@ void DotVisitor::DotNode::write(llvm::raw_ostream& stream) const {
   }
 }
 
-auto DotVisitor::visit(const ast::AST& expr, const char* label) -> DotVisitor& {
+auto DotVisitor::visit(const ast::AST& expr, string_view label) -> DotVisitor& {
   Loc location = expr.location();
   optional<string> type = {};
   if (auto val_ty = expr.val_ty(); val_ty) {
@@ -89,7 +89,7 @@ auto DotVisitor::visit(const ast::AST& expr, const char* label) -> DotVisitor& {
   }
   auto kind_label = xml_escape(expr.kind_name());
 
-  auto& node = add_node(DotNode(m_index, location, type, kind_label), label);
+  auto& node = add_node(DotNode(m_index, location, type, kind_label), label.data());
 
   auto* restore_parent = std::exchange(m_parent, &node);
   expr.visit(*this);
@@ -104,14 +104,14 @@ auto DotVisitor::visit(const ast::AST& expr, const char* label) -> DotVisitor& {
   return *this;
 }
 
-auto DotVisitor::visit(const string& str, const char* label) -> DotVisitor& {
-  add_node(xml_escape(str), label);
+auto DotVisitor::visit(const string& str, string_view label) -> DotVisitor& {
+  add_node(xml_escape(str), label.data());
 
   return *this;
 }
 
-auto DotVisitor::visit(std::nullptr_t, const char* label) -> DotVisitor& {
-  add_node("<FONT COLOR=\"RED\">NULL</FONT>", label);
+auto DotVisitor::visit(std::nullptr_t, string_view label) -> DotVisitor& {
+  add_node("<FONT COLOR=\"RED\">NULL</FONT>", label.data());
 
   return *this;
 }

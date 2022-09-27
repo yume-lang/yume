@@ -17,7 +17,7 @@ class PrintVisitor : public Visitor {
   llvm::raw_ostream& m_stream;
   bool m_needs_sep = false;
 
-  void header(const char* label);
+  void header(string_view label);
 
 public:
   explicit PrintVisitor(llvm::raw_ostream& stream) : m_stream{stream} {}
@@ -28,24 +28,22 @@ public:
   auto operator=(const PrintVisitor&) -> PrintVisitor& = delete;
   auto operator=(PrintVisitor&&) -> PrintVisitor& = delete;
 
-  auto visit(const ast::AST& expr, const char* label) -> PrintVisitor& override;
-
-  auto visit(std::nullptr_t null, const char* label) -> PrintVisitor& override;
-
-  auto visit(const string& str, const char* label) -> PrintVisitor& override;
+  auto visit(const ast::AST& expr, string_view label) -> PrintVisitor& override;
+  auto visit(std::nullptr_t null, string_view label) -> PrintVisitor& override;
+  auto visit(const string& str, string_view label) -> PrintVisitor& override;
 };
 
-inline void PrintVisitor::header(const char* label) {
+inline void PrintVisitor::header(string_view label) {
   if (m_needs_sep)
     m_stream << " ";
   else
     m_needs_sep = true;
 
-  if (label != nullptr)
+  if (!label.empty())
     m_stream << label << "=";
 }
 
-inline auto PrintVisitor::visit(const ast::AST& expr, const char* label) -> PrintVisitor& {
+inline auto PrintVisitor::visit(const ast::AST& expr, string_view label) -> PrintVisitor& {
   header(label);
 
   m_stream.changeColor(llvm::raw_ostream::SAVEDCOLOR, true) << expr.kind_name();
@@ -59,7 +57,7 @@ inline auto PrintVisitor::visit(const ast::AST& expr, const char* label) -> Prin
   return *this;
 }
 
-inline auto PrintVisitor::visit(const string& str, const char* label) -> PrintVisitor& {
+inline auto PrintVisitor::visit(const string& str, string_view label) -> PrintVisitor& {
   header(label);
 
   m_stream << '\"';
@@ -69,7 +67,7 @@ inline auto PrintVisitor::visit(const string& str, const char* label) -> PrintVi
   return *this;
 }
 
-inline auto PrintVisitor::visit(std::nullptr_t, const char* label) -> PrintVisitor& {
+inline auto PrintVisitor::visit(std::nullptr_t, string_view label) -> PrintVisitor& {
   header(label);
 
   m_stream.changeColor(llvm::raw_ostream::RED) << "null";

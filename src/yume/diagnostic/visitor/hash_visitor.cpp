@@ -3,7 +3,7 @@
 #include <cstddef>
 
 namespace yume::diagnostic {
-inline auto HashVisitor::visit(const ast::AST& expr, const char* label) -> HashVisitor& {
+inline auto HashVisitor::visit(const ast::AST& expr, string_view label) -> HashVisitor& {
   hash_combine(m_seed, label);
   hash_combine(m_seed, expr.kind_name());
   hash_combine(m_seed, expr.describe());
@@ -12,14 +12,14 @@ inline auto HashVisitor::visit(const ast::AST& expr, const char* label) -> HashV
   return *this;
 }
 
-inline auto HashVisitor::visit(const string& str, const char* label) -> HashVisitor& {
+inline auto HashVisitor::visit(const string& str, string_view label) -> HashVisitor& {
   hash_combine(m_seed, label);
   hash_combine(m_seed, str);
 
   return *this;
 }
 
-inline auto HashVisitor::visit(std::nullptr_t, const char* label) -> HashVisitor& {
+inline auto HashVisitor::visit(std::nullptr_t, string_view label) -> HashVisitor& {
   hash_combine(m_seed, label);
   hash_combine(m_seed, nullptr);
 

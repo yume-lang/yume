@@ -38,10 +38,8 @@ public:
   auto operator=(const HashVisitor&) -> HashVisitor& = delete;
   auto operator=(HashVisitor&&) -> HashVisitor& = delete;
 
-  auto visit(const ast::AST& expr, const char* label) -> HashVisitor& override;
-
-  auto visit(std::nullptr_t null, const char* label) -> HashVisitor& override;
-
-  auto visit(const string& str, const char* label) -> HashVisitor& override;
+  auto visit(const ast::AST& expr, string_view label) -> HashVisitor& override;
+  auto visit(std::nullptr_t null, string_view label) -> HashVisitor& override;
+  auto visit(const string& str, string_view label) -> HashVisitor& override;
 };
 } // namespace yume::diagnostic
