@@ -103,8 +103,6 @@ constexpr DirectReplaceSimplify STRING_SIMPLIFY = {
 constexpr DirectReplaceSimplify STRINGSTREAM_SIMPLIFY = {
     "std::__cxx11::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >", "std::stringstream"};
 constexpr DirectReplaceSimplify ANONYMOUS_NS_SIMPLIFY = {"::(anonymous namespace)::", ":::"};
-constexpr DirectReplaceSimplify DECL_LIKE_SIMPLIFY = {"std::variant<std::monostate, yume::Fn*, yume::Struct*>",
-                                                      "yume::DeclLike"};
 
 auto stacktrace_ostream::simplify(string_view msg, ContainerLikeSimplify s) -> bool {
   constexpr static const string_view MIDDLE_END = "> >";
@@ -175,7 +173,7 @@ auto stacktrace_ostream::simplify(string_view msg, DirectReplaceSimplify s) -> b
 void stacktrace_ostream::simplify(string_view msg) {
   bool found_any = simplify(msg, UPTR_SIMPLIFY) || simplify(msg, VEC_SIMPLIFY) || simplify(msg, STRING_SIMPLIFY) ||
                    simplify(msg, STRINGSTREAM_SIMPLIFY) || simplify(msg, ANONYMOUS_NS_SIMPLIFY) ||
-                   simplify(msg, SPAN_SIMPLIFY) || simplify(msg, DECL_LIKE_SIMPLIFY);
+                   simplify(msg, SPAN_SIMPLIFY);
 
   if (found_any)
     return;

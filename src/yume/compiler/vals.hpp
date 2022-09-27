@@ -35,23 +35,9 @@ struct FnArg {
   FnArg(ty::Type type, string name, const ast::AST& ast) : type{type}, name{move(name)}, ast{ast} {};
 };
 
-using Def_t = std::variant<ast::FnDecl*, ast::CtorDecl*, ast::LambdaExpr*>;
+using Def_t = visitable_variant<ast::FnDecl*, ast::CtorDecl*, ast::LambdaExpr*>;
 struct Def : public Def_t {
-private:
-  template <typename R, typename... Ts> struct DefVisitor : Ts... {
-    using Ts::operator()...;
-  };
-  template <typename R, typename... Ts> DefVisitor(R, Ts...) -> DefVisitor<R, Ts...>;
-
-public:
   using Def_t::Def_t;
-
-  template <typename R = void, typename... Ts> auto visit_def(Ts... ts) -> decltype(auto) {
-    return std::visit(DefVisitor<R, Ts...>{ts...}, *this);
-  }
-  template <typename R = void, typename... Ts> [[nodiscard]] auto visit_def(Ts... ts) const -> decltype(auto) {
-    return std::visit(DefVisitor<R, Ts...>{ts...}, *this);
-  }
 };
 
 /// A function declaration in the compiler.
@@ -81,7 +67,7 @@ struct Fn {
      vector<unique_ptr<ty::Generic>> type_args = {})
       : def{def}, self_ty{parent}, member{member}, subs{move(subs)}, type_args(move(type_args)) {}
 
-  [[nodiscard]] auto fn_body() -> ast::FnDecl::body_t&;
+  [[nodiscard]] auto fn_body() -> ast::FnDecl::Body&;
   [[nodiscard]] auto compound_body() -> ast::Compound&;
   [[nodiscard]] auto ast() const -> const ast::Stmt&;
   [[nodiscard]] auto ast() -> ast::Stmt&;
@@ -113,7 +99,7 @@ private:
   auto visit_map_args(F fn) const -> std::vector<T> {
     std::vector<T> vec = {};
     vec.reserve(arg_count());
-    def.visit_def([&](auto* ast) {
+    def.visit([&](auto* ast) {
       for (auto& i : ast->args)
         vec.emplace_back(std::move<T>(fn(i)));
     });
@@ -187,63 +173,52 @@ struct Const {
   }
 };
 
-using DeclLike_t = std::variant<std::monostate, Fn*, Struct*, Const*>;
+using DeclLike_t = visitable_variant<std::monostate, Fn*, Struct*, Const*>;
 
-/// A common base between declarations in the compiler: `Fn` and `Struct`. Its value may also be absent
+/// A common base between declarations in the compiler: `Fn`, `Struct` and `Const`. Its value may also be absent
 /// (`std::monostate`).
 struct DeclLike : public DeclLike_t {
-private:
-  template <typename R, typename... Ts> struct DeclLikeVisitor : Ts... {
-    using Ts::operator()...;
-    auto operator()(std::monostate /* ignored */) noexcept(noexcept(R())) -> R { return R(); };
-  };
-  template <typename R, typename... Ts> DeclLikeVisitor(R, Ts...) -> DeclLikeVisitor<R, Ts...>;
-
 public:
   using DeclLike_t::DeclLike_t;
 
-  template <typename R = void, typename... Ts> auto visit_decl(Ts... ts) {
-    return std::visit(DeclLikeVisitor<R, Ts...>{ts...}, *this);
-  }
-  template <typename R = void, typename... Ts> [[nodiscard]] auto visit_decl(Ts... ts) const {
-    return std::visit(DeclLikeVisitor<R, Ts...>{ts...}, *this);
-  }
-
   [[nodiscard]] auto subs() const noexcept -> const Substitution* {
-    return visit_decl<const Substitution*>( //
-        [](Const* /*cn*/) noexcept -> const Substitution* { return nullptr; },
-        [](auto* decl) noexcept -> const Substitution* {
-          if (decl == nullptr)
-            return nullptr;
-          auto& subs = decl->get_subs();
-          if (auto self = decl->get_self_ty(); subs.empty() && self.has_value())
-            if (auto* self_st = self->template base_dyn_cast<ty::Struct>())
-              return &self_st->subs();
+    return visit([](std::monostate /*absent*/) noexcept -> const Substitution* { return nullptr; },
+                 [](Const* /*cn*/) noexcept -> const Substitution* { return nullptr; },
+                 [](auto* decl) noexcept -> const Substitution* {
+                   if (decl == nullptr)
+                     return nullptr;
+                   auto& subs = decl->get_subs();
+                   if (auto self = decl->get_self_ty(); subs.empty() && self.has_value())
+                     if (auto* self_st = self->template base_dyn_cast<ty::Struct>())
+                       return &self_st->subs();
 
-          return &subs;
-        });
+                   return &subs;
+                 });
   };
 
   [[nodiscard]] auto subs() noexcept -> Substitution* {
-    return visit_decl<Substitution*>( //
-        [](Const* /*cn*/) noexcept -> Substitution* { return nullptr; },
-        [](auto* decl) noexcept -> Substitution* {
-          if (decl == nullptr)
-            return nullptr;
-          return &decl->get_subs();
-        });
+    return visit([](std::monostate /*absent*/) noexcept -> Substitution* { return nullptr; },
+                 [](Const* /*cn*/) noexcept -> Substitution* { return nullptr; },
+                 [](auto* decl) noexcept -> Substitution* {
+                   if (decl == nullptr)
+                     return nullptr;
+                   return &decl->get_subs();
+                 });
   };
 
   [[nodiscard]] auto ast() const noexcept -> const ast::AST* {
-    return visit_decl<const ast::AST*>([](const auto* decl) noexcept -> const ast::AST* { return &decl->ast(); });
+    return visit([](std::monostate /*absent*/) noexcept -> const ast::AST* { return nullptr; },
+                 [](const auto* decl) noexcept -> const ast::AST* { return &decl->ast(); });
   };
 
   [[nodiscard]] auto ast() noexcept -> ast::AST* {
-    return visit_decl<ast::AST*>([](auto* decl) noexcept -> ast::AST* { return &decl->ast(); });
+    return visit([](std::monostate /*absent*/) noexcept -> ast::AST* { return nullptr; },
+                 [](auto* decl) noexcept -> ast::AST* { return &decl->ast(); });
   };
 
   [[nodiscard]] auto self_ty() const noexcept -> optional<ty::Type> {
-    return visit_decl<optional<ty::Type>>([](const auto* decl) noexcept { return decl->get_self_ty(); });
+    return visit([](std::monostate /*absent*/) noexcept { return optional<ty::Type>{}; },
+                 [](const auto* decl) noexcept { return decl->get_self_ty(); });
   };
 };
 

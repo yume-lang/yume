@@ -59,10 +59,9 @@ public:
     return *this;
   }
 
-  template <typename T, typename U> auto visit(const std::variant<T, U>& var, const char* label = nullptr) -> Visitor& {
-    if (std::holds_alternative<T>(var))
-      return visit(std::get<T>(var), label);
-    return visit(std::get<U>(var), label);
+  template <typename... Ts>
+  [[deprecated]] auto visit(const std::variant<Ts...>& var, const char* label = nullptr) -> Visitor& {
+    return std::visit([this, label](auto&& x) -> Visitor& { return visit(std::forward<decltype(x)>(x), label); }, var);
   }
 
   template <typename T> auto visit(std::pair<T, const char*>& pair) -> Visitor& {

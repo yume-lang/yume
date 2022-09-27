@@ -22,7 +22,6 @@
 #include <ranges>
 #include <stdexcept>
 #include <utility>
-#include <variant>
 #include <vector>
 
 namespace yume::semantic {
@@ -675,23 +674,23 @@ void TypeWalker::resolve_queue() {
     decl_queue.pop();
 
     with_saved_scope([&] {
-      next.visit_decl( //
-          [&](Const* /* cn */) {},
-          [&](Fn* fn) {
-            in_depth = true;
-            compiler.declare(*fn);
-          },
-          [&](Struct* st) {
-            for (auto& i : st->body()) {
-              auto decl = compiler.decl_statement(*i, st->self_ty, st->member);
+      next.visit([](std::monostate /* absent */) {}, //
+                 [](Const* /* cn */) {},
+                 [&](Fn* fn) {
+                   in_depth = true;
+                   compiler.declare(*fn);
+                 },
+                 [&](Struct* st) {
+                   for (auto& i : st->body()) {
+                     auto decl = compiler.decl_statement(*i, st->self_ty, st->member);
 
-              // "Inherit" substitutions
-              // TODO(rymiel): Shadowing type variables should be an error
-              for (auto& [k, v] : st->subs)
-                decl.subs()->try_emplace(k, v);
-              compiler.walk_types(decl);
-            }
-          });
+                     // "Inherit" substitutions
+                     // TODO(rymiel): Shadowing type variables should be an error
+                     for (auto& [k, v] : st->subs)
+                       decl.subs()->try_emplace(k, v);
+                     compiler.walk_types(decl);
+                   }
+                 });
     });
   }
 }
