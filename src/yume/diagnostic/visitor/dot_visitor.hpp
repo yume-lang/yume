@@ -65,10 +65,8 @@ public:
   auto operator=(const DotVisitor&) -> DotVisitor& = delete;
   auto operator=(DotVisitor&&) -> DotVisitor& = delete;
 
-  auto visit(const ast::AST& expr, const char* label) -> DotVisitor& override;
-
-  auto visit(std::nullptr_t null, const char* label) -> DotVisitor& override;
-
-  auto visit(const string& str, const char* label) -> DotVisitor& override;
+  auto visit(const ast::AST& expr, string_view label) -> DotVisitor& override;
+  auto visit(std::nullptr_t null, string_view label) -> DotVisitor& override;
+  auto visit(const string& str, string_view label) -> DotVisitor& override;
 };
 } // namespace yume::diagnostic

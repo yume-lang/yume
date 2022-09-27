@@ -86,8 +86,9 @@ auto compile(const std::optional<std::string>& target_triple, std::vector<std::s
       auto src_name = src_input->getBufferIdentifier().str();
       auto src_stream = std::stringstream(std::string(src_input->getBufferStart(), src_input->getBufferSize()));
       auto& source = source_files.emplace_back(src_stream, src_name);
+
       if (flags & CompilerFlags::EmitUntypedDot) {
-        dot_visitor->visit(*source.program, nullptr);
+        dot_visitor->visit(*source.program, "");
       }
 
       auto token_it = source.iterator;
@@ -112,7 +113,7 @@ auto compile(const std::optional<std::string>& target_triple, std::vector<std::s
       const std::string full_name = "output_"s + std::string(yume::stem(i.name)) + ".dot";
       auto dot = yume::open_file(full_name.c_str());
       auto visitor = yume::diagnostic::DotVisitor{*dot};
-      visitor.visit(*i.program, nullptr);
+      visitor.visit(*i.program, "");
     }
   }
 
