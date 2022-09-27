@@ -167,18 +167,20 @@ void Compiler::run() {
   while (!m_decl_queue.empty()) {
     auto next = m_decl_queue.front();
     m_decl_queue.pop();
-    next.visit_decl([&](Fn* fn) { define(*fn); }, //
-                    [&](Const* cn) { define(*cn); },
-                    [&](Struct* /*st*/) { throw std::logic_error("Cannot define a struct"); });
+    next.visit([](std::monostate /*absent*/) { /* nothing to do */ }, //
+               [&](Fn* fn) { define(*fn); },                          //
+               [&](Const* cn) { define(*cn); },
+               [&](Struct* /*st*/) { throw std::logic_error("Cannot define a struct"); });
   }
 }
 
 void Compiler::walk_types(DeclLike decl_like) {
-  decl_like.visit_decl([&](auto& decl) {
-    m_walker->current_decl = decl;
-    m_walker->body_statement(decl->ast());
-    m_walker->current_decl = {};
-  });
+  decl_like.visit([](std::monostate /*absent*/) { /* nothing to do */ },
+                  [&](auto& decl) {
+                    m_walker->current_decl = decl;
+                    m_walker->body_statement(decl->ast());
+                    m_walker->current_decl = {};
+                  });
 }
 
 auto Compiler::create_struct(Struct& st) -> bool {

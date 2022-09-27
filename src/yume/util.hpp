@@ -13,12 +13,12 @@
 #include <sstream>
 #include <string_view>
 #include <tuple>
+#include <type_traits>
 #include <utility>
 #include <variant>
 #include <vector>
 
 namespace yume {
-
 using namespace std::literals::string_literals;
 using namespace std::literals::string_view_literals;
 using std::array;
@@ -37,6 +37,30 @@ using llvm::dyn_cast;
 using llvm::errs;
 using llvm::isa;
 using std::move;
+
+template <typename... Ts>
+struct visitable_variant : public std::variant<Ts...> { // NOLINT(readability-identifier-naming): STL-like class
+private:
+  template <typename... Vs> struct Visitor : Vs... {
+    using Vs::operator()...;
+  };
+  template <typename... Vs> Visitor(Vs...) -> Visitor<Vs...>;
+
+public:
+  using std::variant<Ts...>::variant;
+
+  template <typename... Us> auto visit(Us... us) -> decltype(auto) { return std::visit(Visitor<Us...>{us...}, *this); }
+  template <typename... Us> [[nodiscard]] auto visit(Us... us) const -> decltype(auto) {
+    return std::visit(Visitor<Us...>{us...}, *this);
+  }
+};
+
+template <typename T>
+concept visitable = requires(T t) {
+                      {
+                        t.visit([](auto&&) {})
+                      };
+                    };
 
 #if __has_feature(nullability)
 template <typename T> using nullable = T _Nullable;

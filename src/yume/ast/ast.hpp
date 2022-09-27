@@ -703,7 +703,10 @@ public:
     bool varargs;
   };
 
-  using body_t = variant<Compound, string, extern_decl_t>;
+  using body_base_t = visitable_variant<Compound, string, extern_decl_t>;
+  struct Body : public body_base_t {
+    using body_base_t::body_base_t;
+  };
 
   static constexpr auto ANN_EXTERN = "extern";
 
@@ -715,9 +718,9 @@ public:
   /// If this function declaration refers to a primitive, this field is a string representing the name of the primitive.
   /// If it's an external method, this field is a pair of the extern name and whether the method is varargs.
   /// Otherise, this function declaration refers to a regular function and this field holds the body of that function.
-  body_t body;
+  Body body;
 
-  FnDecl(span<Token> tok, string name, vector<TypeName> args, vector<string> type_args, OptionalType ret, body_t body,
+  FnDecl(span<Token> tok, string name, vector<TypeName> args, vector<string> type_args, OptionalType ret, Body body,
          std::set<string> annotations)
       : Decl(K_FnDecl, tok), name{move(name)},
         annotations(move(annotations)), args{move(args)}, type_args{move(type_args)}, ret{move(ret)}, body{move(body)} {

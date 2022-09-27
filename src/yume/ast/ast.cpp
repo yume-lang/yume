@@ -57,8 +57,12 @@ template <std::derived_from<ast::AST> T> auto dup(const T& ast) -> T {
 
 template <std::copy_constructible T> auto dup(const T& obj) -> T { return T(obj); }
 
-template <typename... Ts> auto dup(const std::variant<Ts...>& var) -> std::variant<Ts...> {
+template <typename... Ts> [[deprecated]] auto dup(const std::variant<Ts...>& var) -> std::variant<Ts...> {
   return std::visit([](auto&& x) { return std::variant<Ts...>{dup(std::forward<decltype(x)>(x))}; }, var);
+}
+
+template <visitable T> auto dup(const T& var) -> T {
+  return var.visit([](auto&& x) { return T{dup(std::forward<decltype(x)>(x))}; });
 }
 
 template <typename T> auto dup(const optional<T>& opt) {
