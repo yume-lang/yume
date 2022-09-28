@@ -1,0 +1,7 @@
+<map id="yume::ast::NumberExpr" name="yume::ast::NumberExpr">
+<area shape="rect" id="node1" title="Number literals." alt="" coords="38,247,193,273"/>
+<area shape="rect" id="node2" href="$classyume_1_1ast_1_1Expr.html" title="Expressions have an associated value and type." alt="" coords="7,157,115,184"/>
+<area shape="rect" id="node3" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="5,81,116,108"/>
+<area shape="rect" id="node4" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="6,5,115,32"/>
+<area shape="rect" id="node5" title=" " alt="" coords="139,157,201,184"/>
+</map>

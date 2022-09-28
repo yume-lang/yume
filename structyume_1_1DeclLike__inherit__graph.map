@@ -1,4 +1,5 @@
 <map id="yume::DeclLike" name="yume::DeclLike">
-<area shape="rect" id="node1" title="A common base between declarations in the compiler: Fn and Struct. Its value may also be absent (std:..." alt="" coords="5,80,116,107"/>
-<area shape="rect" id="node2" href="$classDeclLike__t.html" title=" " alt="" coords="19,5,103,32"/>
+<area shape="rect" id="node1" title="A common base between declarations in the compiler: Fn, Struct and Const. Its value may also be absen..." alt="" coords="15,155,126,181"/>
+<area shape="rect" id="node2" href="$structyume_1_1visitable__variant.html" title=" " alt="" coords="29,80,113,107"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,5,136,32"/>
 </map>

@@ -1,4 +1,5 @@
 <map id="yume::Def" name="yume::Def">
-<area shape="rect" id="node1" title=" " alt="" coords="5,80,84,107"/>
-<area shape="rect" id="node2" href="$classDef__t.html" title=" " alt="" coords="18,5,71,32"/>
+<area shape="rect" id="node1" title=" " alt="" coords="31,155,110,181"/>
+<area shape="rect" id="node2" href="$structyume_1_1visitable__variant.html" title=" " alt="" coords="44,80,97,107"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,5,136,32"/>
 </map>

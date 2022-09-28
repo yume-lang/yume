@@ -1,4 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classDef__t.html" title=" " alt="" coords="5,5,59,32"/>
-<area shape="rect" id="node2" href="$structyume_1_1Def.html" title=" " alt="" coords="107,5,185,32"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,56,91,83"/>
+<area shape="rect" id="node2" href="$structyume_1_1visitable__variant.html" title=" " alt="" coords="139,49,292,90"/>
+<area shape="rect" id="node3" href="$structyume_1_1DeclLike.html" title="A common base between declarations in the compiler: Fn, Struct and Const. Its value may also be absen..." alt="" coords="364,5,475,32"/>
+<area shape="rect" id="node4" href="$structyume_1_1Def.html" title=" " alt="" coords="380,56,459,83"/>
+<area shape="rect" id="node5" href="$structyume_1_1ast_1_1FnDecl_1_1Body.html" title=" " alt="" coords="340,107,499,133"/>
 </map>

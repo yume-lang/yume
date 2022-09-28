@@ -1,6 +1,0 @@
-<map id="yume::ast::VarExpr" name="yume::ast::VarExpr">
-<area shape="rect" id="node1" title="A variable, i.e. just an identifier." alt="" coords="5,229,133,256"/>
-<area shape="rect" id="node2" href="$classyume_1_1ast_1_1Expr.html" title="Expressions have an associated value and type." alt="" coords="15,155,123,181"/>
-<area shape="rect" id="node3" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="14,80,125,107"/>
-<area shape="rect" id="node4" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="15,5,124,32"/>
-</map>

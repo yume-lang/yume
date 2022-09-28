@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['templatedtype_0',['TemplatedType',['../classyume_1_1ast_1_1TemplatedType.html',1,'yume::ast']]],
+  ['templatedtype_0',['TemplatedType',['../structyume_1_1ast_1_1TemplatedType.html',1,'yume::ast']]],
   ['token_1',['Token',['../structyume_1_1Token.html',1,'yume']]],
   ['tokeniterator_2',['TokenIterator',['../classyume_1_1ast_1_1TokenIterator.html',1,'yume::ast']]],
   ['tokenizer_3',['Tokenizer',['../classyume_1_1Tokenizer.html',1,'yume']]],

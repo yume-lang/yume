@@ -1,0 +1,9 @@
+<map id="yume::ast::FunctionType" name="yume::ast::FunctionType">
+<area shape="rect" id="node1" title="A function type i.e. &#45;&gt;(Foo,Bar)Baz." alt="" coords="313,199,474,225"/>
+<area shape="rect" id="node2" href="$classyume_1_1ast_1_1Type.html" title="A type annotation. This (ast::Type) is distinct from the actual type of a value (ty::Type)." alt="" coords="9,102,119,129"/>
+<area shape="rect" id="node3" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,5,115,32"/>
+<area shape="rect" id="node4" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title=" " alt="" coords="147,95,330,136"/>
+<area shape="rect" id="node5" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T, or the absence of one. See OptionalExpr and OptionalType..." alt="" coords="139,5,352,32"/>
+<area shape="rect" id="node6" title=" " alt="" coords="354,102,537,129"/>
+<area shape="rect" id="node7" title=" " alt="" coords="561,102,607,129"/>
+</map>

@@ -1,12 +1,12 @@
 <map id="src/yume/ty/substitution.hpp" name="src/yume/ty/substitution.hpp">
-<area shape="rect" id="node1" title=" " alt="" coords="1139,5,1323,32"/>
-<area shape="rect" id="node2" href="$type__base_8hpp.html" title=" " alt="" coords="1171,80,1290,107"/>
-<area shape="rect" id="node5" href="$util_8hpp.html" title=" " alt="" coords="1151,229,1214,256"/>
-<area shape="rect" id="node24" title=" " alt="" coords="1314,80,1361,107"/>
-<area shape="rect" id="node3" href="$qualifier_8hpp.html" title=" " alt="" coords="1137,155,1228,181"/>
-<area shape="rect" id="node4" href="$compatibility_8hpp.html" title=" " alt="" coords="1303,155,1435,181"/>
-<area shape="rect" id="node17" title=" " alt="" coords="1733,304,1803,331"/>
-<area shape="rect" id="node23" title=" " alt="" coords="1407,229,1468,256"/>
+<area shape="rect" id="node1" title=" " alt="" coords="1173,5,1357,32"/>
+<area shape="rect" id="node2" href="$type__base_8hpp.html" title=" " alt="" coords="1206,80,1325,107"/>
+<area shape="rect" id="node5" href="$util_8hpp.html" title=" " alt="" coords="1186,229,1249,256"/>
+<area shape="rect" id="node25" title=" " alt="" coords="1349,80,1395,107"/>
+<area shape="rect" id="node3" href="$qualifier_8hpp.html" title=" " alt="" coords="1172,155,1263,181"/>
+<area shape="rect" id="node4" href="$compatibility_8hpp.html" title=" " alt="" coords="1338,155,1470,181"/>
+<area shape="rect" id="node17" title=" " alt="" coords="1840,304,1909,331"/>
+<area shape="rect" id="node24" title=" " alt="" coords="1441,229,1503,256"/>
 <area shape="rect" id="node6" href="$source__location_8hpp.html" title=" " alt="" coords="5,304,205,331"/>
 <area shape="rect" id="node8" title=" " alt="" coords="229,304,280,331"/>
 <area shape="rect" id="node9" title=" " alt="" coords="305,304,370,331"/>
@@ -19,8 +19,9 @@
 <area shape="rect" id="node16" title=" " alt="" coords="1227,304,1277,331"/>
 <area shape="rect" id="node18" title=" " alt="" coords="1301,304,1389,331"/>
 <area shape="rect" id="node19" title=" " alt="" coords="1413,304,1464,331"/>
-<area shape="rect" id="node20" title=" " alt="" coords="1489,304,1541,331"/>
-<area shape="rect" id="node21" title=" " alt="" coords="1565,304,1627,331"/>
-<area shape="rect" id="node22" title=" " alt="" coords="1651,304,1709,331"/>
+<area shape="rect" id="node20" title=" " alt="" coords="1488,304,1571,331"/>
+<area shape="rect" id="node21" title=" " alt="" coords="1595,304,1647,331"/>
+<area shape="rect" id="node22" title=" " alt="" coords="1672,304,1733,331"/>
+<area shape="rect" id="node23" title=" " alt="" coords="1757,304,1816,331"/>
 <area shape="rect" id="node7" title=" " alt="" coords="78,379,133,405"/>
 </map>

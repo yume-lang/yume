@@ -1,10 +1,10 @@
 <map id="yume::ast::Type" name="yume::ast::Type">
 <area shape="rect" id="node1" title="A type annotation. This (ast::Type) is distinct from the actual type of a value (ty::Type)." alt="" coords="163,132,273,159"/>
-<area shape="rect" id="node3" href="$classyume_1_1ast_1_1FunctionType.html" title="A function type i.e. &#45;&gt;(Foo,Bar)Baz." alt="" coords="327,5,488,32"/>
-<area shape="rect" id="node4" href="$classyume_1_1ast_1_1ProxyType.html" title="A type which refers to a different type, specifically that of a struct field." alt="" coords="336,56,479,83"/>
-<area shape="rect" id="node5" href="$classyume_1_1ast_1_1QualType.html" title="A type with a Qualifier like mut or [] following." alt="" coords="338,107,477,133"/>
-<area shape="rect" id="node6" href="$classyume_1_1ast_1_1SelfType.html" title="The self type." alt="" coords="340,157,475,184"/>
-<area shape="rect" id="node7" href="$classyume_1_1ast_1_1SimpleType.html" title="Just the name of a type, always capitalized." alt="" coords="332,208,483,235"/>
-<area shape="rect" id="node8" href="$classyume_1_1ast_1_1TemplatedType.html" title="A type with explicit type parameters i.e. Foo&lt;Bar,Baz&gt;." alt="" coords="321,259,493,285"/>
+<area shape="rect" id="node3" href="$structyume_1_1ast_1_1FunctionType.html" title="A function type i.e. &#45;&gt;(Foo,Bar)Baz." alt="" coords="327,5,488,32"/>
+<area shape="rect" id="node4" href="$structyume_1_1ast_1_1ProxyType.html" title="A type which refers to a different type, specifically that of a struct field." alt="" coords="336,56,479,83"/>
+<area shape="rect" id="node5" href="$structyume_1_1ast_1_1QualType.html" title="A type with a Qualifier like mut or [] following." alt="" coords="338,107,477,133"/>
+<area shape="rect" id="node6" href="$structyume_1_1ast_1_1SelfType.html" title="The self type." alt="" coords="340,157,475,184"/>
+<area shape="rect" id="node7" href="$structyume_1_1ast_1_1SimpleType.html" title="Just the name of a type, always capitalized." alt="" coords="332,208,483,235"/>
+<area shape="rect" id="node8" href="$structyume_1_1ast_1_1TemplatedType.html" title="A type with explicit type parameters i.e. Foo&lt;Bar,Baz&gt;." alt="" coords="321,259,493,285"/>
 <area shape="rect" id="node2" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,132,115,159"/>
 </map>

@@ -1,11 +1,11 @@
 <map id="src/yume/compiler/scope_container.hpp" name="src/yume/compiler/scope_container.hpp">
-<area shape="rect" id="node1" title=" " alt="" coords="1563,5,1730,47"/>
-<area shape="rect" id="node2" href="$util_8hpp.html" title=" " alt="" coords="1151,95,1214,121"/>
-<area shape="rect" id="node19" title=" " alt="" coords="1744,169,1803,196"/>
-<area shape="rect" id="node20" title=" " alt="" coords="1550,95,1613,121"/>
-<area shape="rect" id="node21" title=" " alt="" coords="1637,95,1787,121"/>
-<area shape="rect" id="node22" title=" " alt="" coords="1812,95,1961,121"/>
-<area shape="rect" id="node23" title=" " alt="" coords="1985,95,2047,121"/>
+<area shape="rect" id="node1" title=" " alt="" coords="1634,5,1801,47"/>
+<area shape="rect" id="node2" href="$util_8hpp.html" title=" " alt="" coords="1186,95,1249,121"/>
+<area shape="rect" id="node20" title=" " alt="" coords="1851,169,1909,196"/>
+<area shape="rect" id="node21" title=" " alt="" coords="1621,95,1683,121"/>
+<area shape="rect" id="node22" title=" " alt="" coords="1707,95,1858,121"/>
+<area shape="rect" id="node23" title=" " alt="" coords="1883,95,2032,121"/>
+<area shape="rect" id="node24" title=" " alt="" coords="2056,95,2117,121"/>
 <area shape="rect" id="node3" href="$source__location_8hpp.html" title=" " alt="" coords="5,169,205,196"/>
 <area shape="rect" id="node5" title=" " alt="" coords="229,169,280,196"/>
 <area shape="rect" id="node6" title=" " alt="" coords="305,169,370,196"/>
@@ -19,7 +19,8 @@
 <area shape="rect" id="node14" title=" " alt="" coords="1301,169,1371,196"/>
 <area shape="rect" id="node15" title=" " alt="" coords="1395,169,1483,196"/>
 <area shape="rect" id="node16" title=" " alt="" coords="1507,169,1557,196"/>
-<area shape="rect" id="node17" title=" " alt="" coords="1582,169,1634,196"/>
-<area shape="rect" id="node18" title=" " alt="" coords="1659,169,1720,196"/>
+<area shape="rect" id="node17" title=" " alt="" coords="1581,169,1664,196"/>
+<area shape="rect" id="node18" title=" " alt="" coords="1689,169,1741,196"/>
+<area shape="rect" id="node19" title=" " alt="" coords="1765,169,1827,196"/>
 <area shape="rect" id="node4" title=" " alt="" coords="78,244,133,271"/>
 </map>

@@ -1,7 +1,6 @@
 <map id="yume::ast::parser::Parser::FnArg" name="yume::ast::parser::Parser::FnArg">
-<area shape="rect" id="node1" title=" " alt="" coords="110,199,235,240"/>
+<area shape="rect" id="node1" title=" " alt="" coords="87,199,213,240"/>
 <area shape="rect" id="node2" title=" " alt="" coords="5,95,153,136"/>
-<area shape="rect" id="node3" title=" " alt="" coords="38,5,121,32"/>
-<area shape="rect" id="node4" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title=" " alt="" coords="177,95,360,136"/>
-<area shape="rect" id="node5" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T, or the absence of one. See OptionalExpr and OptionalType..." alt="" coords="162,5,375,32"/>
+<area shape="rect" id="node3" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title=" " alt="" coords="177,95,360,136"/>
+<area shape="rect" id="node4" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T, or the absence of one. See OptionalExpr and OptionalType..." alt="" coords="162,5,375,32"/>
 </map>

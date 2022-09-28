@@ -1,4 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classDeclLike__t.html" title=" " alt="" coords="5,5,89,32"/>
-<area shape="rect" id="node2" href="$structyume_1_1DeclLike.html" title="A common base between declarations in the compiler: Fn and Struct. Its value may also be absent (std:..." alt="" coords="137,5,248,32"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,31,188,57"/>
+<area shape="rect" id="node2" href="$structyume_1_1ASTStackTrace.html" title=" " alt="" coords="242,5,394,32"/>
+<area shape="rect" id="node3" href="$structyume_1_1ParserStackTrace.html" title=" " alt="" coords="236,56,400,83"/>
 </map>

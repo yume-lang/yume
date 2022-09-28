@@ -1,16 +1,16 @@
 <map id="yume::semantic::TypeWalker" name="yume::semantic::TypeWalker">
 <area shape="rect" id="node1" title="Determine the type information of AST nodes. This makes up most of the &quot;semantic&quot; phase of the compil..." alt="" coords="1181,220,1368,247"/>
 <area shape="rect" id="node2" href="$structyume_1_1CRTPWalker.html" title=" " alt="" coords="577,10,801,36"/>
-<area shape="rect" id="node3" href="$structyume_1_1CRTPWalker.html" title="A helper template to walk the Abstract Syntax Tree (AST), utilizing the Curiously Recurring Template ..." alt="" coords="5,35,205,62"/>
+<area shape="rect" id="node3" href="$structyume_1_1CRTPWalker.html" title="A helper template to walk the Abstract Syntax Tree (AST), utilizing the Curiously Recurring Template ..." alt="" coords="5,32,205,59"/>
 <area shape="rect" id="node6" href="$structyume_1_1CRTPWalker.html" title=" " alt="" coords="347,60,553,87"/>
 <area shape="rect" id="node4" title=" " alt="" coords="898,111,953,138"/>
 <area shape="rect" id="node5" href="$classyume_1_1Compiler.html" title="The Compiler the the primary top&#45;level type during compilation. A single instance is created during t..." alt="" coords="870,60,981,87"/>
-<area shape="rect" id="node7" href="$structyume_1_1DeclLike.html" title="A common base between declarations in the compiler: Fn and Struct. Its value may also be absent (std:..." alt="" coords="870,162,981,188"/>
-<area shape="rect" id="node8" href="$classDeclLike__t.html" title=" " alt="" coords="408,162,492,188"/>
-<area shape="rect" id="node9" href="$classyume_1_1ScopeContainer.html" title=" " alt="" coords="843,213,1008,254"/>
-<area shape="rect" id="node10" href="$classyume_1_1ScopeContainer.html" title=" " alt="" coords="359,220,541,247"/>
-<area shape="rect" id="node11" title=" " alt="" coords="837,278,1013,320"/>
-<area shape="rect" id="node12" title=" " alt="" coords="421,319,479,346"/>
+<area shape="rect" id="node7" href="$structyume_1_1DeclLike.html" title="A common base between declarations in the compiler: Fn, Struct and Const. Its value may also be absen..." alt="" coords="870,162,981,188"/>
+<area shape="rect" id="node8" href="$structyume_1_1visitable__variant.html" title=" " alt="" coords="408,162,492,188"/>
+<area shape="rect" id="node9" title=" " alt="" coords="40,162,171,188"/>
+<area shape="rect" id="node10" href="$classyume_1_1ScopeContainer.html" title=" " alt="" coords="843,213,1008,254"/>
+<area shape="rect" id="node11" href="$classyume_1_1ScopeContainer.html" title=" " alt="" coords="359,220,541,247"/>
+<area shape="rect" id="node12" title=" " alt="" coords="837,278,1013,320"/>
 <area shape="rect" id="node13" title=" " alt="" coords="825,344,1025,385"/>
 <area shape="rect" id="node14" title=" " alt="" coords="842,410,1009,436"/>
 <area shape="rect" id="node15" title=" " alt="" coords="902,460,949,487"/>

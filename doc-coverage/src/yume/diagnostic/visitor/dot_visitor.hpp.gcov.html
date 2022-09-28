@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-09-26 21:58:57</td>
+            <td class="headerValue">2022-09-28 06:24:42</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -123,13 +123,11 @@
 <a name="65"><span class="lineNum">      65 </span><span class="lineNoCov">          0 :   auto operator=(const DotVisitor&amp;) -&gt; DotVisitor&amp; = delete;</span></a>
 <a name="66"><span class="lineNum">      66 </span><span class="lineNoCov">          0 :   auto operator=(DotVisitor&amp;&amp;) -&gt; DotVisitor&amp; = delete;</span></a>
 <a name="67"><span class="lineNum">      67 </span>            : </a>
-<a name="68"><span class="lineNum">      68 </span><span class="lineNoCov">          0 :   auto visit(const ast::AST&amp; expr, const char* label) -&gt; DotVisitor&amp; override;</span></a>
-<a name="69"><span class="lineNum">      69 </span>            : </a>
-<a name="70"><span class="lineNum">      70 </span><span class="lineNoCov">          0 :   auto visit(std::nullptr_t null, const char* label) -&gt; DotVisitor&amp; override;</span></a>
-<a name="71"><span class="lineNum">      71 </span>            : </a>
-<a name="72"><span class="lineNum">      72 </span><span class="lineNoCov">          0 :   auto visit(const string&amp; str, const char* label) -&gt; DotVisitor&amp; override;</span></a>
-<a name="73"><span class="lineNum">      73 </span>            : };</a>
-<a name="74"><span class="lineNum">      74 </span>            : } // namespace yume::diagnostic</a>
+<a name="68"><span class="lineNum">      68 </span><span class="lineNoCov">          0 :   auto visit(const ast::AST&amp; expr, string_view label) -&gt; DotVisitor&amp; override;</span></a>
+<a name="69"><span class="lineNum">      69 </span><span class="lineNoCov">          0 :   auto visit(std::nullptr_t null, string_view label) -&gt; DotVisitor&amp; override;</span></a>
+<a name="70"><span class="lineNum">      70 </span><span class="lineNoCov">          0 :   auto visit(const string&amp; str, string_view label) -&gt; DotVisitor&amp; override;</span></a>
+<a name="71"><span class="lineNum">      71 </span>            : };</a>
+<a name="72"><span class="lineNum">      72 </span>            : } // namespace yume::diagnostic</a>
 </pre>
       </td>
     </tr>

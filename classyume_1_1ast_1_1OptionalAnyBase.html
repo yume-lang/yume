@@ -125,7 +125,7 @@ Public Member Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename T&gt;<br />
 class yume::ast::OptionalAnyBase&lt; T &gt;</div><p >Represents "any" kind of ast node of type <code>T</code>, or the absence of one. See <code>OptionalExpr</code> and <code>OptionalType</code>. </p>
-<p >This template exists to avoid passing around <code>unique_ptr&lt;T&gt;</code>s around in code that deals with <a class="el" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class.">AST</a> nodes containing other generic nodes, such as <code><a class="el" href="classyume_1_1ast_1_1Compound.html" title="A statement consisting of multiple other statements, i.e. the body of a function.">Compound</a></code>. This class has the exact same layout at <code><a class="el" href="classyume_1_1ast_1_1AnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T. See AnyExpr, AnyStmt and AnyType.">AnyBase</a></code>, but is nominally explicit in its semantics, in that it may be null. It replaces the earlier usages of <code>optional&lt;unique_ptr&lt;T&gt;&gt;</code> which in theory wastes memory for the "optional" part when a nullptr already expresses the desired semantics. Unlike <code><a class="el" href="classyume_1_1ast_1_1AnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T. See AnyExpr, AnyStmt and AnyType.">AnyBase</a></code>, this class does not perform null pointer checks, and may be default constructed, or constructed from a <code>nullptr</code>. </p>
+<p >This template exists to avoid passing around <code>unique_ptr&lt;T&gt;</code>s around in code that deals with <a class="el" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class.">AST</a> nodes containing other generic nodes, such as <code><a class="el" href="structyume_1_1ast_1_1Compound.html" title="A statement consisting of multiple other statements, i.e. the body of a function.">Compound</a></code>. This class has the exact same layout at <code><a class="el" href="classyume_1_1ast_1_1AnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T. See AnyExpr, AnyStmt and AnyType.">AnyBase</a></code>, but is nominally explicit in its semantics, in that it may be null. It replaces the earlier usages of <code>optional&lt;unique_ptr&lt;T&gt;&gt;</code> which in theory wastes memory for the "optional" part when a nullptr already expresses the desired semantics. Unlike <code><a class="el" href="classyume_1_1ast_1_1AnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T. See AnyExpr, AnyStmt and AnyType.">AnyBase</a></code>, this class does not perform null pointer checks, and may be default constructed, or constructed from a <code>nullptr</code>. </p>
 
 <p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00148">148</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -308,7 +308,7 @@ template&lt;typename T &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00166">166</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="describe_8cpp_source.html#l00033">yume::ast::FunctionType::describe()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="describe_8cpp_source.html#l00030">yume::ast::FunctionType::describe()</a>, <a class="el" href="type__walker_8cpp_source.html#l00179">yume::semantic::TypeWalker::expression()</a>, <a class="el" href="type__walker_8cpp_source.html#l00458">yume::semantic::TypeWalker::statement()</a>, and <a class="el" href="compiler_8cpp_source.html#l00586">yume::Compiler::statement()</a>.</p>
 
 </div>
 </div>
@@ -512,6 +512,8 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00167">167</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00458">yume::semantic::TypeWalker::statement()</a>.</p>
 
 </div>
 </div>

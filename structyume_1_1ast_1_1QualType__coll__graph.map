@@ -1,0 +1,11 @@
+<map id="yume::ast::QualType" name="yume::ast::QualType">
+<area shape="rect" id="node1" title="A type with a Qualifier like mut or [] following." alt="" coords="161,303,300,329"/>
+<area shape="rect" id="node2" href="$classyume_1_1ast_1_1Type.html" title="A type annotation. This (ast::Type) is distinct from the actual type of a value (ty::Type)." alt="" coords="17,206,127,233"/>
+<area shape="rect" id="node3" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,102,115,129"/>
+<area shape="rect" id="node4" href="$classyume_1_1ast_1_1AnyBase.html" title=" " alt="" coords="163,199,298,240"/>
+<area shape="rect" id="node5" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title=" " alt="" coords="139,95,322,136"/>
+<area shape="rect" id="node6" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T, or the absence of one. See OptionalExpr and OptionalType..." alt="" coords="115,5,328,32"/>
+<area shape="rect" id="node7" href="$classyume_1_1ast_1_1AnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T. See AnyExpr, AnyStmt and AnyType." alt="" coords="357,102,523,129"/>
+<area shape="rect" id="node8" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T, or the absence of one. See OptionalExpr and OptionalType..." alt="" coords="352,5,565,32"/>
+<area shape="rect" id="node9" title=" " alt="" coords="323,206,392,233"/>
+</map>

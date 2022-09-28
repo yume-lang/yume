@@ -108,12 +108,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aebc82a0dd8cdd90b7c3fd7691b8936e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9bd18f5bef1c3d8618c3fe340a706491"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1diagnostic_1_1DotVisitor.html#a9bd18f5bef1c3d8618c3fe340a706491">operator=</a> (<a class="el" href="classyume_1_1diagnostic_1_1DotVisitor.html">DotVisitor</a> &amp;&amp;) -&gt; <a class="el" href="classyume_1_1diagnostic_1_1DotVisitor.html">DotVisitor</a> &amp;=delete</td></tr>
 <tr class="separator:a9bd18f5bef1c3d8618c3fe340a706491"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a53823fe54c5a25d0d5febbe606922aca"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1diagnostic_1_1DotVisitor.html#a53823fe54c5a25d0d5febbe606922aca">visit</a> (const <a class="el" href="classyume_1_1ast_1_1AST.html">ast::AST</a> &amp;expr, const char *label) -&gt; <a class="el" href="classyume_1_1diagnostic_1_1DotVisitor.html">DotVisitor</a> &amp;override</td></tr>
-<tr class="separator:a53823fe54c5a25d0d5febbe606922aca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae872ae99a61fdf1d5c3e6635991667c4"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1diagnostic_1_1DotVisitor.html#ae872ae99a61fdf1d5c3e6635991667c4">visit</a> (std::nullptr_t null, const char *label) -&gt; <a class="el" href="classyume_1_1diagnostic_1_1DotVisitor.html">DotVisitor</a> &amp;override</td></tr>
-<tr class="separator:ae872ae99a61fdf1d5c3e6635991667c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa06fec1610fc0a18866a6400ab89e82b"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1diagnostic_1_1DotVisitor.html#aa06fec1610fc0a18866a6400ab89e82b">visit</a> (const string &amp;str, const char *label) -&gt; <a class="el" href="classyume_1_1diagnostic_1_1DotVisitor.html">DotVisitor</a> &amp;override</td></tr>
-<tr class="separator:aa06fec1610fc0a18866a6400ab89e82b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a00ccdff1cf0e18c273ebb719cfed3e"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1diagnostic_1_1DotVisitor.html#a0a00ccdff1cf0e18c273ebb719cfed3e">visit</a> (const <a class="el" href="classyume_1_1ast_1_1AST.html">ast::AST</a> &amp;expr, string_view label) -&gt; <a class="el" href="classyume_1_1diagnostic_1_1DotVisitor.html">DotVisitor</a> &amp;override</td></tr>
+<tr class="separator:a0a00ccdff1cf0e18c273ebb719cfed3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4bfdb53f8d93df5436e06e89f110ffbb"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1diagnostic_1_1DotVisitor.html#a4bfdb53f8d93df5436e06e89f110ffbb">visit</a> (std::nullptr_t null, string_view label) -&gt; <a class="el" href="classyume_1_1diagnostic_1_1DotVisitor.html">DotVisitor</a> &amp;override</td></tr>
+<tr class="separator:a4bfdb53f8d93df5436e06e89f110ffbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d89a051ad9221208a7b8e85738a2f13"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1diagnostic_1_1DotVisitor.html#a3d89a051ad9221208a7b8e85738a2f13">visit</a> (const string &amp;str, string_view label) -&gt; <a class="el" href="classyume_1_1diagnostic_1_1DotVisitor.html">DotVisitor</a> &amp;override</td></tr>
+<tr class="separator:a3d89a051ad9221208a7b8e85738a2f13"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classyume_1_1Visitor"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classyume_1_1Visitor')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classyume_1_1Visitor.html">yume::Visitor</a></td></tr>
 <tr class="memitem:afb876c44f10ef88ddbecffa883ead0ef inherit pub_methods_classyume_1_1Visitor"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Visitor.html#afb876c44f10ef88ddbecffa883ead0ef">Visitor</a> ()=default</td></tr>
 <tr class="separator:afb876c44f10ef88ddbecffa883ead0ef inherit pub_methods_classyume_1_1Visitor"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -127,39 +127,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a7e5f12e831c401a1b90ea4a3cb26ad63 inherit pub_methods_classyume_1_1Visitor"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a36460eb663518ff186d94ed011cd5360 inherit pub_methods_classyume_1_1Visitor"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Visitor.html#a36460eb663518ff186d94ed011cd5360">operator=</a> (<a class="el" href="classyume_1_1Visitor.html">Visitor</a> &amp;&amp;) -&gt; <a class="el" href="classyume_1_1Visitor.html">Visitor</a> &amp;=default</td></tr>
 <tr class="separator:a36460eb663518ff186d94ed011cd5360 inherit pub_methods_classyume_1_1Visitor"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad5ec239921f8886dc40d71e148c28d27 inherit pub_methods_classyume_1_1Visitor"><td class="memItemLeft" align="right" valign="top">virtual auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Visitor.html#ad5ec239921f8886dc40d71e148c28d27">visit</a> (const <a class="el" href="classyume_1_1ast_1_1AST.html">ast::AST</a> &amp;, const char *) -&gt; <a class="el" href="classyume_1_1Visitor.html">Visitor</a> &amp;=0</td></tr>
-<tr class="separator:ad5ec239921f8886dc40d71e148c28d27 inherit pub_methods_classyume_1_1Visitor"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aab669477bc32c7eeeaad175860f0ce06 inherit pub_methods_classyume_1_1Visitor"><td class="memItemLeft" align="right" valign="top">virtual auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Visitor.html#aab669477bc32c7eeeaad175860f0ce06">visit</a> (std::nullptr_t, const char *) -&gt; <a class="el" href="classyume_1_1Visitor.html">Visitor</a> &amp;=0</td></tr>
-<tr class="separator:aab669477bc32c7eeeaad175860f0ce06 inherit pub_methods_classyume_1_1Visitor"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5c854ab687b8725bc762c37cc313d7c4 inherit pub_methods_classyume_1_1Visitor"><td class="memItemLeft" align="right" valign="top">virtual auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Visitor.html#a5c854ab687b8725bc762c37cc313d7c4">visit</a> (const string &amp;, const char *) -&gt; <a class="el" href="classyume_1_1Visitor.html">Visitor</a> &amp;=0</td></tr>
-<tr class="separator:a5c854ab687b8725bc762c37cc313d7c4 inherit pub_methods_classyume_1_1Visitor"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9e2b024a48a42e195a3407df20a3fa5b inherit pub_methods_classyume_1_1Visitor"><td class="memItemLeft" align="right" valign="top">virtual auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Visitor.html#a9e2b024a48a42e195a3407df20a3fa5b">visit</a> (const <a class="el" href="classyume_1_1ast_1_1AST.html">ast::AST</a> &amp;expr) -&gt; <a class="el" href="classyume_1_1Visitor.html">Visitor</a> &amp;final</td></tr>
-<tr class="separator:a9e2b024a48a42e195a3407df20a3fa5b inherit pub_methods_classyume_1_1Visitor"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a97975176ad2b7111ae60760d1e156652 inherit pub_methods_classyume_1_1Visitor"><td class="memItemLeft" align="right" valign="top">virtual auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Visitor.html#a97975176ad2b7111ae60760d1e156652">visit</a> (std::nullptr_t) -&gt; <a class="el" href="classyume_1_1Visitor.html">Visitor</a> &amp;final</td></tr>
-<tr class="separator:a97975176ad2b7111ae60760d1e156652 inherit pub_methods_classyume_1_1Visitor"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7ef75af693c820b08b30eb33012ba628 inherit pub_methods_classyume_1_1Visitor"><td class="memItemLeft" align="right" valign="top">virtual auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Visitor.html#a7ef75af693c820b08b30eb33012ba628">visit</a> (const string &amp;str) -&gt; <a class="el" href="classyume_1_1Visitor.html">Visitor</a> &amp;final</td></tr>
-<tr class="separator:a7ef75af693c820b08b30eb33012ba628 inherit pub_methods_classyume_1_1Visitor"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac7f67094b5193faeb44ffcf122610d52 inherit pub_methods_classyume_1_1Visitor"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:ac7f67094b5193faeb44ffcf122610d52 inherit pub_methods_classyume_1_1Visitor"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classyume_1_1Visitor.html#ac7f67094b5193faeb44ffcf122610d52">visit</a> (const <a class="el" href="classyume_1_1ast_1_1OptionalAnyBase.html">ast::OptionalAnyBase</a>&lt; T &gt; &amp;any_base, const char *label=nullptr) -&gt; <a class="el" href="classyume_1_1Visitor.html">Visitor</a> &amp;</td></tr>
-<tr class="separator:ac7f67094b5193faeb44ffcf122610d52 inherit pub_methods_classyume_1_1Visitor"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a04f2977aef796c8076c6e62375bf644a inherit pub_methods_classyume_1_1Visitor"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a04f2977aef796c8076c6e62375bf644a inherit pub_methods_classyume_1_1Visitor"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classyume_1_1Visitor.html#a04f2977aef796c8076c6e62375bf644a">visit</a> (const <a class="el" href="classyume_1_1ast_1_1AnyBase.html">ast::AnyBase</a>&lt; T &gt; &amp;any_base, const char *label=nullptr) -&gt; <a class="el" href="classyume_1_1Visitor.html">Visitor</a> &amp;</td></tr>
-<tr class="separator:a04f2977aef796c8076c6e62375bf644a inherit pub_methods_classyume_1_1Visitor"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8c663fef56a339aea7af921df4df3436 inherit pub_methods_classyume_1_1Visitor"><td class="memTemplParams" colspan="2">template&lt;std::ranges::range Range&gt; <br />
-requires (!std::convertible_to&lt;Range, const char*&gt;)</td></tr>
-<tr class="memitem:a8c663fef56a339aea7af921df4df3436 inherit pub_methods_classyume_1_1Visitor"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classyume_1_1Visitor.html#a8c663fef56a339aea7af921df4df3436">visit</a> (const Range &amp;iter, const char *label=nullptr) -&gt; <a class="el" href="classyume_1_1Visitor.html">Visitor</a> &amp;</td></tr>
-<tr class="separator:a8c663fef56a339aea7af921df4df3436 inherit pub_methods_classyume_1_1Visitor"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8564be197c5d8c27a8901d12330d3ebf inherit pub_methods_classyume_1_1Visitor"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a8564be197c5d8c27a8901d12330d3ebf inherit pub_methods_classyume_1_1Visitor"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classyume_1_1Visitor.html#a8564be197c5d8c27a8901d12330d3ebf">visit</a> (const optional&lt; T &gt; &amp;opt, const char *label=nullptr) -&gt; <a class="el" href="classyume_1_1Visitor.html">Visitor</a> &amp;</td></tr>
-<tr class="separator:a8564be197c5d8c27a8901d12330d3ebf inherit pub_methods_classyume_1_1Visitor"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a47104cf930d10ec39a6b16922c425b9f inherit pub_methods_classyume_1_1Visitor"><td class="memTemplParams" colspan="2">template&lt;typename T , typename U &gt; </td></tr>
-<tr class="memitem:a47104cf930d10ec39a6b16922c425b9f inherit pub_methods_classyume_1_1Visitor"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classyume_1_1Visitor.html#a47104cf930d10ec39a6b16922c425b9f">visit</a> (const std::variant&lt; T, U &gt; &amp;var, const char *label=nullptr) -&gt; <a class="el" href="classyume_1_1Visitor.html">Visitor</a> &amp;</td></tr>
-<tr class="separator:a47104cf930d10ec39a6b16922c425b9f inherit pub_methods_classyume_1_1Visitor"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0984fe19f01189a4777bb395dae43d9d inherit pub_methods_classyume_1_1Visitor"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a0984fe19f01189a4777bb395dae43d9d inherit pub_methods_classyume_1_1Visitor"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classyume_1_1Visitor.html#a0984fe19f01189a4777bb395dae43d9d">visit</a> (std::pair&lt; T, const char * &gt; &amp;pair) -&gt; <a class="el" href="classyume_1_1Visitor.html">Visitor</a> &amp;</td></tr>
-<tr class="separator:a0984fe19f01189a4777bb395dae43d9d inherit pub_methods_classyume_1_1Visitor"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af2a46e015e60821dbc2e23a6920d9836 inherit pub_methods_classyume_1_1Visitor"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Visitor.html#af2a46e015e60821dbc2e23a6920d9836">visit</a> ()</td></tr>
-<tr class="separator:af2a46e015e60821dbc2e23a6920d9836 inherit pub_methods_classyume_1_1Visitor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48e1e87e69dad7488ff2b5e09eba7490 inherit pub_methods_classyume_1_1Visitor"><td class="memItemLeft" align="right" valign="top">virtual auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Visitor.html#a48e1e87e69dad7488ff2b5e09eba7490">visit</a> (const <a class="el" href="classyume_1_1ast_1_1AST.html">ast::AST</a> &amp;, string_view) -&gt; <a class="el" href="classyume_1_1Visitor.html">Visitor</a> &amp;=0</td></tr>
+<tr class="separator:a48e1e87e69dad7488ff2b5e09eba7490 inherit pub_methods_classyume_1_1Visitor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4d536a7126491692b5f5e9222adbb39 inherit pub_methods_classyume_1_1Visitor"><td class="memItemLeft" align="right" valign="top">virtual auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Visitor.html#aa4d536a7126491692b5f5e9222adbb39">visit</a> (std::nullptr_t, string_view) -&gt; <a class="el" href="classyume_1_1Visitor.html">Visitor</a> &amp;=0</td></tr>
+<tr class="separator:aa4d536a7126491692b5f5e9222adbb39 inherit pub_methods_classyume_1_1Visitor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc9d6f56fc492aa33e923068ecc33a3a inherit pub_methods_classyume_1_1Visitor"><td class="memItemLeft" align="right" valign="top">virtual auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Visitor.html#acc9d6f56fc492aa33e923068ecc33a3a">visit</a> (const string &amp;, string_view) -&gt; <a class="el" href="classyume_1_1Visitor.html">Visitor</a> &amp;=0</td></tr>
+<tr class="separator:acc9d6f56fc492aa33e923068ecc33a3a inherit pub_methods_classyume_1_1Visitor"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
@@ -325,8 +298,8 @@ requires (!std::convertible_to&lt;Range, const char*&gt;)</td></tr>
 
 </div>
 </div>
-<a id="a53823fe54c5a25d0d5febbe606922aca" name="a53823fe54c5a25d0d5febbe606922aca"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a53823fe54c5a25d0d5febbe606922aca">&#9670;&nbsp;</a></span>visit() <span class="overload">[1/3]</span></h2>
+<a id="a0a00ccdff1cf0e18c273ebb719cfed3e" name="a0a00ccdff1cf0e18c273ebb719cfed3e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0a00ccdff1cf0e18c273ebb719cfed3e">&#9670;&nbsp;</a></span>visit() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -343,7 +316,7 @@ requires (!std::convertible_to&lt;Range, const char*&gt;)</td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const char *&#160;</td>
+          <td class="paramtype">string_view&#160;</td>
           <td class="paramname"><em>label</em>&#160;</td>
         </tr>
         <tr>
@@ -359,18 +332,16 @@ requires (!std::convertible_to&lt;Range, const char*&gt;)</td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classyume_1_1Visitor.html#ad5ec239921f8886dc40d71e148c28d27">yume::Visitor</a>.</p>
+<p>Implements <a class="el" href="classyume_1_1Visitor.html#a48e1e87e69dad7488ff2b5e09eba7490">yume::Visitor</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="dot__visitor_8cpp_source.html#l00084">84</a> of file <a class="el" href="dot__visitor_8cpp_source.html">dot_visitor.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="dot__visitor_8cpp_source.html#l00011">yume::diagnostic::xml_escape()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="yumec_8cpp_source.html#l00059">compile()</a>.</p>
-
 </div>
 </div>
-<a id="aa06fec1610fc0a18866a6400ab89e82b" name="aa06fec1610fc0a18866a6400ab89e82b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa06fec1610fc0a18866a6400ab89e82b">&#9670;&nbsp;</a></span>visit() <span class="overload">[2/3]</span></h2>
+<a id="a3d89a051ad9221208a7b8e85738a2f13" name="a3d89a051ad9221208a7b8e85738a2f13"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3d89a051ad9221208a7b8e85738a2f13">&#9670;&nbsp;</a></span>visit() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -387,7 +358,7 @@ requires (!std::convertible_to&lt;Range, const char*&gt;)</td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const char *&#160;</td>
+          <td class="paramtype">string_view&#160;</td>
           <td class="paramname"><em>label</em>&#160;</td>
         </tr>
         <tr>
@@ -403,7 +374,7 @@ requires (!std::convertible_to&lt;Range, const char*&gt;)</td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classyume_1_1Visitor.html#a5c854ab687b8725bc762c37cc313d7c4">yume::Visitor</a>.</p>
+<p>Implements <a class="el" href="classyume_1_1Visitor.html#acc9d6f56fc492aa33e923068ecc33a3a">yume::Visitor</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="dot__visitor_8cpp_source.html#l00107">107</a> of file <a class="el" href="dot__visitor_8cpp_source.html">dot_visitor.cpp</a>.</p>
 
@@ -411,8 +382,8 @@ requires (!std::convertible_to&lt;Range, const char*&gt;)</td></tr>
 
 </div>
 </div>
-<a id="ae872ae99a61fdf1d5c3e6635991667c4" name="ae872ae99a61fdf1d5c3e6635991667c4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae872ae99a61fdf1d5c3e6635991667c4">&#9670;&nbsp;</a></span>visit() <span class="overload">[3/3]</span></h2>
+<a id="a4bfdb53f8d93df5436e06e89f110ffbb" name="a4bfdb53f8d93df5436e06e89f110ffbb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4bfdb53f8d93df5436e06e89f110ffbb">&#9670;&nbsp;</a></span>visit() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -429,7 +400,7 @@ requires (!std::convertible_to&lt;Range, const char*&gt;)</td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const char *&#160;</td>
+          <td class="paramtype">string_view&#160;</td>
           <td class="paramname"><em>label</em>&#160;</td>
         </tr>
         <tr>
@@ -445,7 +416,7 @@ requires (!std::convertible_to&lt;Range, const char*&gt;)</td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classyume_1_1Visitor.html#aab669477bc32c7eeeaad175860f0ce06">yume::Visitor</a>.</p>
+<p>Implements <a class="el" href="classyume_1_1Visitor.html#aa4d536a7126491692b5f5e9222adbb39">yume::Visitor</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="dot__visitor_8cpp_source.html#l00113">113</a> of file <a class="el" href="dot__visitor_8cpp_source.html">dot_visitor.cpp</a>.</p>
 

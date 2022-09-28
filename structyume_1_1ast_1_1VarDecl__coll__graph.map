@@ -1,0 +1,13 @@
+<map id="yume::ast::VarDecl" name="yume::ast::VarDecl">
+<area shape="rect" id="node1" title="A declaration of a local variable (let)." alt="" coords="952,83,1081,109"/>
+<area shape="rect" id="node2" href="$classyume_1_1ast_1_1Decl.html" title="Base class for a named declaration." alt="" coords="746,5,855,32"/>
+<area shape="rect" id="node3" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="356,5,467,32"/>
+<area shape="rect" id="node4" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="57,5,167,32"/>
+<area shape="rect" id="node5" title=" " alt="" coords="773,56,828,83"/>
+<area shape="rect" id="node6" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title=" " alt="" coords="527,101,709,142"/>
+<area shape="rect" id="node7" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T, or the absence of one. See OptionalExpr and OptionalType..." alt="" coords="5,131,219,157"/>
+<area shape="rect" id="node9" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title=" " alt="" coords="320,159,503,201"/>
+<area shape="rect" id="node8" href="$classyume_1_1ast_1_1AnyBase.html" title=" " alt="" coords="733,170,868,211"/>
+<area shape="rect" id="node10" href="$classyume_1_1ast_1_1AnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T. See AnyExpr, AnyStmt and AnyType." alt="" coords="329,225,494,252"/>
+<area shape="rect" id="node11" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T, or the absence of one. See OptionalExpr and OptionalType..." alt="" coords="5,225,219,252"/>
+</map>

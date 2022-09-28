@@ -1,5 +1,0 @@
-<map id="yume::ast::ProxyType" name="yume::ast::ProxyType">
-<area shape="rect" id="node1" title="A type which refers to a different type, specifically that of a struct field." alt="" coords="5,155,148,181"/>
-<area shape="rect" id="node2" href="$classyume_1_1ast_1_1Type.html" title="A type annotation. This (ast::Type) is distinct from the actual type of a value (ty::Type)." alt="" coords="21,80,132,107"/>
-<area shape="rect" id="node3" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="22,5,131,32"/>
-</map>

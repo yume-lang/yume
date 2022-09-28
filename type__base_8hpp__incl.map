@@ -1,10 +1,10 @@
 <map id="src/yume/ty/type_base.hpp" name="src/yume/ty/type_base.hpp">
-<area shape="rect" id="node1" title=" " alt="" coords="1095,5,1271,32"/>
-<area shape="rect" id="node2" href="$qualifier_8hpp.html" title=" " alt="" coords="1055,80,1145,107"/>
-<area shape="rect" id="node3" href="$compatibility_8hpp.html" title=" " alt="" coords="1221,80,1353,107"/>
-<area shape="rect" id="node4" href="$util_8hpp.html" title=" " alt="" coords="1151,155,1214,181"/>
-<area shape="rect" id="node16" title=" " alt="" coords="1733,229,1803,256"/>
-<area shape="rect" id="node22" title=" " alt="" coords="1324,155,1385,181"/>
+<area shape="rect" id="node1" title=" " alt="" coords="1129,5,1305,32"/>
+<area shape="rect" id="node2" href="$qualifier_8hpp.html" title=" " alt="" coords="1089,80,1180,107"/>
+<area shape="rect" id="node3" href="$compatibility_8hpp.html" title=" " alt="" coords="1255,80,1387,107"/>
+<area shape="rect" id="node4" href="$util_8hpp.html" title=" " alt="" coords="1186,155,1249,181"/>
+<area shape="rect" id="node16" title=" " alt="" coords="1840,229,1909,256"/>
+<area shape="rect" id="node23" title=" " alt="" coords="1359,155,1420,181"/>
 <area shape="rect" id="node5" href="$source__location_8hpp.html" title=" " alt="" coords="5,229,205,256"/>
 <area shape="rect" id="node7" title=" " alt="" coords="229,229,280,256"/>
 <area shape="rect" id="node8" title=" " alt="" coords="305,229,370,256"/>
@@ -17,8 +17,9 @@
 <area shape="rect" id="node15" title=" " alt="" coords="1227,229,1277,256"/>
 <area shape="rect" id="node17" title=" " alt="" coords="1301,229,1389,256"/>
 <area shape="rect" id="node18" title=" " alt="" coords="1413,229,1464,256"/>
-<area shape="rect" id="node19" title=" " alt="" coords="1489,229,1541,256"/>
-<area shape="rect" id="node20" title=" " alt="" coords="1565,229,1627,256"/>
-<area shape="rect" id="node21" title=" " alt="" coords="1651,229,1709,256"/>
+<area shape="rect" id="node19" title=" " alt="" coords="1488,229,1571,256"/>
+<area shape="rect" id="node20" title=" " alt="" coords="1595,229,1647,256"/>
+<area shape="rect" id="node21" title=" " alt="" coords="1672,229,1733,256"/>
+<area shape="rect" id="node22" title=" " alt="" coords="1757,229,1816,256"/>
 <area shape="rect" id="node6" title=" " alt="" coords="78,304,133,331"/>
 </map>

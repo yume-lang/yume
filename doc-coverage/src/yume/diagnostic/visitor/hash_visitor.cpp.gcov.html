@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-09-26 21:58:57</td>
+            <td class="headerValue">2022-09-28 06:24:42</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -61,7 +61,7 @@
 <a name="3"><span class="lineNum">       3 </span>            : #include &lt;cstddef&gt;</a>
 <a name="4"><span class="lineNum">       4 </span>            : </a>
 <a name="5"><span class="lineNum">       5 </span>            : namespace yume::diagnostic {</a>
-<a name="6"><span class="lineNum">       6 </span>            : inline auto HashVisitor::visit(const ast::AST&amp; expr, const char* label) -&gt; HashVisitor&amp; {</a>
+<a name="6"><span class="lineNum">       6 </span>            : inline auto HashVisitor::visit(const ast::AST&amp; expr, string_view label) -&gt; HashVisitor&amp; {</a>
 <a name="7"><span class="lineNum">       7 </span>            :   hash_combine(m_seed, label);</a>
 <a name="8"><span class="lineNum">       8 </span>            :   hash_combine(m_seed, expr.kind_name());</a>
 <a name="9"><span class="lineNum">       9 </span>            :   hash_combine(m_seed, expr.describe());</a>
@@ -70,14 +70,14 @@
 <a name="12"><span class="lineNum">      12 </span>            :   return *this;</a>
 <a name="13"><span class="lineNum">      13 </span>            : }</a>
 <a name="14"><span class="lineNum">      14 </span>            : </a>
-<a name="15"><span class="lineNum">      15 </span>            : inline auto HashVisitor::visit(const string&amp; str, const char* label) -&gt; HashVisitor&amp; {</a>
+<a name="15"><span class="lineNum">      15 </span>            : inline auto HashVisitor::visit(const string&amp; str, string_view label) -&gt; HashVisitor&amp; {</a>
 <a name="16"><span class="lineNum">      16 </span>            :   hash_combine(m_seed, label);</a>
 <a name="17"><span class="lineNum">      17 </span>            :   hash_combine(m_seed, str);</a>
 <a name="18"><span class="lineNum">      18 </span>            : </a>
 <a name="19"><span class="lineNum">      19 </span>            :   return *this;</a>
 <a name="20"><span class="lineNum">      20 </span>            : }</a>
 <a name="21"><span class="lineNum">      21 </span>            : </a>
-<a name="22"><span class="lineNum">      22 </span>            : inline auto HashVisitor::visit(std::nullptr_t, const char* label) -&gt; HashVisitor&amp; {</a>
+<a name="22"><span class="lineNum">      22 </span>            : inline auto HashVisitor::visit(std::nullptr_t, string_view label) -&gt; HashVisitor&amp; {</a>
 <a name="23"><span class="lineNum">      23 </span>            :   hash_combine(m_seed, label);</a>
 <a name="24"><span class="lineNum">      24 </span>            :   hash_combine(m_seed, nullptr);</a>
 <a name="25"><span class="lineNum">      25 </span>            : </a>

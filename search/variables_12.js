@@ -1,8 +1,6 @@
 var searchData=
 [
-  ['valid_0',['valid',['../structyume_1_1TokenState.html#addc1b36a0b814bba80a2c9c2be3f716c',1,'yume::TokenState::valid()'],['../structyume_1_1ty_1_1Compat.html#a7dd71f75b65a2c4b563d256fb3f15568',1,'yume::ty::Compat::valid()']]],
-  ['value_1',['value',['../structyume_1_1InScope.html#a29d994d0e660b25cf3c34511ede9f3fc',1,'yume::InScope::value()'],['../structyume_1_1StringLiteral.html#a820953ea991da8e82ccd6ba30ac80dea',1,'yume::StringLiteral::value()']]],
-  ['varargs_2',['varargs',['../classyume_1_1ast_1_1FnDecl.html#a61296c09afa837dc3b53c2231359ae9b',1,'yume::ast::FnDecl']]],
-  ['version_3',['VERSION',['../namespaceyume.html#af4ae9d2f36afcdb09e5ea1eae1015e40',1,'yume']]],
-  ['viable_4',['viable',['../structyume_1_1semantic_1_1Overload.html#a9914e2a55fdcf5f73195b73ad00a3efd',1,'yume::semantic::Overload']]]
+  ['u_5fmax_0',['u_max',['../structyume_1_1ty_1_1detail_1_1MinMax.html#ab17b11b007b8700600ef542e43ae3dc1',1,'yume::ty::detail::MinMax']]],
+  ['u_5fmin_1',['u_min',['../structyume_1_1ty_1_1detail_1_1MinMax.html#a69b69ffeb9c85f22fcb47851c494ba02',1,'yume::ty::detail::MinMax']]],
+  ['u_5fty_2',['u_ty',['../structyume_1_1TypeHolder_1_1IntTypePair.html#a4edce067a0a3e629fe0fbf7b86675faf',1,'yume::TypeHolder::IntTypePair']]]
 ];

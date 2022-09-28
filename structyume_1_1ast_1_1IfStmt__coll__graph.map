@@ -1,0 +1,7 @@
+<map id="yume::ast::IfStmt" name="yume::ast::IfStmt">
+<area shape="rect" id="node1" title="An if statement (if), with one or more IfClauses, and optionally an else clause." alt="" coords="147,185,265,212"/>
+<area shape="rect" id="node2" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="5,89,116,115"/>
+<area shape="rect" id="node3" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="6,5,115,32"/>
+<area shape="rect" id="node4" title=" " alt="" coords="141,81,271,123"/>
+<area shape="rect" id="node5" title=" " alt="" coords="295,81,429,123"/>
+</map>

@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-09-26 21:58:57</td>
+            <td class="headerValue">2022-09-28 06:24:42</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -86,7 +86,7 @@
 <a name="28"><span class="lineNum">      28 </span>            : </a>
 <a name="29"><span class="lineNum">      29 </span><span class="lineNoCov">          0 : static auto overload_name(const ast::AST* ast) -&gt; std::string {</span></a>
 <a name="30"><span class="lineNum">      30 </span>            :   if (const auto* call = dyn_cast&lt;ast::CallExpr&gt;(ast))</a>
-<a name="31"><span class="lineNum">      31 </span>            :     return call-&gt;name();</a>
+<a name="31"><span class="lineNum">      31 </span>            :     return call-&gt;name;</a>
 <a name="32"><span class="lineNum">      32 </span>            :   if (const auto* ctor = dyn_cast&lt;ast::CtorExpr&gt;(ast))</a>
 <a name="33"><span class="lineNum">      33 </span>            :     return ctor-&gt;ensure_ty().name() + &quot;:new&quot;;</a>
 <a name="34"><span class="lineNum">      34 </span>            : </a>
@@ -133,7 +133,7 @@
 <a name="75"><span class="lineNum">      75 </span>            :     if (int_type-&gt;size() == 1)</a>
 <a name="76"><span class="lineNum">      76 </span>            :       return {}; // Can't implicitly cast to Bool</a>
 <a name="77"><span class="lineNum">      77 </span>            : </a>
-<a name="78"><span class="lineNum">      78 </span>            :     auto in_range = int_type-&gt;in_range(num_arg.val());</a>
+<a name="78"><span class="lineNum">      78 </span>            :     auto in_range = int_type-&gt;in_range(num_arg.val);</a>
 <a name="79"><span class="lineNum">      79 </span>            : </a>
 <a name="80"><span class="lineNum">      80 </span>            :     if (in_range)</a>
 <a name="81"><span class="lineNum">      81 </span>            :       return {.valid = true, .conv = {.dereference = false, .kind = ty::Conv::Int}};</a>

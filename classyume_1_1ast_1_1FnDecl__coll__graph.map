@@ -1,8 +1,0 @@
-<map id="yume::ast::FnDecl" name="yume::ast::FnDecl">
-<area shape="rect" id="node1" title="A declaration of a function (def)." alt="" coords="101,247,225,273"/>
-<area shape="rect" id="node2" href="$classyume_1_1ast_1_1Decl.html" title="Base class for a named declaration." alt="" coords="6,157,115,184"/>
-<area shape="rect" id="node3" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="5,81,116,108"/>
-<area shape="rect" id="node4" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="6,5,115,32"/>
-<area shape="rect" id="node5" title=" " alt="" coords="140,157,187,184"/>
-<area shape="rect" id="node6" title=" " alt="" coords="211,157,353,184"/>
-</map>

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['body_5ft_0',['body_t',['../classyume_1_1ast_1_1FnDecl.html#afaf6024b81adaab666ca0a07d9eec967',1,'yume::ast::FnDecl']]]
+  ['body_5fbase_5ft_0',['body_base_t',['../structyume_1_1ast_1_1FnDecl.html#a2a91123e8cdff3a04b07087b1fb67bd9',1,'yume::ast::FnDecl']]]
 ];

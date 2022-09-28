@@ -84,12 +84,12 @@ Inheritance diagram for yume::ast::Type:</div>
 <div class="center"><img src="classyume_1_1ast_1_1Type__inherit__graph.png" border="0" usemap="#ayume_1_1ast_1_1Type_inherit__map" alt="Inheritance graph"/></div>
 <map name="ayume_1_1ast_1_1Type_inherit__map" id="ayume_1_1ast_1_1Type_inherit__map">
 <area shape="rect" title="A type annotation. This (ast::Type) is distinct from the actual type of a value (ty::Type)." alt="" coords="163,132,273,159"/>
-<area shape="rect" href="classyume_1_1ast_1_1FunctionType.html" title="A function type i.e. &#45;&gt;(Foo,Bar)Baz." alt="" coords="327,5,488,32"/>
-<area shape="rect" href="classyume_1_1ast_1_1ProxyType.html" title="A type which refers to a different type, specifically that of a struct field." alt="" coords="336,56,479,83"/>
-<area shape="rect" href="classyume_1_1ast_1_1QualType.html" title="A type with a Qualifier like mut or [] following." alt="" coords="338,107,477,133"/>
-<area shape="rect" href="classyume_1_1ast_1_1SelfType.html" title="The self type." alt="" coords="340,157,475,184"/>
-<area shape="rect" href="classyume_1_1ast_1_1SimpleType.html" title="Just the name of a type, always capitalized." alt="" coords="332,208,483,235"/>
-<area shape="rect" href="classyume_1_1ast_1_1TemplatedType.html" title="A type with explicit type parameters i.e. Foo&lt;Bar,Baz&gt;." alt="" coords="321,259,493,285"/>
+<area shape="rect" href="structyume_1_1ast_1_1FunctionType.html" title="A function type i.e. &#45;&gt;(Foo,Bar)Baz." alt="" coords="327,5,488,32"/>
+<area shape="rect" href="structyume_1_1ast_1_1ProxyType.html" title="A type which refers to a different type, specifically that of a struct field." alt="" coords="336,56,479,83"/>
+<area shape="rect" href="structyume_1_1ast_1_1QualType.html" title="A type with a Qualifier like mut or [] following." alt="" coords="338,107,477,133"/>
+<area shape="rect" href="structyume_1_1ast_1_1SelfType.html" title="The self type." alt="" coords="340,157,475,184"/>
+<area shape="rect" href="structyume_1_1ast_1_1SimpleType.html" title="Just the name of a type, always capitalized." alt="" coords="332,208,483,235"/>
+<area shape="rect" href="structyume_1_1ast_1_1TemplatedType.html" title="A type with explicit type parameters i.e. Foo&lt;Bar,Baz&gt;." alt="" coords="321,259,493,285"/>
 <area shape="rect" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,132,115,159"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
@@ -119,7 +119,7 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a0d403055daefa675d31177475830a0f6 inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af3b50b2b4d76421366bd56a35f87126d inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AST.html#af3b50b2b4d76421366bd56a35f87126d">~AST</a> ()=default</td></tr>
 <tr class="separator:af3b50b2b4d76421366bd56a35f87126d inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb1376044bc6a064fd71a2ea7505e86f inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AST.html#adb1376044bc6a064fd71a2ea7505e86f">visit</a> (<a class="el" href="classyume_1_1Visitor.html">Visitor</a> &amp;visitor) const =0</td></tr>
+<tr class="memitem:adb1376044bc6a064fd71a2ea7505e86f inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AST.html#adb1376044bc6a064fd71a2ea7505e86f">visit</a> (<a class="el" href="classyume_1_1Visitor.html">Visitor</a> &amp;<a class="el" href="visit_8cpp.html#aecb7a75ced9024d2b17e283aa5f9e651">visitor</a>) const =0</td></tr>
 <tr class="memdesc:adb1376044bc6a064fd71a2ea7505e86f inherit pub_methods_classyume_1_1ast_1_1AST"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recursively visit this ast node and all its constituents.  <a href="classyume_1_1ast_1_1AST.html#adb1376044bc6a064fd71a2ea7505e86f">More...</a><br /></td></tr>
 <tr class="separator:adb1376044bc6a064fd71a2ea7505e86f inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f5bac08572a30ad500ac1b34f2eface inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AST.html#a0f5bac08572a30ad500ac1b34f2eface">val_ty</a> () const noexcept -&gt; optional&lt; <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> &gt;</td></tr>
@@ -287,7 +287,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>Implements <a class="el" href="classyume_1_1ast_1_1AST.html#a46a1fa9de0d3c5d439bb467a29ded575">yume::ast::AST</a>.</p>
 
-<p>Implemented in <a class="el" href="classyume_1_1ast_1_1FunctionType.html#afae98e3aeab73c5392577f477df7d0c6">yume::ast::FunctionType</a>, <a class="el" href="classyume_1_1ast_1_1ProxyType.html#aed6ffee9c65265ec8a3fc3195d425cba">yume::ast::ProxyType</a>, <a class="el" href="classyume_1_1ast_1_1QualType.html#a5a870f622f767ec84193912d14c558cd">yume::ast::QualType</a>, <a class="el" href="classyume_1_1ast_1_1SelfType.html#adbacef8112e46de269aec0a18d656f8e">yume::ast::SelfType</a>, <a class="el" href="classyume_1_1ast_1_1SimpleType.html#a8cd525cdb1bdf78eb0d751b17d1bbfdb">yume::ast::SimpleType</a>, and <a class="el" href="classyume_1_1ast_1_1TemplatedType.html#a8129115b42342a40f2399709d2c18981">yume::ast::TemplatedType</a>.</p>
+<p>Implemented in <a class="el" href="structyume_1_1ast_1_1FunctionType.html#afae98e3aeab73c5392577f477df7d0c6">yume::ast::FunctionType</a>, <a class="el" href="structyume_1_1ast_1_1ProxyType.html#aed6ffee9c65265ec8a3fc3195d425cba">yume::ast::ProxyType</a>, <a class="el" href="structyume_1_1ast_1_1QualType.html#a5a870f622f767ec84193912d14c558cd">yume::ast::QualType</a>, <a class="el" href="structyume_1_1ast_1_1SelfType.html#adbacef8112e46de269aec0a18d656f8e">yume::ast::SelfType</a>, <a class="el" href="structyume_1_1ast_1_1SimpleType.html#a8cd525cdb1bdf78eb0d751b17d1bbfdb">yume::ast::SimpleType</a>, and <a class="el" href="structyume_1_1ast_1_1TemplatedType.html#a8129115b42342a40f2399709d2c18981">yume::ast::TemplatedType</a>.</p>
 
 </div>
 </div>
