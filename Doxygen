@@ -37,7 +37,7 @@ RECURSIVE              = YES
 EXCLUDE                =
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       =
-EXCLUDE_SYMBOLS        = classof # LLVM cast helpers
+EXCLUDE_SYMBOLS        = classof,std
 
 SOURCE_BROWSER         = YES
 STRIP_CODE_COMMENTS    = NO
