@@ -65,7 +65,6 @@ enum Kind {
   /****/ K_Dtor,         ///< `DtorExpr`
   /****/ K_Slice,        ///< `SliceExpr`
   /****/ K_Lambda,       ///< `LambdaExpr`
-  /****/ K_DirectCall,   ///< `DirectCallExpr`
   /****/ K_Assign,       ///< `AssignExpr`
   /****/ K_FieldAccess,  ///< `FieldAccessExpr`
   /****/ K_ImplicitCast, ///< `ImplicitCastExpr`
@@ -114,7 +113,6 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case K_Var: return "var";
   case K_Const: return "const";
   case K_Lambda: return "lambda";
-  case K_DirectCall: return "direct call";
   case K_Return: return "return statement";
   case K_Assign: return "assign";
   case K_FieldAccess: return "field access";
@@ -575,21 +573,6 @@ public:
 
   static auto classof(const AST* a) -> bool { return a->kind() == K_Slice; }
   [[nodiscard]] auto clone() const -> SliceExpr* override;
-};
-
-/// A "direct" call to an anonymous function
-struct DirectCallExpr : public Expr {
-public:
-  AnyExpr base;
-  vector<AnyExpr> args;
-
-  DirectCallExpr(span<Token> tok, AnyExpr base, vector<AnyExpr> args)
-      : Expr(K_DirectCall, tok), base{move(base)}, args{move(args)} {}
-  void visit(Visitor& visitor) const override;
-  // [[nodiscard]] auto describe() const -> string override; // TODO(rymiel)
-
-  static auto classof(const AST* a) -> bool { return a->kind() == K_DirectCall; }
-  [[nodiscard]] auto clone() const -> DirectCallExpr* override;
 };
 
 /// An assignment (`=`).

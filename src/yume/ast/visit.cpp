@@ -114,7 +114,6 @@ void SliceExpr::visit(Visitor& visitor) const { helper(visitor).visit(type, "typ
 void LambdaExpr::visit(Visitor& visitor) const {
   helper(visitor).visit(args, "args").visit(annotations, "annotation").visit(ret, "ret").visit(body, "body");
 }
-void DirectCallExpr::visit(Visitor& visitor) const { helper(visitor).visit(base, "base").visit(args, "args"); }
 void AssignExpr::visit(Visitor& visitor) const { helper(visitor).visit(target, "target").visit(value, "value"); }
 void FieldAccessExpr::visit(Visitor& visitor) const { helper(visitor).visit(base, "base").visit(field, "field"); }
 void ImplicitCastExpr::visit(Visitor& visitor) const {

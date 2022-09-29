@@ -708,8 +708,9 @@ auto Parser::parse_receiver(unique_ptr<Expr> receiver, VectorTokenIterator recei
   if (try_consume(SYM_ARROW)) {
     consume(SYM_LPAREN);
     auto call_args = vector<AnyExpr>{};
+    call_args.emplace_back(move(receiver));
     consume_with_commas_until(SYM_RPAREN, [&] { call_args.emplace_back(parse_expr()); });
-    auto call = ast_ptr<DirectCallExpr>(entry, move(receiver), move(call_args));
+    auto call = ast_ptr<CallExpr>(entry, "->", move(call_args));
     return parse_receiver(move(call), receiver_entry);
   }
   return receiver;

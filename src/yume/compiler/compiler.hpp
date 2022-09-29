@@ -86,6 +86,7 @@ public:
   void body_statement(ast::Stmt&);
   auto decl_statement(ast::Stmt&, optional<ty::Type> parent = std::nullopt, ast::Program* member = nullptr) -> DeclLike;
   auto body_expression(ast::Expr& expr) -> Val;
+  auto direct_call_operator(ast::CallExpr& expr) -> Val;
 
   void write_object(const char* filename, bool binary);
 

@@ -62,6 +62,7 @@ private:
   /// Convert an ast type (`ast::Type`) into a type in the type system (`ty::Type`).
   auto convert_type(ast::Type& ast_type) -> ty::Type;
   auto create_slice_type(const ty::Type& base_type) -> ty::Type;
+  void direct_call_operator(ast::CallExpr& expr);
 
   auto get_or_declare_instantiation(Struct* struct_obj, Substitution subs) -> ty::Type;
 

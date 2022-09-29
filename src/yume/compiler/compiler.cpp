@@ -796,6 +796,9 @@ auto Compiler::primitive(Fn* fn, const vector<Val>& args, const vector<ty::Type>
 }
 
 template <> auto Compiler::expression(ast::CallExpr& expr) -> Val {
+  if (expr.name == "->") // TODO(rymiel): Magic value?
+    return direct_call_operator(expr);
+
   auto* selected = expr.selected_overload;
   llvm::Function* llvm_fn = nullptr;
 
@@ -935,12 +938,16 @@ template <> auto Compiler::expression(ast::LambdaExpr& expr) -> Val {
   return fn_bundle;
 }
 
-template <> auto Compiler::expression(ast::DirectCallExpr& expr) -> Val {
-  auto call_target_ty = expr.base->ensure_ty();
+auto Compiler::direct_call_operator(ast::CallExpr& expr) -> Val {
+  yume_assert(expr.args.size() > 1, "Direct call must have at least 1 argument");
+  auto& base_expr = *expr.args[0];
+
+  auto call_target_ty = base_expr.ensure_ty();
+  yume_assert(call_target_ty.base_isa<ty::Function>(), "Direct call target must be a function type");
   auto* llvm_fn_ty = call_target_ty.base_cast<ty::Function>()->fn_memo();
   auto* llvm_fn_bundle_ty = llvm_type(call_target_ty.without_mut());
 
-  auto base = body_expression(*expr.base);
+  auto base = body_expression(base_expr);
   if (call_target_ty.is_mut())
     base = m_builder->CreateLoad(llvm_fn_bundle_ty, base.llvm, "indir.fnptr.deref");
 
@@ -948,10 +955,10 @@ template <> auto Compiler::expression(ast::DirectCallExpr& expr) -> Val {
   auto* llvm_fn_closure = m_builder->CreateExtractValue(base, 1, "fnptr.closure");
 
   vector<llvm::Value*> args{};
-  args.reserve(expr.args.size());
+  args.reserve(expr.args.size() - 1);
   args.push_back(llvm_fn_closure);
 
-  for (auto& i : expr.args)
+  for (auto& i : llvm::drop_begin(expr.args))
     args.push_back(body_expression(*i));
 
   return m_builder->CreateCall(llvm_fn_ty, llvm_fn_ptr, args,

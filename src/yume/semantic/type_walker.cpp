@@ -210,12 +210,15 @@ template <> void TypeWalker::expression(ast::LambdaExpr& expr) {
   enclosing_scopes.pop_back();
 }
 
-template <> void TypeWalker::expression(ast::DirectCallExpr& expr) {
-  body_expression(*expr.base);
-  yume_assert(expr.base->ensure_ty().base_isa<ty::Function>(), "Direct call target must be a function type");
-  const auto* base_ptr_ty = expr.base->ensure_ty().base_cast<ty::Function>();
+void TypeWalker::direct_call_operator(ast::CallExpr& expr) {
+  yume_assert(expr.args.size() > 1, "Direct call must have at least 1 argument");
+  auto& base = *expr.args[0];
+  body_expression(base);
 
-  for (auto [target, expr_arg] : llvm::zip(base_ptr_ty->args(), expr.args)) {
+  yume_assert(base.ensure_ty().base_isa<ty::Function>(), "Direct call target must be a function type");
+  const auto* base_ptr_ty = base.ensure_ty().base_cast<ty::Function>();
+
+  for (auto [target, expr_arg] : llvm::zip(base_ptr_ty->args(), llvm::drop_begin(expr.args))) {
     body_expression(*expr_arg);
 
     auto compat = expr_arg->ensure_ty().compatibility(target);
@@ -341,8 +344,12 @@ auto TypeWalker::all_ctor_overloads_by_type(Struct& st, ast::CtorExpr& call) -> 
 }
 
 template <> void TypeWalker::expression(ast::CallExpr& expr) {
-  auto overload_set = all_fn_overloads_by_name(expr);
   auto name = expr.name;
+
+  if (name == "->") // TODO(rymiel): Magic value?
+    return direct_call_operator(expr);
+
+  auto overload_set = all_fn_overloads_by_name(expr);
 
   if (overload_set.empty()) {                      // HACK
     resolve_queue();                               // HACK
