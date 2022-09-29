@@ -341,6 +341,7 @@ TEST_CASE("Parse incomplete def", "[parse][throws]") {
   CHECK_PARSER_THROWS("def foo() = __primitive__");
   CHECK_PARSER_THROWS("def foo() = __primitive__(");
   CHECK_PARSER_THROWS("def foo() = __primitive__.");
+  CHECK_PARSER_THROWS("def foo() = __primitive__ foo");
   CHECK_PARSER_THROWS("def foo() = __primitive__(foo");
 }
 
