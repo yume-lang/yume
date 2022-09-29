@@ -1,2 +1,6 @@
-Checks: '-cppcoreguidelines-avoid-non-const-global-variables,-cppcoreguidelines-macro-usage'
+Checks: >-
+  -cppcoreguidelines-avoid-non-const-global-variables,
+  -cppcoreguidelines-macro-usage,
+  -readability-function-cognitive-complexity,
+  -google-runtime-int
 InheritParentConfig: true

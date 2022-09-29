@@ -73,7 +73,7 @@ template <std::derived_from<yume::ast::AST> T> struct StringMaker<T> {
     std::string str;
     llvm::raw_string_ostream ss(str);
     yume::diagnostic::PrintVisitor visitor(ss);
-    visitor.visit(token, nullptr);
+    visitor.visit(token, "");
     return str;
   }
 };

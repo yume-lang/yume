@@ -185,9 +185,6 @@ TEST_CASE("Parse direct calling", "[parse]") {
   CHECK_PARSER("a(b(1), c(2, 3))", make_call("a", make_call("b", 1_Num), make_call("c", 2_Num, 3_Num)));
 }
 
-// TODO(rymiel)
-TEST_CASE("Parse indirect calling", "[!shouldfail][parse]") { CHECK_PARSER("(a)()", make_call("a")); }
-
 TEST_CASE("Parse member calling", "[parse]") {
   CHECK_PARSER("receiver.call", make_call("call", "receiver"_Var));
   CHECK_PARSER("receiver.call()", make_call("call", "receiver"_Var));
@@ -329,6 +326,18 @@ TEST_CASE("Parse extern linkage function declaration", "[parse][fn]") {
                make_fn_decl({.name = "short", .attributes = {"extern"}}, ast<ReturnStmt>(0_Num)));
   CHECK_PARSER("def @extern @pure @foo short() = 0",
                make_fn_decl({.name = "short", .attributes = {"extern", "pure", "foo"}}, ast<ReturnStmt>(0_Num)));
+}
+
+TEST_CASE("Parse incomplete def", "[parse][throws]") {
+  CHECK_PARSER_THROWS("def");
+  CHECK_PARSER_THROWS("def foo");
+  CHECK_PARSER_THROWS("def foo{");
+  CHECK_PARSER_THROWS("def foo(");
+  CHECK_PARSER_THROWS("def foo =");
+  CHECK_PARSER_THROWS("def foo() =");
+  CHECK_PARSER_THROWS("def foo() = __primitive__");
+  CHECK_PARSER_THROWS("def foo() = __primitive__(");
+  CHECK_PARSER_THROWS("def foo() = __primitive__(foo");
 }
 
 #undef CHECK_PARSER
