@@ -1,16 +1,16 @@
 <map id="yume::ast::AST" name="yume::ast::AST">
-<area shape="rect" id="node1" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,791,115,817"/>
-<area shape="rect" id="node2" href="$structyume_1_1ast_1_1IfClause.html" title="Clauses of an if statement IfStmt." alt="" coords="171,613,301,640"/>
-<area shape="rect" id="node3" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="181,664,291,691"/>
-<area shape="rect" id="node31" href="$classyume_1_1ast_1_1Type.html" title="A type annotation. This (ast::Type) is distinct from the actual type of a value (ty::Type)." alt="" coords="181,892,291,919"/>
-<area shape="rect" id="node38" href="$structyume_1_1ast_1_1TypeName.html" title="A pair of a Type and an identifier, i.e. a parameter name." alt="" coords="163,943,309,969"/>
+<area shape="rect" id="node1" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,765,115,792"/>
+<area shape="rect" id="node2" href="$structyume_1_1ast_1_1IfClause.html" title="Clauses of an if statement IfStmt." alt="" coords="171,588,301,615"/>
+<area shape="rect" id="node3" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="181,639,291,665"/>
+<area shape="rect" id="node30" href="$classyume_1_1ast_1_1Type.html" title="A type annotation. This (ast::Type) is distinct from the actual type of a value (ty::Type)." alt="" coords="181,867,291,893"/>
+<area shape="rect" id="node37" href="$structyume_1_1ast_1_1TypeName.html" title="A pair of a Type and an identifier, i.e. a parameter name." alt="" coords="163,917,309,944"/>
 <area shape="rect" id="node4" href="$structyume_1_1ast_1_1Compound.html" title="A statement consisting of multiple other statements, i.e. the body of a function." alt="" coords="371,107,516,133"/>
 <area shape="rect" id="node5" href="$classyume_1_1ast_1_1Decl.html" title="Base class for a named declaration." alt="" coords="389,157,498,184"/>
-<area shape="rect" id="node11" href="$classyume_1_1ast_1_1Expr.html" title="Expressions have an associated value and type." alt="" coords="389,563,497,589"/>
-<area shape="rect" id="node27" href="$structyume_1_1ast_1_1IfStmt.html" title="An if statement (if), with one or more IfClauses, and optionally an else clause." alt="" coords="384,613,503,640"/>
-<area shape="rect" id="node28" href="$structyume_1_1ast_1_1Program.html" title="The top level structure of a file of source code." alt="" coords="377,664,509,691"/>
-<area shape="rect" id="node29" href="$structyume_1_1ast_1_1ReturnStmt.html" title="Return from a function body." alt="" coords="369,715,518,741"/>
-<area shape="rect" id="node30" href="$structyume_1_1ast_1_1WhileStmt.html" title="A while loop (while)." alt="" coords="372,765,515,792"/>
+<area shape="rect" id="node11" href="$classyume_1_1ast_1_1Expr.html" title="Expressions have an associated value and type." alt="" coords="389,537,497,564"/>
+<area shape="rect" id="node26" href="$structyume_1_1ast_1_1IfStmt.html" title="An if statement (if), with one or more IfClauses, and optionally an else clause." alt="" coords="384,588,503,615"/>
+<area shape="rect" id="node27" href="$structyume_1_1ast_1_1Program.html" title="The top level structure of a file of source code." alt="" coords="377,639,509,665"/>
+<area shape="rect" id="node28" href="$structyume_1_1ast_1_1ReturnStmt.html" title="Return from a function body." alt="" coords="369,689,518,716"/>
+<area shape="rect" id="node29" href="$structyume_1_1ast_1_1WhileStmt.html" title="A while loop (while)." alt="" coords="372,740,515,767"/>
 <area shape="rect" id="node6" href="$structyume_1_1ast_1_1ConstDecl.html" title="A declaration of a constant (const)." alt="" coords="596,5,739,32"/>
 <area shape="rect" id="node7" href="$structyume_1_1ast_1_1CtorDecl.html" title="A declaration of a custom constructor (def :new)." alt="" coords="601,56,734,83"/>
 <area shape="rect" id="node8" href="$structyume_1_1ast_1_1FnDecl.html" title="A declaration of a function (def)." alt="" coords="605,107,729,133"/>
@@ -22,19 +22,18 @@
 <area shape="rect" id="node15" href="$structyume_1_1ast_1_1CharExpr.html" title="Char literals." alt="" coords="600,411,735,437"/>
 <area shape="rect" id="node16" href="$structyume_1_1ast_1_1ConstExpr.html" title="A constant. Currently global." alt="" coords="596,461,739,488"/>
 <area shape="rect" id="node17" href="$structyume_1_1ast_1_1CtorExpr.html" title="A construction of a struct or cast of a primitive." alt="" coords="601,512,733,539"/>
-<area shape="rect" id="node18" href="$structyume_1_1ast_1_1DirectCallExpr.html" title="A &quot;direct&quot; call to an anonymous function." alt="" coords="585,563,749,589"/>
-<area shape="rect" id="node19" href="$structyume_1_1ast_1_1DtorExpr.html" title="A destruction of an object upon leaving its scope." alt="" coords="601,613,733,640"/>
-<area shape="rect" id="node20" href="$structyume_1_1ast_1_1FieldAccessExpr.html" title="Direct access of a field of a struct (::)." alt="" coords="577,664,757,691"/>
-<area shape="rect" id="node21" href="$structyume_1_1ast_1_1ImplicitCastExpr.html" title="Represents an implicit cast to a different type, performed during semantic analysis." alt="" coords="579,715,756,741"/>
-<area shape="rect" id="node22" href="$structyume_1_1ast_1_1LambdaExpr.html" title="A local definition of an anonymous function." alt="" coords="590,765,745,792"/>
-<area shape="rect" id="node23" href="$structyume_1_1ast_1_1NumberExpr.html" title="Number literals." alt="" coords="590,816,745,843"/>
-<area shape="rect" id="node24" href="$structyume_1_1ast_1_1SliceExpr.html" title="A slice literal, i.e. an array." alt="" coords="599,867,736,893"/>
-<area shape="rect" id="node25" href="$structyume_1_1ast_1_1StringExpr.html" title="String literals." alt="" coords="596,917,739,944"/>
-<area shape="rect" id="node26" href="$structyume_1_1ast_1_1VarExpr.html" title="A variable, i.e. just an identifier." alt="" coords="603,968,731,995"/>
-<area shape="rect" id="node32" href="$structyume_1_1ast_1_1FunctionType.html" title="A function type i.e. &#45;&gt;(Foo,Bar)Baz." alt="" coords="363,816,524,843"/>
-<area shape="rect" id="node33" href="$structyume_1_1ast_1_1ProxyType.html" title="A type which refers to a different type, specifically that of a struct field." alt="" coords="372,867,515,893"/>
-<area shape="rect" id="node34" href="$structyume_1_1ast_1_1QualType.html" title="A type with a Qualifier like mut or [] following." alt="" coords="374,917,513,944"/>
-<area shape="rect" id="node35" href="$structyume_1_1ast_1_1SelfType.html" title="The self type." alt="" coords="376,968,511,995"/>
-<area shape="rect" id="node36" href="$structyume_1_1ast_1_1SimpleType.html" title="Just the name of a type, always capitalized." alt="" coords="368,1019,519,1045"/>
-<area shape="rect" id="node37" href="$structyume_1_1ast_1_1TemplatedType.html" title="A type with explicit type parameters i.e. Foo&lt;Bar,Baz&gt;." alt="" coords="357,1069,529,1096"/>
+<area shape="rect" id="node18" href="$structyume_1_1ast_1_1DtorExpr.html" title="A destruction of an object upon leaving its scope." alt="" coords="601,563,733,589"/>
+<area shape="rect" id="node19" href="$structyume_1_1ast_1_1FieldAccessExpr.html" title="Direct access of a field of a struct (::)." alt="" coords="577,613,757,640"/>
+<area shape="rect" id="node20" href="$structyume_1_1ast_1_1ImplicitCastExpr.html" title="Represents an implicit cast to a different type, performed during semantic analysis." alt="" coords="579,664,756,691"/>
+<area shape="rect" id="node21" href="$structyume_1_1ast_1_1LambdaExpr.html" title="A local definition of an anonymous function." alt="" coords="590,715,745,741"/>
+<area shape="rect" id="node22" href="$structyume_1_1ast_1_1NumberExpr.html" title="Number literals." alt="" coords="590,765,745,792"/>
+<area shape="rect" id="node23" href="$structyume_1_1ast_1_1SliceExpr.html" title="A slice literal, i.e. an array." alt="" coords="599,816,736,843"/>
+<area shape="rect" id="node24" href="$structyume_1_1ast_1_1StringExpr.html" title="String literals." alt="" coords="596,867,739,893"/>
+<area shape="rect" id="node25" href="$structyume_1_1ast_1_1VarExpr.html" title="A variable, i.e. just an identifier." alt="" coords="603,917,731,944"/>
+<area shape="rect" id="node31" href="$structyume_1_1ast_1_1FunctionType.html" title="A function type i.e. &#45;&gt;(Foo,Bar)Baz." alt="" coords="363,791,524,817"/>
+<area shape="rect" id="node32" href="$structyume_1_1ast_1_1ProxyType.html" title="A type which refers to a different type, specifically that of a struct field." alt="" coords="372,841,515,868"/>
+<area shape="rect" id="node33" href="$structyume_1_1ast_1_1QualType.html" title="A type with a Qualifier like mut or [] following." alt="" coords="374,892,513,919"/>
+<area shape="rect" id="node34" href="$structyume_1_1ast_1_1SelfType.html" title="The self type." alt="" coords="376,943,511,969"/>
+<area shape="rect" id="node35" href="$structyume_1_1ast_1_1SimpleType.html" title="Just the name of a type, always capitalized." alt="" coords="368,993,519,1020"/>
+<area shape="rect" id="node36" href="$structyume_1_1ast_1_1TemplatedType.html" title="A type with explicit type parameters i.e. Foo&lt;Bar,Baz&gt;." alt="" coords="357,1044,529,1071"/>
 </map>

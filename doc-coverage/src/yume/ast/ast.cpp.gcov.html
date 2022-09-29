@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-09-28 06:24:42</td>
+            <td class="headerValue">2022-09-29 05:01:15</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -170,12 +170,11 @@
 <a name="112"><span class="lineNum">     112 </span>            : auto LambdaExpr::clone() const -&gt; LambdaExpr* {</a>
 <a name="113"><span class="lineNum">     113 </span>            :   return new LambdaExpr(tok(), dup(args), dup(ret), dup(body), dup(annotations));</a>
 <a name="114"><span class="lineNum">     114 </span>            : }</a>
-<a name="115"><span class="lineNum">     115 </span>            : auto DirectCallExpr::clone() const -&gt; DirectCallExpr* { return new DirectCallExpr(tok(), dup(base), dup(args)); }</a>
-<a name="116"><span class="lineNum">     116 </span>            : auto AssignExpr::clone() const -&gt; AssignExpr* { return new AssignExpr(tok(), dup(target), dup(value)); }</a>
-<a name="117"><span class="lineNum">     117 </span>            : auto FieldAccessExpr::clone() const -&gt; FieldAccessExpr* { return new FieldAccessExpr(tok(), dup(base), field); }</a>
-<a name="118"><span class="lineNum">     118 </span>            : auto ImplicitCastExpr::clone() const -&gt; ImplicitCastExpr* { return new ImplicitCastExpr(tok(), dup(base), conversion); }</a>
-<a name="119"><span class="lineNum">     119 </span>            : auto Program::clone() const -&gt; Program* { return new Program(tok(), dup(body)); }</a>
-<a name="120"><span class="lineNum">     120 </span>            : } // namespace yume::ast</a>
+<a name="115"><span class="lineNum">     115 </span>            : auto AssignExpr::clone() const -&gt; AssignExpr* { return new AssignExpr(tok(), dup(target), dup(value)); }</a>
+<a name="116"><span class="lineNum">     116 </span>            : auto FieldAccessExpr::clone() const -&gt; FieldAccessExpr* { return new FieldAccessExpr(tok(), dup(base), field); }</a>
+<a name="117"><span class="lineNum">     117 </span>            : auto ImplicitCastExpr::clone() const -&gt; ImplicitCastExpr* { return new ImplicitCastExpr(tok(), dup(base), conversion); }</a>
+<a name="118"><span class="lineNum">     118 </span>            : auto Program::clone() const -&gt; Program* { return new Program(tok(), dup(body)); }</a>
+<a name="119"><span class="lineNum">     119 </span>            : } // namespace yume::ast</a>
 </pre>
       </td>
     </tr>

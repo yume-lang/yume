@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-09-28 06:24:42</td>
+            <td class="headerValue">2022-09-29 05:01:15</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -766,88 +766,89 @@
 <a name="708"><span class="lineNum">     708 </span>            :   if (try_consume(SYM_ARROW)) {</a>
 <a name="709"><span class="lineNum">     709 </span>            :     consume(SYM_LPAREN);</a>
 <a name="710"><span class="lineNum">     710 </span>            :     auto call_args = vector&lt;AnyExpr&gt;{};</a>
-<a name="711"><span class="lineNum">     711 </span>            :     consume_with_commas_until(SYM_RPAREN, [&amp;] { call_args.emplace_back(parse_expr()); });</a>
-<a name="712"><span class="lineNum">     712 </span>            :     auto call = ast_ptr&lt;DirectCallExpr&gt;(entry, move(receiver), move(call_args));</a>
-<a name="713"><span class="lineNum">     713 </span>            :     return parse_receiver(move(call), receiver_entry);</a>
-<a name="714"><span class="lineNum">     714 </span>            :   }</a>
-<a name="715"><span class="lineNum">     715 </span>            :   return receiver;</a>
-<a name="716"><span class="lineNum">     716 </span>            : }</a>
-<a name="717"><span class="lineNum">     717 </span>            : </a>
-<a name="718"><span class="lineNum">     718 </span>            : auto Parser::parse_lambda() -&gt; unique_ptr&lt;LambdaExpr&gt; {</a>
-<a name="719"><span class="lineNum">     719 </span>            :   auto entry = tokens.begin();</a>
-<a name="720"><span class="lineNum">     720 </span>            : </a>
-<a name="721"><span class="lineNum">     721 </span>            :   consume(KWD_DEF);</a>
-<a name="722"><span class="lineNum">     722 </span>            : </a>
-<a name="723"><span class="lineNum">     723 </span>            :   auto annotations = std::set&lt;string&gt;{};</a>
-<a name="724"><span class="lineNum">     724 </span>            :   while (try_consume(SYM_AT))</a>
-<a name="725"><span class="lineNum">     725 </span>            :     annotations.emplace(consume_word());</a>
-<a name="726"><span class="lineNum">     726 </span>            : </a>
-<a name="727"><span class="lineNum">     727 </span>            :   consume(SYM_LPAREN);</a>
-<a name="728"><span class="lineNum">     728 </span>            : </a>
-<a name="729"><span class="lineNum">     729 </span>            :   auto args = vector&lt;TypeName&gt;{};</a>
-<a name="730"><span class="lineNum">     730 </span>            :   consume_with_commas_until(SYM_RPAREN, [&amp;] {</a>
-<a name="731"><span class="lineNum">     731 </span>            :     auto arg = parse_type_name();</a>
-<a name="732"><span class="lineNum">     732 </span>            :     args.emplace_back(move(*arg));</a>
-<a name="733"><span class="lineNum">     733 </span>            :   });</a>
-<a name="734"><span class="lineNum">     734 </span>            : </a>
-<a name="735"><span class="lineNum">     735 </span>            :   auto ret_type = OptionalType{try_parse_type()};</a>
-<a name="736"><span class="lineNum">     736 </span>            :   auto body_begin = entry;</a>
-<a name="737"><span class="lineNum">     737 </span>            :   auto body = vector&lt;AnyStmt&gt;{};</a>
-<a name="738"><span class="lineNum">     738 </span>            : </a>
-<a name="739"><span class="lineNum">     739 </span>            :   if (try_consume(SYM_EQ)) { // A &quot;short&quot; function definition, consists of a single expression</a>
-<a name="740"><span class="lineNum">     740 </span>            :     body_begin = tokens.begin();</a>
-<a name="741"><span class="lineNum">     741 </span>            :     auto expr = parse_expr();</a>
-<a name="742"><span class="lineNum">     742 </span>            :     body.emplace_back(ast_ptr&lt;ReturnStmt&gt;(entry, move(expr)));</a>
-<a name="743"><span class="lineNum">     743 </span>            :   } else {</a>
-<a name="744"><span class="lineNum">     744 </span>            :     if (!try_peek(0, KWD_END)) // Allow `end` to be on the same line</a>
-<a name="745"><span class="lineNum">     745 </span>            :       require_separator();</a>
-<a name="746"><span class="lineNum">     746 </span>            : </a>
-<a name="747"><span class="lineNum">     747 </span>            :     body_begin = tokens.begin();</a>
-<a name="748"><span class="lineNum">     748 </span>            :     while (!try_consume(KWD_END)) {</a>
-<a name="749"><span class="lineNum">     749 </span>            :       body.emplace_back(parse_stmt());</a>
-<a name="750"><span class="lineNum">     750 </span>            :       ignore_separator();</a>
-<a name="751"><span class="lineNum">     751 </span>            :     }</a>
-<a name="752"><span class="lineNum">     752 </span>            :   }</a>
-<a name="753"><span class="lineNum">     753 </span>            : </a>
-<a name="754"><span class="lineNum">     754 </span>            :   return ast_ptr&lt;LambdaExpr&gt;(entry, move(args), move(ret_type), make_ast&lt;Compound&gt;(body_begin, move(body)),</a>
-<a name="755"><span class="lineNum">     755 </span>            :                              move(annotations));</a>
-<a name="756"><span class="lineNum">     756 </span>            : }</a>
-<a name="757"><span class="lineNum">     757 </span>            : </a>
-<a name="758"><span class="lineNum">     758 </span>            : auto Parser::parse_receiver() -&gt; unique_ptr&lt;Expr&gt; {</a>
-<a name="759"><span class="lineNum">     759 </span>            :   if (tokens-&gt;is_a(KWD_DEF))</a>
-<a name="760"><span class="lineNum">     760 </span>            :     return parse_lambda();</a>
-<a name="761"><span class="lineNum">     761 </span>            : </a>
-<a name="762"><span class="lineNum">     762 </span>            :   auto entry = tokens.begin();</a>
-<a name="763"><span class="lineNum">     763 </span>            :   return parse_receiver(parse_primary(), entry);</a>
-<a name="764"><span class="lineNum">     764 </span>            : }</a>
-<a name="765"><span class="lineNum">     765 </span>            : </a>
-<a name="766"><span class="lineNum">     766 </span>            : auto Parser::parse_unary() -&gt; unique_ptr&lt;Expr&gt; {</a>
-<a name="767"><span class="lineNum">     767 </span>            :   auto entry = tokens.begin();</a>
-<a name="768"><span class="lineNum">     768 </span>            :   for (const auto&amp; un_op : unary_operators()) {</a>
-<a name="769"><span class="lineNum">     769 </span>            :     if (try_consume(un_op)) {</a>
-<a name="770"><span class="lineNum">     770 </span>            :       auto value = parse_receiver();</a>
-<a name="771"><span class="lineNum">     771 </span>            :       auto args = vector&lt;AnyExpr&gt;{};</a>
-<a name="772"><span class="lineNum">     772 </span>            :       args.emplace_back(move(value));</a>
-<a name="773"><span class="lineNum">     773 </span>            :       return ast_ptr&lt;CallExpr&gt;(entry, string(std::get&lt;Atom&gt;(un_op)), move(args));</a>
-<a name="774"><span class="lineNum">     774 </span>            :     }</a>
-<a name="775"><span class="lineNum">     775 </span>            :   }</a>
-<a name="776"><span class="lineNum">     776 </span>            :   return parse_receiver();</a>
-<a name="777"><span class="lineNum">     777 </span>            : }</a>
-<a name="778"><span class="lineNum">     778 </span>            : } // namespace yume::ast::parser</a>
-<a name="779"><span class="lineNum">     779 </span>            : </a>
-<a name="780"><span class="lineNum">     780 </span>            : namespace yume::ast {</a>
-<a name="781"><span class="lineNum">     781 </span>            : auto Program::parse(TokenIterator&amp; tokens) -&gt; unique_ptr&lt;Program&gt; {</a>
-<a name="782"><span class="lineNum">     782 </span>            :   auto parser = parser::Parser{tokens};</a>
-<a name="783"><span class="lineNum">     783 </span>            :   parser.ignore_separator();</a>
-<a name="784"><span class="lineNum">     784 </span>            :   auto entry = tokens.begin();</a>
-<a name="785"><span class="lineNum">     785 </span>            : </a>
-<a name="786"><span class="lineNum">     786 </span>            :   auto statements = vector&lt;AnyStmt&gt;{};</a>
-<a name="787"><span class="lineNum">     787 </span>            :   while (!tokens.at_end())</a>
-<a name="788"><span class="lineNum">     788 </span>            :     statements.emplace_back(parser.parse_stmt());</a>
-<a name="789"><span class="lineNum">     789 </span>            : </a>
-<a name="790"><span class="lineNum">     790 </span>            :   return make_unique&lt;Program&gt;(parser.ts(entry), move(statements));</a>
-<a name="791"><span class="lineNum">     791 </span>            : }</a>
-<a name="792"><span class="lineNum">     792 </span>            : } // namespace yume::ast</a>
+<a name="711"><span class="lineNum">     711 </span>            :     call_args.emplace_back(move(receiver));</a>
+<a name="712"><span class="lineNum">     712 </span>            :     consume_with_commas_until(SYM_RPAREN, [&amp;] { call_args.emplace_back(parse_expr()); });</a>
+<a name="713"><span class="lineNum">     713 </span>            :     auto call = ast_ptr&lt;CallExpr&gt;(entry, &quot;-&gt;&quot;, move(call_args));</a>
+<a name="714"><span class="lineNum">     714 </span>            :     return parse_receiver(move(call), receiver_entry);</a>
+<a name="715"><span class="lineNum">     715 </span>            :   }</a>
+<a name="716"><span class="lineNum">     716 </span>            :   return receiver;</a>
+<a name="717"><span class="lineNum">     717 </span>            : }</a>
+<a name="718"><span class="lineNum">     718 </span>            : </a>
+<a name="719"><span class="lineNum">     719 </span>            : auto Parser::parse_lambda() -&gt; unique_ptr&lt;LambdaExpr&gt; {</a>
+<a name="720"><span class="lineNum">     720 </span>            :   auto entry = tokens.begin();</a>
+<a name="721"><span class="lineNum">     721 </span>            : </a>
+<a name="722"><span class="lineNum">     722 </span>            :   consume(KWD_DEF);</a>
+<a name="723"><span class="lineNum">     723 </span>            : </a>
+<a name="724"><span class="lineNum">     724 </span>            :   auto annotations = std::set&lt;string&gt;{};</a>
+<a name="725"><span class="lineNum">     725 </span>            :   while (try_consume(SYM_AT))</a>
+<a name="726"><span class="lineNum">     726 </span>            :     annotations.emplace(consume_word());</a>
+<a name="727"><span class="lineNum">     727 </span>            : </a>
+<a name="728"><span class="lineNum">     728 </span>            :   consume(SYM_LPAREN);</a>
+<a name="729"><span class="lineNum">     729 </span>            : </a>
+<a name="730"><span class="lineNum">     730 </span>            :   auto args = vector&lt;TypeName&gt;{};</a>
+<a name="731"><span class="lineNum">     731 </span>            :   consume_with_commas_until(SYM_RPAREN, [&amp;] {</a>
+<a name="732"><span class="lineNum">     732 </span>            :     auto arg = parse_type_name();</a>
+<a name="733"><span class="lineNum">     733 </span>            :     args.emplace_back(move(*arg));</a>
+<a name="734"><span class="lineNum">     734 </span>            :   });</a>
+<a name="735"><span class="lineNum">     735 </span>            : </a>
+<a name="736"><span class="lineNum">     736 </span>            :   auto ret_type = OptionalType{try_parse_type()};</a>
+<a name="737"><span class="lineNum">     737 </span>            :   auto body_begin = entry;</a>
+<a name="738"><span class="lineNum">     738 </span>            :   auto body = vector&lt;AnyStmt&gt;{};</a>
+<a name="739"><span class="lineNum">     739 </span>            : </a>
+<a name="740"><span class="lineNum">     740 </span>            :   if (try_consume(SYM_EQ)) { // A &quot;short&quot; function definition, consists of a single expression</a>
+<a name="741"><span class="lineNum">     741 </span>            :     body_begin = tokens.begin();</a>
+<a name="742"><span class="lineNum">     742 </span>            :     auto expr = parse_expr();</a>
+<a name="743"><span class="lineNum">     743 </span>            :     body.emplace_back(ast_ptr&lt;ReturnStmt&gt;(entry, move(expr)));</a>
+<a name="744"><span class="lineNum">     744 </span>            :   } else {</a>
+<a name="745"><span class="lineNum">     745 </span>            :     if (!try_peek(0, KWD_END)) // Allow `end` to be on the same line</a>
+<a name="746"><span class="lineNum">     746 </span>            :       require_separator();</a>
+<a name="747"><span class="lineNum">     747 </span>            : </a>
+<a name="748"><span class="lineNum">     748 </span>            :     body_begin = tokens.begin();</a>
+<a name="749"><span class="lineNum">     749 </span>            :     while (!try_consume(KWD_END)) {</a>
+<a name="750"><span class="lineNum">     750 </span>            :       body.emplace_back(parse_stmt());</a>
+<a name="751"><span class="lineNum">     751 </span>            :       ignore_separator();</a>
+<a name="752"><span class="lineNum">     752 </span>            :     }</a>
+<a name="753"><span class="lineNum">     753 </span>            :   }</a>
+<a name="754"><span class="lineNum">     754 </span>            : </a>
+<a name="755"><span class="lineNum">     755 </span>            :   return ast_ptr&lt;LambdaExpr&gt;(entry, move(args), move(ret_type), make_ast&lt;Compound&gt;(body_begin, move(body)),</a>
+<a name="756"><span class="lineNum">     756 </span>            :                              move(annotations));</a>
+<a name="757"><span class="lineNum">     757 </span>            : }</a>
+<a name="758"><span class="lineNum">     758 </span>            : </a>
+<a name="759"><span class="lineNum">     759 </span>            : auto Parser::parse_receiver() -&gt; unique_ptr&lt;Expr&gt; {</a>
+<a name="760"><span class="lineNum">     760 </span>            :   if (tokens-&gt;is_a(KWD_DEF))</a>
+<a name="761"><span class="lineNum">     761 </span>            :     return parse_lambda();</a>
+<a name="762"><span class="lineNum">     762 </span>            : </a>
+<a name="763"><span class="lineNum">     763 </span>            :   auto entry = tokens.begin();</a>
+<a name="764"><span class="lineNum">     764 </span>            :   return parse_receiver(parse_primary(), entry);</a>
+<a name="765"><span class="lineNum">     765 </span>            : }</a>
+<a name="766"><span class="lineNum">     766 </span>            : </a>
+<a name="767"><span class="lineNum">     767 </span>            : auto Parser::parse_unary() -&gt; unique_ptr&lt;Expr&gt; {</a>
+<a name="768"><span class="lineNum">     768 </span>            :   auto entry = tokens.begin();</a>
+<a name="769"><span class="lineNum">     769 </span>            :   for (const auto&amp; un_op : unary_operators()) {</a>
+<a name="770"><span class="lineNum">     770 </span>            :     if (try_consume(un_op)) {</a>
+<a name="771"><span class="lineNum">     771 </span>            :       auto value = parse_receiver();</a>
+<a name="772"><span class="lineNum">     772 </span>            :       auto args = vector&lt;AnyExpr&gt;{};</a>
+<a name="773"><span class="lineNum">     773 </span>            :       args.emplace_back(move(value));</a>
+<a name="774"><span class="lineNum">     774 </span>            :       return ast_ptr&lt;CallExpr&gt;(entry, string(std::get&lt;Atom&gt;(un_op)), move(args));</a>
+<a name="775"><span class="lineNum">     775 </span>            :     }</a>
+<a name="776"><span class="lineNum">     776 </span>            :   }</a>
+<a name="777"><span class="lineNum">     777 </span>            :   return parse_receiver();</a>
+<a name="778"><span class="lineNum">     778 </span>            : }</a>
+<a name="779"><span class="lineNum">     779 </span>            : } // namespace yume::ast::parser</a>
+<a name="780"><span class="lineNum">     780 </span>            : </a>
+<a name="781"><span class="lineNum">     781 </span>            : namespace yume::ast {</a>
+<a name="782"><span class="lineNum">     782 </span>            : auto Program::parse(TokenIterator&amp; tokens) -&gt; unique_ptr&lt;Program&gt; {</a>
+<a name="783"><span class="lineNum">     783 </span>            :   auto parser = parser::Parser{tokens};</a>
+<a name="784"><span class="lineNum">     784 </span>            :   parser.ignore_separator();</a>
+<a name="785"><span class="lineNum">     785 </span>            :   auto entry = tokens.begin();</a>
+<a name="786"><span class="lineNum">     786 </span>            : </a>
+<a name="787"><span class="lineNum">     787 </span>            :   auto statements = vector&lt;AnyStmt&gt;{};</a>
+<a name="788"><span class="lineNum">     788 </span>            :   while (!tokens.at_end())</a>
+<a name="789"><span class="lineNum">     789 </span>            :     statements.emplace_back(parser.parse_stmt());</a>
+<a name="790"><span class="lineNum">     790 </span>            : </a>
+<a name="791"><span class="lineNum">     791 </span>            :   return make_unique&lt;Program&gt;(parser.ts(entry), move(statements));</a>
+<a name="792"><span class="lineNum">     792 </span>            : }</a>
+<a name="793"><span class="lineNum">     793 </span>            : } // namespace yume::ast</a>
 </pre>
       </td>
     </tr>

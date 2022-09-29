@@ -10,7 +10,7 @@ var searchData=
   ['destruct_7',['destruct',['../classyume_1_1Compiler.html#addda770112fe0197f1ae64aef3871145',1,'yume::Compiler']]],
   ['determine_5fgeneric_5fsubs_8',['determine_generic_subs',['../classyume_1_1ty_1_1Type.html#a874abfc9a3610bb2cd3f2f6418657f78',1,'yume::ty::Type']]],
   ['determine_5fvalid_5foverloads_9',['determine_valid_overloads',['../structyume_1_1semantic_1_1OverloadSet.html#a35bede54648214f4718deb478aa2ef8e',1,'yume::semantic::OverloadSet']]],
-  ['directcallexpr_10',['DirectCallExpr',['../structyume_1_1ast_1_1DirectCallExpr.html#aa62b9802b2d891415267d132438704ff',1,'yume::ast::DirectCallExpr']]],
+  ['direct_5fcall_5foperator_10',['direct_call_operator',['../classyume_1_1Compiler.html#a7eb11e4c90170397b98227aaae1525d6',1,'yume::Compiler']]],
   ['dotvisitor_11',['DotVisitor',['../classyume_1_1diagnostic_1_1DotVisitor.html#af2acbd5e538c0f0300568903cf5fb6f5',1,'yume::diagnostic::DotVisitor::DotVisitor(llvm::raw_ostream &amp;stream)'],['../classyume_1_1diagnostic_1_1DotVisitor.html#a970c2c57970784989223005fcad3806e',1,'yume::diagnostic::DotVisitor::DotVisitor(const DotVisitor &amp;)=delete'],['../classyume_1_1diagnostic_1_1DotVisitor.html#a5f19da91fb20f179e6340ca69c506dd4',1,'yume::diagnostic::DotVisitor::DotVisitor(DotVisitor &amp;&amp;)=delete']]],
   ['dtorexpr_12',['DtorExpr',['../structyume_1_1ast_1_1DtorExpr.html#afdf736ad788e249e0a985786a41bb771',1,'yume::ast::DtorExpr']]],
   ['dump_13',['dump',['../structyume_1_1semantic_1_1Overload.html#adc639c8a626aa365a6b89a638215a446',1,'yume::semantic::Overload::dump()'],['../structyume_1_1semantic_1_1OverloadSet.html#aaef1766f6cfc7148dcd7c1726cf90e99',1,'yume::semantic::OverloadSet::dump()']]]

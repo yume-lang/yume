@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-09-28 06:24:42</td>
+            <td class="headerValue">2022-09-29 05:01:15</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -266,84 +266,85 @@
 <a name="208"><span class="lineNum">     208 </span>            : }</a>
 <a name="209"><span class="lineNum">     209 </span>            : </a>
 <a name="210"><span class="lineNum">     210 </span>            : void stacktrace_ostream::format_phase(string_view msg) {</a>
-<a name="211"><span class="lineNum">     211 </span>            :   static array skip_lines = {&quot;yume::CRTPWalker&lt;&quot;sv, &quot;__libc_start_&quot;sv};</a>
-<a name="212"><span class="lineNum">     212 </span>            :   static const string SOURCE_DIR = YUME_SRC_DIR;</a>
-<a name="213"><span class="lineNum">     213 </span>            : </a>
-<a name="214"><span class="lineNum">     214 </span>            :   switch (m_current_phase) {</a>
-<a name="215"><span class="lineNum">     215 </span>            :   case Address: m_buffer &lt;&lt; msg; break;</a>
-<a name="216"><span class="lineNum">     216 </span>            :   case Index:</a>
-<a name="217"><span class="lineNum">     217 </span>            :     set_color(GREEN);</a>
-<a name="218"><span class="lineNum">     218 </span>            :     m_buffer &lt;&lt; msg;</a>
-<a name="219"><span class="lineNum">     219 </span>            :     break;</a>
-<a name="220"><span class="lineNum">     220 </span>            :   case Offset:</a>
-<a name="221"><span class="lineNum">     221 </span>            :     set_color(RED);</a>
-<a name="222"><span class="lineNum">     222 </span>            :     m_buffer &lt;&lt; msg;</a>
-<a name="223"><span class="lineNum">     223 </span>            :     break;</a>
-<a name="224"><span class="lineNum">     224 </span>            :   case Function:</a>
-<a name="225"><span class="lineNum">     225 </span>            :     set_color(CYAN);</a>
-<a name="226"><span class="lineNum">     226 </span>            :     if (std::ranges::any_of(skip_lines, [&amp;](string_view s) noexcept { return msg.find(s) != string::npos; }))</a>
-<a name="227"><span class="lineNum">     227 </span>            :       m_skip = true;</a>
-<a name="228"><span class="lineNum">     228 </span>            :     else</a>
-<a name="229"><span class="lineNum">     229 </span>            :       simplify(msg);</a>
-<a name="230"><span class="lineNum">     230 </span>            :     break;</a>
-<a name="231"><span class="lineNum">     231 </span>            :   case Source:</a>
-<a name="232"><span class="lineNum">     232 </span>            :     set_color(YELLOW);</a>
-<a name="233"><span class="lineNum">     233 </span>            :     if (auto normal_path = std::filesystem::path(msg).lexically_normal().native();</a>
-<a name="234"><span class="lineNum">     234 </span>            :         normal_path.starts_with(SOURCE_DIR) &amp;&amp; use_color) {</a>
-<a name="235"><span class="lineNum">     235 </span>            :       m_buffer &lt;&lt; llvm::sys::Process::OutputBold(false);</a>
-<a name="236"><span class="lineNum">     236 </span>            :       m_buffer &lt;&lt; static_cast&lt;string_view&gt;(normal_path).substr(SOURCE_DIR.size());</a>
-<a name="237"><span class="lineNum">     237 </span>            :     } else {</a>
-<a name="238"><span class="lineNum">     238 </span>            :       m_buffer &lt;&lt; normal_path;</a>
-<a name="239"><span class="lineNum">     239 </span>            :     }</a>
-<a name="240"><span class="lineNum">     240 </span>            :   }</a>
-<a name="241"><span class="lineNum">     241 </span>            : </a>
-<a name="242"><span class="lineNum">     242 </span>            :   if (use_color)</a>
-<a name="243"><span class="lineNum">     243 </span>            :     m_buffer &lt;&lt; llvm::sys::Process::ResetColor();</a>
-<a name="244"><span class="lineNum">     244 </span>            : }</a>
-<a name="245"><span class="lineNum">     245 </span>            : </a>
-<a name="246"><span class="lineNum">     246 </span>            : void stacktrace_ostream::write_impl(const char* ptr, size_t size) {</a>
-<a name="247"><span class="lineNum">     247 </span>            :   auto msg = string_view(ptr, size);</a>
-<a name="248"><span class="lineNum">     248 </span>            :   m_total_size += size;</a>
-<a name="249"><span class="lineNum">     249 </span>            : </a>
-<a name="250"><span class="lineNum">     250 </span>            :   if (size == 1 &amp;&amp; llvm::isSpace(msg.at(0))) {</a>
-<a name="251"><span class="lineNum">     251 </span>            :     m_buffer &lt;&lt; msg.at(0);</a>
-<a name="252"><span class="lineNum">     252 </span>            :     return;</a>
-<a name="253"><span class="lineNum">     253 </span>            :   }</a>
-<a name="254"><span class="lineNum">     254 </span>            : </a>
-<a name="255"><span class="lineNum">     255 </span>            :   if (m_unknown) {</a>
-<a name="256"><span class="lineNum">     256 </span>            :     m_unknown = msg.at(0) != ')';</a>
-<a name="257"><span class="lineNum">     257 </span>            :   } else if (msg.at(0) == '(') {</a>
-<a name="258"><span class="lineNum">     258 </span>            :     m_unknown = true;</a>
-<a name="259"><span class="lineNum">     259 </span>            :     m_skip = true;</a>
-<a name="260"><span class="lineNum">     260 </span>            :     m_current_phase = Offset;</a>
-<a name="261"><span class="lineNum">     261 </span>            :   } else if (msg.at(0) == '/' &amp;&amp; m_current_phase != Source) {</a>
-<a name="262"><span class="lineNum">     262 </span>            :     m_current_phase = Source;</a>
-<a name="263"><span class="lineNum">     263 </span>            :   }</a>
-<a name="264"><span class="lineNum">     264 </span>            : </a>
-<a name="265"><span class="lineNum">     265 </span>            :   format_phase(msg);</a>
-<a name="266"><span class="lineNum">     266 </span>            : </a>
-<a name="267"><span class="lineNum">     267 </span>            :   int counter = static_cast&lt;int&gt;(m_current_phase);</a>
-<a name="268"><span class="lineNum">     268 </span>            :   if (m_current_phase != Offset) {</a>
-<a name="269"><span class="lineNum">     269 </span>            :     ++counter;</a>
-<a name="270"><span class="lineNum">     270 </span>            :     counter %= 4;</a>
-<a name="271"><span class="lineNum">     271 </span>            :   }</a>
-<a name="272"><span class="lineNum">     272 </span>            : </a>
-<a name="273"><span class="lineNum">     273 </span>            :   m_current_phase = static_cast&lt;Phase&gt;(counter);</a>
-<a name="274"><span class="lineNum">     274 </span>            :   if (m_current_phase == Offset &amp;&amp; !m_unknown)</a>
-<a name="275"><span class="lineNum">     275 </span>            :     m_current_phase = Index;</a>
-<a name="276"><span class="lineNum">     276 </span>            : </a>
-<a name="277"><span class="lineNum">     277 </span>            :   if (m_current_phase == Index)</a>
-<a name="278"><span class="lineNum">     278 </span>            :     clean_buffer();</a>
-<a name="279"><span class="lineNum">     279 </span>            : }</a>
-<a name="280"><span class="lineNum">     280 </span>            : </a>
-<a name="281"><span class="lineNum">     281 </span>            : } // namespace</a>
-<a name="282"><span class="lineNum">     282 </span>            : </a>
-<a name="283"><span class="lineNum">     283 </span><span class="lineNoCov">          0 : void backtrace(void* /*unused*/) {</span></a>
-<a name="284"><span class="lineNum">     284 </span>            :   static stacktrace_ostream stream{};</a>
-<a name="285"><span class="lineNum">     285 </span>            :   llvm::sys::PrintStackTrace(stream);</a>
-<a name="286"><span class="lineNum">     286 </span>            :   stream.clean_buffer();</a>
-<a name="287"><span class="lineNum">     287 </span>            : }</a>
-<a name="288"><span class="lineNum">     288 </span>            : } // namespace yume</a>
+<a name="211"><span class="lineNum">     211 </span>            :   static array skip_lines = {&quot;yume::CRTPWalker&lt;&quot;sv, &quot;__libc_start_&quot;sv, &quot;std::__invoke_impl&quot;sv, &quot;std::__invoke&quot;sv,</a>
+<a name="212"><span class="lineNum">     212 </span>            :                              &quot;::__visit_invoke&quot;sv, &quot;std::__do_visit&quot;sv, &quot;std::invoke_result&lt;&quot;sv};</a>
+<a name="213"><span class="lineNum">     213 </span>            :   static const string SOURCE_DIR = YUME_SRC_DIR;</a>
+<a name="214"><span class="lineNum">     214 </span>            : </a>
+<a name="215"><span class="lineNum">     215 </span>            :   switch (m_current_phase) {</a>
+<a name="216"><span class="lineNum">     216 </span>            :   case Address: m_buffer &lt;&lt; msg; break;</a>
+<a name="217"><span class="lineNum">     217 </span>            :   case Index:</a>
+<a name="218"><span class="lineNum">     218 </span>            :     set_color(GREEN);</a>
+<a name="219"><span class="lineNum">     219 </span>            :     m_buffer &lt;&lt; msg;</a>
+<a name="220"><span class="lineNum">     220 </span>            :     break;</a>
+<a name="221"><span class="lineNum">     221 </span>            :   case Offset:</a>
+<a name="222"><span class="lineNum">     222 </span>            :     set_color(RED);</a>
+<a name="223"><span class="lineNum">     223 </span>            :     m_buffer &lt;&lt; msg;</a>
+<a name="224"><span class="lineNum">     224 </span>            :     break;</a>
+<a name="225"><span class="lineNum">     225 </span>            :   case Function:</a>
+<a name="226"><span class="lineNum">     226 </span>            :     set_color(CYAN);</a>
+<a name="227"><span class="lineNum">     227 </span>            :     if (std::ranges::any_of(skip_lines, [&amp;](string_view s) noexcept { return msg.find(s) != string::npos; }))</a>
+<a name="228"><span class="lineNum">     228 </span>            :       m_skip = true;</a>
+<a name="229"><span class="lineNum">     229 </span>            :     else</a>
+<a name="230"><span class="lineNum">     230 </span>            :       simplify(msg);</a>
+<a name="231"><span class="lineNum">     231 </span>            :     break;</a>
+<a name="232"><span class="lineNum">     232 </span>            :   case Source:</a>
+<a name="233"><span class="lineNum">     233 </span>            :     set_color(YELLOW);</a>
+<a name="234"><span class="lineNum">     234 </span>            :     if (auto normal_path = std::filesystem::path(msg).lexically_normal().native();</a>
+<a name="235"><span class="lineNum">     235 </span>            :         normal_path.starts_with(SOURCE_DIR) &amp;&amp; use_color) {</a>
+<a name="236"><span class="lineNum">     236 </span>            :       m_buffer &lt;&lt; llvm::sys::Process::OutputBold(false);</a>
+<a name="237"><span class="lineNum">     237 </span>            :       m_buffer &lt;&lt; static_cast&lt;string_view&gt;(normal_path).substr(SOURCE_DIR.size());</a>
+<a name="238"><span class="lineNum">     238 </span>            :     } else {</a>
+<a name="239"><span class="lineNum">     239 </span>            :       m_buffer &lt;&lt; normal_path;</a>
+<a name="240"><span class="lineNum">     240 </span>            :     }</a>
+<a name="241"><span class="lineNum">     241 </span>            :   }</a>
+<a name="242"><span class="lineNum">     242 </span>            : </a>
+<a name="243"><span class="lineNum">     243 </span>            :   if (use_color)</a>
+<a name="244"><span class="lineNum">     244 </span>            :     m_buffer &lt;&lt; llvm::sys::Process::ResetColor();</a>
+<a name="245"><span class="lineNum">     245 </span>            : }</a>
+<a name="246"><span class="lineNum">     246 </span>            : </a>
+<a name="247"><span class="lineNum">     247 </span>            : void stacktrace_ostream::write_impl(const char* ptr, size_t size) {</a>
+<a name="248"><span class="lineNum">     248 </span>            :   auto msg = string_view(ptr, size);</a>
+<a name="249"><span class="lineNum">     249 </span>            :   m_total_size += size;</a>
+<a name="250"><span class="lineNum">     250 </span>            : </a>
+<a name="251"><span class="lineNum">     251 </span>            :   if (size == 1 &amp;&amp; llvm::isSpace(msg.at(0))) {</a>
+<a name="252"><span class="lineNum">     252 </span>            :     m_buffer &lt;&lt; msg.at(0);</a>
+<a name="253"><span class="lineNum">     253 </span>            :     return;</a>
+<a name="254"><span class="lineNum">     254 </span>            :   }</a>
+<a name="255"><span class="lineNum">     255 </span>            : </a>
+<a name="256"><span class="lineNum">     256 </span>            :   if (m_unknown) {</a>
+<a name="257"><span class="lineNum">     257 </span>            :     m_unknown = msg.at(0) != ')';</a>
+<a name="258"><span class="lineNum">     258 </span>            :   } else if (msg.at(0) == '(') {</a>
+<a name="259"><span class="lineNum">     259 </span>            :     m_unknown = true;</a>
+<a name="260"><span class="lineNum">     260 </span>            :     m_skip = true;</a>
+<a name="261"><span class="lineNum">     261 </span>            :     m_current_phase = Offset;</a>
+<a name="262"><span class="lineNum">     262 </span>            :   } else if (msg.at(0) == '/' &amp;&amp; m_current_phase != Source) {</a>
+<a name="263"><span class="lineNum">     263 </span>            :     m_current_phase = Source;</a>
+<a name="264"><span class="lineNum">     264 </span>            :   }</a>
+<a name="265"><span class="lineNum">     265 </span>            : </a>
+<a name="266"><span class="lineNum">     266 </span>            :   format_phase(msg);</a>
+<a name="267"><span class="lineNum">     267 </span>            : </a>
+<a name="268"><span class="lineNum">     268 </span>            :   int counter = static_cast&lt;int&gt;(m_current_phase);</a>
+<a name="269"><span class="lineNum">     269 </span>            :   if (m_current_phase != Offset) {</a>
+<a name="270"><span class="lineNum">     270 </span>            :     ++counter;</a>
+<a name="271"><span class="lineNum">     271 </span>            :     counter %= 4;</a>
+<a name="272"><span class="lineNum">     272 </span>            :   }</a>
+<a name="273"><span class="lineNum">     273 </span>            : </a>
+<a name="274"><span class="lineNum">     274 </span>            :   m_current_phase = static_cast&lt;Phase&gt;(counter);</a>
+<a name="275"><span class="lineNum">     275 </span>            :   if (m_current_phase == Offset &amp;&amp; !m_unknown)</a>
+<a name="276"><span class="lineNum">     276 </span>            :     m_current_phase = Index;</a>
+<a name="277"><span class="lineNum">     277 </span>            : </a>
+<a name="278"><span class="lineNum">     278 </span>            :   if (m_current_phase == Index)</a>
+<a name="279"><span class="lineNum">     279 </span>            :     clean_buffer();</a>
+<a name="280"><span class="lineNum">     280 </span>            : }</a>
+<a name="281"><span class="lineNum">     281 </span>            : </a>
+<a name="282"><span class="lineNum">     282 </span>            : } // namespace</a>
+<a name="283"><span class="lineNum">     283 </span>            : </a>
+<a name="284"><span class="lineNum">     284 </span><span class="lineNoCov">          0 : void backtrace(void* /*unused*/) {</span></a>
+<a name="285"><span class="lineNum">     285 </span>            :   static stacktrace_ostream stream{};</a>
+<a name="286"><span class="lineNum">     286 </span>            :   llvm::sys::PrintStackTrace(stream);</a>
+<a name="287"><span class="lineNum">     287 </span>            :   stream.clean_buffer();</a>
+<a name="288"><span class="lineNum">     288 </span>            : }</a>
+<a name="289"><span class="lineNum">     289 </span>            : } // namespace yume</a>
 </pre>
       </td>
     </tr>
