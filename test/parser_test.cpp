@@ -331,12 +331,16 @@ TEST_CASE("Parse extern linkage function declaration", "[parse][fn]") {
 TEST_CASE("Parse incomplete def", "[parse][throws]") {
   CHECK_PARSER_THROWS("def");
   CHECK_PARSER_THROWS("def foo");
+  CHECK_PARSER_THROWS("def (");
+  CHECK_PARSER_THROWS("def .");
   CHECK_PARSER_THROWS("def foo{");
   CHECK_PARSER_THROWS("def foo(");
+  CHECK_PARSER_THROWS("def foo.");
   CHECK_PARSER_THROWS("def foo =");
   CHECK_PARSER_THROWS("def foo() =");
   CHECK_PARSER_THROWS("def foo() = __primitive__");
   CHECK_PARSER_THROWS("def foo() = __primitive__(");
+  CHECK_PARSER_THROWS("def foo() = __primitive__.");
   CHECK_PARSER_THROWS("def foo() = __primitive__(foo");
 }
 
