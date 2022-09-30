@@ -14,7 +14,7 @@ template <typename Range, typename Pred = std::ranges::equal_to>
 struct EqualsRangeMatcher : Catch::Matchers::MatcherGenericBase {
   EqualsRangeMatcher(Range range) : m_range{std::move(range)} {}
 
-  template <typename OtherRange> auto match(OtherRange const& other) const -> bool {
+  template <typename OtherRange> auto match(const OtherRange& other) const -> bool {
     using std::begin;
     using std::end;
 
@@ -74,6 +74,19 @@ template <std::derived_from<yume::ast::AST> T> struct StringMaker<T> {
     llvm::raw_string_ostream ss(str);
     yume::diagnostic::PrintVisitor visitor(ss);
     visitor.visit(token, "");
+    return str;
+  }
+};
+
+template <std::derived_from<yume::ast::AST> T> struct StringMaker<std::unique_ptr<T>> {
+  static auto convert(const std::unique_ptr<T>& token) -> std::string {
+    std::string str;
+    llvm::raw_string_ostream ss(str);
+    yume::diagnostic::PrintVisitor visitor(ss);
+    if (token)
+      visitor.visit(*token, "");
+    else
+      visitor.visit(nullptr, "");
     return str;
   }
 };
