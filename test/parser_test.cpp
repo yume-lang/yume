@@ -338,6 +338,19 @@ TEST_CASE("Parse extern linkage function declaration", "[parse][fn]") {
                make_fn_decl({.name = "short", .attributes = {"extern", "pure", "foo"}}, ast<ReturnStmt>(0_Num)));
 }
 
+TEST_CASE("Parse proxy field function declaration", "[parse][fn]") {
+  CHECK_PARSER("def foo(::field)\nend",
+               make_fn_decl({.name = "foo", .args = {{"field", ast<ProxyType>("field")}}},
+                            ast<AssignExpr>(ast<FieldAccessExpr>(std::nullopt, "field"), "field"_Var)));
+  CHECK_PARSER("def foo(a I32, ::b)\nend",
+               make_fn_decl({.name = "foo", .args = {{"a", "I32"_Type}, {"b", ast<ProxyType>("b")}}},
+                            ast<AssignExpr>(ast<FieldAccessExpr>(std::nullopt, "b"), "b"_Var)));
+  CHECK_PARSER("def foo(::a, ::b)\nend",
+               make_fn_decl({.name = "foo", .args = {{"a", ast<ProxyType>("a")}, {"b", ast<ProxyType>("b")}}},
+                            ast<AssignExpr>(ast<FieldAccessExpr>(std::nullopt, "a"), "a"_Var),
+                            ast<AssignExpr>(ast<FieldAccessExpr>(std::nullopt, "b"), "b"_Var)));
+}
+
 TEST_CASE("Parse incomplete def", "[parse][fn][throws]") {
   CHECK_PARSER_THROWS("def");
   CHECK_PARSER_THROWS("def foo");
@@ -360,8 +373,12 @@ TEST_CASE("Parse struct declaration", "[parse][struct]") {
   CHECK_PARSER("struct Foo(i I32)\nend", make_struct_decl("Foo", {{"i", "I32"_Type}}, {}));
   CHECK_PARSER("struct Foo(i I32, bar Bar)\nend",
                make_struct_decl("Foo", {{"i", "I32"_Type}, {"bar", "Bar"_Type}}, {}));
+
   CHECK_PARSER("struct Foo{T}()\nend", make_struct_decl("Foo", {}, {"T"}));
   CHECK_PARSER("struct Foo{T}(t T)\nend", make_struct_decl("Foo", {{"t", "T"_Type}}, {"T"}));
+
+  CHECK_PARSER("struct Foo()\ndef method()\nend\nend",
+               make_struct_decl("Foo", {}, {}, make_fn_decl({.name = "method"})));
 }
 
 TEST_CASE("Parse incomplete struct", "[parse][struct][throws]") {
