@@ -93,6 +93,16 @@ auto make_extern_decl(const std::string& name, std::initializer_list<TName> args
                      FnDecl::extern_decl_t{extern_name, varargs}, std::set<std::string>{});
 }
 
+template <typename... Ts>
+auto make_struct_decl(const std::string& name, std::initializer_list<TName> args, std::vector<std::string> type_vars,
+                      Ts&&... ts) -> std::unique_ptr<StructDecl> {
+  auto ast_args = std::vector<TypeName>();
+  ast_args.reserve(args.size());
+  std::transform(args.begin(), args.end(), std::back_inserter(ast_args),
+                 [](auto& tn) { return static_cast<TypeName>(tn); });
+  return ast<StructDecl>(name, std::move(ast_args), type_vars, make_compound(std::forward<Ts>(ts)...));
+}
+
 auto operator""_Var(const char* str, size_t size) { return ast<VarExpr>(std::string{str, size}); }
 auto operator""_Num(unsigned long long val) { return ast<NumberExpr>(val); }
 auto operator""_String(const char* str, size_t size) { return ast<StringExpr>(std::string{str, size}); }
@@ -328,7 +338,7 @@ TEST_CASE("Parse extern linkage function declaration", "[parse][fn]") {
                make_fn_decl({.name = "short", .attributes = {"extern", "pure", "foo"}}, ast<ReturnStmt>(0_Num)));
 }
 
-TEST_CASE("Parse incomplete def", "[parse][throws]") {
+TEST_CASE("Parse incomplete def", "[parse][fn][throws]") {
   CHECK_PARSER_THROWS("def");
   CHECK_PARSER_THROWS("def foo");
   CHECK_PARSER_THROWS("def (");
@@ -343,6 +353,24 @@ TEST_CASE("Parse incomplete def", "[parse][throws]") {
   CHECK_PARSER_THROWS("def foo() = __primitive__.");
   CHECK_PARSER_THROWS("def foo() = __primitive__ foo");
   CHECK_PARSER_THROWS("def foo() = __primitive__(foo");
+}
+
+TEST_CASE("Parse struct declaration", "[parse][struct]") {
+  CHECK_PARSER("struct Foo()\nend", make_struct_decl("Foo", {}, {}));
+  CHECK_PARSER("struct Foo(i I32)\nend", make_struct_decl("Foo", {{"i", "I32"_Type}}, {}));
+  CHECK_PARSER("struct Foo(i I32, bar Bar)\nend",
+               make_struct_decl("Foo", {{"i", "I32"_Type}, {"bar", "Bar"_Type}}, {}));
+  CHECK_PARSER("struct Foo{T}()\nend", make_struct_decl("Foo", {}, {"T"}));
+  CHECK_PARSER("struct Foo{T}(t T)\nend", make_struct_decl("Foo", {{"t", "T"_Type}}, {"T"}));
+}
+
+TEST_CASE("Parse incomplete struct", "[parse][struct][throws]") {
+  CHECK_PARSER_THROWS("struct");
+  CHECK_PARSER_THROWS("struct Foo");
+  CHECK_PARSER_THROWS("struct Foo(");
+  CHECK_PARSER_THROWS("struct Foo()");
+  CHECK_PARSER_THROWS("struct Foo() end");
+  CHECK_PARSER_THROWS("struct foo");
 }
 
 #undef CHECK_PARSER
