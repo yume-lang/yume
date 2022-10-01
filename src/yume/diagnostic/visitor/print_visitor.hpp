@@ -21,7 +21,6 @@ class PrintVisitor : public Visitor {
 
   void header(string_view label);
   void indent(string_view text);
-  void dedent(string_view text);
 
 public:
   explicit PrintVisitor(llvm::raw_ostream& stream, bool pretty = false) : m_stream{stream}, m_pretty(pretty) {}
@@ -53,12 +52,6 @@ inline void PrintVisitor::indent(string_view text) {
   m_stream << std::string(m_indent * 2UL, ' ');
 }
 
-inline void PrintVisitor::dedent(string_view text) {
-  m_stream << text;
-  --m_indent;
-  m_stream << std::string(m_indent * 2UL, ' ');
-}
-
 inline auto PrintVisitor::visit(const ast::AST& expr, string_view label) -> PrintVisitor& {
   header(label);
 
@@ -71,7 +64,7 @@ inline auto PrintVisitor::visit(const ast::AST& expr, string_view label) -> Prin
 
   expr.visit(*this);
   if (m_pretty)
-    dedent("\n");
+    --m_indent;
   m_stream << ")";
 
   return *this;

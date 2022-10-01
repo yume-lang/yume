@@ -3,6 +3,7 @@
 #include "compiler/vals.hpp"
 #include "diagnostic/errors.hpp"
 #include "diagnostic/visitor/dot_visitor.hpp"
+#include "diagnostic/visitor/print_visitor.hpp"
 #include "token.hpp"
 #include "util.hpp"
 #include <algorithm>
@@ -42,6 +43,8 @@ enum struct CompilerFlags {
   EmitASM = 1 << 2,
   EmitDot = 1 << 3,
   EmitUntypedDot = 1 << 4,
+  DumpAST = 1 << 5,
+  NoPrelude = 1 << 6,
 };
 
 inline auto operator|(CompilerFlags a, CompilerFlags b) -> CompilerFlags {
@@ -58,7 +61,8 @@ inline auto operator&(CompilerFlags a, CompilerFlags b) -> bool {
 
 auto compile(const std::optional<std::string>& target_triple, std::vector<std::string> src_file_names,
              CompilerFlags flags) -> int {
-  src_file_names.insert(src_file_names.begin(), std::string(YUME_LIB_DIR) + "std.ym");
+  if (~flags & CompilerFlags::NoPrelude)
+    src_file_names.insert(src_file_names.begin(), std::string(YUME_LIB_DIR) + "std.ym");
 
   std::vector<yume::SourceFile> source_files{};
   source_files.reserve(src_file_names.size());
@@ -91,6 +95,11 @@ auto compile(const std::optional<std::string>& target_triple, std::vector<std::s
         dot_visitor->visit(*source.program, "");
       }
 
+      if (flags & CompilerFlags::DumpAST) {
+        yume::diagnostic::PrintVisitor(llvm::errs(), true).visit(*source.program, "");
+        llvm::errs() << "\n";
+      }
+
       auto token_it = source.iterator;
       if (!token_it.at_end()) {
         llvm::outs() << "unconsumed tokens:\n";
@@ -104,6 +113,9 @@ auto compile(const std::optional<std::string>& target_triple, std::vector<std::s
       }
     }
   }
+
+  if (flags & CompilerFlags::DumpAST)
+    return 0;
 
   auto compiler = yume::Compiler{target_triple, std::move(source_files)};
   compiler.run();
@@ -138,6 +150,9 @@ void emit_version() {
 auto main(int argc, const char* argv[]) -> int {
   auto raw_args = std::span(argv, argc);
   auto args = raw_args.subspan(1); // omit argv 0 (program name)
+
+  llvm::outs().enable_colors(llvm::outs().has_colors());
+  llvm::errs().enable_colors(llvm::errs().has_colors());
 
   auto fatal_error = [&]() -> auto& {
     emit_version();
@@ -177,6 +192,10 @@ auto main(int argc, const char* argv[]) -> int {
       flags |= CompilerFlags::EmitDot;
     else if (arg == "--emit-untyped-dot"s)
       flags |= CompilerFlags::EmitUntypedDot;
+    else if (arg == "--dump-ast"s)
+      flags |= CompilerFlags::DumpAST;
+    else if (arg == "--no-prelude"s)
+      flags |= CompilerFlags::NoPrelude;
     else if (arg == "--"s)
       done_with_flags = true;
     else if (!done_with_flags && std::string(arg).starts_with('-')) {
