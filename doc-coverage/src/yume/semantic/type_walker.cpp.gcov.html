@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-10-02 09:25:39</td>
+            <td class="headerValue">2022-10-02 10:24:42</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -309,7 +309,7 @@
 <a name="251"><span class="lineNum">     251 </span>            :   for (auto&amp; outer_scope : enclosing_scopes) {</a>
 <a name="252"><span class="lineNum">     252 </span>            :     if (auto** var = outer_scope.find(expr.name); var != nullptr) {</a>
 <a name="253"><span class="lineNum">     253 </span>            :       // It was found, include it in the current scope, so we don't need to look for it again</a>
-<a name="254"><span class="lineNum">     254 </span>            :       scope.add(expr.name, *var);</a>
+<a name="254"><span class="lineNum">     254 </span>            :       scope.add_to_front(expr.name, *var);</a>
 <a name="255"><span class="lineNum">     255 </span>            :       closured.push_back({*var, expr.name});</a>
 <a name="256"><span class="lineNum">     256 </span>            :       return expr.attach_to(*var);</a>
 <a name="257"><span class="lineNum">     257 </span>            :     }</a>
