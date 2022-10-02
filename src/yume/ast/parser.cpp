@@ -636,14 +636,12 @@ auto Parser::parse_primary() -> unique_ptr<Expr> {
 
       auto type = parse_type();
       if (try_consume(SYM_LPAREN)) {
-        auto call_args = vector<AnyExpr>{};
-        consume_with_commas_until(SYM_RPAREN, [&] { call_args.emplace_back(parse_expr()); });
+        auto call_args = collect_with_commas_until<AnyExpr>(SYM_RPAREN, &Parser::parse_expr);
         return ast_ptr<CtorExpr>(entry, move(type), move(call_args));
       }
       if (try_consume(SYM_COLON)) {
         if (try_consume(SYM_LBRACKET)) {
-          auto slice_members = vector<AnyExpr>{};
-          consume_with_commas_until(SYM_RBRACKET, [&] { slice_members.emplace_back(parse_expr()); });
+          auto slice_members = collect_with_commas_until<AnyExpr>(SYM_RBRACKET, &Parser::parse_expr);
           return ast_ptr<SliceExpr>(entry, move(type), move(slice_members));
         }
       }
@@ -653,9 +651,8 @@ auto Parser::parse_primary() -> unique_ptr<Expr> {
 
         auto name = consume_word();
         auto call_args = vector<AnyExpr>{};
-        if (try_consume(SYM_LPAREN)) {
-          consume_with_commas_until(SYM_RPAREN, [&] { call_args.emplace_back(parse_expr()); });
-        }
+        if (try_consume(SYM_LPAREN))
+          collect_with_commas_until(SYM_RPAREN, &Parser::parse_expr, call_args);
         return ast_ptr<CallExpr>(entry, name, move(type), move(call_args));
       }
 
@@ -663,8 +660,7 @@ auto Parser::parse_primary() -> unique_ptr<Expr> {
     }
     auto name = consume_word();
     if (try_consume(SYM_LPAREN)) {
-      auto call_args = vector<AnyExpr>{};
-      consume_with_commas_until(SYM_RPAREN, [&] { call_args.emplace_back(parse_expr()); });
+      auto call_args = collect_with_commas_until<AnyExpr>(SYM_RPAREN, &Parser::parse_expr);
       return ast_ptr<CallExpr>(entry, name, std::nullopt, move(call_args));
     }
     return ast_ptr<VarExpr>({entry, 1}, name);
@@ -679,7 +675,7 @@ auto Parser::parse_receiver(unique_ptr<Expr> receiver, VectorTokenIterator recei
     auto call_args = vector<AnyExpr>{};
     call_args.emplace_back(move(receiver));
     if (try_consume(SYM_LPAREN)) { // A call with a dot `a.b(...)`
-      consume_with_commas_until(SYM_RPAREN, [&] { call_args.emplace_back(parse_expr()); });
+          collect_with_commas_until(SYM_RPAREN, &Parser::parse_expr, call_args);
       auto call = ast_ptr<CallExpr>(entry + 1, name, std::nullopt, move(call_args));
       return parse_receiver(move(call), receiver_entry);
     }
@@ -720,7 +716,7 @@ auto Parser::parse_receiver(unique_ptr<Expr> receiver, VectorTokenIterator recei
     consume(SYM_LPAREN);
     auto call_args = vector<AnyExpr>{};
     call_args.emplace_back(move(receiver));
-    consume_with_commas_until(SYM_RPAREN, [&] { call_args.emplace_back(parse_expr()); });
+          collect_with_commas_until(SYM_RPAREN, &Parser::parse_expr, call_args);
     auto call = ast_ptr<CallExpr>(entry, "->", std::nullopt, move(call_args));
     return parse_receiver(move(call), receiver_entry);
   }
