@@ -218,6 +218,37 @@ struct Parser {
     }
   }
 
+  /// Consume tokens until a token of the given type and payload is encountered.
+  /// `action` (a no-arg member function) is called every time and its result is appended to `vec`. Between each call, a
+  /// comma is expected.
+  template <typename T, std::convertible_to<T> U>
+  void collect_with_commas_until(TokenAtom token_atom, U (Parser::*action)(), vector<T>& vec,
+                                 const source_location location = source_location::current()) {
+    int i = 0;
+    while (!try_consume(token_atom, location)) {
+      if (i++ > 0)
+        consume(SYM_COMMA, location);
+      vec.emplace_back((this->*action)());
+    }
+  }
+
+  /// Consume tokens until a token of the given type and payload is encountered.
+  /// `action` (a no-arg member function) is called every time. Between each call, a comma is expected.
+  /// Returns a vector of all the results of calling `action`.
+  template <typename T, std::convertible_to<T> U>
+  [[nodiscard]] auto collect_with_commas_until(TokenAtom token_atom, U (Parser::*action)(),
+                                               const source_location location = source_location::current())
+      -> vector<T> {
+    vector<T> vec{};
+    int i = 0;
+    while (!try_consume(token_atom, location)) {
+      if (i++ > 0)
+        consume(SYM_COMMA, location);
+      vec.emplace_back((this->*action)());
+    }
+    return vec;
+  }
+
   /// Return the next token and increment the iterator.
   auto next([[maybe_unused]] source_location location = source_location::current()) -> Token;
 
