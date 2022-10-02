@@ -1164,6 +1164,7 @@ template <> auto Compiler::expression(ast::LambdaExpr& expr) -> Val {
   auto saved_scope = m_scope;
   auto* saved_insert_point = m_builder->GetInsertBlock();
   auto* saved_fn = m_current_fn;
+  auto saved_debug_location = m_builder->getCurrentDebugLocation();
 
   setup_fn_base(fn);
 
@@ -1186,6 +1187,7 @@ template <> auto Compiler::expression(ast::LambdaExpr& expr) -> Val {
   m_scope = saved_scope;
   m_builder->SetInsertPoint(saved_insert_point);
   m_current_fn = saved_fn;
+  m_builder->SetCurrentDebugLocation(saved_debug_location);
 
   return fn_bundle;
 }
