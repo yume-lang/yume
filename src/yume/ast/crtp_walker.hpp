@@ -35,7 +35,7 @@ public:
     case ast::K_FnDecl: return conv_statement<ast::FnDecl>(stat, args...);
     case ast::K_StructDecl: return conv_statement<ast::StructDecl>(stat, args...);
     case ast::K_CtorDecl: return conv_statement<ast::CtorDecl>(stat, args...);
-    default: body_expression(llvm::cast<ast::Expr>(stat), args...);
+    default: (static_cast<Derived*>(this))->body_expression(llvm::cast<ast::Expr>(stat), args...);
     }
   }
 
