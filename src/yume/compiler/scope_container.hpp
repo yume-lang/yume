@@ -22,6 +22,7 @@ public:
   void pop_scope() noexcept { m_scopes.pop_back(); }
 
   auto add(std::string_view key, T object) noexcept { return m_scopes.back().try_emplace(key, move(object)); }
+  auto add_to_front(std::string_view key, T object) noexcept { return m_scopes.front().try_emplace(key, move(object)); }
   [[nodiscard]] auto find(std::string_view key) const noexcept -> nullable<const T*> {
     for (const auto& scope : llvm::reverse(m_scopes)) {
       if (auto lookup = scope.find(key); lookup != scope.end())

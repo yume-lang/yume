@@ -251,7 +251,7 @@ template <> void TypeWalker::expression(ast::VarExpr& expr) {
   for (auto& outer_scope : enclosing_scopes) {
     if (auto** var = outer_scope.find(expr.name); var != nullptr) {
       // It was found, include it in the current scope, so we don't need to look for it again
-      scope.add(expr.name, *var);
+      scope.add_to_front(expr.name, *var);
       closured.push_back({*var, expr.name});
       return expr.attach_to(*var);
     }
