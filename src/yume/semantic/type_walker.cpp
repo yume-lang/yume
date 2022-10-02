@@ -359,6 +359,9 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
   if (overload_set.empty())
     throw std::logic_error("No function overload named "s + name);
 
+  if (expr.receiver.has_value())
+    expression(*expr.receiver);
+
   for (auto& i : expr.args) {
     body_expression(*i);
     overload_set.args.push_back(i.raw_ptr());

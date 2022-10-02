@@ -511,13 +511,14 @@ public:
 struct CallExpr final : public Expr {
 public:
   string name;
+  OptionalType receiver;
   vector<AnyExpr> args;
   /// During semantic analysis, the `TypeWalker` performs overload selection and saves the function declaration or
   /// instantiation that this call refers to directly in the AST node, in this field.
   Fn* selected_overload{};
 
-  CallExpr(span<Token> tok, string name, vector<AnyExpr> args)
-      : Expr(K_Call, tok), name{move(name)}, args{move(args)} {}
+  CallExpr(span<Token> tok, string name, OptionalType receiver, vector<AnyExpr> args)
+      : Expr(K_Call, tok), name{move(name)}, receiver{move(receiver)}, args{move(args)} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override { return name; }
 

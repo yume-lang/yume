@@ -647,6 +647,17 @@ auto Parser::parse_primary() -> unique_ptr<Expr> {
           return ast_ptr<SliceExpr>(entry, move(type), move(slice_members));
         }
       }
+      if (try_consume(SYM_DOT)) {
+        if (try_peek_uword(0))
+          throw std::runtime_error("Nested types aren't yet implemented");
+
+        auto name = consume_word();
+        if (try_consume(SYM_LPAREN)) {
+          auto call_args = vector<AnyExpr>{};
+          consume_with_commas_until(SYM_RPAREN, [&] { call_args.emplace_back(parse_expr()); });
+          return ast_ptr<CallExpr>(entry, name, move(type), move(call_args));
+        }
+      }
 
       throw std::runtime_error("Couldn't make an expression from here with a type");
     }
@@ -654,7 +665,7 @@ auto Parser::parse_primary() -> unique_ptr<Expr> {
     if (try_consume(SYM_LPAREN)) {
       auto call_args = vector<AnyExpr>{};
       consume_with_commas_until(SYM_RPAREN, [&] { call_args.emplace_back(parse_expr()); });
-      return ast_ptr<CallExpr>(entry, name, move(call_args));
+      return ast_ptr<CallExpr>(entry, name, std::nullopt, move(call_args));
     }
     return ast_ptr<VarExpr>({entry, 1}, name);
   }
@@ -669,16 +680,16 @@ auto Parser::parse_receiver(unique_ptr<Expr> receiver, VectorTokenIterator recei
     call_args.emplace_back(move(receiver));
     if (try_consume(SYM_LPAREN)) { // A call with a dot `a.b(...)`
       consume_with_commas_until(SYM_RPAREN, [&] { call_args.emplace_back(parse_expr()); });
-      auto call = ast_ptr<CallExpr>(entry + 1, name, move(call_args));
+      auto call = ast_ptr<CallExpr>(entry + 1, name, std::nullopt, move(call_args));
       return parse_receiver(move(call), receiver_entry);
     }
     if (try_consume(SYM_EQ)) { // A setter `a.b = ...`
       auto value = parse_expr();
       call_args.emplace_back(move(value));
-      auto call = ast_ptr<CallExpr>(entry + 1, name + '=', move(call_args));
+      auto call = ast_ptr<CallExpr>(entry + 1, name + '=', std::nullopt, move(call_args));
       return parse_receiver(move(call), receiver_entry);
     }
-    auto noarg_call = ast_ptr<CallExpr>(receiver_entry, name, move(call_args));
+    auto noarg_call = ast_ptr<CallExpr>(receiver_entry, name, std::nullopt, move(call_args));
     return parse_receiver(move(noarg_call), receiver_entry);
   }
   if (try_consume(SYM_EQ)) {
@@ -694,10 +705,10 @@ auto Parser::parse_receiver(unique_ptr<Expr> receiver, VectorTokenIterator recei
     if (try_consume(SYM_EQ)) {
       auto value = parse_expr();
       args.emplace_back(move(value));
-      auto call = ast_ptr<CallExpr>(entry, "[]=", move(args));
+      auto call = ast_ptr<CallExpr>(entry, "[]=", std::nullopt, move(args));
       return parse_receiver(move(call), receiver_entry);
     }
-    auto call = ast_ptr<CallExpr>(entry, "[]", move(args));
+    auto call = ast_ptr<CallExpr>(entry, "[]", std::nullopt, move(args));
     return parse_receiver(move(call), receiver_entry);
   }
   if (try_consume(SYM_COLON_COLON)) {
@@ -710,7 +721,7 @@ auto Parser::parse_receiver(unique_ptr<Expr> receiver, VectorTokenIterator recei
     auto call_args = vector<AnyExpr>{};
     call_args.emplace_back(move(receiver));
     consume_with_commas_until(SYM_RPAREN, [&] { call_args.emplace_back(parse_expr()); });
-    auto call = ast_ptr<CallExpr>(entry, "->", move(call_args));
+    auto call = ast_ptr<CallExpr>(entry, "->", std::nullopt, move(call_args));
     return parse_receiver(move(call), receiver_entry);
   }
   return receiver;
@@ -771,7 +782,7 @@ auto Parser::parse_unary() -> unique_ptr<Expr> {
       auto value = parse_receiver();
       auto args = vector<AnyExpr>{};
       args.emplace_back(move(value));
-      return ast_ptr<CallExpr>(entry, string(std::get<Atom>(un_op)), move(args));
+      return ast_ptr<CallExpr>(entry, string(std::get<Atom>(un_op)), std::nullopt, move(args));
     }
   }
   return parse_receiver();
