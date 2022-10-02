@@ -1,0 +1,12 @@
+struct Foo()
+  def value() I32 = 4
+end
+
+def value() I32 = 5
+
+def main() I32
+  let i = value()
+  assert(i == 5)
+  return 0
+end
+

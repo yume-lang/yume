@@ -95,6 +95,13 @@ auto parameter_count_matches(const vector<ast::AST*>& args, const Fn& fn) -> boo
 auto OverloadSet::is_valid_overload(Overload& overload) const -> bool {
   const auto& fn = *overload.fn;
 
+  auto parent = fn.self_ty;
+  if (parent.has_value() && !isa<ast::CtorExpr>(call)) {
+
+    if (std::ranges::none_of(args, [&](ast::AST* ast) { return ast->ensure_ty().without_mut() == *parent; }))
+      return false;
+  }
+
   // The overload is only viable if the amount of arguments matches the amount of parameters.
   if (!parameter_count_matches(args, fn))
     return false;

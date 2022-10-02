@@ -476,7 +476,7 @@ void Compiler::setup_fn_base(Fn& fn) {
 
   // If this function has a closure, it is the first parameter and will be skipped below
   auto arg_offset = fn.fn_ty->closure_memo() == nullptr ? 0 : 1;
-  auto llvm_fn_args = llvm::make_range(fn.llvm->arg_begin() + arg_offset, fn.llvm->arg_end());
+  auto llvm_fn_args = llvm::drop_begin(fn.llvm->args(), arg_offset);
   // Allocate local variables for each parameter
   for (auto [arg, ast_arg] : llvm::zip(llvm_fn_args, fn.args())) {
     expose_parameter_as_local(ast_arg.type, ast_arg.name, ast_arg.ast, &arg);
