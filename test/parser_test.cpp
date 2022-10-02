@@ -31,9 +31,13 @@ template <typename T, typename... Ts> auto ptr_vec(Ts&&... ts) {
   return vec;
 }
 
-template <typename T = CallExpr, typename E = Expr, typename N, typename... Ts>
-auto make_call(N&& name, Ts&&... ts) -> std::unique_ptr<T> {
-  return ast<T>(std::forward<N>(name), ptr_vec<E>(std::forward<Ts>(ts)...));
+template <typename... Ts> auto make_call(std::string name, Ts&&... ts) -> std::unique_ptr<CallExpr> {
+  return ast<CallExpr>(std::move(name), std::nullopt, ptr_vec<Expr>(std::forward<Ts>(ts)...));
+}
+
+template <typename... Ts>
+auto make_recv_call(std::string name, std::unique_ptr<Type> type, Ts&&... ts) -> std::unique_ptr<CallExpr> {
+  return ast<CallExpr>(std::move(name), std::move(type), ptr_vec<Expr>(std::forward<Ts>(ts)...));
 }
 
 template <typename E = Expr, typename N, typename... Ts>
@@ -201,6 +205,14 @@ TEST_CASE("Parse member calling", "[parse]") {
   CHECK_PARSER("receiver.call(1, 2, 3)", make_call("call", "receiver"_Var, 1_Num, 2_Num, 3_Num));
 }
 
+TEST_CASE("Parse receiver calling", "[parse]") {
+  // CHECK_PARSER("Foo.call", make_recv_call("call", "Foo"_Type));
+  CHECK_PARSER("Foo.call()", make_recv_call("call", "Foo"_Type));
+  CHECK_PARSER("Foo.call(1, 2, 3)", make_recv_call("call", "Foo"_Type, 1_Num, 2_Num, 3_Num));
+  CHECK_PARSER("Foo[].call()", make_recv_call("call", "Foo"_Type & Slice));
+  CHECK_PARSER("Foo mut.call()", make_recv_call("call", "Foo"_Type & Mut));
+}
+
 TEST_CASE("Parse setter calling", "[parse]") {
   CHECK_PARSER("receiver.foo = 0", make_call("foo=", "receiver"_Var, 0_Num));
   CHECK_PARSER("r.f = r", make_call("f=", "r"_Var, "r"_Var));
@@ -222,8 +234,8 @@ TEST_CASE("Parse constructor calling", "[parse]") {
 }
 
 TEST_CASE("Parse slice literal", "[parse]") {
-  CHECK_PARSER("I32:[1, 2, 3]", make_call<SliceExpr>("I32"_Type, 1_Num, 2_Num, 3_Num));
-  CHECK_PARSER("I32:[]", make_call<SliceExpr>("I32"_Type));
+  CHECK_PARSER("I32:[1, 2, 3]", ast<SliceExpr>("I32"_Type, ptr_vec<Expr>(1_Num, 2_Num, 3_Num)));
+  CHECK_PARSER("I32:[]", ast<SliceExpr>("I32"_Type, ptr_vec<Expr>()));
 }
 
 TEST_CASE("Parse bare type", "[parse][throws]") {
