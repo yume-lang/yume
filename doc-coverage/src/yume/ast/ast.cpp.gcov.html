@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-10-02 06:21:28</td>
+            <td class="headerValue">2022-10-02 09:25:39</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -163,7 +163,7 @@
 <a name="105"><span class="lineNum">     105 </span>            : auto Compound::clone() const -&gt; Compound* { return new Compound(tok(), dup(body)); }</a>
 <a name="106"><span class="lineNum">     106 </span>            : auto VarExpr::clone() const -&gt; VarExpr* { return new VarExpr(tok(), name); }</a>
 <a name="107"><span class="lineNum">     107 </span>            : auto ConstExpr::clone() const -&gt; ConstExpr* { return new ConstExpr(tok(), name, parent); }</a>
-<a name="108"><span class="lineNum">     108 </span>            : auto CallExpr::clone() const -&gt; CallExpr* { return new CallExpr(tok(), name, dup(args)); }</a>
+<a name="108"><span class="lineNum">     108 </span>            : auto CallExpr::clone() const -&gt; CallExpr* { return new CallExpr(tok(), name, dup(receiver), dup(args)); }</a>
 <a name="109"><span class="lineNum">     109 </span>            : auto CtorExpr::clone() const -&gt; CtorExpr* { return new CtorExpr(tok(), dup(type), dup(args)); }</a>
 <a name="110"><span class="lineNum">     110 </span>            : auto DtorExpr::clone() const -&gt; DtorExpr* { return new DtorExpr(tok(), dup(base)); }</a>
 <a name="111"><span class="lineNum">     111 </span>            : auto SliceExpr::clone() const -&gt; SliceExpr* { return new SliceExpr(tok(), dup(type), dup(args)); }</a>

@@ -32,8 +32,9 @@ var searchData=
   ['overload_2ecpp_29',['overload.cpp',['../overload_8cpp.html',1,'']]],
   ['overload_2ehpp_30',['overload.hpp',['../overload_8hpp.html',1,'']]],
   ['overload_5fname_31',['overload_name',['../namespaceyume_1_1semantic.html#a3ba468acb6c0b66243c7564638d1173d',1,'yume::semantic']]],
-  ['overloads_32',['overloads',['../structyume_1_1semantic_1_1OverloadSet.html#a52f1c40db404db3f3c71b47573454550',1,'yume::semantic::OverloadSet']]],
-  ['overloadset_33',['OverloadSet',['../structyume_1_1semantic_1_1OverloadSet.html',1,'yume::semantic']]],
-  ['owning_34',['owning',['../structyume_1_1InScope.html#a8ddcc9d3da0ab6e89861d5544a05386d',1,'yume::InScope']]],
-  ['value_20_2a_35',['Value *',['../structyume_1_1Val.html#a645d4983ee82011eb1a2a1018d0b2d9d',1,'yume::Val']]]
+  ['overload_5freceiver_32',['overload_receiver',['../namespaceyume_1_1semantic.html#abae22389527616a56824d0f8369c29b3',1,'yume::semantic']]],
+  ['overloads_33',['overloads',['../structyume_1_1semantic_1_1OverloadSet.html#a52f1c40db404db3f3c71b47573454550',1,'yume::semantic::OverloadSet']]],
+  ['overloadset_34',['OverloadSet',['../structyume_1_1semantic_1_1OverloadSet.html',1,'yume::semantic']]],
+  ['owning_35',['owning',['../structyume_1_1InScope.html#a8ddcc9d3da0ab6e89861d5544a05386d',1,'yume::InScope']]],
+  ['value_20_2a_36',['Value *',['../structyume_1_1Val.html#a645d4983ee82011eb1a2a1018d0b2d9d',1,'yume::Val']]]
 ];

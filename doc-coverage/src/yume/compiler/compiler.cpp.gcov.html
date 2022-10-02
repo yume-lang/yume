@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-10-02 06:21:28</td>
+            <td class="headerValue">2022-10-02 09:25:39</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -534,7 +534,7 @@
 <a name="476"><span class="lineNum">     476 </span>            : </a>
 <a name="477"><span class="lineNum">     477 </span>            :   // If this function has a closure, it is the first parameter and will be skipped below</a>
 <a name="478"><span class="lineNum">     478 </span>            :   auto arg_offset = fn.fn_ty-&gt;closure_memo() == nullptr ? 0 : 1;</a>
-<a name="479"><span class="lineNum">     479 </span>            :   auto llvm_fn_args = llvm::make_range(fn.llvm-&gt;arg_begin() + arg_offset, fn.llvm-&gt;arg_end());</a>
+<a name="479"><span class="lineNum">     479 </span>            :   auto llvm_fn_args = llvm::drop_begin(fn.llvm-&gt;args(), arg_offset);</a>
 <a name="480"><span class="lineNum">     480 </span>            :   // Allocate local variables for each parameter</a>
 <a name="481"><span class="lineNum">     481 </span>            :   for (auto [arg, ast_arg] : llvm::zip(llvm_fn_args, fn.args())) {</a>
 <a name="482"><span class="lineNum">     482 </span>            :     expose_parameter_as_local(ast_arg.type, ast_arg.name, ast_arg.ast, &amp;arg);</a>
