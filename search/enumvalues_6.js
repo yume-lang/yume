@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['mut_0',['Mut',['../namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7',1,'yume']]]
+  ['literal_0',['Literal',['../structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1cad7da1b76e5799f53a399b7a96ba67437',1,'yume::Token']]]
 ];
