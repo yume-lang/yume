@@ -57,6 +57,14 @@ struct Slice{T}(pointer T ptr, size ISize)
       i = i + 1
     end
   end
+
+  def each_with_index(self, fn ->(T, I32))
+    let i = 0
+    while i < self::size
+      fn->(self::pointer[i], i)
+      i = i + 1
+    end
+  end
 end
 
 def []{T}(ptr T ptr, offset ISize) T mut = __primitive__(get_at)

@@ -18,11 +18,7 @@ def parse(input U8[]) Instruction[]
   # This should be dynamically sized...
   let stack = I32[](512)
   let stack_i = 0
-  # TODO
-  # This could be simplified if i had better iteration, i.e. something akin
-  # to a for-each loop
-  while i < input.size
-    let chr = input[i]
+  input.each_with_index(def (chr U8, i I32)
     let instruction = Instruction()
     # TODO
     # This could be simplified if I had switch-like stuff
@@ -46,7 +42,7 @@ def parse(input U8[]) Instruction[]
     end
     instructions[i] = instruction
     i = i + 1
-  end
+  end)
 
   return instructions
 end
