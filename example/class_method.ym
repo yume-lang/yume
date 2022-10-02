@@ -5,8 +5,8 @@ end
 def value() I32 = 5
 
 def main() I32
-  let i = value()
-  assert(i == 5)
+  assert(Foo.value() == 4)
+  assert(value() == 5)
   return 0
 end
 

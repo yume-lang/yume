@@ -294,7 +294,7 @@ struct Parser {
             auto args = vector<AnyExpr>{};
             args.emplace_back(move(left));
             args.emplace_back(move(right));
-            left = ast_ptr<CallExpr>(entry, string(std::get<Atom>(op)), move(args));
+            left = ast_ptr<CallExpr>(entry, string(std::get<Atom>(op)), std::nullopt, move(args));
             found_operator = true;
             break;
           }

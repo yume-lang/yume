@@ -28,15 +28,27 @@ static auto join_args(const auto& iter, auto fn, llvm::raw_ostream& stream = err
 
 static auto overload_name(const ast::AST* ast) -> std::string {
   if (const auto* call = dyn_cast<ast::CallExpr>(ast))
-    return call->name;
+    return (call->receiver.has_value() ? (call->receiver->ensure_ty().name() + ".") : ""s) + call->name;
   if (const auto* ctor = dyn_cast<ast::CtorExpr>(ast))
     return ctor->ensure_ty().name() + ":new";
 
   llvm_unreachable("Cannot evaluate overload set against non-call, non-ctor");
 }
 
+static auto overload_receiver(const ast::AST* ast) -> optional<ty::Type> {
+  if (const auto* call = dyn_cast<ast::CallExpr>(ast))
+    return call->receiver.has_value() ? call->receiver->ensure_ty() : optional<ty::Type>{};
+  if (const auto* ctor = dyn_cast<ast::CtorExpr>(ast))
+    return ctor->ensure_ty();
+
+  llvm_unreachable("Cannot evaluate overload set against non-call, non-ctor");
+}
+
 void Overload::dump(llvm::raw_ostream& stream) const {
-  stream << fn->ast().location().to_string() << "\t" << fn->name() << "(";
+  stream << fn->ast().location().to_string() << "\t";
+  if (fn->self_ty.has_value())
+    stream << fn->self_ty->name() << ".";
+  stream << fn->name() << "(";
   join_args(fn->arg_types(), indirect, stream);
   stream << ")";
   if (!subs.empty()) {
@@ -94,11 +106,19 @@ auto parameter_count_matches(const vector<ast::AST*>& args, const Fn& fn) -> boo
 
 auto OverloadSet::is_valid_overload(Overload& overload) const -> bool {
   const auto& fn = *overload.fn;
+  const auto parent = fn.self_ty;
 
-  auto parent = fn.self_ty;
-  if (parent.has_value() && !isa<ast::CtorExpr>(call)) {
+  // Check if the call has a receiver matching the type of the struct this method is in.
+  // If the call has a receiver, it will always fail to match against against a top level function.
+  // Note that a receiver is always a type, such as `Foo.method`. Calls with an "object" as a receiver look similar,
+  // but `foo.method` is always rewritten to `method(foo)` and thus uses the "argument dependent lookup" rules below.
+  if (overload_receiver(call) != parent) {
+    if (!parent.has_value())
+      return false;
 
-    if (std::ranges::none_of(args, [&](ast::AST* ast) { return ast->ensure_ty().without_mut() == *parent; }))
+    // If there is no matching receiver, check if any arguments are of the type of the struct.
+    // This perform "argument dependent lookup" and is required for "member functions"
+    if (std::ranges::none_of(args, [parent](ast::AST* ast) { return ast->ensure_ty().without_mut() == *parent; }))
       return false;
   }
 

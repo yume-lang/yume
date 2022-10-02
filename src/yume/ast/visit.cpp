@@ -107,7 +107,9 @@ void TypeName::visit(Visitor& visitor) const { helper(visitor).visit(name, "name
 void Compound::visit(Visitor& visitor) const { helper(visitor).visit(body, "body"); }
 void VarExpr::visit(Visitor& visitor) const { helper(visitor).visit(name, "name"); }
 void ConstExpr::visit(Visitor& visitor) const { helper(visitor).visit(name, "name").visit(parent, "name"); }
-void CallExpr::visit(Visitor& visitor) const { helper(visitor).visit(name, "name").visit(args, "args"); }
+void CallExpr::visit(Visitor& visitor) const {
+  helper(visitor).visit(name, "name").visit(receiver, "receiver").visit(args, "args");
+}
 void CtorExpr::visit(Visitor& visitor) const { helper(visitor).visit(type, "type").visit(args, "args"); }
 void DtorExpr::visit(Visitor& visitor) const { helper(visitor).visit(base, "base"); }
 void SliceExpr::visit(Visitor& visitor) const { helper(visitor).visit(type, "type").visit(args, "args"); }
