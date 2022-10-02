@@ -652,11 +652,11 @@ auto Parser::parse_primary() -> unique_ptr<Expr> {
           throw std::runtime_error("Nested types aren't yet implemented");
 
         auto name = consume_word();
+        auto call_args = vector<AnyExpr>{};
         if (try_consume(SYM_LPAREN)) {
-          auto call_args = vector<AnyExpr>{};
           consume_with_commas_until(SYM_RPAREN, [&] { call_args.emplace_back(parse_expr()); });
-          return ast_ptr<CallExpr>(entry, name, move(type), move(call_args));
         }
+        return ast_ptr<CallExpr>(entry, name, move(type), move(call_args));
       }
 
       throw std::runtime_error("Couldn't make an expression from here with a type");

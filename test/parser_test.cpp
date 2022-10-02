@@ -206,7 +206,7 @@ TEST_CASE("Parse member calling", "[parse]") {
 }
 
 TEST_CASE("Parse receiver calling", "[parse]") {
-  // CHECK_PARSER("Foo.call", make_recv_call("call", "Foo"_Type));
+  CHECK_PARSER("Foo.call", make_recv_call("call", "Foo"_Type));
   CHECK_PARSER("Foo.call()", make_recv_call("call", "Foo"_Type));
   CHECK_PARSER("Foo.call(1, 2, 3)", make_recv_call("call", "Foo"_Type, 1_Num, 2_Num, 3_Num));
   CHECK_PARSER("Foo[].call()", make_recv_call("call", "Foo"_Type & Slice));
