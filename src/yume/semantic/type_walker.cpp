@@ -212,7 +212,7 @@ template <> void TypeWalker::expression(ast::LambdaExpr& expr) {
 
 void TypeWalker::direct_call_operator(ast::CallExpr& expr) {
   yume_assert(expr.args.size() > 1, "Direct call must have at least 1 argument");
-  auto& base = *expr.args[0];
+  auto& base = *expr.args.front();
   body_expression(base);
 
   yume_assert(base.ensure_ty().base_isa<ty::Function>(), "Direct call target must be a function type");
