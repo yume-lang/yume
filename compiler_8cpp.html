@@ -86,6 +86,7 @@ $(function() {
 <code>#include &quot;<a class="el" href="vals_8hpp_source.html">vals.hpp</a>&quot;</code><br />
 <code>#include &lt;algorithm&gt;</code><br />
 <code>#include &lt;exception&gt;</code><br />
+<code>#include &lt;limits&gt;</code><br />
 <code>#include &lt;llvm/ADT/STLExtras.h&gt;</code><br />
 <code>#include &lt;llvm/ADT/StringMap.h&gt;</code><br />
 <code>#include &lt;llvm/ADT/StringMapEntry.h&gt;</code><br />
@@ -132,10 +133,12 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a2244f3545d5b6ace387fd44cceb8311a"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a2244f3545d5b6ace387fd44cceb8311a">yume::make_cdtor_fn</a> (llvm::IRBuilder&lt;&gt; &amp;builder, llvm::Module &amp;module, bool is_ctor) -&gt; llvm::Function *</td></tr>
+<tr class="separator:a2244f3545d5b6ace387fd44cceb8311a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9cf917af5859cc17a4ea16e3637d8c66"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a9cf917af5859cc17a4ea16e3637d8c66">yume::build_function_type</a> (Compiler &amp;compiler, const ty::Function &amp;type) -&gt; llvm::Type *</td></tr>
 <tr class="separator:a9cf917af5859cc17a4ea16e3637d8c66"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4910537b7fcaa9c73e9264602bf00eb9"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a4910537b7fcaa9c73e9264602bf00eb9">yume::is_trivially_destructible</a> (ty::Type type) -&gt; bool</td></tr>
-<tr class="separator:a4910537b7fcaa9c73e9264602bf00eb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af0126c650d541307fed5b35556fff680"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#af0126c650d541307fed5b35556fff680">yume::destruct_indirect</a> (Compiler &amp;compiler, const InScope &amp;v)</td></tr>
+<tr class="separator:af0126c650d541307fed5b35556fff680"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7f2890a60fca1d2e44f9d8139e0fbfc7"><td class="memItemLeft" align="right" valign="top">static auto constexpr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a7f2890a60fca1d2e44f9d8139e0fbfc7">yume::const_hash</a> (const char *input) -&gt; unsigned</td></tr>
 <tr class="memdesc:a7f2890a60fca1d2e44f9d8139e0fbfc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">A constexpr-friendly simple string hash, for simple switches with string cases.  <a href="namespaceyume.html#a7f2890a60fca1d2e44f9d8139e0fbfc7">More...</a><br /></td></tr>
 <tr class="separator:a7f2890a60fca1d2e44f9d8139e0fbfc7"><td class="memSeparator" colspan="2">&#160;</td></tr>

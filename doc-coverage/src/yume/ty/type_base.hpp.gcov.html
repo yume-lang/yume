@@ -32,12 +32,12 @@
             <td></td>
             <td class="headerItem">Lines:</td>
             <td class="headerCovTableEntry">10</td>
-            <td class="headerCovTableEntry">47</td>
-            <td class="headerCovTableEntryLo">21.3 %</td>
+            <td class="headerCovTableEntry">48</td>
+            <td class="headerCovTableEntryLo">20.8 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-10-02 10:24:42</td>
+            <td class="headerValue">2022-10-03 12:33:29</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -164,26 +164,28 @@
 <a name="106"><span class="lineNum">     106 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto is_slice() const noexcept -&gt; bool;</span></a>
 <a name="107"><span class="lineNum">     107 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto is_generic() const noexcept -&gt; bool;</span></a>
 <a name="108"><span class="lineNum">     108 </span>            : </a>
-<a name="109"><span class="lineNum">     109 </span>            :   /// If this type is a mutable reference, return the base of it (`T mut` -&gt; `T`)</a>
-<a name="110"><span class="lineNum">     110 </span>            :   /// \returns `nullopt` if this type isn't a mutable reference.</a>
-<a name="111"><span class="lineNum">     111 </span><span class="lineCov">          1 :   [[nodiscard]] auto mut_base() const noexcept -&gt; optional&lt;Type&gt;;</span></a>
-<a name="112"><span class="lineNum">     112 </span>            : </a>
-<a name="113"><span class="lineNum">     113 </span>            :   /// If this type is a mutable reference, return the base of it (`T mut` -&gt; `T`)</a>
-<a name="114"><span class="lineNum">     114 </span>            :   /// \throws if this type isn't a mutable reference.</a>
-<a name="115"><span class="lineNum">     115 </span><span class="lineCov">          1 :   [[nodiscard]] auto ensure_mut_base() const noexcept(false) -&gt; Type;</span></a>
-<a name="116"><span class="lineNum">     116 </span>            : </a>
-<a name="117"><span class="lineNum">     117 </span>            :   /// If this type is a pointer type, return the base of it (`T ptr` -&gt; `T`)</a>
-<a name="118"><span class="lineNum">     118 </span>            :   /// \returns `nullopt` if this type isn't a pointer type.</a>
-<a name="119"><span class="lineNum">     119 </span><span class="lineCov">          1 :   [[nodiscard]] auto ptr_base() const noexcept -&gt; optional&lt;Type&gt;;</span></a>
-<a name="120"><span class="lineNum">     120 </span>            : </a>
-<a name="121"><span class="lineNum">     121 </span>            :   /// If this type is a pointer type, return the base of it (`T ptr` -&gt; `T`)</a>
-<a name="122"><span class="lineNum">     122 </span>            :   /// \throws if this type isn't a pointer type.</a>
-<a name="123"><span class="lineNum">     123 </span><span class="lineCov">          1 :   [[nodiscard]] auto ensure_ptr_base() const noexcept(false) -&gt; Type;</span></a>
-<a name="124"><span class="lineNum">     124 </span>            : </a>
-<a name="125"><span class="lineNum">     125 </span>            :   /// If this type is a mutable reference, return the base of it, otherwise return itself.</a>
-<a name="126"><span class="lineNum">     126 </span><span class="lineCov">          1 :   [[nodiscard]] auto without_mut() const noexcept -&gt; Type;</span></a>
-<a name="127"><span class="lineNum">     127 </span>            : };</a>
-<a name="128"><span class="lineNum">     128 </span>            : } // namespace yume::ty</a>
+<a name="109"><span class="lineNum">     109 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto is_trivially_destructible() const -&gt; bool;</span></a>
+<a name="110"><span class="lineNum">     110 </span>            : </a>
+<a name="111"><span class="lineNum">     111 </span>            :   /// If this type is a mutable reference, return the base of it (`T mut` -&gt; `T`)</a>
+<a name="112"><span class="lineNum">     112 </span>            :   /// \returns `nullopt` if this type isn't a mutable reference.</a>
+<a name="113"><span class="lineNum">     113 </span><span class="lineCov">          1 :   [[nodiscard]] auto mut_base() const noexcept -&gt; optional&lt;Type&gt;;</span></a>
+<a name="114"><span class="lineNum">     114 </span>            : </a>
+<a name="115"><span class="lineNum">     115 </span>            :   /// If this type is a mutable reference, return the base of it (`T mut` -&gt; `T`)</a>
+<a name="116"><span class="lineNum">     116 </span>            :   /// \throws if this type isn't a mutable reference.</a>
+<a name="117"><span class="lineNum">     117 </span><span class="lineCov">          1 :   [[nodiscard]] auto ensure_mut_base() const noexcept(false) -&gt; Type;</span></a>
+<a name="118"><span class="lineNum">     118 </span>            : </a>
+<a name="119"><span class="lineNum">     119 </span>            :   /// If this type is a pointer type, return the base of it (`T ptr` -&gt; `T`)</a>
+<a name="120"><span class="lineNum">     120 </span>            :   /// \returns `nullopt` if this type isn't a pointer type.</a>
+<a name="121"><span class="lineNum">     121 </span><span class="lineCov">          1 :   [[nodiscard]] auto ptr_base() const noexcept -&gt; optional&lt;Type&gt;;</span></a>
+<a name="122"><span class="lineNum">     122 </span>            : </a>
+<a name="123"><span class="lineNum">     123 </span>            :   /// If this type is a pointer type, return the base of it (`T ptr` -&gt; `T`)</a>
+<a name="124"><span class="lineNum">     124 </span>            :   /// \throws if this type isn't a pointer type.</a>
+<a name="125"><span class="lineNum">     125 </span><span class="lineCov">          1 :   [[nodiscard]] auto ensure_ptr_base() const noexcept(false) -&gt; Type;</span></a>
+<a name="126"><span class="lineNum">     126 </span>            : </a>
+<a name="127"><span class="lineNum">     127 </span>            :   /// If this type is a mutable reference, return the base of it, otherwise return itself.</a>
+<a name="128"><span class="lineNum">     128 </span><span class="lineCov">          1 :   [[nodiscard]] auto without_mut() const noexcept -&gt; Type;</span></a>
+<a name="129"><span class="lineNum">     129 </span>            : };</a>
+<a name="130"><span class="lineNum">     130 </span>            : } // namespace yume::ty</a>
 </pre>
       </td>
     </tr>

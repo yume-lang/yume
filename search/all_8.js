@@ -34,7 +34,7 @@ var searchData=
   ['is_5fsigned_31',['is_signed',['../classyume_1_1ty_1_1Int.html#acb504b970d97dd2ebbd28de842b9f527',1,'yume::ty::Int']]],
   ['is_5fslice_32',['is_slice',['../classyume_1_1ty_1_1Type.html#a052aea6a7bafc6a8a2afd7dfbe0bc913',1,'yume::ty::Type']]],
   ['is_5fstr_33',['is_str',['../classyume_1_1Tokenizer.html#a7709893797eac3f850d5563eda75fa54',1,'yume::Tokenizer']]],
-  ['is_5ftrivially_5fdestructible_34',['is_trivially_destructible',['../namespaceyume.html#a4910537b7fcaa9c73e9264602bf00eb9',1,'yume']]],
+  ['is_5ftrivially_5fdestructible_34',['is_trivially_destructible',['../classyume_1_1ty_1_1Type.html#a5f0f4b0ac45c87df139c82d93d3239e9',1,'yume::ty::Type']]],
   ['is_5fuword_35',['is_uword',['../structyume_1_1ast_1_1parser_1_1Parser.html#a07147187a346b21a257648b3960bfa9c',1,'yume::ast::parser::Parser']]],
   ['is_5fvalid_5foverload_36',['is_valid_overload',['../structyume_1_1semantic_1_1OverloadSet.html#aee4829f5888429522113e9188da82ea5',1,'yume::semantic::OverloadSet']]],
   ['is_5fword_37',['is_word',['../classyume_1_1Tokenizer.html#a658e562b7f9671a12b3e833fc5c97f17',1,'yume::Tokenizer']]],

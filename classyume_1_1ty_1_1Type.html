@@ -133,6 +133,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a052aea6a7bafc6a8a2afd7dfbe0bc913"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb2b46ef76643db2258a240ba9f90f8a"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Type.html#acb2b46ef76643db2258a240ba9f90f8a">is_generic</a> () const noexcept -&gt; bool</td></tr>
 <tr class="separator:acb2b46ef76643db2258a240ba9f90f8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f0f4b0ac45c87df139c82d93d3239e9"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Type.html#a5f0f4b0ac45c87df139c82d93d3239e9">is_trivially_destructible</a> () const -&gt; bool</td></tr>
+<tr class="separator:a5f0f4b0ac45c87df139c82d93d3239e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a231d6b5f703dbf9be68258de8ed392ba"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Type.html#a231d6b5f703dbf9be68258de8ed392ba">mut_base</a> () const noexcept -&gt; optional&lt; <a class="el" href="classyume_1_1ty_1_1Type.html">Type</a> &gt;</td></tr>
 <tr class="memdesc:a231d6b5f703dbf9be68258de8ed392ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">If this type is a mutable reference, return the base of it (<code>T mut</code> -&gt; <code>T</code>)  <a href="classyume_1_1ty_1_1Type.html#a231d6b5f703dbf9be68258de8ed392ba">More...</a><br /></td></tr>
 <tr class="separator:a231d6b5f703dbf9be68258de8ed392ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -190,7 +192,7 @@ Public Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="type__base_8hpp_source.html#l00067">67</a> of file <a class="el" href="type__base_8hpp_source.html">type_base.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00225">mut_base()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00241">mut_base()</a>.</p>
 
 </div>
 </div>
@@ -239,7 +241,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00187">187</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00203">203</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="type__base_8hpp_source.html#l00073">base()</a>, and <a class="el" href="util_8hpp_source.html#l00080">yume::yume_assert()</a>.</p>
 
@@ -270,7 +272,7 @@ Public Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="type__base_8hpp_source.html#l00073">73</a> of file <a class="el" href="type__base_8hpp_source.html">type_base.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00187">apply_generic_substitution()</a>, and <a class="el" href="type_8cpp_source.html#l00172">is_slice()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00203">apply_generic_substitution()</a>, and <a class="el" href="type_8cpp_source.html#l00173">is_slice()</a>.</p>
 
 </div>
 </div>
@@ -376,7 +378,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00278">278</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00294">294</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
 </div>
 </div>
@@ -407,7 +409,7 @@ template&lt;typename T &gt; </div>
 <p>The union of this and <code>other</code>. For example, the union of <code>T</code> and <code>T mut</code> is <code>T mut</code>. </p>
 <dl class="section return"><dt>Returns</dt><dd><code>nullopt</code> if an union cannot be created. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00249">249</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00265">265</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
 </div>
 </div>
@@ -437,7 +439,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00106">106</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00107">107</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="structyume_1_1ty_1_1Conv.html#a52dc705eb4433198881d0a5b76ad7aa6a1fef8af652ac09da1d359f34c1bb282d">yume::ty::Conv::FnPtr</a>, and <a class="el" href="compatibility_8hpp_source.html#l00039">yume::ty::Compat::valid</a>.</p>
 
@@ -469,9 +471,9 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00094">94</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00095">95</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="type_8cpp_source.html#l00073">yume::ty::intersect_generics()</a>, <a class="el" href="type_8cpp_source.html#l00037">yume::ty::visit_subs()</a>, and <a class="el" href="util_8hpp_source.html#l00080">yume::yume_assert()</a>.</p>
+<p class="reference">References <a class="el" href="type_8cpp_source.html#l00074">yume::ty::intersect_generics()</a>, <a class="el" href="type_8cpp_source.html#l00038">yume::ty::visit_subs()</a>, and <a class="el" href="util_8hpp_source.html#l00080">yume::yume_assert()</a>.</p>
 
 </div>
 </div>
@@ -506,7 +508,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00231">231</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00247">247</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
 </div>
 </div>
@@ -541,9 +543,9 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00243">243</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00259">259</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00158">is_generic()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00159">is_generic()</a>.</p>
 
 </div>
 </div>
@@ -563,7 +565,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00179">179</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00195">195</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>.</p>
 
@@ -596,7 +598,7 @@ template&lt;typename T &gt; </div>
 <p>Return the intersection of this and <code>other</code>. For example, the intersection of <code>T</code> and <code>T mut</code> is <code>T</code>. </p>
 <dl class="section return"><dt>Returns</dt><dd><code>nullopt</code> is there's not intersection between the types. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00260">260</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00276">276</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
 </div>
 </div>
@@ -623,9 +625,9 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00158">158</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00159">159</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="token_8cpp_source.html#l00034">yume::any_of</a>, and <a class="el" href="type_8cpp_source.html#l00243">ensure_ptr_base()</a>.</p>
+<p class="reference">References <a class="el" href="token_8cpp_source.html#l00034">yume::any_of</a>, and <a class="el" href="type_8cpp_source.html#l00259">ensure_ptr_base()</a>.</p>
 
 </div>
 </div>
@@ -654,7 +656,7 @@ template&lt;typename T &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="type__base_8hpp_source.html#l00105">105</a> of file <a class="el" href="type__base_8hpp_source.html">type_base.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00337">yume::Compiler::destruct()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00377">yume::Compiler::destruct()</a>.</p>
 
 </div>
 </div>
@@ -681,11 +683,32 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00172">172</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00173">173</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="type__base_8hpp_source.html#l00073">base()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00337">yume::Compiler::destruct()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00377">yume::Compiler::destruct()</a>, and <a class="el" href="type_8cpp_source.html#l00180">is_trivially_destructible()</a>.</p>
+
+</div>
+</div>
+<a id="a5f0f4b0ac45c87df139c82d93d3239e9" name="a5f0f4b0ac45c87df139c82d93d3239e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f0f4b0ac45c87df139c82d93d3239e9">&#9670;&nbsp;</a></span>is_trivially_destructible()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto yume::ty::Type::is_trivially_destructible </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const -&gt; bool</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00180">180</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00246">yume::ast::AST::ensure_ty()</a>, <a class="el" href="type_8cpp_source.html#l00173">is_slice()</a>, and <a class="el" href="type_8cpp_source.html#l00289">name()</a>.</p>
 
 </div>
 </div>
@@ -741,7 +764,7 @@ template&lt;typename T &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="type__base_8hpp_source.html#l00096">96</a> of file <a class="el" href="type__base_8hpp_source.html">type_base.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="type_8cpp_source.html#l00023">known_qual()</a>, and <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>.</p>
+<p class="reference">References <a class="el" href="type_8cpp_source.html#l00024">known_qual()</a>, and <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>.</p>
 
 </div>
 </div>
@@ -770,7 +793,7 @@ template&lt;typename T &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="type__base_8hpp_source.html#l00095">95</a> of file <a class="el" href="type__base_8hpp_source.html">type_base.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="type_8cpp_source.html#l00023">known_qual()</a>, and <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a165d3d525f6d0cbd55e42cc3058cafcc">yume::Ptr</a>.</p>
+<p class="reference">References <a class="el" href="type_8cpp_source.html#l00024">known_qual()</a>, and <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a165d3d525f6d0cbd55e42cc3058cafcc">yume::Ptr</a>.</p>
 
 </div>
 </div>
@@ -792,7 +815,7 @@ template&lt;typename T &gt; </div>
 
 <p>Get this type with a given qualifier applied. </p>
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00023">23</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00024">24</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>.</p>
 
@@ -826,11 +849,11 @@ template&lt;typename T &gt; </div>
 <p>If this type is a mutable reference, return the base of it (<code>T mut</code> -&gt; <code>T</code>) </p>
 <dl class="section return"><dt>Returns</dt><dd><code>nullopt</code> if this type isn't a mutable reference. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00225">225</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00241">241</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="type__base_8hpp_source.html#l00067">Type()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00337">yume::Compiler::destruct()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00377">yume::Compiler::destruct()</a>.</p>
 
 </div>
 </div>
@@ -849,11 +872,11 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00273">273</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00289">289</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>, and <a class="el" href="type_8cpp_source.html#l00015">yume::ty::qual_suffix()</a>.</p>
+<p class="reference">References <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>, and <a class="el" href="type_8cpp_source.html#l00016">yume::ty::qual_suffix()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00280">yume::ty::Ptr::name()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00180">is_trivially_destructible()</a>, and <a class="el" href="type_8cpp_source.html#l00296">yume::ty::Ptr::name()</a>.</p>
 
 </div>
 </div>
@@ -909,7 +932,7 @@ template&lt;typename T &gt; </div>
 <p>If this type is a pointer type, return the base of it (<code>T ptr</code> -&gt; <code>T</code>) </p>
 <dl class="section return"><dt>Returns</dt><dd><code>nullopt</code> if this type isn't a pointer type. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00237">237</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00253">253</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
 </div>
 </div>
@@ -967,7 +990,7 @@ template&lt;typename T &gt; </div>
 
 <p>If this type is a mutable reference, return the base of it, otherwise return itself. </p>
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00271">271</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00287">287</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
 </div>
 </div>
