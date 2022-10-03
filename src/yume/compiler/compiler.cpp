@@ -721,7 +721,7 @@ void Compiler::make_temporary_in_scope(Val& val, const ast::AST& ast, const stri
     alloc->setMetadata("yume.tmp", md_node);
     ptr = alloc;
   } else {
-    auto* global = new llvm::GlobalVariable(*m_module, val_ty, true, llvm::GlobalVariable::PrivateLinkage,
+    auto* global = new llvm::GlobalVariable(*m_module, val_ty, false, llvm::GlobalVariable::PrivateLinkage,
                                             llvm::ConstantAggregateZero::get(val_ty), name);
     global->setMetadata("yume.tmp", md_node);
     ptr = global;
