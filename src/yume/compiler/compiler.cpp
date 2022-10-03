@@ -379,11 +379,9 @@ void Compiler::destruct(Val val, ty::Type type) {
   if (type.is_mut()) {
     const auto deref_type = type.mut_base();
     if (deref_type.has_value())
-      return destruct(m_builder->CreateLoad(llvm_type(*deref_type), val), *deref_type);
+      return destruct(m_builder->CreateLoad(llvm_type(*deref_type), val, "dt.deref"), *deref_type);
   }
   if (type.is_slice()) {
-    if (val.llvm->getType()->isPointerTy())
-      val = m_builder->CreateLoad(llvm_type(type), val.llvm);
     auto* ptr = m_builder->CreateExtractValue(val, 0, "sl.ptr.free");
     auto* free = llvm::CallInst::CreateFree(ptr, m_builder->GetInsertBlock());
     m_builder->Insert(free);
@@ -481,28 +479,33 @@ static inline auto is_trivially_destructible(ty::Type type) -> bool {
 void Compiler::destruct_last_scope() {
   for (const auto& i : m_scope.last_scope()) {
     const auto& v = i.second;
-    if (v.owning && !is_trivially_destructible(v.ast.ensure_ty()))
-      destruct(v.value, v.ast.ensure_ty());
+    const auto ty = v.ast.ensure_ty();
+    if (v.owning && !is_trivially_destructible(ty)) {
+      yume_assert(v.value.llvm->getType() == llvm_type(ty)->getPointerTo());
+      destruct(m_builder->CreateLoad(llvm_type(ty), v.value, "dt.l"), ty);
+    }
   }
 }
 
 void Compiler::destruct_all_scopes() {
-  for (const auto& scope : llvm::reverse(m_scope.all_scopes())) {
+  for (const auto& scope : llvm::reverse(llvm::drop_begin(m_scope.all_scopes()))) {
     for (const auto& i : scope) {
       const auto& v = i.second;
-      if (v.owning && !is_trivially_destructible(v.ast.ensure_ty()))
-        destruct(v.value, v.ast.ensure_ty());
+      const auto ty = v.ast.ensure_ty();
+      if (v.owning && !is_trivially_destructible(ty)) {
+        yume_assert(v.value.llvm->getType() == llvm_type(ty)->getPointerTo());
+        destruct(m_builder->CreateLoad(llvm_type(ty), v.value, "dt.l"), ty);
+      }
     }
   }
 }
 
 void Compiler::expose_parameter_as_local(ty::Type type, const string& name, const ast::AST& ast, Val val) {
-  Val alloc = nullptr;
   if (type.is_mut()) {
     m_scope.add(name, {.value = val, .ast = ast, .owning = false}); // We don't own parameters
     return;
   }
-  alloc = m_builder->CreateAlloca(llvm_type(type), nullptr, "lv."s + name);
+  Val alloc = m_builder->CreateAlloca(llvm_type(type), nullptr, "lv."s + name);
   m_builder->CreateStore(val, alloc);
   m_scope.add(name, {.value = alloc, .ast = ast, .owning = false}); // We don't own parameters
 }
