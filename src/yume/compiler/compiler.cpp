@@ -1116,11 +1116,24 @@ auto Compiler::ptr_bitsize() -> unsigned int { return m_module->getDataLayout().
 auto Compiler::create_malloc(llvm::Type* base_type, Val slice_size, string_view name) -> Val {
   auto* size_type = m_builder->getIntNTy(ptr_bitsize());
   slice_size = m_builder->CreateSExtOrTrunc(slice_size, size_type);
-  auto* alloc_size = llvm::ConstantExpr::getTrunc(llvm::ConstantExpr::getSizeOf(base_type), size_type);
-  auto* ptr_alloc = llvm::CallInst::CreateMalloc(m_builder->GetInsertBlock(), size_type, base_type, alloc_size,
-                                                 slice_size, nullptr, name);
+  Val alloc_size = llvm::ConstantExpr::getTrunc(llvm::ConstantExpr::getSizeOf(base_type), size_type);
+  llvm::errs() << m_builder->GetInsertPoint()->getName() << "\n";
 
-  return m_builder->Insert(ptr_alloc);
+  alloc_size = m_builder->CreateMul(slice_size, alloc_size, "mallocsize");
+
+  // prototype malloc as "void *malloc(size_t)"
+  llvm::FunctionCallee malloc_func = m_module->getOrInsertFunction("malloc", m_builder->getInt8PtrTy(), size_type);
+  auto* m_call = m_builder->CreateCall(malloc_func, alloc_size.llvm, "malloccall");
+  Val result = m_builder->CreateBitCast(m_call, base_type->getPointerTo(), name);
+
+  m_call->setTailCall();
+  if (auto* fn = dyn_cast<llvm::Function>(malloc_func.getCallee())) {
+    m_call->setCallingConv(fn->getCallingConv());
+    if (!fn->returnDoesNotAlias())
+      fn->setReturnDoesNotAlias();
+  }
+
+  return result;
 }
 
 auto Compiler::create_malloc(llvm::Type* base_type, uint64_t slice_size, string_view name) -> Val {
