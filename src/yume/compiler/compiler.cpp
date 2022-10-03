@@ -209,7 +209,6 @@ void Compiler::run() {
   }
 
   yume_assert(m_scope.size() == 1, "End of compilation should end with only the global scope remaining");
-  errs() << "Compilation complete\n";
   m_builder->SetInsertPoint(&m_global_dtor_fn->getEntryBlock(), m_global_dtor_fn->getEntryBlock().begin());
   destruct_last_scope();
   m_scope.clear();
