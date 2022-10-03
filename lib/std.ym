@@ -18,6 +18,11 @@ struct Slice{T}(pointer T ptr, size ISize)
     copy(pointer, ::pointer, size)
   end
 
+  def :new(other Slice{T})
+    ::pointer = __builtin_slice_malloc(other::pointer, other::size)
+    copy(other::pointer, ::pointer, other::size)
+  end
+
   def :new(::size)
     ::pointer = __builtin_slice_malloc(::pointer, size) # TODO: this should really be an error, as ::pointer isn't initialized here yet
     let i ISize = ISize(0) # TODO: Shouldn't be necessary
