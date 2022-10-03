@@ -475,26 +475,27 @@ static inline auto is_trivially_destructible(ty::Type type) -> bool {
   throw std::logic_error("Cannot check if "s + type.name() + " is trivially destructible");
 }
 
+static void destruct_indirect(Compiler& compiler, const InScope& v) {
+  const auto ty = v.ast.ensure_ty();
+  if (v.owning && !is_trivially_destructible(ty)) {
+    yume_assert(v.value.llvm->getType() == compiler.llvm_type(ty.without_mut())->getPointerTo());
+    Val llvm_val = v.value;
+    if (!ty.is_mut())
+      llvm_val = compiler.builder()->CreateLoad(compiler.llvm_type(ty), v.value, "dt.l");
+    compiler.destruct(llvm_val, ty);
+  }
+}
+
 void Compiler::destruct_last_scope() {
   for (const auto& i : m_scope.last_scope()) {
-    const auto& v = i.second;
-    const auto ty = v.ast.ensure_ty();
-    if (v.owning && !is_trivially_destructible(ty)) {
-      yume_assert(v.value.llvm->getType() == llvm_type(ty)->getPointerTo());
-      destruct(m_builder->CreateLoad(llvm_type(ty), v.value, "dt.l"), ty);
-    }
+    destruct_indirect(*this, i.second);
   }
 }
 
 void Compiler::destruct_all_scopes() {
   for (const auto& scope : llvm::reverse(llvm::drop_begin(m_scope.all_scopes()))) {
     for (const auto& i : scope) {
-      const auto& v = i.second;
-      const auto ty = v.ast.ensure_ty();
-      if (v.owning && !is_trivially_destructible(ty)) {
-        yume_assert(v.value.llvm->getType() == llvm_type(ty)->getPointerTo());
-        destruct(m_builder->CreateLoad(llvm_type(ty), v.value, "dt.l"), ty);
-      }
+      destruct_indirect(*this, i.second);
     }
   }
 }
@@ -713,7 +714,9 @@ void Compiler::make_temporary_in_scope(Val& val, const ast::AST& ast, const stri
   auto* md_node =
       llvm::MDNode::get(*m_context, llvm::MDString::get(*m_context, std::to_string(m_scope.size()) + ": " + tmp_name));
 
-  auto* val_ty = val.llvm->getType();
+  auto ast_ty = ast.ensure_ty();
+  yume_assert(llvm_type(ast_ty) == val.llvm->getType());
+  auto* val_ty = llvm_type(ast_ty.without_mut());
   Val ptr = nullptr;
   if (m_scope.size() > 1) {
     auto* alloc = entrypoint_builder().CreateAlloca(val_ty, nullptr, name);
@@ -725,8 +728,9 @@ void Compiler::make_temporary_in_scope(Val& val, const ast::AST& ast, const stri
     global->setMetadata("yume.tmp", md_node);
     ptr = global;
   }
-  auto [iter, ok] = m_scope.add(tmp_name, {.value = val.llvm, .ast = ast, .owning = true});
-  m_builder->CreateStore(val.llvm, ptr.llvm);
+
+  auto [iter, ok] = m_scope.add(tmp_name, {.value = ptr.llvm, .ast = ast, .owning = true});
+  m_builder->CreateStore(ast_ty.is_mut() ? m_builder->CreateLoad(val_ty, val.llvm) : val.llvm, ptr.llvm);
   val.scope = &iter->second;
   val.scope->value = ptr;
 }
@@ -897,18 +901,14 @@ template <> auto Compiler::expression(ast::AssignExpr& expr) -> Val {
   if (const auto* target_var = dyn_cast<ast::VarExpr>(expr.target.raw_ptr())) {
     auto* in_scope = m_scope.find(target_var->name);
     yume_assert(in_scope != nullptr, "Variable "s + target_var->name + " is not in scope");
-    auto [target_val, target_ast, target_owning] = *in_scope;
-    auto target_type = target_ast.ensure_ty();
 
-    if (target_owning && !is_trivially_destructible(target_type))
-      destruct(target_val, target_type);
+    destruct_indirect(*this, *in_scope);
 
     auto expr_val = body_expression(*expr.value);
-
     if (expr_val.scope != nullptr && expr_val.scope->owning)
       expr_val.scope->owning = false;
 
-    m_builder->CreateStore(expr_val, target_val);
+    m_builder->CreateStore(expr_val, in_scope->value.llvm);
     return expr_val;
   }
   if (auto* field_access = dyn_cast<ast::FieldAccessExpr>(expr.target.raw_ptr())) {
@@ -1119,7 +1119,6 @@ auto Compiler::create_malloc(llvm::Type* base_type, Val slice_size, string_view 
   auto* size_type = m_builder->getIntNTy(ptr_bitsize());
   slice_size = m_builder->CreateSExtOrTrunc(slice_size, size_type);
   Val alloc_size = llvm::ConstantExpr::getTrunc(llvm::ConstantExpr::getSizeOf(base_type), size_type);
-  llvm::errs() << m_builder->GetInsertPoint()->getName() << "\n";
 
   alloc_size = m_builder->CreateMul(slice_size, alloc_size, "mallocsize");
 

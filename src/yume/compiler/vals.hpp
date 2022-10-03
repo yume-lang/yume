@@ -239,7 +239,7 @@ struct Val {
 struct InScope {
   Val value;
   const ast::AST& ast;
-  /// Whether or not the local scope "owns" the variable. Unowned variables are not destructed at the end of the scope.
+  /// Whether the local scope "owns" the variable. Unowned variables are not destructed at the end of the scope.
   bool owning{};
 };
 
