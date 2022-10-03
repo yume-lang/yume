@@ -5,10 +5,15 @@ struct Fruit(ordinal I32)
   const Apple Fruit = Fruit(0)
 
   def ordinal(self) I32 = self::ordinal
+
+  const NAMES U8[][] = U8[]:["Apple"]
+
+  def name(self) U8[] = Fruit::NAMES[self::ordinal]
 end
 
 def main() I32
   let apple Fruit = Fruit(0)
   assert(apple.ordinal == Fruit::Apple.ordinal)
+  puts(Fruit::Apple.name)
   return 0
 end

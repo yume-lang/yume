@@ -56,6 +56,32 @@
 #include <variant>
 
 namespace yume {
+static auto make_cdtor_fn(llvm::IRBuilder<>& builder, llvm::Module& module, bool is_ctor) -> llvm::Function* {
+  // NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
+  static auto* global_cdtor_fn_ty = llvm::FunctionType::get(builder.getVoidTy(), false);
+  // NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
+  static auto* global_cdtor_entry_ty =
+      llvm::StructType::get(builder.getInt32Ty(), global_cdtor_fn_ty->getPointerTo(), builder.getInt8PtrTy());
+  // NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
+  static auto* global_cdtor_array_ty = llvm::ArrayType::get(global_cdtor_entry_ty, 1);
+
+  auto* global_cdtor_fn = llvm::Function::Create(global_cdtor_fn_ty, llvm::Function::ExternalLinkage,
+                                                 (is_ctor ? "_Ym.__ctor" : "_Ym.__dtor"), &module);
+  auto* bb = llvm::BasicBlock::Create(module.getContext(), "entry", global_cdtor_fn);
+  builder.SetInsertPoint(bb);
+  builder.CreateRetVoid();
+
+  (void)new llvm::GlobalVariable(
+      module, global_cdtor_array_ty, true, llvm::GlobalVariable::AppendingLinkage,
+      llvm::ConstantArray::get(
+          global_cdtor_array_ty,
+          llvm::ConstantStruct::get(global_cdtor_entry_ty, builder.getInt32(std::numeric_limits<uint16_t>::max()),
+                                    global_cdtor_fn, llvm::ConstantPointerNull::get(builder.getInt8PtrTy()))),
+      (is_ctor ? "llvm.global_ctors" : "llvm.global_dtors"));
+
+  return global_cdtor_fn;
+}
+
 Compiler::Compiler(const optional<string>& target_triple, vector<SourceFile> source_files)
     : m_sources(move(source_files)), m_walker(std::make_unique<semantic::TypeWalker>(*this)) {
   m_context = std::make_unique<llvm::LLVMContext>();
@@ -85,26 +111,8 @@ Compiler::Compiler(const optional<string>& target_triple, vector<SourceFile> sou
 
   m_types.declare_size_type(*this);
 
-  auto* global_ctor_fn_ty = llvm::FunctionType::get(m_builder->getVoidTy(), false);
-  auto* global_ctor_fn =
-      llvm::Function::Create(global_ctor_fn_ty, llvm::Function::ExternalLinkage, "_Ym.__ctor", m_module.get());
-  auto* bb = llvm::BasicBlock::Create(*m_context, "entry", global_ctor_fn);
-  m_builder->SetInsertPoint(bb);
-  m_builder->CreateRetVoid();
-
-  auto* global_ctor_entry_ty =
-      llvm::StructType::get(m_builder->getInt32Ty(), global_ctor_fn_ty->getPointerTo(), m_builder->getInt8PtrTy());
-  auto* global_ctor_array_ty = llvm::ArrayType::get(global_ctor_entry_ty, 1);
-  auto* global_ctor_var = new llvm::GlobalVariable(
-      *m_module, global_ctor_array_ty, true, llvm::GlobalVariable::AppendingLinkage,
-      llvm::ConstantArray::get(
-          global_ctor_array_ty,
-          llvm::ConstantStruct::get(global_ctor_entry_ty, m_builder->getInt32(std::numeric_limits<uint16_t>::max()),
-                                    global_ctor_fn, llvm::ConstantPointerNull::get(m_builder->getInt8PtrTy()))),
-      "llvm.global_ctors");
-  global_ctor_var->setSection(".ctor");
-
-  m_global_ctor_fn = global_ctor_fn;
+  m_global_ctor_fn = make_cdtor_fn(*m_builder, *m_module, true);
+  m_global_dtor_fn = make_cdtor_fn(*m_builder, *m_module, false);
 }
 
 void Compiler::declare_default_ctor(Struct& st) {
@@ -133,6 +141,8 @@ void Compiler::declare_default_ctor(Struct& st) {
 }
 
 void Compiler::run() {
+  m_scope.push_scope(); // Global scope
+
   for (const auto& source : m_sources)
     for (auto& i : source.program->body)
       decl_statement(*i, {}, source.program.get());
@@ -197,6 +207,12 @@ void Compiler::run() {
                [&](Const* cn) { define(*cn); },
                [&](Struct* /*st*/) { throw std::logic_error("Cannot define a struct"); });
   }
+
+  yume_assert(m_scope.size() == 1, "End of compilation should end with only the global scope remaining");
+  errs() << "Compilation complete\n";
+  m_builder->SetInsertPoint(&m_global_dtor_fn->getEntryBlock(), m_global_dtor_fn->getEntryBlock().begin());
+  destruct_last_scope();
+  m_scope.clear();
 }
 
 void Compiler::walk_types(DeclLike decl_like) {
@@ -493,7 +509,6 @@ void Compiler::expose_parameter_as_local(ty::Type type, const string& name, cons
 
 void Compiler::setup_fn_base(Fn& fn) {
   m_current_fn = &fn;
-  m_scope.clear();
   m_scope.push_scope();
   m_scope_ctor.reset();
   auto* bb = llvm::BasicBlock::Create(*m_context, "entry", fn.llvm);
@@ -558,8 +573,8 @@ void Compiler::define(Fn& fn) {
     m_builder->CreateRet(finalized_value);
   }
 
-  yume_assert(m_scope.size() == 1, "End of function should end with only the function scope remaining");
   m_scope.pop_scope();
+  yume_assert(m_scope.size() == 1, "End of function should end with only the global scope remaining");
   verifyFunction(*fn.llvm, &errs());
 }
 
@@ -653,6 +668,8 @@ template <> void Compiler::statement(ast::ReturnStmt& stat) {
 }
 
 auto Compiler::entrypoint_builder() -> llvm::IRBuilder<> {
+  if (m_current_fn == nullptr)
+    return {&m_global_ctor_fn->getEntryBlock(), m_global_ctor_fn->getEntryBlock().begin()};
   return {&m_current_fn->llvm->getEntryBlock(), m_current_fn->llvm->getEntryBlock().begin()};
 }
 
@@ -690,16 +707,26 @@ template <> auto Compiler::expression(ast::CharExpr& expr) -> Val { return m_bui
 template <> auto Compiler::expression(ast::BoolExpr& expr) -> Val { return m_builder->getInt1(expr.val); }
 
 void Compiler::make_temporary_in_scope(Val& val, const ast::AST& ast, const string& name) {
-  auto* alloc = entrypoint_builder().CreateAlloca(val.llvm->getType(), nullptr, name);
   const string tmp_name = name + " " + ast.location().to_string();
-  auto& md_ctx = alloc->getContext();
   auto* md_node =
-      llvm::MDNode::get(md_ctx, llvm::MDString::get(md_ctx, std::to_string(m_scope.size()) + ": " + tmp_name));
-  alloc->setMetadata("yume.tmp", md_node);
+      llvm::MDNode::get(*m_context, llvm::MDString::get(*m_context, std::to_string(m_scope.size()) + ": " + tmp_name));
+
+  auto* val_ty = val.llvm->getType();
+  Val ptr = nullptr;
+  if (m_scope.size() > 1) {
+    auto* alloc = entrypoint_builder().CreateAlloca(val_ty, nullptr, name);
+    alloc->setMetadata("yume.tmp", md_node);
+    ptr = alloc;
+  } else {
+    auto* global = new llvm::GlobalVariable(*m_module, val_ty, true, llvm::GlobalVariable::PrivateLinkage,
+                                            llvm::ConstantAggregateZero::get(val_ty), name);
+    global->setMetadata("yume.tmp", md_node);
+    ptr = global;
+  }
   auto [iter, ok] = m_scope.add(tmp_name, {.value = val.llvm, .ast = ast, .owning = true});
-  m_builder->CreateStore(val.llvm, alloc);
+  m_builder->CreateStore(val.llvm, ptr.llvm);
   val.scope = &iter->second;
-  val.scope->value = alloc;
+  val.scope->value = ptr;
 }
 
 template <> auto Compiler::expression(ast::StringExpr& expr) -> Val {

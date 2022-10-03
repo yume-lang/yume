@@ -59,6 +59,8 @@ class Compiler : public CRTPWalker<Compiler> {
   Struct* m_slice_struct{};
 
   llvm::Function* m_global_ctor_fn;
+  llvm::Function* m_global_dtor_fn;
+
   unique_ptr<llvm::LLVMContext> m_context;
   unique_ptr<llvm::IRBuilder<>> m_builder;
   unique_ptr<llvm::Module> m_module;
