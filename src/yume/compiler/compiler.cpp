@@ -460,24 +460,9 @@ template <> void Compiler::statement(ast::Compound& stat) {
     destruct_last_scope();
 }
 
-static inline auto is_trivially_destructible(ty::Type type) -> bool {
-  if (type.base_isa<ty::Int>() || type.base_isa<ty::Ptr>() || type.base_isa<ty::Function>())
-    return true;
-
-  if (type.is_slice())
-    return false;
-
-  if (const auto* struct_type = type.base_dyn_cast<ty::Struct>())
-    return std::ranges::all_of(
-        struct_type->fields(), [](const auto& i) { return is_trivially_destructible(i); }, &ast::TypeName::ensure_ty);
-
-  // A generic or something, shouldn't occur
-  throw std::logic_error("Cannot check if "s + type.name() + " is trivially destructible");
-}
-
 static void destruct_indirect(Compiler& compiler, const InScope& v) {
   const auto ty = v.ast.ensure_ty();
-  if (v.owning && !is_trivially_destructible(ty)) {
+  if (v.owning && !ty.is_trivially_destructible()) {
     yume_assert(v.value.llvm->getType() == compiler.llvm_type(ty.without_mut())->getPointerTo());
     Val llvm_val = v.value;
     if (!ty.is_mut())
@@ -891,7 +876,7 @@ template <> auto Compiler::expression(ast::CallExpr& expr) -> Val {
     val = m_builder->CreateCall(llvm_fn, vals_to_llvm(llvm_args));
   }
 
-  if (auto ty = expr.val_ty(); ty.has_value() && !is_trivially_destructible(*ty))
+  if (auto ty = expr.val_ty(); ty.has_value() && !ty->is_trivially_destructible())
     make_temporary_in_scope(val, expr, "tmp");
 
   return val;

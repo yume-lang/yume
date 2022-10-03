@@ -106,6 +106,8 @@ public:
   [[nodiscard]] auto is_slice() const noexcept -> bool;
   [[nodiscard]] auto is_generic() const noexcept -> bool;
 
+  [[nodiscard]] auto is_trivially_destructible() const -> bool;
+
   /// If this type is a mutable reference, return the base of it (`T mut` -> `T`)
   /// \returns `nullopt` if this type isn't a mutable reference.
   [[nodiscard]] auto mut_base() const noexcept -> optional<Type>;

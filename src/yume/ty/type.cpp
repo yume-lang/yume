@@ -1,4 +1,5 @@
 #include "type.hpp"
+#include "ast/ast.hpp"
 #include "ty/compatibility.hpp"
 #include "ty/substitution.hpp"
 #include <cstddef>
@@ -175,6 +176,21 @@ auto Type::is_slice() const noexcept -> bool {
 
   return false;
 };
+
+auto Type::is_trivially_destructible() const -> bool {
+  if (base_isa<ty::Int>() || base_isa<ty::Ptr>() || base_isa<ty::Function>())
+    return true;
+
+  if (is_slice())
+    return false;
+
+  if (const auto* struct_type = base_dyn_cast<ty::Struct>())
+    return std::ranges::all_of(
+        struct_type->fields(), [](const auto& i) { return i.is_trivially_destructible(); }, &ast::TypeName::ensure_ty);
+
+  // A generic or something, shouldn't occur
+  throw std::logic_error("Cannot check if "s + name() + " is trivially destructible");
+}
 
 auto Type::has_qualifier(Qualifier qual) const -> bool {
   if (m_mut)
