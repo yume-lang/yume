@@ -1,0 +1,14 @@
+struct Fruit(ordinal I32)
+  def :new(::ordinal)
+  end
+
+  const Apple Fruit = Fruit(0)
+
+  def ordinal(self) I32 = self::ordinal
+end
+
+def main() I32
+  let apple Fruit = Fruit(0)
+  assert(apple.ordinal == Fruit::Apple.ordinal)
+  return 0
+end

@@ -12,6 +12,7 @@
 #include "vals.hpp"
 #include <algorithm>
 #include <exception>
+#include <limits>
 #include <llvm/ADT/STLExtras.h>
 #include <llvm/ADT/StringMap.h>
 #include <llvm/ADT/StringMapEntry.h>
@@ -83,6 +84,27 @@ Compiler::Compiler(const optional<string>& target_triple, vector<SourceFile> sou
   m_module->setTargetTriple(triple);
 
   m_types.declare_size_type(*this);
+
+  auto* global_ctor_fn_ty = llvm::FunctionType::get(m_builder->getVoidTy(), false);
+  auto* global_ctor_fn =
+      llvm::Function::Create(global_ctor_fn_ty, llvm::Function::ExternalLinkage, "_Ym.__ctor", m_module.get());
+  auto* bb = llvm::BasicBlock::Create(*m_context, "entry", global_ctor_fn);
+  m_builder->SetInsertPoint(bb);
+  m_builder->CreateRetVoid();
+
+  auto* global_ctor_entry_ty =
+      llvm::StructType::get(m_builder->getInt32Ty(), global_ctor_fn_ty->getPointerTo(), m_builder->getInt8PtrTy());
+  auto* global_ctor_array_ty = llvm::ArrayType::get(global_ctor_entry_ty, 1);
+  auto* global_ctor_var = new llvm::GlobalVariable(
+      *m_module, global_ctor_array_ty, true, llvm::GlobalVariable::AppendingLinkage,
+      llvm::ConstantArray::get(
+          global_ctor_array_ty,
+          llvm::ConstantStruct::get(global_ctor_entry_ty, m_builder->getInt32(std::numeric_limits<uint16_t>::max()),
+                                    global_ctor_fn, llvm::ConstantPointerNull::get(m_builder->getInt8PtrTy()))),
+      "llvm.global_ctors");
+  global_ctor_var->setSection(".ctor");
+
+  m_global_ctor_fn = global_ctor_fn;
 }
 
 void Compiler::declare_default_ctor(Struct& st) {
@@ -115,19 +137,22 @@ void Compiler::run() {
     for (auto& i : source.program->body)
       decl_statement(*i, {}, source.program.get());
 
-  // First pass: only convert constants
-  for (auto& cn : m_consts) {
+  // 1: Only convert the types of constants
+  for (auto& cn : m_consts)
     walk_types(&cn);
-    auto* const_ty = llvm_type(cn.ast().ensure_ty());
-    cn.llvm = new llvm::GlobalVariable(*m_module, const_ty, true, llvm::GlobalVariable::PrivateLinkage, nullptr,
-                                       ".const." + cn.name());
-  }
 
-  // Second pass: only convert structs
+  // 2: Only convert structs
   for (auto& st : m_structs)
     walk_types(&st);
 
-  // Third pass: only convert user defined constructors
+  // 3: Convert initializers of constants
+  for (auto& cn : m_consts) {
+    auto* const_ty = llvm_type(cn.ast().ensure_ty());
+    cn.llvm = new llvm::GlobalVariable(*m_module, const_ty, false, llvm::GlobalVariable::PrivateLinkage, nullptr,
+                                       ".const." + cn.name());
+  }
+
+  // 4: Only convert user defined constructors
   for (auto& ct : m_ctors)
     walk_types(&ct);
 
@@ -136,11 +161,11 @@ void Compiler::run() {
   for (auto& st : m_structs)
     declare_default_ctor(st);
 
-  // Fourth pass: only convert function parameters
+  // 5: only convert function parameters
   for (auto& fn : m_fns)
     walk_types(&fn);
 
-  // Fifth pass: convert everything else, but only when instantiated
+  // 6: convert everything else, but only when instantiated
   m_walker->in_depth = true;
 
   for (auto& cn : m_consts) {
@@ -487,10 +512,20 @@ void Compiler::define(Const& cn) {
   if (cn.llvm->hasInitializer())
     return;
 
+  auto* saved_insert_block = m_builder->GetInsertBlock();
+  m_builder->SetInsertPoint(&m_global_ctor_fn->getEntryBlock(), m_global_ctor_fn->getEntryBlock().begin());
+
   auto init = body_expression(*cn.ast().init);
-  yume_assert(isa<llvm::Constant>(init.llvm), "Constant initializer must be a constant expression");
-  auto* const_val = cast<llvm::Constant>(init.llvm);
-  cn.llvm->setInitializer(const_val);
+  if (isa<llvm::Constant>(init.llvm)) {
+    cn.llvm->setConstant(true);
+    auto* const_val = cast<llvm::Constant>(init.llvm);
+    cn.llvm->setInitializer(const_val);
+  } else {
+    cn.llvm->setInitializer(llvm::ConstantAggregateZero::get(cn.llvm->getValueType()));
+    m_builder->CreateStore(init.llvm, cn.llvm);
+  }
+
+  m_builder->SetInsertPoint(saved_insert_block);
 }
 
 void Compiler::define(Fn& fn) {
