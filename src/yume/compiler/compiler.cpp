@@ -1188,14 +1188,24 @@ template <> auto Compiler::expression(ast::SliceExpr& expr) -> Val {
 
   yume_assert(expr.ensure_ty().is_slice(), "Slice expression must contain slice type");
   auto* slice_type = llvm_type(expr.ensure_ty());
-  auto* base_type =
-      llvm_type(expr.ensure_ty().base_cast<ty::Struct>()->fields().at(0)->ensure_ty().ensure_ptr_base()); // ???
+  auto base_type = expr.ensure_ty().base_cast<ty::Struct>()->fields().at(0)->ensure_ty().ensure_ptr_base(); // ???
+  auto* base_llvm_type = llvm_type(base_type);
 
-  const Val data_ptr = create_malloc(base_type, slice_size, "sl.ctor.malloc");
+  const Val data_ptr = create_malloc(base_llvm_type, slice_size, "sl.ctor.malloc");
 
   unsigned j = 0;
-  for (auto& i : expr.args)
-    m_builder->CreateStore(body_expression(*i), m_builder->CreateConstInBoundsGEP1_32(base_type, data_ptr, j++));
+  for (auto& i : expr.args) {
+    if (!base_type.is_trivially_destructible()) {
+      auto dup_args = vector<ast::AnyExpr>{};
+      dup_args.emplace_back(move(i));
+      auto ast_dup =
+          std::make_unique<ast::CtorExpr>(expr.token_range(), ast::AnyType{expr.type->clone()}, move(dup_args));
+      m_walker->body_expression(*ast_dup);
+      i = ast::AnyExpr{move(ast_dup)};
+    }
+    Val val = body_expression(*i);
+    m_builder->CreateStore(val, m_builder->CreateConstInBoundsGEP1_32(base_llvm_type, data_ptr, j++));
+  }
 
   Val slice_inst = llvm::UndefValue::get(slice_type);
   slice_inst = m_builder->CreateInsertValue(slice_inst, data_ptr, 0);
