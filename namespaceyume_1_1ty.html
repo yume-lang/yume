@@ -83,7 +83,7 @@ Namespaces</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1BaseType.html">BaseType</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a type in the type system. NOTE: that this isn't the class to use for type introspection, for that, <code><a class="el" href="classyume_1_1ty_1_1Type.html" title="A &quot;qualified&quot; type, with a non-stackable qualifier, .i.e. mut.">Type</a></code> should be used instead as it is fully qualified.  <a href="classyume_1_1ty_1_1BaseType.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a type in the type system. NOTE: that this isn't the class to use for type introspection, for that, <code><a class="el" href="classyume_1_1ty_1_1Type.html" title="A &quot;qualified&quot; type, with a non-stackable qualifier, i.e. mut.">Type</a></code> should be used instead as it is fully qualified.  <a href="classyume_1_1ty_1_1BaseType.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ty_1_1Compat.html">Compat</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The compatibility between two types, for overload selection.  <a href="structyume_1_1ty_1_1Compat.html#details">More...</a><br /></td></tr>
@@ -99,6 +99,9 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Int.html">Int</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A built-in integral type, such as I32 or Bool.  <a href="classyume_1_1ty_1_1Int.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Nil.html">Nil</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The null type, <a class="el" href="classyume_1_1ty_1_1Nil.html" title="The null type, Nil.">Nil</a>.  <a href="classyume_1_1ty_1_1Nil.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Ptr.html">Ptr</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A "qualified" type, with a stackable qualifier, <em>i.e</em>. <code>ptr</code>.  <a href="classyume_1_1ty_1_1Ptr.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -108,7 +111,7 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ty_1_1Sub.html">Sub</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Type.html">Type</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A "qualified" type, with a non-stackable qualifier, <em></em>.i.e. <code>mut</code>.  <a href="classyume_1_1ty_1_1Type.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A "qualified" type, with a non-stackable qualifier, <em>i.e</em>. <code>mut</code>.  <a href="classyume_1_1ty_1_1Type.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
@@ -116,10 +119,11 @@ Enumerations</h2></td></tr>
 <tr class="memitem:a4c255b641f0b91ee4ff8bc878e7bd04e"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ty.html#a4c255b641f0b91ee4ff8bc878e7bd04e">Kind</a> { <br />
 &#160;&#160;<a class="el" href="namespaceyume_1_1ty.html#a4c255b641f0b91ee4ff8bc878e7bd04ea337311f4a0312ec61dd1cd555b795b3f">K_Unknown</a>
 , <a class="el" href="namespaceyume_1_1ty.html#a4c255b641f0b91ee4ff8bc878e7bd04ea222f2839099dfc9bd05812ba49c3bb0b">K_Int</a>
+, <a class="el" href="namespaceyume_1_1ty.html#a4c255b641f0b91ee4ff8bc878e7bd04eae175a0f7a2a8a6e0efaac92f8e8e7157">K_Nil</a>
 , <a class="el" href="namespaceyume_1_1ty.html#a4c255b641f0b91ee4ff8bc878e7bd04eabd15b17a548c45dd0971928c645719cd">K_Ptr</a>
-, <a class="el" href="namespaceyume_1_1ty.html#a4c255b641f0b91ee4ff8bc878e7bd04ea32b366cfa0eb5e025d4f6bfea7c8a9e8">K_Struct</a>
 , <br />
-&#160;&#160;<a class="el" href="namespaceyume_1_1ty.html#a4c255b641f0b91ee4ff8bc878e7bd04ea4da89960e6e393a88f24bd51c147ca6c">K_Function</a>
+&#160;&#160;<a class="el" href="namespaceyume_1_1ty.html#a4c255b641f0b91ee4ff8bc878e7bd04ea32b366cfa0eb5e025d4f6bfea7c8a9e8">K_Struct</a>
+, <a class="el" href="namespaceyume_1_1ty.html#a4c255b641f0b91ee4ff8bc878e7bd04ea4da89960e6e393a88f24bd51c147ca6c">K_Function</a>
 , <a class="el" href="namespaceyume_1_1ty.html#a4c255b641f0b91ee4ff8bc878e7bd04ea21c2013a1384b0842784a97713aced5a">K_Generic</a>
 <br />
  }</td></tr>
@@ -151,6 +155,8 @@ Functions</h2></td></tr>
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a4c255b641f0b91ee4ff8bc878e7bd04ea337311f4a0312ec61dd1cd555b795b3f" name="a4c255b641f0b91ee4ff8bc878e7bd04ea337311f4a0312ec61dd1cd555b795b3f"></a>K_Unknown&#160;</td><td class="fielddoc"><p ><code>UnknownType</code>, default, zero value. Hopefully never encountered! </p>
 </td></tr>
 <tr><td class="fieldname"><a id="a4c255b641f0b91ee4ff8bc878e7bd04ea222f2839099dfc9bd05812ba49c3bb0b" name="a4c255b641f0b91ee4ff8bc878e7bd04ea222f2839099dfc9bd05812ba49c3bb0b"></a>K_Int&#160;</td><td class="fielddoc"><p ><code><a class="el" href="classyume_1_1ty_1_1Int.html" title="A built-in integral type, such as I32 or Bool.">Int</a></code> </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a4c255b641f0b91ee4ff8bc878e7bd04eae175a0f7a2a8a6e0efaac92f8e8e7157" name="a4c255b641f0b91ee4ff8bc878e7bd04eae175a0f7a2a8a6e0efaac92f8e8e7157"></a>K_Nil&#160;</td><td class="fielddoc"><p ><code><a class="el" href="classyume_1_1ty_1_1Nil.html" title="The null type, Nil.">Nil</a></code> </p>
 </td></tr>
 <tr><td class="fieldname"><a id="a4c255b641f0b91ee4ff8bc878e7bd04eabd15b17a548c45dd0971928c645719cd" name="a4c255b641f0b91ee4ff8bc878e7bd04eabd15b17a548c45dd0971928c645719cd"></a>K_Ptr&#160;</td><td class="fielddoc"><p ><code><a class="el" href="classyume_1_1ty_1_1Ptr.html" title="A &quot;qualified&quot; type, with a stackable qualifier, i.e. ptr.">Ptr</a></code> </p>
 </td></tr>
@@ -210,9 +216,9 @@ Functions</h2></td></tr>
 <p>Add the substitution <code>gen_sub</code> for the generic type variable <code>gen</code> in template instantiation <code>instantiation</code>. If a substitution already exists for the same type variable, the two substitutions are intersected. </p>
 <dl class="section return"><dt>Returns</dt><dd>nullopt if substitution failed </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00074">74</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00075">75</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00095">yume::ty::Type::determine_generic_subs()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00096">yume::ty::Type::determine_generic_subs()</a>.</p>
 
 </div>
 </div>
@@ -240,11 +246,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00016">16</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00017">17</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>, and <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a165d3d525f6d0cbd55e42cc3058cafcc">yume::Ptr</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00289">yume::ty::Type::name()</a>, and <a class="el" href="type_8cpp_source.html#l00296">yume::ty::Ptr::name()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00290">yume::ty::Type::name()</a>, and <a class="el" href="type_8cpp_source.html#l00297">yume::ty::Ptr::name()</a>.</p>
 
 </div>
 </div>
@@ -288,11 +294,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00038">38</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00039">39</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="type_8hpp_source.html#l00058">yume::ty::Ptr::qualifier()</a>, <a class="el" href="type_8cpp_source.html#l00038">visit_subs()</a>, and <a class="el" href="util_8hpp_source.html#l00080">yume::yume_assert()</a>.</p>
+<p class="reference">References <a class="el" href="type_8hpp_source.html#l00068">yume::ty::Ptr::qualifier()</a>, <a class="el" href="type_8cpp_source.html#l00039">visit_subs()</a>, and <a class="el" href="util_8hpp_source.html#l00080">yume::yume_assert()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00095">yume::ty::Type::determine_generic_subs()</a>, and <a class="el" href="type_8cpp_source.html#l00038">visit_subs()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00096">yume::ty::Type::determine_generic_subs()</a>, and <a class="el" href="type_8cpp_source.html#l00039">visit_subs()</a>.</p>
 
 </div>
 </div>

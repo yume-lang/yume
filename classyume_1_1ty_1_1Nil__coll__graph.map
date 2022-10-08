@@ -1,0 +1,5 @@
+<map id="yume::ty::Nil" name="yume::ty::Nil">
+<area shape="rect" id="node1" title="The null type, Nil." alt="" coords="116,95,207,121"/>
+<area shape="rect" id="node2" href="$classyume_1_1ty_1_1BaseType.html" title="Represents a type in the type system. NOTE: that this isn&#39;t the class to use for type introspection,..." alt="" coords="5,5,139,32"/>
+<area shape="rect" id="node3" title=" " alt="" coords="163,5,339,32"/>
+</map>
