@@ -783,14 +783,18 @@ template <> auto Compiler::expression(ast::StringExpr& expr) -> Val {
   auto* slice_size = m_builder->getIntN(ptr_bitsize(), val.length());
   auto* slice_type = cast<llvm::StructType>(llvm_type(expr.ensure_ty()));
 
-  const Val string_alloc = create_malloc(base_type, slice_size, "str.ctor.malloc");
-  m_builder->CreateMemCpy(string_alloc, {}, global_string_ptr, {}, slice_size);
+  // const Val string_alloc = create_malloc(base_type, slice_size, "str.ctor.malloc");
+  // m_builder->CreateMemCpy(string_alloc, {}, global_string_ptr, {}, slice_size);
+
+  // Val string_slice = llvm::UndefValue::get(slice_type);
+  // string_slice = m_builder->CreateInsertValue(string_slice, string_alloc, 0);
+  // string_slice = m_builder->CreateInsertValue(string_slice, slice_size, 1);
+
+  // make_temporary_in_scope(string_slice, expr, "tmps");
 
   Val string_slice = llvm::UndefValue::get(slice_type);
-  string_slice = m_builder->CreateInsertValue(string_slice, string_alloc, 0);
+  string_slice = m_builder->CreateInsertValue(string_slice, global_string_ptr, 0);
   string_slice = m_builder->CreateInsertValue(string_slice, slice_size, 1);
-
-  make_temporary_in_scope(string_slice, expr, "tmps");
 
   return string_slice;
 }
