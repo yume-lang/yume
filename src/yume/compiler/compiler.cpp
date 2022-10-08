@@ -800,9 +800,9 @@ template <> auto Compiler::expression(ast::VarExpr& expr) -> Val {
   auto* val = in_scope->value.llvm;
   // Function arguments act as locals, but they are immutable, but still behind a reference (alloca)
   if (!in_scope->ast.ensure_ty().is_mut())
-    return m_builder->CreateLoad(llvm_type(in_scope->ast.ensure_ty()), val);
+    return {m_builder->CreateLoad(llvm_type(in_scope->ast.ensure_ty()), val), in_scope};
 
-  return val;
+  return {val, in_scope};
 }
 
 template <> auto Compiler::expression(ast::ConstExpr& expr) -> Val {
