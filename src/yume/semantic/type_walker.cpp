@@ -163,6 +163,68 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
   }
 }
 
+auto TypeWalker::make_dup(ast::AnyExpr& expr) -> Fn* {
+  Struct* st = nullptr;
+
+  auto base_type = expr->ensure_ty().without_mut();
+
+  for_all_instantiations(compiler.m_structs, [&](Struct& i) {
+    if (i.self_ty == base_type)
+      st = &i;
+  });
+
+  yume_assert(st != nullptr, "Cannot duplicate non-struct type " + base_type.name());
+  OverloadSet ctor_overloads{};
+
+  auto ctor_receiver = std::make_unique<ast::SelfType>(expr->token_range());
+  ctor_receiver->val_ty(base_type);
+  auto ctor_args = vector<ast::AnyExpr>{};
+  ctor_args.emplace_back(move(expr));
+  auto ctor_expr = std::make_unique<ast::CtorExpr>(ctor_receiver->token_range(), move(ctor_receiver), move(ctor_args));
+  ctor_expr->val_ty(base_type);
+
+  // XXX: Duplicated from function overload handling
+  resolve_queue();
+  ctor_overloads = all_ctor_overloads_by_type(*st, *ctor_expr);
+  ctor_overloads.args.push_back(ctor_expr->args.front().raw_ptr());
+
+#ifdef YUME_SPEW_OVERLOAD_SELECTION
+  errs() << "\n*** BEGIN CTOR OVERLOAD EVALUATION ***\n";
+  errs() << "Constructors with matching types:\n";
+  ctor_overloads.dump(errs());
+#endif
+
+  ctor_overloads.determine_valid_overloads();
+
+#ifdef YUME_SPEW_OVERLOAD_SELECTION
+  errs() << "\nViable overloads:\n";
+  ctor_overloads.dump(errs(), true);
+#endif
+
+  auto best_overload = ctor_overloads.best_viable_overload();
+
+#ifdef YUME_SPEW_OVERLOAD_SELECTION
+  errs() << "\nSelected overload:\n";
+  best_overload.dump(errs());
+  errs() << "\n*** END CTOR OVERLOAD EVALUATION ***\n\n";
+#endif
+
+  const auto& subs = best_overload.subs;
+  auto* selected = best_overload.fn;
+  yume_assert(subs.empty(), "Constructors cannot be generic"); // TODO(rymiel): revisit?
+
+  // XXX: STILL Duplicated from function overload handling
+  auto target = selected->arg_types().front();
+  auto& expr_arg = ctor_expr->args.front();
+  auto compat = best_overload.compatibilities.front();
+  yume_assert(compat.valid, "Invalid compatibility after overload already selected?????");
+  if (!compat.conv.empty())
+    wrap_in_implicit_cast(expr_arg, compat.conv, target);
+  expr = move(ctor_expr);
+
+  return selected;
+}
+
 template <> void TypeWalker::expression(ast::SliceExpr& expr) {
   for (auto& i : expr.args) {
     body_expression(*i);

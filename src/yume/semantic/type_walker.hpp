@@ -58,6 +58,8 @@ public:
 
   void resolve_queue();
 
+  auto make_dup(ast::AnyExpr& expr) -> Fn*;
+
 private:
   /// Convert an ast type (`ast::Type`) into a type in the type system (`ty::Type`).
   auto convert_type(ast::Type& ast_type) -> ty::Type;
