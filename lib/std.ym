@@ -37,9 +37,8 @@ struct Slice{T}(pointer T ptr, size ISize)
 
   def [](self mut, offset ISize) T mut = self::pointer[offset]
   def [](self, offset ISize) T = self::pointer[offset]
-  def []=(self mut, offset ISize, val T) T
+  def []=(self mut, offset ISize, val T) Nil
     self::pointer[offset] = val
-    return val
   end
 
   def dup(self, extra ISize) Self
@@ -73,7 +72,7 @@ struct Slice{T}(pointer T ptr, size ISize)
 end
 
 def []{T}(ptr T ptr, offset ISize) T mut = __primitive__(get_at)
-def []={T}(ptr T ptr, offset ISize, val T) T = __primitive__(set_at)
+def []={T}(ptr T ptr, offset ISize, val T) Nil = __primitive__(set_at)
 def __builtin_default_init{T}(obj T mut) = __primitive__(default_init)
 
 # TODO: most of these should be templated

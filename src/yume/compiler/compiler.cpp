@@ -839,7 +839,7 @@ auto Compiler::primitive(Fn* fn, const vector<Val>& args, const vector<ty::Type>
     llvm::Value* value = args.at(2);
     llvm::Value* base = m_builder->CreateGEP(result_type, args.at(0).llvm, args.at(1).llvm, "p.set_at.gep");
     m_builder->CreateStore(value, base);
-    return args.at(2);
+    return llvm::UndefValue::get(m_builder->getVoidTy());
   }
   if (primitive == "get_at") {
     auto* result_type = llvm_type(types[0].without_mut().ensure_ptr_base());
