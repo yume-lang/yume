@@ -671,12 +671,16 @@ template <> void Compiler::statement(ast::ReturnStmt& stat) {
       }
     }
 
+    auto val = body_expression(*stat.expr);
+
+    if (val.scope != nullptr && val.scope->owning)
+      val.scope->owning = false;
+
     destruct_all_scopes();
 
     if (reset_owning != nullptr)
       reset_owning->owning = true; // The local variable may not be returned in all code paths, so reset its ownership
 
-    auto val = body_expression(*stat.expr);
     if (val.llvm->getType()->isVoidTy())
       m_builder->CreateRetVoid();
     else
