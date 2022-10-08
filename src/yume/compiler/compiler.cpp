@@ -385,9 +385,33 @@ void Compiler::destruct(Val val, ty::Type type) {
       return destruct(m_builder->CreateLoad(llvm_type(*deref_type), val, "dt.deref"), *deref_type);
   }
   if (type.is_slice()) {
+    auto base_type = type.base_cast<ty::Struct>()->fields().at(0)->ensure_ty().ensure_ptr_base(); // ???
+    auto* base_llvm_type = llvm_type(base_type);
     auto* ptr = m_builder->CreateExtractValue(val, 0, "sl.ptr.free");
-    auto* free = llvm::CallInst::CreateFree(ptr, m_builder->GetInsertBlock());
-    m_builder->Insert(free);
+    if (!base_type.is_trivially_destructible()) {
+      auto* size = m_builder->CreateExtractValue(val, 1, "sl.size.free");
+      auto* loop_iter =
+          entrypoint_dtor_builder().CreateAlloca(m_builder->getIntNTy(ptr_bitsize()), 0, nullptr, "sl.dtor.loop.i");
+      m_builder->CreateStore(m_builder->getIntN(ptr_bitsize(), 0), loop_iter);
+      auto saved_insert_point = m_builder->saveIP();
+      auto* cont_block = m_builder->GetInsertBlock()->splitBasicBlock(m_builder->GetInsertPoint(), "sl.dtor.cont");
+      auto* loop_block = llvm::BasicBlock::Create(*m_context, "sl.dtor.loop", cont_block->getParent(), cont_block);
+
+      saved_insert_point.getBlock()->getTerminator()->eraseFromParent();
+      m_builder->SetInsertPoint(saved_insert_point.getBlock());
+      m_builder->CreateBr(loop_block);
+      m_builder->SetInsertPoint(loop_block);
+      auto* iter_i = m_builder->CreateLoad(m_builder->getIntNTy(ptr_bitsize()), loop_iter, "sl.dtor.i.iter");
+      Val iter_val = m_builder->CreateLoad(
+          base_llvm_type, m_builder->CreateInBoundsGEP(base_llvm_type, ptr, iter_i, "sl.dtor.i.gep"), "sl.dtor.i.load");
+      destruct(iter_val, base_type);
+      auto* iter_inc = m_builder->CreateAdd(iter_i, m_builder->getIntN(ptr_bitsize(), 1), "sl.dtor.i.inc");
+      m_builder->CreateStore(iter_inc, loop_iter);
+      m_builder->CreateCondBr(m_builder->CreateICmpEQ(iter_inc, size), cont_block, loop_block);
+
+      m_builder->restoreIP(saved_insert_point);
+    }
+    create_free(ptr);
   }
 }
 
