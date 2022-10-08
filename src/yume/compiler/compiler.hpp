@@ -61,6 +61,8 @@ class Compiler : public CRTPWalker<Compiler> {
   llvm::Function* m_global_ctor_fn;
   llvm::Function* m_global_dtor_fn;
 
+  ast::AST* m_return_value{};
+
   unique_ptr<llvm::LLVMContext> m_context;
   unique_ptr<llvm::IRBuilder<>> m_builder;
   unique_ptr<llvm::Module> m_module;

@@ -671,6 +671,7 @@ template <> void Compiler::statement(ast::ReturnStmt& stat) {
       }
     }
 
+    m_return_value = stat.expr.raw_ptr(); // TODO(rymiel): Find a better solution than this global variable
     auto val = body_expression(*stat.expr);
 
     if (val.scope != nullptr && val.scope->owning)
@@ -1247,7 +1248,8 @@ template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
     yume_assert(current_ty.is_mut(), "Source type must be mutable when implicitly derefencing");
     current_ty = current_ty.ensure_mut_base();
     base.llvm = m_builder->CreateLoad(llvm_type(current_ty), base, "ic.deref");
-    if (!current_ty.is_trivially_destructible() && base.scope != nullptr && base.scope->owning) {
+    if (!current_ty.is_trivially_destructible() && base.scope != nullptr && base.scope->owning &&
+        m_return_value == &expr) {
       auto* ast_dup = m_walker->make_dup(expr.base);
       auto* llvm_fn = declare(*ast_dup);
       vector<llvm::Value*> llvm_args{};
