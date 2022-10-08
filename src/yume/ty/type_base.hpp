@@ -59,7 +59,7 @@ protected:
   BaseType(Kind kind, string name) : m_kind(kind), m_name(move(name)) {}
 };
 
-/// A "qualified" type, with a non-stackable qualifier, \e .i.e. `mut`.
+/// A "qualified" type, with a non-stackable qualifier, \e i.e. `mut`.
 class Type {
   nonnull<const BaseType*> m_base;
   bool m_mut{};

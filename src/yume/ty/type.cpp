@@ -1,5 +1,6 @@
 #include "type.hpp"
 #include "ast/ast.hpp"
+#include "qualifier.hpp"
 #include "ty/compatibility.hpp"
 #include "ty/substitution.hpp"
 #include <cstddef>
@@ -239,15 +240,15 @@ auto Struct::emplace_subbed(Substitution sub) const -> const Struct& {
 }
 
 auto Type::mut_base() const noexcept -> optional<Type> {
-  if (m_mut)
+  if (is_mut())
     return Type(m_base);
   return std::nullopt;
 }
 
 auto Type::ensure_mut_base() const -> Type {
-  if (m_mut)
+  if (is_mut())
     return {m_base};
-  llvm_unreachable("Tried calling ensure_mut_base on a type that isn't a mutable reference");
+  throw std::logic_error("Tried calling ensure_mut_base on a type that isn't a mutable reference");
 }
 
 auto Type::ptr_base() const noexcept -> optional<Type> {
@@ -259,7 +260,7 @@ auto Type::ptr_base() const noexcept -> optional<Type> {
 auto Type::ensure_ptr_base() const -> Type {
   if (const auto* ptr = base_dyn_cast<Ptr>())
     return ptr->pointee();
-  llvm_unreachable("Tried calling ensure_ptr_base on a type that isn't a pointer-like type");
+  throw std::logic_error("Tried calling ensure_ptr_base on a type that isn't a pointer-like type");
 }
 
 auto Type::coalesce(Type other) const noexcept -> optional<Type> {

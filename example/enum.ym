@@ -14,7 +14,6 @@ end
 def main() I32
   let apple Fruit = Fruit(0)
   assert(apple.ordinal == Fruit::Apple.ordinal)
-  # FIXME: double free
-  # puts(Fruit::Apple.name)
+  puts(Fruit::Apple.name)
   return 0
 end
