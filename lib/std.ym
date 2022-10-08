@@ -21,6 +21,7 @@ struct Slice{T}(pointer T ptr, size ISize)
   def :new(other Slice{T})
     ::pointer = __builtin_slice_malloc(other::pointer, other::size)
     copy(other::pointer, ::pointer, other::size)
+    ::size = other::size
   end
 
   def :new(::size)
