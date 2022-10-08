@@ -342,11 +342,11 @@ static auto build_function_type(Compiler& compiler, const ty::Function& type) ->
 }
 
 auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
-  auto* base = llvm::Type::getVoidTy(*m_context);
+  llvm::Type* base = nullptr;
 
-  if (const auto* int_type = type.base_dyn_cast<ty::Int>())
+  if (const auto* int_type = type.base_dyn_cast<ty::Int>()) {
     base = llvm::Type::getIntNTy(*m_context, int_type->size());
-  else if (const auto* ptr_type = type.base_dyn_cast<ty::Ptr>()) {
+  } else if (const auto* ptr_type = type.base_dyn_cast<ty::Ptr>()) {
     yume_assert(ptr_type->qualifier() == Qualifier::Ptr, "Ptr type must hold pointer");
     base = llvm::PointerType::getUnqual(llvm_type(ptr_type->pointee()));
   } else if (const auto* struct_type = type.base_dyn_cast<ty::Struct>()) {
@@ -367,6 +367,10 @@ auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
       memo = build_function_type(*this, *function_type);
 
     base = memo;
+  } else if (type.base_isa<ty::Nil>()) {
+    base = llvm::Type::getVoidTy(*m_context);
+  } else {
+    throw std::logic_error("Unknown type base " + type.name());
   }
 
   if (type.is_mut())

@@ -15,6 +15,7 @@ class Type;
 enum Kind {
   K_Unknown,  ///< `UnknownType`, default, zero value. Hopefully never encountered!
   K_Int,      ///< `Int`
+  K_Nil,      ///< `Nil`
   K_Ptr,      ///< `Ptr`
   K_Struct,   ///< `Struct`
   K_Function, ///< `Function`

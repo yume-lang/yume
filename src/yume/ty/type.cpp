@@ -178,7 +178,7 @@ auto Type::is_slice() const noexcept -> bool {
 };
 
 auto Type::is_trivially_destructible() const -> bool {
-  if (base_isa<ty::Int>() || base_isa<ty::Ptr>() || base_isa<ty::Function>())
+  if (base_isa<ty::Int>() || base_isa<ty::Ptr>() || base_isa<ty::Function>() || base_isa<ty::Nil>())
     return true;
 
   if (is_slice())

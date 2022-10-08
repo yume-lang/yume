@@ -24,6 +24,10 @@ TypeHolder::TypeHolder() {
   auto bool_ty = std::make_unique<ty::Int>("Bool", 1, false);
   bool_type = bool_ty.get();
   known.insert({bool_ty->name(), move(bool_ty)});
+
+  auto nil_ty = std::make_unique<ty::Nil>();
+  nil_type = nil_ty.get();
+  known.insert({nil_ty->name(), move(nil_ty)});
 }
 
 void TypeHolder::declare_size_type(Compiler& compiler) {

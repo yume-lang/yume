@@ -43,6 +43,16 @@ public:
   static auto classof(const BaseType* a) -> bool { return a->kind() == K_Int; }
 };
 
+/// The null type, Nil.
+class Nil final : public BaseType {
+public:
+  constexpr static const auto nil_name = "Nil"; // TODO(rymiel): Magic value?
+
+  Nil() : BaseType(K_Nil, nil_name) {}
+  [[nodiscard]] auto name() const -> string override { return nil_name; };
+  static auto classof(const BaseType* a) -> bool { return a->kind() == K_Nil; }
+};
+
 /// A "qualified" type, with a stackable qualifier, \e i.e. `ptr`.
 class Ptr : public BaseType {
   // TODO(rymiel): why are these here?
