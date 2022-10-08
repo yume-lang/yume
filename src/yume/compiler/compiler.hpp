@@ -121,6 +121,7 @@ private:
   /// Create a temporary `IRBuilder` which points to the entrypoint of the current function being compiled. This is used
   /// for variable declarations, which are always at the entrypoint, as to not cause a stack overflow with locals.
   auto entrypoint_builder() -> llvm::IRBuilder<>;
+  auto entrypoint_dtor_builder() -> llvm::IRBuilder<>;
 
   /// Common code between defining functions and constructors. \see define .
   void setup_fn_base(Fn&);

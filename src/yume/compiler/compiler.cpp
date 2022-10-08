@@ -556,6 +556,12 @@ void Compiler::define(Const& cn) {
     m_builder->CreateStore(init.llvm, cn.llvm);
   }
 
+  auto cn_type = cn.ast().type->ensure_ty();
+  if (!cn_type.is_trivially_destructible()) {
+    m_builder->SetInsertPoint(&m_global_dtor_fn->getEntryBlock(), m_global_dtor_fn->getEntryBlock().begin());
+    destruct(m_builder->CreateLoad(llvm_type(cn_type), cn.llvm), cn_type);
+  }
+
   m_builder->SetInsertPoint(saved_insert_block);
 }
 
@@ -686,6 +692,12 @@ template <> void Compiler::statement(ast::ReturnStmt& stat) {
 auto Compiler::entrypoint_builder() -> llvm::IRBuilder<> {
   if (m_current_fn == nullptr)
     return {&m_global_ctor_fn->getEntryBlock(), m_global_ctor_fn->getEntryBlock().begin()};
+  return {&m_current_fn->llvm->getEntryBlock(), m_current_fn->llvm->getEntryBlock().begin()};
+}
+
+auto Compiler::entrypoint_dtor_builder() -> llvm::IRBuilder<> {
+  if (m_current_fn == nullptr)
+    return {&m_global_dtor_fn->getEntryBlock(), m_global_dtor_fn->getEntryBlock().begin()};
   return {&m_current_fn->llvm->getEntryBlock(), m_current_fn->llvm->getEntryBlock().begin()};
 }
 
