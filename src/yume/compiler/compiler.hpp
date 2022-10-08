@@ -138,6 +138,7 @@ private:
 
   auto create_malloc(llvm::Type* base_type, Val slice_size, string_view name = ""sv) -> Val;
   auto create_malloc(llvm::Type* base_type, uint64_t slice_size, string_view name = ""sv) -> Val;
+  auto create_free(Val ptr) -> Val;
 
   /// Handle all primitive, built-in functions
   auto primitive(Fn* fn, const vector<Val>& args, const vector<ty::Type>& types) -> optional<Val>;

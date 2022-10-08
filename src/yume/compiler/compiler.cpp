@@ -1130,6 +1130,19 @@ auto Compiler::create_malloc(llvm::Type* base_type, uint64_t slice_size, string_
   return create_malloc(base_type, m_builder->getIntN(ptr_bitsize(), slice_size), name);
 }
 
+auto Compiler::create_free(Val ptr) -> Val {
+  auto* void_ty = m_builder->getVoidTy();
+  auto* int_ptr_ty = m_builder->getInt8PtrTy();
+  // prototype free as "void free(void*)"
+  llvm::FunctionCallee free_func = m_module->getOrInsertFunction("free", void_ty, int_ptr_ty);
+  auto* result = m_builder->CreateCall(free_func, m_builder->CreateBitCast(ptr, int_ptr_ty));
+  result->setTailCall();
+  if (auto* fn = dyn_cast<llvm::Function>(free_func.getCallee()))
+    result->setCallingConv(fn->getCallingConv());
+
+  return result;
+}
+
 template <> auto Compiler::expression(ast::SliceExpr& expr) -> Val {
   auto* slice_size = m_builder->getIntN(ptr_bitsize(), expr.args.size());
 
