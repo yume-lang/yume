@@ -276,7 +276,27 @@ auto Parser::parse_type_name() -> unique_ptr<TypeName> {
   return ast_ptr<TypeName>(entry, move(type), name);
 }
 
-auto Parser::parse_expr() -> unique_ptr<Expr> { return parse_operator(); }
+auto Parser::parse_logical_or() -> unique_ptr<Expr> {
+  auto entry = tokens.begin();
+  auto left = parse_logical_and();
+  if (try_consume(SYM_OR_OR)) {
+    auto right = parse_logical_or();
+    left = ast_ptr<BinaryLogicExpr>(entry, SYM_OR_OR.second, move(left), move(right));
+  }
+  return left;
+}
+
+auto Parser::parse_logical_and() -> unique_ptr<Expr> {
+  auto entry = tokens.begin();
+  auto left = parse_operator();
+  if (try_consume(SYM_AND_AND)) {
+    auto right = parse_logical_and();
+    left = ast_ptr<BinaryLogicExpr>(entry, SYM_AND_AND.second, move(left), move(right));
+  }
+  return left;
+}
+
+auto Parser::parse_expr() -> unique_ptr<Expr> { return parse_logical_or(); }
 
 auto Parser::parse_fn_name() -> string {
   string name{};
@@ -675,7 +695,7 @@ auto Parser::parse_receiver(unique_ptr<Expr> receiver, VectorTokenIterator recei
     auto call_args = vector<AnyExpr>{};
     call_args.emplace_back(move(receiver));
     if (try_consume(SYM_LPAREN)) { // A call with a dot `a.b(...)`
-          collect_with_commas_until(SYM_RPAREN, &Parser::parse_expr, call_args);
+      collect_with_commas_until(SYM_RPAREN, &Parser::parse_expr, call_args);
       auto call = ast_ptr<CallExpr>(entry + 1, name, std::nullopt, move(call_args));
       return parse_receiver(move(call), receiver_entry);
     }
@@ -716,7 +736,7 @@ auto Parser::parse_receiver(unique_ptr<Expr> receiver, VectorTokenIterator recei
     consume(SYM_LPAREN);
     auto call_args = vector<AnyExpr>{};
     call_args.emplace_back(move(receiver));
-          collect_with_commas_until(SYM_RPAREN, &Parser::parse_expr, call_args);
+    collect_with_commas_until(SYM_RPAREN, &Parser::parse_expr, call_args);
     auto call = ast_ptr<CallExpr>(entry, "->", std::nullopt, move(call_args));
     return parse_receiver(move(call), receiver_entry);
   }

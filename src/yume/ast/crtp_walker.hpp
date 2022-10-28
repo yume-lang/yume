@@ -47,6 +47,7 @@ public:
     case ast::K_Char: return conv_expression<ast::CharExpr>(expr, args...);
     case ast::K_Bool: return conv_expression<ast::BoolExpr>(expr, args...);
     case ast::K_Call: return conv_expression<ast::CallExpr>(expr, args...);
+    case ast::K_BinaryLogic: return conv_expression<ast::BinaryLogicExpr>(expr, args...);
     case ast::K_Var: return conv_expression<ast::VarExpr>(expr, args...);
     case ast::K_Const: return conv_expression<ast::ConstExpr>(expr, args...);
     case ast::K_Lambda: return conv_expression<ast::LambdaExpr>(expr, args...);

@@ -113,6 +113,8 @@ static const TokenAtom SYM_STAR = {Token::Type::Symbol, "*"_a};
 static const TokenAtom SYM_BANG = {Token::Type::Symbol, "!"_a};
 static const TokenAtom SYM_COLON = {Token::Type::Symbol, ":"_a};
 static const TokenAtom SYM_COLON_COLON = {Token::Type::Symbol, "::"_a};
+static const TokenAtom SYM_OR_OR = {Token::Type::Symbol, "||"_a};
+static const TokenAtom SYM_AND_AND = {Token::Type::Symbol, "&&"_a};
 static const TokenAtom SYM_ARROW = {Token::Type::Symbol, "->"_a};
 static const TokenAtom SYM_DOLLAR = {Token::Type::Symbol, "$"_a};
 
@@ -309,6 +311,9 @@ struct Parser {
   auto parse_unary() -> unique_ptr<Expr>;
 
   auto parse_lambda() -> unique_ptr<LambdaExpr>;
+
+  auto parse_logical_or() -> unique_ptr<Expr>;
+  auto parse_logical_and() -> unique_ptr<Expr>;
 
   template <size_t N = 0> auto parse_operator() -> unique_ptr<Expr> {
     auto entry = tokens.begin();

@@ -1,6 +1,7 @@
 #include "./test_common.hpp"
 #include "ast/ast.hpp"
 #include "ast/parser.hpp"
+#include "atom.hpp"
 #include "diagnostic/visitor/hash_visitor.hpp"
 #include "token.hpp"
 #include "util.hpp"
@@ -156,6 +157,7 @@ auto operator&(std::unique_ptr<Type> type, decltype(Slice) /* tag */) {
 
 using namespace yume::ast;
 using enum yume::Qualifier;
+using yume::operator""_a;
 
 TEST_CASE("Parse literals", "[parse]") {
   CHECK_PARSER("true", ast<BoolExpr>(true));
@@ -247,6 +249,19 @@ TEST_CASE("Parse bare type", "[parse][throws]") {
 TEST_CASE("Parse index operator", "[parse]") {
   CHECK_PARSER("a[b]", make_call("[]", "a"_Var, "b"_Var));
   CHECK_PARSER("a[b] = c", make_call("[]=", "a"_Var, "b"_Var, "c"_Var));
+}
+
+TEST_CASE("Parse logical operators", "[parse]") {
+  CHECK_PARSER("a || b", ast<BinaryLogicExpr>("||"_a, "a"_Var, "b"_Var));
+  CHECK_PARSER("a && b", ast<BinaryLogicExpr>("&&"_a, "a"_Var, "b"_Var));
+  CHECK_PARSER("a || b || c", ast<BinaryLogicExpr>("||"_a, "a"_Var, ast<BinaryLogicExpr>("||"_a, "b"_Var, "c"_Var)));
+  CHECK_PARSER("a && b && c", ast<BinaryLogicExpr>("&&"_a, "a"_Var, ast<BinaryLogicExpr>("&&"_a, "b"_Var, "c"_Var)));
+  CHECK_PARSER("a && b || c && d", ast<BinaryLogicExpr>("||"_a, ast<BinaryLogicExpr>("&&"_a, "a"_Var, "b"_Var),
+                                                        ast<BinaryLogicExpr>("&&"_a, "c"_Var, "d"_Var)));
+  CHECK_PARSER(
+      "a || b && c || d",
+      ast<BinaryLogicExpr>("||"_a, "a"_Var,
+                           ast<BinaryLogicExpr>("||"_a, ast<BinaryLogicExpr>("&&"_a, "b"_Var, "c"_Var), "d"_Var)));
 }
 
 TEST_CASE("Parse variable declaration", "[parse]") {

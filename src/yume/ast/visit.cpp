@@ -110,6 +110,9 @@ void ConstExpr::visit(Visitor& visitor) const { helper(visitor).visit(name, "nam
 void CallExpr::visit(Visitor& visitor) const {
   helper(visitor).visit(name, "name").visit(receiver, "receiver").visit(args, "args");
 }
+void BinaryLogicExpr::visit(Visitor& visitor) const {
+  helper(visitor).visit(string{operation}, "operation").visit(lhs, "lhs").visit(rhs, "rhs");
+}
 void CtorExpr::visit(Visitor& visitor) const { helper(visitor).visit(type, "type").visit(args, "args"); }
 void DtorExpr::visit(Visitor& visitor) const { helper(visitor).visit(base, "base"); }
 void SliceExpr::visit(Visitor& visitor) const { helper(visitor).visit(type, "type").visit(args, "args"); }

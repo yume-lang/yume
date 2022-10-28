@@ -61,6 +61,7 @@ enum Kind {
   /****/ K_Var,          ///< `VarExpr`
   /****/ K_Const,        ///< `ConstExpr`
   /****/ K_Call,         ///< `CallExpr`
+  /****/ K_BinaryLogic,  ///< `BinaryLogicExpr`
   /****/ K_Ctor,         ///< `CtorExpr`
   /****/ K_Dtor,         ///< `DtorExpr`
   /****/ K_Slice,        ///< `SliceExpr`
@@ -107,6 +108,7 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case K_If: return "if statement";
   case K_IfClause: return "if clause";
   case K_Call: return "call";
+  case K_BinaryLogic: return "binary logic";
   case K_Ctor: return "constructor";
   case K_Dtor: return "destructor";
   case K_Slice: return "slice";
@@ -524,6 +526,22 @@ public:
 
   static auto classof(const AST* a) -> bool { return a->kind() == K_Call; }
   [[nodiscard]] auto clone() const -> CallExpr* override;
+};
+
+/// A logical operator such as `||` or `&&`. Since these aren't overloadable, they have their own AST node.
+struct BinaryLogicExpr final : public Expr {
+public:
+  Atom operation;
+  AnyExpr lhs;
+  AnyExpr rhs;
+
+  BinaryLogicExpr(span<Token> tok, Atom operation, AnyExpr lhs, AnyExpr rhs)
+      : Expr(K_BinaryLogic, tok), operation{operation}, lhs{move(lhs)}, rhs{move(rhs)} {}
+  void visit(Visitor& visitor) const override;
+  [[nodiscard]] auto describe() const -> string override { return static_cast<string>(operation); }
+
+  static auto classof(const AST* a) -> bool { return a->kind() == K_BinaryLogic; }
+  [[nodiscard]] auto clone() const -> BinaryLogicExpr* override;
 };
 
 /// A construction of a struct or cast of a primitive.
