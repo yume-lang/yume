@@ -213,9 +213,9 @@ public:
               {Token::Type::Symbol, is_exactly("&&"sv)},
               {Token::Type::Symbol, is_any_of(R"(()[]{}<>=:#%-+.,!/*&@$\)"sv)},
           })) {
-        string message = "Tokenizer didn't recognize ";
-        message += m_last;
-        throw std::runtime_error(message);
+        std::stringstream msg;
+        msg << "Tokenizer didn't recognize '" << m_last << "' at " << m_source_file << ":" << m_line << ":" << m_col;
+        throw std::runtime_error(msg.str());
       }
       m_count++;
     }
