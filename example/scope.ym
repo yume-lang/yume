@@ -1,7 +1,7 @@
 def main() I32
   let i = 4
   assert(i == 4)
-  if true
+  if false || true
     let i = 8
     assert(i == 8)
   end

@@ -512,6 +512,16 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
   expr.selected_overload = selected;
 }
 
+template <> void TypeWalker::expression(ast::BinaryLogicExpr& expr) {
+  // TODO(rymiel): expand this to apply more than just bools
+  ty::Type bool_ty = compiler.m_types.bool_type;
+  body_expression(*expr.lhs);
+  body_expression(*expr.rhs);
+  yume_assert(expr.lhs->ensure_ty() == bool_ty);
+  yume_assert(expr.rhs->ensure_ty() == bool_ty);
+  expr.val_ty(bool_ty);
+}
+
 template <> void TypeWalker::statement(ast::Compound& stat) {
   [[maybe_unused]] auto guard = scope.push_scope_guarded();
   for (auto& i : stat)

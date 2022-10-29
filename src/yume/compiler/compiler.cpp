@@ -927,6 +927,30 @@ template <> auto Compiler::expression(ast::CallExpr& expr) -> Val {
   return val;
 }
 
+template <> auto Compiler::expression(ast::BinaryLogicExpr& expr) -> Val {
+  bool is_and = expr.operation == "&&"_a;
+  string label_base = (is_and ? "land" : "lor");
+  auto* entry_block = m_builder->GetInsertBlock();
+  auto* rhs_block = llvm::BasicBlock::Create(*m_context, label_base + ".rhs", m_current_fn->llvm);
+  auto* pass_block = llvm::BasicBlock::Create(*m_context, label_base + ".pass", m_current_fn->llvm);
+  auto lhs_val = body_expression(*expr.lhs);
+  if (is_and)
+    m_builder->CreateCondBr(lhs_val, rhs_block, pass_block);
+  else
+    m_builder->CreateCondBr(lhs_val, pass_block, rhs_block);
+  m_builder->SetInsertPoint(rhs_block);
+  auto rhs_val = body_expression(*expr.rhs);
+  m_builder->CreateBr(pass_block);
+  m_builder->SetInsertPoint(pass_block);
+  auto* phi = m_builder->CreatePHI(llvm_type(expr.ensure_ty()), 2, label_base + ".phi");
+  if (is_and)
+    phi->addIncoming(m_builder->getTrue(), entry_block);
+  else
+    phi->addIncoming(m_builder->getFalse(), entry_block);
+  phi->addIncoming(rhs_val, rhs_block);
+  return phi;
+}
+
 template <> auto Compiler::expression(ast::AssignExpr& expr) -> Val {
   if (const auto* target_var = dyn_cast<ast::VarExpr>(expr.target.raw_ptr())) {
     auto* in_scope = m_scope.find(target_var->name);
