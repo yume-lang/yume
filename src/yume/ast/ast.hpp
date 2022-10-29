@@ -704,8 +704,9 @@ public:
     string name;
     bool varargs;
   };
+  using abstract_decl_t = struct {};
 
-  using body_base_t = visitable_variant<Compound, string, extern_decl_t>;
+  using body_base_t = visitable_variant<Compound, string, extern_decl_t, abstract_decl_t>;
   struct Body : public body_base_t {
     using body_base_t::body_base_t;
   };
@@ -733,6 +734,7 @@ public:
   [[nodiscard]] auto varargs() const -> bool { return extern_decl() && std::get<extern_decl_t>(body).varargs; }
   [[nodiscard]] auto primitive() const -> bool { return holds_alternative<string>(body); }
   [[nodiscard]] auto extern_decl() const -> bool { return holds_alternative<extern_decl_t>(body); }
+  [[nodiscard]] auto abstract() const -> bool { return holds_alternative<abstract_decl_t>(body); }
   [[nodiscard]] auto extern_linkage() const -> bool { return extern_decl() || annotations.contains(ANN_EXTERN); }
   void make_extern_linkage(bool value = true) {
     if (value)

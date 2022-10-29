@@ -432,6 +432,10 @@ auto Parser::parse_fn_decl() -> unique_ptr<FnDecl> {
       return ast_ptr<FnDecl>(entry, name, move(args), type_args, move(ret_type), FnDecl::extern_decl_t{name, varargs},
                              move(annotations));
     }
+    if (try_consume(KWD_ABSTRACT)) {
+      return ast_ptr<FnDecl>(entry, name, move(args), type_args, move(ret_type), FnDecl::abstract_decl_t{},
+                             move(annotations));
+    }
     body_begin = tokens.begin();
     auto expr = parse_expr();
     body.emplace_back(ast_ptr<ReturnStmt>(entry, move(expr)));

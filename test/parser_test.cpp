@@ -98,6 +98,16 @@ auto make_extern_decl(const std::string& name, std::initializer_list<TName> args
                      FnDecl::extern_decl_t{extern_name, varargs}, std::set<std::string>{});
 }
 
+auto make_abstract_decl(const std::string& name, std::initializer_list<TName> args, OptionalType ret,
+                        std::set<std::string> attributes = {}) -> std::unique_ptr<FnDecl> {
+  auto ast_args = std::vector<TypeName>();
+  ast_args.reserve(args.size());
+  std::transform(args.begin(), args.end(), std::back_inserter(ast_args),
+                 [](auto& tn) { return static_cast<TypeName>(tn); });
+  return ast<FnDecl>(name, std::move(ast_args), std::vector<std::string>{}, std::move(ret), FnDecl::abstract_decl_t{},
+                     std::move(attributes));
+}
+
 template <typename... Ts>
 auto make_struct_decl(const std::string& name, std::initializer_list<TName> args, std::vector<std::string> type_vars,
                       Ts&&... ts) -> std::unique_ptr<StructDecl> {
@@ -365,6 +375,12 @@ TEST_CASE("Parse primitive function declaration", "[parse][fn]") {
                make_primitive_decl("munge", {{"a", "I32"_Type & Ptr}}, "I32"_Type & Ptr, "native_munge"));
   CHECK_PARSER("def printf(format U8 ptr) = __extern__ __varargs__",
                make_extern_decl("printf", {{"format", "U8"_Type & Ptr}}, {}, "printf", true));
+}
+
+TEST_CASE("Parse abstract function declaration", "[parse][abstract]") {
+  CHECK_PARSER("def abs() = abstract", make_abstract_decl("abs", {}, {}));
+  CHECK_PARSER("def munge(a I32 ptr) I32 ptr = abstract",
+               make_abstract_decl("munge", {{"a", "I32"_Type & Ptr}}, "I32"_Type & Ptr));
 }
 
 TEST_CASE("Parse extern linkage function declaration", "[parse][fn]") {

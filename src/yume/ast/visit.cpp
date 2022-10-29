@@ -53,6 +53,12 @@ struct VisitorHelper {
   auto visit(std::same_as<bool> auto value, string_view label) -> auto& {
     return visit(value ? "true" : "false", label);
   }
+
+  auto maybe(bool value, string_view label) -> auto& {
+    if (value)
+      visit("true", label);
+    return *this;
+  }
 };
 
 auto helper(Visitor& visitor) { return VisitorHelper{visitor}; }
@@ -80,30 +86,25 @@ void FnDecl::visit(Visitor& visitor) const {
                  .visit(annotations, "annotation")
                  .visit(ret, "ret");
 
-  if (const auto* s = get_if<string>(&body); s) {
-    vis.visit(*s, "primitive");
-  } else if (const auto* s = get_if<extern_decl_t>(&body); s) {
-    vis.visit(s->name, "extern");
-    if (s->varargs)
-      vis.visit(true, "varags");
-  } else {
-    vis.visit(get<Compound>(body), "body");
-  }
+  body.visit([&](const string& s) { vis.visit(s, "primitive"); },
+             [&](const extern_decl_t& s) { vis.visit(s.name, "extern").maybe(s.varargs, "varags"); },
+             [&](const Compound& s) { vis.visit(s, "body"); },
+             [&](const abstract_decl_t& /*s*/) { vis.visit(true, "abstract"); });
 }
 void CtorDecl::visit(Visitor& visitor) const { helper(visitor).visit(args, "arg").visit(body, "body"); }
 void StructDecl::visit(Visitor& visitor) const {
-  auto vis =
-      helper(visitor).visit(name, "name").visit(fields, "field").visit(type_args, "type arg").visit(body, "body");
-  if (is_interface)
-    vis.visit(true, "interface");
+  helper(visitor)
+      .visit(name, "name")
+      .visit(fields, "field")
+      .visit(type_args, "type arg")
+      .visit(body, "body")
+      .maybe(is_interface, "interface");
 }
 void SimpleType::visit(Visitor& visitor) const { helper(visitor).visit(name, "name"); }
 void QualType::visit(Visitor& visitor) const { helper(visitor).visit(base, describe().c_str()); }
 void TemplatedType::visit(Visitor& visitor) const { helper(visitor).visit(base, "base").visit(type_args, "type arg"); }
 void FunctionType::visit(Visitor& visitor) const {
-  auto vis = helper(visitor).visit(ret, "ret").visit(args, "args");
-  if (fn_ptr)
-    vis.visit(true, "fn ptr");
+  helper(visitor).visit(ret, "ret").visit(args, "args").maybe(fn_ptr, "fn ptr");
 }
 void ProxyType::visit(Visitor& visitor) const { helper(visitor).visit(field, "field"); }
 void TypeName::visit(Visitor& visitor) const { helper(visitor).visit(name, "name").visit(type, "type"); }
