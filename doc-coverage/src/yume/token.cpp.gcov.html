@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-10-25 18:55:11</td>
+            <td class="headerValue">2022-10-29 16:38:07</td>
             <td></td>
           </tr>
           <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -267,113 +267,115 @@
 <a name="209"><span class="lineNum">     209 </span>            :               {Token::Type::Symbol, is_exactly(&quot;//&quot;sv)},</a>
 <a name="210"><span class="lineNum">     210 </span>            :               {Token::Type::Symbol, is_exactly(&quot;::&quot;sv)},</a>
 <a name="211"><span class="lineNum">     211 </span>            :               {Token::Type::Symbol, is_exactly(&quot;-&gt;&quot;sv)},</a>
-<a name="212"><span class="lineNum">     212 </span>            :               {Token::Type::Symbol, is_any_of(R&quot;(()[]{}&lt;&gt;=:#%-+.,!/*&amp;@$\)&quot;sv)},</a>
-<a name="213"><span class="lineNum">     213 </span>            :           })) {</a>
-<a name="214"><span class="lineNum">     214 </span>            :         string message = &quot;Tokenizer didn't recognize &quot;;</a>
-<a name="215"><span class="lineNum">     215 </span>            :         message += m_last;</a>
-<a name="216"><span class="lineNum">     216 </span>            :         throw std::runtime_error(message);</a>
-<a name="217"><span class="lineNum">     217 </span>            :       }</a>
-<a name="218"><span class="lineNum">     218 </span>            :       m_count++;</a>
-<a name="219"><span class="lineNum">     219 </span>            :     }</a>
-<a name="220"><span class="lineNum">     220 </span>            :   }</a>
-<a name="221"><span class="lineNum">     221 </span>            : </a>
-<a name="222"><span class="lineNum">     222 </span><span class="lineNoCov">          0 :   Tokenizer(std::istream&amp; in, const char* source_file) : m_in(in), m_last(next()), m_source_file(source_file) {}</span></a>
+<a name="212"><span class="lineNum">     212 </span>            :               {Token::Type::Symbol, is_exactly(&quot;||&quot;sv)},</a>
+<a name="213"><span class="lineNum">     213 </span>            :               {Token::Type::Symbol, is_exactly(&quot;&amp;&amp;&quot;sv)},</a>
+<a name="214"><span class="lineNum">     214 </span>            :               {Token::Type::Symbol, is_any_of(R&quot;(()[]{}&lt;&gt;=:#%-+.,!/*&amp;@$\)&quot;sv)},</a>
+<a name="215"><span class="lineNum">     215 </span>            :           })) {</a>
+<a name="216"><span class="lineNum">     216 </span>            :         string message = &quot;Tokenizer didn't recognize &quot;;</a>
+<a name="217"><span class="lineNum">     217 </span>            :         message += m_last;</a>
+<a name="218"><span class="lineNum">     218 </span>            :         throw std::runtime_error(message);</a>
+<a name="219"><span class="lineNum">     219 </span>            :       }</a>
+<a name="220"><span class="lineNum">     220 </span>            :       m_count++;</a>
+<a name="221"><span class="lineNum">     221 </span>            :     }</a>
+<a name="222"><span class="lineNum">     222 </span>            :   }</a>
 <a name="223"><span class="lineNum">     223 </span>            : </a>
-<a name="224"><span class="lineNum">     224 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto tokens() { return m_tokens; }</span></a>
+<a name="224"><span class="lineNum">     224 </span><span class="lineNoCov">          0 :   Tokenizer(std::istream&amp; in, const char* source_file) : m_in(in), m_last(next()), m_source_file(source_file) {}</span></a>
 <a name="225"><span class="lineNum">     225 </span>            : </a>
-<a name="226"><span class="lineNum">     226 </span>            : private:</a>
-<a name="227"><span class="lineNum">     227 </span><span class="lineNoCov">          0 :   auto next() -&gt; char {</span></a>
-<a name="228"><span class="lineNum">     228 </span>            :     m_in.get(m_last);</a>
-<a name="229"><span class="lineNum">     229 </span>            :     if (m_last == '\n') {</a>
-<a name="230"><span class="lineNum">     230 </span>            :       m_line++;</a>
-<a name="231"><span class="lineNum">     231 </span>            :       m_col = 0;</a>
-<a name="232"><span class="lineNum">     232 </span>            :     } else {</a>
-<a name="233"><span class="lineNum">     233 </span>            :       m_col++;</a>
-<a name="234"><span class="lineNum">     234 </span>            :     }</a>
-<a name="235"><span class="lineNum">     235 </span>            :     return m_last;</a>
-<a name="236"><span class="lineNum">     236 </span>            :   }</a>
-<a name="237"><span class="lineNum">     237 </span>            : </a>
-<a name="238"><span class="lineNum">     238 </span>            :   /// Find the first criterion for which the current character is viable as the first character, then consume tokens</a>
-<a name="239"><span class="lineNum">     239 </span>            :   /// until the criterion becomes false. The result is appended to the current list of tokens `m_tokens`.</a>
-<a name="240"><span class="lineNum">     240 </span>            :   ///</a>
-<a name="241"><span class="lineNum">     241 </span>            :   /// \returns `false` if no criterion matched.</a>
-<a name="242"><span class="lineNum">     242 </span>            :   /// \sa consume_characteristic</a>
-<a name="243"><span class="lineNum">     243 </span><span class="lineCov">          1 :   auto select_characteristic(std::initializer_list&lt;Characteristic&gt; list) -&gt; bool {</span></a>
-<a name="244"><span class="lineNum">     244 </span>            :     int begin_line = m_line;</a>
-<a name="245"><span class="lineNum">     245 </span>            :     int begin_col = m_col;</a>
-<a name="246"><span class="lineNum">     246 </span>            :     char begin_last = m_last;</a>
-<a name="247"><span class="lineNum">     247 </span>            :     auto begin_position = m_in.tellg();</a>
-<a name="248"><span class="lineNum">     248 </span>            : </a>
-<a name="249"><span class="lineNum">     249 </span>            :     return any_of(list, [&amp;](const auto&amp; c) {</a>
-<a name="250"><span class="lineNum">     250 </span>            :       m_line = begin_line;</a>
-<a name="251"><span class="lineNum">     251 </span>            :       m_col = begin_col;</a>
-<a name="252"><span class="lineNum">     252 </span>            :       m_last = begin_last;</a>
-<a name="253"><span class="lineNum">     253 </span>            :       m_in.clear();</a>
-<a name="254"><span class="lineNum">     254 </span>            :       m_in.seekg(begin_position);</a>
-<a name="255"><span class="lineNum">     255 </span>            : </a>
-<a name="256"><span class="lineNum">     256 </span>            :       auto stream = stringstream{};</a>
-<a name="257"><span class="lineNum">     257 </span>            :       auto state = TokenState{false, m_last, 0, stream};</a>
-<a name="258"><span class="lineNum">     258 </span>            :       if (c.fn(state)) {</a>
-<a name="259"><span class="lineNum">     259 </span>            :         auto [atom, end_line, end_col] = consume_characteristic(c.fn, state);</a>
-<a name="260"><span class="lineNum">     260 </span>            :         if (state.valid) {</a>
-<a name="261"><span class="lineNum">     261 </span>            :           m_tokens.emplace_back(c.type, atom, m_count, Loc{begin_line, begin_col, end_line, end_col, m_source_file});</a>
-<a name="262"><span class="lineNum">     262 </span>            :           return true;</a>
-<a name="263"><span class="lineNum">     263 </span>            :         }</a>
-<a name="264"><span class="lineNum">     264 </span>            :       }</a>
-<a name="265"><span class="lineNum">     265 </span>            :       return false;</a>
-<a name="266"><span class="lineNum">     266 </span>            :     });</a>
-<a name="267"><span class="lineNum">     267 </span>            :   }</a>
-<a name="268"><span class="lineNum">     268 </span>            : </a>
-<a name="269"><span class="lineNum">     269 </span>            :   /// Consume characters until the criterion becomes false. Note that the first character is assumed to already be</a>
-<a name="270"><span class="lineNum">     270 </span>            :   /// matched.</a>
-<a name="271"><span class="lineNum">     271 </span>            :   /// \returns `Atom` containing the payload of the matched token, and the line and col number it stopped on.</a>
-<a name="272"><span class="lineNum">     272 </span><span class="lineCov">          1 :   auto consume_characteristic(const char_fn&amp; fun, TokenState&amp; state) -&gt; std::tuple&lt;Atom, int, int&gt; {</span></a>
-<a name="273"><span class="lineNum">     273 </span>            :     state.index++;</a>
-<a name="274"><span class="lineNum">     274 </span>            :     int end_line = m_line;</a>
-<a name="275"><span class="lineNum">     275 </span>            :     int end_col = m_col;</a>
-<a name="276"><span class="lineNum">     276 </span>            :     next();</a>
-<a name="277"><span class="lineNum">     277 </span>            :     state.c = m_last;</a>
-<a name="278"><span class="lineNum">     278 </span>            :     while (!m_in.eof() &amp;&amp; fun(state)) {</a>
-<a name="279"><span class="lineNum">     279 </span>            :       state.index++;</a>
-<a name="280"><span class="lineNum">     280 </span>            :       end_line = m_line;</a>
-<a name="281"><span class="lineNum">     281 </span>            :       end_col = m_col;</a>
-<a name="282"><span class="lineNum">     282 </span>            :       next();</a>
-<a name="283"><span class="lineNum">     283 </span>            :       state.c = m_last;</a>
-<a name="284"><span class="lineNum">     284 </span>            :     }</a>
-<a name="285"><span class="lineNum">     285 </span>            : </a>
-<a name="286"><span class="lineNum">     286 </span>            :     return {make_atom(state.stream.str()), end_line, end_col};</a>
-<a name="287"><span class="lineNum">     287 </span>            :   }</a>
-<a name="288"><span class="lineNum">     288 </span>            : };</a>
-<a name="289"><span class="lineNum">     289 </span>            : </a>
-<a name="290"><span class="lineNum">     290 </span><span class="lineCov">          1 : auto tokenize_preserve_skipped(std::istream&amp; in, const string&amp; source_file) -&gt; vector&lt;Token&gt; {</span></a>
-<a name="291"><span class="lineNum">     291 </span>            :   auto tokenizer = Tokenizer(in, source_file.data());</a>
-<a name="292"><span class="lineNum">     292 </span>            :   tokenizer.tokenize();</a>
-<a name="293"><span class="lineNum">     293 </span>            :   return tokenizer.tokens();</a>
-<a name="294"><span class="lineNum">     294 </span>            : }</a>
-<a name="295"><span class="lineNum">     295 </span>            : </a>
-<a name="296"><span class="lineNum">     296 </span><span class="lineCov">          1 : auto tokenize(std::istream&amp; in, const string&amp; source_file) -&gt; vector&lt;Token&gt; {</span></a>
-<a name="297"><span class="lineNum">     297 </span>            :   vector&lt;Token&gt; original = tokenize_preserve_skipped(in, source_file);</a>
-<a name="298"><span class="lineNum">     298 </span>            :   vector&lt;Token&gt; filtered{};</a>
-<a name="299"><span class="lineNum">     299 </span>            :   filtered.reserve(original.size());</a>
-<a name="300"><span class="lineNum">     300 </span>            :   std::copy_if(original.begin(), original.end(), std::back_inserter(filtered),</a>
-<a name="301"><span class="lineNum">     301 </span>            :                [](const Token&amp; t) { return t.type != Token::Type::Skip; });</a>
-<a name="302"><span class="lineNum">     302 </span>            :   return filtered;</a>
-<a name="303"><span class="lineNum">     303 </span>            : }</a>
-<a name="304"><span class="lineNum">     304 </span>            : </a>
-<a name="305"><span class="lineNum">     305 </span><span class="lineNoCov">          0 : auto operator&lt;&lt;(llvm::raw_ostream&amp; os, const Token&amp; token) -&gt; llvm::raw_ostream&amp; {</span></a>
-<a name="306"><span class="lineNum">     306 </span>            :   os &lt;&lt; &quot;Token&quot; &lt;&lt; llvm::format_decimal(token.index, 4) &lt;&lt; '(';</a>
-<a name="307"><span class="lineNum">     307 </span>            :   const auto&amp; loc = token.loc;</a>
-<a name="308"><span class="lineNum">     308 </span>            :   os &lt;&lt; loc.to_string() &lt;&lt; &quot;,&quot;;</a>
-<a name="309"><span class="lineNum">     309 </span>            :   os &lt;&lt; Token::type_name(token.type);</a>
-<a name="310"><span class="lineNum">     310 </span>            :   if (token.payload.has_value()) {</a>
-<a name="311"><span class="lineNum">     311 </span>            :     os &lt;&lt; &quot;,\&quot;&quot;;</a>
-<a name="312"><span class="lineNum">     312 </span>            :     os.write_escaped(string(*token.payload));</a>
-<a name="313"><span class="lineNum">     313 </span>            :     os &lt;&lt; '\&quot;';</a>
-<a name="314"><span class="lineNum">     314 </span>            :   }</a>
-<a name="315"><span class="lineNum">     315 </span>            :   os &lt;&lt; &quot;)&quot;;</a>
-<a name="316"><span class="lineNum">     316 </span>            :   return os;</a>
-<a name="317"><span class="lineNum">     317 </span>            : }</a>
-<a name="318"><span class="lineNum">     318 </span>            : } // namespace yume</a>
+<a name="226"><span class="lineNum">     226 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto tokens() { return m_tokens; }</span></a>
+<a name="227"><span class="lineNum">     227 </span>            : </a>
+<a name="228"><span class="lineNum">     228 </span>            : private:</a>
+<a name="229"><span class="lineNum">     229 </span><span class="lineNoCov">          0 :   auto next() -&gt; char {</span></a>
+<a name="230"><span class="lineNum">     230 </span>            :     m_in.get(m_last);</a>
+<a name="231"><span class="lineNum">     231 </span>            :     if (m_last == '\n') {</a>
+<a name="232"><span class="lineNum">     232 </span>            :       m_line++;</a>
+<a name="233"><span class="lineNum">     233 </span>            :       m_col = 0;</a>
+<a name="234"><span class="lineNum">     234 </span>            :     } else {</a>
+<a name="235"><span class="lineNum">     235 </span>            :       m_col++;</a>
+<a name="236"><span class="lineNum">     236 </span>            :     }</a>
+<a name="237"><span class="lineNum">     237 </span>            :     return m_last;</a>
+<a name="238"><span class="lineNum">     238 </span>            :   }</a>
+<a name="239"><span class="lineNum">     239 </span>            : </a>
+<a name="240"><span class="lineNum">     240 </span>            :   /// Find the first criterion for which the current character is viable as the first character, then consume tokens</a>
+<a name="241"><span class="lineNum">     241 </span>            :   /// until the criterion becomes false. The result is appended to the current list of tokens `m_tokens`.</a>
+<a name="242"><span class="lineNum">     242 </span>            :   ///</a>
+<a name="243"><span class="lineNum">     243 </span>            :   /// \returns `false` if no criterion matched.</a>
+<a name="244"><span class="lineNum">     244 </span>            :   /// \sa consume_characteristic</a>
+<a name="245"><span class="lineNum">     245 </span><span class="lineCov">          1 :   auto select_characteristic(std::initializer_list&lt;Characteristic&gt; list) -&gt; bool {</span></a>
+<a name="246"><span class="lineNum">     246 </span>            :     int begin_line = m_line;</a>
+<a name="247"><span class="lineNum">     247 </span>            :     int begin_col = m_col;</a>
+<a name="248"><span class="lineNum">     248 </span>            :     char begin_last = m_last;</a>
+<a name="249"><span class="lineNum">     249 </span>            :     auto begin_position = m_in.tellg();</a>
+<a name="250"><span class="lineNum">     250 </span>            : </a>
+<a name="251"><span class="lineNum">     251 </span>            :     return any_of(list, [&amp;](const auto&amp; c) {</a>
+<a name="252"><span class="lineNum">     252 </span>            :       m_line = begin_line;</a>
+<a name="253"><span class="lineNum">     253 </span>            :       m_col = begin_col;</a>
+<a name="254"><span class="lineNum">     254 </span>            :       m_last = begin_last;</a>
+<a name="255"><span class="lineNum">     255 </span>            :       m_in.clear();</a>
+<a name="256"><span class="lineNum">     256 </span>            :       m_in.seekg(begin_position);</a>
+<a name="257"><span class="lineNum">     257 </span>            : </a>
+<a name="258"><span class="lineNum">     258 </span>            :       auto stream = stringstream{};</a>
+<a name="259"><span class="lineNum">     259 </span>            :       auto state = TokenState{false, m_last, 0, stream};</a>
+<a name="260"><span class="lineNum">     260 </span>            :       if (c.fn(state)) {</a>
+<a name="261"><span class="lineNum">     261 </span>            :         auto [atom, end_line, end_col] = consume_characteristic(c.fn, state);</a>
+<a name="262"><span class="lineNum">     262 </span>            :         if (state.valid) {</a>
+<a name="263"><span class="lineNum">     263 </span>            :           m_tokens.emplace_back(c.type, atom, m_count, Loc{begin_line, begin_col, end_line, end_col, m_source_file});</a>
+<a name="264"><span class="lineNum">     264 </span>            :           return true;</a>
+<a name="265"><span class="lineNum">     265 </span>            :         }</a>
+<a name="266"><span class="lineNum">     266 </span>            :       }</a>
+<a name="267"><span class="lineNum">     267 </span>            :       return false;</a>
+<a name="268"><span class="lineNum">     268 </span>            :     });</a>
+<a name="269"><span class="lineNum">     269 </span>            :   }</a>
+<a name="270"><span class="lineNum">     270 </span>            : </a>
+<a name="271"><span class="lineNum">     271 </span>            :   /// Consume characters until the criterion becomes false. Note that the first character is assumed to already be</a>
+<a name="272"><span class="lineNum">     272 </span>            :   /// matched.</a>
+<a name="273"><span class="lineNum">     273 </span>            :   /// \returns `Atom` containing the payload of the matched token, and the line and col number it stopped on.</a>
+<a name="274"><span class="lineNum">     274 </span><span class="lineCov">          1 :   auto consume_characteristic(const char_fn&amp; fun, TokenState&amp; state) -&gt; std::tuple&lt;Atom, int, int&gt; {</span></a>
+<a name="275"><span class="lineNum">     275 </span>            :     state.index++;</a>
+<a name="276"><span class="lineNum">     276 </span>            :     int end_line = m_line;</a>
+<a name="277"><span class="lineNum">     277 </span>            :     int end_col = m_col;</a>
+<a name="278"><span class="lineNum">     278 </span>            :     next();</a>
+<a name="279"><span class="lineNum">     279 </span>            :     state.c = m_last;</a>
+<a name="280"><span class="lineNum">     280 </span>            :     while (!m_in.eof() &amp;&amp; fun(state)) {</a>
+<a name="281"><span class="lineNum">     281 </span>            :       state.index++;</a>
+<a name="282"><span class="lineNum">     282 </span>            :       end_line = m_line;</a>
+<a name="283"><span class="lineNum">     283 </span>            :       end_col = m_col;</a>
+<a name="284"><span class="lineNum">     284 </span>            :       next();</a>
+<a name="285"><span class="lineNum">     285 </span>            :       state.c = m_last;</a>
+<a name="286"><span class="lineNum">     286 </span>            :     }</a>
+<a name="287"><span class="lineNum">     287 </span>            : </a>
+<a name="288"><span class="lineNum">     288 </span>            :     return {make_atom(state.stream.str()), end_line, end_col};</a>
+<a name="289"><span class="lineNum">     289 </span>            :   }</a>
+<a name="290"><span class="lineNum">     290 </span>            : };</a>
+<a name="291"><span class="lineNum">     291 </span>            : </a>
+<a name="292"><span class="lineNum">     292 </span><span class="lineCov">          1 : auto tokenize_preserve_skipped(std::istream&amp; in, const string&amp; source_file) -&gt; vector&lt;Token&gt; {</span></a>
+<a name="293"><span class="lineNum">     293 </span>            :   auto tokenizer = Tokenizer(in, source_file.data());</a>
+<a name="294"><span class="lineNum">     294 </span>            :   tokenizer.tokenize();</a>
+<a name="295"><span class="lineNum">     295 </span>            :   return tokenizer.tokens();</a>
+<a name="296"><span class="lineNum">     296 </span>            : }</a>
+<a name="297"><span class="lineNum">     297 </span>            : </a>
+<a name="298"><span class="lineNum">     298 </span><span class="lineCov">          1 : auto tokenize(std::istream&amp; in, const string&amp; source_file) -&gt; vector&lt;Token&gt; {</span></a>
+<a name="299"><span class="lineNum">     299 </span>            :   vector&lt;Token&gt; original = tokenize_preserve_skipped(in, source_file);</a>
+<a name="300"><span class="lineNum">     300 </span>            :   vector&lt;Token&gt; filtered{};</a>
+<a name="301"><span class="lineNum">     301 </span>            :   filtered.reserve(original.size());</a>
+<a name="302"><span class="lineNum">     302 </span>            :   std::copy_if(original.begin(), original.end(), std::back_inserter(filtered),</a>
+<a name="303"><span class="lineNum">     303 </span>            :                [](const Token&amp; t) { return t.type != Token::Type::Skip; });</a>
+<a name="304"><span class="lineNum">     304 </span>            :   return filtered;</a>
+<a name="305"><span class="lineNum">     305 </span>            : }</a>
+<a name="306"><span class="lineNum">     306 </span>            : </a>
+<a name="307"><span class="lineNum">     307 </span><span class="lineNoCov">          0 : auto operator&lt;&lt;(llvm::raw_ostream&amp; os, const Token&amp; token) -&gt; llvm::raw_ostream&amp; {</span></a>
+<a name="308"><span class="lineNum">     308 </span>            :   os &lt;&lt; &quot;Token&quot; &lt;&lt; llvm::format_decimal(token.index, 4) &lt;&lt; '(';</a>
+<a name="309"><span class="lineNum">     309 </span>            :   const auto&amp; loc = token.loc;</a>
+<a name="310"><span class="lineNum">     310 </span>            :   os &lt;&lt; loc.to_string() &lt;&lt; &quot;,&quot;;</a>
+<a name="311"><span class="lineNum">     311 </span>            :   os &lt;&lt; Token::type_name(token.type);</a>
+<a name="312"><span class="lineNum">     312 </span>            :   if (token.payload.has_value()) {</a>
+<a name="313"><span class="lineNum">     313 </span>            :     os &lt;&lt; &quot;,\&quot;&quot;;</a>
+<a name="314"><span class="lineNum">     314 </span>            :     os.write_escaped(string(*token.payload));</a>
+<a name="315"><span class="lineNum">     315 </span>            :     os &lt;&lt; '\&quot;';</a>
+<a name="316"><span class="lineNum">     316 </span>            :   }</a>
+<a name="317"><span class="lineNum">     317 </span>            :   os &lt;&lt; &quot;)&quot;;</a>
+<a name="318"><span class="lineNum">     318 </span>            :   return os;</a>
+<a name="319"><span class="lineNum">     319 </span>            : }</a>
+<a name="320"><span class="lineNum">     320 </span>            : } // namespace yume</a>
 </pre>
       </td>
     </tr>

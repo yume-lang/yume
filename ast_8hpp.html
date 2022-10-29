@@ -231,6 +231,9 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1CallExpr.html">yume::ast::CallExpr</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A function call or operator.  <a href="structyume_1_1ast_1_1CallExpr.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1BinaryLogicExpr.html">yume::ast::BinaryLogicExpr</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A logical operator such as <code>||</code> or <code>&amp;&amp;</code>. Since these aren't overloadable, they have their own <a class="el" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class.">AST</a> node.  <a href="structyume_1_1ast_1_1BinaryLogicExpr.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1CtorExpr.html">yume::ast::CtorExpr</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A construction of a struct or cast of a primitive.  <a href="structyume_1_1ast_1_1CtorExpr.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -348,27 +351,28 @@ Enumerations</h2></td></tr>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406ae0bd2ca52dc4748449ce544eb570b191">yume::ast::K_Const</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a725d5805359046b94634996276d35b29">yume::ast::K_Call</a>
 , <br />
-&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406affbe8ac10c90f57aeefdf6b190308d56">yume::ast::K_Ctor</a>
+&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a0cb5fa51025b84b8a2f88de31c3ebde7">yume::ast::K_BinaryLogic</a>
+, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406affbe8ac10c90f57aeefdf6b190308d56">yume::ast::K_Ctor</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a1d139dc28bf472f6091c749830ca5d07">yume::ast::K_Dtor</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a50d806f5bf631e958002cc257d257d70">yume::ast::K_Slice</a>
-, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406af7e69d346e5f7f28960b580d12e487cd">yume::ast::K_Lambda</a>
 , <br />
-&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a1026a7cd3d739e73716b6a5e19fe06b5">yume::ast::K_Assign</a>
+&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406af7e69d346e5f7f28960b580d12e487cd">yume::ast::K_Lambda</a>
+, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a1026a7cd3d739e73716b6a5e19fe06b5">yume::ast::K_Assign</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a57e69957d24d6a173fa460b59e03cee6">yume::ast::K_FieldAccess</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a46d6f0de014831d0e4403caf1aeb67eb">yume::ast::K_ImplicitCast</a>
-, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a2307bd6b4d1a28171ee71c082ff26068">yume::ast::K_END_Expr</a>
 , <br />
-&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406acea44ee55acceb084545a22e9c544e06">yume::ast::K_END_Stmt</a>
+&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a2307bd6b4d1a28171ee71c082ff26068">yume::ast::K_END_Expr</a>
+, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406acea44ee55acceb084545a22e9c544e06">yume::ast::K_END_Stmt</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a59e9625693ebd150640e6ea809dbe880">yume::ast::K_Type</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406ab0fa7ff866aa3d6b6a48364da9a18729">yume::ast::K_SimpleType</a>
-, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a548d359a0e552680a68ba7f0e99a469f">yume::ast::K_QualType</a>
 , <br />
-&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a3ee321004266cc8caae4081094acdcd4">yume::ast::K_TemplatedType</a>
+&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a548d359a0e552680a68ba7f0e99a469f">yume::ast::K_QualType</a>
+, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a3ee321004266cc8caae4081094acdcd4">yume::ast::K_TemplatedType</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a7bc385a752e350de8d57f0a7118fd8bf">yume::ast::K_FunctionType</a>
 , <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a99beb458aa18de10514d9e4a6a8f2e98">yume::ast::K_SelfType</a>
-, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a3c80ff47a160d774fcaa24e9cc76a024">yume::ast::K_ProxyType</a>
 , <br />
-&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406ad9d288944a156bf921fc6213308b308f">yume::ast::K_END_Type</a>
+&#160;&#160;<a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406a3c80ff47a160d774fcaa24e9cc76a024">yume::ast::K_ProxyType</a>
+, <a class="el" href="namespaceyume_1_1ast.html#a39181752a224556ace8d0e9f43ac0406ad9d288944a156bf921fc6213308b308f">yume::ast::K_END_Type</a>
 <br />
  }</td></tr>
 <tr class="separator:a39181752a224556ace8d0e9f43ac0406"><td class="memSeparator" colspan="2">&#160;</td></tr>

@@ -8,5 +8,6 @@ var searchData=
   ['resolve_5fqueue_5',['resolve_queue',['../structyume_1_1semantic_1_1TypeWalker.html#a70155485116ff5bcfd48d0f3b825f9bb',1,'yume::semantic::TypeWalker']]],
   ['ret_6',['ret',['../structyume_1_1ast_1_1FunctionType.html#a1d16b0d1080d214830cd7ddb8dadb3d8',1,'yume::ast::FunctionType::ret()'],['../structyume_1_1ast_1_1LambdaExpr.html#a1e09db4c4da0677fee070b46f6941cf3',1,'yume::ast::LambdaExpr::ret()'],['../structyume_1_1ast_1_1FnDecl.html#acdad92da11ec4538b1246ee8bd113104',1,'yume::ast::FnDecl::ret()'],['../structyume_1_1Fn.html#ada0ff4fe438648c78c63b27112c093c0',1,'yume::Fn::ret()'],['../classyume_1_1ty_1_1Function.html#aa2199b8e3b9600c75a596f84e185c6c8',1,'yume::ty::Function::ret()']]],
   ['returnstmt_7',['ReturnStmt',['../structyume_1_1ast_1_1ReturnStmt.html#ada8cecb7b59874a58451d42dab4cdd2a',1,'yume::ast::ReturnStmt::ReturnStmt()'],['../structyume_1_1ast_1_1ReturnStmt.html',1,'yume::ast::ReturnStmt']]],
-  ['run_8',['run',['../classyume_1_1Compiler.html#a8038097f05fb0694b905808ec5f44da3',1,'yume::Compiler']]]
+  ['rhs_8',['rhs',['../structyume_1_1ast_1_1BinaryLogicExpr.html#a51e6e5f730de84375774c4baead894d2',1,'yume::ast::BinaryLogicExpr']]],
+  ['run_9',['run',['../classyume_1_1Compiler.html#a8038097f05fb0694b905808ec5f44da3',1,'yume::Compiler']]]
 ];

@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-10-25 18:55:11</td>
+            <td class="headerValue">2022-10-29 16:38:07</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -105,29 +105,30 @@
 <a name="47"><span class="lineNum">      47 </span>            :     case ast::K_Char: return conv_expression&lt;ast::CharExpr&gt;(expr, args...);</a>
 <a name="48"><span class="lineNum">      48 </span>            :     case ast::K_Bool: return conv_expression&lt;ast::BoolExpr&gt;(expr, args...);</a>
 <a name="49"><span class="lineNum">      49 </span>            :     case ast::K_Call: return conv_expression&lt;ast::CallExpr&gt;(expr, args...);</a>
-<a name="50"><span class="lineNum">      50 </span>            :     case ast::K_Var: return conv_expression&lt;ast::VarExpr&gt;(expr, args...);</a>
-<a name="51"><span class="lineNum">      51 </span>            :     case ast::K_Const: return conv_expression&lt;ast::ConstExpr&gt;(expr, args...);</a>
-<a name="52"><span class="lineNum">      52 </span>            :     case ast::K_Lambda: return conv_expression&lt;ast::LambdaExpr&gt;(expr, args...);</a>
-<a name="53"><span class="lineNum">      53 </span>            :     case ast::K_Assign: return conv_expression&lt;ast::AssignExpr&gt;(expr, args...);</a>
-<a name="54"><span class="lineNum">      54 </span>            :     case ast::K_Ctor: return conv_expression&lt;ast::CtorExpr&gt;(expr, args...);</a>
-<a name="55"><span class="lineNum">      55 </span>            :     // case ast::K_Dtor: return conv_expression&lt;ast::DtorExpr&gt;(expr, args...);</a>
-<a name="56"><span class="lineNum">      56 </span>            :     case ast::K_Slice: return conv_expression&lt;ast::SliceExpr&gt;(expr, args...);</a>
-<a name="57"><span class="lineNum">      57 </span>            :     case ast::K_FieldAccess: return conv_expression&lt;ast::FieldAccessExpr&gt;(expr, args...);</a>
-<a name="58"><span class="lineNum">      58 </span>            :     case ast::K_ImplicitCast: return conv_expression&lt;ast::ImplicitCastExpr&gt;(expr, args...);</a>
-<a name="59"><span class="lineNum">      59 </span>            :     default: return (static_cast&lt;Derived*&gt;(this))-&gt;template expression(expr, args...);</a>
-<a name="60"><span class="lineNum">      60 </span>            :     }</a>
-<a name="61"><span class="lineNum">      61 </span>            :   }</a>
-<a name="62"><span class="lineNum">      62 </span>            : </a>
-<a name="63"><span class="lineNum">      63 </span>            : private:</a>
-<a name="64"><span class="lineNum">      64 </span><span class="lineNoCov">          0 :   template &lt;std::derived_from&lt;ast::Expr&gt; T&gt; auto conv_expression(ast::Expr&amp; expr, auto... args) {</span></a>
-<a name="65"><span class="lineNum">      65 </span>            :     return (static_cast&lt;Derived*&gt;(this))-&gt;expression(llvm::cast&lt;T&gt;(expr), args...);</a>
-<a name="66"><span class="lineNum">      66 </span>            :   }</a>
-<a name="67"><span class="lineNum">      67 </span>            : </a>
-<a name="68"><span class="lineNum">      68 </span><span class="lineNoCov">          0 :   template &lt;OnlyStmt T&gt; void conv_statement(ast::Stmt&amp; stat, auto... args) {</span></a>
-<a name="69"><span class="lineNum">      69 </span>            :     return (static_cast&lt;Derived*&gt;(this))-&gt;statement(llvm::cast&lt;T&gt;(stat), args...);</a>
-<a name="70"><span class="lineNum">      70 </span>            :   }</a>
-<a name="71"><span class="lineNum">      71 </span>            : };</a>
-<a name="72"><span class="lineNum">      72 </span>            : } // namespace yume</a>
+<a name="50"><span class="lineNum">      50 </span>            :     case ast::K_BinaryLogic: return conv_expression&lt;ast::BinaryLogicExpr&gt;(expr, args...);</a>
+<a name="51"><span class="lineNum">      51 </span>            :     case ast::K_Var: return conv_expression&lt;ast::VarExpr&gt;(expr, args...);</a>
+<a name="52"><span class="lineNum">      52 </span>            :     case ast::K_Const: return conv_expression&lt;ast::ConstExpr&gt;(expr, args...);</a>
+<a name="53"><span class="lineNum">      53 </span>            :     case ast::K_Lambda: return conv_expression&lt;ast::LambdaExpr&gt;(expr, args...);</a>
+<a name="54"><span class="lineNum">      54 </span>            :     case ast::K_Assign: return conv_expression&lt;ast::AssignExpr&gt;(expr, args...);</a>
+<a name="55"><span class="lineNum">      55 </span>            :     case ast::K_Ctor: return conv_expression&lt;ast::CtorExpr&gt;(expr, args...);</a>
+<a name="56"><span class="lineNum">      56 </span>            :     // case ast::K_Dtor: return conv_expression&lt;ast::DtorExpr&gt;(expr, args...);</a>
+<a name="57"><span class="lineNum">      57 </span>            :     case ast::K_Slice: return conv_expression&lt;ast::SliceExpr&gt;(expr, args...);</a>
+<a name="58"><span class="lineNum">      58 </span>            :     case ast::K_FieldAccess: return conv_expression&lt;ast::FieldAccessExpr&gt;(expr, args...);</a>
+<a name="59"><span class="lineNum">      59 </span>            :     case ast::K_ImplicitCast: return conv_expression&lt;ast::ImplicitCastExpr&gt;(expr, args...);</a>
+<a name="60"><span class="lineNum">      60 </span>            :     default: return (static_cast&lt;Derived*&gt;(this))-&gt;template expression(expr, args...);</a>
+<a name="61"><span class="lineNum">      61 </span>            :     }</a>
+<a name="62"><span class="lineNum">      62 </span>            :   }</a>
+<a name="63"><span class="lineNum">      63 </span>            : </a>
+<a name="64"><span class="lineNum">      64 </span>            : private:</a>
+<a name="65"><span class="lineNum">      65 </span><span class="lineNoCov">          0 :   template &lt;std::derived_from&lt;ast::Expr&gt; T&gt; auto conv_expression(ast::Expr&amp; expr, auto... args) {</span></a>
+<a name="66"><span class="lineNum">      66 </span>            :     return (static_cast&lt;Derived*&gt;(this))-&gt;expression(llvm::cast&lt;T&gt;(expr), args...);</a>
+<a name="67"><span class="lineNum">      67 </span>            :   }</a>
+<a name="68"><span class="lineNum">      68 </span>            : </a>
+<a name="69"><span class="lineNum">      69 </span><span class="lineNoCov">          0 :   template &lt;OnlyStmt T&gt; void conv_statement(ast::Stmt&amp; stat, auto... args) {</span></a>
+<a name="70"><span class="lineNum">      70 </span>            :     return (static_cast&lt;Derived*&gt;(this))-&gt;statement(llvm::cast&lt;T&gt;(stat), args...);</a>
+<a name="71"><span class="lineNum">      71 </span>            :   }</a>
+<a name="72"><span class="lineNum">      72 </span>            : };</a>
+<a name="73"><span class="lineNum">      73 </span>            : } // namespace yume</a>
 </pre>
       </td>
     </tr>
