@@ -116,6 +116,9 @@ Compiler::Compiler(const optional<string>& target_triple, vector<SourceFile> sou
 }
 
 void Compiler::declare_default_ctor(Struct& st) {
+  if (st.ast().is_interface)
+    return; // Don't declare implicit ctors if the struct is an interface
+
   const bool no_ctors_declared =
       std::ranges::none_of(m_ctors, [&](const Fn& fn) { return fn.get_self_ty() == st.get_self_ty(); });
 

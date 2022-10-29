@@ -352,6 +352,10 @@ auto Parser::parse_struct_decl() -> unique_ptr<StructDecl> {
   if (try_consume(SYM_LPAREN))
     consume_with_commas_until(SYM_RPAREN, [&] { fields.push_back(move(*parse_type_name())); });
 
+  auto implements = OptionalType{};
+  if (try_consume(KWD_IS))
+    implements = parse_type();
+
   require_separator();
 
   auto body = vector<AnyStmt>{};
@@ -362,7 +366,7 @@ auto Parser::parse_struct_decl() -> unique_ptr<StructDecl> {
   }
 
   return ast_ptr<StructDecl>(entry, name, move(fields), type_args, make_ast<Compound>(body_begin, move(body)),
-                             interface);
+                             move(implements), interface);
 }
 
 auto Parser::parse_fn_arg() -> FnArg {

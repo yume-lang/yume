@@ -110,12 +110,13 @@ auto make_abstract_decl(const std::string& name, std::initializer_list<TName> ar
 
 template <typename... Ts>
 auto make_struct_decl(const std::string& name, std::initializer_list<TName> args, std::vector<std::string> type_vars,
-                      Ts&&... ts) -> std::unique_ptr<StructDecl> {
+                      std::unique_ptr<Type> implements, Ts&&... ts) -> std::unique_ptr<StructDecl> {
   auto ast_args = std::vector<TypeName>();
   ast_args.reserve(args.size());
   std::transform(args.begin(), args.end(), std::back_inserter(ast_args),
                  [](auto& tn) { return static_cast<TypeName>(tn); });
-  return ast<StructDecl>(name, std::move(ast_args), type_vars, make_compound(std::forward<Ts>(ts)...));
+  return ast<StructDecl>(name, std::move(ast_args), type_vars, make_compound(std::forward<Ts>(ts)...),
+                         move(implements), false);
 }
 
 template <typename... Ts>
@@ -125,7 +126,8 @@ auto make_interface_decl(const std::string& name, std::initializer_list<TName> a
   ast_args.reserve(args.size());
   std::transform(args.begin(), args.end(), std::back_inserter(ast_args),
                  [](auto& tn) { return static_cast<TypeName>(tn); });
-  return ast<StructDecl>(name, std::move(ast_args), type_vars, make_compound(std::forward<Ts>(ts)...), true);
+  return ast<StructDecl>(name, std::move(ast_args), type_vars, make_compound(std::forward<Ts>(ts)...), std::nullopt,
+                         true);
 }
 
 auto operator""_Var(const char* str, size_t size) { return ast<VarExpr>(std::string{str, size}); }
@@ -422,17 +424,20 @@ TEST_CASE("Parse incomplete def", "[parse][fn][throws]") {
 }
 
 TEST_CASE("Parse struct declaration", "[parse][struct]") {
-  CHECK_PARSER("struct Foo()\nend", make_struct_decl("Foo", {}, {}));
-  CHECK_PARSER("struct Foo\nend", make_struct_decl("Foo", {}, {}));
-  CHECK_PARSER("struct Foo(i I32)\nend", make_struct_decl("Foo", {{"i", "I32"_Type}}, {}));
+  CHECK_PARSER("struct Foo()\nend", make_struct_decl("Foo", {}, {}, {}));
+  CHECK_PARSER("struct Foo\nend", make_struct_decl("Foo", {}, {}, {}));
+  CHECK_PARSER("struct Foo(i I32)\nend", make_struct_decl("Foo", {{"i", "I32"_Type}}, {}, {}));
   CHECK_PARSER("struct Foo(i I32, bar Bar)\nend",
-               make_struct_decl("Foo", {{"i", "I32"_Type}, {"bar", "Bar"_Type}}, {}));
+               make_struct_decl("Foo", {{"i", "I32"_Type}, {"bar", "Bar"_Type}}, {}, {}));
 
-  CHECK_PARSER("struct Foo{T}()\nend", make_struct_decl("Foo", {}, {"T"}));
-  CHECK_PARSER("struct Foo{T}(t T)\nend", make_struct_decl("Foo", {{"t", "T"_Type}}, {"T"}));
+  CHECK_PARSER("struct Foo{T}()\nend", make_struct_decl("Foo", {}, {"T"}, {}));
+  CHECK_PARSER("struct Foo{T}(t T)\nend", make_struct_decl("Foo", {{"t", "T"_Type}}, {"T"}, {}));
 
   CHECK_PARSER("struct Foo()\ndef method()\nend\nend",
-               make_struct_decl("Foo", {}, {}, make_fn_decl({.name = "method"})));
+               make_struct_decl("Foo", {}, {}, {}, make_fn_decl({.name = "method"})));
+
+  CHECK_PARSER("struct Foo() is Bar\nend", make_struct_decl("Foo", {}, {}, "Bar"_Type));
+  CHECK_PARSER("struct Foo is Bar\nend", make_struct_decl("Foo", {}, {}, "Bar"_Type));
 }
 
 TEST_CASE("Parse interface declaration", "[parse][interface]") {

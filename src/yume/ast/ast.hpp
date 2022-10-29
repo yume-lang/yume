@@ -784,12 +784,13 @@ public:
   vector<TypeName> fields;
   vector<string> type_args;
   Compound body;
+  OptionalType implements;
   bool is_interface;
 
   StructDecl(span<Token> tok, string name, vector<TypeName> fields, vector<string> type_args, Compound body,
-             bool is_interface = false)
+             OptionalType implements, bool is_interface = false)
       : Decl(K_StructDecl, tok), name{move(name)}, fields{move(fields)}, type_args{move(type_args)}, body{move(body)},
-        is_interface{is_interface} {}
+        implements{move(implements)}, is_interface{is_interface} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto decl_name() const -> string override { return name; }
 

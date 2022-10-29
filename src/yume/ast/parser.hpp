@@ -73,6 +73,7 @@ static constexpr auto Word = Token::Type::Word;
 static constexpr auto Symbol = Token::Type::Symbol;
 
 static const TokenAtom KWD_IF = {Word, "if"_a};
+static const TokenAtom KWD_IS = {Word, "is"_a};
 static const TokenAtom KWD_DEF = {Word, "def"_a};
 static const TokenAtom KWD_END = {Word, "end"_a};
 static const TokenAtom KWD_LET = {Word, "let"_a};

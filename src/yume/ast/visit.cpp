@@ -95,6 +95,7 @@ void CtorDecl::visit(Visitor& visitor) const { helper(visitor).visit(args, "arg"
 void StructDecl::visit(Visitor& visitor) const {
   helper(visitor)
       .visit(name, "name")
+      .visit(implements, "implements")
       .visit(fields, "field")
       .visit(type_args, "type arg")
       .visit(body, "body")
