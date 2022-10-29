@@ -141,7 +141,7 @@ auto Parser::parse_stmt(bool require_sep) -> unique_ptr<Stmt> {
 
   if (tokens->is_a(KWD_DEF))
     stat = parse_fn_or_ctor_decl();
-  else if (tokens->is_a(KWD_STRUCT))
+  else if (tokens->is_a(KWD_STRUCT) || tokens->is_a(KWD_INTERFACE))
     stat = parse_struct_decl();
   else if (tokens->is_a(KWD_LET))
     stat = parse_var_decl();
@@ -336,7 +336,10 @@ auto Parser::parse_fn_name() -> string {
 auto Parser::parse_struct_decl() -> unique_ptr<StructDecl> {
   auto entry = tokens.begin();
 
-  consume(KWD_STRUCT);
+  bool interface = try_consume(KWD_INTERFACE);
+  if (!interface)
+    consume(KWD_STRUCT);
+
   const string name = consume_word();
   if (!is_uword(name))
     throw std::runtime_error("Expected capitalized name for struct decl");
@@ -358,7 +361,8 @@ auto Parser::parse_struct_decl() -> unique_ptr<StructDecl> {
     ignore_separator();
   }
 
-  return ast_ptr<StructDecl>(entry, name, move(fields), type_args, make_ast<Compound>(body_begin, move(body)));
+  return ast_ptr<StructDecl>(entry, name, move(fields), type_args, make_ast<Compound>(body_begin, move(body)),
+                             interface);
 }
 
 auto Parser::parse_fn_arg() -> FnArg {

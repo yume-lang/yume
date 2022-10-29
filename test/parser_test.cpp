@@ -108,6 +108,16 @@ auto make_struct_decl(const std::string& name, std::initializer_list<TName> args
   return ast<StructDecl>(name, std::move(ast_args), type_vars, make_compound(std::forward<Ts>(ts)...));
 }
 
+template <typename... Ts>
+auto make_interface_decl(const std::string& name, std::initializer_list<TName> args, std::vector<std::string> type_vars,
+                         Ts&&... ts) -> std::unique_ptr<StructDecl> {
+  auto ast_args = std::vector<TypeName>();
+  ast_args.reserve(args.size());
+  std::transform(args.begin(), args.end(), std::back_inserter(ast_args),
+                 [](auto& tn) { return static_cast<TypeName>(tn); });
+  return ast<StructDecl>(name, std::move(ast_args), type_vars, make_compound(std::forward<Ts>(ts)...), true);
+}
+
 auto operator""_Var(const char* str, size_t size) { return ast<VarExpr>(std::string{str, size}); }
 auto operator""_Num(unsigned long long val) { return ast<NumberExpr>(val); }
 auto operator""_String(const char* str, size_t size) { return ast<StringExpr>(std::string{str, size}); }
@@ -408,6 +418,13 @@ TEST_CASE("Parse struct declaration", "[parse][struct]") {
                make_struct_decl("Foo", {}, {}, make_fn_decl({.name = "method"})));
 }
 
+TEST_CASE("Parse interface declaration", "[parse][interface]") {
+  CHECK_PARSER("interface Foo()\nend", make_interface_decl("Foo", {}, {}));
+  CHECK_PARSER("interface Foo(i I32)\nend", make_interface_decl("Foo", {{"i", "I32"_Type}}, {}));
+  CHECK_PARSER("interface Foo()\ndef method()\nend\nend",
+               make_interface_decl("Foo", {}, {}, make_fn_decl({.name = "method"})));
+}
+
 TEST_CASE("Parse incomplete struct", "[parse][struct][throws]") {
   CHECK_PARSER_THROWS("struct");
   CHECK_PARSER_THROWS("struct Foo");
@@ -415,6 +432,15 @@ TEST_CASE("Parse incomplete struct", "[parse][struct][throws]") {
   CHECK_PARSER_THROWS("struct Foo()");
   CHECK_PARSER_THROWS("struct Foo() end");
   CHECK_PARSER_THROWS("struct foo");
+}
+
+TEST_CASE("Parse incomplete interface", "[parse][interface][throws]") {
+  CHECK_PARSER_THROWS("interface");
+  CHECK_PARSER_THROWS("interface Foo");
+  CHECK_PARSER_THROWS("interface Foo(");
+  CHECK_PARSER_THROWS("interface Foo()");
+  CHECK_PARSER_THROWS("interface Foo() end");
+  CHECK_PARSER_THROWS("interface foo");
 }
 
 #undef CHECK_PARSER
