@@ -348,9 +348,9 @@ auto Parser::parse_struct_decl() -> unique_ptr<StructDecl> {
   if (try_consume(SYM_LBRACE))
     consume_with_commas_until(SYM_RBRACE, [&] { type_args.push_back(consume_word()); });
 
-  consume(SYM_LPAREN);
   auto fields = vector<TypeName>{};
-  consume_with_commas_until(SYM_RPAREN, [&] { fields.push_back(move(*parse_type_name())); });
+  if (try_consume(SYM_LPAREN))
+    consume_with_commas_until(SYM_RPAREN, [&] { fields.push_back(move(*parse_type_name())); });
 
   require_separator();
 

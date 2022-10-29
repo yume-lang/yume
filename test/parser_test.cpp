@@ -407,6 +407,7 @@ TEST_CASE("Parse incomplete def", "[parse][fn][throws]") {
 
 TEST_CASE("Parse struct declaration", "[parse][struct]") {
   CHECK_PARSER("struct Foo()\nend", make_struct_decl("Foo", {}, {}));
+  CHECK_PARSER("struct Foo\nend", make_struct_decl("Foo", {}, {}));
   CHECK_PARSER("struct Foo(i I32)\nend", make_struct_decl("Foo", {{"i", "I32"_Type}}, {}));
   CHECK_PARSER("struct Foo(i I32, bar Bar)\nend",
                make_struct_decl("Foo", {{"i", "I32"_Type}, {"bar", "Bar"_Type}}, {}));
@@ -420,6 +421,7 @@ TEST_CASE("Parse struct declaration", "[parse][struct]") {
 
 TEST_CASE("Parse interface declaration", "[parse][interface]") {
   CHECK_PARSER("interface Foo()\nend", make_interface_decl("Foo", {}, {}));
+  CHECK_PARSER("interface Foo\nend", make_interface_decl("Foo", {}, {}));
   CHECK_PARSER("interface Foo(i I32)\nend", make_interface_decl("Foo", {{"i", "I32"_Type}}, {}));
   CHECK_PARSER("interface Foo()\ndef method()\nend\nend",
                make_interface_decl("Foo", {}, {}, make_fn_decl({.name = "method"})));
