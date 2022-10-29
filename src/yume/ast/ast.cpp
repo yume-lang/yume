@@ -94,7 +94,9 @@ auto FnDecl::clone() const -> FnDecl* {
   return new FnDecl(tok(), name, dup(args), type_args, dup(ret), dup(body), dup(annotations));
 }
 auto CtorDecl::clone() const -> CtorDecl* { return new CtorDecl(tok(), dup(args), dup(body)); }
-auto StructDecl::clone() const -> StructDecl* { return new StructDecl(tok(), name, dup(fields), type_args, dup(body)); }
+auto StructDecl::clone() const -> StructDecl* {
+  return new StructDecl(tok(), name, dup(fields), type_args, dup(body), is_interface);
+}
 auto SimpleType::clone() const -> SimpleType* { return new SimpleType(tok(), name); }
 auto QualType::clone() const -> QualType* { return new QualType(tok(), dup(base), qualifier); }
 auto TemplatedType::clone() const -> TemplatedType* { return new TemplatedType(tok(), dup(base), dup(type_args)); }

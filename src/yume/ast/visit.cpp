@@ -92,7 +92,10 @@ void FnDecl::visit(Visitor& visitor) const {
 }
 void CtorDecl::visit(Visitor& visitor) const { helper(visitor).visit(args, "arg").visit(body, "body"); }
 void StructDecl::visit(Visitor& visitor) const {
-  helper(visitor).visit(name, "name").visit(fields, "field").visit(type_args, "type arg").visit(body, "body");
+  auto vis =
+      helper(visitor).visit(name, "name").visit(fields, "field").visit(type_args, "type arg").visit(body, "body");
+  if (is_interface)
+    vis.visit(true, "interface");
 }
 void SimpleType::visit(Visitor& visitor) const { helper(visitor).visit(name, "name"); }
 void QualType::visit(Visitor& visitor) const { helper(visitor).visit(base, describe().c_str()); }

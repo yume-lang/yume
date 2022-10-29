@@ -775,16 +775,19 @@ public:
   [[nodiscard]] auto clone() const -> CtorDecl* override;
 };
 
-/// A declaration of a struct (`struct`).
+/// A declaration of a struct (`struct`) or an interface (`interface`).
 struct StructDecl final : public Decl {
 public:
   string name;
   vector<TypeName> fields;
   vector<string> type_args;
   Compound body;
+  bool is_interface;
 
-  StructDecl(span<Token> tok, string name, vector<TypeName> fields, vector<string> type_args, Compound body)
-      : Decl(K_StructDecl, tok), name{move(name)}, fields{move(fields)}, type_args{move(type_args)}, body(move(body)) {}
+  StructDecl(span<Token> tok, string name, vector<TypeName> fields, vector<string> type_args, Compound body,
+             bool is_interface = false)
+      : Decl(K_StructDecl, tok), name{move(name)}, fields{move(fields)}, type_args{move(type_args)}, body{move(body)},
+        is_interface{is_interface} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto decl_name() const -> string override { return name; }
 
