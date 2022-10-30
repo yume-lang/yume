@@ -731,9 +731,9 @@ auto TypeWalker::convert_type(ast::Type& ast_type) -> ty::Type {
     auto& template_base = *templated->base;
     expression(template_base);
     auto base_type = convert_type(template_base);
-    auto struct_obj = std::ranges::find(compiler.m_structs, base_type, &Struct::self_ty);
+    auto* struct_obj = base_type.base_cast<ty::Struct>()->decl();
 
-    if (struct_obj == compiler.m_structs.end())
+    if (struct_obj == nullptr)
       throw std::logic_error("Can't add template arguments to non-struct types");
 
     for (auto& i : templated->type_args)
@@ -743,7 +743,7 @@ auto TypeWalker::convert_type(ast::Type& ast_type) -> ty::Type {
     for (const auto& [gen, gen_sub] : llvm::zip(struct_obj->type_args, templated->type_args))
       subs.try_emplace(gen->name(), gen_sub->ensure_ty());
 
-    return get_or_declare_instantiation(&*struct_obj, subs);
+    return get_or_declare_instantiation(struct_obj, subs);
   }
 
   throw std::runtime_error("Cannot convert AST type to actual type! "s + ast_type.kind_name() + " (" +

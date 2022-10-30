@@ -231,7 +231,7 @@ auto Struct::emplace_subbed(Substitution sub) const -> const Struct& {
 
   auto existing = m_subbed.find(sub);
   if (existing == m_subbed.end()) {
-    auto [iter, success] = m_subbed.emplace(move(sub), make_unique<Struct>(base_name(), fields(), nullptr));
+    auto [iter, success] = m_subbed.emplace(move(sub), make_unique<Struct>(base_name(), fields(), m_decl, nullptr));
     iter->second->m_subs = &iter->first;
     iter->second->m_parent = this;
     return *iter->second;

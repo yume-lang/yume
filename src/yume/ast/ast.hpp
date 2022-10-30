@@ -722,6 +722,9 @@ public:
   /// If it's an external method, this field is a pair of the extern name and whether the method is varargs.
   /// Otherise, this function declaration refers to a regular function and this field holds the body of that function.
   Body body;
+  /// During semantic analysis, AST nodes are converted to a format better suited for semantic analysis. This field
+  /// will be set once said conversion is performed.
+  Fn* sema_decl{};
 
   FnDecl(span<Token> tok, string name, vector<TypeName> args, vector<string> type_args, OptionalType ret, Body body,
          std::set<string> annotations)

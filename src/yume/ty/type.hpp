@@ -1,11 +1,13 @@
 #pragma once
 
+#include "ast/ast.hpp"
 #include "qualifier.hpp"
 #include "ty/substitution.hpp"
 #include "ty/type_base.hpp"
 #include "util.hpp"
 #include <array>
 #include <cstdint>
+#include <llvm/IR/Type.h>
 #include <map>
 #include <memory>
 #include <string>
@@ -15,13 +17,14 @@
 namespace llvm {
 class StructType;
 class FunctionType;
-class Type;
 } // namespace llvm
 namespace yume {
 class Compiler;
 struct Instantiation;
+struct Struct;
 namespace ast {
 struct TypeName;
+class Type;
 } // namespace ast
 } // namespace yume
 
@@ -76,10 +79,10 @@ class Struct final : public BaseType {
   vector<ast::TypeName*> m_fields;
   nullable<const Substitution*> m_subs;
   nullable<const Struct*> m_parent{};
+  nonnull<yume::Struct*> m_decl{};
   mutable std::map<Substitution, unique_ptr<Struct>> m_subbed{}; // HACK
   auto emplace_subbed(Substitution sub) const -> const Struct&;
-  mutable llvm::StructType* m_memo{};
-  void memo(llvm::StructType* memo) const { m_memo = memo; }
+  mutable llvm::Type* m_memo{};
 
   // TODO(rymiel): why are these here?
   friend Compiler;
@@ -87,13 +90,15 @@ class Struct final : public BaseType {
   friend Type;
 
 public:
-  Struct(string name, vector<ast::TypeName*> fields, nullable<const Substitution*> subs)
-      : BaseType(K_Struct, move(name)), m_fields(move(fields)), m_subs(subs) {}
+  Struct(string name, vector<ast::TypeName*> fields, nonnull<yume::Struct*> decl, nullable<const Substitution*> subs)
+      : BaseType(K_Struct, move(name)), m_fields(move(fields)), m_subs(subs), m_decl(decl) {}
   [[nodiscard]] auto fields() const -> const auto& { return m_fields; }
   [[nodiscard]] auto fields() -> auto& { return m_fields; }
   [[nodiscard]] auto subs() const -> const auto& { return *m_subs; }
+  [[nodiscard]] auto decl() const -> nonnull<yume::Struct*> { return m_decl; }
   [[nodiscard]] auto name() const -> string override;
   [[nodiscard]] auto memo() const -> auto* { return m_memo; }
+  void memo(Compiler& /* key */, llvm::Type* memo) const { m_memo = memo; }
   static auto classof(const BaseType* a) -> bool { return a->kind() == K_Struct; }
 };
 

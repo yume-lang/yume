@@ -8,6 +8,7 @@
 #include "ty/compatibility.hpp"
 #include "ty/substitution.hpp"
 #include "ty/type.hpp"
+#include "ty/type_base.hpp"
 #include "util.hpp"
 #include "vals.hpp"
 #include <algorithm>
@@ -237,7 +238,7 @@ auto Compiler::create_struct(Struct& st) -> bool {
   auto iter = m_types.known.find(s_decl.name);
   if (iter == m_types.known.end()) {
     auto empl =
-        m_types.known.try_emplace(s_decl.name, std::make_unique<ty::Struct>(s_decl.name, move(fields), &st.subs));
+        m_types.known.try_emplace(s_decl.name, std::make_unique<ty::Struct>(s_decl.name, move(fields), &st, &st.subs));
     yume_assert(isa<ty::Struct>(*empl.first->second));
     st.self_ty = &*empl.first->second;
     return true;
@@ -263,6 +264,7 @@ auto Compiler::decl_statement(ast::Stmt& stmt, optional<ty::Type> parent, ast::P
       subs.try_emplace(i, gen.get());
     }
     auto& fn = m_fns.emplace_back(fn_decl, member, parent, move(subs), move(type_args));
+    fn_decl->sema_decl = &fn;
 
     return &fn;
   }

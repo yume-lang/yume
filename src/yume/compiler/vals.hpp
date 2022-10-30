@@ -26,6 +26,9 @@ class GlobalVariable;
 } // namespace llvm
 
 namespace yume {
+namespace ty {
+class Function;
+}
 
 struct FnArg {
   ty::Type type;
