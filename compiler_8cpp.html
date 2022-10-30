@@ -82,6 +82,7 @@ $(function() {
 <code>#include &quot;<a class="el" href="compatibility_8hpp_source.html">ty/compatibility.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="substitution_8hpp_source.html">ty/substitution.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="type_8hpp_source.html">ty/type.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="type__base_8hpp_source.html">ty/type_base.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="util_8hpp_source.html">util.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="vals_8hpp_source.html">vals.hpp</a>&quot;</code><br />
 <code>#include &lt;algorithm&gt;</code><br />
@@ -135,8 +136,12 @@ Namespaces</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:a2244f3545d5b6ace387fd44cceb8311a"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a2244f3545d5b6ace387fd44cceb8311a">yume::make_cdtor_fn</a> (llvm::IRBuilder&lt;&gt; &amp;builder, llvm::Module &amp;module, bool is_ctor) -&gt; llvm::Function *</td></tr>
 <tr class="separator:a2244f3545d5b6ace387fd44cceb8311a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a86e5f9077005441feafbd6b66e0aeae4"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a86e5f9077005441feafbd6b66e0aeae4">yume::vtable_entry_for</a> (const Fn &amp;fn) -&gt; VTableEntry</td></tr>
+<tr class="separator:a86e5f9077005441feafbd6b66e0aeae4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9cf917af5859cc17a4ea16e3637d8c66"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a9cf917af5859cc17a4ea16e3637d8c66">yume::build_function_type</a> (Compiler &amp;compiler, const ty::Function &amp;type) -&gt; llvm::Type *</td></tr>
 <tr class="separator:a9cf917af5859cc17a4ea16e3637d8c66"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a91839861cedcd1bbc48aa97b1a8aeb7f"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a91839861cedcd1bbc48aa97b1a8aeb7f">yume::build_struct_type</a> (Compiler &amp;compiler, const ty::Struct &amp;type) -&gt; std::pair&lt; llvm::Type *, bool &gt;</td></tr>
+<tr class="separator:a91839861cedcd1bbc48aa97b1a8aeb7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af0126c650d541307fed5b35556fff680"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#af0126c650d541307fed5b35556fff680">yume::destruct_indirect</a> (Compiler &amp;compiler, const InScope &amp;v)</td></tr>
 <tr class="separator:af0126c650d541307fed5b35556fff680"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7f2890a60fca1d2e44f9d8139e0fbfc7"><td class="memItemLeft" align="right" valign="top">static auto constexpr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a7f2890a60fca1d2e44f9d8139e0fbfc7">yume::const_hash</a> (const char *input) -&gt; unsigned</td></tr>

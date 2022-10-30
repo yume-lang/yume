@@ -31,13 +31,13 @@
             <td class="headerValue">doc-cov.info</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntry">153</td>
-            <td class="headerCovTableEntry">320</td>
-            <td class="headerCovTableEntryLo">47.8 %</td>
+            <td class="headerCovTableEntry">154</td>
+            <td class="headerCovTableEntry">327</td>
+            <td class="headerCovTableEntryLo">47.1 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-10-29 16:38:07</td>
+            <td class="headerValue">2022-10-30 13:39:59</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -762,192 +762,203 @@
 <a name="704"><span class="lineNum">     704 </span>            :     string name;</a>
 <a name="705"><span class="lineNum">     705 </span><span class="lineNoCov">          0 :     bool varargs;</span></a>
 <a name="706"><span class="lineNum">     706 </span>            :   };</a>
-<a name="707"><span class="lineNum">     707 </span>            : </a>
-<a name="708"><span class="lineNum">     708 </span><span class="lineNoCov">          0 :   using body_base_t = visitable_variant&lt;Compound, string, extern_decl_t&gt;;</span></a>
-<a name="709"><span class="lineNum">     709 </span><span class="lineNoCov">          0 :   struct Body : public body_base_t {</span></a>
-<a name="710"><span class="lineNum">     710 </span>            :     using body_base_t::body_base_t;</a>
-<a name="711"><span class="lineNum">     711 </span>            :   };</a>
-<a name="712"><span class="lineNum">     712 </span>            : </a>
-<a name="713"><span class="lineNum">     713 </span><span class="lineNoCov">          0 :   static constexpr auto ANN_EXTERN = &quot;extern&quot;;</span></a>
-<a name="714"><span class="lineNum">     714 </span>            : </a>
-<a name="715"><span class="lineNum">     715 </span><span class="lineNoCov">          0 :   string name;</span></a>
-<a name="716"><span class="lineNum">     716 </span><span class="lineNoCov">          0 :   std::set&lt;string&gt; annotations;</span></a>
-<a name="717"><span class="lineNum">     717 </span><span class="lineNoCov">          0 :   vector&lt;TypeName&gt; args;</span></a>
-<a name="718"><span class="lineNum">     718 </span><span class="lineNoCov">          0 :   vector&lt;string&gt; type_args;</span></a>
-<a name="719"><span class="lineNum">     719 </span><span class="lineNoCov">          0 :   OptionalType ret;</span></a>
-<a name="720"><span class="lineNum">     720 </span>            :   /// If this function declaration refers to a primitive, this field is a string representing the name of the primitive.</a>
-<a name="721"><span class="lineNum">     721 </span>            :   /// If it's an external method, this field is a pair of the extern name and whether the method is varargs.</a>
-<a name="722"><span class="lineNum">     722 </span>            :   /// Otherise, this function declaration refers to a regular function and this field holds the body of that function.</a>
-<a name="723"><span class="lineNum">     723 </span><span class="lineCov">          1 :   Body body;</span></a>
-<a name="724"><span class="lineNum">     724 </span>            : </a>
-<a name="725"><span class="lineNum">     725 </span><span class="lineNoCov">          0 :   FnDecl(span&lt;Token&gt; tok, string name, vector&lt;TypeName&gt; args, vector&lt;string&gt; type_args, OptionalType ret, Body body,</span></a>
-<a name="726"><span class="lineNum">     726 </span>            :          std::set&lt;string&gt; annotations)</a>
-<a name="727"><span class="lineNum">     727 </span>            :       : Decl(K_FnDecl, tok), name{move(name)},</a>
-<a name="728"><span class="lineNum">     728 </span>            :         annotations(move(annotations)), args{move(args)}, type_args{move(type_args)}, ret{move(ret)}, body{move(body)} {</a>
-<a name="729"><span class="lineNum">     729 </span>            :   }</a>
-<a name="730"><span class="lineNum">     730 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
-<a name="731"><span class="lineNum">     731 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto decl_name() const -&gt; string override { return name; }</span></a>
-<a name="732"><span class="lineNum">     732 </span>            : </a>
-<a name="733"><span class="lineNum">     733 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto varargs() const -&gt; bool { return extern_decl() &amp;&amp; std::get&lt;extern_decl_t&gt;(body).varargs; }</span></a>
-<a name="734"><span class="lineNum">     734 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto primitive() const -&gt; bool { return holds_alternative&lt;string&gt;(body); }</span></a>
-<a name="735"><span class="lineNum">     735 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto extern_decl() const -&gt; bool { return holds_alternative&lt;extern_decl_t&gt;(body); }</span></a>
-<a name="736"><span class="lineNum">     736 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto extern_linkage() const -&gt; bool { return extern_decl() || annotations.contains(ANN_EXTERN); }</span></a>
-<a name="737"><span class="lineNum">     737 </span><span class="lineNoCov">          0 :   void make_extern_linkage(bool value = true) {</span></a>
-<a name="738"><span class="lineNum">     738 </span>            :     if (value)</a>
-<a name="739"><span class="lineNum">     739 </span>            :       annotations.emplace(ANN_EXTERN);</a>
-<a name="740"><span class="lineNum">     740 </span>            :     else</a>
-<a name="741"><span class="lineNum">     741 </span>            :       annotations.erase(ANN_EXTERN);</a>
-<a name="742"><span class="lineNum">     742 </span>            :   }</a>
-<a name="743"><span class="lineNum">     743 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_FnDecl; }</a>
-<a name="744"><span class="lineNum">     744 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; FnDecl* override;</span></a>
-<a name="745"><span class="lineNum">     745 </span>            : };</a>
-<a name="746"><span class="lineNum">     746 </span>            : </a>
-<a name="747"><span class="lineNum">     747 </span>            : /// A declaration of a custom constructor (`def :new`).</a>
-<a name="748"><span class="lineNum">     748 </span>            : /**</a>
-<a name="749"><span class="lineNum">     749 </span>            :  * The arguments of a constructor may be regular `TypeName`s, just as in regular function declarations, but they also</a>
-<a name="750"><span class="lineNum">     750 </span>            :  * may be a `FieldAccessExpr` without a base (such as `::x`), representing a shorthand where the field is set</a>
-<a name="751"><span class="lineNum">     751 </span>            :  * immediately, and the type is deduced to be that of the field.</a>
-<a name="752"><span class="lineNum">     752 </span>            :  * Essentially the following two declarations are identical:</a>
-<a name="753"><span class="lineNum">     753 </span>            :  * \code</a>
-<a name="754"><span class="lineNum">     754 </span>            :  * struct Foo(data I32)</a>
-<a name="755"><span class="lineNum">     755 </span>            :  *   def :new(::data)</a>
-<a name="756"><span class="lineNum">     756 </span>            :  *   end</a>
-<a name="757"><span class="lineNum">     757 </span>            :  *</a>
-<a name="758"><span class="lineNum">     758 </span>            :  *   def :new(data I32)</a>
-<a name="759"><span class="lineNum">     759 </span>            :  *     ::data = data</a>
-<a name="760"><span class="lineNum">     760 </span>            :  *   end</a>
-<a name="761"><span class="lineNum">     761 </span>            :  * end</a>
-<a name="762"><span class="lineNum">     762 </span>            :  * \endcode</a>
-<a name="763"><span class="lineNum">     763 </span>            :  */</a>
-<a name="764"><span class="lineNum">     764 </span><span class="lineCov">          1 : struct CtorDecl final : public Decl {</span></a>
-<a name="765"><span class="lineNum">     765 </span>            : public:</a>
-<a name="766"><span class="lineNum">     766 </span><span class="lineNoCov">          0 :   vector&lt;TypeName&gt; args;</span></a>
-<a name="767"><span class="lineNum">     767 </span><span class="lineNoCov">          0 :   Compound body;</span></a>
-<a name="768"><span class="lineNum">     768 </span>            : </a>
-<a name="769"><span class="lineNum">     769 </span><span class="lineNoCov">          0 :   CtorDecl(span&lt;Token&gt; tok, vector&lt;TypeName&gt; args, Compound body)</span></a>
-<a name="770"><span class="lineNum">     770 </span>            :       : Decl(K_CtorDecl, tok), args{move(args)}, body{move(body)} {}</a>
-<a name="771"><span class="lineNum">     771 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
-<a name="772"><span class="lineNum">     772 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto decl_name() const -&gt; string override { return &quot;:new&quot;; } // TODO(rymiel): Magic value?</span></a>
-<a name="773"><span class="lineNum">     773 </span>            : </a>
-<a name="774"><span class="lineNum">     774 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_CtorDecl; }</a>
-<a name="775"><span class="lineNum">     775 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; CtorDecl* override;</span></a>
-<a name="776"><span class="lineNum">     776 </span>            : };</a>
-<a name="777"><span class="lineNum">     777 </span>            : </a>
-<a name="778"><span class="lineNum">     778 </span>            : /// A declaration of a struct (`struct`).</a>
-<a name="779"><span class="lineNum">     779 </span><span class="lineCov">          1 : struct StructDecl final : public Decl {</span></a>
-<a name="780"><span class="lineNum">     780 </span>            : public:</a>
-<a name="781"><span class="lineNum">     781 </span><span class="lineNoCov">          0 :   string name;</span></a>
-<a name="782"><span class="lineNum">     782 </span><span class="lineNoCov">          0 :   vector&lt;TypeName&gt; fields;</span></a>
-<a name="783"><span class="lineNum">     783 </span><span class="lineNoCov">          0 :   vector&lt;string&gt; type_args;</span></a>
-<a name="784"><span class="lineNum">     784 </span><span class="lineNoCov">          0 :   Compound body;</span></a>
-<a name="785"><span class="lineNum">     785 </span>            : </a>
-<a name="786"><span class="lineNum">     786 </span><span class="lineNoCov">          0 :   StructDecl(span&lt;Token&gt; tok, string name, vector&lt;TypeName&gt; fields, vector&lt;string&gt; type_args, Compound body)</span></a>
-<a name="787"><span class="lineNum">     787 </span>            :       : Decl(K_StructDecl, tok), name{move(name)}, fields{move(fields)}, type_args{move(type_args)}, body(move(body)) {}</a>
-<a name="788"><span class="lineNum">     788 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
-<a name="789"><span class="lineNum">     789 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto decl_name() const -&gt; string override { return name; }</span></a>
-<a name="790"><span class="lineNum">     790 </span>            : </a>
-<a name="791"><span class="lineNum">     791 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_StructDecl; }</a>
-<a name="792"><span class="lineNum">     792 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; StructDecl* override;</span></a>
-<a name="793"><span class="lineNum">     793 </span>            : };</a>
+<a name="707"><span class="lineNum">     707 </span><span class="lineNoCov">          0 :   using abstract_decl_t = struct {};</span></a>
+<a name="708"><span class="lineNum">     708 </span>            : </a>
+<a name="709"><span class="lineNum">     709 </span><span class="lineNoCov">          0 :   using body_base_t = visitable_variant&lt;Compound, string, extern_decl_t, abstract_decl_t&gt;;</span></a>
+<a name="710"><span class="lineNum">     710 </span><span class="lineNoCov">          0 :   struct Body : public body_base_t {</span></a>
+<a name="711"><span class="lineNum">     711 </span>            :     using body_base_t::body_base_t;</a>
+<a name="712"><span class="lineNum">     712 </span>            :   };</a>
+<a name="713"><span class="lineNum">     713 </span>            : </a>
+<a name="714"><span class="lineNum">     714 </span><span class="lineNoCov">          0 :   static constexpr auto ANN_EXTERN = &quot;extern&quot;;</span></a>
+<a name="715"><span class="lineNum">     715 </span><span class="lineNoCov">          0 :   static constexpr auto ANN_OVERRIDE = &quot;override&quot;;</span></a>
+<a name="716"><span class="lineNum">     716 </span>            : </a>
+<a name="717"><span class="lineNum">     717 </span><span class="lineNoCov">          0 :   string name;</span></a>
+<a name="718"><span class="lineNum">     718 </span><span class="lineNoCov">          0 :   std::set&lt;string&gt; annotations;</span></a>
+<a name="719"><span class="lineNum">     719 </span><span class="lineNoCov">          0 :   vector&lt;TypeName&gt; args;</span></a>
+<a name="720"><span class="lineNum">     720 </span><span class="lineNoCov">          0 :   vector&lt;string&gt; type_args;</span></a>
+<a name="721"><span class="lineNum">     721 </span><span class="lineNoCov">          0 :   OptionalType ret;</span></a>
+<a name="722"><span class="lineNum">     722 </span>            :   /// If this function declaration refers to a primitive, this field is a string representing the name of the primitive.</a>
+<a name="723"><span class="lineNum">     723 </span>            :   /// If it's an external method, this field is a pair of the extern name and whether the method is varargs.</a>
+<a name="724"><span class="lineNum">     724 </span>            :   /// Otherise, this function declaration refers to a regular function and this field holds the body of that function.</a>
+<a name="725"><span class="lineNum">     725 </span><span class="lineCov">          1 :   Body body;</span></a>
+<a name="726"><span class="lineNum">     726 </span>            :   /// During semantic analysis, AST nodes are converted to a format better suited for semantic analysis. This field</a>
+<a name="727"><span class="lineNum">     727 </span>            :   /// will be set once said conversion is performed.</a>
+<a name="728"><span class="lineNum">     728 </span><span class="lineCov">          1 :   Fn* sema_decl{};</span></a>
+<a name="729"><span class="lineNum">     729 </span>            : </a>
+<a name="730"><span class="lineNum">     730 </span><span class="lineNoCov">          0 :   FnDecl(span&lt;Token&gt; tok, string name, vector&lt;TypeName&gt; args, vector&lt;string&gt; type_args, OptionalType ret, Body body,</span></a>
+<a name="731"><span class="lineNum">     731 </span>            :          std::set&lt;string&gt; annotations)</a>
+<a name="732"><span class="lineNum">     732 </span>            :       : Decl(K_FnDecl, tok), name{move(name)},</a>
+<a name="733"><span class="lineNum">     733 </span>            :         annotations(move(annotations)), args{move(args)}, type_args{move(type_args)}, ret{move(ret)}, body{move(body)} {</a>
+<a name="734"><span class="lineNum">     734 </span>            :   }</a>
+<a name="735"><span class="lineNum">     735 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
+<a name="736"><span class="lineNum">     736 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto decl_name() const -&gt; string override { return name; }</span></a>
+<a name="737"><span class="lineNum">     737 </span>            : </a>
+<a name="738"><span class="lineNum">     738 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto varargs() const -&gt; bool { return extern_decl() &amp;&amp; std::get&lt;extern_decl_t&gt;(body).varargs; }</span></a>
+<a name="739"><span class="lineNum">     739 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto primitive() const -&gt; bool { return holds_alternative&lt;string&gt;(body); }</span></a>
+<a name="740"><span class="lineNum">     740 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto extern_decl() const -&gt; bool { return holds_alternative&lt;extern_decl_t&gt;(body); }</span></a>
+<a name="741"><span class="lineNum">     741 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto abstract() const -&gt; bool { return holds_alternative&lt;abstract_decl_t&gt;(body); }</span></a>
+<a name="742"><span class="lineNum">     742 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto extern_linkage() const -&gt; bool { return extern_decl() || annotations.contains(ANN_EXTERN); }</span></a>
+<a name="743"><span class="lineNum">     743 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto override() const -&gt; bool { return annotations.contains(ANN_OVERRIDE); }</span></a>
+<a name="744"><span class="lineNum">     744 </span><span class="lineNoCov">          0 :   void make_extern_linkage(bool value = true) {</span></a>
+<a name="745"><span class="lineNum">     745 </span>            :     if (value)</a>
+<a name="746"><span class="lineNum">     746 </span>            :       annotations.emplace(ANN_EXTERN);</a>
+<a name="747"><span class="lineNum">     747 </span>            :     else</a>
+<a name="748"><span class="lineNum">     748 </span>            :       annotations.erase(ANN_EXTERN);</a>
+<a name="749"><span class="lineNum">     749 </span>            :   }</a>
+<a name="750"><span class="lineNum">     750 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_FnDecl; }</a>
+<a name="751"><span class="lineNum">     751 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; FnDecl* override;</span></a>
+<a name="752"><span class="lineNum">     752 </span>            : };</a>
+<a name="753"><span class="lineNum">     753 </span>            : </a>
+<a name="754"><span class="lineNum">     754 </span>            : /// A declaration of a custom constructor (`def :new`).</a>
+<a name="755"><span class="lineNum">     755 </span>            : /**</a>
+<a name="756"><span class="lineNum">     756 </span>            :  * The arguments of a constructor may be regular `TypeName`s, just as in regular function declarations, but they also</a>
+<a name="757"><span class="lineNum">     757 </span>            :  * may be a `FieldAccessExpr` without a base (such as `::x`), representing a shorthand where the field is set</a>
+<a name="758"><span class="lineNum">     758 </span>            :  * immediately, and the type is deduced to be that of the field.</a>
+<a name="759"><span class="lineNum">     759 </span>            :  * Essentially the following two declarations are identical:</a>
+<a name="760"><span class="lineNum">     760 </span>            :  * \code</a>
+<a name="761"><span class="lineNum">     761 </span>            :  * struct Foo(data I32)</a>
+<a name="762"><span class="lineNum">     762 </span>            :  *   def :new(::data)</a>
+<a name="763"><span class="lineNum">     763 </span>            :  *   end</a>
+<a name="764"><span class="lineNum">     764 </span>            :  *</a>
+<a name="765"><span class="lineNum">     765 </span>            :  *   def :new(data I32)</a>
+<a name="766"><span class="lineNum">     766 </span>            :  *     ::data = data</a>
+<a name="767"><span class="lineNum">     767 </span>            :  *   end</a>
+<a name="768"><span class="lineNum">     768 </span>            :  * end</a>
+<a name="769"><span class="lineNum">     769 </span>            :  * \endcode</a>
+<a name="770"><span class="lineNum">     770 </span>            :  */</a>
+<a name="771"><span class="lineNum">     771 </span><span class="lineCov">          1 : struct CtorDecl final : public Decl {</span></a>
+<a name="772"><span class="lineNum">     772 </span>            : public:</a>
+<a name="773"><span class="lineNum">     773 </span><span class="lineNoCov">          0 :   vector&lt;TypeName&gt; args;</span></a>
+<a name="774"><span class="lineNum">     774 </span><span class="lineNoCov">          0 :   Compound body;</span></a>
+<a name="775"><span class="lineNum">     775 </span>            : </a>
+<a name="776"><span class="lineNum">     776 </span><span class="lineNoCov">          0 :   CtorDecl(span&lt;Token&gt; tok, vector&lt;TypeName&gt; args, Compound body)</span></a>
+<a name="777"><span class="lineNum">     777 </span>            :       : Decl(K_CtorDecl, tok), args{move(args)}, body{move(body)} {}</a>
+<a name="778"><span class="lineNum">     778 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
+<a name="779"><span class="lineNum">     779 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto decl_name() const -&gt; string override { return &quot;:new&quot;; } // TODO(rymiel): Magic value?</span></a>
+<a name="780"><span class="lineNum">     780 </span>            : </a>
+<a name="781"><span class="lineNum">     781 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_CtorDecl; }</a>
+<a name="782"><span class="lineNum">     782 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; CtorDecl* override;</span></a>
+<a name="783"><span class="lineNum">     783 </span>            : };</a>
+<a name="784"><span class="lineNum">     784 </span>            : </a>
+<a name="785"><span class="lineNum">     785 </span>            : /// A declaration of a struct (`struct`) or an interface (`interface`).</a>
+<a name="786"><span class="lineNum">     786 </span><span class="lineCov">          1 : struct StructDecl final : public Decl {</span></a>
+<a name="787"><span class="lineNum">     787 </span>            : public:</a>
+<a name="788"><span class="lineNum">     788 </span><span class="lineNoCov">          0 :   string name;</span></a>
+<a name="789"><span class="lineNum">     789 </span><span class="lineNoCov">          0 :   vector&lt;TypeName&gt; fields;</span></a>
+<a name="790"><span class="lineNum">     790 </span><span class="lineNoCov">          0 :   vector&lt;string&gt; type_args;</span></a>
+<a name="791"><span class="lineNum">     791 </span><span class="lineNoCov">          0 :   Compound body;</span></a>
+<a name="792"><span class="lineNum">     792 </span><span class="lineNoCov">          0 :   OptionalType implements;</span></a>
+<a name="793"><span class="lineNum">     793 </span><span class="lineNoCov">          0 :   bool is_interface;</span></a>
 <a name="794"><span class="lineNum">     794 </span>            : </a>
-<a name="795"><span class="lineNum">     795 </span>            : /// A declaration of a local variable (`let`).</a>
-<a name="796"><span class="lineNum">     796 </span><span class="lineCov">          1 : struct VarDecl final : public Decl {</span></a>
-<a name="797"><span class="lineNum">     797 </span>            : public:</a>
-<a name="798"><span class="lineNum">     798 </span><span class="lineNoCov">          0 :   string name;</span></a>
-<a name="799"><span class="lineNum">     799 </span><span class="lineNoCov">          0 :   OptionalType type;</span></a>
-<a name="800"><span class="lineNum">     800 </span><span class="lineNoCov">          0 :   AnyExpr init;</span></a>
+<a name="795"><span class="lineNum">     795 </span><span class="lineNoCov">          0 :   StructDecl(span&lt;Token&gt; tok, string name, vector&lt;TypeName&gt; fields, vector&lt;string&gt; type_args, Compound body,</span></a>
+<a name="796"><span class="lineNum">     796 </span>            :              OptionalType implements, bool is_interface = false)</a>
+<a name="797"><span class="lineNum">     797 </span>            :       : Decl(K_StructDecl, tok), name{move(name)}, fields{move(fields)}, type_args{move(type_args)}, body{move(body)},</a>
+<a name="798"><span class="lineNum">     798 </span>            :         implements{move(implements)}, is_interface{is_interface} {}</a>
+<a name="799"><span class="lineNum">     799 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
+<a name="800"><span class="lineNum">     800 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto decl_name() const -&gt; string override { return name; }</span></a>
 <a name="801"><span class="lineNum">     801 </span>            : </a>
-<a name="802"><span class="lineNum">     802 </span><span class="lineNoCov">          0 :   VarDecl(span&lt;Token&gt; tok, string name, OptionalType type, AnyExpr init)</span></a>
-<a name="803"><span class="lineNum">     803 </span>            :       : Decl(K_VarDecl, tok), name{move(name)}, type{move(type)}, init(move(init)) {}</a>
-<a name="804"><span class="lineNum">     804 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
-<a name="805"><span class="lineNum">     805 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto decl_name() const -&gt; string override { return name; }</span></a>
-<a name="806"><span class="lineNum">     806 </span>            : </a>
-<a name="807"><span class="lineNum">     807 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_VarDecl; }</a>
-<a name="808"><span class="lineNum">     808 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; VarDecl* override;</span></a>
-<a name="809"><span class="lineNum">     809 </span>            : };</a>
-<a name="810"><span class="lineNum">     810 </span>            : </a>
-<a name="811"><span class="lineNum">     811 </span>            : /// A declaration of a constant (`const`).</a>
-<a name="812"><span class="lineNum">     812 </span><span class="lineCov">          1 : struct ConstDecl final : public Decl {</span></a>
-<a name="813"><span class="lineNum">     813 </span>            : public:</a>
-<a name="814"><span class="lineNum">     814 </span><span class="lineNoCov">          0 :   string name;</span></a>
-<a name="815"><span class="lineNum">     815 </span><span class="lineNoCov">          0 :   AnyType type; // TODO(rymiel): make optional?</span></a>
-<a name="816"><span class="lineNum">     816 </span><span class="lineNoCov">          0 :   AnyExpr init;</span></a>
+<a name="802"><span class="lineNum">     802 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_StructDecl; }</a>
+<a name="803"><span class="lineNum">     803 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; StructDecl* override;</span></a>
+<a name="804"><span class="lineNum">     804 </span>            : };</a>
+<a name="805"><span class="lineNum">     805 </span>            : </a>
+<a name="806"><span class="lineNum">     806 </span>            : /// A declaration of a local variable (`let`).</a>
+<a name="807"><span class="lineNum">     807 </span><span class="lineCov">          1 : struct VarDecl final : public Decl {</span></a>
+<a name="808"><span class="lineNum">     808 </span>            : public:</a>
+<a name="809"><span class="lineNum">     809 </span><span class="lineNoCov">          0 :   string name;</span></a>
+<a name="810"><span class="lineNum">     810 </span><span class="lineNoCov">          0 :   OptionalType type;</span></a>
+<a name="811"><span class="lineNum">     811 </span><span class="lineNoCov">          0 :   AnyExpr init;</span></a>
+<a name="812"><span class="lineNum">     812 </span>            : </a>
+<a name="813"><span class="lineNum">     813 </span><span class="lineNoCov">          0 :   VarDecl(span&lt;Token&gt; tok, string name, OptionalType type, AnyExpr init)</span></a>
+<a name="814"><span class="lineNum">     814 </span>            :       : Decl(K_VarDecl, tok), name{move(name)}, type{move(type)}, init(move(init)) {}</a>
+<a name="815"><span class="lineNum">     815 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
+<a name="816"><span class="lineNum">     816 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto decl_name() const -&gt; string override { return name; }</span></a>
 <a name="817"><span class="lineNum">     817 </span>            : </a>
-<a name="818"><span class="lineNum">     818 </span><span class="lineNoCov">          0 :   ConstDecl(span&lt;Token&gt; tok, string name, AnyType type, AnyExpr init)</span></a>
-<a name="819"><span class="lineNum">     819 </span>            :       : Decl(K_ConstDecl, tok), name{move(name)}, type{move(type)}, init(move(init)) {}</a>
-<a name="820"><span class="lineNum">     820 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
-<a name="821"><span class="lineNum">     821 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto decl_name() const -&gt; string override { return name; }</span></a>
-<a name="822"><span class="lineNum">     822 </span>            : </a>
-<a name="823"><span class="lineNum">     823 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_ConstDecl; }</a>
-<a name="824"><span class="lineNum">     824 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; ConstDecl* override;</span></a>
-<a name="825"><span class="lineNum">     825 </span>            : };</a>
-<a name="826"><span class="lineNum">     826 </span>            : </a>
-<a name="827"><span class="lineNum">     827 </span>            : /// A while loop (`while`).</a>
-<a name="828"><span class="lineNum">     828 </span><span class="lineCov">          1 : struct WhileStmt final : public Stmt {</span></a>
-<a name="829"><span class="lineNum">     829 </span>            : public:</a>
-<a name="830"><span class="lineNum">     830 </span><span class="lineNoCov">          0 :   AnyExpr cond;</span></a>
-<a name="831"><span class="lineNum">     831 </span><span class="lineNoCov">          0 :   Compound body;</span></a>
-<a name="832"><span class="lineNum">     832 </span>            : </a>
-<a name="833"><span class="lineNum">     833 </span><span class="lineNoCov">          0 :   WhileStmt(span&lt;Token&gt; tok, AnyExpr cond, Compound body) : Stmt(K_While, tok), cond{move(cond)}, body{move(body)} {}</span></a>
-<a name="834"><span class="lineNum">     834 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
-<a name="835"><span class="lineNum">     835 </span>            : </a>
-<a name="836"><span class="lineNum">     836 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_While; }</a>
-<a name="837"><span class="lineNum">     837 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; WhileStmt* override;</span></a>
-<a name="838"><span class="lineNum">     838 </span>            : };</a>
-<a name="839"><span class="lineNum">     839 </span>            : </a>
-<a name="840"><span class="lineNum">     840 </span>            : /// Clauses of an if statement `IfStmt`.</a>
-<a name="841"><span class="lineNum">     841 </span><span class="lineCov">          1 : struct IfClause final : public AST {</span></a>
-<a name="842"><span class="lineNum">     842 </span>            : public:</a>
-<a name="843"><span class="lineNum">     843 </span><span class="lineNoCov">          0 :   AnyExpr cond;</span></a>
-<a name="844"><span class="lineNum">     844 </span><span class="lineNoCov">          0 :   Compound body;</span></a>
-<a name="845"><span class="lineNum">     845 </span>            : </a>
-<a name="846"><span class="lineNum">     846 </span><span class="lineNoCov">          0 :   IfClause(span&lt;Token&gt; tok, AnyExpr cond, Compound body) : AST(K_IfClause, tok), cond{move(cond)}, body{move(body)} {}</span></a>
-<a name="847"><span class="lineNum">     847 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
-<a name="848"><span class="lineNum">     848 </span>            : </a>
-<a name="849"><span class="lineNum">     849 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_IfClause; }</a>
-<a name="850"><span class="lineNum">     850 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; IfClause* override;</span></a>
-<a name="851"><span class="lineNum">     851 </span>            : };</a>
-<a name="852"><span class="lineNum">     852 </span>            : </a>
-<a name="853"><span class="lineNum">     853 </span>            : /// An if statement (`if`), with one or more `IfClause`s, and optionally an else clause.</a>
-<a name="854"><span class="lineNum">     854 </span><span class="lineCov">          1 : struct IfStmt final : public Stmt {</span></a>
-<a name="855"><span class="lineNum">     855 </span>            : public:</a>
-<a name="856"><span class="lineNum">     856 </span><span class="lineNoCov">          0 :   vector&lt;IfClause&gt; clauses;</span></a>
-<a name="857"><span class="lineNum">     857 </span><span class="lineNoCov">          0 :   optional&lt;Compound&gt; else_clause;</span></a>
-<a name="858"><span class="lineNum">     858 </span>            : </a>
-<a name="859"><span class="lineNum">     859 </span><span class="lineNoCov">          0 :   IfStmt(span&lt;Token&gt; tok, vector&lt;IfClause&gt; clauses, optional&lt;Compound&gt; else_clause)</span></a>
-<a name="860"><span class="lineNum">     860 </span>            :       : Stmt(K_If, tok), clauses{move(clauses)}, else_clause{move(else_clause)} {}</a>
-<a name="861"><span class="lineNum">     861 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
-<a name="862"><span class="lineNum">     862 </span>            : </a>
-<a name="863"><span class="lineNum">     863 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_If; }</a>
-<a name="864"><span class="lineNum">     864 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; IfStmt* override;</span></a>
-<a name="865"><span class="lineNum">     865 </span>            : };</a>
-<a name="866"><span class="lineNum">     866 </span>            : </a>
-<a name="867"><span class="lineNum">     867 </span>            : /// Return from a function body.</a>
-<a name="868"><span class="lineNum">     868 </span><span class="lineCov">          1 : struct ReturnStmt final : public Stmt {</span></a>
-<a name="869"><span class="lineNum">     869 </span>            : public:</a>
-<a name="870"><span class="lineNum">     870 </span><span class="lineNoCov">          0 :   OptionalExpr expr;</span></a>
-<a name="871"><span class="lineNum">     871 </span><span class="lineNoCov">          0 :   VarDecl* extends_lifetime{};</span></a>
-<a name="872"><span class="lineNum">     872 </span>            : </a>
-<a name="873"><span class="lineNum">     873 </span><span class="lineNoCov">          0 :   explicit ReturnStmt(span&lt;Token&gt; tok, OptionalExpr expr) : Stmt(K_Return, tok), expr{move(expr)} {}</span></a>
-<a name="874"><span class="lineNum">     874 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
-<a name="875"><span class="lineNum">     875 </span>            : </a>
-<a name="876"><span class="lineNum">     876 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_Return; }</a>
-<a name="877"><span class="lineNum">     877 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; ReturnStmt* override;</span></a>
-<a name="878"><span class="lineNum">     878 </span>            : };</a>
-<a name="879"><span class="lineNum">     879 </span>            : </a>
-<a name="880"><span class="lineNum">     880 </span>            : /// The top level structure of a file of source code.</a>
-<a name="881"><span class="lineNum">     881 </span><span class="lineCov">          1 : struct Program final : public Stmt {</span></a>
-<a name="882"><span class="lineNum">     882 </span>            : public:</a>
-<a name="883"><span class="lineNum">     883 </span><span class="lineNoCov">          0 :   vector&lt;AnyStmt&gt; body;</span></a>
-<a name="884"><span class="lineNum">     884 </span>            : </a>
-<a name="885"><span class="lineNum">     885 </span><span class="lineNoCov">          0 :   explicit Program(span&lt;Token&gt; tok, vector&lt;AnyStmt&gt; body) : Stmt(K_Program, tok), body{move(body)} {}</span></a>
-<a name="886"><span class="lineNum">     886 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
-<a name="887"><span class="lineNum">     887 </span><span class="lineNoCov">          0 :   [[nodiscard]] static auto parse(TokenIterator&amp; tokens) -&gt; unique_ptr&lt;Program&gt;;</span></a>
-<a name="888"><span class="lineNum">     888 </span>            : </a>
-<a name="889"><span class="lineNum">     889 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_Program; }</a>
-<a name="890"><span class="lineNum">     890 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; Program* override;</span></a>
-<a name="891"><span class="lineNum">     891 </span>            : };</a>
-<a name="892"><span class="lineNum">     892 </span>            : } // namespace yume::ast</a>
+<a name="818"><span class="lineNum">     818 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_VarDecl; }</a>
+<a name="819"><span class="lineNum">     819 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; VarDecl* override;</span></a>
+<a name="820"><span class="lineNum">     820 </span>            : };</a>
+<a name="821"><span class="lineNum">     821 </span>            : </a>
+<a name="822"><span class="lineNum">     822 </span>            : /// A declaration of a constant (`const`).</a>
+<a name="823"><span class="lineNum">     823 </span><span class="lineCov">          1 : struct ConstDecl final : public Decl {</span></a>
+<a name="824"><span class="lineNum">     824 </span>            : public:</a>
+<a name="825"><span class="lineNum">     825 </span><span class="lineNoCov">          0 :   string name;</span></a>
+<a name="826"><span class="lineNum">     826 </span><span class="lineNoCov">          0 :   AnyType type; // TODO(rymiel): make optional?</span></a>
+<a name="827"><span class="lineNum">     827 </span><span class="lineNoCov">          0 :   AnyExpr init;</span></a>
+<a name="828"><span class="lineNum">     828 </span>            : </a>
+<a name="829"><span class="lineNum">     829 </span><span class="lineNoCov">          0 :   ConstDecl(span&lt;Token&gt; tok, string name, AnyType type, AnyExpr init)</span></a>
+<a name="830"><span class="lineNum">     830 </span>            :       : Decl(K_ConstDecl, tok), name{move(name)}, type{move(type)}, init(move(init)) {}</a>
+<a name="831"><span class="lineNum">     831 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
+<a name="832"><span class="lineNum">     832 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto decl_name() const -&gt; string override { return name; }</span></a>
+<a name="833"><span class="lineNum">     833 </span>            : </a>
+<a name="834"><span class="lineNum">     834 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_ConstDecl; }</a>
+<a name="835"><span class="lineNum">     835 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; ConstDecl* override;</span></a>
+<a name="836"><span class="lineNum">     836 </span>            : };</a>
+<a name="837"><span class="lineNum">     837 </span>            : </a>
+<a name="838"><span class="lineNum">     838 </span>            : /// A while loop (`while`).</a>
+<a name="839"><span class="lineNum">     839 </span><span class="lineCov">          1 : struct WhileStmt final : public Stmt {</span></a>
+<a name="840"><span class="lineNum">     840 </span>            : public:</a>
+<a name="841"><span class="lineNum">     841 </span><span class="lineNoCov">          0 :   AnyExpr cond;</span></a>
+<a name="842"><span class="lineNum">     842 </span><span class="lineNoCov">          0 :   Compound body;</span></a>
+<a name="843"><span class="lineNum">     843 </span>            : </a>
+<a name="844"><span class="lineNum">     844 </span><span class="lineNoCov">          0 :   WhileStmt(span&lt;Token&gt; tok, AnyExpr cond, Compound body) : Stmt(K_While, tok), cond{move(cond)}, body{move(body)} {}</span></a>
+<a name="845"><span class="lineNum">     845 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
+<a name="846"><span class="lineNum">     846 </span>            : </a>
+<a name="847"><span class="lineNum">     847 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_While; }</a>
+<a name="848"><span class="lineNum">     848 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; WhileStmt* override;</span></a>
+<a name="849"><span class="lineNum">     849 </span>            : };</a>
+<a name="850"><span class="lineNum">     850 </span>            : </a>
+<a name="851"><span class="lineNum">     851 </span>            : /// Clauses of an if statement `IfStmt`.</a>
+<a name="852"><span class="lineNum">     852 </span><span class="lineCov">          1 : struct IfClause final : public AST {</span></a>
+<a name="853"><span class="lineNum">     853 </span>            : public:</a>
+<a name="854"><span class="lineNum">     854 </span><span class="lineNoCov">          0 :   AnyExpr cond;</span></a>
+<a name="855"><span class="lineNum">     855 </span><span class="lineNoCov">          0 :   Compound body;</span></a>
+<a name="856"><span class="lineNum">     856 </span>            : </a>
+<a name="857"><span class="lineNum">     857 </span><span class="lineNoCov">          0 :   IfClause(span&lt;Token&gt; tok, AnyExpr cond, Compound body) : AST(K_IfClause, tok), cond{move(cond)}, body{move(body)} {}</span></a>
+<a name="858"><span class="lineNum">     858 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
+<a name="859"><span class="lineNum">     859 </span>            : </a>
+<a name="860"><span class="lineNum">     860 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_IfClause; }</a>
+<a name="861"><span class="lineNum">     861 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; IfClause* override;</span></a>
+<a name="862"><span class="lineNum">     862 </span>            : };</a>
+<a name="863"><span class="lineNum">     863 </span>            : </a>
+<a name="864"><span class="lineNum">     864 </span>            : /// An if statement (`if`), with one or more `IfClause`s, and optionally an else clause.</a>
+<a name="865"><span class="lineNum">     865 </span><span class="lineCov">          1 : struct IfStmt final : public Stmt {</span></a>
+<a name="866"><span class="lineNum">     866 </span>            : public:</a>
+<a name="867"><span class="lineNum">     867 </span><span class="lineNoCov">          0 :   vector&lt;IfClause&gt; clauses;</span></a>
+<a name="868"><span class="lineNum">     868 </span><span class="lineNoCov">          0 :   optional&lt;Compound&gt; else_clause;</span></a>
+<a name="869"><span class="lineNum">     869 </span>            : </a>
+<a name="870"><span class="lineNum">     870 </span><span class="lineNoCov">          0 :   IfStmt(span&lt;Token&gt; tok, vector&lt;IfClause&gt; clauses, optional&lt;Compound&gt; else_clause)</span></a>
+<a name="871"><span class="lineNum">     871 </span>            :       : Stmt(K_If, tok), clauses{move(clauses)}, else_clause{move(else_clause)} {}</a>
+<a name="872"><span class="lineNum">     872 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
+<a name="873"><span class="lineNum">     873 </span>            : </a>
+<a name="874"><span class="lineNum">     874 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_If; }</a>
+<a name="875"><span class="lineNum">     875 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; IfStmt* override;</span></a>
+<a name="876"><span class="lineNum">     876 </span>            : };</a>
+<a name="877"><span class="lineNum">     877 </span>            : </a>
+<a name="878"><span class="lineNum">     878 </span>            : /// Return from a function body.</a>
+<a name="879"><span class="lineNum">     879 </span><span class="lineCov">          1 : struct ReturnStmt final : public Stmt {</span></a>
+<a name="880"><span class="lineNum">     880 </span>            : public:</a>
+<a name="881"><span class="lineNum">     881 </span><span class="lineNoCov">          0 :   OptionalExpr expr;</span></a>
+<a name="882"><span class="lineNum">     882 </span><span class="lineNoCov">          0 :   VarDecl* extends_lifetime{};</span></a>
+<a name="883"><span class="lineNum">     883 </span>            : </a>
+<a name="884"><span class="lineNum">     884 </span><span class="lineNoCov">          0 :   explicit ReturnStmt(span&lt;Token&gt; tok, OptionalExpr expr) : Stmt(K_Return, tok), expr{move(expr)} {}</span></a>
+<a name="885"><span class="lineNum">     885 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
+<a name="886"><span class="lineNum">     886 </span>            : </a>
+<a name="887"><span class="lineNum">     887 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_Return; }</a>
+<a name="888"><span class="lineNum">     888 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; ReturnStmt* override;</span></a>
+<a name="889"><span class="lineNum">     889 </span>            : };</a>
+<a name="890"><span class="lineNum">     890 </span>            : </a>
+<a name="891"><span class="lineNum">     891 </span>            : /// The top level structure of a file of source code.</a>
+<a name="892"><span class="lineNum">     892 </span><span class="lineCov">          1 : struct Program final : public Stmt {</span></a>
+<a name="893"><span class="lineNum">     893 </span>            : public:</a>
+<a name="894"><span class="lineNum">     894 </span><span class="lineNoCov">          0 :   vector&lt;AnyStmt&gt; body;</span></a>
+<a name="895"><span class="lineNum">     895 </span>            : </a>
+<a name="896"><span class="lineNum">     896 </span><span class="lineNoCov">          0 :   explicit Program(span&lt;Token&gt; tok, vector&lt;AnyStmt&gt; body) : Stmt(K_Program, tok), body{move(body)} {}</span></a>
+<a name="897"><span class="lineNum">     897 </span><span class="lineCov">          1 :   void visit(Visitor&amp; visitor) const override;</span></a>
+<a name="898"><span class="lineNum">     898 </span><span class="lineNoCov">          0 :   [[nodiscard]] static auto parse(TokenIterator&amp; tokens) -&gt; unique_ptr&lt;Program&gt;;</span></a>
+<a name="899"><span class="lineNum">     899 </span>            : </a>
+<a name="900"><span class="lineNum">     900 </span>            :   static auto classof(const AST* a) -&gt; bool { return a-&gt;kind() == K_Program; }</a>
+<a name="901"><span class="lineNum">     901 </span><span class="lineCov">          1 :   [[nodiscard]] auto clone() const -&gt; Program* override;</span></a>
+<a name="902"><span class="lineNum">     902 </span>            : };</a>
+<a name="903"><span class="lineNum">     903 </span>            : } // namespace yume::ast</a>
 </pre>
       </td>
     </tr>

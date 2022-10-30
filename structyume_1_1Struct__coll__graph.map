@@ -1,18 +1,23 @@
 <map id="yume::Struct" name="yume::Struct">
-<area shape="rect" id="node1" title="A struct declaration in the compiler." alt="" coords="947,305,1041,332"/>
-<area shape="rect" id="node2" href="$structyume_1_1ast_1_1StructDecl.html" title="A declaration of a struct (struct)." alt="" coords="650,125,794,152"/>
-<area shape="rect" id="node3" href="$classyume_1_1ast_1_1Decl.html" title="Base class for a named declaration." alt="" coords="391,5,501,32"/>
-<area shape="rect" id="node4" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="174,107,285,133"/>
-<area shape="rect" id="node9" href="$structyume_1_1ast_1_1Compound.html" title="A statement consisting of multiple other statements, i.e. the body of a function." alt="" coords="373,107,519,133"/>
-<area shape="rect" id="node12" href="$structyume_1_1ast_1_1Program.html" title="The top level structure of a file of source code." alt="" coords="380,275,512,301"/>
-<area shape="rect" id="node5" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,107,115,133"/>
-<area shape="rect" id="node6" title=" " alt="" coords="419,56,473,83"/>
-<area shape="rect" id="node7" title=" " alt="" coords="381,158,511,199"/>
-<area shape="rect" id="node8" title=" " alt="" coords="390,224,502,251"/>
-<area shape="rect" id="node10" title=" " alt="" coords="164,223,295,265"/>
-<area shape="rect" id="node11" title=" " alt="" coords="659,203,785,245"/>
-<area shape="rect" id="node13" title=" " alt="" coords="645,333,799,374"/>
-<area shape="rect" id="node14" href="$structyume_1_1Substitution.html" title=" " alt="" coords="658,399,786,425"/>
-<area shape="rect" id="node15" href="$classsubstitution__t.html" title=" " alt="" coords="396,399,496,425"/>
-<area shape="rect" id="node16" title=" " alt="" coords="627,450,817,491"/>
+<area shape="rect" id="node1" title="A struct declaration in the compiler." alt="" coords="1139,478,1233,505"/>
+<area shape="rect" id="node2" href="$structyume_1_1ast_1_1StructDecl.html" title="A declaration of a struct (struct) or an interface (interface)." alt="" coords="813,215,957,242"/>
+<area shape="rect" id="node3" href="$classyume_1_1ast_1_1Decl.html" title="Base class for a named declaration." alt="" coords="515,187,625,214"/>
+<area shape="rect" id="node4" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="215,277,326,303"/>
+<area shape="rect" id="node9" href="$structyume_1_1ast_1_1Compound.html" title="A statement consisting of multiple other statements, i.e. the body of a function." alt="" coords="497,289,643,315"/>
+<area shape="rect" id="node15" href="$structyume_1_1ast_1_1Program.html" title="The top level structure of a file of source code." alt="" coords="504,390,636,417"/>
+<area shape="rect" id="node5" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,277,115,303"/>
+<area shape="rect" id="node6" title=" " alt="" coords="543,339,597,366"/>
+<area shape="rect" id="node7" title=" " alt="" coords="505,5,635,47"/>
+<area shape="rect" id="node8" title=" " alt="" coords="514,137,626,163"/>
+<area shape="rect" id="node10" title=" " alt="" coords="205,360,336,401"/>
+<area shape="rect" id="node11" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title=" " alt="" coords="479,71,661,112"/>
+<area shape="rect" id="node12" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T, or the absence of one. See OptionalExpr and OptionalType..." alt="" coords="164,78,377,105"/>
+<area shape="rect" id="node13" title=" " alt="" coords="547,238,593,265"/>
+<area shape="rect" id="node14" title=" " alt="" coords="823,319,948,360"/>
+<area shape="rect" id="node16" title=" " alt="" coords="809,448,962,489"/>
+<area shape="rect" id="node17" href="$structyume_1_1Substitution.html" title=" " alt="" coords="821,514,949,541"/>
+<area shape="rect" id="node18" href="$classsubstitution__t.html" title=" " alt="" coords="520,514,620,541"/>
+<area shape="rect" id="node19" title=" " alt="" coords="790,565,981,607"/>
+<area shape="rect" id="node20" title=" " alt="" coords="792,631,979,658"/>
+<area shape="rect" id="node21" title=" " alt="" coords="780,682,991,709"/>
 </map>

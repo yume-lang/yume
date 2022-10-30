@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-10-29 16:38:07</td>
+            <td class="headerValue">2022-10-30 13:39:59</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -152,32 +152,34 @@
 <a name="94"><span class="lineNum">      94 </span>            :   return new FnDecl(tok(), name, dup(args), type_args, dup(ret), dup(body), dup(annotations));</a>
 <a name="95"><span class="lineNum">      95 </span>            : }</a>
 <a name="96"><span class="lineNum">      96 </span>            : auto CtorDecl::clone() const -&gt; CtorDecl* { return new CtorDecl(tok(), dup(args), dup(body)); }</a>
-<a name="97"><span class="lineNum">      97 </span>            : auto StructDecl::clone() const -&gt; StructDecl* { return new StructDecl(tok(), name, dup(fields), type_args, dup(body)); }</a>
-<a name="98"><span class="lineNum">      98 </span>            : auto SimpleType::clone() const -&gt; SimpleType* { return new SimpleType(tok(), name); }</a>
-<a name="99"><span class="lineNum">      99 </span>            : auto QualType::clone() const -&gt; QualType* { return new QualType(tok(), dup(base), qualifier); }</a>
-<a name="100"><span class="lineNum">     100 </span>            : auto TemplatedType::clone() const -&gt; TemplatedType* { return new TemplatedType(tok(), dup(base), dup(type_args)); }</a>
-<a name="101"><span class="lineNum">     101 </span>            : auto SelfType::clone() const -&gt; SelfType* { return new SelfType(tok()); }</a>
-<a name="102"><span class="lineNum">     102 </span>            : auto ProxyType::clone() const -&gt; ProxyType* { return new ProxyType(tok(), field); }</a>
-<a name="103"><span class="lineNum">     103 </span>            : auto FunctionType::clone() const -&gt; FunctionType* { return new FunctionType(tok(), dup(ret), dup(args), fn_ptr); }</a>
-<a name="104"><span class="lineNum">     104 </span>            : auto TypeName::clone() const -&gt; TypeName* { return new TypeName(tok(), dup(type), name); }</a>
-<a name="105"><span class="lineNum">     105 </span>            : auto Compound::clone() const -&gt; Compound* { return new Compound(tok(), dup(body)); }</a>
-<a name="106"><span class="lineNum">     106 </span>            : auto VarExpr::clone() const -&gt; VarExpr* { return new VarExpr(tok(), name); }</a>
-<a name="107"><span class="lineNum">     107 </span>            : auto ConstExpr::clone() const -&gt; ConstExpr* { return new ConstExpr(tok(), name, parent); }</a>
-<a name="108"><span class="lineNum">     108 </span>            : auto CallExpr::clone() const -&gt; CallExpr* { return new CallExpr(tok(), name, dup(receiver), dup(args)); }</a>
-<a name="109"><span class="lineNum">     109 </span>            : auto BinaryLogicExpr::clone() const -&gt; BinaryLogicExpr* {</a>
-<a name="110"><span class="lineNum">     110 </span>            :   return new BinaryLogicExpr(tok(), operation, dup(lhs), dup(rhs));</a>
-<a name="111"><span class="lineNum">     111 </span>            : }</a>
-<a name="112"><span class="lineNum">     112 </span>            : auto CtorExpr::clone() const -&gt; CtorExpr* { return new CtorExpr(tok(), dup(type), dup(args)); }</a>
-<a name="113"><span class="lineNum">     113 </span>            : auto DtorExpr::clone() const -&gt; DtorExpr* { return new DtorExpr(tok(), dup(base)); }</a>
-<a name="114"><span class="lineNum">     114 </span>            : auto SliceExpr::clone() const -&gt; SliceExpr* { return new SliceExpr(tok(), dup(type), dup(args)); }</a>
-<a name="115"><span class="lineNum">     115 </span>            : auto LambdaExpr::clone() const -&gt; LambdaExpr* {</a>
-<a name="116"><span class="lineNum">     116 </span>            :   return new LambdaExpr(tok(), dup(args), dup(ret), dup(body), dup(annotations));</a>
-<a name="117"><span class="lineNum">     117 </span>            : }</a>
-<a name="118"><span class="lineNum">     118 </span>            : auto AssignExpr::clone() const -&gt; AssignExpr* { return new AssignExpr(tok(), dup(target), dup(value)); }</a>
-<a name="119"><span class="lineNum">     119 </span>            : auto FieldAccessExpr::clone() const -&gt; FieldAccessExpr* { return new FieldAccessExpr(tok(), dup(base), field); }</a>
-<a name="120"><span class="lineNum">     120 </span>            : auto ImplicitCastExpr::clone() const -&gt; ImplicitCastExpr* { return new ImplicitCastExpr(tok(), dup(base), conversion); }</a>
-<a name="121"><span class="lineNum">     121 </span>            : auto Program::clone() const -&gt; Program* { return new Program(tok(), dup(body)); }</a>
-<a name="122"><span class="lineNum">     122 </span>            : } // namespace yume::ast</a>
+<a name="97"><span class="lineNum">      97 </span>            : auto StructDecl::clone() const -&gt; StructDecl* {</a>
+<a name="98"><span class="lineNum">      98 </span>            :   return new StructDecl(tok(), name, dup(fields), type_args, dup(body), dup(implements), is_interface);</a>
+<a name="99"><span class="lineNum">      99 </span>            : }</a>
+<a name="100"><span class="lineNum">     100 </span>            : auto SimpleType::clone() const -&gt; SimpleType* { return new SimpleType(tok(), name); }</a>
+<a name="101"><span class="lineNum">     101 </span>            : auto QualType::clone() const -&gt; QualType* { return new QualType(tok(), dup(base), qualifier); }</a>
+<a name="102"><span class="lineNum">     102 </span>            : auto TemplatedType::clone() const -&gt; TemplatedType* { return new TemplatedType(tok(), dup(base), dup(type_args)); }</a>
+<a name="103"><span class="lineNum">     103 </span>            : auto SelfType::clone() const -&gt; SelfType* { return new SelfType(tok()); }</a>
+<a name="104"><span class="lineNum">     104 </span>            : auto ProxyType::clone() const -&gt; ProxyType* { return new ProxyType(tok(), field); }</a>
+<a name="105"><span class="lineNum">     105 </span>            : auto FunctionType::clone() const -&gt; FunctionType* { return new FunctionType(tok(), dup(ret), dup(args), fn_ptr); }</a>
+<a name="106"><span class="lineNum">     106 </span>            : auto TypeName::clone() const -&gt; TypeName* { return new TypeName(tok(), dup(type), name); }</a>
+<a name="107"><span class="lineNum">     107 </span>            : auto Compound::clone() const -&gt; Compound* { return new Compound(tok(), dup(body)); }</a>
+<a name="108"><span class="lineNum">     108 </span>            : auto VarExpr::clone() const -&gt; VarExpr* { return new VarExpr(tok(), name); }</a>
+<a name="109"><span class="lineNum">     109 </span>            : auto ConstExpr::clone() const -&gt; ConstExpr* { return new ConstExpr(tok(), name, parent); }</a>
+<a name="110"><span class="lineNum">     110 </span>            : auto CallExpr::clone() const -&gt; CallExpr* { return new CallExpr(tok(), name, dup(receiver), dup(args)); }</a>
+<a name="111"><span class="lineNum">     111 </span>            : auto BinaryLogicExpr::clone() const -&gt; BinaryLogicExpr* {</a>
+<a name="112"><span class="lineNum">     112 </span>            :   return new BinaryLogicExpr(tok(), operation, dup(lhs), dup(rhs));</a>
+<a name="113"><span class="lineNum">     113 </span>            : }</a>
+<a name="114"><span class="lineNum">     114 </span>            : auto CtorExpr::clone() const -&gt; CtorExpr* { return new CtorExpr(tok(), dup(type), dup(args)); }</a>
+<a name="115"><span class="lineNum">     115 </span>            : auto DtorExpr::clone() const -&gt; DtorExpr* { return new DtorExpr(tok(), dup(base)); }</a>
+<a name="116"><span class="lineNum">     116 </span>            : auto SliceExpr::clone() const -&gt; SliceExpr* { return new SliceExpr(tok(), dup(type), dup(args)); }</a>
+<a name="117"><span class="lineNum">     117 </span>            : auto LambdaExpr::clone() const -&gt; LambdaExpr* {</a>
+<a name="118"><span class="lineNum">     118 </span>            :   return new LambdaExpr(tok(), dup(args), dup(ret), dup(body), dup(annotations));</a>
+<a name="119"><span class="lineNum">     119 </span>            : }</a>
+<a name="120"><span class="lineNum">     120 </span>            : auto AssignExpr::clone() const -&gt; AssignExpr* { return new AssignExpr(tok(), dup(target), dup(value)); }</a>
+<a name="121"><span class="lineNum">     121 </span>            : auto FieldAccessExpr::clone() const -&gt; FieldAccessExpr* { return new FieldAccessExpr(tok(), dup(base), field); }</a>
+<a name="122"><span class="lineNum">     122 </span>            : auto ImplicitCastExpr::clone() const -&gt; ImplicitCastExpr* { return new ImplicitCastExpr(tok(), dup(base), conversion); }</a>
+<a name="123"><span class="lineNum">     123 </span>            : auto Program::clone() const -&gt; Program* { return new Program(tok(), dup(body)); }</a>
+<a name="124"><span class="lineNum">     124 </span>            : } // namespace yume::ast</a>
 </pre>
       </td>
     </tr>

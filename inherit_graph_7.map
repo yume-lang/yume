@@ -14,7 +14,7 @@
 <area shape="rect" id="node6" href="$structyume_1_1ast_1_1ConstDecl.html" title="A declaration of a constant (const)." alt="" coords="596,5,739,32"/>
 <area shape="rect" id="node7" href="$structyume_1_1ast_1_1CtorDecl.html" title="A declaration of a custom constructor (def :new)." alt="" coords="601,56,734,83"/>
 <area shape="rect" id="node8" href="$structyume_1_1ast_1_1FnDecl.html" title="A declaration of a function (def)." alt="" coords="605,107,729,133"/>
-<area shape="rect" id="node9" href="$structyume_1_1ast_1_1StructDecl.html" title="A declaration of a struct (struct)." alt="" coords="595,157,739,184"/>
+<area shape="rect" id="node9" href="$structyume_1_1ast_1_1StructDecl.html" title="A declaration of a struct (struct) or an interface (interface)." alt="" coords="595,157,739,184"/>
 <area shape="rect" id="node10" href="$structyume_1_1ast_1_1VarDecl.html" title="A declaration of a local variable (let)." alt="" coords="603,208,732,235"/>
 <area shape="rect" id="node12" href="$structyume_1_1ast_1_1AssignExpr.html" title="An assignment (=)." alt="" coords="593,259,741,285"/>
 <area shape="rect" id="node13" href="$structyume_1_1ast_1_1BinaryLogicExpr.html" title="A logical operator such as || or &amp;&amp;. Since these aren&#39;t overloadable, they have their own AST node." alt="" coords="579,309,755,336"/>

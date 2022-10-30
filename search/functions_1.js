@@ -11,10 +11,11 @@ var searchData=
   ['best_5fviable_5foverload_8',['best_viable_overload',['../structyume_1_1semantic_1_1OverloadSet.html#abac89cd9bde019beabcbe8c4629eecb8',1,'yume::semantic::OverloadSet']]],
   ['better_5fcandidate_5fthan_9',['better_candidate_than',['../structyume_1_1semantic_1_1Overload.html#af28c748c577015460be552b5e165e274',1,'yume::semantic::Overload']]],
   ['binarylogicexpr_10',['BinaryLogicExpr',['../structyume_1_1ast_1_1BinaryLogicExpr.html#a37cbd6b26e31f547fed22b1a198287a2',1,'yume::ast::BinaryLogicExpr']]],
-  ['body_11',['body',['../structyume_1_1Struct.html#a37f55a13cc740cf9cc21ec3c94e68bc1',1,'yume::Struct::body() const noexcept -&gt; const auto &amp;'],['../structyume_1_1Struct.html#a86f6131febd6ce3a8b39a145f8d61007',1,'yume::Struct::body() noexcept -&gt; auto &amp;']]],
+  ['body_11',['body',['../structyume_1_1Struct.html#a86f6131febd6ce3a8b39a145f8d61007',1,'yume::Struct::body() noexcept -&gt; auto &amp;'],['../structyume_1_1Struct.html#a37f55a13cc740cf9cc21ec3c94e68bc1',1,'yume::Struct::body() const noexcept -&gt; const auto &amp;']]],
   ['body_5fexpression_12',['body_expression',['../structyume_1_1CRTPWalker.html#af4cfdd0fb4dacd5f1380c4eb57e85b8e',1,'yume::CRTPWalker::body_expression()'],['../classyume_1_1Compiler.html#a12ece4efc6afd52e1d07aebd28d80a94',1,'yume::Compiler::body_expression()'],['../structyume_1_1semantic_1_1TypeWalker.html#aadcc1b7256fb3b55a7613e5afd94fd0e',1,'yume::semantic::TypeWalker::body_expression()']]],
   ['body_5fstatement_13',['body_statement',['../structyume_1_1CRTPWalker.html#a4f90b769f01e8ddb4064a6cb2139c3d7',1,'yume::CRTPWalker::body_statement()'],['../classyume_1_1Compiler.html#a1f8bd5af2583dbbbf7e1df003d91a322',1,'yume::Compiler::body_statement()'],['../structyume_1_1semantic_1_1TypeWalker.html#aa2f528e3a660e2d13e79f5a755b624d2',1,'yume::semantic::TypeWalker::body_statement()']]],
   ['boolexpr_14',['BoolExpr',['../structyume_1_1ast_1_1BoolExpr.html#a18a8f83f0b5166b512a6246e066ca928',1,'yume::ast::BoolExpr']]],
   ['build_5ffunction_5ftype_15',['build_function_type',['../namespaceyume.html#a9cf917af5859cc17a4ea16e3637d8c66',1,'yume']]],
-  ['builder_16',['builder',['../classyume_1_1Compiler.html#a109cd6d1aa9210fc70485c0bea7f7ccb',1,'yume::Compiler']]]
+  ['build_5fstruct_5ftype_16',['build_struct_type',['../namespaceyume.html#a91839861cedcd1bbc48aa97b1a8aeb7f',1,'yume']]],
+  ['builder_17',['builder',['../classyume_1_1Compiler.html#a109cd6d1aa9210fc70485c0bea7f7ccb',1,'yume::Compiler']]]
 ];

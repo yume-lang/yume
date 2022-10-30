@@ -6,5 +6,7 @@ var searchData=
   ['varargs_3',['varargs',['../structyume_1_1ast_1_1FnDecl.html#a61296c09afa837dc3b53c2231359ae9b',1,'yume::ast::FnDecl']]],
   ['version_4',['VERSION',['../namespaceyume.html#af4ae9d2f36afcdb09e5ea1eae1015e40',1,'yume']]],
   ['viable_5',['viable',['../structyume_1_1semantic_1_1Overload.html#a9914e2a55fdcf5f73195b73ad00a3efd',1,'yume::semantic::Overload']]],
-  ['visitor_6',['visitor',['../visit_8cpp.html#aecb7a75ced9024d2b17e283aa5f9e651',1,'visit.cpp']]]
+  ['visitor_6',['visitor',['../visit_8cpp.html#aecb7a75ced9024d2b17e283aa5f9e651',1,'visit.cpp']]],
+  ['vtable_5fmembers_7',['vtable_members',['../structyume_1_1Struct.html#ac096da4e85478f6db7fdd1e61a06bd49',1,'yume::Struct']]],
+  ['vtable_5fmemo_8',['vtable_memo',['../structyume_1_1Struct.html#acef4c3ff02d85b3437f1d35677dd4cc6',1,'yume::Struct']]]
 ];

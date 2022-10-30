@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-10-29 16:38:07</td>
+            <td class="headerValue">2022-10-30 13:39:59</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -111,80 +111,85 @@
 <a name="53"><span class="lineNum">      53 </span>            :   auto visit(std::same_as&lt;bool&gt; auto value, string_view label) -&gt; auto&amp; {</a>
 <a name="54"><span class="lineNum">      54 </span>            :     return visit(value ? &quot;true&quot; : &quot;false&quot;, label);</a>
 <a name="55"><span class="lineNum">      55 </span>            :   }</a>
-<a name="56"><span class="lineNum">      56 </span>            : };</a>
-<a name="57"><span class="lineNum">      57 </span>            : </a>
-<a name="58"><span class="lineNum">      58 </span>            : auto helper(Visitor&amp; visitor) { return VisitorHelper{visitor}; }</a>
-<a name="59"><span class="lineNum">      59 </span>            : } // namespace</a>
-<a name="60"><span class="lineNum">      60 </span>            : </a>
-<a name="61"><span class="lineNum">      61 </span>            : void IfStmt::visit(Visitor&amp; visitor) const { helper(visitor).visit(clauses, &quot;clause&quot;).visit(else_clause, &quot;else&quot;); }</a>
-<a name="62"><span class="lineNum">      62 </span>            : void IfClause::visit(Visitor&amp; visitor) const { helper(visitor).visit(cond, &quot;cond&quot;).visit(body, &quot;body&quot;); }</a>
-<a name="63"><span class="lineNum">      63 </span>            : void NumberExpr::visit(Visitor&amp; visitor) const { helper(visitor).visit(describe(), &quot;value&quot;); }</a>
-<a name="64"><span class="lineNum">      64 </span>            : void StringExpr::visit(Visitor&amp; visitor) const { helper(visitor).visit(val, &quot;value&quot;); }</a>
-<a name="65"><span class="lineNum">      65 </span>            : void CharExpr::visit(Visitor&amp; visitor) const { helper(visitor).visit(string{static_cast&lt;char&gt;(val)}, &quot;value&quot;); }</a>
-<a name="66"><span class="lineNum">      66 </span>            : void BoolExpr::visit(Visitor&amp; visitor) const { helper(visitor).visit(describe(), &quot;value&quot;); }</a>
-<a name="67"><span class="lineNum">      67 </span>            : void ReturnStmt::visit(Visitor&amp; visitor) const { helper(visitor).visit(expr, &quot;expr&quot;); }</a>
-<a name="68"><span class="lineNum">      68 </span>            : void WhileStmt::visit(Visitor&amp; visitor) const { helper(visitor).visit(cond, &quot;cond&quot;).visit(body, &quot;body&quot;); }</a>
-<a name="69"><span class="lineNum">      69 </span>            : void VarDecl::visit(Visitor&amp; visitor) const {</a>
-<a name="70"><span class="lineNum">      70 </span>            :   helper(visitor).visit(name, &quot;name&quot;).visit(type, &quot;type&quot;).visit(init, &quot;init&quot;);</a>
-<a name="71"><span class="lineNum">      71 </span>            : }</a>
-<a name="72"><span class="lineNum">      72 </span>            : void ConstDecl::visit(Visitor&amp; visitor) const {</a>
-<a name="73"><span class="lineNum">      73 </span>            :   helper(visitor).visit(name, &quot;name&quot;).visit(type, &quot;type&quot;).visit(init, &quot;init&quot;);</a>
-<a name="74"><span class="lineNum">      74 </span>            : }</a>
-<a name="75"><span class="lineNum">      75 </span>            : void FnDecl::visit(Visitor&amp; visitor) const {</a>
-<a name="76"><span class="lineNum">      76 </span>            :   auto vis = helper(visitor)</a>
-<a name="77"><span class="lineNum">      77 </span>            :                  .visit(name, &quot;name&quot;)</a>
-<a name="78"><span class="lineNum">      78 </span>            :                  .visit(args, &quot;arg&quot;)</a>
-<a name="79"><span class="lineNum">      79 </span>            :                  .visit(type_args, &quot;type arg&quot;)</a>
-<a name="80"><span class="lineNum">      80 </span>            :                  .visit(annotations, &quot;annotation&quot;)</a>
-<a name="81"><span class="lineNum">      81 </span>            :                  .visit(ret, &quot;ret&quot;);</a>
-<a name="82"><span class="lineNum">      82 </span>            : </a>
-<a name="83"><span class="lineNum">      83 </span>            :   if (const auto* s = get_if&lt;string&gt;(&amp;body); s) {</a>
-<a name="84"><span class="lineNum">      84 </span>            :     vis.visit(*s, &quot;primitive&quot;);</a>
-<a name="85"><span class="lineNum">      85 </span>            :   } else if (const auto* s = get_if&lt;extern_decl_t&gt;(&amp;body); s) {</a>
-<a name="86"><span class="lineNum">      86 </span>            :     vis.visit(s-&gt;name, &quot;extern&quot;);</a>
-<a name="87"><span class="lineNum">      87 </span>            :     if (s-&gt;varargs)</a>
-<a name="88"><span class="lineNum">      88 </span>            :       vis.visit(true, &quot;varags&quot;);</a>
-<a name="89"><span class="lineNum">      89 </span>            :   } else {</a>
-<a name="90"><span class="lineNum">      90 </span>            :     vis.visit(get&lt;Compound&gt;(body), &quot;body&quot;);</a>
-<a name="91"><span class="lineNum">      91 </span>            :   }</a>
-<a name="92"><span class="lineNum">      92 </span>            : }</a>
-<a name="93"><span class="lineNum">      93 </span>            : void CtorDecl::visit(Visitor&amp; visitor) const { helper(visitor).visit(args, &quot;arg&quot;).visit(body, &quot;body&quot;); }</a>
-<a name="94"><span class="lineNum">      94 </span>            : void StructDecl::visit(Visitor&amp; visitor) const {</a>
-<a name="95"><span class="lineNum">      95 </span>            :   helper(visitor).visit(name, &quot;name&quot;).visit(fields, &quot;field&quot;).visit(type_args, &quot;type arg&quot;).visit(body, &quot;body&quot;);</a>
-<a name="96"><span class="lineNum">      96 </span>            : }</a>
-<a name="97"><span class="lineNum">      97 </span>            : void SimpleType::visit(Visitor&amp; visitor) const { helper(visitor).visit(name, &quot;name&quot;); }</a>
-<a name="98"><span class="lineNum">      98 </span>            : void QualType::visit(Visitor&amp; visitor) const { helper(visitor).visit(base, describe().c_str()); }</a>
-<a name="99"><span class="lineNum">      99 </span>            : void TemplatedType::visit(Visitor&amp; visitor) const { helper(visitor).visit(base, &quot;base&quot;).visit(type_args, &quot;type arg&quot;); }</a>
-<a name="100"><span class="lineNum">     100 </span>            : void FunctionType::visit(Visitor&amp; visitor) const {</a>
-<a name="101"><span class="lineNum">     101 </span>            :   auto vis = helper(visitor).visit(ret, &quot;ret&quot;).visit(args, &quot;args&quot;);</a>
-<a name="102"><span class="lineNum">     102 </span>            :   if (fn_ptr)</a>
-<a name="103"><span class="lineNum">     103 </span>            :     vis.visit(true, &quot;fn ptr&quot;);</a>
-<a name="104"><span class="lineNum">     104 </span>            : }</a>
-<a name="105"><span class="lineNum">     105 </span>            : void ProxyType::visit(Visitor&amp; visitor) const { helper(visitor).visit(field, &quot;field&quot;); }</a>
-<a name="106"><span class="lineNum">     106 </span>            : void TypeName::visit(Visitor&amp; visitor) const { helper(visitor).visit(name, &quot;name&quot;).visit(type, &quot;type&quot;); }</a>
-<a name="107"><span class="lineNum">     107 </span>            : void Compound::visit(Visitor&amp; visitor) const { helper(visitor).visit(body, &quot;body&quot;); }</a>
-<a name="108"><span class="lineNum">     108 </span>            : void VarExpr::visit(Visitor&amp; visitor) const { helper(visitor).visit(name, &quot;name&quot;); }</a>
-<a name="109"><span class="lineNum">     109 </span>            : void ConstExpr::visit(Visitor&amp; visitor) const { helper(visitor).visit(name, &quot;name&quot;).visit(parent, &quot;name&quot;); }</a>
-<a name="110"><span class="lineNum">     110 </span>            : void CallExpr::visit(Visitor&amp; visitor) const {</a>
-<a name="111"><span class="lineNum">     111 </span>            :   helper(visitor).visit(name, &quot;name&quot;).visit(receiver, &quot;receiver&quot;).visit(args, &quot;args&quot;);</a>
-<a name="112"><span class="lineNum">     112 </span>            : }</a>
-<a name="113"><span class="lineNum">     113 </span>            : void BinaryLogicExpr::visit(Visitor&amp; visitor) const {</a>
-<a name="114"><span class="lineNum">     114 </span>            :   helper(visitor).visit(string{operation}, &quot;operation&quot;).visit(lhs, &quot;lhs&quot;).visit(rhs, &quot;rhs&quot;);</a>
-<a name="115"><span class="lineNum">     115 </span>            : }</a>
-<a name="116"><span class="lineNum">     116 </span>            : void CtorExpr::visit(Visitor&amp; visitor) const { helper(visitor).visit(type, &quot;type&quot;).visit(args, &quot;args&quot;); }</a>
-<a name="117"><span class="lineNum">     117 </span>            : void DtorExpr::visit(Visitor&amp; visitor) const { helper(visitor).visit(base, &quot;base&quot;); }</a>
-<a name="118"><span class="lineNum">     118 </span>            : void SliceExpr::visit(Visitor&amp; visitor) const { helper(visitor).visit(type, &quot;type&quot;).visit(args, &quot;args&quot;); }</a>
-<a name="119"><span class="lineNum">     119 </span>            : void LambdaExpr::visit(Visitor&amp; visitor) const {</a>
-<a name="120"><span class="lineNum">     120 </span>            :   helper(visitor).visit(args, &quot;args&quot;).visit(annotations, &quot;annotation&quot;).visit(ret, &quot;ret&quot;).visit(body, &quot;body&quot;);</a>
-<a name="121"><span class="lineNum">     121 </span>            : }</a>
-<a name="122"><span class="lineNum">     122 </span>            : void AssignExpr::visit(Visitor&amp; visitor) const { helper(visitor).visit(target, &quot;target&quot;).visit(value, &quot;value&quot;); }</a>
-<a name="123"><span class="lineNum">     123 </span>            : void FieldAccessExpr::visit(Visitor&amp; visitor) const { helper(visitor).visit(base, &quot;base&quot;).visit(field, &quot;field&quot;); }</a>
-<a name="124"><span class="lineNum">     124 </span>            : void ImplicitCastExpr::visit(Visitor&amp; visitor) const {</a>
-<a name="125"><span class="lineNum">     125 </span>            :   helper(visitor).visit(conversion.to_string(), &quot;conversion&quot;).visit(base, &quot;base&quot;);</a>
+<a name="56"><span class="lineNum">      56 </span>            : </a>
+<a name="57"><span class="lineNum">      57 </span>            :   auto maybe(bool value, string_view label) -&gt; auto&amp; {</a>
+<a name="58"><span class="lineNum">      58 </span>            :     if (value)</a>
+<a name="59"><span class="lineNum">      59 </span>            :       visit(&quot;true&quot;, label);</a>
+<a name="60"><span class="lineNum">      60 </span>            :     return *this;</a>
+<a name="61"><span class="lineNum">      61 </span>            :   }</a>
+<a name="62"><span class="lineNum">      62 </span>            : };</a>
+<a name="63"><span class="lineNum">      63 </span>            : </a>
+<a name="64"><span class="lineNum">      64 </span>            : auto helper(Visitor&amp; visitor) { return VisitorHelper{visitor}; }</a>
+<a name="65"><span class="lineNum">      65 </span>            : } // namespace</a>
+<a name="66"><span class="lineNum">      66 </span>            : </a>
+<a name="67"><span class="lineNum">      67 </span>            : void IfStmt::visit(Visitor&amp; visitor) const { helper(visitor).visit(clauses, &quot;clause&quot;).visit(else_clause, &quot;else&quot;); }</a>
+<a name="68"><span class="lineNum">      68 </span>            : void IfClause::visit(Visitor&amp; visitor) const { helper(visitor).visit(cond, &quot;cond&quot;).visit(body, &quot;body&quot;); }</a>
+<a name="69"><span class="lineNum">      69 </span>            : void NumberExpr::visit(Visitor&amp; visitor) const { helper(visitor).visit(describe(), &quot;value&quot;); }</a>
+<a name="70"><span class="lineNum">      70 </span>            : void StringExpr::visit(Visitor&amp; visitor) const { helper(visitor).visit(val, &quot;value&quot;); }</a>
+<a name="71"><span class="lineNum">      71 </span>            : void CharExpr::visit(Visitor&amp; visitor) const { helper(visitor).visit(string{static_cast&lt;char&gt;(val)}, &quot;value&quot;); }</a>
+<a name="72"><span class="lineNum">      72 </span>            : void BoolExpr::visit(Visitor&amp; visitor) const { helper(visitor).visit(describe(), &quot;value&quot;); }</a>
+<a name="73"><span class="lineNum">      73 </span>            : void ReturnStmt::visit(Visitor&amp; visitor) const { helper(visitor).visit(expr, &quot;expr&quot;); }</a>
+<a name="74"><span class="lineNum">      74 </span>            : void WhileStmt::visit(Visitor&amp; visitor) const { helper(visitor).visit(cond, &quot;cond&quot;).visit(body, &quot;body&quot;); }</a>
+<a name="75"><span class="lineNum">      75 </span>            : void VarDecl::visit(Visitor&amp; visitor) const {</a>
+<a name="76"><span class="lineNum">      76 </span>            :   helper(visitor).visit(name, &quot;name&quot;).visit(type, &quot;type&quot;).visit(init, &quot;init&quot;);</a>
+<a name="77"><span class="lineNum">      77 </span>            : }</a>
+<a name="78"><span class="lineNum">      78 </span>            : void ConstDecl::visit(Visitor&amp; visitor) const {</a>
+<a name="79"><span class="lineNum">      79 </span>            :   helper(visitor).visit(name, &quot;name&quot;).visit(type, &quot;type&quot;).visit(init, &quot;init&quot;);</a>
+<a name="80"><span class="lineNum">      80 </span>            : }</a>
+<a name="81"><span class="lineNum">      81 </span>            : void FnDecl::visit(Visitor&amp; visitor) const {</a>
+<a name="82"><span class="lineNum">      82 </span>            :   auto vis = helper(visitor)</a>
+<a name="83"><span class="lineNum">      83 </span>            :                  .visit(name, &quot;name&quot;)</a>
+<a name="84"><span class="lineNum">      84 </span>            :                  .visit(args, &quot;arg&quot;)</a>
+<a name="85"><span class="lineNum">      85 </span>            :                  .visit(type_args, &quot;type arg&quot;)</a>
+<a name="86"><span class="lineNum">      86 </span>            :                  .visit(annotations, &quot;annotation&quot;)</a>
+<a name="87"><span class="lineNum">      87 </span>            :                  .visit(ret, &quot;ret&quot;);</a>
+<a name="88"><span class="lineNum">      88 </span>            : </a>
+<a name="89"><span class="lineNum">      89 </span>            :   body.visit([&amp;](const string&amp; s) { vis.visit(s, &quot;primitive&quot;); },</a>
+<a name="90"><span class="lineNum">      90 </span>            :              [&amp;](const extern_decl_t&amp; s) { vis.visit(s.name, &quot;extern&quot;).maybe(s.varargs, &quot;varags&quot;); },</a>
+<a name="91"><span class="lineNum">      91 </span>            :              [&amp;](const Compound&amp; s) { vis.visit(s, &quot;body&quot;); },</a>
+<a name="92"><span class="lineNum">      92 </span>            :              [&amp;](const abstract_decl_t&amp; /*s*/) { vis.visit(true, &quot;abstract&quot;); });</a>
+<a name="93"><span class="lineNum">      93 </span>            : }</a>
+<a name="94"><span class="lineNum">      94 </span>            : void CtorDecl::visit(Visitor&amp; visitor) const { helper(visitor).visit(args, &quot;arg&quot;).visit(body, &quot;body&quot;); }</a>
+<a name="95"><span class="lineNum">      95 </span>            : void StructDecl::visit(Visitor&amp; visitor) const {</a>
+<a name="96"><span class="lineNum">      96 </span>            :   helper(visitor)</a>
+<a name="97"><span class="lineNum">      97 </span>            :       .visit(name, &quot;name&quot;)</a>
+<a name="98"><span class="lineNum">      98 </span>            :       .visit(implements, &quot;implements&quot;)</a>
+<a name="99"><span class="lineNum">      99 </span>            :       .visit(fields, &quot;field&quot;)</a>
+<a name="100"><span class="lineNum">     100 </span>            :       .visit(type_args, &quot;type arg&quot;)</a>
+<a name="101"><span class="lineNum">     101 </span>            :       .visit(body, &quot;body&quot;)</a>
+<a name="102"><span class="lineNum">     102 </span>            :       .maybe(is_interface, &quot;interface&quot;);</a>
+<a name="103"><span class="lineNum">     103 </span>            : }</a>
+<a name="104"><span class="lineNum">     104 </span>            : void SimpleType::visit(Visitor&amp; visitor) const { helper(visitor).visit(name, &quot;name&quot;); }</a>
+<a name="105"><span class="lineNum">     105 </span>            : void QualType::visit(Visitor&amp; visitor) const { helper(visitor).visit(base, describe().c_str()); }</a>
+<a name="106"><span class="lineNum">     106 </span>            : void TemplatedType::visit(Visitor&amp; visitor) const { helper(visitor).visit(base, &quot;base&quot;).visit(type_args, &quot;type arg&quot;); }</a>
+<a name="107"><span class="lineNum">     107 </span>            : void FunctionType::visit(Visitor&amp; visitor) const {</a>
+<a name="108"><span class="lineNum">     108 </span>            :   helper(visitor).visit(ret, &quot;ret&quot;).visit(args, &quot;args&quot;).maybe(fn_ptr, &quot;fn ptr&quot;);</a>
+<a name="109"><span class="lineNum">     109 </span>            : }</a>
+<a name="110"><span class="lineNum">     110 </span>            : void ProxyType::visit(Visitor&amp; visitor) const { helper(visitor).visit(field, &quot;field&quot;); }</a>
+<a name="111"><span class="lineNum">     111 </span>            : void TypeName::visit(Visitor&amp; visitor) const { helper(visitor).visit(name, &quot;name&quot;).visit(type, &quot;type&quot;); }</a>
+<a name="112"><span class="lineNum">     112 </span>            : void Compound::visit(Visitor&amp; visitor) const { helper(visitor).visit(body, &quot;body&quot;); }</a>
+<a name="113"><span class="lineNum">     113 </span>            : void VarExpr::visit(Visitor&amp; visitor) const { helper(visitor).visit(name, &quot;name&quot;); }</a>
+<a name="114"><span class="lineNum">     114 </span>            : void ConstExpr::visit(Visitor&amp; visitor) const { helper(visitor).visit(name, &quot;name&quot;).visit(parent, &quot;name&quot;); }</a>
+<a name="115"><span class="lineNum">     115 </span>            : void CallExpr::visit(Visitor&amp; visitor) const {</a>
+<a name="116"><span class="lineNum">     116 </span>            :   helper(visitor).visit(name, &quot;name&quot;).visit(receiver, &quot;receiver&quot;).visit(args, &quot;args&quot;);</a>
+<a name="117"><span class="lineNum">     117 </span>            : }</a>
+<a name="118"><span class="lineNum">     118 </span>            : void BinaryLogicExpr::visit(Visitor&amp; visitor) const {</a>
+<a name="119"><span class="lineNum">     119 </span>            :   helper(visitor).visit(string{operation}, &quot;operation&quot;).visit(lhs, &quot;lhs&quot;).visit(rhs, &quot;rhs&quot;);</a>
+<a name="120"><span class="lineNum">     120 </span>            : }</a>
+<a name="121"><span class="lineNum">     121 </span>            : void CtorExpr::visit(Visitor&amp; visitor) const { helper(visitor).visit(type, &quot;type&quot;).visit(args, &quot;args&quot;); }</a>
+<a name="122"><span class="lineNum">     122 </span>            : void DtorExpr::visit(Visitor&amp; visitor) const { helper(visitor).visit(base, &quot;base&quot;); }</a>
+<a name="123"><span class="lineNum">     123 </span>            : void SliceExpr::visit(Visitor&amp; visitor) const { helper(visitor).visit(type, &quot;type&quot;).visit(args, &quot;args&quot;); }</a>
+<a name="124"><span class="lineNum">     124 </span>            : void LambdaExpr::visit(Visitor&amp; visitor) const {</a>
+<a name="125"><span class="lineNum">     125 </span>            :   helper(visitor).visit(args, &quot;args&quot;).visit(annotations, &quot;annotation&quot;).visit(ret, &quot;ret&quot;).visit(body, &quot;body&quot;);</a>
 <a name="126"><span class="lineNum">     126 </span>            : }</a>
-<a name="127"><span class="lineNum">     127 </span>            : void Program::visit(Visitor&amp; visitor) const { helper(visitor).visit(body, &quot;body&quot;); }</a>
-<a name="128"><span class="lineNum">     128 </span>            : </a>
-<a name="129"><span class="lineNum">     129 </span>            : } // namespace yume::ast</a>
+<a name="127"><span class="lineNum">     127 </span>            : void AssignExpr::visit(Visitor&amp; visitor) const { helper(visitor).visit(target, &quot;target&quot;).visit(value, &quot;value&quot;); }</a>
+<a name="128"><span class="lineNum">     128 </span>            : void FieldAccessExpr::visit(Visitor&amp; visitor) const { helper(visitor).visit(base, &quot;base&quot;).visit(field, &quot;field&quot;); }</a>
+<a name="129"><span class="lineNum">     129 </span>            : void ImplicitCastExpr::visit(Visitor&amp; visitor) const {</a>
+<a name="130"><span class="lineNum">     130 </span>            :   helper(visitor).visit(conversion.to_string(), &quot;conversion&quot;).visit(base, &quot;base&quot;);</a>
+<a name="131"><span class="lineNum">     131 </span>            : }</a>
+<a name="132"><span class="lineNum">     132 </span>            : void Program::visit(Visitor&amp; visitor) const { helper(visitor).visit(body, &quot;body&quot;); }</a>
+<a name="133"><span class="lineNum">     133 </span>            : </a>
+<a name="134"><span class="lineNum">     134 </span>            : } // namespace yume::ast</a>
 </pre>
       </td>
     </tr>

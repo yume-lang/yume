@@ -1,5 +1,5 @@
 <map id="yume::ast::StructDecl" name="yume::ast::StructDecl">
-<area shape="rect" id="node1" title="A declaration of a struct (struct)." alt="" coords="5,229,149,256"/>
+<area shape="rect" id="node1" title="A declaration of a struct (struct) or an interface (interface)." alt="" coords="5,229,149,256"/>
 <area shape="rect" id="node2" href="$classyume_1_1ast_1_1Decl.html" title="Base class for a named declaration." alt="" coords="23,155,132,181"/>
 <area shape="rect" id="node3" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="22,80,133,107"/>
 <area shape="rect" id="node4" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="23,5,132,32"/>

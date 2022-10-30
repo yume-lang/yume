@@ -127,7 +127,7 @@ $(function() {
 <area shape="rect" href="structyume_1_1ast_1_1ConstDecl.html" title="A declaration of a constant (const)." alt="" coords="596,5,739,32"/>
 <area shape="rect" href="structyume_1_1ast_1_1CtorDecl.html" title="A declaration of a custom constructor (def :new)." alt="" coords="601,56,734,83"/>
 <area shape="rect" href="structyume_1_1ast_1_1FnDecl.html" title="A declaration of a function (def)." alt="" coords="605,107,729,133"/>
-<area shape="rect" href="structyume_1_1ast_1_1StructDecl.html" title="A declaration of a struct (struct)." alt="" coords="595,157,739,184"/>
+<area shape="rect" href="structyume_1_1ast_1_1StructDecl.html" title="A declaration of a struct (struct) or an interface (interface)." alt="" coords="595,157,739,184"/>
 <area shape="rect" href="structyume_1_1ast_1_1VarDecl.html" title="A declaration of a local variable (let)." alt="" coords="603,208,732,235"/>
 <area shape="rect" href="structyume_1_1ast_1_1AssignExpr.html" title="An assignment (=)." alt="" coords="593,259,741,285"/>
 <area shape="rect" href="structyume_1_1ast_1_1BinaryLogicExpr.html" title="A logical operator such as || or &amp;&amp;. Since these aren&#39;t overloadable, they have their own AST node." alt="" coords="579,309,755,336"/>
@@ -324,13 +324,14 @@ $(function() {
 </td></tr>
 <tr><td><img src="inherit_graph_41.png" border="0" usemap="#ayume_1_1ty_1_1BaseType" alt=""/>
 <map name="ayume_1_1ty_1_1BaseType" id="ayume_1_1ty_1_1BaseType">
-<area shape="rect" href="classyume_1_1ty_1_1BaseType.html" title="Represents a type in the type system. NOTE: that this isn&#39;t the class to use for type introspection,..." alt="" coords="5,132,139,159"/>
-<area shape="rect" href="classyume_1_1ty_1_1Function.html" title="A function pointer type." alt="" coords="187,5,312,32"/>
-<area shape="rect" href="classyume_1_1ty_1_1Generic.html" title="An unsubstituted generic type variable, usually something like T." alt="" coords="189,56,309,83"/>
-<area shape="rect" href="classyume_1_1ty_1_1Int.html" title="A built&#45;in integral type, such as I32 or Bool." alt="" coords="204,107,295,133"/>
-<area shape="rect" href="classyume_1_1ty_1_1Nil.html" title="The null type, Nil." alt="" coords="204,157,295,184"/>
-<area shape="rect" href="classyume_1_1ty_1_1Ptr.html" title="A &quot;qualified&quot; type, with a stackable qualifier, i.e. ptr." alt="" coords="203,208,295,235"/>
-<area shape="rect" href="classyume_1_1ty_1_1Struct.html" title="An user&#45;defined struct type with associated fields." alt="" coords="194,259,305,285"/>
+<area shape="rect" href="classyume_1_1ty_1_1BaseType.html" title="Represents a type in the type system. NOTE: that this isn&#39;t the class to use for type introspection,..." alt="" coords="5,157,139,184"/>
+<area shape="rect" href="classyume_1_1ty_1_1Function.html" title="A function pointer type." alt="" coords="195,5,321,32"/>
+<area shape="rect" href="classyume_1_1ty_1_1Generic.html" title="An unsubstituted generic type variable, usually something like T." alt="" coords="198,56,318,83"/>
+<area shape="rect" href="classyume_1_1ty_1_1Int.html" title="A built&#45;in integral type, such as I32 or Bool." alt="" coords="213,107,303,133"/>
+<area shape="rect" href="classyume_1_1ty_1_1Nil.html" title="The null type, Nil." alt="" coords="213,157,303,184"/>
+<area shape="rect" href="classyume_1_1ty_1_1OpaqueSelf.html" title="The &quot;self&quot; type of abstract or overriding functions. An extra layer of indirection is introduced for ..." alt="" coords="187,208,329,235"/>
+<area shape="rect" href="classyume_1_1ty_1_1Ptr.html" title="A &quot;qualified&quot; type, with a stackable qualifier, i.e. ptr." alt="" coords="212,259,304,285"/>
+<area shape="rect" href="classyume_1_1ty_1_1Struct.html" title="An user&#45;defined struct type with associated fields." alt="" coords="203,309,313,336"/>
 </map>
 </td></tr>
 <tr><td><img src="inherit_graph_42.png" border="0" usemap="#ayume_1_1ty_1_1Compat" alt=""/>
@@ -384,6 +385,11 @@ $(function() {
 <area shape="rect" href="classyume_1_1diagnostic_1_1DotVisitor.html" title=" " alt="" coords="155,5,336,32"/>
 <area shape="rect" href="classyume_1_1diagnostic_1_1HashVisitor.html" title=" " alt="" coords="149,56,341,83"/>
 <area shape="rect" href="classyume_1_1diagnostic_1_1PrintVisitor.html" title=" " alt="" coords="151,107,339,133"/>
+</map>
+</td></tr>
+<tr><td><img src="inherit_graph_52.png" border="0" usemap="#ayume_1_1VTableEntry" alt=""/>
+<map name="ayume_1_1VTableEntry" id="ayume_1_1VTableEntry">
+<area shape="rect" href="structyume_1_1VTableEntry.html" title=" " alt="" coords="5,5,135,32"/>
 </map>
 </td></tr>
 </table>

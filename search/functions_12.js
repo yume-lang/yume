@@ -12,7 +12,7 @@ var searchData=
   ['stem_9',['stem',['../namespaceyume.html#a84da801f2471cee6b1007cf0c0e98ce5',1,'yume']]],
   ['stringexpr_10',['StringExpr',['../structyume_1_1ast_1_1StringExpr.html#a6612fa30a991468cd47f4b24ca467bc6',1,'yume::ast::StringExpr']]],
   ['stringliteral_11',['StringLiteral',['../structyume_1_1StringLiteral.html#a250addadb057dc60d0f500a68d280dac',1,'yume::StringLiteral']]],
-  ['struct_12',['Struct',['../structyume_1_1Struct.html#a659a42ea6160801a4fed2f12f2f3989b',1,'yume::Struct::Struct()'],['../classyume_1_1ty_1_1Struct.html#a53504a01b45f667c9eff9f81857f7db7',1,'yume::ty::Struct::Struct()']]],
-  ['structdecl_13',['StructDecl',['../structyume_1_1ast_1_1StructDecl.html#a3051a0527ec2ebec2b383ddb146ae037',1,'yume::ast::StructDecl']]],
+  ['struct_12',['Struct',['../structyume_1_1Struct.html#a659a42ea6160801a4fed2f12f2f3989b',1,'yume::Struct::Struct()'],['../classyume_1_1ty_1_1Struct.html#a2e124c61e3bd9f65889e230d4ee9dee5',1,'yume::ty::Struct::Struct()']]],
+  ['structdecl_13',['StructDecl',['../structyume_1_1ast_1_1StructDecl.html#a33b4a60ccece76c210aa65cbc49acb5b',1,'yume::ast::StructDecl']]],
   ['subs_14',['subs',['../structyume_1_1DeclLike.html#a43cedbac1a5b13f8514d5f9a35305f95',1,'yume::DeclLike::subs() const noexcept -&gt; const Substitution *'],['../structyume_1_1DeclLike.html#a2746d9e1b89ed725831a175decfe3345',1,'yume::DeclLike::subs() noexcept -&gt; Substitution *'],['../classyume_1_1ty_1_1Struct.html#aa3e4ba4e2f08aecb46dd1a82f58e5f76',1,'yume::ty::Struct::subs()']]]
 ];

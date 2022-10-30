@@ -1,0 +1,4 @@
+<map id="yume::ty::OpaqueSelf" name="yume::ty::OpaqueSelf">
+<area shape="rect" id="node1" title="The &quot;self&quot; type of abstract or overriding functions. An extra layer of indirection is introduced for ..." alt="" coords="5,80,148,107"/>
+<area shape="rect" id="node2" href="$classyume_1_1ty_1_1BaseType.html" title="Represents a type in the type system. NOTE: that this isn&#39;t the class to use for type introspection,..." alt="" coords="10,5,143,32"/>
+</map>

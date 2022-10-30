@@ -83,22 +83,27 @@ Collaboration diagram for yume::Struct:</div>
 <div class="dyncontent">
 <div class="center"><img src="structyume_1_1Struct__coll__graph.png" border="0" usemap="#ayume_1_1Struct_coll__map" alt="Collaboration graph"/></div>
 <map name="ayume_1_1Struct_coll__map" id="ayume_1_1Struct_coll__map">
-<area shape="rect" title="A struct declaration in the compiler." alt="" coords="947,305,1041,332"/>
-<area shape="rect" href="structyume_1_1ast_1_1StructDecl.html" title="A declaration of a struct (struct)." alt="" coords="650,125,794,152"/>
-<area shape="rect" href="classyume_1_1ast_1_1Decl.html" title="Base class for a named declaration." alt="" coords="391,5,501,32"/>
-<area shape="rect" href="classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="174,107,285,133"/>
-<area shape="rect" href="structyume_1_1ast_1_1Compound.html" title="A statement consisting of multiple other statements, i.e. the body of a function." alt="" coords="373,107,519,133"/>
-<area shape="rect" href="structyume_1_1ast_1_1Program.html" title="The top level structure of a file of source code." alt="" coords="380,275,512,301"/>
-<area shape="rect" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,107,115,133"/>
-<area shape="rect" title=" " alt="" coords="419,56,473,83"/>
-<area shape="rect" title=" " alt="" coords="381,158,511,199"/>
-<area shape="rect" title=" " alt="" coords="390,224,502,251"/>
-<area shape="rect" title=" " alt="" coords="164,223,295,265"/>
-<area shape="rect" title=" " alt="" coords="659,203,785,245"/>
-<area shape="rect" title=" " alt="" coords="645,333,799,374"/>
-<area shape="rect" href="structyume_1_1Substitution.html" title=" " alt="" coords="658,399,786,425"/>
-<area shape="rect" href="classsubstitution__t.html" title=" " alt="" coords="396,399,496,425"/>
-<area shape="rect" title=" " alt="" coords="627,450,817,491"/>
+<area shape="rect" title="A struct declaration in the compiler." alt="" coords="1139,478,1233,505"/>
+<area shape="rect" href="structyume_1_1ast_1_1StructDecl.html" title="A declaration of a struct (struct) or an interface (interface)." alt="" coords="813,215,957,242"/>
+<area shape="rect" href="classyume_1_1ast_1_1Decl.html" title="Base class for a named declaration." alt="" coords="515,187,625,214"/>
+<area shape="rect" href="classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="215,277,326,303"/>
+<area shape="rect" href="structyume_1_1ast_1_1Compound.html" title="A statement consisting of multiple other statements, i.e. the body of a function." alt="" coords="497,289,643,315"/>
+<area shape="rect" href="structyume_1_1ast_1_1Program.html" title="The top level structure of a file of source code." alt="" coords="504,390,636,417"/>
+<area shape="rect" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,277,115,303"/>
+<area shape="rect" title=" " alt="" coords="543,339,597,366"/>
+<area shape="rect" title=" " alt="" coords="505,5,635,47"/>
+<area shape="rect" title=" " alt="" coords="514,137,626,163"/>
+<area shape="rect" title=" " alt="" coords="205,360,336,401"/>
+<area shape="rect" href="classyume_1_1ast_1_1OptionalAnyBase.html" title=" " alt="" coords="479,71,661,112"/>
+<area shape="rect" href="classyume_1_1ast_1_1OptionalAnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T, or the absence of one. See OptionalExpr and OptionalType..." alt="" coords="164,78,377,105"/>
+<area shape="rect" title=" " alt="" coords="547,238,593,265"/>
+<area shape="rect" title=" " alt="" coords="823,319,948,360"/>
+<area shape="rect" title=" " alt="" coords="809,448,962,489"/>
+<area shape="rect" href="structyume_1_1Substitution.html" title=" " alt="" coords="821,514,949,541"/>
+<area shape="rect" href="classsubstitution__t.html" title=" " alt="" coords="520,514,620,541"/>
+<area shape="rect" title=" " alt="" coords="790,565,981,607"/>
+<area shape="rect" title=" " alt="" coords="792,631,979,658"/>
+<area shape="rect" title=" " alt="" coords="780,682,991,709"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -144,12 +149,16 @@ Public Attributes</h2></td></tr>
 <tr class="separator:aff1ec215cbeb4906b9ac9e4b26bef004"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a44ab678362978025805488845bc31dbc"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="structyume_1_1Substitution.html">Substitution</a>, unique_ptr&lt; <a class="el" href="structyume_1_1Struct.html">Struct</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Struct.html#a44ab678362978025805488845bc31dbc">instantiations</a> {}</td></tr>
 <tr class="separator:a44ab678362978025805488845bc31dbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac096da4e85478f6db7fdd1e61a06bd49"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structyume_1_1VTableEntry.html">VTableEntry</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Struct.html#ac096da4e85478f6db7fdd1e61a06bd49">vtable_members</a> {}</td></tr>
+<tr class="separator:ac096da4e85478f6db7fdd1e61a06bd49"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acef4c3ff02d85b3437f1d35677dd4cc6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceyume.html#a38932a6efdeba0de668a05650c45b8b3">nullable</a>&lt; llvm::GlobalVariable * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1Struct.html#acef4c3ff02d85b3437f1d35677dd4cc6">vtable_memo</a> {}</td></tr>
+<tr class="separator:acef4c3ff02d85b3437f1d35677dd4cc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >A struct declaration in the compiler. </p>
-<p >Very similar to <code><a class="el" href="structyume_1_1Fn.html" title="A function declaration in the compiler.">Fn</a></code>, the primary use of this structure is to bind together the AST declaration of a struct (<code><a class="el" href="structyume_1_1ast_1_1StructDecl.html" title="A declaration of a struct (struct).">ast::StructDecl</a></code>) and the type this struct defines. A struct template may also be a <code><a class="el" href="structyume_1_1Struct.html" title="A struct declaration in the compiler.">Struct</a></code>. All the instantiations of a template are stored in <code>instantiations</code>. </p>
+<p >Very similar to <code><a class="el" href="structyume_1_1Fn.html" title="A function declaration in the compiler.">Fn</a></code>, the primary use of this structure is to bind together the AST declaration of a struct (<code><a class="el" href="structyume_1_1ast_1_1StructDecl.html" title="A declaration of a struct (struct) or an interface (interface).">ast::StructDecl</a></code>) and the type this struct defines. A struct template may also be a <code><a class="el" href="structyume_1_1Struct.html" title="A struct declaration in the compiler.">Struct</a></code>. All the instantiations of a template are stored in <code>instantiations</code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00116">116</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00130">130</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a659a42ea6160801a4fed2f12f2f3989b" name="a659a42ea6160801a4fed2f12f2f3989b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a659a42ea6160801a4fed2f12f2f3989b">&#9670;&nbsp;</a></span>Struct()</h2>
@@ -203,7 +212,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00127">127</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00143">143</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
 </div>
 </div>
@@ -231,9 +240,11 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00131">131</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00147">147</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00117">st_ast</a>.</p>
+<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00131">st_ast</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00147">yume::Compiler::run()</a>.</p>
 
 </div>
 </div>
@@ -260,9 +271,9 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00132">132</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00148">148</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00117">st_ast</a>.</p>
+<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00131">st_ast</a>.</p>
 
 </div>
 </div>
@@ -289,9 +300,9 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00133">133</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00149">149</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00784">yume::ast::StructDecl::body</a>, and <a class="el" href="vals_8hpp_source.html#l00117">st_ast</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00791">yume::ast::StructDecl::body</a>, and <a class="el" href="vals_8hpp_source.html#l00131">st_ast</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="vals_8cpp_source.html#l00039">create_instantiation()</a>.</p>
 
@@ -320,9 +331,9 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00134">134</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00150">150</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00784">yume::ast::StructDecl::body</a>, and <a class="el" href="vals_8hpp_source.html#l00117">st_ast</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00791">yume::ast::StructDecl::body</a>, and <a class="el" href="vals_8hpp_source.html#l00131">st_ast</a>.</p>
 
 </div>
 </div>
@@ -352,7 +363,7 @@ Public Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="vals_8cpp_source.html#l00039">39</a> of file <a class="el" href="vals_8cpp_source.html">vals.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00133">body()</a>.</p>
+<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00149">body()</a>.</p>
 
 </div>
 </div>
@@ -407,9 +418,9 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00135">135</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00151">151</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00119">self_ty</a>.</p>
+<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00133">self_ty</a>.</p>
 
 </div>
 </div>
@@ -436,9 +447,9 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00136">136</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00152">152</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00124">subs</a>.</p>
+<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00138">subs</a>.</p>
 
 </div>
 </div>
@@ -465,9 +476,9 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00137">137</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00153">153</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00124">subs</a>.</p>
+<p class="reference">References <a class="el" href="vals_8hpp_source.html#l00138">subs</a>.</p>
 
 </div>
 </div>
@@ -496,9 +507,9 @@ Public Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="vals_8cpp_source.html#l00060">60</a> of file <a class="el" href="vals_8cpp_source.html">vals.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00781">yume::ast::StructDecl::name</a>, and <a class="el" href="vals_8hpp_source.html#l00117">st_ast</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00788">yume::ast::StructDecl::name</a>, and <a class="el" href="vals_8hpp_source.html#l00131">st_ast</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00254">yume::Compiler::decl_statement()</a>, <a class="el" href="type__walker_8cpp_source.html#l00166">yume::semantic::TypeWalker::make_dup()</a>, and <a class="el" href="vals_8hpp_source.html#l00162">yume::Const::referred_to_by()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type__walker_8cpp_source.html#l00166">yume::semantic::TypeWalker::make_dup()</a>, and <a class="el" href="vals_8hpp_source.html#l00178">yume::Const::referred_to_by()</a>.</p>
 
 </div>
 </div>
@@ -515,7 +526,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00125">125</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00139">139</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
 </div>
 </div>
@@ -533,7 +544,7 @@ Public Attributes</h2></td></tr>
 
 <p>The program this declaration is a member of. </p>
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00121">121</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00135">135</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
 </div>
 </div>
@@ -551,9 +562,9 @@ Public Attributes</h2></td></tr>
 
 <p>The type of this struct. Used for the <code>self</code> type. </p>
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00119">119</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00133">133</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00226">yume::Compiler::create_struct()</a>, <a class="el" href="compiler_8cpp_source.html#l00254">yume::Compiler::decl_statement()</a>, <a class="el" href="vals_8hpp_source.html#l00135">get_self_ty()</a>, <a class="el" href="vals_8hpp_source.html#l00159">yume::Const::get_self_ty()</a>, and <a class="el" href="vals_8hpp_source.html#l00162">yume::Const::referred_to_by()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="vals_8hpp_source.html#l00151">get_self_ty()</a>, <a class="el" href="vals_8hpp_source.html#l00175">yume::Const::get_self_ty()</a>, and <a class="el" href="vals_8hpp_source.html#l00178">yume::Const::referred_to_by()</a>.</p>
 
 </div>
 </div>
@@ -569,9 +580,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00117">117</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00131">131</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="vals_8hpp_source.html#l00131">ast()</a>, <a class="el" href="vals_8hpp_source.html#l00133">body()</a>, <a class="el" href="compiler_8cpp_source.html#l00226">yume::Compiler::create_struct()</a>, and <a class="el" href="vals_8cpp_source.html#l00060">name()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="vals_8hpp_source.html#l00147">ast()</a>, <a class="el" href="vals_8hpp_source.html#l00149">body()</a>, and <a class="el" href="vals_8cpp_source.html#l00060">name()</a>.</p>
 
 </div>
 </div>
@@ -589,9 +600,9 @@ Public Attributes</h2></td></tr>
 
 <p>If this is an instantiation of a template, a mapping between type variables and their substitutions. </p>
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00124">124</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00138">138</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00226">yume::Compiler::create_struct()</a>, <a class="el" href="vals_8hpp_source.html#l00136">get_subs()</a>, and <a class="el" href="vals_8hpp_source.html#l00184">yume::DeclLike::subs()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="vals_8hpp_source.html#l00152">get_subs()</a>, and <a class="el" href="vals_8hpp_source.html#l00200">yume::DeclLike::subs()</a>.</p>
 
 </div>
 </div>
@@ -607,9 +618,39 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00122">122</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00136">136</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="compiler_8cpp_source.html#l00254">yume::Compiler::decl_statement()</a>.</p>
+</div>
+</div>
+<a id="ac096da4e85478f6db7fdd1e61a06bd49" name="ac096da4e85478f6db7fdd1e61a06bd49"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac096da4e85478f6db7fdd1e61a06bd49">&#9670;&nbsp;</a></span>vtable_members</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;<a class="el" href="structyume_1_1VTableEntry.html">VTableEntry</a>&gt; yume::Struct::vtable_members {}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00140">140</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+
+</div>
+</div>
+<a id="acef4c3ff02d85b3437f1d35677dd4cc6" name="acef4c3ff02d85b3437f1d35677dd4cc6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acef4c3ff02d85b3437f1d35677dd4cc6">&#9670;&nbsp;</a></span>vtable_memo</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceyume.html#a38932a6efdeba0de668a05650c45b8b3">nullable</a>&lt;llvm::GlobalVariable*&gt; yume::Struct::vtable_memo {}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00141">141</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
 </div>
 </div>

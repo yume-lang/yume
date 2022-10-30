@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-10-29 16:38:07</td>
+            <td class="headerValue">2022-10-30 13:39:59</td>
             <td></td>
           </tr>
           <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -271,9 +271,9 @@
 <a name="213"><span class="lineNum">     213 </span>            :               {Token::Type::Symbol, is_exactly(&quot;&amp;&amp;&quot;sv)},</a>
 <a name="214"><span class="lineNum">     214 </span>            :               {Token::Type::Symbol, is_any_of(R&quot;(()[]{}&lt;&gt;=:#%-+.,!/*&amp;@$\)&quot;sv)},</a>
 <a name="215"><span class="lineNum">     215 </span>            :           })) {</a>
-<a name="216"><span class="lineNum">     216 </span>            :         string message = &quot;Tokenizer didn't recognize &quot;;</a>
-<a name="217"><span class="lineNum">     217 </span>            :         message += m_last;</a>
-<a name="218"><span class="lineNum">     218 </span>            :         throw std::runtime_error(message);</a>
+<a name="216"><span class="lineNum">     216 </span>            :         std::stringstream msg;</a>
+<a name="217"><span class="lineNum">     217 </span>            :         msg &lt;&lt; &quot;Tokenizer didn't recognize '&quot; &lt;&lt; m_last &lt;&lt; &quot;' at &quot; &lt;&lt; m_source_file &lt;&lt; &quot;:&quot; &lt;&lt; m_line &lt;&lt; &quot;:&quot; &lt;&lt; m_col;</a>
+<a name="218"><span class="lineNum">     218 </span>            :         throw std::runtime_error(msg.str());</a>
 <a name="219"><span class="lineNum">     219 </span>            :       }</a>
 <a name="220"><span class="lineNum">     220 </span>            :       m_count++;</a>
 <a name="221"><span class="lineNum">     221 </span>            :     }</a>

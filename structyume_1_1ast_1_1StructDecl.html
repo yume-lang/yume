@@ -74,7 +74,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>A declaration of a struct (<code>struct</code>).  
+<p>A declaration of a struct (<code>struct</code>) or an interface (<code>interface</code>).  
  <a href="structyume_1_1ast_1_1StructDecl.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="ast_8hpp_source.html">ast.hpp</a>&gt;</code></p>
@@ -83,7 +83,7 @@ Inheritance diagram for yume::ast::StructDecl:</div>
 <div class="dyncontent">
 <div class="center"><img src="structyume_1_1ast_1_1StructDecl__inherit__graph.png" border="0" usemap="#ayume_1_1ast_1_1StructDecl_inherit__map" alt="Inheritance graph"/></div>
 <map name="ayume_1_1ast_1_1StructDecl_inherit__map" id="ayume_1_1ast_1_1StructDecl_inherit__map">
-<area shape="rect" title="A declaration of a struct (struct)." alt="" coords="5,229,149,256"/>
+<area shape="rect" title="A declaration of a struct (struct) or an interface (interface)." alt="" coords="5,229,149,256"/>
 <area shape="rect" href="classyume_1_1ast_1_1Decl.html" title="Base class for a named declaration." alt="" coords="23,155,132,181"/>
 <area shape="rect" href="classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="22,80,133,107"/>
 <area shape="rect" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="23,5,132,32"/>
@@ -94,22 +94,25 @@ Collaboration diagram for yume::ast::StructDecl:</div>
 <div class="dyncontent">
 <div class="center"><img src="structyume_1_1ast_1_1StructDecl__coll__graph.png" border="0" usemap="#ayume_1_1ast_1_1StructDecl_coll__map" alt="Collaboration graph"/></div>
 <map name="ayume_1_1ast_1_1StructDecl_coll__map" id="ayume_1_1ast_1_1StructDecl_coll__map">
-<area shape="rect" title="A declaration of a struct (struct)." alt="" coords="627,141,771,167"/>
-<area shape="rect" href="classyume_1_1ast_1_1Decl.html" title="Base class for a named declaration." alt="" coords="391,90,501,117"/>
-<area shape="rect" href="classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="174,81,285,107"/>
-<area shape="rect" href="structyume_1_1ast_1_1Compound.html" title="A statement consisting of multiple other statements, i.e. the body of a function." alt="" coords="373,39,519,66"/>
+<area shape="rect" title="A declaration of a struct (struct) or an interface (interface)." alt="" coords="780,199,924,226"/>
+<area shape="rect" href="classyume_1_1ast_1_1Decl.html" title="Base class for a named declaration." alt="" coords="515,90,625,117"/>
+<area shape="rect" href="classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="215,81,326,107"/>
+<area shape="rect" href="structyume_1_1ast_1_1Compound.html" title="A statement consisting of multiple other statements, i.e. the body of a function." alt="" coords="497,39,643,66"/>
 <area shape="rect" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,81,115,107"/>
-<area shape="rect" title=" " alt="" coords="419,141,473,167"/>
-<area shape="rect" title=" " alt="" coords="381,192,511,233"/>
-<area shape="rect" title=" " alt="" coords="390,258,502,285"/>
-<area shape="rect" title=" " alt="" coords="164,5,295,47"/>
+<area shape="rect" title=" " alt="" coords="543,141,597,167"/>
+<area shape="rect" title=" " alt="" coords="505,192,635,233"/>
+<area shape="rect" title=" " alt="" coords="514,258,626,285"/>
+<area shape="rect" title=" " alt="" coords="205,5,336,47"/>
+<area shape="rect" href="classyume_1_1ast_1_1OptionalAnyBase.html" title=" " alt="" coords="479,309,661,351"/>
+<area shape="rect" href="classyume_1_1ast_1_1OptionalAnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T, or the absence of one. See OptionalExpr and OptionalType..." alt="" coords="164,317,377,343"/>
+<area shape="rect" title=" " alt="" coords="547,375,593,402"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a3051a0527ec2ebec2b383ddb146ae037"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1StructDecl.html#a3051a0527ec2ebec2b383ddb146ae037">StructDecl</a> (span&lt; <a class="el" href="structyume_1_1Token.html">Token</a> &gt; <a class="el" href="classyume_1_1ast_1_1AST.html#aef0323c4bfe9d210c3edeef11f7fa9b4">tok</a>, string <a class="el" href="structyume_1_1ast_1_1StructDecl.html#ad017e55817896c82632ddee0cd2bf1be">name</a>, vector&lt; <a class="el" href="structyume_1_1ast_1_1TypeName.html">TypeName</a> &gt; <a class="el" href="structyume_1_1ast_1_1StructDecl.html#ac955a5177bdd20aa0b6bb191f356d6ad">fields</a>, vector&lt; string &gt; <a class="el" href="structyume_1_1ast_1_1StructDecl.html#ad3fa2fd0929583bbdea428409ce2ca51">type_args</a>, <a class="el" href="structyume_1_1ast_1_1Compound.html">Compound</a> <a class="el" href="structyume_1_1ast_1_1StructDecl.html#aed85b25ab497ff8d21d054ece04a1595">body</a>)</td></tr>
-<tr class="separator:a3051a0527ec2ebec2b383ddb146ae037"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33b4a60ccece76c210aa65cbc49acb5b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1StructDecl.html#a33b4a60ccece76c210aa65cbc49acb5b">StructDecl</a> (span&lt; <a class="el" href="structyume_1_1Token.html">Token</a> &gt; <a class="el" href="classyume_1_1ast_1_1AST.html#aef0323c4bfe9d210c3edeef11f7fa9b4">tok</a>, string <a class="el" href="structyume_1_1ast_1_1StructDecl.html#ad017e55817896c82632ddee0cd2bf1be">name</a>, vector&lt; <a class="el" href="structyume_1_1ast_1_1TypeName.html">TypeName</a> &gt; <a class="el" href="structyume_1_1ast_1_1StructDecl.html#ac955a5177bdd20aa0b6bb191f356d6ad">fields</a>, vector&lt; string &gt; <a class="el" href="structyume_1_1ast_1_1StructDecl.html#ad3fa2fd0929583bbdea428409ce2ca51">type_args</a>, <a class="el" href="structyume_1_1ast_1_1Compound.html">Compound</a> <a class="el" href="structyume_1_1ast_1_1StructDecl.html#aed85b25ab497ff8d21d054ece04a1595">body</a>, <a class="el" href="namespaceyume_1_1ast.html#abbe8370067fd80e7639b21ac03c4c7f1">OptionalType</a> <a class="el" href="structyume_1_1ast_1_1StructDecl.html#a76010059ddb1b7fa7e9d39bac12a1b41">implements</a>, bool <a class="el" href="structyume_1_1ast_1_1StructDecl.html#a8acb4e7d0ed9fbc6bd7ca1068e885e44">is_interface</a>=false)</td></tr>
+<tr class="separator:a33b4a60ccece76c210aa65cbc49acb5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c9333e02955855f9d582c620b228249"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1StructDecl.html#a7c9333e02955855f9d582c620b228249">visit</a> (<a class="el" href="classyume_1_1Visitor.html">Visitor</a> &amp;<a class="el" href="visit_8cpp.html#aecb7a75ced9024d2b17e283aa5f9e651">visitor</a>) const override</td></tr>
 <tr class="memdesc:a7c9333e02955855f9d582c620b228249"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recursively visit this ast node and all its constituents.  <a href="structyume_1_1ast_1_1StructDecl.html#a7c9333e02955855f9d582c620b228249">More...</a><br /></td></tr>
 <tr class="separator:a7c9333e02955855f9d582c620b228249"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -180,6 +183,10 @@ Public Attributes</h2></td></tr>
 <tr class="separator:ad3fa2fd0929583bbdea428409ce2ca51"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aed85b25ab497ff8d21d054ece04a1595"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structyume_1_1ast_1_1Compound.html">Compound</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1StructDecl.html#aed85b25ab497ff8d21d054ece04a1595">body</a></td></tr>
 <tr class="separator:aed85b25ab497ff8d21d054ece04a1595"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a76010059ddb1b7fa7e9d39bac12a1b41"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceyume_1_1ast.html#abbe8370067fd80e7639b21ac03c4c7f1">OptionalType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1StructDecl.html#a76010059ddb1b7fa7e9d39bac12a1b41">implements</a></td></tr>
+<tr class="separator:a76010059ddb1b7fa7e9d39bac12a1b41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8acb4e7d0ed9fbc6bd7ca1068e885e44"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ast_1_1StructDecl.html#a8acb4e7d0ed9fbc6bd7ca1068e885e44">is_interface</a></td></tr>
+<tr class="separator:a8acb4e7d0ed9fbc6bd7ca1068e885e44"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -200,12 +207,12 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:a42e670ad594aae36657c38638cc72d41 inherit pro_methods_classyume_1_1ast_1_1AST"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p >A declaration of a struct (<code>struct</code>). </p>
+<div class="textblock"><p >A declaration of a struct (<code>struct</code>) or an interface (<code>interface</code>). </p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00779">779</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00786">786</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a3051a0527ec2ebec2b383ddb146ae037" name="a3051a0527ec2ebec2b383ddb146ae037"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3051a0527ec2ebec2b383ddb146ae037">&#9670;&nbsp;</a></span>StructDecl()</h2>
+<a id="a33b4a60ccece76c210aa65cbc49acb5b" name="a33b4a60ccece76c210aa65cbc49acb5b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a33b4a60ccece76c210aa65cbc49acb5b">&#9670;&nbsp;</a></span>StructDecl()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -241,7 +248,19 @@ Additional Inherited Members</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="structyume_1_1ast_1_1Compound.html">Compound</a>&#160;</td>
-          <td class="paramname"><em>body</em>&#160;</td>
+          <td class="paramname"><em>body</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespaceyume_1_1ast.html#abbe8370067fd80e7639b21ac03c4c7f1">OptionalType</a>&#160;</td>
+          <td class="paramname"><em>implements</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>is_interface</em> = <code>false</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -256,7 +275,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00786">786</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00795">795</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00097">clone()</a>.</p>
 
@@ -292,7 +311,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00097">97</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00784">body</a>, <a class="el" href="ast_8hpp_source.html#l00782">fields</a>, <a class="el" href="ast_8hpp_source.html#l00781">name</a>, <a class="el" href="ast_8hpp_source.html#l00786">StructDecl()</a>, <a class="el" href="ast_8hpp_source.html#l00233">yume::ast::AST::tok()</a>, and <a class="el" href="ast_8hpp_source.html#l00783">type_args</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00791">body</a>, <a class="el" href="ast_8hpp_source.html#l00789">fields</a>, <a class="el" href="ast_8hpp_source.html#l00792">implements</a>, <a class="el" href="ast_8hpp_source.html#l00793">is_interface</a>, <a class="el" href="ast_8hpp_source.html#l00788">name</a>, <a class="el" href="ast_8hpp_source.html#l00795">StructDecl()</a>, <a class="el" href="ast_8hpp_source.html#l00233">yume::ast::AST::tok()</a>, and <a class="el" href="ast_8hpp_source.html#l00790">type_args</a>.</p>
 
 </div>
 </div>
@@ -321,7 +340,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classyume_1_1ast_1_1Decl.html#aa82d9bf53c43e24ad3709e1dabde1075">yume::ast::Decl</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00789">789</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00800">800</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -354,9 +373,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classyume_1_1ast_1_1AST.html#adb1376044bc6a064fd71a2ea7505e86f">yume::ast::AST</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="visit_8cpp_source.html#l00094">94</a> of file <a class="el" href="visit_8cpp_source.html">visit.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="visit_8cpp_source.html#l00095">95</a> of file <a class="el" href="visit_8cpp_source.html">visit.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00784">body</a>, <a class="el" href="ast_8hpp_source.html#l00782">fields</a>, <a class="el" href="ast_8hpp_source.html#l00781">name</a>, <a class="el" href="ast_8hpp_source.html#l00783">type_args</a>, and <a class="el" href="visit_8cpp_source.html#l00015">visitor</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00791">body</a>, <a class="el" href="ast_8hpp_source.html#l00789">fields</a>, <a class="el" href="ast_8hpp_source.html#l00792">implements</a>, <a class="el" href="ast_8hpp_source.html#l00793">is_interface</a>, <a class="el" href="ast_8hpp_source.html#l00788">name</a>, <a class="el" href="ast_8hpp_source.html#l00790">type_args</a>, and <a class="el" href="visit_8cpp_source.html#l00015">visitor</a>.</p>
 
 </div>
 </div>
@@ -373,9 +392,9 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00784">784</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00791">791</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="vals_8hpp_source.html#l00133">yume::Struct::body()</a>, <a class="el" href="ast_8cpp_source.html#l00097">clone()</a>, and <a class="el" href="visit_8cpp_source.html#l00094">visit()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="vals_8hpp_source.html#l00149">yume::Struct::body()</a>, <a class="el" href="ast_8cpp_source.html#l00097">clone()</a>, and <a class="el" href="visit_8cpp_source.html#l00095">visit()</a>.</p>
 
 </div>
 </div>
@@ -391,9 +410,45 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00782">782</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00789">789</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00097">clone()</a>, <a class="el" href="type__walker_8cpp_source.html#l00531">yume::semantic::TypeWalker::statement()</a>, and <a class="el" href="visit_8cpp_source.html#l00094">visit()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00097">clone()</a>, <a class="el" href="type__walker_8cpp_source.html#l00531">yume::semantic::TypeWalker::statement()</a>, and <a class="el" href="visit_8cpp_source.html#l00095">visit()</a>.</p>
+
+</div>
+</div>
+<a id="a76010059ddb1b7fa7e9d39bac12a1b41" name="a76010059ddb1b7fa7e9d39bac12a1b41"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a76010059ddb1b7fa7e9d39bac12a1b41">&#9670;&nbsp;</a></span>implements</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceyume_1_1ast.html#abbe8370067fd80e7639b21ac03c4c7f1">OptionalType</a> yume::ast::StructDecl::implements</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00792">792</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00097">clone()</a>, <a class="el" href="type__walker_8cpp_source.html#l00531">yume::semantic::TypeWalker::statement()</a>, and <a class="el" href="visit_8cpp_source.html#l00095">visit()</a>.</p>
+
+</div>
+</div>
+<a id="a8acb4e7d0ed9fbc6bd7ca1068e885e44" name="a8acb4e7d0ed9fbc6bd7ca1068e885e44"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8acb4e7d0ed9fbc6bd7ca1068e885e44">&#9670;&nbsp;</a></span>is_interface</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool yume::ast::StructDecl::is_interface</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00793">793</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00097">clone()</a>, and <a class="el" href="visit_8cpp_source.html#l00095">visit()</a>.</p>
 
 </div>
 </div>
@@ -409,9 +464,9 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00781">781</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00788">788</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00097">clone()</a>, <a class="el" href="vals_8cpp_source.html#l00060">yume::Struct::name()</a>, and <a class="el" href="visit_8cpp_source.html#l00094">visit()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00097">clone()</a>, <a class="el" href="vals_8cpp_source.html#l00060">yume::Struct::name()</a>, and <a class="el" href="visit_8cpp_source.html#l00095">visit()</a>.</p>
 
 </div>
 </div>
@@ -427,9 +482,9 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00783">783</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00790">790</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00097">clone()</a>, and <a class="el" href="visit_8cpp_source.html#l00094">visit()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00097">clone()</a>, and <a class="el" href="visit_8cpp_source.html#l00095">visit()</a>.</p>
 
 </div>
 </div>
