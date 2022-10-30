@@ -1155,7 +1155,7 @@ template <> auto Compiler::expression(ast::LambdaExpr& expr) -> Val {
   }
 
   body_statement(expr.body);
-  if (m_builder->GetInsertBlock()->getTerminator() == nullptr && !fn.llvm->getReturnType()->isVoidTy())
+  if (m_builder->GetInsertBlock()->getTerminator() == nullptr)
     m_builder->CreateRetVoid();
 
   m_scope = saved_scope;
