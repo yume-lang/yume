@@ -1,0 +1,22 @@
+interface Greeter
+  def greet(self, fn ->(U8[])) = abstract
+end
+
+def greet_world(greeter Greeter)
+  greeter.greet(def (message U8[]) = printf(message.c_str.unsafe_ptr))
+  puts("World")
+end
+
+struct HelloGreeter is Greeter
+  def @override greet(self, fn ->(U8[])) = fn->("Hello, ")
+end
+
+struct HiGreeter is Greeter
+  def @override greet(self, fn ->(U8[])) = fn->("Hi, ")
+end
+
+def main() I32
+  greet_world(HelloGreeter())
+  greet_world(HiGreeter())
+  return 0
+end

@@ -535,6 +535,9 @@ template <> void TypeWalker::statement(ast::StructDecl& stat) {
 
   for (auto& i : stat.fields)
     expression(i);
+
+  if (stat.implements)
+    expression(*stat.implements);
 }
 
 template <> void TypeWalker::statement(ast::FnDecl& stat) {
@@ -705,7 +708,7 @@ auto TypeWalker::convert_type(ast::Type& ast_type) -> ty::Type {
     return convert_type(*qual_type->base).known_qual(qualifier);
   } else if (isa<ast::SelfType>(ast_type)) {
     if (parent)
-      return *parent;
+      return {parent->base(), parent->is_mut(), current_decl.opaque_self()};
   } else if (auto* proxy_type = dyn_cast<ast::ProxyType>(&ast_type)) {
     if (parent) {
       if (const auto* parent_struct = parent->base_dyn_cast<ty::Struct>()) {

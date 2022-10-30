@@ -86,6 +86,7 @@ struct Fn {
   [[nodiscard]] auto args() const -> vector<FnArg>;
   [[nodiscard]] auto varargs() const -> bool;
   [[nodiscard]] auto primitive() const -> bool;
+  [[nodiscard]] auto abstract() const -> bool;
   [[nodiscard]] auto extern_decl() const -> bool;
   [[nodiscard]] auto local() const -> bool;
   [[nodiscard]] auto extern_linkage() const -> bool;
@@ -110,6 +111,16 @@ private:
   }
 };
 
+struct VTableEntry {
+  using self_type_t = std::monostate;
+  using Type = std::variant<ty::Type, self_type_t>;
+  string name;
+  vector<Type> args;
+  optional<Type> ret;
+
+  auto operator<=>(const VTableEntry& other) const noexcept = default;
+};
+
 /// A struct declaration in the compiler.
 /**
  * Very similar to `Fn`, the primary use of this structure is to bind together the AST declaration of a struct
@@ -126,6 +137,8 @@ struct Struct {
   /// If this is an instantiation of a template, a mapping between type variables and their substitutions.
   Substitution subs{};
   std::map<Substitution, unique_ptr<Struct>> instantiations{};
+  std::vector<VTableEntry> vtable_members{};
+  nullable<llvm::GlobalVariable*> vtable_memo{};
 
   Struct(ast::StructDecl& ast_decl, ast::Program* member, optional<ty::Type> type = std::nullopt,
          Substitution subs = {}, vector<unique_ptr<ty::Generic>> type_args = {}) noexcept
@@ -222,6 +235,11 @@ public:
   [[nodiscard]] auto self_ty() const noexcept -> optional<ty::Type> {
     return visit([](std::monostate /*absent*/) noexcept { return optional<ty::Type>{}; },
                  [](const auto* decl) noexcept { return decl->get_self_ty(); });
+  };
+
+  [[nodiscard]] auto opaque_self() const noexcept -> bool {
+    return visit([](Fn* fn) noexcept { return fn->abstract() || fn->has_annotation(ast::FnDecl::ANN_OVERRIDE); },
+                 [](auto&& /* default */) noexcept { return false; });
   };
 };
 

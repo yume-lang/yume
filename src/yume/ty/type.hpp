@@ -96,6 +96,8 @@ public:
   [[nodiscard]] auto fields() -> auto& { return m_fields; }
   [[nodiscard]] auto subs() const -> const auto& { return *m_subs; }
   [[nodiscard]] auto decl() const -> nonnull<yume::Struct*> { return m_decl; }
+  [[nodiscard]] auto is_interface() const -> bool;
+  [[nodiscard]] auto implements() const -> const ast::OptionalType&;
   [[nodiscard]] auto name() const -> string override;
   [[nodiscard]] auto memo() const -> auto* { return m_memo; }
   void memo(Compiler& /* key */, llvm::Type* memo) const { m_memo = memo; }
@@ -152,5 +154,17 @@ public:
   explicit Generic(string name) : BaseType(K_Generic, move(name)) {}
   [[nodiscard]] auto name() const -> string override { return base_name(); };
   static auto classof(const BaseType* a) -> bool { return a->kind() == K_Generic; }
+};
+
+/// The "self" type of abstract or overriding functions. An extra layer of indirection is introduced for type erasure
+class OpaqueSelf final : public BaseType {
+private:
+  BaseType* m_indirect;
+
+public:
+  explicit OpaqueSelf(BaseType* indirect) : BaseType(K_OpaqueSelf, indirect->name()), m_indirect(indirect) {}
+  [[nodiscard]] auto name() const -> string override { return base_name(); };
+  [[nodiscard]] auto indirect() const -> BaseType* { return m_indirect; };
+  static auto classof(const BaseType* a) -> bool { return a->kind() == K_OpaqueSelf; }
 };
 } // namespace yume::ty

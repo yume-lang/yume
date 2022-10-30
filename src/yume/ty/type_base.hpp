@@ -13,13 +13,14 @@ struct Sub;
 class Type;
 
 enum Kind {
-  K_Unknown,  ///< `UnknownType`, default, zero value. Hopefully never encountered!
-  K_Int,      ///< `Int`
-  K_Nil,      ///< `Nil`
-  K_Ptr,      ///< `Ptr`
-  K_Struct,   ///< `Struct`
-  K_Function, ///< `Function`
-  K_Generic,  ///< `Generic`
+  K_Unknown,    ///< `UnknownType`, default, zero value. Hopefully never encountered!
+  K_Int,        ///< `Int`
+  K_Nil,        ///< `Nil`
+  K_Ptr,        ///< `Ptr`
+  K_Struct,     ///< `Struct`
+  K_Function,   ///< `Function`
+  K_Generic,    ///< `Generic`
+  K_OpaqueSelf, ///< `OpaqueSelf`
 };
 
 /// Represents a type in the type system.
@@ -63,8 +64,11 @@ protected:
 class Type {
   nonnull<const BaseType*> m_base;
   bool m_mut{};
+  bool m_opaque_self{};
 
 public:
+  Type(nonnull<const BaseType*> base, bool mut, bool opaque_self) noexcept
+      : m_base(base), m_mut(mut), m_opaque_self(opaque_self) {}
   Type(nonnull<const BaseType*> base, bool mut) noexcept : m_base(base), m_mut(mut) {}
   Type(nonnull<const BaseType*> base) noexcept : m_base(base) {}
 
@@ -106,6 +110,7 @@ public:
   [[nodiscard]] auto is_mut() const noexcept -> bool { return m_mut; };
   [[nodiscard]] auto is_slice() const noexcept -> bool;
   [[nodiscard]] auto is_generic() const noexcept -> bool;
+  [[nodiscard]] auto is_opaque_self() const noexcept -> bool { return m_opaque_self; };
 
   [[nodiscard]] auto is_trivially_destructible() const -> bool;
 

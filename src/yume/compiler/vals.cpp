@@ -95,6 +95,9 @@ auto Fn::varargs() const -> bool {
 auto Fn::primitive() const -> bool {
   return def.visit([](ast::FnDecl* fn) { return fn->primitive(); }, always_false);
 }
+auto Fn::abstract() const -> bool {
+  return def.visit([](ast::FnDecl* fn) { return fn->abstract(); }, always_false);
+}
 auto Fn::extern_decl() const -> bool {
   return def.visit([](ast::FnDecl* fn) { return fn->extern_decl(); }, always_false);
 }

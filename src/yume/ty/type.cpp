@@ -1,5 +1,6 @@
 #include "type.hpp"
 #include "ast/ast.hpp"
+#include "compiler/vals.hpp"
 #include "qualifier.hpp"
 #include "ty/compatibility.hpp"
 #include "ty/substitution.hpp"
@@ -149,9 +150,27 @@ auto Type::compatibility(Type other, Compat compat) const -> Compat {
     if (this_fn->m_args == other_fn->m_args && this_fn->m_ret == other_fn->m_ret && this_fn->m_closure.empty() &&
         !this_fn->m_fn_ptr && other_fn->m_fn_ptr) {
       compat.valid = true;
-      compat.conv.kind = Conv::Kind::FnPtr;
+      compat.conv.kind = Conv::FnPtr;
       return compat;
     }
+  }
+
+  // A struct type which implements an interface can be casted to said interface.
+  if (const auto this_st = base_dyn_cast<Struct>(), other_st = other.base_dyn_cast<Struct>();
+      (this_st != nullptr) && (other_st != nullptr) && (other_st->is_interface()) &&
+      (this_st->implements().has_value()) && (this_st->implements()->ensure_ty() == other.m_base)) {
+    compat.valid = true;
+    compat.conv.kind = Conv::Virtual;
+    return compat;
+  }
+
+  // An interface is essentially always opaque, and thus can be implicitly converted to be "opaque"
+  if (const auto this_st = base_dyn_cast<Struct>(), other_st = other.base_dyn_cast<Struct>();
+      (this_st != nullptr) && (other_st != nullptr) && (this_st->is_interface()) && !this->is_opaque_self() &&
+      other.is_opaque_self() && (this_st == other_st)) {
+    // TODO(rymiel): should this recurse?
+    compat.valid = true;
+    return compat;
   }
 
   return compat;
@@ -239,6 +258,10 @@ auto Struct::emplace_subbed(Substitution sub) const -> const Struct& {
   return *existing->second;
 }
 
+auto Struct::is_interface() const -> bool { return m_decl->st_ast.is_interface; }
+
+auto Struct::implements() const -> const ast::OptionalType& { return m_decl->st_ast.implements; }
+
 auto Type::mut_base() const noexcept -> optional<Type> {
   if (is_mut())
     return Type(m_base);
@@ -288,9 +311,12 @@ auto Type::intersect(Type other) const noexcept -> optional<Type> {
 auto Type::without_mut() const noexcept -> Type { return {m_base}; }
 
 auto Type::name() const -> string {
+  auto name = m_base->name();
   if (m_mut)
-    return m_base->name() + qual_suffix(Qualifier::Mut);
-  return m_base->name();
+    name += qual_suffix(Qualifier::Mut);
+  if (m_opaque_self)
+    name += " opaque";
+  return name;
 }
 auto Type::base_name() const -> string { return m_base->name(); }
 

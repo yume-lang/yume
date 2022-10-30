@@ -712,6 +712,7 @@ public:
   };
 
   static constexpr auto ANN_EXTERN = "extern";
+  static constexpr auto ANN_OVERRIDE = "override";
 
   string name;
   std::set<string> annotations;
@@ -739,6 +740,7 @@ public:
   [[nodiscard]] auto extern_decl() const -> bool { return holds_alternative<extern_decl_t>(body); }
   [[nodiscard]] auto abstract() const -> bool { return holds_alternative<abstract_decl_t>(body); }
   [[nodiscard]] auto extern_linkage() const -> bool { return extern_decl() || annotations.contains(ANN_EXTERN); }
+  [[nodiscard]] auto override() const -> bool { return annotations.contains(ANN_OVERRIDE); }
   void make_extern_linkage(bool value = true) {
     if (value)
       annotations.emplace(ANN_EXTERN);

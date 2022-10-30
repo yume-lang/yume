@@ -179,7 +179,12 @@ void Compiler::run() {
   for (auto& fn : m_fns)
     walk_types(&fn);
 
-  // 6: convert everything else, but only when instantiated
+  // 6: Create vtables for interfaces
+  for (auto& st : m_structs)
+    if (st.ast().is_interface)
+      create_vtable_for(st);
+
+  // 7: convert everything else, but only when instantiated
   m_walker->in_depth = true;
 
   for (auto& cn : m_consts) {
@@ -225,6 +230,41 @@ void Compiler::walk_types(DeclLike decl_like) {
                     m_walker->body_statement(decl->ast());
                     m_walker->current_decl = {};
                   });
+}
+
+static inline auto vtable_entry_for(const Fn& fn) -> VTableEntry {
+  auto args = vector<VTableEntry::Type>{};
+  auto ret = optional<VTableEntry::Type>{};
+  for (const auto& i : fn.arg_types()) {
+    if (i.is_opaque_self())
+      args.emplace_back(VTableEntry::self_type_t{});
+    else
+      args.emplace_back(i);
+  }
+  if (fn.ret().has_value()) {
+    if (fn.ret()->is_opaque_self())
+      ret = VTableEntry::self_type_t{};
+    else
+      ret = *fn.ret();
+  }
+  return {.name = fn.name(), .args = args, .ret = ret};
+}
+
+void Compiler::create_vtable_for(Struct& st) {
+  yume_assert(st.ast().is_interface, "Cannot create vtable for non-interface struct");
+
+  for (auto& i : st.body()) {
+    if (auto* fn_ast = dyn_cast<ast::FnDecl>(i.raw_ptr())) {
+      if (!fn_ast->abstract())
+        continue;
+      auto* fn = fn_ast->sema_decl;
+      yume_assert(fn != nullptr, "Semantic Fn not set in FnDecl AST node");
+
+      (void)llvm_type(fn->fn_ty);
+      errs() << st.name() << ": " << fn->name() << " -> " << *fn->fn_ty->fn_memo() << "\n";
+      st.vtable_members.emplace_back(vtable_entry_for(*fn));
+    }
+  }
 }
 
 auto Compiler::create_struct(Struct& st) -> bool {
@@ -346,8 +386,26 @@ static auto build_function_type(Compiler& compiler, const ty::Function& type) ->
   return memo;
 }
 
+static auto build_struct_type(Compiler& compiler, const ty::Struct& type) -> std::pair<llvm::Type*, bool> {
+  llvm::Type* memo = nullptr;
+  bool is_interface = false;
+  if (type.is_interface()) {
+    memo = llvm::StructType::get(compiler.builder()->getInt8PtrTy(), compiler.builder()->getInt8PtrTy());
+    is_interface = true;
+  } else {
+    auto fields = vector<llvm::Type*>{};
+    for (const auto* i : type.fields())
+      fields.push_back(compiler.llvm_type(i->type->ensure_ty()));
+
+    memo = llvm::StructType::create(*compiler.context(), fields, "_"s + type.name());
+  }
+  type.memo(compiler, memo);
+  return {memo, is_interface};
+}
+
 auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
   llvm::Type* base = nullptr;
+  bool interface_self = false;
 
   if (const auto* int_type = type.base_dyn_cast<ty::Int>()) {
     base = llvm::Type::getIntNTy(*m_context, int_type->size());
@@ -355,15 +413,9 @@ auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
     yume_assert(ptr_type->qualifier() == Qualifier::Ptr, "Ptr type must hold pointer");
     base = llvm::PointerType::getUnqual(llvm_type(ptr_type->pointee()));
   } else if (const auto* struct_type = type.base_dyn_cast<ty::Struct>()) {
-    auto* memo = struct_type->memo();
-    if (memo == nullptr) {
-      auto fields = vector<llvm::Type*>{};
-      for (const auto* i : struct_type->fields())
-        fields.push_back(llvm_type(i->type->ensure_ty()));
-
-      memo = llvm::StructType::create(*m_context, fields, "_"s + struct_type->name());
-      struct_type->memo(memo);
-    }
+    llvm::Type* memo = struct_type->memo();
+    if (memo == nullptr)
+      std::tie(memo, interface_self) = build_struct_type(*this, *struct_type);
 
     base = memo;
   } else if (const auto* function_type = type.base_dyn_cast<ty::Function>()) {
@@ -379,6 +431,8 @@ auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
   }
 
   if (type.is_mut())
+    return base->getPointerTo();
+  if (type.is_opaque_self() && !interface_self) // TODO(rymiel): how do opaque and mut interact?
     return base->getPointerTo();
   return base;
 }
@@ -535,6 +589,9 @@ void Compiler::setup_fn_base(Fn& fn) {
   auto* bb = llvm::BasicBlock::Create(*m_context, "entry", fn.llvm);
   m_builder->SetInsertPoint(bb);
 
+  if (fn.abstract())
+    return; // Abstract methods don't have a real body and thus have no need to meaningfully use params as locals
+
   // If this function has a closure, it is the first parameter and will be skipped below
   auto arg_offset = fn.fn_ty->closure_memo() == nullptr ? 0 : 1;
   auto llvm_fn_args = llvm::drop_begin(fn.llvm->args(), arg_offset);
@@ -573,7 +630,54 @@ void Compiler::define(Const& cn) {
 void Compiler::define(Fn& fn) {
   setup_fn_base(fn);
 
-  if (isa<ast::FnDecl>(&fn.ast())) {
+  if (fn.abstract()) {
+    yume_assert(fn.self_ty.has_value(), "Abstract function must refer to a self type");
+    yume_assert(fn.self_ty->base_isa<ty::Struct>(), "Abstract function must be within a struct");
+    const auto* interface = fn.self_ty->base_cast<ty::Struct>()->decl();
+    yume_assert(interface != nullptr, "Struct not found from struct type?");
+    yume_assert(interface->ast().is_interface, "Abstract function must be within interface");
+
+    auto vtable_match = std::ranges::find(interface->vtable_members, vtable_entry_for(fn));
+    yume_assert(vtable_match != interface->vtable_members.end(), "abstract method not found in vtable?");
+    auto vtable_entry_index = std::distance(interface->vtable_members.begin(), vtable_match);
+
+    // TODO(rymiel): Kinda repetitive...?
+    auto vtable_deref_args = vector<llvm::Type*>();
+    auto* vtable_deref_ret = m_builder->getVoidTy();
+    for (const auto& arg : vtable_match->args) {
+      if (std::holds_alternative<ty::Type>(arg))
+        vtable_deref_args.emplace_back(llvm_type(std::get<ty::Type>(arg)));
+      else
+        vtable_deref_args.emplace_back(m_builder->getInt8PtrTy());
+    }
+    if (vtable_match->ret) {
+      if (std::holds_alternative<ty::Type>(*vtable_match->ret))
+        vtable_deref_ret = llvm_type(std::get<ty::Type>(*vtable_match->ret));
+      else
+        vtable_deref_ret = m_builder->getInt8PtrTy();
+    }
+
+    auto call_args = vector<llvm::Value*>();
+    call_args.push_back(m_builder->CreateExtractValue(fn.llvm->args().begin(), 1));
+    for (auto& extra_arg : llvm::drop_begin(fn.llvm->args()))
+      call_args.emplace_back(&extra_arg);
+
+    // TODO(LLVM MIN >= 15): A lot of bit-twiddling obsoleted by opaque pointers
+
+    auto* call_fn_type = llvm::FunctionType::get(vtable_deref_ret, vtable_deref_args, false);
+    auto* vtable_struct_ptr = m_builder->CreateExtractValue(fn.llvm->args().begin(), 0);
+    auto* vtable_ptr_array = m_builder->CreateBitCast(vtable_struct_ptr, m_builder->getInt8PtrTy()->getPointerTo());
+    auto* vtable_entry = m_builder->CreateLoad(
+        m_builder->getInt8PtrTy(),
+        m_builder->CreateConstGEP1_32(m_builder->getInt8PtrTy(), vtable_ptr_array, vtable_entry_index));
+    Val call_result = m_builder->CreateCall(
+        call_fn_type, m_builder->CreateBitCast(vtable_entry, call_fn_type->getPointerTo()), call_args);
+
+    if (call_result.llvm->getType()->isVoidTy())
+      m_builder->CreateRetVoid();
+    else
+      m_builder->CreateRet(call_result);
+  } else if (isa<ast::FnDecl>(&fn.ast())) {
     if (auto* body = get_if<ast::Compound>(&fn.fn_body()); body != nullptr) {
       statement(*body);
     }
@@ -687,7 +791,7 @@ template <> void Compiler::statement(ast::ReturnStmt& stat) {
     if (reset_owning != nullptr)
       reset_owning->owning = true; // The local variable may not be returned in all code paths, so reset its ownership
 
-    if (val.llvm->getType()->isVoidTy())
+    if (val.llvm->getType()->isVoidTy() || m_current_fn->llvm->getReturnType()->isVoidTy())
       m_builder->CreateRetVoid();
     else
       m_builder->CreateRet(val);
@@ -1051,7 +1155,7 @@ template <> auto Compiler::expression(ast::LambdaExpr& expr) -> Val {
   }
 
   body_statement(expr.body);
-  if (m_builder->GetInsertBlock()->getTerminator() == nullptr && !fn.fn_ty->m_ret.has_value())
+  if (m_builder->GetInsertBlock()->getTerminator() == nullptr && !fn.llvm->getReturnType()->isVoidTy())
     m_builder->CreateRetVoid();
 
   m_scope = saved_scope;
@@ -1285,13 +1389,9 @@ template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
       llvm_args.push_back(base.llvm);
       base.llvm = m_builder->CreateCall(llvm_fn, llvm_args);
     }
-  }
-
-  if (expr.conversion.kind == ty::Conv::Int) {
+  } else if (expr.conversion.kind == ty::Conv::Int) {
     return m_builder->CreateIntCast(base, llvm_type(target_ty), current_ty.base_cast<ty::Int>()->is_signed(), "ic.int");
-  }
-
-  if (expr.conversion.kind == ty::Conv::Kind::FnPtr) {
+  } else if (expr.conversion.kind == ty::Conv::FnPtr) {
     yume_assert(current_ty.base_isa<ty::Function>(), "fnptr conversion source must be a function type");
     yume_assert(isa<ast::LambdaExpr>(*expr.base), "fnptr conversion source must be a lambda");
     yume_assert(target_ty.base_isa<ty::Function>(), "fnptr conversion target must be a function type");
@@ -1317,6 +1417,64 @@ template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
     m_current_fn = saved_fn;
 
     return fn.llvm;
+  } else if (expr.conversion.kind == ty::Conv::Virtual) {
+    yume_assert(target_ty.base_isa<ty::Struct>(), "Virtual cast must cast into a struct type");
+    yume_assert(current_ty.base_isa<ty::Struct>(), "Virtual cast must cast from a struct type");
+    const auto* target_st_ty = target_ty.base_cast<ty::Struct>();
+    const auto* current_st_ty = current_ty.base_cast<ty::Struct>();
+
+    const auto* target_st = target_st_ty->decl();
+    yume_assert(target_st != nullptr, "Struct not found from struct type?");
+    yume_assert(target_st->ast().is_interface, "Virtual cast must cast into an interface type");
+
+    auto* current_st = current_st_ty->decl();
+    yume_assert(current_st != nullptr, "Struct not found from struct type?");
+
+    if (current_st->vtable_memo == nullptr) {
+      auto vtable_entries = vector<llvm::Constant*>();
+      auto vtable_types = vector<llvm::Type*>();
+      vtable_entries.resize(target_st->vtable_members.size());
+      vtable_types.resize(target_st->vtable_members.size());
+
+      for (const auto& i : current_st->body()) {
+        if (!isa<ast::FnDecl>(*i))
+          continue;
+
+        const auto& fn_ast = cast<ast::FnDecl>(*i);
+        auto* fn = fn_ast.sema_decl;
+        yume_assert(fn != nullptr, "Fn not found from fn ast?");
+
+        auto vtable_match = std::ranges::find(target_st->vtable_members, vtable_entry_for(*fn));
+        if (vtable_match == target_st->vtable_members.end())
+          continue;
+
+        auto index = std::distance(target_st->vtable_members.begin(), vtable_match);
+        vtable_entries[index] = declare(*fn);
+        vtable_types[index] = fn->fn_ty->memo();
+      }
+
+      auto* vtable_struct = llvm::ConstantStruct::getAnon(vtable_entries);
+      auto* vtable_global =
+          new llvm::GlobalVariable(*m_module, vtable_struct->getType(), true, llvm::GlobalVariable::PrivateLinkage,
+                                   vtable_struct, ".vtable." + target_st->name() + "." + current_st->name());
+      errs() << *vtable_global << "\n";
+      current_st->vtable_memo = vtable_global;
+    }
+
+    // TODO(rymiel): This probably needs extra logic for mutable types?
+    Val erased_original = entrypoint_builder().CreateAlloca(llvm_type(current_st_ty));
+    m_builder->CreateStore(base, erased_original);
+
+    auto* interface_struct_ty = llvm::StructType::get(m_builder->getInt8PtrTy(), m_builder->getInt8PtrTy());
+    Val interface_struct = llvm::UndefValue::get(interface_struct_ty);
+    interface_struct = m_builder->CreateInsertValue(
+        interface_struct, m_builder->CreateBitCast(current_st->vtable_memo, m_builder->getInt8PtrTy()), 0);
+    interface_struct = m_builder->CreateInsertValue(
+        interface_struct, m_builder->CreateBitCast(erased_original, m_builder->getInt8PtrTy()), 1);
+
+    return interface_struct;
+  } else {
+    throw std::logic_error("Invalid implicit conversion " + expr.conversion.to_string());
   }
 
   return base;

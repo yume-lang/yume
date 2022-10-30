@@ -129,6 +129,8 @@ private:
   /// Common code between defining functions and constructors. \see define .
   void setup_fn_base(Fn&);
 
+  void create_vtable_for(Struct&);
+
   /// Run the destructors for every owned local variable in the current scope. Should be run when exiting a scope.
   void destruct_last_scope();
   /// Run the destructors for every owned local variable in all scopes of the current function. Should be run when
