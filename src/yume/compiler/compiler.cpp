@@ -1389,9 +1389,15 @@ template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
       llvm_args.push_back(base.llvm);
       base.llvm = m_builder->CreateCall(llvm_fn, llvm_args);
     }
-  } else if (expr.conversion.kind == ty::Conv::Int) {
+  }
+
+  if (expr.conversion.kind == ty::Conv::None) {
+    return base;
+  }
+  if (expr.conversion.kind == ty::Conv::Int) {
     return m_builder->CreateIntCast(base, llvm_type(target_ty), current_ty.base_cast<ty::Int>()->is_signed(), "ic.int");
-  } else if (expr.conversion.kind == ty::Conv::FnPtr) {
+  }
+  if (expr.conversion.kind == ty::Conv::FnPtr) {
     yume_assert(current_ty.base_isa<ty::Function>(), "fnptr conversion source must be a function type");
     yume_assert(isa<ast::LambdaExpr>(*expr.base), "fnptr conversion source must be a lambda");
     yume_assert(target_ty.base_isa<ty::Function>(), "fnptr conversion target must be a function type");
@@ -1417,7 +1423,8 @@ template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
     m_current_fn = saved_fn;
 
     return fn.llvm;
-  } else if (expr.conversion.kind == ty::Conv::Virtual) {
+  }
+  if (expr.conversion.kind == ty::Conv::Virtual) {
     yume_assert(target_ty.base_isa<ty::Struct>(), "Virtual cast must cast into a struct type");
     yume_assert(current_ty.base_isa<ty::Struct>(), "Virtual cast must cast from a struct type");
     const auto* target_st_ty = target_ty.base_cast<ty::Struct>();
@@ -1473,11 +1480,8 @@ template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
         interface_struct, m_builder->CreateBitCast(erased_original, m_builder->getInt8PtrTy()), 1);
 
     return interface_struct;
-  } else {
-    throw std::logic_error("Invalid implicit conversion " + expr.conversion.to_string());
   }
-
-  return base;
+  throw std::runtime_error("Unknown implicit conversion " + expr.conversion.to_string());
 }
 
 void Compiler::write_object(const char* filename, bool binary) {
