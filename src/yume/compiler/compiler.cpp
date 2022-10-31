@@ -1437,6 +1437,7 @@ template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
     auto* current_st = current_st_ty->decl();
     yume_assert(current_st != nullptr, "Struct not found from struct type?");
 
+    // TODO(rymiel): Extract out
     if (current_st->vtable_memo == nullptr) {
       auto vtable_entries = vector<llvm::Constant*>();
       auto vtable_types = vector<llvm::Type*>();
@@ -1458,6 +1459,21 @@ template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
         auto index = std::distance(target_st->vtable_members.begin(), vtable_match);
         vtable_entries[index] = declare(*fn);
         vtable_types[index] = fn->fn_ty->memo();
+      }
+
+      if (std::ranges::any_of(vtable_entries, [](auto* ptr) { return ptr == nullptr; })) {
+        std::stringstream str;
+        str << "The struct `" << current_st->name() << "' implements the interface `" << target_st->name()
+            << "', but does not implement an abstract method.\n";
+        str << "These abstract methods were unimplemented:";
+        for (const auto& i : llvm::enumerate(vtable_entries)) {
+          if (i.value() != nullptr)
+            continue;
+
+          // TODO(rymiel): Also write the types, as there can be overloads
+          str << "\n  " << target_st->vtable_members.at(i.index()).name;
+        }
+        throw std::runtime_error(str.str());
       }
 
       auto* vtable_struct = llvm::ConstantStruct::getAnon(vtable_entries);
