@@ -8,7 +8,7 @@ var searchData=
   ['in_5fdepth_5',['in_depth',['../structyume_1_1semantic_1_1TypeWalker.html#af9a74becf44b236bec8bf38365735c59',1,'yume::semantic::TypeWalker']]],
   ['in_5frange_6',['in_range',['../classyume_1_1ty_1_1Int.html#aa6b55d0d47254db19fdff7428f4e0f07',1,'yume::ty::Int']]],
   ['index_7',['index',['../structyume_1_1Token.html#a559dd11a57e8fcb30382803050da5d24',1,'yume::Token::index()'],['../structyume_1_1TokenState.html#ae28aa12a65948f99f52c4c0708bd0103',1,'yume::TokenState::index()']]],
-  ['indirect_8',['indirect',['../namespaceyume_1_1semantic.html#ab3220834a177744682338bd9cf424009',1,'yume::semantic::indirect()'],['../classyume_1_1ty_1_1OpaqueSelf.html#a740bd3956587fb8a0fbcedd70d4063ed',1,'yume::ty::OpaqueSelf::indirect()']]],
+  ['indirect_8',['indirect',['../namespaceyume_1_1semantic.html#ab3220834a177744682338bd9cf424009',1,'yume::semantic::indirect()'],['../classyume_1_1ty_1_1OpaqueSelf.html#a6848493b96da6d8516e9bd558e9e815e',1,'yume::ty::OpaqueSelf::indirect()']]],
   ['init_9',['init',['../structyume_1_1ast_1_1VarDecl.html#a5386cda718a47dcc47e6f0a25bc13414',1,'yume::ast::VarDecl::init()'],['../structyume_1_1ast_1_1ConstDecl.html#a9fd253ed15dc624e2beaa2b090013739',1,'yume::ast::ConstDecl::init()']]],
   ['inscope_10',['InScope',['../structyume_1_1InScope.html',1,'yume']]],
   ['instantiations_11',['instantiations',['../structyume_1_1Fn.html#a1e93d5e55cf14fb68ef3e9809ada66bb',1,'yume::Fn::instantiations()'],['../structyume_1_1Struct.html#a44ab678362978025805488845bc31dbc',1,'yume::Struct::instantiations()']]],

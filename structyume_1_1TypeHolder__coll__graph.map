@@ -1,5 +1,5 @@
 <map id="yume::TypeHolder" name="yume::TypeHolder">
-<area shape="rect" id="node1" title=" " alt="" coords="835,186,960,213"/>
+<area shape="rect" id="node1" title=" " alt="" coords="835,221,960,247"/>
 <area shape="rect" id="node2" title=" " alt="" coords="469,5,633,47"/>
 <area shape="rect" id="node3" href="$classyume_1_1ty_1_1Int.html" title="A built&#45;in integral type, such as I32 or Bool." alt="" coords="285,126,376,153"/>
 <area shape="rect" id="node5" href="$structyume_1_1TypeHolder_1_1IntTypePair.html" title=" " alt="" coords="452,134,649,161"/>
@@ -9,4 +9,5 @@
 <area shape="rect" id="node8" title=" " alt="" coords="467,248,634,289"/>
 <area shape="rect" id="node9" title=" " alt="" coords="471,313,630,355"/>
 <area shape="rect" id="node10" title=" " alt="" coords="467,379,634,420"/>
+<area shape="rect" id="node11" title=" " alt="" coords="473,444,628,515"/>
 </map>

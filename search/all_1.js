@@ -25,6 +25,6 @@ var searchData=
   ['bool_5ftype_22',['bool_type',['../structyume_1_1TypeHolder.html#a4dee7d7520cf8565a4c3c94f892d7102',1,'yume::TypeHolder']]],
   ['boolexpr_23',['BoolExpr',['../structyume_1_1ast_1_1BoolExpr.html#a18a8f83f0b5166b512a6246e066ca928',1,'yume::ast::BoolExpr::BoolExpr()'],['../structyume_1_1ast_1_1BoolExpr.html',1,'yume::ast::BoolExpr']]],
   ['build_5ffunction_5ftype_24',['build_function_type',['../namespaceyume.html#a9cf917af5859cc17a4ea16e3637d8c66',1,'yume']]],
-  ['build_5fstruct_5ftype_25',['build_struct_type',['../namespaceyume.html#a91839861cedcd1bbc48aa97b1a8aeb7f',1,'yume']]],
+  ['build_5fstruct_5ftype_25',['build_struct_type',['../namespaceyume.html#a8b05473663a080e87ab849bbb70e96af',1,'yume']]],
   ['builder_26',['builder',['../classyume_1_1Compiler.html#a109cd6d1aa9210fc70485c0bea7f7ccb',1,'yume::Compiler']]]
 ];

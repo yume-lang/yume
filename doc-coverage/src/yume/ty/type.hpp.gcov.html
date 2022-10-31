@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-10-30 13:39:59</td>
+            <td class="headerValue">2022-10-31 03:06:32</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -217,12 +217,12 @@
 <a name="159"><span class="lineNum">     159 </span>            : /// The &quot;self&quot; type of abstract or overriding functions. An extra layer of indirection is introduced for type erasure</a>
 <a name="160"><span class="lineNum">     160 </span><span class="lineCov">          1 : class OpaqueSelf final : public BaseType {</span></a>
 <a name="161"><span class="lineNum">     161 </span>            : private:</a>
-<a name="162"><span class="lineNum">     162 </span><span class="lineNoCov">          0 :   BaseType* m_indirect;</span></a>
+<a name="162"><span class="lineNum">     162 </span><span class="lineNoCov">          0 :   const BaseType* m_indirect;</span></a>
 <a name="163"><span class="lineNum">     163 </span>            : </a>
 <a name="164"><span class="lineNum">     164 </span>            : public:</a>
-<a name="165"><span class="lineNum">     165 </span><span class="lineNoCov">          0 :   explicit OpaqueSelf(BaseType* indirect) : BaseType(K_OpaqueSelf, indirect-&gt;name()), m_indirect(indirect) {}</span></a>
+<a name="165"><span class="lineNum">     165 </span><span class="lineNoCov">          0 :   explicit OpaqueSelf(const BaseType* indirect) : BaseType(K_OpaqueSelf, indirect-&gt;name()), m_indirect(indirect) {}</span></a>
 <a name="166"><span class="lineNum">     166 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto name() const -&gt; string override { return base_name(); };</span></a>
-<a name="167"><span class="lineNum">     167 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto indirect() const -&gt; BaseType* { return m_indirect; };</span></a>
+<a name="167"><span class="lineNum">     167 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto indirect() const -&gt; const BaseType* { return m_indirect; };</span></a>
 <a name="168"><span class="lineNum">     168 </span>            :   static auto classof(const BaseType* a) -&gt; bool { return a-&gt;kind() == K_OpaqueSelf; }</a>
 <a name="169"><span class="lineNum">     169 </span>            : };</a>
 <a name="170"><span class="lineNum">     170 </span>            : } // namespace yume::ty</a>

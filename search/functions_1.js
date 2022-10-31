@@ -16,6 +16,6 @@ var searchData=
   ['body_5fstatement_13',['body_statement',['../structyume_1_1CRTPWalker.html#a4f90b769f01e8ddb4064a6cb2139c3d7',1,'yume::CRTPWalker::body_statement()'],['../classyume_1_1Compiler.html#a1f8bd5af2583dbbbf7e1df003d91a322',1,'yume::Compiler::body_statement()'],['../structyume_1_1semantic_1_1TypeWalker.html#aa2f528e3a660e2d13e79f5a755b624d2',1,'yume::semantic::TypeWalker::body_statement()']]],
   ['boolexpr_14',['BoolExpr',['../structyume_1_1ast_1_1BoolExpr.html#a18a8f83f0b5166b512a6246e066ca928',1,'yume::ast::BoolExpr']]],
   ['build_5ffunction_5ftype_15',['build_function_type',['../namespaceyume.html#a9cf917af5859cc17a4ea16e3637d8c66',1,'yume']]],
-  ['build_5fstruct_5ftype_16',['build_struct_type',['../namespaceyume.html#a91839861cedcd1bbc48aa97b1a8aeb7f',1,'yume']]],
+  ['build_5fstruct_5ftype_16',['build_struct_type',['../namespaceyume.html#a8b05473663a080e87ab849bbb70e96af',1,'yume']]],
   ['builder_17',['builder',['../classyume_1_1Compiler.html#a109cd6d1aa9210fc70485c0bea7f7ccb',1,'yume::Compiler']]]
 ];
