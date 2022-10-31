@@ -707,8 +707,11 @@ auto TypeWalker::convert_type(ast::Type& ast_type) -> ty::Type {
     auto qualifier = qual_type->qualifier;
     return convert_type(*qual_type->base).known_qual(qualifier);
   } else if (isa<ast::SelfType>(ast_type)) {
-    if (parent)
-      return {parent->base(), parent->is_mut(), current_decl.opaque_self()};
+    if (parent) {
+      if (current_decl.opaque_self())
+        return {compiler.m_types.find_or_create_opaque_wrapper(parent->base()), parent->is_mut()};
+      return {parent->base(), parent->is_mut()};
+    }
   } else if (auto* proxy_type = dyn_cast<ast::ProxyType>(&ast_type)) {
     if (parent) {
       if (const auto* parent_struct = parent->base_dyn_cast<ty::Struct>()) {

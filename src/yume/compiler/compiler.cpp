@@ -233,21 +233,7 @@ void Compiler::walk_types(DeclLike decl_like) {
 }
 
 static inline auto vtable_entry_for(const Fn& fn) -> VTableEntry {
-  auto args = vector<VTableEntry::Type>{};
-  auto ret = optional<VTableEntry::Type>{};
-  for (const auto& i : fn.arg_types()) {
-    if (i.is_opaque_self())
-      args.emplace_back(VTableEntry::self_type_t{});
-    else
-      args.emplace_back(i);
-  }
-  if (fn.ret().has_value()) {
-    if (fn.ret()->is_opaque_self())
-      ret = VTableEntry::self_type_t{};
-    else
-      ret = *fn.ret();
-  }
-  return {.name = fn.name(), .args = args, .ret = ret};
+  return {.name = fn.name(), .args = fn.arg_types(), .ret = fn.ret()};
 }
 
 void Compiler::create_vtable_for(Struct& st) {
@@ -386,12 +372,10 @@ static auto build_function_type(Compiler& compiler, const ty::Function& type) ->
   return memo;
 }
 
-static auto build_struct_type(Compiler& compiler, const ty::Struct& type) -> std::pair<llvm::Type*, bool> {
+static auto build_struct_type(Compiler& compiler, const ty::Struct& type) -> llvm::Type* {
   llvm::Type* memo = nullptr;
-  bool is_interface = false;
   if (type.is_interface()) {
     memo = llvm::StructType::get(compiler.builder()->getInt8PtrTy(), compiler.builder()->getInt8PtrTy());
-    is_interface = true;
   } else {
     auto fields = vector<llvm::Type*>{};
     for (const auto* i : type.fields())
@@ -400,7 +384,7 @@ static auto build_struct_type(Compiler& compiler, const ty::Struct& type) -> std
     memo = llvm::StructType::create(*compiler.context(), fields, "_"s + type.name());
   }
   type.memo(compiler, memo);
-  return {memo, is_interface};
+  return memo;
 }
 
 auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
@@ -415,7 +399,7 @@ auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
   } else if (const auto* struct_type = type.base_dyn_cast<ty::Struct>()) {
     llvm::Type* memo = struct_type->memo();
     if (memo == nullptr)
-      std::tie(memo, interface_self) = build_struct_type(*this, *struct_type);
+      memo = build_struct_type(*this, *struct_type);
 
     base = memo;
   } else if (const auto* function_type = type.base_dyn_cast<ty::Function>()) {
@@ -426,6 +410,10 @@ auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
     base = memo;
   } else if (type.base_isa<ty::Nil>()) {
     base = llvm::Type::getVoidTy(*m_context);
+  } else if (const auto* opaque_self_type = type.base_dyn_cast<ty::OpaqueSelf>()) {
+    base = llvm_type({opaque_self_type->indirect()});
+    interface_self = llvm::isa<ty::Struct>(opaque_self_type->indirect()) &&
+                     llvm::cast<ty::Struct>(opaque_self_type->indirect())->is_interface();
   } else {
     throw std::logic_error("Unknown type base " + type.name());
   }
@@ -641,23 +629,16 @@ void Compiler::define(Fn& fn) {
     yume_assert(vtable_match != interface->vtable_members.end(), "abstract method not found in vtable?");
     auto vtable_entry_index = std::distance(interface->vtable_members.begin(), vtable_match);
 
-    // TODO(rymiel): Kinda repetitive...?
     auto vtable_deref_args = vector<llvm::Type*>();
     auto* vtable_deref_ret = m_builder->getVoidTy();
-    for (const auto& arg : vtable_match->args) {
-      if (std::holds_alternative<ty::Type>(arg))
-        vtable_deref_args.emplace_back(llvm_type(std::get<ty::Type>(arg)));
-      else
-        vtable_deref_args.emplace_back(m_builder->getInt8PtrTy());
-    }
-    if (vtable_match->ret) {
-      if (std::holds_alternative<ty::Type>(*vtable_match->ret))
-        vtable_deref_ret = llvm_type(std::get<ty::Type>(*vtable_match->ret));
-      else
-        vtable_deref_ret = m_builder->getInt8PtrTy();
-    }
+    for (const auto& arg : vtable_match->args)
+      vtable_deref_args.emplace_back(llvm_type(arg));
+    if (vtable_match->ret)
+      vtable_deref_ret = llvm_type(*vtable_match->ret);
 
     auto call_args = vector<llvm::Value*>();
+    errs() << *fn.llvm << "\n";
+    auto foo = fn.args();
     call_args.push_back(m_builder->CreateExtractValue(fn.llvm->args().begin(), 1));
     for (auto& extra_arg : llvm::drop_begin(fn.llvm->args()))
       call_args.emplace_back(&extra_arg);

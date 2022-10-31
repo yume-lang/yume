@@ -159,12 +159,12 @@ public:
 /// The "self" type of abstract or overriding functions. An extra layer of indirection is introduced for type erasure
 class OpaqueSelf final : public BaseType {
 private:
-  BaseType* m_indirect;
+  const BaseType* m_indirect;
 
 public:
-  explicit OpaqueSelf(BaseType* indirect) : BaseType(K_OpaqueSelf, indirect->name()), m_indirect(indirect) {}
+  explicit OpaqueSelf(const BaseType* indirect) : BaseType(K_OpaqueSelf, indirect->name()), m_indirect(indirect) {}
   [[nodiscard]] auto name() const -> string override { return base_name(); };
-  [[nodiscard]] auto indirect() const -> BaseType* { return m_indirect; };
+  [[nodiscard]] auto indirect() const -> const BaseType* { return m_indirect; };
   static auto classof(const BaseType* a) -> bool { return a->kind() == K_OpaqueSelf; }
 };
 } // namespace yume::ty

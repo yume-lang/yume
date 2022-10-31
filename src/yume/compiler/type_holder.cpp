@@ -61,4 +61,11 @@ auto TypeHolder::find_or_create_fn_ptr_type(const vector<ty::Type>& args, option
       fn_types.emplace_back(std::make_unique<ty::Function>("", args, ret, vector<ty::Type>{}, true, c_varargs));
   return new_fn.get();
 }
+
+auto TypeHolder::find_or_create_opaque_wrapper(const ty::BaseType* base) -> ty::OpaqueSelf* {
+  if (opaque_wrappers.contains(base))
+    return opaque_wrappers.at(base).get();
+
+  return opaque_wrappers.try_emplace(base, new ty::OpaqueSelf(base)).first->second.get();
+};
 } // namespace yume

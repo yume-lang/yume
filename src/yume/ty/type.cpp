@@ -155,9 +155,10 @@ auto Type::compatibility(Type other, Compat compat) const -> Compat {
     }
   }
 
+  const auto* this_st = base_dyn_cast<Struct>();
+  const auto* other_st = other.base_dyn_cast<Struct>();
   // A struct type which implements an interface can be casted to said interface.
-  if (const auto this_st = base_dyn_cast<Struct>(), other_st = other.base_dyn_cast<Struct>();
-      (this_st != nullptr) && (other_st != nullptr) && (other_st->is_interface()) &&
+  if ((this_st != nullptr) && (other_st != nullptr) && (other_st->is_interface()) &&
       (this_st->implements().has_value()) && (this_st->implements()->ensure_ty() == other.m_base)) {
     compat.valid = true;
     compat.conv.kind = Conv::Virtual;
@@ -165,9 +166,9 @@ auto Type::compatibility(Type other, Compat compat) const -> Compat {
   }
 
   // An interface is essentially always opaque, and thus can be implicitly converted to be "opaque"
-  if (const auto this_st = base_dyn_cast<Struct>(), other_st = other.base_dyn_cast<Struct>();
-      (this_st != nullptr) && (other_st != nullptr) && (this_st->is_interface()) && !this->is_opaque_self() &&
-      other.is_opaque_self() && (this_st == other_st)) {
+  if (const auto* other_opaque = other.base_dyn_cast<OpaqueSelf>();
+      (this_st != nullptr) && (other_opaque != nullptr) && (this_st->is_interface()) && !this->is_opaque_self() &&
+      other.is_opaque_self() && (this_st == other_opaque->indirect())) {
     // TODO(rymiel): should this recurse?
     compat.valid = true;
     return compat;
@@ -196,6 +197,8 @@ auto Type::is_slice() const noexcept -> bool {
 
   return false;
 };
+
+auto Type::is_opaque_self() const noexcept -> bool { return base_isa<OpaqueSelf>(); };
 
 auto Type::is_trivially_destructible() const -> bool {
   if (base_isa<ty::Int>() || base_isa<ty::Ptr>() || base_isa<ty::Function>() || base_isa<ty::Nil>())
@@ -314,8 +317,6 @@ auto Type::name() const -> string {
   auto name = m_base->name();
   if (m_mut)
     name += qual_suffix(Qualifier::Mut);
-  if (m_opaque_self)
-    name += " opaque";
   return name;
 }
 auto Type::base_name() const -> string { return m_base->name(); }
@@ -364,6 +365,10 @@ auto Function::name() const -> string {
 
   return ss.str();
 }
+
+auto Type::opaque_equal(const Type& other) const noexcept -> bool {
+  return *this == other || (this->is_opaque_self() && other.is_opaque_self());
+};
 
 namespace detail {
 static constexpr size_t BITSIZE_8 = 8;

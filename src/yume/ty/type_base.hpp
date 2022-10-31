@@ -64,15 +64,13 @@ protected:
 class Type {
   nonnull<const BaseType*> m_base;
   bool m_mut{};
-  bool m_opaque_self{};
 
 public:
-  Type(nonnull<const BaseType*> base, bool mut, bool opaque_self) noexcept
-      : m_base(base), m_mut(mut), m_opaque_self(opaque_self) {}
   Type(nonnull<const BaseType*> base, bool mut) noexcept : m_base(base), m_mut(mut) {}
   Type(nonnull<const BaseType*> base) noexcept : m_base(base) {}
 
   auto operator<=>(const Type&) const noexcept = default;
+  [[nodiscard]] auto opaque_equal(const Type &other) const noexcept -> bool;
 
   [[nodiscard]] auto kind() const noexcept -> Kind { return m_base->kind(); };
   [[nodiscard]] auto base() const noexcept -> nonnull<const BaseType*> { return m_base; }
@@ -110,7 +108,7 @@ public:
   [[nodiscard]] auto is_mut() const noexcept -> bool { return m_mut; };
   [[nodiscard]] auto is_slice() const noexcept -> bool;
   [[nodiscard]] auto is_generic() const noexcept -> bool;
-  [[nodiscard]] auto is_opaque_self() const noexcept -> bool { return m_opaque_self; };
+  [[nodiscard]] auto is_opaque_self() const noexcept -> bool;
 
   [[nodiscard]] auto is_trivially_destructible() const -> bool;
 

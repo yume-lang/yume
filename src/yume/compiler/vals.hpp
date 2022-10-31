@@ -6,6 +6,7 @@
 #include "ty/substitution.hpp"
 #include "ty/type.hpp"
 #include "util.hpp"
+#include <algorithm>
 #include <compare>
 #include <functional>
 #include <iosfwd>
@@ -112,13 +113,16 @@ private:
 };
 
 struct VTableEntry {
-  using self_type_t = std::monostate;
-  using Type = std::variant<ty::Type, self_type_t>;
   string name;
-  vector<Type> args;
-  optional<Type> ret;
+  vector<ty::Type> args;
+  optional<ty::Type> ret;
 
-  auto operator<=>(const VTableEntry& other) const noexcept = default;
+  [[nodiscard]] auto operator==(const VTableEntry& other) const noexcept -> bool {
+    auto args = llvm::zip(this->args, other.args);
+    auto opaque_eq = [](const auto& p) { return std::get<0>(p).opaque_equal(std::get<1>(p)); };
+    return this->name == other.name && std::all_of(args.begin(), args.end(), opaque_eq) &&
+           this->ret.has_value() == other.ret.has_value() && (!this->ret || this->ret->opaque_equal(*other.ret));
+  };
 };
 
 /// A struct declaration in the compiler.
