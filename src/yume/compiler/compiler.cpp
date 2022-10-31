@@ -246,8 +246,6 @@ void Compiler::create_vtable_for(Struct& st) {
       auto* fn = fn_ast->sema_decl;
       yume_assert(fn != nullptr, "Semantic Fn not set in FnDecl AST node");
 
-      (void)llvm_type(fn->fn_ty);
-      errs() << st.name() << ": " << fn->name() << " -> " << *fn->fn_ty->fn_memo() << "\n";
       st.vtable_members.emplace_back(vtable_entry_for(*fn));
     }
   }
@@ -637,8 +635,6 @@ void Compiler::define(Fn& fn) {
       vtable_deref_ret = llvm_type(*vtable_match->ret);
 
     auto call_args = vector<llvm::Value*>();
-    errs() << *fn.llvm << "\n";
-    auto foo = fn.args();
     call_args.push_back(m_builder->CreateExtractValue(fn.llvm->args().begin(), 1));
     for (auto& extra_arg : llvm::drop_begin(fn.llvm->args()))
       call_args.emplace_back(&extra_arg);
@@ -1458,11 +1454,10 @@ template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
       }
 
       auto* vtable_struct = llvm::ConstantStruct::getAnon(vtable_entries);
-      auto* vtable_global =
+      current_st->vtable_memo =
           new llvm::GlobalVariable(*m_module, vtable_struct->getType(), true, llvm::GlobalVariable::PrivateLinkage,
                                    vtable_struct, ".vtable." + target_st->name() + "." + current_st->name());
-      errs() << *vtable_global << "\n";
-      current_st->vtable_memo = vtable_global;
+      ;
     }
 
     // TODO(rymiel): This probably needs extra logic for mutable types?
