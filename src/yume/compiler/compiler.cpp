@@ -144,6 +144,25 @@ void Compiler::declare_default_ctor(Struct& st) {
   walk_types(decl_statement(*new_ct, st.get_self_ty(), st.member));
 }
 
+static inline auto vtable_entry_for(const Fn& fn) -> VTableEntry {
+  return {.name = fn.name(), .args = fn.arg_types(), .ret = fn.ret()};
+}
+
+static inline void create_vtable_for(Struct& st) {
+  yume_assert(st.ast().is_interface, "Cannot create vtable for non-interface struct");
+
+  for (auto& i : st.body()) {
+    if (auto* fn_ast = dyn_cast<ast::FnDecl>(i.raw_ptr())) {
+      if (!fn_ast->abstract())
+        continue;
+      auto* fn = fn_ast->sema_decl;
+      yume_assert(fn != nullptr, "Semantic Fn not set in FnDecl AST node");
+
+      st.vtable_members.emplace_back(vtable_entry_for(*fn));
+    }
+  }
+}
+
 void Compiler::run() {
   m_scope.push_scope(); // Global scope
 
@@ -230,25 +249,6 @@ void Compiler::walk_types(DeclLike decl_like) {
                     m_walker->body_statement(decl->ast());
                     m_walker->current_decl = {};
                   });
-}
-
-static inline auto vtable_entry_for(const Fn& fn) -> VTableEntry {
-  return {.name = fn.name(), .args = fn.arg_types(), .ret = fn.ret()};
-}
-
-void Compiler::create_vtable_for(Struct& st) {
-  yume_assert(st.ast().is_interface, "Cannot create vtable for non-interface struct");
-
-  for (auto& i : st.body()) {
-    if (auto* fn_ast = dyn_cast<ast::FnDecl>(i.raw_ptr())) {
-      if (!fn_ast->abstract())
-        continue;
-      auto* fn = fn_ast->sema_decl;
-      yume_assert(fn != nullptr, "Semantic Fn not set in FnDecl AST node");
-
-      st.vtable_members.emplace_back(vtable_entry_for(*fn));
-    }
-  }
 }
 
 auto Compiler::create_struct(Struct& st) -> bool {
