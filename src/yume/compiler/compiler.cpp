@@ -400,6 +400,7 @@ auto Compiler::llvm_type(ty::Type type, bool erase_opaque) -> llvm::Type* {
       memo = build_struct_type(*this, *struct_type);
 
     base = memo;
+    interface_self = struct_type->is_interface();
   } else if (const auto* function_type = type.base_dyn_cast<ty::Function>()) {
     llvm::Type* memo = function_type->memo();
     if (memo == nullptr)
@@ -418,9 +419,9 @@ auto Compiler::llvm_type(ty::Type type, bool erase_opaque) -> llvm::Type* {
     throw std::logic_error("Unknown type base " + type.name());
   }
 
-  if (type.is_mut())
+  if (type.is_mut() && !interface_self)
     return base->getPointerTo();
-  if (type.is_opaque_self() && !interface_self) // TODO(rymiel): how do opaque and mut interact?
+  if (type.is_opaque_self() && !interface_self)
     return base->getPointerTo();
   return base;
 }
@@ -636,20 +637,15 @@ void Compiler::define(Fn& fn) {
     if (vtable_match->ret)
       vtable_deref_ret = llvm_type(*vtable_match->ret, true);
 
-    Val vtable_erased_self = fn.llvm->args().begin();
-    if (fn.arg_types().begin()->is_mut())
-      vtable_erased_self = m_builder->CreateLoad(
-          llvm::StructType::get(m_builder->getInt8PtrTy(), m_builder->getInt8PtrTy()), vtable_erased_self);
-
     auto call_args = vector<llvm::Value*>();
-    call_args.push_back(m_builder->CreateExtractValue(vtable_erased_self, 1));
+    call_args.push_back(m_builder->CreateExtractValue(fn.llvm->args().begin(), 1));
     for (auto& extra_arg : llvm::drop_begin(fn.llvm->args()))
       call_args.emplace_back(&extra_arg);
 
     // TODO(LLVM MIN >= 15): A lot of bit-twiddling obsoleted by opaque pointers
 
     auto* call_fn_type = llvm::FunctionType::get(vtable_deref_ret, vtable_deref_args, false);
-    auto* vtable_struct_ptr = m_builder->CreateExtractValue(vtable_erased_self, 0);
+    auto* vtable_struct_ptr = m_builder->CreateExtractValue(fn.llvm->args().begin(), 0);
     auto* vtable_ptr_array = m_builder->CreateBitCast(vtable_struct_ptr, m_builder->getInt8PtrTy()->getPointerTo());
     auto* vtable_entry = m_builder->CreateLoad(
         m_builder->getInt8PtrTy(),
@@ -1467,9 +1463,13 @@ template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
       ;
     }
 
-    // TODO(rymiel): This probably needs extra logic for mutable types?
-    Val erased_original = entrypoint_builder().CreateAlloca(llvm_type(current_st_ty));
-    m_builder->CreateStore(base, erased_original);
+    Val erased_original = nullptr;
+    if (current_ty.is_mut()) {
+      erased_original = base;
+    } else {
+      erased_original = entrypoint_builder().CreateAlloca(llvm_type(current_st_ty));
+      m_builder->CreateStore(base, erased_original);
+    }
 
     auto* interface_struct_ty = llvm::StructType::get(m_builder->getInt8PtrTy(), m_builder->getInt8PtrTy());
     Val interface_struct = llvm::UndefValue::get(interface_struct_ty);
