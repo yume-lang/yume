@@ -634,15 +634,20 @@ void Compiler::define(Fn& fn) {
     if (vtable_match->ret)
       vtable_deref_ret = llvm_type(*vtable_match->ret);
 
+    Val vtable_erased_self = fn.llvm->args().begin();
+    if (fn.arg_types().begin()->is_mut())
+      vtable_erased_self = m_builder->CreateLoad(
+          llvm::StructType::get(m_builder->getInt8PtrTy(), m_builder->getInt8PtrTy()), vtable_erased_self);
+
     auto call_args = vector<llvm::Value*>();
-    call_args.push_back(m_builder->CreateExtractValue(fn.llvm->args().begin(), 1));
+    call_args.push_back(m_builder->CreateExtractValue(vtable_erased_self, 1));
     for (auto& extra_arg : llvm::drop_begin(fn.llvm->args()))
       call_args.emplace_back(&extra_arg);
 
     // TODO(LLVM MIN >= 15): A lot of bit-twiddling obsoleted by opaque pointers
 
     auto* call_fn_type = llvm::FunctionType::get(vtable_deref_ret, vtable_deref_args, false);
-    auto* vtable_struct_ptr = m_builder->CreateExtractValue(fn.llvm->args().begin(), 0);
+    auto* vtable_struct_ptr = m_builder->CreateExtractValue(vtable_erased_self, 0);
     auto* vtable_ptr_array = m_builder->CreateBitCast(vtable_struct_ptr, m_builder->getInt8PtrTy()->getPointerTo());
     auto* vtable_entry = m_builder->CreateLoad(
         m_builder->getInt8PtrTy(),
