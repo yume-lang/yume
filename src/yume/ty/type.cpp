@@ -168,7 +168,7 @@ auto Type::compatibility(Type other, Compat compat) const -> Compat {
   // An interface is essentially always opaque, and thus can be implicitly converted to be "opaque"
   if (const auto* other_opaque = other.base_dyn_cast<OpaqueSelf>();
       (this_st != nullptr) && (other_opaque != nullptr) && (this_st->is_interface()) && !this->is_opaque_self() &&
-      other.is_opaque_self() && (this_st == other_opaque->indirect())) {
+      other.is_opaque_self() && (this_st == other_opaque->indirect()) && (this->is_mut() == other.is_mut())) {
     // TODO(rymiel): should this recurse?
     compat.valid = true;
     return compat;
