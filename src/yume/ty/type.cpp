@@ -159,7 +159,8 @@ auto Type::compatibility(Type other, Compat compat) const -> Compat {
   const auto* other_st = other.base_dyn_cast<Struct>();
   // A struct type which implements an interface can be casted to said interface.
   if ((this_st != nullptr) && (other_st != nullptr) && (other_st->is_interface()) &&
-      (this_st->implements().has_value()) && (this_st->implements()->ensure_ty() == other.m_base)) {
+      (this_st->implements().has_value()) && (this_st->implements()->ensure_ty() == other.m_base) &&
+      (this->is_mut() == other.is_mut())) {
     compat.valid = true;
     compat.conv.kind = Conv::Virtual;
     return compat;
