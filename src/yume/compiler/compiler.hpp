@@ -97,7 +97,7 @@ public:
   void write_object(const char* filename, bool binary);
 
   /// Convert a type into its corresponding LLVM type
-  auto llvm_type(ty::Type type) -> llvm::Type*;
+  auto llvm_type(ty::Type type, bool erase_opaque = false) -> llvm::Type*;
 
   auto ptr_bitsize() -> unsigned int;
 

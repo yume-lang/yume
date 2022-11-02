@@ -385,7 +385,7 @@ static auto build_struct_type(Compiler& compiler, const ty::Struct& type) -> llv
   return memo;
 }
 
-auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
+auto Compiler::llvm_type(ty::Type type, bool erase_opaque) -> llvm::Type* {
   llvm::Type* base = nullptr;
   bool interface_self = false;
 
@@ -409,6 +409,8 @@ auto Compiler::llvm_type(ty::Type type) -> llvm::Type* {
   } else if (type.base_isa<ty::Nil>()) {
     base = llvm::Type::getVoidTy(*m_context);
   } else if (const auto* opaque_self_type = type.base_dyn_cast<ty::OpaqueSelf>()) {
+    if (erase_opaque)
+      return m_builder->getInt8PtrTy();
     base = llvm_type({opaque_self_type->indirect()});
     interface_self = llvm::isa<ty::Struct>(opaque_self_type->indirect()) &&
                      llvm::cast<ty::Struct>(opaque_self_type->indirect())->is_interface();
@@ -630,9 +632,9 @@ void Compiler::define(Fn& fn) {
     auto vtable_deref_args = vector<llvm::Type*>();
     auto* vtable_deref_ret = m_builder->getVoidTy();
     for (const auto& arg : vtable_match->args)
-      vtable_deref_args.emplace_back(llvm_type(arg));
+      vtable_deref_args.emplace_back(llvm_type(arg, true));
     if (vtable_match->ret)
-      vtable_deref_ret = llvm_type(*vtable_match->ret);
+      vtable_deref_ret = llvm_type(*vtable_match->ret, true);
 
     Val vtable_erased_self = fn.llvm->args().begin();
     if (fn.arg_types().begin()->is_mut())
