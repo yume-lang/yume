@@ -9,7 +9,7 @@ var searchData=
   ['literal_5fcast_6',['literal_cast',['../namespaceyume_1_1semantic.html#aad840cb24751dfb444717162926adbb3',1,'yume::semantic']]],
   ['llvm_7',['llvm',['../structyume_1_1Fn.html#a782fd88435bf09047ed6d69cad5302a0',1,'yume::Fn::llvm()'],['../structyume_1_1Val.html#a0705ca6b25ccfc5f449a5910411912fa',1,'yume::Val::llvm()'],['../structyume_1_1Const.html#a262c639c8375c7ebc3f25e8a30c46d6f',1,'yume::Const::llvm()'],['../namespacellvm.html',1,'llvm']]],
   ['llvm_5ffn_8',['llvm_fn',['../structyume_1_1ast_1_1LambdaExpr.html#abdbb664f6875f0cb9475e868301692f7',1,'yume::ast::LambdaExpr']]],
-  ['llvm_5ftype_9',['llvm_type',['../classyume_1_1Compiler.html#aff8ab7afe4b0189e59ad3deb01682f71',1,'yume::Compiler']]],
+  ['llvm_5ftype_9',['llvm_type',['../classyume_1_1Compiler.html#a63b7103fc55ea5403143892ab4f2f1a3',1,'yume::Compiler']]],
   ['loc_10',['loc',['../structyume_1_1Token.html#a837998fc163bab2faec4e3f31c140526',1,'yume::Token']]],
   ['loc_11',['Loc',['../structyume_1_1Loc.html',1,'yume']]],
   ['local_12',['local',['../structyume_1_1Fn.html#a64eb58a91efe94480573d8250a15cc2e',1,'yume::Fn']]],

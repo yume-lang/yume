@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-10-31 03:14:54</td>
+            <td class="headerValue">2022-11-02 07:57:34</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -155,7 +155,7 @@
 <a name="97"><span class="lineNum">      97 </span><span class="lineNoCov">          0 :   void write_object(const char* filename, bool binary);</span></a>
 <a name="98"><span class="lineNum">      98 </span>            : </a>
 <a name="99"><span class="lineNum">      99 </span>            :   /// Convert a type into its corresponding LLVM type</a>
-<a name="100"><span class="lineNum">     100 </span><span class="lineCov">          1 :   auto llvm_type(ty::Type type) -&gt; llvm::Type*;</span></a>
+<a name="100"><span class="lineNum">     100 </span><span class="lineCov">          1 :   auto llvm_type(ty::Type type, bool erase_opaque = false) -&gt; llvm::Type*;</span></a>
 <a name="101"><span class="lineNum">     101 </span>            : </a>
 <a name="102"><span class="lineNum">     102 </span><span class="lineNoCov">          0 :   auto ptr_bitsize() -&gt; unsigned int;</span></a>
 <a name="103"><span class="lineNum">     103 </span>            : </a>
