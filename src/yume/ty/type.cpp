@@ -342,7 +342,7 @@ auto Struct::name() const -> string {
 
 auto Function::name() const -> string {
   auto ss = stringstream{};
-  ss << "->" << base_name();
+  ss << "(" << base_name();
   if (!m_closure.empty()) {
     ss << "[";
     for (const auto& i : llvm::enumerate(m_closure)) {
@@ -350,19 +350,20 @@ auto Function::name() const -> string {
         ss << ",";
       ss << i.value().name();
     }
-    ss << "]";
-  } else if (m_fn_ptr) {
-    ss << "ptr";
+    ss << "] ";
   }
-  ss << "(";
   for (const auto& i : llvm::enumerate(m_args)) {
     if (i.index() > 0)
       ss << ",";
     ss << i.value().name();
   }
-  ss << ")";
+  ss << "->";
+  if (m_fn_ptr) {
+    ss << "ptr";
+  }
   if (m_ret.has_value())
     ss << m_ret->name();
+  ss << ")";
 
   return ss.str();
 }

@@ -163,12 +163,12 @@ auto Parser::parse_stmt(bool require_sep) -> unique_ptr<Stmt> {
 
 auto Parser::try_parse_function_type() -> optional<unique_ptr<FunctionType>> {
   auto entry = tokens.begin();
-  if (try_consume(SYM_ARROW)) {
-    auto fn_ptr = try_consume(KWD_PTR);
-    consume(SYM_LPAREN);
+  if (try_consume(SYM_LPAREN)) {
     auto args = vector<AnyType>{};
-    consume_with_commas_until(SYM_RPAREN, [&] { args.emplace_back(parse_type()); });
+    consume_with_commas_until(SYM_ARROW, [&] { args.emplace_back(parse_type()); });
+    auto fn_ptr = try_consume(KWD_PTR);
     auto ret = OptionalType{try_parse_type()};
+    consume(SYM_RPAREN);
     return ast_ptr<FunctionType>(entry, move(ret), move(args), fn_ptr);
   }
   return {};

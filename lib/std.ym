@@ -55,7 +55,7 @@ struct Slice{T}(pointer T ptr, size ISize)
     return dup_t
   end
 
-  def each(self, fn ->(T))
+  def each(self, fn (T->))
     let i = 0
     while i < self::size
       fn->(self::pointer[i])
@@ -63,7 +63,7 @@ struct Slice{T}(pointer T ptr, size ISize)
     end
   end
 
-  def each_with_index(self, fn ->(T, I32))
+  def each_with_index(self, fn (T, I32->))
     let i = 0
     while i < self::size
       fn->(self::pointer[i], i)

@@ -1,4 +1,4 @@
-def invoke(fn ->(I32))
+def invoke(fn (I32->))
   fn->(2)
 end
 
