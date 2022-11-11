@@ -7,6 +7,8 @@ env:
   TARGET_CLANG: 15
   TARGET_LLVM: 15
   CATCH2_REF: "5a1ef7e4a6caf3d5f696eb82302e3d87ff5c2303"
+  LLVM_REF: "4a5184f4c357eeafcced3371cd8539fa0ac9f24d"
+  LLVM_REF_VER: 16
   BUILD_DIR: ${{ github.workspace }}/build
 
 jobs:
@@ -34,10 +36,10 @@ jobs:
 
       - name: Add LLVM repos
         run: |
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
           sudo add-apt-repository 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy main'
           sudo add-apt-repository 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-14 main'
           sudo add-apt-repository 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-15 main'
-          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
           sudo apt update
 
       - name: Install LLVM ${{ matrix.llvm }}
@@ -103,6 +105,146 @@ jobs:
         with:
           name: coverage
           path: ${{env.BUILD_DIR}}/cov
+
+  hermetic-setup:
+    name: "Hermetic setup, libc++ source"
+    runs-on: ubuntu-22.04
+
+    concurrency:
+      group: ${{ github.ref }}
+      cancel-in-progress: true
+    env:
+      CC: clang-14
+      CXX: clang++-14
+
+    steps:
+      - name: Cache LLVM
+        id: cache-llvm
+        uses: actions/cache@v3
+        with:
+          path: ~/lib/
+          key: llvm-libcxx-${{ env.LLVM_REF }}
+
+      - name: Cache LLVM (ccache)
+        if: steps.cache-llvm.outputs.cache-hit != 'true'
+        id: cache-llvm-ccache
+        uses: actions/cache@v3
+        with:
+          path: ~/ccache/
+          key: llvm-libcxx-ccache-${{ env.CC }}
+          restore-keys: llvm-libcxx-ccache-
+
+      - name: Install ninja, libc++, clang
+        if: steps.cache-llvm.outputs.cache-hit != 'true'
+        run: |
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+          sudo add-apt-repository 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy main'
+          sudo apt update
+          sudo apt install ninja-build ccache libc++-${{ env.LLVM_REF_VER }}-dev libc++abi-${{ env.LLVM_REF_VER }}-dev ${{ env.CC }}
+      - name: Checkout LLVM
+        if: steps.cache-llvm.outputs.cache-hit != 'true'
+        uses: actions/checkout@v3
+        with:
+          repository: "llvm/llvm-project"
+          ref: "${{ env.LLVM_REF }}"
+          path: "llvm"
+
+      - name: Configure LLVM
+        if: steps.cache-llvm.outputs.cache-hit != 'true'
+        run: >
+          cmake -S llvm/llvm -B llvm/build -G Ninja
+          -D LLVM_ENABLE_PROJECTS='llvm' -D LLVM_ENABLE_LIBXML2=OFF
+          -D LLVM_ENABLE_LIBCXX=ON -D CMAKE_BUILD_TYPE=Release -D LLVM_OPTIMIZED_TABLEGEN=ON
+          -D LLVM_PARALLEL_LINK_JOBS=1 -D LLVM_ENABLE_BINDINGS=OFF
+          -D LLVM_TARGETS_TO_BUILD=X86 -D LLVM_CCACHE_BUILD=ON
+          -D LLVM_CCACHE_DIR=~/ccache -D CMAKE_INSTALL_PREFIX=~/lib
+      - name: Build LLVM
+        if: steps.cache-llvm.outputs.cache-hit != 'true'
+        run: ninja -C llvm/build all -v
+
+      - name: Install LLVM
+        if: steps.cache-llvm.outputs.cache-hit != 'true'
+        run: ninja -C llvm/build install -v
+
+  hermetic-build:
+    name: "Hermetic build, libc++ source"
+    runs-on: ubuntu-22.04
+    needs: hermetic-setup
+
+    env:
+      CC: clang-14
+      CXX: clang++-14
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set symbolizer
+        run: echo "LLVM_SYMBOLIZER_PATH=llvm-symbolizer-${{ env.LLVM_REF_VER }}" >> $GITHUB_ENV
+
+      - name: Install ninja, libc++, clang
+        run: |
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+          sudo add-apt-repository 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy main'
+          sudo apt update
+          sudo apt install ninja-build ccache libc++-${{ env.LLVM_REF_VER }}-dev libc++abi-${{ env.LLVM_REF_VER }}-dev lld-${{ env.LLVM_REF_VER }} ${{ env.CC }}
+      - name: Cache LLVM
+        id: cache-llvm
+        uses: actions/cache@v3
+        with:
+          path: ~/lib/
+          key: llvm-libcxx-${{ env.LLVM_REF }}
+
+      - name: Cache Catch2
+        id: cache-catch2
+        uses: actions/cache@v3
+        with:
+          path: ~/lib/
+          key: catch2-${{ env.CC }}-${{ env.CATCH2_REF }}-libcxx
+
+      - name: Build Catch2 (libc++)
+        if: steps.cache-catch2.outputs.cache-hit != 'true'
+        run: |
+          git clone https://github.com/catchorg/Catch2.git
+          cd Catch2
+          git checkout ${{ env.CATCH2_REF }}
+          CXXFLAGS="-stdlib=libc++" cmake -Bbuild -H. -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=~/lib
+          sudo cmake --build build/ --target install
+      - name: Configure CMake
+        run: >
+          cmake -B ${{ env.BUILD_DIR }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+          -DYUME_FORCE_LLVM_VERSION=${{ env.LLVM_REF_VER }} -DYUME_COV=OFF -DBUILD_TESTING=ON
+          -DYUME_FORCE_LLD=ON -DYUME_FORCE_LIBCXX=ON -DYUME_FORCE_STATIC=ON -DYUME_LTO=ON -DCMAKE_SYSTEM_PREFIX_PATH=~/lib
+      - name: Build
+        run: cmake --build ${{ env.BUILD_DIR }} --config ${{ env.BUILD_TYPE }} -v
+
+      - name: Smoke
+        run: ${{ env.BUILD_DIR }}/yumec --version
+
+      - name: Example Test
+        run: bin/ci.sh examples
+
+      - name: Unit Test
+        run: bin/ci.sh test
+
+      - if: always()
+        name: Publish Test Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: "tests-hermetic"
+          path: "${{ env.BUILD_DIR }}/junit.xml"
+
+      - name: Publish IR Output
+        uses: actions/upload-artifact@v3
+        with:
+          name: ir-output-hermetic
+          path: result-*.ll
+
+      - name: Publish executable
+        uses: actions/upload-artifact@v3
+        with:
+          name: exec-hermetic
+          path: ${{ env.BUILD_DIR }}/yumec
+
   event_file:
     name: "Event File"
     runs-on: ubuntu-latest
