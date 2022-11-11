@@ -59,10 +59,18 @@ inline auto operator&(CompilerFlags a, CompilerFlags b) -> bool {
   return (static_cast<int>(a) & static_cast<int>(b)) != 0;
 }
 
+auto lib_dir() -> std::string {
+  const char* env_lib_dir = std::getenv("YUME_LIB_DIR");
+  if (env_lib_dir == nullptr)
+    env_lib_dir = YUME_LIB_DIR;
+
+  return env_lib_dir;
+}
+
 auto compile(const std::optional<std::string>& target_triple, std::vector<std::string> src_file_names,
              CompilerFlags flags) -> int {
   if (~flags & CompilerFlags::NoPrelude)
-    src_file_names.insert(src_file_names.begin(), std::string(YUME_LIB_DIR) + "std.ym");
+    src_file_names.insert(src_file_names.begin(), lib_dir() + "std.ym");
 
   std::vector<yume::SourceFile> source_files{};
   source_files.reserve(src_file_names.size());
@@ -143,8 +151,9 @@ auto compile(const std::optional<std::string>& target_triple, std::vector<std::s
 
 void emit_version() {
   llvm::outs() << "yume version " << yume::VERSION << "-" << yume::GIT_SHORTHASH << "\n";
-  llvm::outs() << "LIB_DIR: " YUME_LIB_DIR "\n";
-  llvm::outs() << "SRC_DIR: " YUME_SRC_DIR "\n";
+  llvm::outs() << "lib: " << lib_dir() << "\n";
+  llvm::outs() << "build-time LIB_DIR: " YUME_LIB_DIR "\n";
+  llvm::outs() << "build-time SRC_DIR: " YUME_SRC_DIR "\n";
 }
 
 auto main(int argc, const char* argv[]) -> int {

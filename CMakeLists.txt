@@ -5,6 +5,7 @@ option(YUME_SANITIZE "Enable sanitization flags (-fsanitize)" FALSE)
 option(YUME_SPEW "Verbose output (higher numbers mean more)" 0)
 option(YUME_IWYU "Check the project with include-what-you-use" FALSE)
 option(YUME_COV "Coverage information" FALSE)
+option(YUME_LTO "Enable link time optimization" TRUE)
 option(YUME_FORCE_COLOR "Always produce ANSI-colored output when compiling" FALSE)
 
 find_package(Git)
@@ -93,14 +94,32 @@ if(SUPPORTS_W_NULLABLE_TO_NONNULL_CONVERSION)
   target_compile_options(yume PUBLIC -Wnullable-to-nonnull-conversion)
 endif()
 
+if(YUME_FORCE_STATIC)
+  if(NOT YUME_FORCE_LIBCXX)
+    message(FATAL_ERROR "Must use libc++ to link statically")
+  endif()
+  set_target_properties(yume PROPERTIES LINK_SEARCH_START_STATIC ON)
+  set_target_properties(yume PROPERTIES LINK_SEARCH_END_STATIC ON)
+
+  target_link_options(yume PUBLIC -static)
+endif()
+
 if(YUME_FORCE_LIBCXX)
   target_compile_options(yume PUBLIC -stdlib=libc++)
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lc++abi")
+  target_link_options(yume PUBLIC -stdlib=libc++)
+endif()
+
+if(YUME_FORCE_LLD)
+  target_link_options(yume PUBLIC "-fuse-ld=lld")
 endif()
 
 if(YUME_IWYU)
   find_program(iwyu_path NAMES include-what-you-use iwyu REQUIRED)
   set_property(TARGET yume PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path};-Xiwyu;--max_line_length=120;-Xiwyu;--cxx17ns)
+endif()
+
+if(NOT LLVM_ENABLE_RTTI)
+  target_compile_options(yume PUBLIC -fno-rtti)
 endif()
 
 target_include_directories(yume BEFORE PUBLIC src/yume)
@@ -109,13 +128,19 @@ execute_process(COMMAND ${LLVM_TOOLS_BINARY_DIR}/llvm-config --libs all
   OUTPUT_VARIABLE LLVM_LIBS OUTPUT_STRIP_TRAILING_WHITESPACE)
 message(STATUS "LLVM libs: ${LLVM_LIBS}")
 
-target_link_libraries(yume ${LLVM_LIBS})
+execute_process(COMMAND ${LLVM_TOOLS_BINARY_DIR}/llvm-config --system-libs all
+  OUTPUT_VARIABLE LLVM_SYS_LIBS OUTPUT_STRIP_TRAILING_WHITESPACE)
+message(STATUS "LLVM system libs: ${LLVM_SYS_LIBS}")
+
+target_link_libraries(yume ${LLVM_LIBS} ${LLVM_SYS_LIBS})
 
 add_executable(yumec src/yumec.cpp)
 
 set_property(TARGET yumec PROPERTY CXX_STANDARD 20)
 set_property(TARGET yumec PROPERTY EXPORT_COMPILE_COMMANDS TRUE)
-set_property(TARGET yumec PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
+if(YUME_LTO)
+  set_property(TARGET yumec PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
+endif()
 target_link_libraries(yumec PRIVATE yume)
 
 if(BUILD_TESTING)

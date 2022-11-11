@@ -19,6 +19,6 @@ using substitution_t = std::map<string, ty::Type>;
 struct Substitution : substitution_t {
   using substitution_t::map;
 
-  auto operator<=>(const Substitution& other) const noexcept = default;
+  auto operator==(const Substitution& other) const noexcept -> bool = default;
 };
 } // namespace yume
