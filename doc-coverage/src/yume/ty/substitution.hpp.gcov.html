@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-11-11 06:40:45</td>
+            <td class="headerValue">2022-11-11 09:21:50</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -77,7 +77,7 @@
 <a name="19"><span class="lineNum">      19 </span><span class="lineNoCov">          0 : struct Substitution : substitution_t {</span></a>
 <a name="20"><span class="lineNum">      20 </span>            :   using substitution_t::map;</a>
 <a name="21"><span class="lineNum">      21 </span>            : </a>
-<a name="22"><span class="lineNum">      22 </span><span class="lineNoCov">          0 :   auto operator&lt;=&gt;(const Substitution&amp; other) const noexcept = default;</span></a>
+<a name="22"><span class="lineNum">      22 </span><span class="lineNoCov">          0 :   auto operator==(const Substitution&amp; other) const noexcept -&gt; bool = default;</span></a>
 <a name="23"><span class="lineNum">      23 </span>            : };</a>
 <a name="24"><span class="lineNum">      24 </span>            : } // namespace yume</a>
 </pre>
