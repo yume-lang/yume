@@ -1,5 +1,5 @@
 interface Greeter
-  def greet(self, fn ->(U8[])) = abstract
+  def greet(self, fn (U8[] ->)) = abstract
 end
 
 def greet_world(greeter Greeter)
@@ -8,11 +8,11 @@ def greet_world(greeter Greeter)
 end
 
 struct HelloGreeter is Greeter
-  def @override greet(self, fn ->(U8[])) = fn->("Hello, ")
+  def @override greet(self, fn (U8[] ->)) = fn->("Hello, ")
 end
 
 struct HiGreeter is Greeter
-  def @override greet(self, fn ->(U8[])) = fn->("Hi, ")
+  def @override greet(self, fn (U8[] ->)) = fn->("Hi, ")
 end
 
 def main() I32
