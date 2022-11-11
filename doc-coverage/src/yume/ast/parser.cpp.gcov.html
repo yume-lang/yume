@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-11-02 07:57:34</td>
+            <td class="headerValue">2022-11-11 06:40:45</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -221,12 +221,12 @@
 <a name="163"><span class="lineNum">     163 </span>            : </a>
 <a name="164"><span class="lineNum">     164 </span>            : auto Parser::try_parse_function_type() -&gt; optional&lt;unique_ptr&lt;FunctionType&gt;&gt; {</a>
 <a name="165"><span class="lineNum">     165 </span>            :   auto entry = tokens.begin();</a>
-<a name="166"><span class="lineNum">     166 </span>            :   if (try_consume(SYM_ARROW)) {</a>
-<a name="167"><span class="lineNum">     167 </span>            :     auto fn_ptr = try_consume(KWD_PTR);</a>
-<a name="168"><span class="lineNum">     168 </span>            :     consume(SYM_LPAREN);</a>
-<a name="169"><span class="lineNum">     169 </span>            :     auto args = vector&lt;AnyType&gt;{};</a>
-<a name="170"><span class="lineNum">     170 </span>            :     consume_with_commas_until(SYM_RPAREN, [&amp;] { args.emplace_back(parse_type()); });</a>
-<a name="171"><span class="lineNum">     171 </span>            :     auto ret = OptionalType{try_parse_type()};</a>
+<a name="166"><span class="lineNum">     166 </span>            :   if (try_consume(SYM_LPAREN)) {</a>
+<a name="167"><span class="lineNum">     167 </span>            :     auto args = vector&lt;AnyType&gt;{};</a>
+<a name="168"><span class="lineNum">     168 </span>            :     consume_with_commas_until(SYM_ARROW, [&amp;] { args.emplace_back(parse_type()); });</a>
+<a name="169"><span class="lineNum">     169 </span>            :     auto fn_ptr = try_consume(KWD_PTR);</a>
+<a name="170"><span class="lineNum">     170 </span>            :     auto ret = OptionalType{try_parse_type()};</a>
+<a name="171"><span class="lineNum">     171 </span>            :     consume(SYM_RPAREN);</a>
 <a name="172"><span class="lineNum">     172 </span>            :     return ast_ptr&lt;FunctionType&gt;(entry, move(ret), move(args), fn_ptr);</a>
 <a name="173"><span class="lineNum">     173 </span>            :   }</a>
 <a name="174"><span class="lineNum">     174 </span>            :   return {};</a>

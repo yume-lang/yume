@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-11-02 07:57:34</td>
+            <td class="headerValue">2022-11-11 06:40:45</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -400,7 +400,7 @@
 <a name="342"><span class="lineNum">     342 </span>            : </a>
 <a name="343"><span class="lineNum">     343 </span>            : auto Function::name() const -&gt; string {</a>
 <a name="344"><span class="lineNum">     344 </span>            :   auto ss = stringstream{};</a>
-<a name="345"><span class="lineNum">     345 </span>            :   ss &lt;&lt; &quot;-&gt;&quot; &lt;&lt; base_name();</a>
+<a name="345"><span class="lineNum">     345 </span>            :   ss &lt;&lt; &quot;(&quot; &lt;&lt; base_name();</a>
 <a name="346"><span class="lineNum">     346 </span>            :   if (!m_closure.empty()) {</a>
 <a name="347"><span class="lineNum">     347 </span>            :     ss &lt;&lt; &quot;[&quot;;</a>
 <a name="348"><span class="lineNum">     348 </span>            :     for (const auto&amp; i : llvm::enumerate(m_closure)) {</a>
@@ -408,67 +408,68 @@
 <a name="350"><span class="lineNum">     350 </span>            :         ss &lt;&lt; &quot;,&quot;;</a>
 <a name="351"><span class="lineNum">     351 </span>            :       ss &lt;&lt; i.value().name();</a>
 <a name="352"><span class="lineNum">     352 </span>            :     }</a>
-<a name="353"><span class="lineNum">     353 </span>            :     ss &lt;&lt; &quot;]&quot;;</a>
-<a name="354"><span class="lineNum">     354 </span>            :   } else if (m_fn_ptr) {</a>
-<a name="355"><span class="lineNum">     355 </span>            :     ss &lt;&lt; &quot;ptr&quot;;</a>
-<a name="356"><span class="lineNum">     356 </span>            :   }</a>
-<a name="357"><span class="lineNum">     357 </span>            :   ss &lt;&lt; &quot;(&quot;;</a>
-<a name="358"><span class="lineNum">     358 </span>            :   for (const auto&amp; i : llvm::enumerate(m_args)) {</a>
-<a name="359"><span class="lineNum">     359 </span>            :     if (i.index() &gt; 0)</a>
-<a name="360"><span class="lineNum">     360 </span>            :       ss &lt;&lt; &quot;,&quot;;</a>
-<a name="361"><span class="lineNum">     361 </span>            :     ss &lt;&lt; i.value().name();</a>
-<a name="362"><span class="lineNum">     362 </span>            :   }</a>
-<a name="363"><span class="lineNum">     363 </span>            :   ss &lt;&lt; &quot;)&quot;;</a>
+<a name="353"><span class="lineNum">     353 </span>            :     ss &lt;&lt; &quot;] &quot;;</a>
+<a name="354"><span class="lineNum">     354 </span>            :   }</a>
+<a name="355"><span class="lineNum">     355 </span>            :   for (const auto&amp; i : llvm::enumerate(m_args)) {</a>
+<a name="356"><span class="lineNum">     356 </span>            :     if (i.index() &gt; 0)</a>
+<a name="357"><span class="lineNum">     357 </span>            :       ss &lt;&lt; &quot;,&quot;;</a>
+<a name="358"><span class="lineNum">     358 </span>            :     ss &lt;&lt; i.value().name();</a>
+<a name="359"><span class="lineNum">     359 </span>            :   }</a>
+<a name="360"><span class="lineNum">     360 </span>            :   ss &lt;&lt; &quot;-&gt;&quot;;</a>
+<a name="361"><span class="lineNum">     361 </span>            :   if (m_fn_ptr) {</a>
+<a name="362"><span class="lineNum">     362 </span>            :     ss &lt;&lt; &quot;ptr&quot;;</a>
+<a name="363"><span class="lineNum">     363 </span>            :   }</a>
 <a name="364"><span class="lineNum">     364 </span>            :   if (m_ret.has_value())</a>
 <a name="365"><span class="lineNum">     365 </span>            :     ss &lt;&lt; m_ret-&gt;name();</a>
-<a name="366"><span class="lineNum">     366 </span>            : </a>
-<a name="367"><span class="lineNum">     367 </span>            :   return ss.str();</a>
-<a name="368"><span class="lineNum">     368 </span>            : }</a>
-<a name="369"><span class="lineNum">     369 </span>            : </a>
-<a name="370"><span class="lineNum">     370 </span>            : auto Type::opaque_equal(const Type&amp; other) const noexcept -&gt; bool {</a>
-<a name="371"><span class="lineNum">     371 </span>            :   return *this == other || (this-&gt;is_opaque_self() &amp;&amp; other.is_opaque_self());</a>
-<a name="372"><span class="lineNum">     372 </span>            : };</a>
-<a name="373"><span class="lineNum">     373 </span>            : </a>
-<a name="374"><span class="lineNum">     374 </span><span class="lineNoCov">          0 : namespace detail {</span></a>
-<a name="375"><span class="lineNum">     375 </span><span class="lineNoCov">          0 : static constexpr size_t BITSIZE_8 = 8;</span></a>
-<a name="376"><span class="lineNum">     376 </span><span class="lineNoCov">          0 : static constexpr size_t BITSIZE_16 = 16;</span></a>
-<a name="377"><span class="lineNum">     377 </span><span class="lineNoCov">          0 : static constexpr size_t BITSIZE_32 = 32;</span></a>
-<a name="378"><span class="lineNum">     378 </span><span class="lineNoCov">          0 : static constexpr size_t BITSIZE_64 = 64;</span></a>
-<a name="379"><span class="lineNum">     379 </span>            : </a>
-<a name="380"><span class="lineNum">     380 </span><span class="lineNoCov">          0 : struct MinMax {</span></a>
-<a name="381"><span class="lineNum">     381 </span><span class="lineNoCov">          0 :   uint64_t u_min;</span></a>
-<a name="382"><span class="lineNum">     382 </span><span class="lineNoCov">          0 :   uint64_t u_max;</span></a>
-<a name="383"><span class="lineNum">     383 </span><span class="lineNoCov">          0 :   int64_t s_min;</span></a>
-<a name="384"><span class="lineNum">     384 </span><span class="lineNoCov">          0 :   int64_t s_max;</span></a>
-<a name="385"><span class="lineNum">     385 </span>            : };</a>
-<a name="386"><span class="lineNum">     386 </span>            : </a>
-<a name="387"><span class="lineNum">     387 </span><span class="lineNoCov">          0 : template &lt;typename UIntType&gt; consteval auto minmax_for_bits() -&gt; MinMax {</span></a>
-<a name="388"><span class="lineNum">     388 </span>            :   using SIntType = typename std::make_signed&lt;UIntType&gt;::type;</a>
-<a name="389"><span class="lineNum">     389 </span>            : </a>
-<a name="390"><span class="lineNum">     390 </span>            :   return {std::numeric_limits&lt;UIntType&gt;::min(), std::numeric_limits&lt;UIntType&gt;::max(),</a>
-<a name="391"><span class="lineNum">     391 </span>            :           std::numeric_limits&lt;SIntType&gt;::min(), std::numeric_limits&lt;SIntType&gt;::max()};</a>
-<a name="392"><span class="lineNum">     392 </span>            : }</a>
-<a name="393"><span class="lineNum">     393 </span>            : </a>
-<a name="394"><span class="lineNum">     394 </span><span class="lineNoCov">          0 : constexpr auto minmax_for_bits(size_t bits) -&gt; MinMax {</span></a>
-<a name="395"><span class="lineNum">     395 </span>            :   switch (bits) {</a>
-<a name="396"><span class="lineNum">     396 </span>            :   case BITSIZE_8: return minmax_for_bits&lt;uint8_t&gt;();</a>
-<a name="397"><span class="lineNum">     397 </span>            :   case BITSIZE_16: return minmax_for_bits&lt;uint16_t&gt;();</a>
-<a name="398"><span class="lineNum">     398 </span>            :   case BITSIZE_32: return minmax_for_bits&lt;uint32_t&gt;();</a>
-<a name="399"><span class="lineNum">     399 </span>            :   case BITSIZE_64: return minmax_for_bits&lt;uint64_t&gt;();</a>
-<a name="400"><span class="lineNum">     400 </span>            :   default: throw std::logic_error(&quot;Integer type must be 8, 16, 32, or 64 bits, not &quot;s + std::to_string(bits));</a>
-<a name="401"><span class="lineNum">     401 </span>            :   };</a>
-<a name="402"><span class="lineNum">     402 </span>            : }</a>
-<a name="403"><span class="lineNum">     403 </span>            : } // namespace detail</a>
-<a name="404"><span class="lineNum">     404 </span>            : </a>
-<a name="405"><span class="lineNum">     405 </span>            : auto Int::in_range(int64_t num) const -&gt; bool {</a>
-<a name="406"><span class="lineNum">     406 </span>            :   if (num &lt; 0 &amp;&amp; !m_signed)</a>
-<a name="407"><span class="lineNum">     407 </span>            :     return false;</a>
-<a name="408"><span class="lineNum">     408 </span>            :   auto min_max = detail::minmax_for_bits(m_size);</a>
-<a name="409"><span class="lineNum">     409 </span>            :   if (m_signed)</a>
-<a name="410"><span class="lineNum">     410 </span>            :     return num &gt;= min_max.s_min &amp;&amp; num &lt;= min_max.s_max;</a>
-<a name="411"><span class="lineNum">     411 </span>            :   return static_cast&lt;uint64_t&gt;(num) &gt;= min_max.u_min &amp;&amp; static_cast&lt;uint64_t&gt;(num) &lt;= min_max.u_max;</a>
-<a name="412"><span class="lineNum">     412 </span>            : }</a>
-<a name="413"><span class="lineNum">     413 </span>            : } // namespace yume::ty</a>
+<a name="366"><span class="lineNum">     366 </span>            :   ss &lt;&lt; &quot;)&quot;;</a>
+<a name="367"><span class="lineNum">     367 </span>            : </a>
+<a name="368"><span class="lineNum">     368 </span>            :   return ss.str();</a>
+<a name="369"><span class="lineNum">     369 </span>            : }</a>
+<a name="370"><span class="lineNum">     370 </span>            : </a>
+<a name="371"><span class="lineNum">     371 </span>            : auto Type::opaque_equal(const Type&amp; other) const noexcept -&gt; bool {</a>
+<a name="372"><span class="lineNum">     372 </span>            :   return *this == other || (this-&gt;is_opaque_self() &amp;&amp; other.is_opaque_self());</a>
+<a name="373"><span class="lineNum">     373 </span>            : };</a>
+<a name="374"><span class="lineNum">     374 </span>            : </a>
+<a name="375"><span class="lineNum">     375 </span><span class="lineNoCov">          0 : namespace detail {</span></a>
+<a name="376"><span class="lineNum">     376 </span><span class="lineNoCov">          0 : static constexpr size_t BITSIZE_8 = 8;</span></a>
+<a name="377"><span class="lineNum">     377 </span><span class="lineNoCov">          0 : static constexpr size_t BITSIZE_16 = 16;</span></a>
+<a name="378"><span class="lineNum">     378 </span><span class="lineNoCov">          0 : static constexpr size_t BITSIZE_32 = 32;</span></a>
+<a name="379"><span class="lineNum">     379 </span><span class="lineNoCov">          0 : static constexpr size_t BITSIZE_64 = 64;</span></a>
+<a name="380"><span class="lineNum">     380 </span>            : </a>
+<a name="381"><span class="lineNum">     381 </span><span class="lineNoCov">          0 : struct MinMax {</span></a>
+<a name="382"><span class="lineNum">     382 </span><span class="lineNoCov">          0 :   uint64_t u_min;</span></a>
+<a name="383"><span class="lineNum">     383 </span><span class="lineNoCov">          0 :   uint64_t u_max;</span></a>
+<a name="384"><span class="lineNum">     384 </span><span class="lineNoCov">          0 :   int64_t s_min;</span></a>
+<a name="385"><span class="lineNum">     385 </span><span class="lineNoCov">          0 :   int64_t s_max;</span></a>
+<a name="386"><span class="lineNum">     386 </span>            : };</a>
+<a name="387"><span class="lineNum">     387 </span>            : </a>
+<a name="388"><span class="lineNum">     388 </span><span class="lineNoCov">          0 : template &lt;typename UIntType&gt; consteval auto minmax_for_bits() -&gt; MinMax {</span></a>
+<a name="389"><span class="lineNum">     389 </span>            :   using SIntType = typename std::make_signed&lt;UIntType&gt;::type;</a>
+<a name="390"><span class="lineNum">     390 </span>            : </a>
+<a name="391"><span class="lineNum">     391 </span>            :   return {std::numeric_limits&lt;UIntType&gt;::min(), std::numeric_limits&lt;UIntType&gt;::max(),</a>
+<a name="392"><span class="lineNum">     392 </span>            :           std::numeric_limits&lt;SIntType&gt;::min(), std::numeric_limits&lt;SIntType&gt;::max()};</a>
+<a name="393"><span class="lineNum">     393 </span>            : }</a>
+<a name="394"><span class="lineNum">     394 </span>            : </a>
+<a name="395"><span class="lineNum">     395 </span><span class="lineNoCov">          0 : constexpr auto minmax_for_bits(size_t bits) -&gt; MinMax {</span></a>
+<a name="396"><span class="lineNum">     396 </span>            :   switch (bits) {</a>
+<a name="397"><span class="lineNum">     397 </span>            :   case BITSIZE_8: return minmax_for_bits&lt;uint8_t&gt;();</a>
+<a name="398"><span class="lineNum">     398 </span>            :   case BITSIZE_16: return minmax_for_bits&lt;uint16_t&gt;();</a>
+<a name="399"><span class="lineNum">     399 </span>            :   case BITSIZE_32: return minmax_for_bits&lt;uint32_t&gt;();</a>
+<a name="400"><span class="lineNum">     400 </span>            :   case BITSIZE_64: return minmax_for_bits&lt;uint64_t&gt;();</a>
+<a name="401"><span class="lineNum">     401 </span>            :   default: throw std::logic_error(&quot;Integer type must be 8, 16, 32, or 64 bits, not &quot;s + std::to_string(bits));</a>
+<a name="402"><span class="lineNum">     402 </span>            :   };</a>
+<a name="403"><span class="lineNum">     403 </span>            : }</a>
+<a name="404"><span class="lineNum">     404 </span>            : } // namespace detail</a>
+<a name="405"><span class="lineNum">     405 </span>            : </a>
+<a name="406"><span class="lineNum">     406 </span>            : auto Int::in_range(int64_t num) const -&gt; bool {</a>
+<a name="407"><span class="lineNum">     407 </span>            :   if (num &lt; 0 &amp;&amp; !m_signed)</a>
+<a name="408"><span class="lineNum">     408 </span>            :     return false;</a>
+<a name="409"><span class="lineNum">     409 </span>            :   auto min_max = detail::minmax_for_bits(m_size);</a>
+<a name="410"><span class="lineNum">     410 </span>            :   if (m_signed)</a>
+<a name="411"><span class="lineNum">     411 </span>            :     return num &gt;= min_max.s_min &amp;&amp; num &lt;= min_max.s_max;</a>
+<a name="412"><span class="lineNum">     412 </span>            :   return static_cast&lt;uint64_t&gt;(num) &gt;= min_max.u_min &amp;&amp; static_cast&lt;uint64_t&gt;(num) &lt;= min_max.u_max;</a>
+<a name="413"><span class="lineNum">     413 </span>            : }</a>
+<a name="414"><span class="lineNum">     414 </span>            : } // namespace yume::ty</a>
 </pre>
       </td>
     </tr>
