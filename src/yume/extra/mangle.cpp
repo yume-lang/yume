@@ -7,6 +7,8 @@ namespace yume::mangle {
 }
 
 auto mangle_name(Fn& fn) -> string {
+  // TODO(rymiel): static function declarations (i.e. without self) in multiple structs will have identical names.
+  // thus, the recevier should probably be included in the mangled name
   stringstream ss{};
   ss << "_Ym.";
   ss << fn.name();
