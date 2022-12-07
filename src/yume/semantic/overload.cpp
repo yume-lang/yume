@@ -97,11 +97,14 @@ static auto literal_cast(ast::AST& arg, ty::Type target_type) -> ty::Compat {
 }
 
 auto parameter_count_matches(const vector<ast::AST*>& args, const Fn& fn) -> bool {
-  // Varargs functions may have more arguments that the amount of non-vararg parameters.
-  if (args.size() != fn.arg_count())
-    if (!fn.varargs() || args.size() < fn.arg_count())
-      return false;
-  return true;
+  if (args.size() == fn.arg_count())
+    return true;
+
+  // Varargs functions may have more arguments than the amount of non-vararg parameters.
+  if (args.size() > fn.arg_count() && fn.varargs())
+    return true;
+
+  return false;
 }
 
 auto OverloadSet::is_valid_overload(Overload& overload) const -> bool {
@@ -118,13 +121,25 @@ auto OverloadSet::is_valid_overload(Overload& overload) const -> bool {
 
     // If there is no matching receiver, check if any arguments are of the type of the struct.
     // This perform "argument dependent lookup" and is required for "member functions"
-    if (std::ranges::none_of(args, [parent](ast::AST* ast) { return ast->ensure_ty().without_mut() == *parent; }))
+    if (std::ranges::none_of(args, [parent](ast::AST* ast) { return ast->ensure_ty().without_mut() == *parent; })) {
+#ifdef YUME_SPEW_OVERLOAD_SELECTION
+      errs() << "!!! Unsuitable (adl)            : ";
+      overload.dump(errs());
+      errs() << "\n";
+#endif
       return false;
+    }
   }
 
   // The overload is only viable if the amount of arguments matches the amount of parameters.
-  if (!parameter_count_matches(args, fn))
+  if (!parameter_count_matches(args, fn)) {
+#ifdef YUME_SPEW_OVERLOAD_SELECTION
+    errs() << "!!! Unsuitable (parameter count): ";
+    overload.dump(errs());
+    errs() << "\n";
+#endif
     return false;
+  }
 
   overload.compatibilities.reserve(args.size());
 
@@ -157,8 +172,14 @@ auto OverloadSet::is_valid_overload(Overload& overload) const -> bool {
       compat = arg_type->compatibility(*param_type);
 
     // Couldn't perform any kind of valid cast: one invalid conversion disqualifies the function entirely
-    if (!compat.valid)
+    if (!compat.valid) {
+#ifdef YUME_SPEW_OVERLOAD_SELECTION
+      errs() << "!!! Unsuitable (incompatible)   : ";
+      overload.dump(errs());
+      errs() << ": " << arg_type->name() << " vs " << param_type->name() << "\n";
+#endif
       return false;
+    }
 
     // Save the steps needed to perform the conversion
     overload.compatibilities.push_back(compat);
