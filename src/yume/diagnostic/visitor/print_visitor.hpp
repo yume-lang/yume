@@ -66,6 +66,7 @@ inline auto PrintVisitor::visit(const ast::AST& expr, string_view label) -> Prin
   if (m_pretty)
     --m_indent;
   m_stream << ")";
+  m_needs_sep = true;
 
   return *this;
 }
