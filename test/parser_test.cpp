@@ -115,8 +115,8 @@ auto make_struct_decl(const std::string& name, std::initializer_list<TName> args
   ast_args.reserve(args.size());
   std::transform(args.begin(), args.end(), std::back_inserter(ast_args),
                  [](auto& tn) { return static_cast<TypeName>(tn); });
-  return ast<StructDecl>(name, std::move(ast_args), type_vars, make_compound(std::forward<Ts>(ts)...),
-                         move(implements), false);
+  return ast<StructDecl>(name, std::move(ast_args), type_vars, make_compound(std::forward<Ts>(ts)...), move(implements),
+                         false);
 }
 
 template <typename... Ts>
@@ -135,6 +135,7 @@ auto operator""_Num(unsigned long long val) { return ast<NumberExpr>(val); }
 auto operator""_String(const char* str, size_t size) { return ast<StringExpr>(std::string{str, size}); }
 auto operator""_Char(char chr) { return ast<CharExpr>(chr); }
 auto operator""_Type(const char* str, size_t size) { return ast<SimpleType>(std::string{str, size}); }
+auto Self() { return ast<SelfType>(); } // NOLINT(readability-identifier-naming)
 
 constexpr auto ast_comparison = [](const yume::ast::Program& a,
                                    const std::vector<std::unique_ptr<yume::ast::AST>>& b) -> bool {
@@ -380,7 +381,10 @@ TEST_CASE("Parse primitive function declaration", "[parse][fn]") {
 }
 
 TEST_CASE("Parse abstract function declaration", "[parse][abstract]") {
-  CHECK_PARSER("def abs() = abstract", make_abstract_decl("abs", {}, {}));
+  CHECK_PARSER("def abs() = abstract", make_abstract_decl("abs", {{"", Self()}}, {}));
+  CHECK_PARSER("def abs(self) = abstract", make_abstract_decl("abs", {{"self", Self()}}, {}));
+  CHECK_PARSER("def abs(this Self) = abstract", make_abstract_decl("abs", {{"this", Self()}}, {}));
+  CHECK_PARSER("def dup(self) Self = abstract", make_abstract_decl("dup", {{"self", Self()}}, Self()));
   CHECK_PARSER("def munge(a I32 ptr) I32 ptr = abstract",
                make_abstract_decl("munge", {{"a", "I32"_Type & Ptr}}, "I32"_Type & Ptr));
 }
