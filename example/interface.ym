@@ -1,5 +1,6 @@
 interface Greeter
   def greet(self, fn (U8[] ->)) = abstract
+  def magic_number() I32 = abstract
 end
 
 def greet_world(greeter Greeter)
@@ -7,16 +8,26 @@ def greet_world(greeter Greeter)
   puts("World")
 end
 
+def check_magic_number(greeter Greeter, num I32)
+  assert(greeter.magic_number == num)
+end
+
 struct HelloGreeter is Greeter
   def @override greet(self, fn (U8[] ->)) = fn->("Hello, ")
+  def @override magic_number() I32 = 7
 end
 
 struct HiGreeter is Greeter
   def @override greet(self, fn (U8[] ->)) = fn->("Hi, ")
+  def @override magic_number() I32 = 13
 end
 
 def main() I32
-  greet_world(HelloGreeter())
+  let hello = HelloGreeter()
+  greet_world(hello)
   greet_world(HiGreeter())
+  assert(HelloGreeter.magic_number == 7)
+  check_magic_number(hello, 7)
+  check_magic_number(HiGreeter(), 13)
   return 0
 end

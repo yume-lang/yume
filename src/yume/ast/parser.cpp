@@ -437,6 +437,20 @@ auto Parser::parse_fn_decl() -> unique_ptr<FnDecl> {
                              move(annotations));
     }
     if (try_consume(KWD_ABSTRACT)) {
+      if (args.empty()) {
+        // A no-arg abstract method wouldn't be able to be called, because the self type is required to perform
+        // dispatch. Add it here silently. It cannot actually be used, so it will be discarded when passed to the impl
+        // method.
+        // HACK: This currently basically only works by chance, as there is no logic in place to verify type
+        // compatibility between interface methods and their implementations. As such, this invented self pointer just
+        // magically vanishes, where as if it would be properly type checked, they wouldn't match.
+        // HACK: This implicit variable is a hack itself, as it makes it indistinguishable from an abstract method
+        // with an explicit self parameter.
+        // HACK: As per the hack mentioned above, the arg is given an empty name "", which is checked for later, under
+        // the assumption that regular code can't write an empty name. Relying on a specific, special name is still
+        // dirty, though.
+        args.emplace_back(make_ast<TypeName>(entry, ast_ptr<SelfType>(entry), ""));
+      }
       return ast_ptr<FnDecl>(entry, name, move(args), type_args, move(ret_type), FnDecl::abstract_decl_t{},
                              move(annotations));
     }

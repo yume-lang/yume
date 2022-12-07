@@ -638,20 +638,30 @@ void Compiler::define(Fn& fn) {
       vtable_deref_ret = llvm_type(*vtable_match->ret, true);
 
     auto call_args = vector<llvm::Value*>();
-    call_args.push_back(m_builder->CreateExtractValue(fn.llvm->args().begin(), 1));
-    for (auto& extra_arg : llvm::drop_begin(fn.llvm->args()))
-      call_args.emplace_back(&extra_arg);
+    llvm::FunctionType* call_fn_type = nullptr;
+
+    // An empty arg name means it is actually fake and not in impl methods. this is a HACK
+    if (fn.arg_count() == 1 && fn.arg_names().at(0).empty()) {
+      call_fn_type = llvm::FunctionType::get(vtable_deref_ret, {}, false);
+    } else {
+      call_args.push_back(m_builder->CreateExtractValue(fn.llvm->args().begin(), 1, "abs.self"));
+      for (auto& extra_arg : llvm::drop_begin(fn.llvm->args()))
+        call_args.emplace_back(&extra_arg);
+
+      call_fn_type = llvm::FunctionType::get(vtable_deref_ret, vtable_deref_args, false);
+    }
 
     // TODO(LLVM MIN >= 15): A lot of bit-twiddling obsoleted by opaque pointers
 
-    auto* call_fn_type = llvm::FunctionType::get(vtable_deref_ret, vtable_deref_args, false);
-    auto* vtable_struct_ptr = m_builder->CreateExtractValue(fn.llvm->args().begin(), 0);
-    auto* vtable_ptr_array = m_builder->CreateBitCast(vtable_struct_ptr, m_builder->getInt8PtrTy()->getPointerTo());
+    auto* vtable_struct_ptr = m_builder->CreateExtractValue(fn.llvm->args().begin(), 0, "abs.vt.struct");
+    auto* vtable_ptr_array =
+        m_builder->CreateBitCast(vtable_struct_ptr, m_builder->getInt8PtrTy()->getPointerTo(), "abs.vt.array");
     auto* vtable_entry = m_builder->CreateLoad(
         m_builder->getInt8PtrTy(),
-        m_builder->CreateConstGEP1_32(m_builder->getInt8PtrTy(), vtable_ptr_array, vtable_entry_index));
+        m_builder->CreateConstGEP1_32(m_builder->getInt8PtrTy(), vtable_ptr_array, vtable_entry_index, "abs.vt.entry"),
+        "abs.vt.entry.load");
     Val call_result = m_builder->CreateCall(
-        call_fn_type, m_builder->CreateBitCast(vtable_entry, call_fn_type->getPointerTo()), call_args);
+        call_fn_type, m_builder->CreateBitCast(vtable_entry, call_fn_type->getPointerTo(), "abs.fn"), call_args);
 
     if (call_result.llvm->getType()->isVoidTy())
       m_builder->CreateRetVoid();
