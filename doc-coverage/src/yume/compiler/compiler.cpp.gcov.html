@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-12-08 00:33:47</td>
+            <td class="headerValue">2022-12-08 12:03:55</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -1101,9 +1101,9 @@
 <a name="1043"><span class="lineNum">    1043 </span>            :   m_builder-&gt;SetInsertPoint(pass_block);</a>
 <a name="1044"><span class="lineNum">    1044 </span>            :   auto* phi = m_builder-&gt;CreatePHI(llvm_type(expr.ensure_ty()), 2, label_base + &quot;.phi&quot;);</a>
 <a name="1045"><span class="lineNum">    1045 </span>            :   if (is_and)</a>
-<a name="1046"><span class="lineNum">    1046 </span>            :     phi-&gt;addIncoming(m_builder-&gt;getTrue(), entry_block);</a>
+<a name="1046"><span class="lineNum">    1046 </span>            :     phi-&gt;addIncoming(m_builder-&gt;getFalse(), entry_block);</a>
 <a name="1047"><span class="lineNum">    1047 </span>            :   else</a>
-<a name="1048"><span class="lineNum">    1048 </span>            :     phi-&gt;addIncoming(m_builder-&gt;getFalse(), entry_block);</a>
+<a name="1048"><span class="lineNum">    1048 </span>            :     phi-&gt;addIncoming(m_builder-&gt;getTrue(), entry_block);</a>
 <a name="1049"><span class="lineNum">    1049 </span>            :   phi-&gt;addIncoming(rhs_val, rhs_block);</a>
 <a name="1050"><span class="lineNum">    1050 </span>            :   return phi;</a>
 <a name="1051"><span class="lineNum">    1051 </span>            : }</a>
