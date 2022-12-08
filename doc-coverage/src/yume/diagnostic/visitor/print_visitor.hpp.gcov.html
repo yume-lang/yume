@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-11-11 09:21:50</td>
+            <td class="headerValue">2022-12-08 00:33:47</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -124,29 +124,30 @@
 <a name="66"><span class="lineNum">      66 </span>            :   if (m_pretty)</a>
 <a name="67"><span class="lineNum">      67 </span>            :     --m_indent;</a>
 <a name="68"><span class="lineNum">      68 </span>            :   m_stream &lt;&lt; &quot;)&quot;;</a>
-<a name="69"><span class="lineNum">      69 </span>            : </a>
-<a name="70"><span class="lineNum">      70 </span>            :   return *this;</a>
-<a name="71"><span class="lineNum">      71 </span>            : }</a>
-<a name="72"><span class="lineNum">      72 </span>            : </a>
-<a name="73"><span class="lineNum">      73 </span>            : inline auto PrintVisitor::visit(const string&amp; str, string_view label) -&gt; PrintVisitor&amp; {</a>
-<a name="74"><span class="lineNum">      74 </span>            :   header(label);</a>
-<a name="75"><span class="lineNum">      75 </span>            : </a>
-<a name="76"><span class="lineNum">      76 </span>            :   m_stream &lt;&lt; '\&quot;';</a>
-<a name="77"><span class="lineNum">      77 </span>            :   m_stream.write_escaped(str);</a>
-<a name="78"><span class="lineNum">      78 </span>            :   m_stream &lt;&lt; '\&quot;';</a>
-<a name="79"><span class="lineNum">      79 </span>            : </a>
-<a name="80"><span class="lineNum">      80 </span>            :   return *this;</a>
-<a name="81"><span class="lineNum">      81 </span>            : }</a>
-<a name="82"><span class="lineNum">      82 </span>            : </a>
-<a name="83"><span class="lineNum">      83 </span>            : inline auto PrintVisitor::visit(std::nullptr_t, string_view label) -&gt; PrintVisitor&amp; {</a>
-<a name="84"><span class="lineNum">      84 </span>            :   header(label);</a>
-<a name="85"><span class="lineNum">      85 </span>            : </a>
-<a name="86"><span class="lineNum">      86 </span>            :   m_stream.changeColor(llvm::raw_ostream::RED) &lt;&lt; &quot;null&quot;;</a>
-<a name="87"><span class="lineNum">      87 </span>            :   m_stream.resetColor();</a>
-<a name="88"><span class="lineNum">      88 </span>            : </a>
-<a name="89"><span class="lineNum">      89 </span>            :   return *this;</a>
-<a name="90"><span class="lineNum">      90 </span>            : }</a>
-<a name="91"><span class="lineNum">      91 </span>            : } // namespace yume::diagnostic</a>
+<a name="69"><span class="lineNum">      69 </span>            :   m_needs_sep = true;</a>
+<a name="70"><span class="lineNum">      70 </span>            : </a>
+<a name="71"><span class="lineNum">      71 </span>            :   return *this;</a>
+<a name="72"><span class="lineNum">      72 </span>            : }</a>
+<a name="73"><span class="lineNum">      73 </span>            : </a>
+<a name="74"><span class="lineNum">      74 </span>            : inline auto PrintVisitor::visit(const string&amp; str, string_view label) -&gt; PrintVisitor&amp; {</a>
+<a name="75"><span class="lineNum">      75 </span>            :   header(label);</a>
+<a name="76"><span class="lineNum">      76 </span>            : </a>
+<a name="77"><span class="lineNum">      77 </span>            :   m_stream &lt;&lt; '\&quot;';</a>
+<a name="78"><span class="lineNum">      78 </span>            :   m_stream.write_escaped(str);</a>
+<a name="79"><span class="lineNum">      79 </span>            :   m_stream &lt;&lt; '\&quot;';</a>
+<a name="80"><span class="lineNum">      80 </span>            : </a>
+<a name="81"><span class="lineNum">      81 </span>            :   return *this;</a>
+<a name="82"><span class="lineNum">      82 </span>            : }</a>
+<a name="83"><span class="lineNum">      83 </span>            : </a>
+<a name="84"><span class="lineNum">      84 </span>            : inline auto PrintVisitor::visit(std::nullptr_t, string_view label) -&gt; PrintVisitor&amp; {</a>
+<a name="85"><span class="lineNum">      85 </span>            :   header(label);</a>
+<a name="86"><span class="lineNum">      86 </span>            : </a>
+<a name="87"><span class="lineNum">      87 </span>            :   m_stream.changeColor(llvm::raw_ostream::RED) &lt;&lt; &quot;null&quot;;</a>
+<a name="88"><span class="lineNum">      88 </span>            :   m_stream.resetColor();</a>
+<a name="89"><span class="lineNum">      89 </span>            : </a>
+<a name="90"><span class="lineNum">      90 </span>            :   return *this;</a>
+<a name="91"><span class="lineNum">      91 </span>            : }</a>
+<a name="92"><span class="lineNum">      92 </span>            : } // namespace yume::diagnostic</a>
 </pre>
       </td>
     </tr>
