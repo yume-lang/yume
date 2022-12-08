@@ -1043,9 +1043,9 @@ template <> auto Compiler::expression(ast::BinaryLogicExpr& expr) -> Val {
   m_builder->SetInsertPoint(pass_block);
   auto* phi = m_builder->CreatePHI(llvm_type(expr.ensure_ty()), 2, label_base + ".phi");
   if (is_and)
-    phi->addIncoming(m_builder->getTrue(), entry_block);
-  else
     phi->addIncoming(m_builder->getFalse(), entry_block);
+  else
+    phi->addIncoming(m_builder->getTrue(), entry_block);
   phi->addIncoming(rhs_val, rhs_block);
   return phi;
 }
