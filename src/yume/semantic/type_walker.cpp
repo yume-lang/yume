@@ -623,6 +623,12 @@ template <> void TypeWalker::statement(ast::VarDecl& stat) {
     expression(*stat.type);
     make_implicit_conversion(stat.init, stat.type->val_ty());
     stat.init->attach_to(stat.type.raw_ptr());
+  } else {
+    // This does a "decay" of sorts. If an explicit type isn't provided, and the initializer returns a mutable
+    // reference, the variable is initialized from a value instead of a reference. Note that the local variable itself
+    // becomes a reference again, but usually as a copy of the initializer.
+    // TODO(rymiel): Add a way to bypass this decay, i.e. by using `let mut`.
+    make_implicit_conversion(stat.init, stat.init->ensure_ty().without_mut());
   }
 
   stat.val_ty(stat.init->ensure_ty().known_mut());
