@@ -23,5 +23,17 @@ def main() I32
   puts(num_s)
   assert(num_s.size == 2)
 
+  let unum U32 = U32(0)
+  let unum_s U8[] = unum.to_s
+
+  puts(unum_s)
+  assert(unum_s.size == 1)
+
+  unum = U32(15870)
+  unum_s = unum.to_s
+
+  puts(unum_s)
+  assert(unum_s.size == 5)
+
   return 0
 end

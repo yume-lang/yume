@@ -90,10 +90,12 @@ def -(a U8, b U8) U8 = __primitive__(ib_sub)
 def -(a I32) I32 = 0 - a
 
 def %(a I32, b I32) I32 = __primitive__(ib_srem)
+def %(a U32, b U32) U32 = __primitive__(ib_urem)
 
 def *(a I32, b I32) I32 = __primitive__(ib_mul)
 
 def //(a I32, b I32) I32 = __primitive__(ib_sdiv)
+def //(a U32, b U32) U32 = __primitive__(ib_udiv)
 
 def &(a U8, b U8) U8 = __primitive__(ib_and)
 
@@ -145,6 +147,29 @@ def to_s(value I32) U8[]
 
   let ret_buffer = Slice{U8}(i + sign_num)
   copy(char_buffer.unsafe_ptr, ret_buffer.unsafe_ptr, i + sign_num)
+  return ret_buffer
+end
+
+def to_s(value U32) U8[]
+  let char_buffer = Slice{U8}(12)
+  let i = 0
+
+  while (value != 0) || (i == 0)
+    char_buffer[i] = ?0 + U8(value % 10)
+    value = value // 10
+    i = i + 1
+  end
+
+  let j = 0
+  while j < (i // 2)
+    let tmp = char_buffer[j]
+    char_buffer[j] = char_buffer[i - j - 1]
+    char_buffer[i - j - 1] = tmp
+    j = j + 1
+  end
+
+  let ret_buffer = Slice{U8}(i)
+  copy(char_buffer.unsafe_ptr, ret_buffer.unsafe_ptr, i)
   return ret_buffer
 end
 
