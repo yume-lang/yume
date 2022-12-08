@@ -111,6 +111,43 @@ def >(a I64, b I64) Bool = __primitive__(ib_icmp_sgt)
 def <(a I32, b I32) Bool = __primitive__(ib_icmp_slt)
 def <(a I64, b I64) Bool = __primitive__(ib_icmp_slt)
 
+def abs(a I32) I32
+  if a < 0
+    return -a
+  else
+    return a
+  end
+end
+
+def to_s(value I32) U8[]
+  let char_buffer = Slice{U8}(12)
+  let i = 0
+  let sign_num = 0
+  if value < 0
+    sign_num = 1
+    char_buffer[0] = ?-
+  end
+
+  while (value != 0) || (i == 0)
+    let v = value % 10
+    char_buffer[i + sign_num] = ?0 + U8(v.abs)
+    value = value // 10
+    i = i + 1
+  end
+
+  let j = 0
+  while j < (i // 2)
+    let tmp = char_buffer[j + sign_num]
+    char_buffer[j + sign_num] = char_buffer[i - j - 1 + sign_num]
+    char_buffer[i - j - 1 + sign_num] = tmp
+    j = j + 1
+  end
+
+  let ret_buffer = Slice{U8}(i + sign_num)
+  copy(char_buffer.unsafe_ptr, ret_buffer.unsafe_ptr, i + sign_num)
+  return ret_buffer
+end
+
 def !(a Bool) Bool
   if a
     return false

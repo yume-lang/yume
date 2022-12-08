@@ -1,0 +1,27 @@
+def main() I32
+  let num I32 = 0
+  let num_s U8[] = num.to_s
+
+  puts(num_s)
+  assert(num_s.size == 1)
+
+  num = 110
+  num_s = num.to_s
+
+  puts(num_s)
+  assert(num_s.size == 3)
+
+  num = 786235
+  num_s = num.to_s
+
+  puts(num_s)
+  assert(num_s.size == 6)
+
+  num = -1
+  num_s = num.to_s
+
+  puts(num_s)
+  assert(num_s.size == 2)
+
+  return 0
+end
