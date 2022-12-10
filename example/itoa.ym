@@ -1,39 +1,10 @@
 def main() I32
-  let num I32 = 0
-  let num_s U8[] = num.to_s
-
-  puts(num_s)
-  assert(num_s.size == 1)
-
-  num = 110
-  num_s = num.to_s
-
-  puts(num_s)
-  assert(num_s.size == 3)
-
-  num = 786235
-  num_s = num.to_s
-
-  puts(num_s)
-  assert(num_s.size == 6)
-
-  num = -1
-  num_s = num.to_s
-
-  puts(num_s)
-  assert(num_s.size == 2)
-
-  let unum U32 = U32(0)
-  let unum_s U8[] = unum.to_s
-
-  puts(unum_s)
-  assert(unum_s.size == 1)
-
-  unum = U32(15870)
-  unum_s = unum.to_s
-
-  puts(unum_s)
-  assert(unum_s.size == 5)
+  assert(0.to_s == "0")
+  assert(110.to_s == "110")
+  assert(786235.to_s == "786235")
+  assert((-1).to_s == "-1") # TODO: - should bind stronger to the number
+  assert(U32(0).to_s == "0")
+  assert(U32(15870).to_s == "15870")
 
   return 0
 end
