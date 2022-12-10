@@ -103,6 +103,22 @@ def ==(a I64, b I64) Bool = __primitive__(ib_icmp_eq)
 def ==(a I32, b I32) Bool = __primitive__(ib_icmp_eq)
 def ==(a U8, b U8) Bool = __primitive__(ib_icmp_eq)
 
+def ==(a U8[], b U8[]) Bool
+  let i = 0
+  if a.size != b.size
+    return false
+  end
+
+  while i < a.size
+    if a[i] != b[i]
+      return false
+    end
+    i = i + 1
+  end
+
+  return true
+end
+
 def !=(a I64, b I64) Bool = __primitive__(ib_icmp_ne)
 def !=(a I32, b I32) Bool = __primitive__(ib_icmp_ne)
 def !=(a U8, b U8) Bool = __primitive__(ib_icmp_ne)
