@@ -728,7 +728,7 @@ template <> void Compiler::statement(ast::IfStmt& stat) {
     last_branch = m_builder->CreateCondBr(condition, body_bb, next_test_bb);
     m_builder->SetInsertPoint(body_bb);
     statement(clause.body);
-    if (m_builder->GetInsertBlock()->getTerminator() == nullptr) {
+    if (body_bb->getTerminator() == nullptr) {
       all_terminated = false;
       m_builder->CreateBr(merge_bb);
     }
@@ -739,11 +739,14 @@ template <> void Compiler::statement(ast::IfStmt& stat) {
     next_test_bb->setName("if.else");
     m_builder->SetInsertPoint(next_test_bb);
     statement(*else_clause);
-    if (m_builder->GetInsertBlock()->getTerminator() == nullptr) {
+    if (next_test_bb->getTerminator() == nullptr) {
       all_terminated = false;
       m_builder->CreateBr(merge_bb);
     }
   } else {
+    // We can't consider all branches to terminate when there is no else clause, as the whole if statement could be
+    // skipped
+    all_terminated = false;
     last_branch->setSuccessor(1, merge_bb);
     next_test_bb->eraseFromParent();
   }
