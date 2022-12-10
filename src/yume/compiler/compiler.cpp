@@ -728,7 +728,8 @@ template <> void Compiler::statement(ast::IfStmt& stat) {
     last_branch = m_builder->CreateCondBr(condition, body_bb, next_test_bb);
     m_builder->SetInsertPoint(body_bb);
     statement(clause.body);
-    if (body_bb->getTerminator() == nullptr) {
+    // This has to use GetInsertBlock() since the statement being created above can introduce many new blocks.
+    if (m_builder->GetInsertBlock()->getTerminator() == nullptr) {
       all_terminated = false;
       m_builder->CreateBr(merge_bb);
     }
@@ -739,7 +740,7 @@ template <> void Compiler::statement(ast::IfStmt& stat) {
     next_test_bb->setName("if.else");
     m_builder->SetInsertPoint(next_test_bb);
     statement(*else_clause);
-    if (next_test_bb->getTerminator() == nullptr) {
+    if (m_builder->GetInsertBlock()->getTerminator() == nullptr) {
       all_terminated = false;
       m_builder->CreateBr(merge_bb);
     }
