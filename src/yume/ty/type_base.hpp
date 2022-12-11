@@ -130,5 +130,8 @@ public:
 
   /// If this type is a mutable reference, return the base of it, otherwise return itself.
   [[nodiscard]] auto without_mut() const noexcept -> Type;
+
+  /// If this type is a opaque wrapper type, return the wrapper type, otherwise return itself.
+  [[nodiscard]] auto without_opaque() const noexcept -> Type;
 };
 } // namespace yume::ty

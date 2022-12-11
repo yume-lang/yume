@@ -314,6 +314,12 @@ auto Type::intersect(Type other) const noexcept -> optional<Type> {
 
 auto Type::without_mut() const noexcept -> Type { return {m_base}; }
 
+auto Type::without_opaque() const noexcept -> Type {
+  if (const auto* opaque_self = base_dyn_cast<OpaqueSelf>(); opaque_self != nullptr)
+    return {opaque_self->indirect()};
+  return *this;
+}
+
 auto Type::name() const -> string {
   auto name = m_base->name();
   if (m_mut)
