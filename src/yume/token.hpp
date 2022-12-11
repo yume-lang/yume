@@ -64,6 +64,9 @@ struct Loc {
   }
 
   [[nodiscard]] auto valid() const -> bool { return begin_line > 0 && end_line > 0; }
+
+  /// Return a new Loc which refers to the first character of the current Loc.
+  [[nodiscard]] auto single() const -> Loc { return {begin_line, begin_col, begin_line, begin_col, file}; }
 };
 
 /// A categorized token in source code, created by the tokenizer. These tokens are consumed by the lexer.

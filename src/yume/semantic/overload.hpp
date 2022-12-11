@@ -1,6 +1,8 @@
 #pragma once
 
 #include "compiler/vals.hpp"
+#include "diagnostic/notes.hpp"
+#include "token.hpp"
 #include "ty/compatibility.hpp"
 #include "ty/substitution.hpp"
 #include "util.hpp"
@@ -26,17 +28,22 @@ struct Overload {
 
   [[nodiscard]] auto better_candidate_than(Overload other) const -> bool;
   void dump(llvm::raw_ostream& stream) const;
+
+  [[nodiscard]] auto location() const -> Loc {
+    return fn->ast().location();
+  }
 };
 
 struct OverloadSet {
   ast::AST* call;
   vector<Overload> overloads;
   vector<ast::AST*> args;
+  diagnostic::NotesHolder notes{};
 
   [[nodiscard]] auto empty() const -> bool { return overloads.empty(); }
   void dump(llvm::raw_ostream& stream, bool hide_invalid = false) const;
   void determine_valid_overloads();
-  [[nodiscard]] auto is_valid_overload(Overload& overload) const -> bool;
+  [[nodiscard]] auto is_valid_overload(Overload& overload) -> bool;
   [[nodiscard]] auto try_best_viable_overload() const -> const Overload*;
   [[nodiscard]] auto best_viable_overload() const -> Overload;
 };

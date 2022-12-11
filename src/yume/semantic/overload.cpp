@@ -107,7 +107,7 @@ auto parameter_count_matches(const vector<ast::AST*>& args, const Fn& fn) -> boo
   return false;
 }
 
-auto OverloadSet::is_valid_overload(Overload& overload) const -> bool {
+auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
   const auto& fn = *overload.fn;
   const auto parent = fn.self_ty;
 
@@ -121,12 +121,13 @@ auto OverloadSet::is_valid_overload(Overload& overload) const -> bool {
 
     // If there is no matching receiver, check if any arguments are of the type of the struct.
     // This perform "argument dependent lookup" and is required for "member functions"
-    if (std::ranges::none_of(args, [parent](ast::AST* ast) { return ast->ensure_ty().without_mut() == *parent; })) {
-#ifdef YUME_SPEW_OVERLOAD_SELECTION
-      errs() << "!!! Unsuitable (adl)            : ";
-      overload.dump(errs());
-      errs() << "\n";
-#endif
+    if (std::ranges::none_of(
+            args, [parent](ast::AST* ast) { return ast->ensure_ty().without_mut().without_opaque() == *parent; })) {
+      notes.emit(overload.location()) << "Overload not considered due to ADL";
+      for (const auto* ast : args) {
+        notes.emit(overload.location()) << "  Because `" << ast->ensure_ty().without_mut().without_opaque().name()
+                                        << "' is not `" << parent->name() << "'";
+      }
       return false;
     }
   }
@@ -173,11 +174,9 @@ auto OverloadSet::is_valid_overload(Overload& overload) const -> bool {
 
     // Couldn't perform any kind of valid cast: one invalid conversion disqualifies the function entirely
     if (!compat.valid) {
-#ifdef YUME_SPEW_OVERLOAD_SELECTION
-      errs() << "!!! Unsuitable (incompatible)   : ";
-      overload.dump(errs());
-      errs() << ": " << arg_type->name() << " vs " << param_type->name() << "\n";
-#endif
+      notes.emit(overload.location()) << "Overload not valid";
+      notes.emit(overload.location()) << "  Because `" << arg_type->name() << "' is not convertible to `"
+                                      << param_type->name() << "'";
       return false;
     }
 
@@ -264,6 +263,8 @@ auto OverloadSet::best_viable_overload() const -> Overload {
       i.dump(ss);
       ss << "\n";
     }
+    ss << "\n";
+    notes.dump(ss);
     throw std::logic_error(str);
   }
 
