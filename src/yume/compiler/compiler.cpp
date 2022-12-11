@@ -1372,8 +1372,10 @@ template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
   Val base = body_expression(*expr.base);
 
   if (expr.conversion.dereference) {
-    yume_assert(current_ty.is_mut(), "Source type must be mutable when implicitly derefencing");
-    current_ty = current_ty.ensure_mut_base();
+    // TODO(rymiel): Hack on top of a hack (see Type::compatibility)
+    yume_assert(current_ty.is_mut() || current_ty.is_opaque_self(), "Source type must be mutable or opaque when implicitly derefencing");
+    // TODO(rymiel): Should really just be .ensure_mut_base()
+    current_ty = current_ty.without_mut().without_opaque();
     base.llvm = m_builder->CreateLoad(llvm_type(current_ty), base, "ic.deref");
     if (!current_ty.is_trivially_destructible() && base.scope != nullptr && base.scope->owning &&
         m_return_value == &expr) {

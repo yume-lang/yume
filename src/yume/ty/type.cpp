@@ -168,9 +168,22 @@ auto Type::compatibility(Type other, Compat compat) const -> Compat {
 
   // An interface is essentially always opaque, and thus can be implicitly converted to be "opaque"
   if (const auto* other_opaque = other.base_dyn_cast<OpaqueSelf>();
-      (this_st != nullptr) && (other_opaque != nullptr) && (this_st->is_interface()) && !this->is_opaque_self() &&
-      other.is_opaque_self() && (this_st == other_opaque->indirect()) && (this->is_mut() == other.is_mut())) {
+      (this_st != nullptr) && (other_opaque != nullptr) && (this_st->is_interface()) && (!this->is_opaque_self()) &&
+      (this_st == other_opaque->indirect()) && (this->is_mut() == other.is_mut())) {
     // TODO(rymiel): should this recurse?
+    compat.valid = true;
+    return compat;
+  }
+
+  // An opaque struct type converted to a regular struct type is basically just a dereference.
+  // TODO(rymiel): This is sorta abusing the notion of "opaque", come up with a separate type? Or merge with Virtual
+  // somehow?
+  // TODO(rymiel): This doesn't support anything related to mutable types, should it?
+  if (const auto* this_opaque = this->base_dyn_cast<OpaqueSelf>();
+      (this_opaque != nullptr) && (other_st != nullptr) && (!other_st->is_interface()) && (!other.is_opaque_self()) &&
+      (other_st == this_opaque->indirect()) && (!this->is_mut()) && (!other.is_mut())) {
+    // TODO(rymiel): should this recurse?
+    compat.conv.dereference = true;
     compat.valid = true;
     return compat;
   }

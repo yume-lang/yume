@@ -22,12 +22,29 @@ struct HiGreeter is Greeter
   def @override magic_number() I32 = 13
 end
 
+struct NumberGreeter(number I32) is Greeter
+  def @override greet(self, fn (U8[] ->))
+    fn->(self::number.to_s)
+    fn->(", ")
+  end
+  def @override magic_number() I32 = 21
+  def number(self) I32 = self::number
+end
+
 def main() I32
   let hello = HelloGreeter()
+  let hi = HiGreeter()
+  let num = NumberGreeter(8)
+
   greet_world(hello)
-  greet_world(HiGreeter())
+  greet_world(hi)
+  greet_world(num)
+
   assert(HelloGreeter.magic_number == 7)
+
   check_magic_number(hello, 7)
-  check_magic_number(HiGreeter(), 13)
+  check_magic_number(hi, 13)
+  check_magic_number(num, 21)
+
   return 0
 end

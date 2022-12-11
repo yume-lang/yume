@@ -373,7 +373,10 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
     base_is_mut = true;
   }
 
-  const auto* struct_type = type->base_dyn_cast<ty::Struct>();
+  if (type->is_opaque_self())
+    make_implicit_conversion(expr.base, type->without_opaque());
+
+  const auto* struct_type = type->without_opaque().base_dyn_cast<ty::Struct>();
 
   if (struct_type == nullptr)
     throw std::runtime_error("Can't access field of expression with non-struct type");
