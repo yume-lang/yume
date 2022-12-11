@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-12-10 19:53:23</td>
+            <td class="headerValue">2022-12-11 21:45:23</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -226,250 +226,269 @@
 <a name="168"><span class="lineNum">     168 </span>            : </a>
 <a name="169"><span class="lineNum">     169 </span>            :   // An interface is essentially always opaque, and thus can be implicitly converted to be &quot;opaque&quot;</a>
 <a name="170"><span class="lineNum">     170 </span>            :   if (const auto* other_opaque = other.base_dyn_cast&lt;OpaqueSelf&gt;();</a>
-<a name="171"><span class="lineNum">     171 </span>            :       (this_st != nullptr) &amp;&amp; (other_opaque != nullptr) &amp;&amp; (this_st-&gt;is_interface()) &amp;&amp; !this-&gt;is_opaque_self() &amp;&amp;</a>
-<a name="172"><span class="lineNum">     172 </span>            :       other.is_opaque_self() &amp;&amp; (this_st == other_opaque-&gt;indirect()) &amp;&amp; (this-&gt;is_mut() == other.is_mut())) {</a>
+<a name="171"><span class="lineNum">     171 </span>            :       (this_st != nullptr) &amp;&amp; (other_opaque != nullptr) &amp;&amp; (this_st-&gt;is_interface()) &amp;&amp; (!this-&gt;is_opaque_self()) &amp;&amp;</a>
+<a name="172"><span class="lineNum">     172 </span>            :       (this_st == other_opaque-&gt;indirect()) &amp;&amp; (this-&gt;is_mut() == other.is_mut())) {</a>
 <a name="173"><span class="lineNum">     173 </span>            :     // TODO(rymiel): should this recurse?</a>
 <a name="174"><span class="lineNum">     174 </span>            :     compat.valid = true;</a>
 <a name="175"><span class="lineNum">     175 </span>            :     return compat;</a>
 <a name="176"><span class="lineNum">     176 </span>            :   }</a>
 <a name="177"><span class="lineNum">     177 </span>            : </a>
-<a name="178"><span class="lineNum">     178 </span>            :   return compat;</a>
-<a name="179"><span class="lineNum">     179 </span>            : }</a>
-<a name="180"><span class="lineNum">     180 </span>            : </a>
-<a name="181"><span class="lineNum">     181 </span>            : auto Type::is_generic() const noexcept -&gt; bool {</a>
-<a name="182"><span class="lineNum">     182 </span>            :   if (base_isa&lt;Generic&gt;())</a>
-<a name="183"><span class="lineNum">     183 </span>            :     return true;</a>
-<a name="184"><span class="lineNum">     184 </span>            : </a>
-<a name="185"><span class="lineNum">     185 </span>            :   if (base_isa&lt;Ptr&gt;())</a>
-<a name="186"><span class="lineNum">     186 </span>            :     return ensure_ptr_base().is_generic();</a>
-<a name="187"><span class="lineNum">     187 </span>            : </a>
-<a name="188"><span class="lineNum">     188 </span>            :   if (const auto* struct_ty = base_dyn_cast&lt;Struct&gt;())</a>
-<a name="189"><span class="lineNum">     189 </span>            :     return std::ranges::any_of(struct_ty-&gt;subs(), [](const auto&amp; sub) noexcept { return sub.second.is_generic(); });</a>
-<a name="190"><span class="lineNum">     190 </span>            :   // XXX: The above ranges call is repeated often</a>
-<a name="191"><span class="lineNum">     191 </span>            : </a>
-<a name="192"><span class="lineNum">     192 </span>            :   return false;</a>
-<a name="193"><span class="lineNum">     193 </span>            : }</a>
-<a name="194"><span class="lineNum">     194 </span>            : </a>
-<a name="195"><span class="lineNum">     195 </span>            : auto Type::is_slice() const noexcept -&gt; bool {</a>
-<a name="196"><span class="lineNum">     196 </span>            :   if (const auto* base = base_dyn_cast&lt;Struct&gt;())</a>
-<a name="197"><span class="lineNum">     197 </span>            :     return base-&gt;base_name() == &quot;Slice&quot; &amp;&amp; (base-&gt;m_subs != nullptr) &amp;&amp; base-&gt;m_subs-&gt;size() == 1;</a>
-<a name="198"><span class="lineNum">     198 </span>            : </a>
-<a name="199"><span class="lineNum">     199 </span>            :   return false;</a>
-<a name="200"><span class="lineNum">     200 </span>            : };</a>
-<a name="201"><span class="lineNum">     201 </span>            : </a>
-<a name="202"><span class="lineNum">     202 </span>            : auto Type::is_opaque_self() const noexcept -&gt; bool { return base_isa&lt;OpaqueSelf&gt;(); };</a>
-<a name="203"><span class="lineNum">     203 </span>            : </a>
-<a name="204"><span class="lineNum">     204 </span>            : auto Type::is_trivially_destructible() const -&gt; bool {</a>
-<a name="205"><span class="lineNum">     205 </span>            :   if (base_isa&lt;ty::Int&gt;() || base_isa&lt;ty::Ptr&gt;() || base_isa&lt;ty::Function&gt;() || base_isa&lt;ty::Nil&gt;())</a>
-<a name="206"><span class="lineNum">     206 </span>            :     return true;</a>
+<a name="178"><span class="lineNum">     178 </span>            :   // An opaque struct type converted to a regular struct type is basically just a dereference.</a>
+<a name="179"><span class="lineNum">     179 </span>            :   // TODO(rymiel): This is sorta abusing the notion of &quot;opaque&quot;, come up with a separate type? Or merge with Virtual</a>
+<a name="180"><span class="lineNum">     180 </span>            :   // somehow?</a>
+<a name="181"><span class="lineNum">     181 </span>            :   // TODO(rymiel): This doesn't support anything related to mutable types, should it?</a>
+<a name="182"><span class="lineNum">     182 </span>            :   if (const auto* this_opaque = this-&gt;base_dyn_cast&lt;OpaqueSelf&gt;();</a>
+<a name="183"><span class="lineNum">     183 </span>            :       (this_opaque != nullptr) &amp;&amp; (other_st != nullptr) &amp;&amp; (!other_st-&gt;is_interface()) &amp;&amp; (!other.is_opaque_self()) &amp;&amp;</a>
+<a name="184"><span class="lineNum">     184 </span>            :       (other_st == this_opaque-&gt;indirect()) &amp;&amp; (!this-&gt;is_mut()) &amp;&amp; (!other.is_mut())) {</a>
+<a name="185"><span class="lineNum">     185 </span>            :     // TODO(rymiel): should this recurse?</a>
+<a name="186"><span class="lineNum">     186 </span>            :     compat.conv.dereference = true;</a>
+<a name="187"><span class="lineNum">     187 </span>            :     compat.valid = true;</a>
+<a name="188"><span class="lineNum">     188 </span>            :     return compat;</a>
+<a name="189"><span class="lineNum">     189 </span>            :   }</a>
+<a name="190"><span class="lineNum">     190 </span>            : </a>
+<a name="191"><span class="lineNum">     191 </span>            :   return compat;</a>
+<a name="192"><span class="lineNum">     192 </span>            : }</a>
+<a name="193"><span class="lineNum">     193 </span>            : </a>
+<a name="194"><span class="lineNum">     194 </span>            : auto Type::is_generic() const noexcept -&gt; bool {</a>
+<a name="195"><span class="lineNum">     195 </span>            :   if (base_isa&lt;Generic&gt;())</a>
+<a name="196"><span class="lineNum">     196 </span>            :     return true;</a>
+<a name="197"><span class="lineNum">     197 </span>            : </a>
+<a name="198"><span class="lineNum">     198 </span>            :   if (base_isa&lt;Ptr&gt;())</a>
+<a name="199"><span class="lineNum">     199 </span>            :     return ensure_ptr_base().is_generic();</a>
+<a name="200"><span class="lineNum">     200 </span>            : </a>
+<a name="201"><span class="lineNum">     201 </span>            :   if (const auto* struct_ty = base_dyn_cast&lt;Struct&gt;())</a>
+<a name="202"><span class="lineNum">     202 </span>            :     return std::ranges::any_of(struct_ty-&gt;subs(), [](const auto&amp; sub) noexcept { return sub.second.is_generic(); });</a>
+<a name="203"><span class="lineNum">     203 </span>            :   // XXX: The above ranges call is repeated often</a>
+<a name="204"><span class="lineNum">     204 </span>            : </a>
+<a name="205"><span class="lineNum">     205 </span>            :   return false;</a>
+<a name="206"><span class="lineNum">     206 </span>            : }</a>
 <a name="207"><span class="lineNum">     207 </span>            : </a>
-<a name="208"><span class="lineNum">     208 </span>            :   if (is_slice())</a>
-<a name="209"><span class="lineNum">     209 </span>            :     return false;</a>
-<a name="210"><span class="lineNum">     210 </span>            : </a>
-<a name="211"><span class="lineNum">     211 </span>            :   if (const auto* struct_type = base_dyn_cast&lt;ty::Struct&gt;())</a>
-<a name="212"><span class="lineNum">     212 </span>            :     return std::ranges::all_of(</a>
-<a name="213"><span class="lineNum">     213 </span>            :         struct_type-&gt;fields(), [](const auto&amp; i) { return i.is_trivially_destructible(); }, &amp;ast::TypeName::ensure_ty);</a>
+<a name="208"><span class="lineNum">     208 </span>            : auto Type::is_slice() const noexcept -&gt; bool {</a>
+<a name="209"><span class="lineNum">     209 </span>            :   if (const auto* base = base_dyn_cast&lt;Struct&gt;())</a>
+<a name="210"><span class="lineNum">     210 </span>            :     return base-&gt;base_name() == &quot;Slice&quot; &amp;&amp; (base-&gt;m_subs != nullptr) &amp;&amp; base-&gt;m_subs-&gt;size() == 1;</a>
+<a name="211"><span class="lineNum">     211 </span>            : </a>
+<a name="212"><span class="lineNum">     212 </span>            :   return false;</a>
+<a name="213"><span class="lineNum">     213 </span>            : };</a>
 <a name="214"><span class="lineNum">     214 </span>            : </a>
-<a name="215"><span class="lineNum">     215 </span>            :   // A generic or something, shouldn't occur</a>
-<a name="216"><span class="lineNum">     216 </span>            :   throw std::logic_error(&quot;Cannot check if &quot;s + name() + &quot; is trivially destructible&quot;);</a>
-<a name="217"><span class="lineNum">     217 </span>            : }</a>
-<a name="218"><span class="lineNum">     218 </span>            : </a>
-<a name="219"><span class="lineNum">     219 </span>            : auto Type::has_qualifier(Qualifier qual) const -&gt; bool {</a>
-<a name="220"><span class="lineNum">     220 </span>            :   if (m_mut)</a>
-<a name="221"><span class="lineNum">     221 </span>            :     return (qual == Qualifier::Mut);</a>
-<a name="222"><span class="lineNum">     222 </span>            :   if (const auto* ptr_base = base_dyn_cast&lt;Ptr&gt;(); ptr_base)</a>
-<a name="223"><span class="lineNum">     223 </span>            :     return ptr_base-&gt;has_qualifier(qual);</a>
-<a name="224"><span class="lineNum">     224 </span>            :   return false;</a>
-<a name="225"><span class="lineNum">     225 </span>            : }</a>
-<a name="226"><span class="lineNum">     226 </span>            : </a>
-<a name="227"><span class="lineNum">     227 </span>            : auto Type::apply_generic_substitution(Sub sub) const -&gt; optional&lt;Type&gt; {</a>
-<a name="228"><span class="lineNum">     228 </span>            :   yume_assert(is_generic(), &quot;Can't perform generic substitution without a generic type&quot;);</a>
-<a name="229"><span class="lineNum">     229 </span>            :   if (m_base == sub.target)</a>
-<a name="230"><span class="lineNum">     230 </span>            :     return Type{sub.replace.base(), m_mut};</a>
+<a name="215"><span class="lineNum">     215 </span>            : auto Type::is_opaque_self() const noexcept -&gt; bool { return base_isa&lt;OpaqueSelf&gt;(); };</a>
+<a name="216"><span class="lineNum">     216 </span>            : </a>
+<a name="217"><span class="lineNum">     217 </span>            : auto Type::is_trivially_destructible() const -&gt; bool {</a>
+<a name="218"><span class="lineNum">     218 </span>            :   if (base_isa&lt;ty::Int&gt;() || base_isa&lt;ty::Ptr&gt;() || base_isa&lt;ty::Function&gt;() || base_isa&lt;ty::Nil&gt;())</a>
+<a name="219"><span class="lineNum">     219 </span>            :     return true;</a>
+<a name="220"><span class="lineNum">     220 </span>            : </a>
+<a name="221"><span class="lineNum">     221 </span>            :   if (is_slice())</a>
+<a name="222"><span class="lineNum">     222 </span>            :     return false;</a>
+<a name="223"><span class="lineNum">     223 </span>            : </a>
+<a name="224"><span class="lineNum">     224 </span>            :   if (const auto* struct_type = base_dyn_cast&lt;ty::Struct&gt;())</a>
+<a name="225"><span class="lineNum">     225 </span>            :     return std::ranges::all_of(</a>
+<a name="226"><span class="lineNum">     226 </span>            :         struct_type-&gt;fields(), [](const auto&amp; i) { return i.is_trivially_destructible(); }, &amp;ast::TypeName::ensure_ty);</a>
+<a name="227"><span class="lineNum">     227 </span>            : </a>
+<a name="228"><span class="lineNum">     228 </span>            :   // A generic or something, shouldn't occur</a>
+<a name="229"><span class="lineNum">     229 </span>            :   throw std::logic_error(&quot;Cannot check if &quot;s + name() + &quot; is trivially destructible&quot;);</a>
+<a name="230"><span class="lineNum">     230 </span>            : }</a>
 <a name="231"><span class="lineNum">     231 </span>            : </a>
-<a name="232"><span class="lineNum">     232 </span>            :   if (const auto* ptr_this = base_dyn_cast&lt;Ptr&gt;())</a>
-<a name="233"><span class="lineNum">     233 </span>            :     return ensure_ptr_base().apply_generic_substitution(sub)-&gt;known_qual(ptr_this-&gt;qualifier());</a>
-<a name="234"><span class="lineNum">     234 </span>            : </a>
-<a name="235"><span class="lineNum">     235 </span>            :   if (const auto* st_this = base_dyn_cast&lt;Struct&gt;()) {</a>
-<a name="236"><span class="lineNum">     236 </span>            :     // Gah!</a>
-<a name="237"><span class="lineNum">     237 </span>            :     auto subs = Substitution{};</a>
-<a name="238"><span class="lineNum">     238 </span>            :     for (const auto&amp; [k, v] : st_this-&gt;subs()) {</a>
-<a name="239"><span class="lineNum">     239 </span>            :       subs.try_emplace(k, v.apply_generic_substitution(sub).value());</a>
-<a name="240"><span class="lineNum">     240 </span>            :     }</a>
-<a name="241"><span class="lineNum">     241 </span>            : </a>
-<a name="242"><span class="lineNum">     242 </span>            :     return &amp;st_this-&gt;emplace_subbed(move(subs));</a>
-<a name="243"><span class="lineNum">     243 </span>            :   }</a>
+<a name="232"><span class="lineNum">     232 </span>            : auto Type::has_qualifier(Qualifier qual) const -&gt; bool {</a>
+<a name="233"><span class="lineNum">     233 </span>            :   if (m_mut)</a>
+<a name="234"><span class="lineNum">     234 </span>            :     return (qual == Qualifier::Mut);</a>
+<a name="235"><span class="lineNum">     235 </span>            :   if (const auto* ptr_base = base_dyn_cast&lt;Ptr&gt;(); ptr_base)</a>
+<a name="236"><span class="lineNum">     236 </span>            :     return ptr_base-&gt;has_qualifier(qual);</a>
+<a name="237"><span class="lineNum">     237 </span>            :   return false;</a>
+<a name="238"><span class="lineNum">     238 </span>            : }</a>
+<a name="239"><span class="lineNum">     239 </span>            : </a>
+<a name="240"><span class="lineNum">     240 </span>            : auto Type::apply_generic_substitution(Sub sub) const -&gt; optional&lt;Type&gt; {</a>
+<a name="241"><span class="lineNum">     241 </span>            :   yume_assert(is_generic(), &quot;Can't perform generic substitution without a generic type&quot;);</a>
+<a name="242"><span class="lineNum">     242 </span>            :   if (m_base == sub.target)</a>
+<a name="243"><span class="lineNum">     243 </span>            :     return Type{sub.replace.base(), m_mut};</a>
 <a name="244"><span class="lineNum">     244 </span>            : </a>
-<a name="245"><span class="lineNum">     245 </span>            :   return {};</a>
-<a name="246"><span class="lineNum">     246 </span>            : }</a>
+<a name="245"><span class="lineNum">     245 </span>            :   if (const auto* ptr_this = base_dyn_cast&lt;Ptr&gt;())</a>
+<a name="246"><span class="lineNum">     246 </span>            :     return ensure_ptr_base().apply_generic_substitution(sub)-&gt;known_qual(ptr_this-&gt;qualifier());</a>
 <a name="247"><span class="lineNum">     247 </span>            : </a>
-<a name="248"><span class="lineNum">     248 </span>            : auto Struct::emplace_subbed(Substitution sub) const -&gt; const Struct&amp; {</a>
-<a name="249"><span class="lineNum">     249 </span>            :   if (m_parent != nullptr)</a>
-<a name="250"><span class="lineNum">     250 </span>            :     return m_parent-&gt;emplace_subbed(move(sub));</a>
-<a name="251"><span class="lineNum">     251 </span>            : </a>
-<a name="252"><span class="lineNum">     252 </span>            :   if (sub == *m_subs)</a>
-<a name="253"><span class="lineNum">     253 </span>            :     return *this;</a>
+<a name="248"><span class="lineNum">     248 </span>            :   if (const auto* st_this = base_dyn_cast&lt;Struct&gt;()) {</a>
+<a name="249"><span class="lineNum">     249 </span>            :     // Gah!</a>
+<a name="250"><span class="lineNum">     250 </span>            :     auto subs = Substitution{};</a>
+<a name="251"><span class="lineNum">     251 </span>            :     for (const auto&amp; [k, v] : st_this-&gt;subs()) {</a>
+<a name="252"><span class="lineNum">     252 </span>            :       subs.try_emplace(k, v.apply_generic_substitution(sub).value());</a>
+<a name="253"><span class="lineNum">     253 </span>            :     }</a>
 <a name="254"><span class="lineNum">     254 </span>            : </a>
-<a name="255"><span class="lineNum">     255 </span>            :   auto existing = m_subbed.find(sub);</a>
-<a name="256"><span class="lineNum">     256 </span>            :   if (existing == m_subbed.end()) {</a>
-<a name="257"><span class="lineNum">     257 </span>            :     auto [iter, success] = m_subbed.emplace(move(sub), make_unique&lt;Struct&gt;(base_name(), fields(), m_decl, nullptr));</a>
-<a name="258"><span class="lineNum">     258 </span>            :     iter-&gt;second-&gt;m_subs = &amp;iter-&gt;first;</a>
-<a name="259"><span class="lineNum">     259 </span>            :     iter-&gt;second-&gt;m_parent = this;</a>
-<a name="260"><span class="lineNum">     260 </span>            :     return *iter-&gt;second;</a>
-<a name="261"><span class="lineNum">     261 </span>            :   }</a>
-<a name="262"><span class="lineNum">     262 </span>            :   return *existing-&gt;second;</a>
-<a name="263"><span class="lineNum">     263 </span>            : }</a>
+<a name="255"><span class="lineNum">     255 </span>            :     return &amp;st_this-&gt;emplace_subbed(move(subs));</a>
+<a name="256"><span class="lineNum">     256 </span>            :   }</a>
+<a name="257"><span class="lineNum">     257 </span>            : </a>
+<a name="258"><span class="lineNum">     258 </span>            :   return {};</a>
+<a name="259"><span class="lineNum">     259 </span>            : }</a>
+<a name="260"><span class="lineNum">     260 </span>            : </a>
+<a name="261"><span class="lineNum">     261 </span>            : auto Struct::emplace_subbed(Substitution sub) const -&gt; const Struct&amp; {</a>
+<a name="262"><span class="lineNum">     262 </span>            :   if (m_parent != nullptr)</a>
+<a name="263"><span class="lineNum">     263 </span>            :     return m_parent-&gt;emplace_subbed(move(sub));</a>
 <a name="264"><span class="lineNum">     264 </span>            : </a>
-<a name="265"><span class="lineNum">     265 </span>            : auto Struct::is_interface() const -&gt; bool { return m_decl-&gt;st_ast.is_interface; }</a>
-<a name="266"><span class="lineNum">     266 </span>            : </a>
-<a name="267"><span class="lineNum">     267 </span>            : auto Struct::implements() const -&gt; const ast::OptionalType&amp; { return m_decl-&gt;st_ast.implements; }</a>
-<a name="268"><span class="lineNum">     268 </span>            : </a>
-<a name="269"><span class="lineNum">     269 </span>            : auto Type::mut_base() const noexcept -&gt; optional&lt;Type&gt; {</a>
-<a name="270"><span class="lineNum">     270 </span>            :   if (is_mut())</a>
-<a name="271"><span class="lineNum">     271 </span>            :     return Type(m_base);</a>
-<a name="272"><span class="lineNum">     272 </span>            :   return std::nullopt;</a>
-<a name="273"><span class="lineNum">     273 </span>            : }</a>
-<a name="274"><span class="lineNum">     274 </span>            : </a>
-<a name="275"><span class="lineNum">     275 </span>            : auto Type::ensure_mut_base() const -&gt; Type {</a>
-<a name="276"><span class="lineNum">     276 </span>            :   if (is_mut())</a>
-<a name="277"><span class="lineNum">     277 </span>            :     return {m_base};</a>
-<a name="278"><span class="lineNum">     278 </span>            :   throw std::logic_error(&quot;Tried calling ensure_mut_base on a type that isn't a mutable reference&quot;);</a>
-<a name="279"><span class="lineNum">     279 </span>            : }</a>
-<a name="280"><span class="lineNum">     280 </span>            : </a>
-<a name="281"><span class="lineNum">     281 </span>            : auto Type::ptr_base() const noexcept -&gt; optional&lt;Type&gt; {</a>
-<a name="282"><span class="lineNum">     282 </span>            :   if (const auto* ptr = base_dyn_cast&lt;Ptr&gt;())</a>
-<a name="283"><span class="lineNum">     283 </span>            :     return ptr-&gt;pointee();</a>
-<a name="284"><span class="lineNum">     284 </span>            :   return {};</a>
-<a name="285"><span class="lineNum">     285 </span>            : }</a>
-<a name="286"><span class="lineNum">     286 </span>            : </a>
-<a name="287"><span class="lineNum">     287 </span>            : auto Type::ensure_ptr_base() const -&gt; Type {</a>
-<a name="288"><span class="lineNum">     288 </span>            :   if (const auto* ptr = base_dyn_cast&lt;Ptr&gt;())</a>
-<a name="289"><span class="lineNum">     289 </span>            :     return ptr-&gt;pointee();</a>
-<a name="290"><span class="lineNum">     290 </span>            :   throw std::logic_error(&quot;Tried calling ensure_ptr_base on a type that isn't a pointer-like type&quot;);</a>
-<a name="291"><span class="lineNum">     291 </span>            : }</a>
-<a name="292"><span class="lineNum">     292 </span>            : </a>
-<a name="293"><span class="lineNum">     293 </span>            : auto Type::coalesce(Type other) const noexcept -&gt; optional&lt;Type&gt; {</a>
-<a name="294"><span class="lineNum">     294 </span>            :   if (*this == other)</a>
-<a name="295"><span class="lineNum">     295 </span>            :     return *this;</a>
-<a name="296"><span class="lineNum">     296 </span>            :   if (m_mut &amp;&amp; !other.m_mut &amp;&amp; m_base == other.m_base)</a>
-<a name="297"><span class="lineNum">     297 </span>            :     return *this;</a>
-<a name="298"><span class="lineNum">     298 </span>            :   if (other.m_mut &amp;&amp; !m_mut &amp;&amp; other.m_base == m_base)</a>
-<a name="299"><span class="lineNum">     299 </span>            :     return other;</a>
-<a name="300"><span class="lineNum">     300 </span>            : </a>
-<a name="301"><span class="lineNum">     301 </span>            :   return std::nullopt;</a>
-<a name="302"><span class="lineNum">     302 </span>            : }</a>
-<a name="303"><span class="lineNum">     303 </span>            : </a>
-<a name="304"><span class="lineNum">     304 </span>            : auto Type::intersect(Type other) const noexcept -&gt; optional&lt;Type&gt; {</a>
-<a name="305"><span class="lineNum">     305 </span>            :   if (*this == other)</a>
-<a name="306"><span class="lineNum">     306 </span>            :     return *this;</a>
-<a name="307"><span class="lineNum">     307 </span>            :   if (m_mut &amp;&amp; !other.m_mut &amp;&amp; m_base == other.m_base)</a>
-<a name="308"><span class="lineNum">     308 </span>            :     return other;</a>
-<a name="309"><span class="lineNum">     309 </span>            :   if (other.m_mut &amp;&amp; !m_mut &amp;&amp; other.m_base == m_base)</a>
+<a name="265"><span class="lineNum">     265 </span>            :   if (sub == *m_subs)</a>
+<a name="266"><span class="lineNum">     266 </span>            :     return *this;</a>
+<a name="267"><span class="lineNum">     267 </span>            : </a>
+<a name="268"><span class="lineNum">     268 </span>            :   auto existing = m_subbed.find(sub);</a>
+<a name="269"><span class="lineNum">     269 </span>            :   if (existing == m_subbed.end()) {</a>
+<a name="270"><span class="lineNum">     270 </span>            :     auto [iter, success] = m_subbed.emplace(move(sub), make_unique&lt;Struct&gt;(base_name(), fields(), m_decl, nullptr));</a>
+<a name="271"><span class="lineNum">     271 </span>            :     iter-&gt;second-&gt;m_subs = &amp;iter-&gt;first;</a>
+<a name="272"><span class="lineNum">     272 </span>            :     iter-&gt;second-&gt;m_parent = this;</a>
+<a name="273"><span class="lineNum">     273 </span>            :     return *iter-&gt;second;</a>
+<a name="274"><span class="lineNum">     274 </span>            :   }</a>
+<a name="275"><span class="lineNum">     275 </span>            :   return *existing-&gt;second;</a>
+<a name="276"><span class="lineNum">     276 </span>            : }</a>
+<a name="277"><span class="lineNum">     277 </span>            : </a>
+<a name="278"><span class="lineNum">     278 </span>            : auto Struct::is_interface() const -&gt; bool { return m_decl-&gt;st_ast.is_interface; }</a>
+<a name="279"><span class="lineNum">     279 </span>            : </a>
+<a name="280"><span class="lineNum">     280 </span>            : auto Struct::implements() const -&gt; const ast::OptionalType&amp; { return m_decl-&gt;st_ast.implements; }</a>
+<a name="281"><span class="lineNum">     281 </span>            : </a>
+<a name="282"><span class="lineNum">     282 </span>            : auto Type::mut_base() const noexcept -&gt; optional&lt;Type&gt; {</a>
+<a name="283"><span class="lineNum">     283 </span>            :   if (is_mut())</a>
+<a name="284"><span class="lineNum">     284 </span>            :     return Type(m_base);</a>
+<a name="285"><span class="lineNum">     285 </span>            :   return std::nullopt;</a>
+<a name="286"><span class="lineNum">     286 </span>            : }</a>
+<a name="287"><span class="lineNum">     287 </span>            : </a>
+<a name="288"><span class="lineNum">     288 </span>            : auto Type::ensure_mut_base() const -&gt; Type {</a>
+<a name="289"><span class="lineNum">     289 </span>            :   if (is_mut())</a>
+<a name="290"><span class="lineNum">     290 </span>            :     return {m_base};</a>
+<a name="291"><span class="lineNum">     291 </span>            :   throw std::logic_error(&quot;Tried calling ensure_mut_base on a type that isn't a mutable reference&quot;);</a>
+<a name="292"><span class="lineNum">     292 </span>            : }</a>
+<a name="293"><span class="lineNum">     293 </span>            : </a>
+<a name="294"><span class="lineNum">     294 </span>            : auto Type::ptr_base() const noexcept -&gt; optional&lt;Type&gt; {</a>
+<a name="295"><span class="lineNum">     295 </span>            :   if (const auto* ptr = base_dyn_cast&lt;Ptr&gt;())</a>
+<a name="296"><span class="lineNum">     296 </span>            :     return ptr-&gt;pointee();</a>
+<a name="297"><span class="lineNum">     297 </span>            :   return {};</a>
+<a name="298"><span class="lineNum">     298 </span>            : }</a>
+<a name="299"><span class="lineNum">     299 </span>            : </a>
+<a name="300"><span class="lineNum">     300 </span>            : auto Type::ensure_ptr_base() const -&gt; Type {</a>
+<a name="301"><span class="lineNum">     301 </span>            :   if (const auto* ptr = base_dyn_cast&lt;Ptr&gt;())</a>
+<a name="302"><span class="lineNum">     302 </span>            :     return ptr-&gt;pointee();</a>
+<a name="303"><span class="lineNum">     303 </span>            :   throw std::logic_error(&quot;Tried calling ensure_ptr_base on a type that isn't a pointer-like type&quot;);</a>
+<a name="304"><span class="lineNum">     304 </span>            : }</a>
+<a name="305"><span class="lineNum">     305 </span>            : </a>
+<a name="306"><span class="lineNum">     306 </span>            : auto Type::coalesce(Type other) const noexcept -&gt; optional&lt;Type&gt; {</a>
+<a name="307"><span class="lineNum">     307 </span>            :   if (*this == other)</a>
+<a name="308"><span class="lineNum">     308 </span>            :     return *this;</a>
+<a name="309"><span class="lineNum">     309 </span>            :   if (m_mut &amp;&amp; !other.m_mut &amp;&amp; m_base == other.m_base)</a>
 <a name="310"><span class="lineNum">     310 </span>            :     return *this;</a>
-<a name="311"><span class="lineNum">     311 </span>            : </a>
-<a name="312"><span class="lineNum">     312 </span>            :   return std::nullopt;</a>
-<a name="313"><span class="lineNum">     313 </span>            : }</a>
-<a name="314"><span class="lineNum">     314 </span>            : </a>
-<a name="315"><span class="lineNum">     315 </span>            : auto Type::without_mut() const noexcept -&gt; Type { return {m_base}; }</a>
+<a name="311"><span class="lineNum">     311 </span>            :   if (other.m_mut &amp;&amp; !m_mut &amp;&amp; other.m_base == m_base)</a>
+<a name="312"><span class="lineNum">     312 </span>            :     return other;</a>
+<a name="313"><span class="lineNum">     313 </span>            : </a>
+<a name="314"><span class="lineNum">     314 </span>            :   return std::nullopt;</a>
+<a name="315"><span class="lineNum">     315 </span>            : }</a>
 <a name="316"><span class="lineNum">     316 </span>            : </a>
-<a name="317"><span class="lineNum">     317 </span>            : auto Type::name() const -&gt; string {</a>
-<a name="318"><span class="lineNum">     318 </span>            :   auto name = m_base-&gt;name();</a>
-<a name="319"><span class="lineNum">     319 </span>            :   if (m_mut)</a>
-<a name="320"><span class="lineNum">     320 </span>            :     name += qual_suffix(Qualifier::Mut);</a>
-<a name="321"><span class="lineNum">     321 </span>            :   return name;</a>
-<a name="322"><span class="lineNum">     322 </span>            : }</a>
-<a name="323"><span class="lineNum">     323 </span>            : auto Type::base_name() const -&gt; string { return m_base-&gt;name(); }</a>
+<a name="317"><span class="lineNum">     317 </span>            : auto Type::intersect(Type other) const noexcept -&gt; optional&lt;Type&gt; {</a>
+<a name="318"><span class="lineNum">     318 </span>            :   if (*this == other)</a>
+<a name="319"><span class="lineNum">     319 </span>            :     return *this;</a>
+<a name="320"><span class="lineNum">     320 </span>            :   if (m_mut &amp;&amp; !other.m_mut &amp;&amp; m_base == other.m_base)</a>
+<a name="321"><span class="lineNum">     321 </span>            :     return other;</a>
+<a name="322"><span class="lineNum">     322 </span>            :   if (other.m_mut &amp;&amp; !m_mut &amp;&amp; other.m_base == m_base)</a>
+<a name="323"><span class="lineNum">     323 </span>            :     return *this;</a>
 <a name="324"><span class="lineNum">     324 </span>            : </a>
-<a name="325"><span class="lineNum">     325 </span>            : auto Ptr::name() const -&gt; string { return m_base.name() + qual_suffix(m_qual); }</a>
-<a name="326"><span class="lineNum">     326 </span>            : </a>
-<a name="327"><span class="lineNum">     327 </span>            : auto Struct::name() const -&gt; string {</a>
-<a name="328"><span class="lineNum">     328 </span>            :   if (m_subs-&gt;empty())</a>
-<a name="329"><span class="lineNum">     329 </span>            :     return base_name();</a>
-<a name="330"><span class="lineNum">     330 </span>            : </a>
-<a name="331"><span class="lineNum">     331 </span>            :   auto ss = stringstream{};</a>
-<a name="332"><span class="lineNum">     332 </span>            :   ss &lt;&lt; base_name() &lt;&lt; &quot;{&quot;;</a>
-<a name="333"><span class="lineNum">     333 </span>            :   for (const auto&amp; i : llvm::enumerate(*m_subs)) {</a>
-<a name="334"><span class="lineNum">     334 </span>            :     if (i.index() &gt; 0)</a>
-<a name="335"><span class="lineNum">     335 </span>            :       ss &lt;&lt; &quot;,&quot;;</a>
-<a name="336"><span class="lineNum">     336 </span>            :     ss &lt;&lt; i.value().second.name();</a>
-<a name="337"><span class="lineNum">     337 </span>            :   }</a>
-<a name="338"><span class="lineNum">     338 </span>            :   ss &lt;&lt; &quot;}&quot;;</a>
-<a name="339"><span class="lineNum">     339 </span>            : </a>
-<a name="340"><span class="lineNum">     340 </span>            :   return ss.str();</a>
+<a name="325"><span class="lineNum">     325 </span>            :   return std::nullopt;</a>
+<a name="326"><span class="lineNum">     326 </span>            : }</a>
+<a name="327"><span class="lineNum">     327 </span>            : </a>
+<a name="328"><span class="lineNum">     328 </span>            : auto Type::without_mut() const noexcept -&gt; Type { return {m_base}; }</a>
+<a name="329"><span class="lineNum">     329 </span>            : </a>
+<a name="330"><span class="lineNum">     330 </span>            : auto Type::without_opaque() const noexcept -&gt; Type {</a>
+<a name="331"><span class="lineNum">     331 </span>            :   if (const auto* opaque_self = base_dyn_cast&lt;OpaqueSelf&gt;(); opaque_self != nullptr)</a>
+<a name="332"><span class="lineNum">     332 </span>            :     return {opaque_self-&gt;indirect()};</a>
+<a name="333"><span class="lineNum">     333 </span>            :   return *this;</a>
+<a name="334"><span class="lineNum">     334 </span>            : }</a>
+<a name="335"><span class="lineNum">     335 </span>            : </a>
+<a name="336"><span class="lineNum">     336 </span>            : auto Type::name() const -&gt; string {</a>
+<a name="337"><span class="lineNum">     337 </span>            :   auto name = m_base-&gt;name();</a>
+<a name="338"><span class="lineNum">     338 </span>            :   if (m_mut)</a>
+<a name="339"><span class="lineNum">     339 </span>            :     name += qual_suffix(Qualifier::Mut);</a>
+<a name="340"><span class="lineNum">     340 </span>            :   return name;</a>
 <a name="341"><span class="lineNum">     341 </span>            : }</a>
-<a name="342"><span class="lineNum">     342 </span>            : </a>
-<a name="343"><span class="lineNum">     343 </span>            : auto Function::name() const -&gt; string {</a>
-<a name="344"><span class="lineNum">     344 </span>            :   auto ss = stringstream{};</a>
-<a name="345"><span class="lineNum">     345 </span>            :   ss &lt;&lt; &quot;(&quot; &lt;&lt; base_name();</a>
-<a name="346"><span class="lineNum">     346 </span>            :   if (!m_closure.empty()) {</a>
-<a name="347"><span class="lineNum">     347 </span>            :     ss &lt;&lt; &quot;[&quot;;</a>
-<a name="348"><span class="lineNum">     348 </span>            :     for (const auto&amp; i : llvm::enumerate(m_closure)) {</a>
-<a name="349"><span class="lineNum">     349 </span>            :       if (i.index() &gt; 0)</a>
-<a name="350"><span class="lineNum">     350 </span>            :         ss &lt;&lt; &quot;,&quot;;</a>
-<a name="351"><span class="lineNum">     351 </span>            :       ss &lt;&lt; i.value().name();</a>
-<a name="352"><span class="lineNum">     352 </span>            :     }</a>
-<a name="353"><span class="lineNum">     353 </span>            :     ss &lt;&lt; &quot;] &quot;;</a>
-<a name="354"><span class="lineNum">     354 </span>            :   }</a>
-<a name="355"><span class="lineNum">     355 </span>            :   for (const auto&amp; i : llvm::enumerate(m_args)) {</a>
-<a name="356"><span class="lineNum">     356 </span>            :     if (i.index() &gt; 0)</a>
-<a name="357"><span class="lineNum">     357 </span>            :       ss &lt;&lt; &quot;,&quot;;</a>
-<a name="358"><span class="lineNum">     358 </span>            :     ss &lt;&lt; i.value().name();</a>
-<a name="359"><span class="lineNum">     359 </span>            :   }</a>
-<a name="360"><span class="lineNum">     360 </span>            :   ss &lt;&lt; &quot;-&gt;&quot;;</a>
-<a name="361"><span class="lineNum">     361 </span>            :   if (m_fn_ptr) {</a>
-<a name="362"><span class="lineNum">     362 </span>            :     ss &lt;&lt; &quot;ptr&quot;;</a>
-<a name="363"><span class="lineNum">     363 </span>            :   }</a>
-<a name="364"><span class="lineNum">     364 </span>            :   if (m_ret.has_value())</a>
-<a name="365"><span class="lineNum">     365 </span>            :     ss &lt;&lt; m_ret-&gt;name();</a>
-<a name="366"><span class="lineNum">     366 </span>            :   ss &lt;&lt; &quot;)&quot;;</a>
-<a name="367"><span class="lineNum">     367 </span>            : </a>
-<a name="368"><span class="lineNum">     368 </span>            :   return ss.str();</a>
-<a name="369"><span class="lineNum">     369 </span>            : }</a>
-<a name="370"><span class="lineNum">     370 </span>            : </a>
-<a name="371"><span class="lineNum">     371 </span>            : auto Type::opaque_equal(const Type&amp; other) const noexcept -&gt; bool {</a>
-<a name="372"><span class="lineNum">     372 </span>            :   return *this == other || (this-&gt;is_opaque_self() &amp;&amp; other.is_opaque_self());</a>
-<a name="373"><span class="lineNum">     373 </span>            : };</a>
-<a name="374"><span class="lineNum">     374 </span>            : </a>
-<a name="375"><span class="lineNum">     375 </span><span class="lineNoCov">          0 : namespace detail {</span></a>
-<a name="376"><span class="lineNum">     376 </span><span class="lineNoCov">          0 : static constexpr size_t BITSIZE_8 = 8;</span></a>
-<a name="377"><span class="lineNum">     377 </span><span class="lineNoCov">          0 : static constexpr size_t BITSIZE_16 = 16;</span></a>
-<a name="378"><span class="lineNum">     378 </span><span class="lineNoCov">          0 : static constexpr size_t BITSIZE_32 = 32;</span></a>
-<a name="379"><span class="lineNum">     379 </span><span class="lineNoCov">          0 : static constexpr size_t BITSIZE_64 = 64;</span></a>
-<a name="380"><span class="lineNum">     380 </span>            : </a>
-<a name="381"><span class="lineNum">     381 </span><span class="lineNoCov">          0 : struct MinMax {</span></a>
-<a name="382"><span class="lineNum">     382 </span><span class="lineNoCov">          0 :   uint64_t u_min;</span></a>
-<a name="383"><span class="lineNum">     383 </span><span class="lineNoCov">          0 :   uint64_t u_max;</span></a>
-<a name="384"><span class="lineNum">     384 </span><span class="lineNoCov">          0 :   int64_t s_min;</span></a>
-<a name="385"><span class="lineNum">     385 </span><span class="lineNoCov">          0 :   int64_t s_max;</span></a>
-<a name="386"><span class="lineNum">     386 </span>            : };</a>
-<a name="387"><span class="lineNum">     387 </span>            : </a>
-<a name="388"><span class="lineNum">     388 </span><span class="lineNoCov">          0 : template &lt;typename UIntType&gt; consteval auto minmax_for_bits() -&gt; MinMax {</span></a>
-<a name="389"><span class="lineNum">     389 </span>            :   using SIntType = typename std::make_signed&lt;UIntType&gt;::type;</a>
-<a name="390"><span class="lineNum">     390 </span>            : </a>
-<a name="391"><span class="lineNum">     391 </span>            :   return {std::numeric_limits&lt;UIntType&gt;::min(), std::numeric_limits&lt;UIntType&gt;::max(),</a>
-<a name="392"><span class="lineNum">     392 </span>            :           std::numeric_limits&lt;SIntType&gt;::min(), std::numeric_limits&lt;SIntType&gt;::max()};</a>
-<a name="393"><span class="lineNum">     393 </span>            : }</a>
-<a name="394"><span class="lineNum">     394 </span>            : </a>
-<a name="395"><span class="lineNum">     395 </span><span class="lineNoCov">          0 : constexpr auto minmax_for_bits(size_t bits) -&gt; MinMax {</span></a>
-<a name="396"><span class="lineNum">     396 </span>            :   switch (bits) {</a>
-<a name="397"><span class="lineNum">     397 </span>            :   case BITSIZE_8: return minmax_for_bits&lt;uint8_t&gt;();</a>
-<a name="398"><span class="lineNum">     398 </span>            :   case BITSIZE_16: return minmax_for_bits&lt;uint16_t&gt;();</a>
-<a name="399"><span class="lineNum">     399 </span>            :   case BITSIZE_32: return minmax_for_bits&lt;uint32_t&gt;();</a>
-<a name="400"><span class="lineNum">     400 </span>            :   case BITSIZE_64: return minmax_for_bits&lt;uint64_t&gt;();</a>
-<a name="401"><span class="lineNum">     401 </span>            :   default: throw std::logic_error(&quot;Integer type must be 8, 16, 32, or 64 bits, not &quot;s + std::to_string(bits));</a>
-<a name="402"><span class="lineNum">     402 </span>            :   };</a>
-<a name="403"><span class="lineNum">     403 </span>            : }</a>
-<a name="404"><span class="lineNum">     404 </span>            : } // namespace detail</a>
-<a name="405"><span class="lineNum">     405 </span>            : </a>
-<a name="406"><span class="lineNum">     406 </span>            : auto Int::in_range(int64_t num) const -&gt; bool {</a>
-<a name="407"><span class="lineNum">     407 </span>            :   if (num &lt; 0 &amp;&amp; !m_signed)</a>
-<a name="408"><span class="lineNum">     408 </span>            :     return false;</a>
-<a name="409"><span class="lineNum">     409 </span>            :   auto min_max = detail::minmax_for_bits(m_size);</a>
-<a name="410"><span class="lineNum">     410 </span>            :   if (m_signed)</a>
-<a name="411"><span class="lineNum">     411 </span>            :     return num &gt;= min_max.s_min &amp;&amp; num &lt;= min_max.s_max;</a>
-<a name="412"><span class="lineNum">     412 </span>            :   return static_cast&lt;uint64_t&gt;(num) &gt;= min_max.u_min &amp;&amp; static_cast&lt;uint64_t&gt;(num) &lt;= min_max.u_max;</a>
-<a name="413"><span class="lineNum">     413 </span>            : }</a>
-<a name="414"><span class="lineNum">     414 </span>            : } // namespace yume::ty</a>
+<a name="342"><span class="lineNum">     342 </span>            : auto Type::base_name() const -&gt; string { return m_base-&gt;name(); }</a>
+<a name="343"><span class="lineNum">     343 </span>            : </a>
+<a name="344"><span class="lineNum">     344 </span>            : auto Ptr::name() const -&gt; string { return m_base.name() + qual_suffix(m_qual); }</a>
+<a name="345"><span class="lineNum">     345 </span>            : </a>
+<a name="346"><span class="lineNum">     346 </span>            : auto Struct::name() const -&gt; string {</a>
+<a name="347"><span class="lineNum">     347 </span>            :   if (m_subs-&gt;empty())</a>
+<a name="348"><span class="lineNum">     348 </span>            :     return base_name();</a>
+<a name="349"><span class="lineNum">     349 </span>            : </a>
+<a name="350"><span class="lineNum">     350 </span>            :   auto ss = stringstream{};</a>
+<a name="351"><span class="lineNum">     351 </span>            :   ss &lt;&lt; base_name() &lt;&lt; &quot;{&quot;;</a>
+<a name="352"><span class="lineNum">     352 </span>            :   for (const auto&amp; i : llvm::enumerate(*m_subs)) {</a>
+<a name="353"><span class="lineNum">     353 </span>            :     if (i.index() &gt; 0)</a>
+<a name="354"><span class="lineNum">     354 </span>            :       ss &lt;&lt; &quot;,&quot;;</a>
+<a name="355"><span class="lineNum">     355 </span>            :     ss &lt;&lt; i.value().second.name();</a>
+<a name="356"><span class="lineNum">     356 </span>            :   }</a>
+<a name="357"><span class="lineNum">     357 </span>            :   ss &lt;&lt; &quot;}&quot;;</a>
+<a name="358"><span class="lineNum">     358 </span>            : </a>
+<a name="359"><span class="lineNum">     359 </span>            :   return ss.str();</a>
+<a name="360"><span class="lineNum">     360 </span>            : }</a>
+<a name="361"><span class="lineNum">     361 </span>            : </a>
+<a name="362"><span class="lineNum">     362 </span>            : auto Function::name() const -&gt; string {</a>
+<a name="363"><span class="lineNum">     363 </span>            :   auto ss = stringstream{};</a>
+<a name="364"><span class="lineNum">     364 </span>            :   ss &lt;&lt; &quot;(&quot; &lt;&lt; base_name();</a>
+<a name="365"><span class="lineNum">     365 </span>            :   if (!m_closure.empty()) {</a>
+<a name="366"><span class="lineNum">     366 </span>            :     ss &lt;&lt; &quot;[&quot;;</a>
+<a name="367"><span class="lineNum">     367 </span>            :     for (const auto&amp; i : llvm::enumerate(m_closure)) {</a>
+<a name="368"><span class="lineNum">     368 </span>            :       if (i.index() &gt; 0)</a>
+<a name="369"><span class="lineNum">     369 </span>            :         ss &lt;&lt; &quot;,&quot;;</a>
+<a name="370"><span class="lineNum">     370 </span>            :       ss &lt;&lt; i.value().name();</a>
+<a name="371"><span class="lineNum">     371 </span>            :     }</a>
+<a name="372"><span class="lineNum">     372 </span>            :     ss &lt;&lt; &quot;] &quot;;</a>
+<a name="373"><span class="lineNum">     373 </span>            :   }</a>
+<a name="374"><span class="lineNum">     374 </span>            :   for (const auto&amp; i : llvm::enumerate(m_args)) {</a>
+<a name="375"><span class="lineNum">     375 </span>            :     if (i.index() &gt; 0)</a>
+<a name="376"><span class="lineNum">     376 </span>            :       ss &lt;&lt; &quot;,&quot;;</a>
+<a name="377"><span class="lineNum">     377 </span>            :     ss &lt;&lt; i.value().name();</a>
+<a name="378"><span class="lineNum">     378 </span>            :   }</a>
+<a name="379"><span class="lineNum">     379 </span>            :   ss &lt;&lt; &quot;-&gt;&quot;;</a>
+<a name="380"><span class="lineNum">     380 </span>            :   if (m_fn_ptr) {</a>
+<a name="381"><span class="lineNum">     381 </span>            :     ss &lt;&lt; &quot;ptr&quot;;</a>
+<a name="382"><span class="lineNum">     382 </span>            :   }</a>
+<a name="383"><span class="lineNum">     383 </span>            :   if (m_ret.has_value())</a>
+<a name="384"><span class="lineNum">     384 </span>            :     ss &lt;&lt; m_ret-&gt;name();</a>
+<a name="385"><span class="lineNum">     385 </span>            :   ss &lt;&lt; &quot;)&quot;;</a>
+<a name="386"><span class="lineNum">     386 </span>            : </a>
+<a name="387"><span class="lineNum">     387 </span>            :   return ss.str();</a>
+<a name="388"><span class="lineNum">     388 </span>            : }</a>
+<a name="389"><span class="lineNum">     389 </span>            : </a>
+<a name="390"><span class="lineNum">     390 </span>            : auto Type::opaque_equal(const Type&amp; other) const noexcept -&gt; bool {</a>
+<a name="391"><span class="lineNum">     391 </span>            :   return *this == other || (this-&gt;is_opaque_self() &amp;&amp; other.is_opaque_self());</a>
+<a name="392"><span class="lineNum">     392 </span>            : };</a>
+<a name="393"><span class="lineNum">     393 </span>            : </a>
+<a name="394"><span class="lineNum">     394 </span><span class="lineNoCov">          0 : namespace detail {</span></a>
+<a name="395"><span class="lineNum">     395 </span><span class="lineNoCov">          0 : static constexpr size_t BITSIZE_8 = 8;</span></a>
+<a name="396"><span class="lineNum">     396 </span><span class="lineNoCov">          0 : static constexpr size_t BITSIZE_16 = 16;</span></a>
+<a name="397"><span class="lineNum">     397 </span><span class="lineNoCov">          0 : static constexpr size_t BITSIZE_32 = 32;</span></a>
+<a name="398"><span class="lineNum">     398 </span><span class="lineNoCov">          0 : static constexpr size_t BITSIZE_64 = 64;</span></a>
+<a name="399"><span class="lineNum">     399 </span>            : </a>
+<a name="400"><span class="lineNum">     400 </span><span class="lineNoCov">          0 : struct MinMax {</span></a>
+<a name="401"><span class="lineNum">     401 </span><span class="lineNoCov">          0 :   uint64_t u_min;</span></a>
+<a name="402"><span class="lineNum">     402 </span><span class="lineNoCov">          0 :   uint64_t u_max;</span></a>
+<a name="403"><span class="lineNum">     403 </span><span class="lineNoCov">          0 :   int64_t s_min;</span></a>
+<a name="404"><span class="lineNum">     404 </span><span class="lineNoCov">          0 :   int64_t s_max;</span></a>
+<a name="405"><span class="lineNum">     405 </span>            : };</a>
+<a name="406"><span class="lineNum">     406 </span>            : </a>
+<a name="407"><span class="lineNum">     407 </span><span class="lineNoCov">          0 : template &lt;typename UIntType&gt; consteval auto minmax_for_bits() -&gt; MinMax {</span></a>
+<a name="408"><span class="lineNum">     408 </span>            :   using SIntType = typename std::make_signed&lt;UIntType&gt;::type;</a>
+<a name="409"><span class="lineNum">     409 </span>            : </a>
+<a name="410"><span class="lineNum">     410 </span>            :   return {std::numeric_limits&lt;UIntType&gt;::min(), std::numeric_limits&lt;UIntType&gt;::max(),</a>
+<a name="411"><span class="lineNum">     411 </span>            :           std::numeric_limits&lt;SIntType&gt;::min(), std::numeric_limits&lt;SIntType&gt;::max()};</a>
+<a name="412"><span class="lineNum">     412 </span>            : }</a>
+<a name="413"><span class="lineNum">     413 </span>            : </a>
+<a name="414"><span class="lineNum">     414 </span><span class="lineNoCov">          0 : constexpr auto minmax_for_bits(size_t bits) -&gt; MinMax {</span></a>
+<a name="415"><span class="lineNum">     415 </span>            :   switch (bits) {</a>
+<a name="416"><span class="lineNum">     416 </span>            :   case BITSIZE_8: return minmax_for_bits&lt;uint8_t&gt;();</a>
+<a name="417"><span class="lineNum">     417 </span>            :   case BITSIZE_16: return minmax_for_bits&lt;uint16_t&gt;();</a>
+<a name="418"><span class="lineNum">     418 </span>            :   case BITSIZE_32: return minmax_for_bits&lt;uint32_t&gt;();</a>
+<a name="419"><span class="lineNum">     419 </span>            :   case BITSIZE_64: return minmax_for_bits&lt;uint64_t&gt;();</a>
+<a name="420"><span class="lineNum">     420 </span>            :   default: throw std::logic_error(&quot;Integer type must be 8, 16, 32, or 64 bits, not &quot;s + std::to_string(bits));</a>
+<a name="421"><span class="lineNum">     421 </span>            :   };</a>
+<a name="422"><span class="lineNum">     422 </span>            : }</a>
+<a name="423"><span class="lineNum">     423 </span>            : } // namespace detail</a>
+<a name="424"><span class="lineNum">     424 </span>            : </a>
+<a name="425"><span class="lineNum">     425 </span>            : auto Int::in_range(int64_t num) const -&gt; bool {</a>
+<a name="426"><span class="lineNum">     426 </span>            :   if (num &lt; 0 &amp;&amp; !m_signed)</a>
+<a name="427"><span class="lineNum">     427 </span>            :     return false;</a>
+<a name="428"><span class="lineNum">     428 </span>            :   auto min_max = detail::minmax_for_bits(m_size);</a>
+<a name="429"><span class="lineNum">     429 </span>            :   if (m_signed)</a>
+<a name="430"><span class="lineNum">     430 </span>            :     return num &gt;= min_max.s_min &amp;&amp; num &lt;= min_max.s_max;</a>
+<a name="431"><span class="lineNum">     431 </span>            :   return static_cast&lt;uint64_t&gt;(num) &gt;= min_max.u_min &amp;&amp; static_cast&lt;uint64_t&gt;(num) &lt;= min_max.u_max;</a>
+<a name="432"><span class="lineNum">     432 </span>            : }</a>
+<a name="433"><span class="lineNum">     433 </span>            : } // namespace yume::ty</a>
 </pre>
       </td>
     </tr>

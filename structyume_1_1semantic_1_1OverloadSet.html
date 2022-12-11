@@ -80,10 +80,11 @@ Collaboration diagram for yume::semantic::OverloadSet:</div>
 <div class="dyncontent">
 <div class="center"><img src="structyume_1_1semantic_1_1OverloadSet__coll__graph.png" border="0" usemap="#ayume_1_1semantic_1_1OverloadSet_coll__map" alt="Collaboration graph"/></div>
 <map name="ayume_1_1semantic_1_1OverloadSet_coll__map" id="ayume_1_1semantic_1_1OverloadSet_coll__map">
-<area shape="rect" title=" " alt="" coords="123,109,314,136"/>
-<area shape="rect" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,13,115,39"/>
-<area shape="rect" title=" " alt="" coords="139,5,298,47"/>
-<area shape="rect" title=" " alt="" coords="323,5,453,47"/>
+<area shape="rect" title=" " alt="" coords="311,97,501,124"/>
+<area shape="rect" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="49,5,159,32"/>
+<area shape="rect" title=" " alt="" coords="25,57,183,98"/>
+<area shape="rect" title=" " alt="" coords="39,122,169,163"/>
+<area shape="rect" href="classyume_1_1diagnostic_1_1NotesHolder.html" title=" " alt="" coords="5,188,203,215"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -95,8 +96,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aaef1766f6cfc7148dcd7c1726cf90e99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a35bede54648214f4718deb478aa2ef8e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1semantic_1_1OverloadSet.html#a35bede54648214f4718deb478aa2ef8e">determine_valid_overloads</a> ()</td></tr>
 <tr class="separator:a35bede54648214f4718deb478aa2ef8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aee4829f5888429522113e9188da82ea5"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1semantic_1_1OverloadSet.html#aee4829f5888429522113e9188da82ea5">is_valid_overload</a> (<a class="el" href="structyume_1_1semantic_1_1Overload.html">Overload</a> &amp;overload) const -&gt; bool</td></tr>
-<tr class="separator:aee4829f5888429522113e9188da82ea5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f5a6bae42553e5bd4311150280b080c"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1semantic_1_1OverloadSet.html#a2f5a6bae42553e5bd4311150280b080c">is_valid_overload</a> (<a class="el" href="structyume_1_1semantic_1_1Overload.html">Overload</a> &amp;overload) -&gt; bool</td></tr>
+<tr class="separator:a2f5a6bae42553e5bd4311150280b080c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a79ab99c580919d69943c85aa8fcc3811"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1semantic_1_1OverloadSet.html#a79ab99c580919d69943c85aa8fcc3811">try_best_viable_overload</a> () const -&gt; const <a class="el" href="structyume_1_1semantic_1_1Overload.html">Overload</a> *</td></tr>
 <tr class="separator:a79ab99c580919d69943c85aa8fcc3811"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abac89cd9bde019beabcbe8c4629eecb8"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1semantic_1_1OverloadSet.html#abac89cd9bde019beabcbe8c4629eecb8">best_viable_overload</a> () const -&gt; <a class="el" href="structyume_1_1semantic_1_1Overload.html">Overload</a></td></tr>
@@ -110,10 +111,12 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a52f1c40db404db3f3c71b47573454550"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c08481939d7169b001b583608744ff3"><td class="memItemLeft" align="right" valign="top">vector&lt; <a class="el" href="classyume_1_1ast_1_1AST.html">ast::AST</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1semantic_1_1OverloadSet.html#a7c08481939d7169b001b583608744ff3">args</a></td></tr>
 <tr class="separator:a7c08481939d7169b001b583608744ff3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8ed10046431887d62c0599809eaa9ce"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classyume_1_1diagnostic_1_1NotesHolder.html">diagnostic::NotesHolder</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1semantic_1_1OverloadSet.html#aa8ed10046431887d62c0599809eaa9ce">notes</a> {}</td></tr>
+<tr class="separator:aa8ed10046431887d62c0599809eaa9ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="overload_8hpp_source.html#l00031">31</a> of file <a class="el" href="overload_8hpp_source.html">overload.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="overload_8hpp_source.html#l00037">37</a> of file <a class="el" href="overload_8hpp_source.html">overload.hpp</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="abac89cd9bde019beabcbe8c4629eecb8" name="abac89cd9bde019beabcbe8c4629eecb8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abac89cd9bde019beabcbe8c4629eecb8">&#9670;&nbsp;</a></span>best_viable_overload()</h2>
@@ -130,9 +133,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="overload_8cpp_source.html#l00254">254</a> of file <a class="el" href="overload_8cpp_source.html">overload.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="overload_8cpp_source.html#l00253">253</a> of file <a class="el" href="overload_8cpp_source.html">overload.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="overload_8hpp_source.html#l00034">args</a>, <a class="el" href="overload_8hpp_source.html#l00032">call</a>, <a class="el" href="overload_8cpp_source.html#l00018">yume::semantic::get_val_ty</a>, <a class="el" href="overload_8cpp_source.html#l00021">yume::semantic::join_args()</a>, <a class="el" href="overload_8cpp_source.html#l00029">yume::semantic::overload_name()</a>, <a class="el" href="overload_8hpp_source.html#l00033">overloads</a>, and <a class="el" href="overload_8cpp_source.html#l00243">try_best_viable_overload()</a>.</p>
+<p class="reference">References <a class="el" href="overload_8hpp_source.html#l00040">args</a>, <a class="el" href="overload_8hpp_source.html#l00038">call</a>, <a class="el" href="notes_8hpp_source.html#l00026">yume::diagnostic::NotesHolder::dump()</a>, <a class="el" href="overload_8cpp_source.html#l00018">yume::semantic::get_val_ty</a>, <a class="el" href="overload_8cpp_source.html#l00021">yume::semantic::join_args()</a>, <a class="el" href="overload_8hpp_source.html#l00041">notes</a>, <a class="el" href="overload_8cpp_source.html#l00029">yume::semantic::overload_name()</a>, <a class="el" href="overload_8hpp_source.html#l00039">overloads</a>, and <a class="el" href="overload_8cpp_source.html#l00242">try_best_viable_overload()</a>.</p>
 
 </div>
 </div>
@@ -151,9 +154,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="overload_8cpp_source.html#l00196">196</a> of file <a class="el" href="overload_8cpp_source.html">overload.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="overload_8cpp_source.html#l00195">195</a> of file <a class="el" href="overload_8cpp_source.html">overload.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="overload_8cpp_source.html#l00110">is_valid_overload()</a>, and <a class="el" href="overload_8hpp_source.html#l00033">overloads</a>.</p>
+<p class="reference">References <a class="el" href="overload_8cpp_source.html#l00110">is_valid_overload()</a>, and <a class="el" href="overload_8hpp_source.html#l00039">overloads</a>.</p>
 
 </div>
 </div>
@@ -185,7 +188,7 @@ Public Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="overload_8cpp_source.html#l00066">66</a> of file <a class="el" href="overload_8cpp_source.html">overload.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="overload_8hpp_source.html#l00034">args</a>, <a class="el" href="overload_8hpp_source.html#l00032">call</a>, <a class="el" href="overload_8cpp_source.html#l00018">yume::semantic::get_val_ty</a>, <a class="el" href="overload_8cpp_source.html#l00021">yume::semantic::join_args()</a>, <a class="el" href="overload_8cpp_source.html#l00029">yume::semantic::overload_name()</a>, and <a class="el" href="overload_8hpp_source.html#l00033">overloads</a>.</p>
+<p class="reference">References <a class="el" href="overload_8hpp_source.html#l00040">args</a>, <a class="el" href="overload_8hpp_source.html#l00038">call</a>, <a class="el" href="overload_8cpp_source.html#l00018">yume::semantic::get_val_ty</a>, <a class="el" href="overload_8cpp_source.html#l00021">yume::semantic::join_args()</a>, <a class="el" href="overload_8cpp_source.html#l00029">yume::semantic::overload_name()</a>, and <a class="el" href="overload_8hpp_source.html#l00039">overloads</a>.</p>
 
 </div>
 </div>
@@ -212,14 +215,14 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="overload_8hpp_source.html#l00036">36</a> of file <a class="el" href="overload_8hpp_source.html">overload.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="overload_8hpp_source.html#l00043">43</a> of file <a class="el" href="overload_8hpp_source.html">overload.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="overload_8hpp_source.html#l00033">overloads</a>.</p>
+<p class="reference">References <a class="el" href="overload_8hpp_source.html#l00039">overloads</a>.</p>
 
 </div>
 </div>
-<a id="aee4829f5888429522113e9188da82ea5" name="aee4829f5888429522113e9188da82ea5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aee4829f5888429522113e9188da82ea5">&#9670;&nbsp;</a></span>is_valid_overload()</h2>
+<a id="a2f5a6bae42553e5bd4311150280b080c" name="a2f5a6bae42553e5bd4311150280b080c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f5a6bae42553e5bd4311150280b080c">&#9670;&nbsp;</a></span>is_valid_overload()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -229,7 +232,7 @@ Public Attributes</h2></td></tr>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structyume_1_1semantic_1_1Overload.html">Overload</a> &amp;&#160;</td>
           <td class="paramname"><em>overload</em></td><td>)</td>
-          <td> const -&gt; bool</td>
+          <td> -&gt; bool</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -238,7 +241,7 @@ Public Attributes</h2></td></tr>
 
 <p class="reference">References <a class="el" href="ast_8hpp_source.html#l00248">yume::ast::AST::ensure_ty()</a>, <a class="el" href="overload_8cpp_source.html#l00079">yume::semantic::literal_cast()</a>, <a class="el" href="overload_8cpp_source.html#l00038">yume::semantic::overload_receiver()</a>, and <a class="el" href="overload_8cpp_source.html#l00099">yume::semantic::parameter_count_matches()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="overload_8cpp_source.html#l00196">determine_valid_overloads()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="overload_8cpp_source.html#l00195">determine_valid_overloads()</a>.</p>
 
 </div>
 </div>
@@ -257,11 +260,11 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="overload_8cpp_source.html#l00243">243</a> of file <a class="el" href="overload_8cpp_source.html">overload.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="overload_8cpp_source.html#l00242">242</a> of file <a class="el" href="overload_8cpp_source.html">overload.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="overload_8cpp_source.html#l00220">yume::semantic::Overload::better_candidate_than()</a>, and <a class="el" href="overload_8hpp_source.html#l00033">overloads</a>.</p>
+<p class="reference">References <a class="el" href="overload_8cpp_source.html#l00219">yume::semantic::Overload::better_candidate_than()</a>, and <a class="el" href="overload_8hpp_source.html#l00039">overloads</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="overload_8cpp_source.html#l00254">best_viable_overload()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="overload_8cpp_source.html#l00253">best_viable_overload()</a>.</p>
 
 </div>
 </div>
@@ -278,9 +281,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="overload_8hpp_source.html#l00034">34</a> of file <a class="el" href="overload_8hpp_source.html">overload.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="overload_8hpp_source.html#l00040">40</a> of file <a class="el" href="overload_8hpp_source.html">overload.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="overload_8cpp_source.html#l00254">best_viable_overload()</a>, and <a class="el" href="overload_8cpp_source.html#l00066">dump()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="overload_8cpp_source.html#l00253">best_viable_overload()</a>, and <a class="el" href="overload_8cpp_source.html#l00066">dump()</a>.</p>
 
 </div>
 </div>
@@ -296,9 +299,27 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="overload_8hpp_source.html#l00032">32</a> of file <a class="el" href="overload_8hpp_source.html">overload.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="overload_8hpp_source.html#l00038">38</a> of file <a class="el" href="overload_8hpp_source.html">overload.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="overload_8cpp_source.html#l00254">best_viable_overload()</a>, and <a class="el" href="overload_8cpp_source.html#l00066">dump()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="overload_8cpp_source.html#l00253">best_viable_overload()</a>, and <a class="el" href="overload_8cpp_source.html#l00066">dump()</a>.</p>
+
+</div>
+</div>
+<a id="aa8ed10046431887d62c0599809eaa9ce" name="aa8ed10046431887d62c0599809eaa9ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8ed10046431887d62c0599809eaa9ce">&#9670;&nbsp;</a></span>notes</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classyume_1_1diagnostic_1_1NotesHolder.html">diagnostic::NotesHolder</a> yume::semantic::OverloadSet::notes {}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="overload_8hpp_source.html#l00041">41</a> of file <a class="el" href="overload_8hpp_source.html">overload.hpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="overload_8cpp_source.html#l00253">best_viable_overload()</a>.</p>
 
 </div>
 </div>
@@ -314,9 +335,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="overload_8hpp_source.html#l00033">33</a> of file <a class="el" href="overload_8hpp_source.html">overload.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="overload_8hpp_source.html#l00039">39</a> of file <a class="el" href="overload_8hpp_source.html">overload.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="overload_8cpp_source.html#l00254">best_viable_overload()</a>, <a class="el" href="overload_8cpp_source.html#l00196">determine_valid_overloads()</a>, <a class="el" href="overload_8cpp_source.html#l00066">dump()</a>, <a class="el" href="overload_8hpp_source.html#l00036">empty()</a>, and <a class="el" href="overload_8cpp_source.html#l00243">try_best_viable_overload()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="overload_8cpp_source.html#l00253">best_viable_overload()</a>, <a class="el" href="overload_8cpp_source.html#l00195">determine_valid_overloads()</a>, <a class="el" href="overload_8cpp_source.html#l00066">dump()</a>, <a class="el" href="overload_8hpp_source.html#l00043">empty()</a>, and <a class="el" href="overload_8cpp_source.html#l00242">try_best_viable_overload()</a>.</p>
 
 </div>
 </div>

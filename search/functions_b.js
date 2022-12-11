@@ -8,5 +8,5 @@ var searchData=
   ['literal_5fcast_5',['literal_cast',['../namespaceyume_1_1semantic.html#aad840cb24751dfb444717162926adbb3',1,'yume::semantic']]],
   ['llvm_5ftype_6',['llvm_type',['../classyume_1_1Compiler.html#a63b7103fc55ea5403143892ab4f2f1a3',1,'yume::Compiler']]],
   ['local_7',['local',['../structyume_1_1Fn.html#a64eb58a91efe94480573d8250a15cc2e',1,'yume::Fn']]],
-  ['location_8',['location',['../classyume_1_1ast_1_1AST.html#ab30cf0f1bcb19522b1a27a95098c4cc2',1,'yume::ast::AST']]]
+  ['location_8',['location',['../classyume_1_1ast_1_1AST.html#ab30cf0f1bcb19522b1a27a95098c4cc2',1,'yume::ast::AST::location()'],['../structyume_1_1semantic_1_1Overload.html#ac59d77c523cfb29cf75f4969c610c5e7',1,'yume::semantic::Overload::location()']]]
 ];
