@@ -942,6 +942,9 @@ auto Compiler::int_bin_primitive(const string& primitive, const vector<Val>& arg
   case const_hash("ib_urem"): return m_builder->CreateURem(a, b);
   case const_hash("ib_sdiv"): return m_builder->CreateSDiv(a, b);
   case const_hash("ib_udiv"): return m_builder->CreateUDiv(a, b);
+  case const_hash("ib_shl"): return m_builder->CreateShl(a, b);
+  case const_hash("ib_lshr"): return m_builder->CreateLShr(a, b);
+  case const_hash("ib_ashr"): return m_builder->CreateAShr(a, b);
   default: throw std::runtime_error("Unknown binary integer primitive "s + primitive);
   }
 }
@@ -990,6 +993,9 @@ auto Compiler::primitive(Fn* fn, const vector<Val>& args, const vector<ty::Type>
     llvm::Value* base = args.at(0);
     base = m_builder->CreateGEP(result_type, base, args.at(1).llvm, "p.get_at.gep");
     return base;
+  }
+  if (primitive == "ptr_cast") {
+    return m_builder->CreateBitCast(args[0], llvm_type(types[1]));
   }
   if (primitive.starts_with("ib_"))
     return int_bin_primitive(primitive, args);

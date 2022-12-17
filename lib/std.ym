@@ -1,6 +1,7 @@
 def printf(format U8 ptr) I32 = __extern__ __varargs__
 def puts(string U8 ptr) I32 = __extern__
 def puts(string U8[]) I32 = puts(string.c_str.unsafe_ptr)
+def print(string U8[]) I32 = printf(string.c_str.unsafe_ptr)
 def putchar(char I32) I32 = __extern__
 
 def exit(status I32) = __extern__
@@ -10,6 +11,8 @@ def assert(condition Bool)
   end
 end
 
+def __builtin_ptr_cast{T,U}(from T ptr, to U ptr) U ptr = __primitive__(ptr_cast)
+def __builtin_ptrto{T}(t T mut) T ptr = __primitive__(ptrto)
 def __builtin_slice_malloc{T}(ptr T ptr, size ISize) T ptr = __primitive__(slice_malloc)
 
 struct Slice{T}(pointer T ptr, size ISize)
@@ -82,10 +85,12 @@ def +(a I32, b I32) I32 = __primitive__(ib_add)
 def +(a I64, b I64) I64 = __primitive__(ib_add)
 def +(a U8, b U8) U8 = __primitive__(ib_add)
 def +(a U16, b U16) U16 = __primitive__(ib_add)
+def +(a U32, b U32) U32 = __primitive__(ib_add)
 
 def -(a I32, b I32) I32 = __primitive__(ib_sub)
 def -(a I64, b I64) I64 = __primitive__(ib_sub)
 def -(a U8, b U8) U8 = __primitive__(ib_sub)
+def -(a U32, b U32) U32 = __primitive__(ib_sub)
 
 def -(a I32) I32 = 0 - a
 
@@ -93,11 +98,13 @@ def %(a I32, b I32) I32 = __primitive__(ib_srem)
 def %(a U32, b U32) U32 = __primitive__(ib_urem)
 
 def *(a I32, b I32) I32 = __primitive__(ib_mul)
+def *(a U32, b U32) U32 = __primitive__(ib_mul)
 
 def //(a I32, b I32) I32 = __primitive__(ib_sdiv)
 def //(a U32, b U32) U32 = __primitive__(ib_udiv)
 
 def &(a U8, b U8) U8 = __primitive__(ib_and)
+def &(a U32, b U32) U32 = __primitive__(ib_and)
 
 def ==(a I64, b I64) Bool = __primitive__(ib_icmp_eq)
 def ==(a I32, b I32) Bool = __primitive__(ib_icmp_eq)
@@ -128,6 +135,10 @@ def >(a I64, b I64) Bool = __primitive__(ib_icmp_sgt)
 
 def <(a I32, b I32) Bool = __primitive__(ib_icmp_slt)
 def <(a I64, b I64) Bool = __primitive__(ib_icmp_slt)
+
+def shl(a U32, b U32) U32 = __primitive__(ib_shl)
+
+def lshr(a U32, b U32) U32 = __primitive__(ib_lshr)
 
 def abs(a I32) I32
   if a < 0
