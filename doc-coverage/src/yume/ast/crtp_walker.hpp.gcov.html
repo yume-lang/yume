@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-12-11 21:45:23</td>
+            <td class="headerValue">2022-12-17 22:26:36</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -93,7 +93,7 @@
 <a name="35"><span class="lineNum">      35 </span>            :     case ast::K_FnDecl: return conv_statement&lt;ast::FnDecl&gt;(stat, args...);</a>
 <a name="36"><span class="lineNum">      36 </span>            :     case ast::K_StructDecl: return conv_statement&lt;ast::StructDecl&gt;(stat, args...);</a>
 <a name="37"><span class="lineNum">      37 </span>            :     case ast::K_CtorDecl: return conv_statement&lt;ast::CtorDecl&gt;(stat, args...);</a>
-<a name="38"><span class="lineNum">      38 </span>            :     default: body_expression(llvm::cast&lt;ast::Expr&gt;(stat), args...);</a>
+<a name="38"><span class="lineNum">      38 </span>            :     default: (static_cast&lt;Derived*&gt;(this))-&gt;body_expression(llvm::cast&lt;ast::Expr&gt;(stat), args...);</a>
 <a name="39"><span class="lineNum">      39 </span>            :     }</a>
 <a name="40"><span class="lineNum">      40 </span>            :   }</a>
 <a name="41"><span class="lineNum">      41 </span>            : </a>

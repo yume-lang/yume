@@ -21,9 +21,11 @@ var searchData=
   ['is_5finterface_18',['is_interface',['../classyume_1_1ty_1_1Struct.html#ae38593acf191637d62aa11f444d0cc15',1,'yume::ty::Struct']]],
   ['is_5fmut_19',['is_mut',['../classyume_1_1ty_1_1Type.html#a166456eb3f36b9ea2dfb9eb0598e75ed',1,'yume::ty::Type']]],
   ['is_5fopaque_5fself_20',['is_opaque_self',['../classyume_1_1ty_1_1Type.html#a5e3485fdfdf536c25d9f29feee8082c9',1,'yume::ty::Type']]],
-  ['is_5fsigned_21',['is_signed',['../classyume_1_1ty_1_1Int.html#acb504b970d97dd2ebbd28de842b9f527',1,'yume::ty::Int']]],
-  ['is_5fslice_22',['is_slice',['../classyume_1_1ty_1_1Type.html#a052aea6a7bafc6a8a2afd7dfbe0bc913',1,'yume::ty::Type']]],
-  ['is_5ftrivially_5fdestructible_23',['is_trivially_destructible',['../classyume_1_1ty_1_1Type.html#a5f0f4b0ac45c87df139c82d93d3239e9',1,'yume::ty::Type']]],
-  ['is_5fuword_24',['is_uword',['../structyume_1_1ast_1_1parser_1_1Parser.html#a07147187a346b21a257648b3960bfa9c',1,'yume::ast::parser::Parser']]],
-  ['is_5fvalid_5foverload_25',['is_valid_overload',['../structyume_1_1semantic_1_1OverloadSet.html#a2f5a6bae42553e5bd4311150280b080c',1,'yume::semantic::OverloadSet']]]
+  ['is_5fref_21',['is_ref',['../classyume_1_1ty_1_1Type.html#af3c7993caf3a3eacb99d03573eab90e4',1,'yume::ty::Type']]],
+  ['is_5fsigned_22',['is_signed',['../classyume_1_1ty_1_1Int.html#acb504b970d97dd2ebbd28de842b9f527',1,'yume::ty::Int']]],
+  ['is_5fslice_23',['is_slice',['../classyume_1_1ty_1_1Type.html#a052aea6a7bafc6a8a2afd7dfbe0bc913',1,'yume::ty::Type']]],
+  ['is_5ftrivially_5fdestructible_24',['is_trivially_destructible',['../classyume_1_1ty_1_1Type.html#a5f0f4b0ac45c87df139c82d93d3239e9',1,'yume::ty::Type']]],
+  ['is_5funqualified_25',['is_unqualified',['../classyume_1_1ty_1_1Type.html#a3629d6e9d5ff81071b33cb9c55c0ac5d',1,'yume::ty::Type']]],
+  ['is_5fuword_26',['is_uword',['../structyume_1_1ast_1_1parser_1_1Parser.html#a07147187a346b21a257648b3960bfa9c',1,'yume::ast::parser::Parser']]],
+  ['is_5fvalid_5foverload_27',['is_valid_overload',['../structyume_1_1semantic_1_1OverloadSet.html#a2f5a6bae42553e5bd4311150280b080c',1,'yume::semantic::OverloadSet']]]
 ];

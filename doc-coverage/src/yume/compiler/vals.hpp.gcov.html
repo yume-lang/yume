@@ -32,12 +32,12 @@
             <td></td>
             <td class="headerItem">Lines:</td>
             <td class="headerCovTableEntry">18</td>
-            <td class="headerCovTableEntry">103</td>
-            <td class="headerCovTableEntryLo">17.5 %</td>
+            <td class="headerCovTableEntry">105</td>
+            <td class="headerCovTableEntryLo">17.1 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-12-11 21:45:23</td>
+            <td class="headerValue">2022-12-17 22:26:36</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -328,25 +328,29 @@
 <a name="270"><span class="lineNum">     270 </span>            : </a>
 <a name="271"><span class="lineNum">     271 </span>            : /// A source file with its associated Syntax Tree.</a>
 <a name="272"><span class="lineNum">     272 </span><span class="lineCov">          1 : struct SourceFile {</span></a>
-<a name="273"><span class="lineNum">     273 </span><span class="lineNoCov">          0 :   const string name;</span></a>
-<a name="274"><span class="lineNum">     274 </span><span class="lineNoCov">          0 :   vector&lt;yume::Token&gt; tokens;</span></a>
-<a name="275"><span class="lineNum">     275 </span><span class="lineNoCov">          0 :   ast::TokenIterator iterator;</span></a>
-<a name="276"><span class="lineNum">     276 </span><span class="lineNoCov">          0 :   unique_ptr&lt;ast::Program&gt; program;</span></a>
-<a name="277"><span class="lineNum">     277 </span>            : </a>
-<a name="278"><span class="lineNum">     278 </span><span class="lineNoCov">          0 :   SourceFile(std::istream&amp; in, string name)</span></a>
-<a name="279"><span class="lineNum">     279 </span>            :       : name(move(name)), tokens(yume::tokenize(in, this-&gt;name)), iterator{tokens.begin(), tokens.end()} {</a>
-<a name="280"><span class="lineNum">     280 </span>            : #ifdef YUME_SPEW_LIST_TOKENS</a>
-<a name="281"><span class="lineNum">     281 </span>            :     llvm::outs() &lt;&lt; &quot;tokens:\n&quot;;</a>
-<a name="282"><span class="lineNum">     282 </span>            :     for (auto&amp; i : tokens) {</a>
-<a name="283"><span class="lineNum">     283 </span>            :       llvm::outs() &lt;&lt; &quot;  &quot; &lt;&lt; i &lt;&lt; &quot;\n&quot;;</a>
-<a name="284"><span class="lineNum">     284 </span>            :     }</a>
-<a name="285"><span class="lineNum">     285 </span>            :     llvm::outs() &lt;&lt; &quot;\n&quot;;</a>
-<a name="286"><span class="lineNum">     286 </span>            :     llvm::outs().flush();</a>
-<a name="287"><span class="lineNum">     287 </span>            : #endif</a>
-<a name="288"><span class="lineNum">     288 </span>            :     program = ast::Program::parse(iterator);</a>
-<a name="289"><span class="lineNum">     289 </span>            :   }</a>
-<a name="290"><span class="lineNum">     290 </span>            : };</a>
-<a name="291"><span class="lineNum">     291 </span>            : } // namespace yume</a>
+<a name="273"><span class="lineNum">     273 </span><span class="lineNoCov">          0 :   fs::path path;</span></a>
+<a name="274"><span class="lineNum">     274 </span><span class="lineNoCov">          0 :   string name;</span></a>
+<a name="275"><span class="lineNum">     275 </span><span class="lineNoCov">          0 :   vector&lt;yume::Token&gt; tokens;</span></a>
+<a name="276"><span class="lineNum">     276 </span><span class="lineNoCov">          0 :   ast::TokenIterator iterator;</span></a>
+<a name="277"><span class="lineNum">     277 </span><span class="lineNoCov">          0 :   unique_ptr&lt;ast::Program&gt; program;</span></a>
+<a name="278"><span class="lineNum">     278 </span>            : </a>
+<a name="279"><span class="lineNum">     279 </span><span class="lineNoCov">          0 :   static auto name_or_stdin(const fs::path&amp; path) -&gt; string { return path.empty() ? path.native() : &quot;&lt;stdin&gt;&quot;s; }</span></a>
+<a name="280"><span class="lineNum">     280 </span>            : </a>
+<a name="281"><span class="lineNum">     281 </span><span class="lineNoCov">          0 :   SourceFile(std::istream&amp; in, fs::path path)</span></a>
+<a name="282"><span class="lineNum">     282 </span>            :       : path(move(path)), name(name_or_stdin(this-&gt;path)),</a>
+<a name="283"><span class="lineNum">     283 </span>            :         tokens(yume::tokenize(in, this-&gt;name)), iterator{tokens.begin(), tokens.end()} {</a>
+<a name="284"><span class="lineNum">     284 </span>            : #ifdef YUME_SPEW_LIST_TOKENS</a>
+<a name="285"><span class="lineNum">     285 </span>            :     llvm::outs() &lt;&lt; &quot;tokens:\n&quot;;</a>
+<a name="286"><span class="lineNum">     286 </span>            :     for (auto&amp; i : tokens) {</a>
+<a name="287"><span class="lineNum">     287 </span>            :       llvm::outs() &lt;&lt; &quot;  &quot; &lt;&lt; i &lt;&lt; &quot;\n&quot;;</a>
+<a name="288"><span class="lineNum">     288 </span>            :     }</a>
+<a name="289"><span class="lineNum">     289 </span>            :     llvm::outs() &lt;&lt; &quot;\n&quot;;</a>
+<a name="290"><span class="lineNum">     290 </span>            :     llvm::outs().flush();</a>
+<a name="291"><span class="lineNum">     291 </span>            : #endif</a>
+<a name="292"><span class="lineNum">     292 </span>            :     program = ast::Program::parse(iterator);</a>
+<a name="293"><span class="lineNum">     293 </span>            :   }</a>
+<a name="294"><span class="lineNum">     294 </span>            : };</a>
+<a name="295"><span class="lineNum">     295 </span>            : } // namespace yume</a>
 </pre>
       </td>
     </tr>

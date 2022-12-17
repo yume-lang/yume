@@ -68,6 +68,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="structyume_1_1SourceFile-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">yume::SourceFile Struct Reference</div></div>
@@ -83,23 +84,31 @@ Collaboration diagram for yume::SourceFile:</div>
 <div class="dyncontent">
 <div class="center"><img src="structyume_1_1SourceFile__coll__graph.png" border="0" usemap="#ayume_1_1SourceFile_coll__map" alt="Collaboration graph"/></div>
 <map name="ayume_1_1SourceFile_coll__map" id="ayume_1_1SourceFile_coll__map">
-<area shape="rect" title="A source file with its associated Syntax Tree." alt="" coords="264,81,385,108"/>
-<area shape="rect" title=" " alt="" coords="41,5,130,32"/>
-<area shape="rect" title=" " alt="" coords="9,56,162,83"/>
-<area shape="rect" href="classyume_1_1ast_1_1TokenIterator.html" title="An iterator&#45;like holding Tokens, used when parsing." alt="" coords="5,107,165,133"/>
-<area shape="rect" title=" " alt="" coords="11,158,159,199"/>
+<area shape="rect" title="A source file with its associated Syntax Tree." alt="" coords="264,107,385,133"/>
+<area shape="rect" title=" " alt="" coords="62,5,109,32"/>
+<area shape="rect" title=" " alt="" coords="58,56,113,83"/>
+<area shape="rect" title=" " alt="" coords="9,107,162,133"/>
+<area shape="rect" href="classyume_1_1ast_1_1TokenIterator.html" title="An iterator&#45;like holding Tokens, used when parsing." alt="" coords="5,157,165,184"/>
+<area shape="rect" title=" " alt="" coords="11,209,159,250"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a6df06d11cb6955a27e532aea905f92f8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1SourceFile.html#a6df06d11cb6955a27e532aea905f92f8">SourceFile</a> (std::istream &amp;in, string <a class="el" href="structyume_1_1SourceFile.html#a33c2d4da7ba7954a2a80287f9db42ece">name</a>)</td></tr>
-<tr class="separator:a6df06d11cb6955a27e532aea905f92f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0fa2288c9cbb0b6430bbf6dfc41a15e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1SourceFile.html#ab0fa2288c9cbb0b6430bbf6dfc41a15e">SourceFile</a> (std::istream &amp;in, fs::path <a class="el" href="structyume_1_1SourceFile.html#acdde1cc4beacecacea005ad8ba8a9487">path</a>)</td></tr>
+<tr class="separator:ab0fa2288c9cbb0b6430bbf6dfc41a15e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a12c35ee0a479b7bd91e84d0ae7eadf66"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1SourceFile.html#a12c35ee0a479b7bd91e84d0ae7eadf66">name_or_stdin</a> (const fs::path &amp;<a class="el" href="structyume_1_1SourceFile.html#acdde1cc4beacecacea005ad8ba8a9487">path</a>) -&gt; string</td></tr>
+<tr class="separator:a12c35ee0a479b7bd91e84d0ae7eadf66"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a33c2d4da7ba7954a2a80287f9db42ece"><td class="memItemLeft" align="right" valign="top">const string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1SourceFile.html#a33c2d4da7ba7954a2a80287f9db42ece">name</a></td></tr>
-<tr class="separator:a33c2d4da7ba7954a2a80287f9db42ece"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acdde1cc4beacecacea005ad8ba8a9487"><td class="memItemLeft" align="right" valign="top">fs::path&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1SourceFile.html#acdde1cc4beacecacea005ad8ba8a9487">path</a></td></tr>
+<tr class="separator:acdde1cc4beacecacea005ad8ba8a9487"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0fff646e54e4449793f2fbac7479eb6b"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1SourceFile.html#a0fff646e54e4449793f2fbac7479eb6b">name</a></td></tr>
+<tr class="separator:a0fff646e54e4449793f2fbac7479eb6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a06b57a9c3a7c2bb6f6b2b2b930378364"><td class="memItemLeft" align="right" valign="top">vector&lt; <a class="el" href="structyume_1_1Token.html">yume::Token</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1SourceFile.html#a06b57a9c3a7c2bb6f6b2b2b930378364">tokens</a></td></tr>
 <tr class="separator:a06b57a9c3a7c2bb6f6b2b2b930378364"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aced874c55e1d611053e688b11f6a39ad"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classyume_1_1ast_1_1TokenIterator.html">ast::TokenIterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1SourceFile.html#aced874c55e1d611053e688b11f6a39ad">iterator</a></td></tr>
@@ -112,8 +121,8 @@ Public Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00272">272</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a6df06d11cb6955a27e532aea905f92f8" name="a6df06d11cb6955a27e532aea905f92f8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6df06d11cb6955a27e532aea905f92f8">&#9670;&nbsp;</a></span>SourceFile()</h2>
+<a id="ab0fa2288c9cbb0b6430bbf6dfc41a15e" name="ab0fa2288c9cbb0b6430bbf6dfc41a15e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab0fa2288c9cbb0b6430bbf6dfc41a15e">&#9670;&nbsp;</a></span>SourceFile()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -130,8 +139,8 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>name</em>&#160;</td>
+          <td class="paramtype">fs::path&#160;</td>
+          <td class="paramname"><em>path</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -146,9 +155,38 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00278">278</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00281">281</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="parser_8cpp_source.html#l00835">yume::ast::Program::parse()</a>.</p>
+<p class="reference">References <a class="el" href="parser_8cpp_source.html#l00839">yume::ast::Program::parse()</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a12c35ee0a479b7bd91e84d0ae7eadf66" name="a12c35ee0a479b7bd91e84d0ae7eadf66"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12c35ee0a479b7bd91e84d0ae7eadf66">&#9670;&nbsp;</a></span>name_or_stdin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static auto yume::SourceFile::name_or_stdin </td>
+          <td>(</td>
+          <td class="paramtype">const fs::path &amp;&#160;</td>
+          <td class="paramname"><em>path</em></td><td>)</td>
+          <td> -&gt; string </td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00279">279</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
 </div>
 </div>
@@ -165,18 +203,34 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00275">275</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00276">276</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
 </div>
 </div>
-<a id="a33c2d4da7ba7954a2a80287f9db42ece" name="a33c2d4da7ba7954a2a80287f9db42ece"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a33c2d4da7ba7954a2a80287f9db42ece">&#9670;&nbsp;</a></span>name</h2>
+<a id="a0fff646e54e4449793f2fbac7479eb6b" name="a0fff646e54e4449793f2fbac7479eb6b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0fff646e54e4449793f2fbac7479eb6b">&#9670;&nbsp;</a></span>name</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const string yume::SourceFile::name</td>
+          <td class="memname">string yume::SourceFile::name</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00274">274</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+
+</div>
+</div>
+<a id="acdde1cc4beacecacea005ad8ba8a9487" name="acdde1cc4beacecacea005ad8ba8a9487"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acdde1cc4beacecacea005ad8ba8a9487">&#9670;&nbsp;</a></span>path</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">fs::path yume::SourceFile::path</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -197,7 +251,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00276">276</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00277">277</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
 </div>
 </div>
@@ -213,7 +267,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00274">274</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00275">275</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
 </div>
 </div>

@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-12-11 21:45:23</td>
+            <td class="headerValue">2022-12-17 22:26:36</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -776,8 +776,8 @@
 <a name="718"><span class="lineNum">     718 </span>            :   } else if (isa&lt;ast::SelfType&gt;(ast_type)) {</a>
 <a name="719"><span class="lineNum">     719 </span>            :     if (parent) {</a>
 <a name="720"><span class="lineNum">     720 </span>            :       if (current_decl.opaque_self())</a>
-<a name="721"><span class="lineNum">     721 </span>            :         return {compiler.m_types.find_or_create_opaque_wrapper(parent-&gt;base()), parent-&gt;is_mut()};</a>
-<a name="722"><span class="lineNum">     722 </span>            :       return {parent-&gt;base(), parent-&gt;is_mut()};</a>
+<a name="721"><span class="lineNum">     721 </span>            :         return {compiler.m_types.find_or_create_opaque_wrapper(parent-&gt;base()), parent-&gt;is_mut(), parent-&gt;is_ref()};</a>
+<a name="722"><span class="lineNum">     722 </span>            :       return {parent-&gt;base(), parent-&gt;is_mut(), parent-&gt;is_ref()};</a>
 <a name="723"><span class="lineNum">     723 </span>            :     }</a>
 <a name="724"><span class="lineNum">     724 </span>            :   } else if (auto* proxy_type = dyn_cast&lt;ast::ProxyType&gt;(&amp;ast_type)) {</a>
 <a name="725"><span class="lineNum">     725 </span>            :     if (parent) {</a>
