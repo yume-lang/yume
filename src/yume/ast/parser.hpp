@@ -79,6 +79,7 @@ static const TokenAtom KWD_END = {Word, "end"_a};
 static const TokenAtom KWD_LET = {Word, "let"_a};
 static const TokenAtom KWD_PTR = {Word, "ptr"_a};
 static const TokenAtom KWD_MUT = {Word, "mut"_a};
+static const TokenAtom KWD_REF = {Word, "ref"_a};
 static const TokenAtom KWD_NEW = {Word, "new"_a};
 static const TokenAtom KWD_ELSE = {Word, "else"_a};
 static const TokenAtom KWD_SELF_ITEM = {Word, "self"_a};

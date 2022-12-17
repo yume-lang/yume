@@ -64,9 +64,10 @@ protected:
 class Type {
   nonnull<const BaseType*> m_base;
   bool m_mut{};
+  bool m_ref{};
 
 public:
-  Type(nonnull<const BaseType*> base, bool mut) noexcept : m_base(base), m_mut(mut) {}
+  Type(nonnull<const BaseType*> base, bool mut, bool ref) noexcept : m_base(base), m_mut(mut), m_ref(ref) {}
   Type(nonnull<const BaseType*> base) noexcept : m_base(base) {}
 
   auto operator<=>(const Type&) const noexcept = default;
@@ -85,7 +86,7 @@ public:
     return std::nullopt;
   }
   template <typename T> [[nodiscard]] auto base_isa() const noexcept -> bool { return isa<T>(m_base); }
-  [[nodiscard]] auto has_qualifier(Qualifier qual) const -> bool;
+  [[nodiscard,deprecated]] auto has_qualifier(Qualifier qual) const -> bool;
   [[nodiscard]] auto name() const -> string;
   [[nodiscard]] auto base_name() const -> string;
 
@@ -106,6 +107,8 @@ public:
   [[nodiscard]] auto intersect(Type other) const noexcept -> optional<Type>;
 
   [[nodiscard]] auto is_mut() const noexcept -> bool { return m_mut; };
+  [[nodiscard]] auto is_ref() const noexcept -> bool { return m_ref; };
+  [[nodiscard]] auto is_unqualified() const noexcept -> bool { return !m_ref && !m_mut; };
   [[nodiscard]] auto is_slice() const noexcept -> bool;
   [[nodiscard]] auto is_generic() const noexcept -> bool;
   [[nodiscard]] auto is_opaque_self() const noexcept -> bool;

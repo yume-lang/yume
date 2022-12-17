@@ -4,6 +4,7 @@ namespace yume {
 enum struct Qualifier {
   Ptr, ///< `ptr`
   Mut, ///< `mut`
+  Ref, ///< `ref`
 };
 
 enum struct PtrLikeQualifier {

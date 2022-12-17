@@ -195,6 +195,8 @@ auto Parser::parse_type(bool implicit_self) -> unique_ptr<Type> {
       base = ast_ptr<QualType>(entry, move(base), Qualifier::Ptr);
     } else if (try_consume(KWD_MUT)) {
       base = ast_ptr<QualType>(entry, move(base), Qualifier::Mut);
+    } else if (try_consume(KWD_REF)) {
+      base = ast_ptr<QualType>(entry, move(base), Qualifier::Ref);
     } else if (try_peek(0, SYM_LBRACKET) && try_peek(1, SYM_RBRACKET)) {
       // Don't consume the `[` unless the `]` is directly after; it might be a slice literal.
       consume(SYM_LBRACKET);
@@ -243,6 +245,8 @@ auto Parser::try_parse_type() -> optional<unique_ptr<Type>> {
       base = ast_ptr<QualType>(entry, move(base), Qualifier::Ptr);
     } else if (try_consume(KWD_MUT)) {
       base = ast_ptr<QualType>(entry, move(base), Qualifier::Mut);
+    } else if (try_consume(KWD_REF)) {
+      base = ast_ptr<QualType>(entry, move(base), Qualifier::Ref);
     } else if (try_peek(0, SYM_LBRACKET) && try_peek(1, SYM_RBRACKET)) {
       // Don't consume the `[` unless the `]` is directly after; it might be a slice literal.
       consume(SYM_LBRACKET);

@@ -19,13 +19,16 @@ static auto qual_suffix(Qualifier qual) -> string {
   switch (qual) {
   case Qualifier::Mut: return " mut";
   case Qualifier::Ptr: return " ptr";
+  case Qualifier::Ref: return " ref";
   default: return "";
   }
 }
 
 auto Type::known_qual(Qualifier qual) const -> Type {
   if (qual == Qualifier::Mut)
-    return {m_base, true};
+    return {m_base, true, false};
+  if (qual == Qualifier::Ref)
+    return {m_base, false, true};
 
   const int qual_idx = static_cast<int>(qual);
   const auto& existing = m_base->m_known_ptr_like.at(qual_idx);
@@ -232,6 +235,8 @@ auto Type::is_trivially_destructible() const -> bool {
 auto Type::has_qualifier(Qualifier qual) const -> bool {
   if (m_mut)
     return (qual == Qualifier::Mut);
+  if (m_ref)
+    return (qual == Qualifier::Ref);
   if (const auto* ptr_base = base_dyn_cast<Ptr>(); ptr_base)
     return ptr_base->has_qualifier(qual);
   return false;
@@ -240,7 +245,7 @@ auto Type::has_qualifier(Qualifier qual) const -> bool {
 auto Type::apply_generic_substitution(Sub sub) const -> optional<Type> {
   yume_assert(is_generic(), "Can't perform generic substitution without a generic type");
   if (m_base == sub.target)
-    return Type{sub.replace.base(), m_mut};
+    return Type{sub.replace.base(), m_mut, m_ref};
 
   if (const auto* ptr_this = base_dyn_cast<Ptr>())
     return ensure_ptr_base().apply_generic_substitution(sub)->known_qual(ptr_this->qualifier());
