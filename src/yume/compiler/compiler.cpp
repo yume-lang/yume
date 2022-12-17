@@ -248,11 +248,17 @@ void Compiler::run() {
   }
 
   yume_assert(m_scope.size() == 1, "End of compilation should end with only the global scope remaining");
+
   m_builder->SetInsertPoint(&m_global_dtor_fn->getEntryBlock(), m_global_dtor_fn->getEntryBlock().begin());
   destruct_last_scope();
   m_scope.clear();
+
   m_debug->finalize();
-  yume_assert(!llvm::verifyModule(*m_module, &errs()), "Module verification should pass");
+
+  if (llvm::verifyModule(*m_module, &errs())) {
+    m_module->print(errs(), nullptr, false, true);
+    throw std::runtime_error("Module verification failed");
+  }
 }
 
 void Compiler::walk_types(DeclLike decl_like) {
@@ -454,12 +460,13 @@ void Compiler::destruct(Val val, ty::Type type) {
       auto* loop_iter =
           entrypoint_dtor_builder().CreateAlloca(m_builder->getIntNTy(ptr_bitsize()), 0, nullptr, "sl.dtor.loop.i");
       m_builder->CreateStore(m_builder->getIntN(ptr_bitsize(), 0), loop_iter);
-      auto saved_insert_point = m_builder->saveIP();
-      auto* cont_block = m_builder->GetInsertBlock()->splitBasicBlock(m_builder->GetInsertPoint(), "sl.dtor.cont");
-      auto* loop_block = llvm::BasicBlock::Create(*m_context, "sl.dtor.loop", cont_block->getParent(), cont_block);
+      auto* loop_entry = m_builder->GetInsertBlock();
+      auto* loop_cont = loop_entry->splitBasicBlock(m_builder->GetInsertPoint(), "sl.dtor.cont");
+      auto* loop_block = llvm::BasicBlock::Create(*m_context, "sl.dtor.loop", loop_cont->getParent(), loop_cont);
+      auto saved_insert_point = llvm::IRBuilderBase::InsertPoint{loop_cont, loop_cont->begin()};
 
-      saved_insert_point.getBlock()->getTerminator()->eraseFromParent();
-      m_builder->SetInsertPoint(saved_insert_point.getBlock());
+      loop_entry->getTerminator()->eraseFromParent();
+      m_builder->SetInsertPoint(loop_entry);
       m_builder->CreateBr(loop_block);
       m_builder->SetInsertPoint(loop_block);
       auto* iter_i = m_builder->CreateLoad(m_builder->getIntNTy(ptr_bitsize()), loop_iter, "sl.dtor.i.iter");
@@ -468,7 +475,7 @@ void Compiler::destruct(Val val, ty::Type type) {
       destruct(iter_val, base_type);
       auto* iter_inc = m_builder->CreateAdd(iter_i, m_builder->getIntN(ptr_bitsize(), 1), "sl.dtor.i.inc");
       m_builder->CreateStore(iter_inc, loop_iter);
-      m_builder->CreateCondBr(m_builder->CreateICmpEQ(iter_inc, size), cont_block, loop_block);
+      m_builder->CreateCondBr(m_builder->CreateICmpEQ(iter_inc, size), loop_cont, loop_block);
 
       m_builder->restoreIP(saved_insert_point);
     }
@@ -1406,7 +1413,8 @@ template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
 
   if (expr.conversion.dereference) {
     // TODO(rymiel): Hack on top of a hack (see Type::compatibility)
-    yume_assert(current_ty.is_mut() || current_ty.is_opaque_self(), "Source type must be mutable or opaque when implicitly derefencing");
+    yume_assert(current_ty.is_mut() || current_ty.is_opaque_self(),
+                "Source type must be mutable or opaque when implicitly derefencing");
     // TODO(rymiel): Should really just be .ensure_mut_base()
     current_ty = current_ty.without_mut().without_opaque();
     base.llvm = m_builder->CreateLoad(llvm_type(current_ty), base, "ic.deref");
