@@ -117,7 +117,7 @@ auto Type::compatibility(Type other, Compat compat) const -> Compat {
 
   // `Foo mut` -> `Foo`.
   // Note that the base types are also compared, so `I32 mut` -> `I64`.
-  if (this->is_mut() && !other.is_mut()) {
+  if (this->is_mut() && other.is_unqualified()) {
     compat.conv.dereference = true;
     compat = ensure_mut_base().compatibility(other, compat);
     return compat;
@@ -163,7 +163,7 @@ auto Type::compatibility(Type other, Compat compat) const -> Compat {
   // A struct type which implements an interface can be casted to said interface.
   if ((this_st != nullptr) && (other_st != nullptr) && (other_st->is_interface()) &&
       (this_st->implements().has_value()) && (this_st->implements()->ensure_ty() == other.m_base) &&
-      (this->is_mut() == other.is_mut())) {
+      (this->is_mut() == other.is_mut()) && (this->is_ref() == other.is_ref())) {
     compat.valid = true;
     compat.conv.kind = Conv::Virtual;
     return compat;
@@ -172,19 +172,20 @@ auto Type::compatibility(Type other, Compat compat) const -> Compat {
   // An interface is essentially always opaque, and thus can be implicitly converted to be "opaque"
   if (const auto* other_opaque = other.base_dyn_cast<OpaqueSelf>();
       (this_st != nullptr) && (other_opaque != nullptr) && (this_st->is_interface()) && (!this->is_opaque_self()) &&
-      (this_st == other_opaque->indirect()) && (this->is_mut() == other.is_mut())) {
+      (this_st == other_opaque->indirect()) && (this->is_mut() == other.is_mut()) &&
+      (this->is_ref() == other.is_ref())) {
     // TODO(rymiel): should this recurse?
     compat.valid = true;
     return compat;
   }
 
   // An opaque struct type converted to a regular struct type is basically just a dereference.
-  // TODO(rymiel): This is sorta abusing the notion of "opaque", come up with a separate type? Or merge with Virtual
-  // somehow?
+  // TODO(rymiel): This is sorta abusing the notion of "dereference", come up with a separate type? Or merge with
+  // Virtual somehow?
   // TODO(rymiel): This doesn't support anything related to mutable types, should it?
   if (const auto* this_opaque = this->base_dyn_cast<OpaqueSelf>();
       (this_opaque != nullptr) && (other_st != nullptr) && (!other_st->is_interface()) && (!other.is_opaque_self()) &&
-      (other_st == this_opaque->indirect()) && (!this->is_mut()) && (!other.is_mut())) {
+      (other_st == this_opaque->indirect()) && (this->is_unqualified()) && (other.is_unqualified())) {
     // TODO(rymiel): should this recurse?
     compat.conv.dereference = true;
     compat.valid = true;
@@ -342,6 +343,8 @@ auto Type::name() const -> string {
   auto name = m_base->name();
   if (m_mut)
     name += qual_suffix(Qualifier::Mut);
+  if (m_ref)
+    name += qual_suffix(Qualifier::Ref);
   return name;
 }
 auto Type::base_name() const -> string { return m_base->name(); }

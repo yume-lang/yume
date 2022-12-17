@@ -1,0 +1,17 @@
+def main() I32
+  let a I32 = 7
+  let b I32 = a
+  let c I32 ref = a
+
+  assert(a == 7)
+  assert(b == 7)
+  assert(c == 7)
+
+  a = 13
+
+  assert(a == 13)
+  assert(b == 7)
+  assert(c == 13)
+
+  return 0
+end

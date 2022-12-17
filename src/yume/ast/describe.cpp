@@ -13,6 +13,7 @@ auto QualType::describe() const -> string {
   switch (qualifier) {
   case Qualifier::Ptr: return "ptr";
   case Qualifier::Mut: return "mut";
+  case Qualifier::Ref: return "ref";
   default: return "";
   }
 }
