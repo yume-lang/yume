@@ -276,7 +276,7 @@ struct SourceFile {
   ast::TokenIterator iterator;
   unique_ptr<ast::Program> program;
 
-  static auto name_or_stdin(const fs::path& path) -> string { return path.empty() ? path.native() : "<stdin>"s; }
+  static auto name_or_stdin(const fs::path& path) -> string { return path.empty() ? "<stdin>"s : path.native(); }
 
   SourceFile(std::istream& in, fs::path path)
       : path(move(path)), name(name_or_stdin(this->path)),
