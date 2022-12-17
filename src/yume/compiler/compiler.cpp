@@ -252,7 +252,7 @@ void Compiler::run() {
   destruct_last_scope();
   m_scope.clear();
   m_debug->finalize();
-  llvm::verifyModule(*m_module, &errs());
+  yume_assert(!llvm::verifyModule(*m_module, &errs()), "Module verification should pass");
 }
 
 void Compiler::walk_types(DeclLike decl_like) {
