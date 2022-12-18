@@ -120,5 +120,6 @@ auto LambdaExpr::clone() const -> LambdaExpr* {
 auto AssignExpr::clone() const -> AssignExpr* { return new AssignExpr(tok(), dup(target), dup(value)); }
 auto FieldAccessExpr::clone() const -> FieldAccessExpr* { return new FieldAccessExpr(tok(), dup(base), field); }
 auto ImplicitCastExpr::clone() const -> ImplicitCastExpr* { return new ImplicitCastExpr(tok(), dup(base), conversion); }
+auto TypeExpr::clone() const -> TypeExpr* { return new TypeExpr(tok(), dup(type)); }
 auto Program::clone() const -> Program* { return new Program(tok(), dup(body)); }
 } // namespace yume::ast

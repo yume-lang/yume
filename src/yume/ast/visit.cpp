@@ -129,6 +129,7 @@ void FieldAccessExpr::visit(Visitor& visitor) const { helper(visitor).visit(base
 void ImplicitCastExpr::visit(Visitor& visitor) const {
   helper(visitor).visit(conversion.to_string(), "conversion").visit(base, "base");
 }
+void TypeExpr::visit(Visitor& visitor) const { helper(visitor).visit(type, "type"); }
 void Program::visit(Visitor& visitor) const { helper(visitor).visit(body, "body"); }
 
 } // namespace yume::ast

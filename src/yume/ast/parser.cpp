@@ -260,7 +260,7 @@ auto Parser::try_parse_type() -> optional<unique_ptr<Type>> {
       auto type_args = vector<AnyType>{};
       consume_with_commas_until(SYM_RBRACE, [&] { type_args.emplace_back(parse_type()); });
 
-      base = ast_ptr<TemplatedType>(entry, move(base), std::move(type_args));
+      base = ast_ptr<TemplatedType>(entry, move(base), move(type_args));
     } else {
       break;
     }
@@ -706,7 +706,7 @@ auto Parser::parse_primary() -> unique_ptr<Expr> {
         return ast_ptr<CallExpr>(entry, name, move(type), move(call_args));
       }
 
-      throw std::runtime_error("Couldn't make an expression from here with a type");
+      return ast_ptr<TypeExpr>(entry, move(type));
     }
     auto name = consume_word();
     if (try_consume(SYM_LPAREN)) {

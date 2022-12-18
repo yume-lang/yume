@@ -69,6 +69,7 @@ enum Kind {
   /****/ K_Assign,       ///< `AssignExpr`
   /****/ K_FieldAccess,  ///< `FieldAccessExpr`
   /****/ K_ImplicitCast, ///< `ImplicitCastExpr`
+  /****/ K_TypeExpr,     ///< `TypeExpr`
   /****/ K_END_Expr,
   /**/ K_END_Stmt,
 
@@ -119,6 +120,7 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case K_Assign: return "assign";
   case K_FieldAccess: return "field access";
   case K_ImplicitCast: return "implicit cast";
+  case K_TypeExpr: return "type expr";
 
   case K_Stmt:
   case K_Expr:
@@ -645,6 +647,18 @@ public:
 
   static auto classof(const AST* a) -> bool { return a->kind() == K_ImplicitCast; }
   [[nodiscard]] auto clone() const -> ImplicitCastExpr* override;
+};
+
+/// Represents a reference to a type.
+struct TypeExpr final : public Expr {
+public:
+  AnyType type;
+
+  TypeExpr(span<Token> tok, AnyType type) : Expr(K_TypeExpr, tok), type{move(type)} {}
+  void visit(Visitor& visitor) const override;
+
+  static auto classof(const AST* a) -> bool { return a->kind() == K_TypeExpr; }
+  [[nodiscard]] auto clone() const -> TypeExpr* override;
 };
 
 /// A statement consisting of multiple other statements, \e i.e. the body of a function.
