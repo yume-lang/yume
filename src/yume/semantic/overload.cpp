@@ -157,13 +157,22 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
       auto sub = arg_type->determine_generic_subs(*param_type, overload.subs);
 
       // No valid substitution found
-      if (!sub)
+      if (!sub) {
+        notes.emit(overload.location()) << "Overload not valid";
+        notes.emit(overload.location()) << "  Because no generic substitution could be found for `"
+                                        << param_type->name() << "' using `" << arg_type->name() << "'";
         return false;
+      }
 
       param_type = param_type->apply_generic_substitution(*sub);
 
-      if (!param_type)
+      if (!param_type) {
+        notes.emit(overload.location()) << "Overload not valid";
+        notes.emit(overload.location()) << "  Because the generic type `" << param_type_r.name()
+                                        << "' wasn't able to be substituted with `" << sub->target->name() << "' = `"
+                                        << sub->replace.name() << "'";
         return false;
+      }
     }
 
     // Attempt to do a literal cast
