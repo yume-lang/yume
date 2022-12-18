@@ -991,7 +991,8 @@ static inline auto vals_to_llvm(const vector<Val>& in) -> vector<llvm::Value*> {
   return out;
 }
 
-auto Compiler::primitive(Fn* fn, const vector<Val>& args, const vector<ty::Type>& types) -> optional<Val> {
+auto Compiler::primitive(Fn* fn, const vector<Val>& args, const vector<ty::Type>& types,
+                         vector<ast::AnyExpr*>& ast_args) -> optional<Val> {
   if (fn->extern_decl())
     return m_builder->CreateCall(declare(*fn), vals_to_llvm(args));
 
@@ -1031,6 +1032,12 @@ auto Compiler::primitive(Fn* fn, const vector<Val>& args, const vector<ty::Type>
   if (primitive == "ptr_cast") {
     return m_builder->CreateBitCast(args[0], llvm_type(types[1]));
   }
+  if (primitive == "cast") {
+    // TODO(rymiel): This is an "explicit" cast, and should be able to cast more things when compared to an implicit one
+    auto* base = ast_args.at(0);
+    semantic::make_implicit_conversion(*base, types.at(1).without_meta());
+    return body_expression(**base);
+  }
   if (primitive.starts_with("ib_"))
     return int_bin_primitive(primitive, args);
   throw std::runtime_error("Unknown primitive "s + primitive);
@@ -1043,20 +1050,20 @@ template <> auto Compiler::expression(ast::CallExpr& expr) -> Val {
   auto* selected = expr.selected_overload;
   llvm::Function* llvm_fn = nullptr;
 
-  vector<Val> args{};
+  vector<ast::AnyExpr*> ast_args{};
   vector<ty::Type> arg_types{};
   vector<Val> llvm_args{};
 
   for (auto& i : expr.args) {
     auto arg = body_expression(*i);
-    args.push_back(arg);
+    ast_args.push_back(&i);
     llvm_args.emplace_back(arg.llvm);
     arg_types.push_back(i->ensure_ty());
   }
 
   Val val{nullptr};
 
-  auto prim = primitive(selected, llvm_args, arg_types);
+  auto prim = primitive(selected, llvm_args, arg_types, ast_args);
   if (prim.has_value()) {
     val = *prim;
   } else {

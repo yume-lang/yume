@@ -149,7 +149,8 @@ private:
   auto create_free(Val ptr) -> Val;
 
   /// Handle all primitive, built-in functions
-  auto primitive(Fn* fn, const vector<Val>& args, const vector<ty::Type>& types) -> optional<Val>;
+  auto primitive(Fn* fn, const vector<Val>& args, const vector<ty::Type>& types, vector<ast::AnyExpr*>& ast_args)
+      -> optional<Val>;
   /// Handle primitive functions taking two integral values, such as most arithmetic operations (add, multiply, etc).
   auto int_bin_primitive(const string& primitive, const vector<Val>& args) -> Val;
 

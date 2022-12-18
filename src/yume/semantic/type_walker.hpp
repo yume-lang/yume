@@ -96,4 +96,6 @@ private:
   }
 };
 
+void make_implicit_conversion(ast::OptionalExpr& expr, optional<ty::Type> target_ty);
+
 } // namespace yume::semantic

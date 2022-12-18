@@ -1,0 +1,6 @@
+def main() I32
+  let a I32 = 0
+  let b = a.as(I64)
+
+  return 0
+end

@@ -48,7 +48,7 @@ inline auto try_implicit_conversion(ast::OptionalExpr& expr, optional<ty::Type> 
   return true;
 }
 
-inline void make_implicit_conversion(ast::OptionalExpr& expr, optional<ty::Type> target_ty) {
+void make_implicit_conversion(ast::OptionalExpr& expr, optional<ty::Type> target_ty) {
   if (!target_ty)
     return;
   if (!expr)

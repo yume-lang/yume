@@ -15,6 +15,8 @@ def __builtin_ptr_cast{T,U}(from T ptr, to U ptr) U ptr = __primitive__(ptr_cast
 def __builtin_ptrto{T}(t T mut) T ptr = __primitive__(ptrto)
 def __builtin_slice_malloc{T}(ptr T ptr, size ISize) T ptr = __primitive__(slice_malloc)
 
+def as{T,U}(from T, to U type) U = __primitive__(cast)
+
 struct Slice{T}(pointer T ptr, size ISize)
   def :new(pointer T ptr, ::size)
     ::pointer = __builtin_slice_malloc(pointer, size)
