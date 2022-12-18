@@ -525,6 +525,13 @@ template <> void TypeWalker::expression(ast::BinaryLogicExpr& expr) {
   expr.val_ty(bool_ty);
 }
 
+template <> void TypeWalker::expression(ast::TypeExpr& expr) {
+  expression(*expr.type);
+  ty::Type base_type = expr.type->ensure_ty();
+  yume_assert(base_type.is_unqualified(), "Type expression must be unqualified"); // TODO(rymiel): revisit
+  expr.val_ty(base_type.known_meta());
+}
+
 template <> void TypeWalker::statement(ast::Compound& stat) {
   [[maybe_unused]] auto guard = scope.push_scope_guarded();
   for (auto& i : stat)

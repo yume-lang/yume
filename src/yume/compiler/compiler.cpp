@@ -434,6 +434,8 @@ auto Compiler::llvm_type(ty::Type type, bool erase_opaque) -> llvm::Type* {
     base = llvm_type({opaque_self_type->indirect()});
     interface_self = llvm::isa<ty::Struct>(opaque_self_type->indirect()) &&
                      llvm::cast<ty::Struct>(opaque_self_type->indirect())->is_interface();
+  } else if (type.base_isa<ty::Meta>()) {
+    base = m_builder->getInt8Ty();
   } else {
     throw std::logic_error("Unknown type base " + type.name());
   }
@@ -1538,6 +1540,11 @@ template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
     return interface_struct;
   }
   throw std::runtime_error("Unknown implicit conversion " + expr.conversion.to_string());
+}
+
+template <> auto Compiler::expression(ast::TypeExpr& expr) -> Val {
+  yume_assert(expr.ensure_ty().is_meta(), "Type expr must have metatype as its type");
+  return m_builder->getInt8(0);
 }
 
 void Compiler::write_object(const char* filename, bool binary) {
