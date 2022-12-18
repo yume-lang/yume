@@ -86,6 +86,7 @@ static const TokenAtom KWD_SELF_ITEM = {Word, "self"_a};
 static const TokenAtom KWD_SELF_TYPE = {Word, "Self"_a};
 static const TokenAtom KWD_THEN = {Word, "then"_a};
 static const TokenAtom KWD_TRUE = {Word, "true"_a};
+static const TokenAtom KWD_TYPE = {Word, "type"_a};
 static const TokenAtom KWD_FALSE = {Word, "false"_a};
 static const TokenAtom KWD_WHILE = {Word, "while"_a};
 static const TokenAtom KWD_CONST = {Word, "const"_a};
