@@ -2,13 +2,10 @@
 
 namespace yume {
 enum struct Qualifier {
-  Ptr, ///< `ptr`
-  Mut, ///< `mut`
-  Ref, ///< `ref`
-};
-
-enum struct PtrLikeQualifier {
-  Ptr = static_cast<int>(Qualifier::Ptr), ///< `ptr`
-  Q_END
+  Ptr,    ///< `ptr`
+  Mut,    ///< `mut`
+  Ref,    ///< `ref`
+  Type,   ///< `type`
+  Opaque, ///< Opaque self types
 };
 } // namespace yume

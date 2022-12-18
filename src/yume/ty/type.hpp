@@ -63,6 +63,7 @@ class Ptr : public BaseType {
 
 private:
   Type m_base;
+  // TODO(rymiel): redundant?
   Qualifier m_qual;
 
 public:
@@ -163,8 +164,20 @@ private:
 
 public:
   explicit OpaqueSelf(const BaseType* indirect) : BaseType(K_OpaqueSelf, indirect->name()), m_indirect(indirect) {}
-  [[nodiscard]] auto name() const -> string override { return base_name(); };
+  [[nodiscard]] auto name() const -> string override { return base_name() + " opaque"; };
   [[nodiscard]] auto indirect() const -> const BaseType* { return m_indirect; };
   static auto classof(const BaseType* a) -> bool { return a->kind() == K_OpaqueSelf; }
+};
+
+/// A metatype, that is, a type referring to a type.
+class Meta final : public BaseType {
+private:
+  const BaseType* m_indirect;
+
+public:
+  explicit Meta(const BaseType* indirect) : BaseType(K_Meta, indirect->name()), m_indirect(indirect) {}
+  [[nodiscard]] auto name() const -> string override { return base_name() + " type"; };
+  [[nodiscard]] auto indirect() const -> const BaseType* { return m_indirect; };
+  static auto classof(const BaseType* a) -> bool { return a->kind() == K_Meta; }
 };
 } // namespace yume::ty

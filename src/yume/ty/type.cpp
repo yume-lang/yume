@@ -25,19 +25,25 @@ static auto qual_suffix(Qualifier qual) -> string {
 }
 
 auto Type::known_qual(Qualifier qual) const -> Type {
-  if (qual == Qualifier::Mut)
-    return {m_base, true, false};
-  if (qual == Qualifier::Ref)
-    return {m_base, false, true};
+  switch (qual) {
+  case Qualifier::Mut: return {m_base, true, false};
+  case Qualifier::Ref: return {m_base, false, true};
+  case Qualifier::Ptr:
+    if (m_base->m_known_ptr == nullptr)
+      m_base->m_known_ptr = std::make_unique<Ptr>(m_base->base_name(), *this, qual);
 
-  const int qual_idx = static_cast<int>(qual);
-  const auto& existing = m_base->m_known_ptr_like.at(qual_idx);
-  if (existing != nullptr)
-    return {existing.get()};
+    return {m_base->m_known_ptr.get()};
+  case Qualifier::Type:
+    if (m_base->m_known_meta == nullptr)
+      m_base->m_known_meta = std::make_unique<Meta>(this->base());
 
-  auto new_qual_type = std::make_unique<Ptr>(m_base->base_name(), *this, qual);
-  m_base->m_known_ptr_like.at(qual_idx) = move(new_qual_type);
-  return {m_base->m_known_ptr_like.at(qual_idx).get()};
+    return {m_base->m_known_meta.get()};
+  case Qualifier::Opaque:
+    if (m_base->m_known_opaque_self == nullptr)
+      m_base->m_known_opaque_self = std::make_unique<OpaqueSelf>(this->base());
+
+    return {m_base->m_known_opaque_self.get()};
+  }
 }
 
 static auto visit_subs(Type a, Type b, optional<Sub> sub) -> optional<Sub> {
@@ -50,7 +56,10 @@ static auto visit_subs(Type a, Type b, optional<Sub> sub) -> optional<Sub> {
   }
   // `Foo mut` -> `T mut`, with `T = Foo`.
   if (a.is_mut() && b.is_mut())
-    return visit_subs(a.ensure_mut_base(), b.without_mut(), sub);
+    return visit_subs(a.ensure_mut_base(), b.ensure_mut_base(), sub);
+  // `Foo type` -> `T type`, with `T = Foo`.
+  if (a.is_meta() && b.is_meta())
+    return visit_subs(a.without_meta(), b.without_meta(), sub);
 
   // `Foo ptr mut` -> `T ptr`, with `T = Foo`.
   if (a.is_mut() && !b.is_mut())
@@ -202,6 +211,9 @@ auto Type::is_generic() const noexcept -> bool {
   if (base_isa<Ptr>())
     return ensure_ptr_base().is_generic();
 
+  if (base_isa<Meta>())
+    return without_meta().is_generic(); // TODO(rymiel): Needs a `ensure_meta_indirect` or something idk
+
   if (const auto* struct_ty = base_dyn_cast<Struct>())
     return std::ranges::any_of(struct_ty->subs(), [](const auto& sub) noexcept { return sub.second.is_generic(); });
   // XXX: The above ranges call is repeated often
@@ -217,6 +229,8 @@ auto Type::is_slice() const noexcept -> bool {
 };
 
 auto Type::is_opaque_self() const noexcept -> bool { return base_isa<OpaqueSelf>(); };
+
+auto Type::is_meta() const noexcept -> bool { return base_isa<Meta>(); };
 
 auto Type::is_trivially_destructible() const -> bool {
   if (base_isa<ty::Int>() || base_isa<ty::Ptr>() || base_isa<ty::Function>() || base_isa<ty::Nil>())
@@ -250,6 +264,9 @@ auto Type::apply_generic_substitution(Sub sub) const -> optional<Type> {
 
   if (const auto* ptr_this = base_dyn_cast<Ptr>())
     return ensure_ptr_base().apply_generic_substitution(sub)->known_qual(ptr_this->qualifier());
+
+  if (is_meta())
+    return without_meta().apply_generic_substitution(sub)->known_meta();
 
   if (const auto* st_this = base_dyn_cast<Struct>()) {
     // Gah!
@@ -336,6 +353,12 @@ auto Type::without_mut() const noexcept -> Type { return {m_base}; }
 auto Type::without_opaque() const noexcept -> Type {
   if (const auto* opaque_self = base_dyn_cast<OpaqueSelf>(); opaque_self != nullptr)
     return {opaque_self->indirect()};
+  return *this;
+}
+
+auto Type::without_meta() const noexcept -> Type {
+  if (const auto* meta = base_dyn_cast<Meta>(); meta != nullptr)
+    return {meta->indirect()};
   return *this;
 }
 

@@ -57,6 +57,7 @@ public:
     case ast::K_Slice: return conv_expression<ast::SliceExpr>(expr, args...);
     case ast::K_FieldAccess: return conv_expression<ast::FieldAccessExpr>(expr, args...);
     case ast::K_ImplicitCast: return conv_expression<ast::ImplicitCastExpr>(expr, args...);
+    case ast::K_TypeExpr: return conv_expression<ast::TypeExpr>(expr, args...);
     default: return (static_cast<Derived*>(this))->template expression(expr, args...);
     }
   }

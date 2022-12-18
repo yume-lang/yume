@@ -21,6 +21,7 @@ enum Kind {
   K_Function,   ///< `Function`
   K_Generic,    ///< `Generic`
   K_OpaqueSelf, ///< `OpaqueSelf`
+  K_Meta,       ///< `Meta`
 };
 
 /// Represents a type in the type system.
@@ -37,10 +38,12 @@ enum Kind {
 /// instances of `Type`. A "qualified" type is, for example, `mut`. These qualifiers do not stack. Getting the "mut"
 /// reference to a mutable reference should be itself.
 ///
-/// Also, pointer-like types are also not held in `TypeHolder`, and are instead stored in the `m_known_ptr_like` array
+/// Also, pointer-like types are also not held in `TypeHolder`, and are instead stored in the `m_known_...` fields
 /// of their pointee type.
 class BaseType {
-  mutable array<unique_ptr<BaseType>, static_cast<int>(PtrLikeQualifier::Q_END)> m_known_ptr_like{};
+  mutable unique_ptr<BaseType> m_known_ptr{};
+  mutable unique_ptr<BaseType> m_known_opaque_self{};
+  mutable unique_ptr<BaseType> m_known_meta{};
   const Kind m_kind;
   string m_name;
 
@@ -71,7 +74,7 @@ public:
   Type(nonnull<const BaseType*> base) noexcept : m_base(base) {}
 
   auto operator<=>(const Type&) const noexcept = default;
-  [[nodiscard]] auto opaque_equal(const Type &other) const noexcept -> bool;
+  [[nodiscard]] auto opaque_equal(const Type& other) const noexcept -> bool;
 
   [[nodiscard]] auto kind() const noexcept -> Kind { return m_base->kind(); };
   [[nodiscard]] auto base() const noexcept -> nonnull<const BaseType*> { return m_base; }
@@ -86,7 +89,7 @@ public:
     return std::nullopt;
   }
   template <typename T> [[nodiscard]] auto base_isa() const noexcept -> bool { return isa<T>(m_base); }
-  [[nodiscard,deprecated]] auto has_qualifier(Qualifier qual) const -> bool;
+  [[nodiscard, deprecated]] auto has_qualifier(Qualifier qual) const -> bool;
   [[nodiscard]] auto name() const -> string;
   [[nodiscard]] auto base_name() const -> string;
 
@@ -98,6 +101,9 @@ public:
   [[nodiscard]] auto known_qual(Qualifier qual) const -> Type;
   [[nodiscard]] auto known_ptr() const -> Type { return known_qual(Qualifier::Ptr); }
   [[nodiscard]] auto known_mut() const -> Type { return known_qual(Qualifier::Mut); }
+  [[nodiscard]] auto known_ref() const -> Type { return known_qual(Qualifier::Ref); }
+  [[nodiscard]] auto known_meta() const -> Type { return known_qual(Qualifier::Type); }
+  [[nodiscard]] auto known_opaque() const -> Type { return known_qual(Qualifier::Opaque); }
 
   /// The union of this and `other`. For example, the union of `T` and `T mut` is `T mut`.
   /// \returns `nullopt` if an union cannot be created.
@@ -112,6 +118,7 @@ public:
   [[nodiscard]] auto is_slice() const noexcept -> bool;
   [[nodiscard]] auto is_generic() const noexcept -> bool;
   [[nodiscard]] auto is_opaque_self() const noexcept -> bool;
+  [[nodiscard]] auto is_meta() const noexcept -> bool;
 
   [[nodiscard]] auto is_trivially_destructible() const -> bool;
 
@@ -136,5 +143,6 @@ public:
 
   /// If this type is a opaque wrapper type, return the wrapper type, otherwise return itself.
   [[nodiscard]] auto without_opaque() const noexcept -> Type;
+  [[nodiscard]] auto without_meta() const noexcept -> Type;
 };
 } // namespace yume::ty

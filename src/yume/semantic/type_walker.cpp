@@ -718,8 +718,8 @@ auto TypeWalker::convert_type(ast::Type& ast_type) -> ty::Type {
   } else if (isa<ast::SelfType>(ast_type)) {
     if (parent) {
       if (current_decl.opaque_self())
-        return {compiler.m_types.find_or_create_opaque_wrapper(parent->base()), parent->is_mut(), parent->is_ref()};
-      return {parent->base(), parent->is_mut(), parent->is_ref()};
+        return {parent->known_opaque().base(), parent->is_mut(), parent->is_ref()};
+      return {parent->base(), parent->is_mut(), parent->is_ref()}; // TODO(rymiel): Isn't this just `parent`
     }
   } else if (auto* proxy_type = dyn_cast<ast::ProxyType>(&ast_type)) {
     if (parent) {

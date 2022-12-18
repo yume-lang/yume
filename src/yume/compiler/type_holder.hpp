@@ -21,7 +21,6 @@ struct TypeHolder {
   llvm::StringMap<unique_ptr<ty::BaseType>> known{};
   std::vector<unique_ptr<ty::Function>> fn_types{};
   std::vector<unique_ptr<ty::BaseType>> template_instantiations{};
-  std::unordered_map<const ty::BaseType*, unique_ptr<ty::OpaqueSelf>> opaque_wrappers{};
 
   TypeHolder();
 
@@ -36,6 +35,5 @@ struct TypeHolder {
       -> ty::Function*;
   auto find_or_create_fn_ptr_type(const vector<ty::Type>& args, optional<ty::Type> ret, bool c_varargs = false)
       -> ty::Function*;
-  auto find_or_create_opaque_wrapper(const ty::BaseType* base) -> ty::OpaqueSelf*;
 };
 } // namespace yume
