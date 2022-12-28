@@ -36,7 +36,7 @@ public:
       : m_iterator{iterator}, m_end{end} {}
 
   /// Check if the iterator is at the end and no more `Token`s could possibly be read.
-  [[nodiscard]] auto at_end() const noexcept -> bool { return m_iterator == m_end; }
+  [[nodiscard]] auto at_end() const noexcept -> bool { return m_iterator >= m_end; }
   [[nodiscard]] auto operator->() const -> Token* {
     if (at_end())
       throw std::runtime_error("Can't dereference at end");

@@ -75,6 +75,8 @@ auto Parser::try_peek(int ahead, TokenAtom token_atom, [[maybe_unused]] const so
     return false;
 
   auto token = tokens + ahead;
+  if (token.at_end())
+    return false;
 
 #ifdef YUME_SPEW_CONSUMED_TOKENS
   errs() << "try_peek ahead by " << ahead << ": expected " << Token::type_name(token_type) << " " << string(payload)
@@ -88,7 +90,10 @@ auto Parser::try_peek(int ahead, Token::Type token_type, [[maybe_unused]] const 
     -> bool {
   if (tokens.at_end())
     return false;
+
   auto token = tokens + ahead;
+  if (token.at_end())
+    return false;
 
 #ifdef YUME_SPEW_CONSUMED_TOKENS
   errs() << "try_peek ahead by " << ahead << ": expected " << Token::type_name(token_type) << ", got " << *token
