@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-12-28 12:34:02</td>
+            <td class="headerValue">2022-12-28 12:42:10</td>
             <td></td>
           </tr>
           <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
@@ -160,134 +160,132 @@
 <a name="102"><span class="lineNum">     102 </span>            :       auto src_stream = std::stringstream(std::string(src_input-&gt;getBufferStart(), src_input-&gt;getBufferSize()));</a>
 <a name="103"><span class="lineNum">     103 </span>            :       auto&amp; source = source_files.emplace_back(src_stream, src_path);</a>
 <a name="104"><span class="lineNum">     104 </span>            : </a>
-<a name="105"><span class="lineNum">     105 </span>            :       if (flags &amp; CompilerFlags::EmitUntypedDot) {</a>
+<a name="105"><span class="lineNum">     105 </span>            :       if (flags &amp; CompilerFlags::EmitUntypedDot)</a>
 <a name="106"><span class="lineNum">     106 </span>            :         dot_visitor-&gt;visit(*source.program, &quot;&quot;);</a>
-<a name="107"><span class="lineNum">     107 </span>            :       }</a>
-<a name="108"><span class="lineNum">     108 </span>            : </a>
-<a name="109"><span class="lineNum">     109 </span>            :       if (flags &amp; CompilerFlags::DumpAST) {</a>
-<a name="110"><span class="lineNum">     110 </span>            :         yume::diagnostic::PrintVisitor(llvm::errs(), true).visit(*source.program, &quot;&quot;);</a>
-<a name="111"><span class="lineNum">     111 </span>            :         llvm::errs() &lt;&lt; &quot;\n&quot;;</a>
-<a name="112"><span class="lineNum">     112 </span>            :       }</a>
-<a name="113"><span class="lineNum">     113 </span>            : </a>
-<a name="114"><span class="lineNum">     114 </span>            :       auto token_it = source.iterator;</a>
-<a name="115"><span class="lineNum">     115 </span>            :       if (!token_it.at_end()) {</a>
-<a name="116"><span class="lineNum">     116 </span>            :         llvm::outs() &lt;&lt; &quot;unconsumed tokens:\n&quot;;</a>
-<a name="117"><span class="lineNum">     117 </span>            :         while (!token_it.at_end()) {</a>
-<a name="118"><span class="lineNum">     118 </span>            :           llvm::outs() &lt;&lt; &quot;  &quot; &lt;&lt; *token_it++ &lt;&lt; &quot;\n&quot;;</a>
-<a name="119"><span class="lineNum">     119 </span>            :         }</a>
-<a name="120"><span class="lineNum">     120 </span>            :         llvm::outs() &lt;&lt; &quot;\n&quot;;</a>
-<a name="121"><span class="lineNum">     121 </span>            :         llvm::outs().flush();</a>
-<a name="122"><span class="lineNum">     122 </span>            : </a>
-<a name="123"><span class="lineNum">     123 </span>            :         return 2;</a>
-<a name="124"><span class="lineNum">     124 </span>            :       }</a>
-<a name="125"><span class="lineNum">     125 </span>            :     }</a>
-<a name="126"><span class="lineNum">     126 </span>            :   }</a>
-<a name="127"><span class="lineNum">     127 </span>            : </a>
-<a name="128"><span class="lineNum">     128 </span>            :   if (flags &amp; CompilerFlags::DumpAST)</a>
-<a name="129"><span class="lineNum">     129 </span>            :     return 0;</a>
-<a name="130"><span class="lineNum">     130 </span>            : </a>
-<a name="131"><span class="lineNum">     131 </span>            :   auto compiler = yume::Compiler{target_triple, std::move(source_files)};</a>
-<a name="132"><span class="lineNum">     132 </span>            :   compiler.run();</a>
-<a name="133"><span class="lineNum">     133 </span>            : </a>
-<a name="134"><span class="lineNum">     134 </span>            :   if (flags &amp; CompilerFlags::EmitDot) {</a>
-<a name="135"><span class="lineNum">     135 </span>            :     for (const auto&amp; i : compiler.source_files()) {</a>
-<a name="136"><span class="lineNum">     136 </span>            :       const std::string full_name = &quot;output_&quot;s + i.path.stem().native() + &quot;.dot&quot;;</a>
-<a name="137"><span class="lineNum">     137 </span>            :       auto dot = yume::open_file(full_name.c_str());</a>
-<a name="138"><span class="lineNum">     138 </span>            :       auto visitor = yume::diagnostic::DotVisitor{*dot};</a>
-<a name="139"><span class="lineNum">     139 </span>            :       visitor.visit(*i.program, &quot;&quot;);</a>
-<a name="140"><span class="lineNum">     140 </span>            :     }</a>
-<a name="141"><span class="lineNum">     141 </span>            :   }</a>
-<a name="142"><span class="lineNum">     142 </span>            : </a>
-<a name="143"><span class="lineNum">     143 </span>            :   if (flags &amp; CompilerFlags::EmitLLVM)</a>
-<a name="144"><span class="lineNum">     144 </span>            :     compiler.module()-&gt;print(*yume::open_file(&quot;output.ll&quot;), nullptr);</a>
-<a name="145"><span class="lineNum">     145 </span>            :   if (flags &amp; CompilerFlags::EmitASM)</a>
-<a name="146"><span class="lineNum">     146 </span>            :     compiler.write_object(&quot;output.s&quot;, false);</a>
-<a name="147"><span class="lineNum">     147 </span>            :   compiler.write_object(&quot;output.o&quot;, true);</a>
-<a name="148"><span class="lineNum">     148 </span>            :   llvm::outs().flush();</a>
-<a name="149"><span class="lineNum">     149 </span>            :   if (~flags &amp; CompilerFlags::NoLink)</a>
-<a name="150"><span class="lineNum">     150 </span>            :     std::system(&quot;cc output.o -o yume.out&quot;);</a>
-<a name="151"><span class="lineNum">     151 </span>            : </a>
-<a name="152"><span class="lineNum">     152 </span>            :   return EXIT_SUCCESS;</a>
-<a name="153"><span class="lineNum">     153 </span>            : }</a>
-<a name="154"><span class="lineNum">     154 </span>            : </a>
-<a name="155"><span class="lineNum">     155 </span><span class="lineNoCov">          0 : void emit_version() {</span></a>
-<a name="156"><span class="lineNum">     156 </span>            :   llvm::outs() &lt;&lt; &quot;yume version &quot; &lt;&lt; yume::VERSION &lt;&lt; &quot;-&quot; &lt;&lt; yume::GIT_SHORTHASH &lt;&lt; &quot;\n&quot;;</a>
-<a name="157"><span class="lineNum">     157 </span>            :   llvm::outs() &lt;&lt; &quot;lib: &quot; &lt;&lt; lib_dir() &lt;&lt; &quot;\n&quot;;</a>
-<a name="158"><span class="lineNum">     158 </span>            :   llvm::outs() &lt;&lt; &quot;build-time LIB_DIR: &quot; YUME_LIB_DIR &quot;\n&quot;;</a>
-<a name="159"><span class="lineNum">     159 </span>            :   llvm::outs() &lt;&lt; &quot;build-time SRC_DIR: &quot; YUME_SRC_DIR &quot;\n&quot;;</a>
-<a name="160"><span class="lineNum">     160 </span>            : }</a>
-<a name="161"><span class="lineNum">     161 </span>            : </a>
-<a name="162"><span class="lineNum">     162 </span><span class="lineNoCov">          0 : auto main(int argc, const char* argv[]) -&gt; int {</span></a>
-<a name="163"><span class="lineNum">     163 </span>            :   auto raw_args = std::span(argv, argc);</a>
-<a name="164"><span class="lineNum">     164 </span>            :   auto args = raw_args.subspan(1); // omit argv 0 (program name)</a>
-<a name="165"><span class="lineNum">     165 </span>            : </a>
-<a name="166"><span class="lineNum">     166 </span>            :   llvm::outs().enable_colors(llvm::outs().has_colors());</a>
-<a name="167"><span class="lineNum">     167 </span>            :   llvm::errs().enable_colors(llvm::errs().has_colors());</a>
-<a name="168"><span class="lineNum">     168 </span>            : </a>
-<a name="169"><span class="lineNum">     169 </span>            :   auto fatal_error = [&amp;]() -&gt; auto&amp; {</a>
-<a name="170"><span class="lineNum">     170 </span>            :     emit_version();</a>
-<a name="171"><span class="lineNum">     171 </span>            :     llvm::outs() &lt;&lt; &quot;\n&quot;;</a>
-<a name="172"><span class="lineNum">     172 </span>            :     llvm::outs().changeColor(llvm::raw_ostream::WHITE, true) &lt;&lt; raw_args[0];</a>
+<a name="107"><span class="lineNum">     107 </span>            : </a>
+<a name="108"><span class="lineNum">     108 </span>            :       if (flags &amp; CompilerFlags::DumpAST) {</a>
+<a name="109"><span class="lineNum">     109 </span>            :         yume::diagnostic::PrintVisitor(llvm::errs(), true).visit(*source.program, &quot;&quot;);</a>
+<a name="110"><span class="lineNum">     110 </span>            :         llvm::errs() &lt;&lt; &quot;\n&quot;;</a>
+<a name="111"><span class="lineNum">     111 </span>            :       }</a>
+<a name="112"><span class="lineNum">     112 </span>            : </a>
+<a name="113"><span class="lineNum">     113 </span>            :       auto token_it = source.iterator;</a>
+<a name="114"><span class="lineNum">     114 </span>            :       if (!token_it.at_end()) {</a>
+<a name="115"><span class="lineNum">     115 </span>            :         llvm::outs() &lt;&lt; &quot;unconsumed tokens:\n&quot;;</a>
+<a name="116"><span class="lineNum">     116 </span>            :         while (!token_it.at_end())</a>
+<a name="117"><span class="lineNum">     117 </span>            :           llvm::outs() &lt;&lt; &quot;  &quot; &lt;&lt; *token_it++ &lt;&lt; &quot;\n&quot;;</a>
+<a name="118"><span class="lineNum">     118 </span>            :         llvm::outs() &lt;&lt; &quot;\n&quot;;</a>
+<a name="119"><span class="lineNum">     119 </span>            :         llvm::outs().flush();</a>
+<a name="120"><span class="lineNum">     120 </span>            : </a>
+<a name="121"><span class="lineNum">     121 </span>            :         return 2;</a>
+<a name="122"><span class="lineNum">     122 </span>            :       }</a>
+<a name="123"><span class="lineNum">     123 </span>            :     }</a>
+<a name="124"><span class="lineNum">     124 </span>            :   }</a>
+<a name="125"><span class="lineNum">     125 </span>            : </a>
+<a name="126"><span class="lineNum">     126 </span>            :   if (flags &amp; CompilerFlags::DumpAST)</a>
+<a name="127"><span class="lineNum">     127 </span>            :     return 0;</a>
+<a name="128"><span class="lineNum">     128 </span>            : </a>
+<a name="129"><span class="lineNum">     129 </span>            :   auto compiler = yume::Compiler{target_triple, std::move(source_files)};</a>
+<a name="130"><span class="lineNum">     130 </span>            :   compiler.run();</a>
+<a name="131"><span class="lineNum">     131 </span>            : </a>
+<a name="132"><span class="lineNum">     132 </span>            :   if (flags &amp; CompilerFlags::EmitDot) {</a>
+<a name="133"><span class="lineNum">     133 </span>            :     for (const auto&amp; i : compiler.source_files()) {</a>
+<a name="134"><span class="lineNum">     134 </span>            :       const std::string full_name = &quot;output_&quot;s + i.path.stem().native() + &quot;.dot&quot;;</a>
+<a name="135"><span class="lineNum">     135 </span>            :       auto dot = yume::open_file(full_name.c_str());</a>
+<a name="136"><span class="lineNum">     136 </span>            :       auto visitor = yume::diagnostic::DotVisitor{*dot};</a>
+<a name="137"><span class="lineNum">     137 </span>            :       visitor.visit(*i.program, &quot;&quot;);</a>
+<a name="138"><span class="lineNum">     138 </span>            :     }</a>
+<a name="139"><span class="lineNum">     139 </span>            :   }</a>
+<a name="140"><span class="lineNum">     140 </span>            : </a>
+<a name="141"><span class="lineNum">     141 </span>            :   if (flags &amp; CompilerFlags::EmitLLVM)</a>
+<a name="142"><span class="lineNum">     142 </span>            :     compiler.module()-&gt;print(*yume::open_file(&quot;output.ll&quot;), nullptr);</a>
+<a name="143"><span class="lineNum">     143 </span>            :   if (flags &amp; CompilerFlags::EmitASM)</a>
+<a name="144"><span class="lineNum">     144 </span>            :     compiler.write_object(&quot;output.s&quot;, false);</a>
+<a name="145"><span class="lineNum">     145 </span>            :   compiler.write_object(&quot;output.o&quot;, true);</a>
+<a name="146"><span class="lineNum">     146 </span>            :   llvm::outs().flush();</a>
+<a name="147"><span class="lineNum">     147 </span>            :   if (~flags &amp; CompilerFlags::NoLink)</a>
+<a name="148"><span class="lineNum">     148 </span>            :     std::system(&quot;cc output.o -o yume.out&quot;);</a>
+<a name="149"><span class="lineNum">     149 </span>            : </a>
+<a name="150"><span class="lineNum">     150 </span>            :   return EXIT_SUCCESS;</a>
+<a name="151"><span class="lineNum">     151 </span>            : }</a>
+<a name="152"><span class="lineNum">     152 </span>            : </a>
+<a name="153"><span class="lineNum">     153 </span><span class="lineNoCov">          0 : void emit_version() {</span></a>
+<a name="154"><span class="lineNum">     154 </span>            :   llvm::outs() &lt;&lt; &quot;yume version &quot; &lt;&lt; yume::VERSION &lt;&lt; &quot;-&quot; &lt;&lt; yume::GIT_SHORTHASH &lt;&lt; &quot;\n&quot;;</a>
+<a name="155"><span class="lineNum">     155 </span>            :   llvm::outs() &lt;&lt; &quot;lib: &quot; &lt;&lt; lib_dir() &lt;&lt; &quot;\n&quot;;</a>
+<a name="156"><span class="lineNum">     156 </span>            :   llvm::outs() &lt;&lt; &quot;build-time LIB_DIR: &quot; YUME_LIB_DIR &quot;\n&quot;;</a>
+<a name="157"><span class="lineNum">     157 </span>            :   llvm::outs() &lt;&lt; &quot;build-time SRC_DIR: &quot; YUME_SRC_DIR &quot;\n&quot;;</a>
+<a name="158"><span class="lineNum">     158 </span>            : }</a>
+<a name="159"><span class="lineNum">     159 </span>            : </a>
+<a name="160"><span class="lineNum">     160 </span><span class="lineNoCov">          0 : auto main(int argc, const char* argv[]) -&gt; int {</span></a>
+<a name="161"><span class="lineNum">     161 </span>            :   auto raw_args = std::span(argv, argc);</a>
+<a name="162"><span class="lineNum">     162 </span>            :   auto args = raw_args.subspan(1); // omit argv 0 (program name)</a>
+<a name="163"><span class="lineNum">     163 </span>            : </a>
+<a name="164"><span class="lineNum">     164 </span>            :   llvm::outs().enable_colors(llvm::outs().has_colors());</a>
+<a name="165"><span class="lineNum">     165 </span>            :   llvm::errs().enable_colors(llvm::errs().has_colors());</a>
+<a name="166"><span class="lineNum">     166 </span>            : </a>
+<a name="167"><span class="lineNum">     167 </span>            :   auto fatal_error = [&amp;]() -&gt; auto&amp; {</a>
+<a name="168"><span class="lineNum">     168 </span>            :     emit_version();</a>
+<a name="169"><span class="lineNum">     169 </span>            :     llvm::outs() &lt;&lt; &quot;\n&quot;;</a>
+<a name="170"><span class="lineNum">     170 </span>            :     llvm::outs().changeColor(llvm::raw_ostream::WHITE, true) &lt;&lt; raw_args[0];</a>
+<a name="171"><span class="lineNum">     171 </span>            :     llvm::outs().resetColor() &lt;&lt; &quot;: &quot;;</a>
+<a name="172"><span class="lineNum">     172 </span>            :     llvm::outs().changeColor(llvm::raw_ostream::RED) &lt;&lt; &quot;error&quot;;</a>
 <a name="173"><span class="lineNum">     173 </span>            :     llvm::outs().resetColor() &lt;&lt; &quot;: &quot;;</a>
-<a name="174"><span class="lineNum">     174 </span>            :     llvm::outs().changeColor(llvm::raw_ostream::RED) &lt;&lt; &quot;error&quot;;</a>
-<a name="175"><span class="lineNum">     175 </span>            :     llvm::outs().resetColor() &lt;&lt; &quot;: &quot;;</a>
-<a name="176"><span class="lineNum">     176 </span>            :     return llvm::outs();</a>
-<a name="177"><span class="lineNum">     177 </span>            :   };</a>
-<a name="178"><span class="lineNum">     178 </span>            : </a>
-<a name="179"><span class="lineNum">     179 </span>            :   std::optional&lt;std::string&gt; target_triple = {};</a>
-<a name="180"><span class="lineNum">     180 </span>            :   std::vector&lt;std::string&gt; source_file_names = {};</a>
-<a name="181"><span class="lineNum">     181 </span>            :   bool consuming_target = false;</a>
-<a name="182"><span class="lineNum">     182 </span>            :   bool done_with_flags = false;</a>
-<a name="183"><span class="lineNum">     183 </span>            :   auto flags = CompilerFlags::None;</a>
-<a name="184"><span class="lineNum">     184 </span>            : </a>
-<a name="185"><span class="lineNum">     185 </span>            :   for (const auto&amp; arg : args) {</a>
-<a name="186"><span class="lineNum">     186 </span>            :     if (consuming_target) {</a>
-<a name="187"><span class="lineNum">     187 </span>            :       target_triple = arg;</a>
-<a name="188"><span class="lineNum">     188 </span>            :       consuming_target = false;</a>
-<a name="189"><span class="lineNum">     189 </span>            :       continue;</a>
-<a name="190"><span class="lineNum">     190 </span>            :     }</a>
-<a name="191"><span class="lineNum">     191 </span>            :     if (arg == &quot;--version&quot;s) {</a>
-<a name="192"><span class="lineNum">     192 </span>            :       emit_version();</a>
-<a name="193"><span class="lineNum">     193 </span>            :       return EXIT_SUCCESS;</a>
-<a name="194"><span class="lineNum">     194 </span>            :     }</a>
-<a name="195"><span class="lineNum">     195 </span>            :     if (arg == &quot;--target&quot;s)</a>
-<a name="196"><span class="lineNum">     196 </span>            :       consuming_target = true;</a>
-<a name="197"><span class="lineNum">     197 </span>            :     else if (arg == &quot;-c&quot;s)</a>
-<a name="198"><span class="lineNum">     198 </span>            :       flags |= CompilerFlags::NoLink;</a>
-<a name="199"><span class="lineNum">     199 </span>            :     else if (arg == &quot;--emit-llvm&quot;s)</a>
-<a name="200"><span class="lineNum">     200 </span>            :       flags |= CompilerFlags::EmitLLVM;</a>
-<a name="201"><span class="lineNum">     201 </span>            :     else if (arg == &quot;--emit-asm&quot;s)</a>
-<a name="202"><span class="lineNum">     202 </span>            :       flags |= CompilerFlags::EmitASM;</a>
-<a name="203"><span class="lineNum">     203 </span>            :     else if (arg == &quot;--emit-dot&quot;s)</a>
-<a name="204"><span class="lineNum">     204 </span>            :       flags |= CompilerFlags::EmitDot;</a>
-<a name="205"><span class="lineNum">     205 </span>            :     else if (arg == &quot;--emit-untyped-dot&quot;s)</a>
-<a name="206"><span class="lineNum">     206 </span>            :       flags |= CompilerFlags::EmitUntypedDot;</a>
-<a name="207"><span class="lineNum">     207 </span>            :     else if (arg == &quot;--dump-ast&quot;s)</a>
-<a name="208"><span class="lineNum">     208 </span>            :       flags |= CompilerFlags::DumpAST;</a>
-<a name="209"><span class="lineNum">     209 </span>            :     else if (arg == &quot;--no-prelude&quot;s)</a>
-<a name="210"><span class="lineNum">     210 </span>            :       flags |= CompilerFlags::NoPrelude;</a>
-<a name="211"><span class="lineNum">     211 </span>            :     else if (arg == &quot;--&quot;s)</a>
-<a name="212"><span class="lineNum">     212 </span>            :       done_with_flags = true;</a>
-<a name="213"><span class="lineNum">     213 </span>            :     else if (!done_with_flags &amp;&amp; std::string(arg).starts_with('-')) {</a>
-<a name="214"><span class="lineNum">     214 </span>            :       fatal_error() &lt;&lt; &quot;unknown flag &quot; &lt;&lt; arg &lt;&lt; &quot;\n&quot;;</a>
-<a name="215"><span class="lineNum">     215 </span>            :       return 3;</a>
-<a name="216"><span class="lineNum">     216 </span>            :     } else {</a>
-<a name="217"><span class="lineNum">     217 </span>            :       source_file_names.emplace_back(arg);</a>
-<a name="218"><span class="lineNum">     218 </span>            :     }</a>
-<a name="219"><span class="lineNum">     219 </span>            :   }</a>
-<a name="220"><span class="lineNum">     220 </span>            : </a>
-<a name="221"><span class="lineNum">     221 </span>            :   if (source_file_names.empty()) {</a>
-<a name="222"><span class="lineNum">     222 </span>            :     fatal_error() &lt;&lt; &quot;provide at least one source file\n&quot;;</a>
-<a name="223"><span class="lineNum">     223 </span>            :     return 1;</a>
-<a name="224"><span class="lineNum">     224 </span>            :   }</a>
-<a name="225"><span class="lineNum">     225 </span>            : </a>
-<a name="226"><span class="lineNum">     226 </span>            :   std::set_terminate(yume::print_exception);</a>
-<a name="227"><span class="lineNum">     227 </span>            :   llvm::EnablePrettyStackTrace();</a>
-<a name="228"><span class="lineNum">     228 </span>            :   llvm::setBugReportMsg(&quot;&quot;);</a>
-<a name="229"><span class="lineNum">     229 </span>            :   llvm::sys::AddSignalHandler(yume::backtrace, args.data());</a>
-<a name="230"><span class="lineNum">     230 </span>            : </a>
-<a name="231"><span class="lineNum">     231 </span>            :   return compile(target_triple, source_file_names, flags);</a>
-<a name="232"><span class="lineNum">     232 </span>            : }</a>
+<a name="174"><span class="lineNum">     174 </span>            :     return llvm::outs();</a>
+<a name="175"><span class="lineNum">     175 </span>            :   };</a>
+<a name="176"><span class="lineNum">     176 </span>            : </a>
+<a name="177"><span class="lineNum">     177 </span>            :   std::optional&lt;std::string&gt; target_triple = {};</a>
+<a name="178"><span class="lineNum">     178 </span>            :   std::vector&lt;std::string&gt; source_file_names = {};</a>
+<a name="179"><span class="lineNum">     179 </span>            :   bool consuming_target = false;</a>
+<a name="180"><span class="lineNum">     180 </span>            :   bool done_with_flags = false;</a>
+<a name="181"><span class="lineNum">     181 </span>            :   auto flags = CompilerFlags::None;</a>
+<a name="182"><span class="lineNum">     182 </span>            : </a>
+<a name="183"><span class="lineNum">     183 </span>            :   for (const auto&amp; arg : args) {</a>
+<a name="184"><span class="lineNum">     184 </span>            :     if (consuming_target) {</a>
+<a name="185"><span class="lineNum">     185 </span>            :       target_triple = arg;</a>
+<a name="186"><span class="lineNum">     186 </span>            :       consuming_target = false;</a>
+<a name="187"><span class="lineNum">     187 </span>            :       continue;</a>
+<a name="188"><span class="lineNum">     188 </span>            :     }</a>
+<a name="189"><span class="lineNum">     189 </span>            :     if (arg == &quot;--version&quot;s) {</a>
+<a name="190"><span class="lineNum">     190 </span>            :       emit_version();</a>
+<a name="191"><span class="lineNum">     191 </span>            :       return EXIT_SUCCESS;</a>
+<a name="192"><span class="lineNum">     192 </span>            :     }</a>
+<a name="193"><span class="lineNum">     193 </span>            :     if (arg == &quot;--target&quot;s) {</a>
+<a name="194"><span class="lineNum">     194 </span>            :       consuming_target = true;</a>
+<a name="195"><span class="lineNum">     195 </span>            :     } else if (arg == &quot;-c&quot;s) {</a>
+<a name="196"><span class="lineNum">     196 </span>            :       flags |= CompilerFlags::NoLink;</a>
+<a name="197"><span class="lineNum">     197 </span>            :     } else if (arg == &quot;--emit-llvm&quot;s) {</a>
+<a name="198"><span class="lineNum">     198 </span>            :       flags |= CompilerFlags::EmitLLVM;</a>
+<a name="199"><span class="lineNum">     199 </span>            :     } else if (arg == &quot;--emit-asm&quot;s) {</a>
+<a name="200"><span class="lineNum">     200 </span>            :       flags |= CompilerFlags::EmitASM;</a>
+<a name="201"><span class="lineNum">     201 </span>            :     } else if (arg == &quot;--emit-dot&quot;s) {</a>
+<a name="202"><span class="lineNum">     202 </span>            :       flags |= CompilerFlags::EmitDot;</a>
+<a name="203"><span class="lineNum">     203 </span>            :     } else if (arg == &quot;--emit-untyped-dot&quot;s) {</a>
+<a name="204"><span class="lineNum">     204 </span>            :       flags |= CompilerFlags::EmitUntypedDot;</a>
+<a name="205"><span class="lineNum">     205 </span>            :     } else if (arg == &quot;--dump-ast&quot;s) {</a>
+<a name="206"><span class="lineNum">     206 </span>            :       flags |= CompilerFlags::DumpAST;</a>
+<a name="207"><span class="lineNum">     207 </span>            :     } else if (arg == &quot;--no-prelude&quot;s) {</a>
+<a name="208"><span class="lineNum">     208 </span>            :       flags |= CompilerFlags::NoPrelude;</a>
+<a name="209"><span class="lineNum">     209 </span>            :     } else if (arg == &quot;--&quot;s) {</a>
+<a name="210"><span class="lineNum">     210 </span>            :       done_with_flags = true;</a>
+<a name="211"><span class="lineNum">     211 </span>            :     } else if (!done_with_flags &amp;&amp; std::string(arg).starts_with('-')) {</a>
+<a name="212"><span class="lineNum">     212 </span>            :       fatal_error() &lt;&lt; &quot;unknown flag &quot; &lt;&lt; arg &lt;&lt; &quot;\n&quot;;</a>
+<a name="213"><span class="lineNum">     213 </span>            :       return 3;</a>
+<a name="214"><span class="lineNum">     214 </span>            :     } else {</a>
+<a name="215"><span class="lineNum">     215 </span>            :       source_file_names.emplace_back(arg);</a>
+<a name="216"><span class="lineNum">     216 </span>            :     }</a>
+<a name="217"><span class="lineNum">     217 </span>            :   }</a>
+<a name="218"><span class="lineNum">     218 </span>            : </a>
+<a name="219"><span class="lineNum">     219 </span>            :   if (source_file_names.empty()) {</a>
+<a name="220"><span class="lineNum">     220 </span>            :     fatal_error() &lt;&lt; &quot;provide at least one source file\n&quot;;</a>
+<a name="221"><span class="lineNum">     221 </span>            :     return 1;</a>
+<a name="222"><span class="lineNum">     222 </span>            :   }</a>
+<a name="223"><span class="lineNum">     223 </span>            : </a>
+<a name="224"><span class="lineNum">     224 </span>            :   std::set_terminate(yume::print_exception);</a>
+<a name="225"><span class="lineNum">     225 </span>            :   llvm::EnablePrettyStackTrace();</a>
+<a name="226"><span class="lineNum">     226 </span>            :   llvm::setBugReportMsg(&quot;&quot;);</a>
+<a name="227"><span class="lineNum">     227 </span>            :   llvm::sys::AddSignalHandler(yume::backtrace, args.data());</a>
+<a name="228"><span class="lineNum">     228 </span>            : </a>
+<a name="229"><span class="lineNum">     229 </span>            :   return compile(target_triple, source_file_names, flags);</a>
+<a name="230"><span class="lineNum">     230 </span>            : }</a>
 </pre>
       </td>
     </tr>

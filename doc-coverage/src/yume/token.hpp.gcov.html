@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-12-28 12:34:02</td>
+            <td class="headerValue">2022-12-28 12:42:10</td>
             <td></td>
           </tr>
           <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -104,83 +104,81 @@
 <a name="46"><span class="lineNum">      46 </span>            : </a>
 <a name="47"><span class="lineNum">      47 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto to_string() const -&gt; string {</span></a>
 <a name="48"><span class="lineNum">      48 </span>            :     stringstream ss{};</a>
-<a name="49"><span class="lineNum">      49 </span>            :     if (file != nullptr) {</a>
+<a name="49"><span class="lineNum">      49 </span>            :     if (file != nullptr)</a>
 <a name="50"><span class="lineNum">      50 </span>            :       ss &lt;&lt; fs::path(file).stem().native();</a>
-<a name="51"><span class="lineNum">      51 </span>            :     }</a>
-<a name="52"><span class="lineNum">      52 </span>            : </a>
-<a name="53"><span class="lineNum">      53 </span>            :     if (!valid()) {</a>
-<a name="54"><span class="lineNum">      54 </span>            :       ss &lt;&lt; &quot;:?&quot;;</a>
-<a name="55"><span class="lineNum">      55 </span>            :     } else {</a>
-<a name="56"><span class="lineNum">      56 </span>            :       ss &lt;&lt; ':' &lt;&lt; begin_line &lt;&lt; ':' &lt;&lt; begin_col;</a>
-<a name="57"><span class="lineNum">      57 </span>            :       if (end_line != begin_line) {</a>
-<a name="58"><span class="lineNum">      58 </span>            :         ss &lt;&lt; ' ' &lt;&lt; end_line &lt;&lt; ':' &lt;&lt; end_col;</a>
-<a name="59"><span class="lineNum">      59 </span>            :       } else if (end_col != begin_col) {</a>
-<a name="60"><span class="lineNum">      60 </span>            :         ss &lt;&lt; &quot; :&quot; &lt;&lt; end_col;</a>
-<a name="61"><span class="lineNum">      61 </span>            :       }</a>
-<a name="62"><span class="lineNum">      62 </span>            :     }</a>
-<a name="63"><span class="lineNum">      63 </span>            :     return ss.str();</a>
-<a name="64"><span class="lineNum">      64 </span>            :   }</a>
+<a name="51"><span class="lineNum">      51 </span>            : </a>
+<a name="52"><span class="lineNum">      52 </span>            :     if (!valid()) {</a>
+<a name="53"><span class="lineNum">      53 </span>            :       ss &lt;&lt; &quot;:?&quot;;</a>
+<a name="54"><span class="lineNum">      54 </span>            :     } else {</a>
+<a name="55"><span class="lineNum">      55 </span>            :       ss &lt;&lt; ':' &lt;&lt; begin_line &lt;&lt; ':' &lt;&lt; begin_col;</a>
+<a name="56"><span class="lineNum">      56 </span>            :       if (end_line != begin_line)</a>
+<a name="57"><span class="lineNum">      57 </span>            :         ss &lt;&lt; ' ' &lt;&lt; end_line &lt;&lt; ':' &lt;&lt; end_col;</a>
+<a name="58"><span class="lineNum">      58 </span>            :       else if (end_col != begin_col)</a>
+<a name="59"><span class="lineNum">      59 </span>            :         ss &lt;&lt; &quot; :&quot; &lt;&lt; end_col;</a>
+<a name="60"><span class="lineNum">      60 </span>            :     }</a>
+<a name="61"><span class="lineNum">      61 </span>            :     return ss.str();</a>
+<a name="62"><span class="lineNum">      62 </span>            :   }</a>
+<a name="63"><span class="lineNum">      63 </span>            : </a>
+<a name="64"><span class="lineNum">      64 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto valid() const -&gt; bool { return begin_line &gt; 0 &amp;&amp; end_line &gt; 0; }</span></a>
 <a name="65"><span class="lineNum">      65 </span>            : </a>
-<a name="66"><span class="lineNum">      66 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto valid() const -&gt; bool { return begin_line &gt; 0 &amp;&amp; end_line &gt; 0; }</span></a>
-<a name="67"><span class="lineNum">      67 </span>            : </a>
-<a name="68"><span class="lineNum">      68 </span>            :   /// Return a new Loc which refers to the first character of the current Loc.</a>
-<a name="69"><span class="lineNum">      69 </span><span class="lineCov">          1 :   [[nodiscard]] auto single() const -&gt; Loc { return {begin_line, begin_col, begin_line, begin_col, file}; }</span></a>
-<a name="70"><span class="lineNum">      70 </span>            : };</a>
-<a name="71"><span class="lineNum">      71 </span>            : </a>
-<a name="72"><span class="lineNum">      72 </span>            : /// A categorized token in source code, created by the tokenizer. These tokens are consumed by the lexer.</a>
-<a name="73"><span class="lineNum">      73 </span>            : /**</a>
-<a name="74"><span class="lineNum">      74 </span>            :  * Each token has a type, an associated payload (usually the text the token was created from) and a location \link Loc</a>
-<a name="75"><span class="lineNum">      75 </span>            :  */</a>
-<a name="76"><span class="lineNum">      76 </span><span class="lineCov">          1 : struct Token {</span></a>
-<a name="77"><span class="lineNum">      77 </span><span class="lineNoCov">          0 :   enum struct Type {</span></a>
-<a name="78"><span class="lineNum">      78 </span>            :     Word,     ///&lt; Any form of keyword or identifier, essentially the &quot;default&quot; token type</a>
-<a name="79"><span class="lineNum">      79 </span>            :     Skip,     ///&lt; Tokens which should be ignored, i.e. insignificant whitespace</a>
-<a name="80"><span class="lineNum">      80 </span>            :     Symbol,   ///&lt; Special characters, such as those representing operators</a>
-<a name="81"><span class="lineNum">      81 </span>            :     Literal,  ///&lt; A string literal, enclosed in quotes</a>
-<a name="82"><span class="lineNum">      82 </span>            :     Number,   ///&lt; A number literal</a>
-<a name="83"><span class="lineNum">      83 </span>            :     Char,     ///&lt; A character literal, beginning with `?`</a>
-<a name="84"><span class="lineNum">      84 </span>            :     Separator ///&lt; A newline or a semicolon `;`</a>
-<a name="85"><span class="lineNum">      85 </span>            :   };</a>
-<a name="86"><span class="lineNum">      86 </span><span class="lineNoCov">          0 :   static auto inline constexpr type_name(Type type) -&gt; const char* {</span></a>
-<a name="87"><span class="lineNum">      87 </span>            :     using enum Token::Type;</a>
-<a name="88"><span class="lineNum">      88 </span>            :     switch (type) {</a>
-<a name="89"><span class="lineNum">      89 </span>            :     case Word: return &quot;Word&quot;;</a>
-<a name="90"><span class="lineNum">      90 </span>            :     case Skip: return &quot;Skip&quot;;</a>
-<a name="91"><span class="lineNum">      91 </span>            :     case Symbol: return &quot;Symbol&quot;;</a>
-<a name="92"><span class="lineNum">      92 </span>            :     case Literal: return &quot;Literal&quot;;</a>
-<a name="93"><span class="lineNum">      93 </span>            :     case Number: return &quot;Number&quot;;</a>
-<a name="94"><span class="lineNum">      94 </span>            :     case Char: return &quot;Char&quot;;</a>
-<a name="95"><span class="lineNum">      95 </span>            :     case Separator: return &quot;Separator&quot;;</a>
-<a name="96"><span class="lineNum">      96 </span>            :     }</a>
-<a name="97"><span class="lineNum">      97 </span>            :   }</a>
+<a name="66"><span class="lineNum">      66 </span>            :   /// Return a new Loc which refers to the first character of the current Loc.</a>
+<a name="67"><span class="lineNum">      67 </span><span class="lineCov">          1 :   [[nodiscard]] auto single() const -&gt; Loc { return {begin_line, begin_col, begin_line, begin_col, file}; }</span></a>
+<a name="68"><span class="lineNum">      68 </span>            : };</a>
+<a name="69"><span class="lineNum">      69 </span>            : </a>
+<a name="70"><span class="lineNum">      70 </span>            : /// A categorized token in source code, created by the tokenizer. These tokens are consumed by the lexer.</a>
+<a name="71"><span class="lineNum">      71 </span>            : /**</a>
+<a name="72"><span class="lineNum">      72 </span>            :  * Each token has a type, an associated payload (usually the text the token was created from) and a location \link Loc</a>
+<a name="73"><span class="lineNum">      73 </span>            :  */</a>
+<a name="74"><span class="lineNum">      74 </span><span class="lineCov">          1 : struct Token {</span></a>
+<a name="75"><span class="lineNum">      75 </span><span class="lineNoCov">          0 :   enum struct Type {</span></a>
+<a name="76"><span class="lineNum">      76 </span>            :     Word,     ///&lt; Any form of keyword or identifier, essentially the &quot;default&quot; token type</a>
+<a name="77"><span class="lineNum">      77 </span>            :     Skip,     ///&lt; Tokens which should be ignored, i.e. insignificant whitespace</a>
+<a name="78"><span class="lineNum">      78 </span>            :     Symbol,   ///&lt; Special characters, such as those representing operators</a>
+<a name="79"><span class="lineNum">      79 </span>            :     Literal,  ///&lt; A string literal, enclosed in quotes</a>
+<a name="80"><span class="lineNum">      80 </span>            :     Number,   ///&lt; A number literal</a>
+<a name="81"><span class="lineNum">      81 </span>            :     Char,     ///&lt; A character literal, beginning with `?`</a>
+<a name="82"><span class="lineNum">      82 </span>            :     Separator ///&lt; A newline or a semicolon `;`</a>
+<a name="83"><span class="lineNum">      83 </span>            :   };</a>
+<a name="84"><span class="lineNum">      84 </span><span class="lineNoCov">          0 :   static auto inline constexpr type_name(Type type) -&gt; const char* {</span></a>
+<a name="85"><span class="lineNum">      85 </span>            :     using enum Token::Type;</a>
+<a name="86"><span class="lineNum">      86 </span>            :     switch (type) {</a>
+<a name="87"><span class="lineNum">      87 </span>            :     case Word: return &quot;Word&quot;;</a>
+<a name="88"><span class="lineNum">      88 </span>            :     case Skip: return &quot;Skip&quot;;</a>
+<a name="89"><span class="lineNum">      89 </span>            :     case Symbol: return &quot;Symbol&quot;;</a>
+<a name="90"><span class="lineNum">      90 </span>            :     case Literal: return &quot;Literal&quot;;</a>
+<a name="91"><span class="lineNum">      91 </span>            :     case Number: return &quot;Number&quot;;</a>
+<a name="92"><span class="lineNum">      92 </span>            :     case Char: return &quot;Char&quot;;</a>
+<a name="93"><span class="lineNum">      93 </span>            :     case Separator: return &quot;Separator&quot;;</a>
+<a name="94"><span class="lineNum">      94 </span>            :     }</a>
+<a name="95"><span class="lineNum">      95 </span>            :   }</a>
+<a name="96"><span class="lineNum">      96 </span>            : </a>
+<a name="97"><span class="lineNum">      97 </span><span class="lineNoCov">          0 :   using Payload = optional&lt;Atom&gt;;</span></a>
 <a name="98"><span class="lineNum">      98 </span>            : </a>
-<a name="99"><span class="lineNum">      99 </span><span class="lineNoCov">          0 :   using Payload = optional&lt;Atom&gt;;</span></a>
-<a name="100"><span class="lineNum">     100 </span>            : </a>
-<a name="101"><span class="lineNum">     101 </span><span class="lineNoCov">          0 :   Type type;</span></a>
-<a name="102"><span class="lineNum">     102 </span><span class="lineNoCov">          0 :   Payload payload;</span></a>
-<a name="103"><span class="lineNum">     103 </span><span class="lineNoCov">          0 :   int index = -1;</span></a>
-<a name="104"><span class="lineNum">     104 </span><span class="lineNoCov">          0 :   Loc loc{};</span></a>
-<a name="105"><span class="lineNum">     105 </span>            : </a>
-<a name="106"><span class="lineNum">     106 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto is_a(const std::pair&lt;Type, Atom&gt;&amp; type_atom) const -&gt; bool {</span></a>
-<a name="107"><span class="lineNum">     107 </span>            :     return type == type_atom.first &amp;&amp; payload == type_atom.second;</a>
-<a name="108"><span class="lineNum">     108 </span>            :   }</a>
-<a name="109"><span class="lineNum">     109 </span>            : </a>
-<a name="110"><span class="lineNum">     110 </span><span class="lineNoCov">          0 :   explicit constexpr Token(Type type) : type(type) {}</span></a>
-<a name="111"><span class="lineNum">     111 </span><span class="lineNoCov">          0 :   constexpr Token(Type type, Payload payload) noexcept : type(type), payload(payload) {}</span></a>
-<a name="112"><span class="lineNum">     112 </span><span class="lineNoCov">          0 :   constexpr Token(Type type, Payload payload, int i, Loc loc) noexcept</span></a>
-<a name="113"><span class="lineNum">     113 </span>            :       : type(type), payload(payload), index{i}, loc{loc} {}</a>
-<a name="114"><span class="lineNum">     114 </span>            : </a>
-<a name="115"><span class="lineNum">     115 </span><span class="lineNoCov">          0 :   friend auto operator&lt;&lt;(llvm::raw_ostream&amp; os, const Token&amp; token) -&gt; llvm::raw_ostream&amp;;</span></a>
-<a name="116"><span class="lineNum">     116 </span>            : };</a>
-<a name="117"><span class="lineNum">     117 </span>            : </a>
-<a name="118"><span class="lineNum">     118 </span>            : /// Consume the contents of the input stream and create corresponding tokens, preserving every token, including</a>
-<a name="119"><span class="lineNum">     119 </span>            : /// whitespace. This is usually undesired.</a>
-<a name="120"><span class="lineNum">     120 </span>            : /// \sa tokenize</a>
-<a name="121"><span class="lineNum">     121 </span>            : auto tokenize_preserve_skipped(std::istream&amp; in, const string&amp; source_file) -&gt; vector&lt;Token&gt;;</a>
-<a name="122"><span class="lineNum">     122 </span>            : </a>
-<a name="123"><span class="lineNum">     123 </span>            : /// Consume the contents of the input stream and create corresponding tokens, ignoring insignificant whitespace</a>
-<a name="124"><span class="lineNum">     124 </span>            : auto tokenize(std::istream&amp; in, const string&amp; source_file) -&gt; vector&lt;Token&gt;;</a>
-<a name="125"><span class="lineNum">     125 </span>            : } // namespace yume</a>
+<a name="99"><span class="lineNum">      99 </span><span class="lineNoCov">          0 :   Type type;</span></a>
+<a name="100"><span class="lineNum">     100 </span><span class="lineNoCov">          0 :   Payload payload;</span></a>
+<a name="101"><span class="lineNum">     101 </span><span class="lineNoCov">          0 :   int index = -1;</span></a>
+<a name="102"><span class="lineNum">     102 </span><span class="lineNoCov">          0 :   Loc loc{};</span></a>
+<a name="103"><span class="lineNum">     103 </span>            : </a>
+<a name="104"><span class="lineNum">     104 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto is_a(const std::pair&lt;Type, Atom&gt;&amp; type_atom) const -&gt; bool {</span></a>
+<a name="105"><span class="lineNum">     105 </span>            :     return type == type_atom.first &amp;&amp; payload == type_atom.second;</a>
+<a name="106"><span class="lineNum">     106 </span>            :   }</a>
+<a name="107"><span class="lineNum">     107 </span>            : </a>
+<a name="108"><span class="lineNum">     108 </span><span class="lineNoCov">          0 :   explicit constexpr Token(Type type) : type(type) {}</span></a>
+<a name="109"><span class="lineNum">     109 </span><span class="lineNoCov">          0 :   constexpr Token(Type type, Payload payload) noexcept : type(type), payload(payload) {}</span></a>
+<a name="110"><span class="lineNum">     110 </span><span class="lineNoCov">          0 :   constexpr Token(Type type, Payload payload, int i, Loc loc) noexcept</span></a>
+<a name="111"><span class="lineNum">     111 </span>            :       : type(type), payload(payload), index{i}, loc{loc} {}</a>
+<a name="112"><span class="lineNum">     112 </span>            : </a>
+<a name="113"><span class="lineNum">     113 </span><span class="lineNoCov">          0 :   friend auto operator&lt;&lt;(llvm::raw_ostream&amp; os, const Token&amp; token) -&gt; llvm::raw_ostream&amp;;</span></a>
+<a name="114"><span class="lineNum">     114 </span>            : };</a>
+<a name="115"><span class="lineNum">     115 </span>            : </a>
+<a name="116"><span class="lineNum">     116 </span>            : /// Consume the contents of the input stream and create corresponding tokens, preserving every token, including</a>
+<a name="117"><span class="lineNum">     117 </span>            : /// whitespace. This is usually undesired.</a>
+<a name="118"><span class="lineNum">     118 </span>            : /// \sa tokenize</a>
+<a name="119"><span class="lineNum">     119 </span>            : auto tokenize_preserve_skipped(std::istream&amp; in, const string&amp; source_file) -&gt; vector&lt;Token&gt;;</a>
+<a name="120"><span class="lineNum">     120 </span>            : </a>
+<a name="121"><span class="lineNum">     121 </span>            : /// Consume the contents of the input stream and create corresponding tokens, ignoring insignificant whitespace</a>
+<a name="122"><span class="lineNum">     122 </span>            : auto tokenize(std::istream&amp; in, const string&amp; source_file) -&gt; vector&lt;Token&gt;;</a>
+<a name="123"><span class="lineNum">     123 </span>            : } // namespace yume</a>
 </pre>
       </td>
     </tr>

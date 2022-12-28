@@ -155,38 +155,37 @@ $(function() {
 <div class="line"><a id="l00084" name="l00084"></a><span class="lineno"><a class="line" href="classyume_1_1diagnostic_1_1DotVisitor.html#a0a00ccdff1cf0e18c273ebb719cfed3e">   84</a></span><span class="keyword">auto</span> <a class="code hl_function" href="classyume_1_1diagnostic_1_1DotVisitor.html#a0a00ccdff1cf0e18c273ebb719cfed3e">DotVisitor::visit</a>(<span class="keyword">const</span> <a class="code hl_class" href="classyume_1_1ast_1_1AST.html">ast::AST</a>&amp; expr, string_view label) -&gt; <a class="code hl_class" href="classyume_1_1diagnostic_1_1DotVisitor.html">DotVisitor</a>&amp; {</div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>  <a class="code hl_struct" href="structyume_1_1Loc.html">Loc</a> location = expr.location();</div>
 <div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>  optional&lt;string&gt; type = {};</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>  <span class="keywordflow">if</span> (<span class="keyword">auto</span> val_ty = expr.val_ty(); val_ty) {</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>  <span class="keywordflow">if</span> (<span class="keyword">auto</span> val_ty = expr.val_ty(); val_ty)</div>
 <div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    type = <a class="code hl_function" href="namespaceyume_1_1diagnostic.html#a52c8406462987511376ab26342a13a56">xml_escape</a>(val_ty-&gt;name());</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>  }</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>  <span class="keyword">auto</span> kind_label = <a class="code hl_function" href="namespaceyume_1_1diagnostic.html#a52c8406462987511376ab26342a13a56">xml_escape</a>(expr.kind_name());</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span> </div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>  <span class="keyword">auto</span>&amp; node = add_node(DotNode(m_index, location, type, kind_label), label.data());</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>  <span class="keyword">auto</span>* restore_parent = std::exchange(m_parent, &amp;node);</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>  expr.visit(*<span class="keyword">this</span>);</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>  m_parent = restore_parent;</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span> </div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>  <span class="comment">// This node had no parent, which means it&#39;s a root node.</span></div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>  <span class="keywordflow">if</span> (restore_parent == <span class="keyword">nullptr</span>) {</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    node.write(m_stream);</div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>    m_root.reset();</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>  }</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span> </div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>  <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>}</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span> </div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno"><a class="line" href="classyume_1_1diagnostic_1_1DotVisitor.html#a3d89a051ad9221208a7b8e85738a2f13">  107</a></span><span class="keyword">auto</span> <a class="code hl_function" href="classyume_1_1diagnostic_1_1DotVisitor.html#a0a00ccdff1cf0e18c273ebb719cfed3e">DotVisitor::visit</a>(<span class="keyword">const</span> <span class="keywordtype">string</span>&amp; str, string_view label) -&gt; <a class="code hl_class" href="classyume_1_1diagnostic_1_1DotVisitor.html">DotVisitor</a>&amp; {</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>  add_node(<a class="code hl_function" href="namespaceyume_1_1diagnostic.html#a52c8406462987511376ab26342a13a56">xml_escape</a>(str), label.data());</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span> </div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>  <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>}</div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno"><a class="line" href="classyume_1_1diagnostic_1_1DotVisitor.html#a4bfdb53f8d93df5436e06e89f110ffbb">  113</a></span><span class="keyword">auto</span> <a class="code hl_function" href="classyume_1_1diagnostic_1_1DotVisitor.html#a0a00ccdff1cf0e18c273ebb719cfed3e">DotVisitor::visit</a>(std::nullptr_t, string_view label) -&gt; <a class="code hl_class" href="classyume_1_1diagnostic_1_1DotVisitor.html">DotVisitor</a>&amp; {</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>  add_node(<span class="stringliteral">&quot;&lt;FONT COLOR=\&quot;RED\&quot;&gt;NULL&lt;/FONT&gt;&quot;</span>, label.data());</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span> </div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>  <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>}</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>} <span class="comment">// namespace yume::diagnostic</span></div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>  <span class="keyword">auto</span> kind_label = <a class="code hl_function" href="namespaceyume_1_1diagnostic.html#a52c8406462987511376ab26342a13a56">xml_escape</a>(expr.kind_name());</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>  <span class="keyword">auto</span>&amp; node = add_node(DotNode(m_index, location, type, kind_label), label.data());</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>  <span class="keyword">auto</span>* restore_parent = std::exchange(m_parent, &amp;node);</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>  expr.visit(*<span class="keyword">this</span>);</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>  m_parent = restore_parent;</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span> </div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>  <span class="comment">// This node had no parent, which means it&#39;s a root node.</span></div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>  <span class="keywordflow">if</span> (restore_parent == <span class="keyword">nullptr</span>) {</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    node.write(m_stream);</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    m_root.reset();</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>  }</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span> </div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>  <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>}</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno"><a class="line" href="classyume_1_1diagnostic_1_1DotVisitor.html#a3d89a051ad9221208a7b8e85738a2f13">  106</a></span><span class="keyword">auto</span> <a class="code hl_function" href="classyume_1_1diagnostic_1_1DotVisitor.html#a0a00ccdff1cf0e18c273ebb719cfed3e">DotVisitor::visit</a>(<span class="keyword">const</span> <span class="keywordtype">string</span>&amp; str, string_view label) -&gt; <a class="code hl_class" href="classyume_1_1diagnostic_1_1DotVisitor.html">DotVisitor</a>&amp; {</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>  add_node(<a class="code hl_function" href="namespaceyume_1_1diagnostic.html#a52c8406462987511376ab26342a13a56">xml_escape</a>(str), label.data());</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span> </div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>  <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>}</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span> </div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno"><a class="line" href="classyume_1_1diagnostic_1_1DotVisitor.html#a4bfdb53f8d93df5436e06e89f110ffbb">  112</a></span><span class="keyword">auto</span> <a class="code hl_function" href="classyume_1_1diagnostic_1_1DotVisitor.html#a0a00ccdff1cf0e18c273ebb719cfed3e">DotVisitor::visit</a>(std::nullptr_t, string_view label) -&gt; <a class="code hl_class" href="classyume_1_1diagnostic_1_1DotVisitor.html">DotVisitor</a>&amp; {</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>  add_node(<span class="stringliteral">&quot;&lt;FONT COLOR=\&quot;RED\&quot;&gt;NULL&lt;/FONT&gt;&quot;</span>, label.data());</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span> </div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>  <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>}</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>} <span class="comment">// namespace yume::diagnostic</span></div>
 <div class="ttc" id="aast_8hpp_html"><div class="ttname"><a href="ast_8hpp.html">ast.hpp</a></div></div>
 <div class="ttc" id="aclassyume_1_1ast_1_1AST_html"><div class="ttname"><a href="classyume_1_1ast_1_1AST.html">yume::ast::AST</a></div><div class="ttdoc">All nodes in the AST tree of the program inherit from this class.</div><div class="ttdef"><b>Definition:</b> <a href="ast_8hpp_source.html#l00220">ast.hpp:220</a></div></div>
 <div class="ttc" id="aclassyume_1_1diagnostic_1_1DotVisitor_html"><div class="ttname"><a href="classyume_1_1diagnostic_1_1DotVisitor.html">yume::diagnostic::DotVisitor</a></div><div class="ttdef"><b>Definition:</b> <a href="dot__visitor_8hpp_source.html#l00019">dot_visitor.hpp:19</a></div></div>
