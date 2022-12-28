@@ -1041,7 +1041,10 @@ auto Compiler::primitive(Fn* fn, const vector<Val>& args, const vector<ty::Type>
     return base;
   }
   if (primitive == "ptr_cast") {
-    return m_builder->CreateBitCast(args[0], llvm_type(types[1]));
+    return m_builder->CreateBitCast(args[0], llvm_type(types.at(1).without_meta()), "builtin.ptr_cast");
+  }
+  if (primitive == "ptr_gep") {
+    return m_builder->CreateGEP(llvm_type(types.at(0).ensure_ptr_base()), args.at(0), args.at(1), "builtin.ptr_gep");
   }
   if (primitive == "cast") {
     // TODO(rymiel): This is an "explicit" cast, and should be able to cast more things when compared to an implicit one
