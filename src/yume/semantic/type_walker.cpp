@@ -54,9 +54,10 @@ void make_implicit_conversion(ast::OptionalExpr& expr, optional<ty::Type> target
   if (!expr)
     return;
 
-  if (!try_implicit_conversion(expr, target_ty))
+  if (!try_implicit_conversion(expr, target_ty)) {
     throw std::runtime_error("Invalid implicit conversion ('"s + expr->ensure_ty().name() + "' -> '" +
                              target_ty->name() + "')");
+  }
 }
 
 template <> void TypeWalker::expression(ast::NumberExpr& expr) {
@@ -226,9 +227,8 @@ auto TypeWalker::make_dup(ast::AnyExpr& expr) -> Fn* {
 }
 
 template <> void TypeWalker::expression(ast::SliceExpr& expr) {
-  for (auto& i : expr.args) {
+  for (auto& i : expr.args)
     body_expression(*i);
-  }
 
   auto& slice_base = *expr.type;
   expression(slice_base);
@@ -323,10 +323,9 @@ template <> void TypeWalker::expression(ast::VarExpr& expr) {
 }
 
 template <> void TypeWalker::expression(ast::ConstExpr& expr) {
-  for (const auto& cn : compiler.m_consts) {
+  for (const auto& cn : compiler.m_consts)
     if (cn.referred_to_by(expr))
       return expr.val_ty(cn.ast().ensure_ty());
-  }
   throw std::runtime_error("Nonexistent constant called "s + expr.name);
 }
 
@@ -615,10 +614,12 @@ template <> void TypeWalker::statement(ast::ReturnStmt& stat) {
   if (stat.expr.has_value()) {
     body_expression(*stat.expr);
     // If we're returning a local variable, mark that it will leave the scope and should not be destructed yet.
-    if (auto* var_expr = dyn_cast<ast::VarExpr>(stat.expr.raw_ptr()))
-      if (auto** in_scope = scope.find(var_expr->name); in_scope != nullptr)
+    if (auto* var_expr = dyn_cast<ast::VarExpr>(stat.expr.raw_ptr())) {
+      if (auto** in_scope = scope.find(var_expr->name); in_scope != nullptr) {
         if (auto* var_decl = dyn_cast<ast::VarDecl>(*in_scope))
           stat.extends_lifetime = var_decl;
+      }
+    }
 
     make_implicit_conversion(stat.expr, current_decl.ast()->val_ty());
     current_decl.ast()->attach_to(stat.expr.raw_ptr());

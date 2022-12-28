@@ -208,9 +208,10 @@ public:
                    if (decl == nullptr)
                      return nullptr;
                    auto& subs = decl->get_subs();
-                   if (auto self = decl->get_self_ty(); subs.empty() && self.has_value())
+                   if (auto self = decl->get_self_ty(); subs.empty() && self.has_value()) {
                      if (auto* self_st = self->template base_dyn_cast<ty::Struct>())
                        return &self_st->subs();
+                   }
 
                    return &subs;
                  });
@@ -283,9 +284,8 @@ struct SourceFile {
         tokens(yume::tokenize(in, this->name)), iterator{tokens.begin(), tokens.end()} {
 #ifdef YUME_SPEW_LIST_TOKENS
     llvm::outs() << "tokens:\n";
-    for (auto& i : tokens) {
+    for (auto& i : tokens)
       llvm::outs() << "  " << i << "\n";
-    }
     llvm::outs() << "\n";
     llvm::outs().flush();
 #endif

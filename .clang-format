@@ -2,6 +2,8 @@
 BasedOnStyle: LLVM
 ---
 Language: Cpp
+InsertBraces: true
+RemoveBracesLLVM: true
 # AlignArrayOfStructures: Left
 PointerAlignment: Left
 ColumnLimit: 120

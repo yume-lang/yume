@@ -102,9 +102,8 @@ auto compile(const std::optional<std::string>& target_triple, std::vector<std::s
       auto src_stream = std::stringstream(std::string(src_input->getBufferStart(), src_input->getBufferSize()));
       auto& source = source_files.emplace_back(src_stream, src_path);
 
-      if (flags & CompilerFlags::EmitUntypedDot) {
+      if (flags & CompilerFlags::EmitUntypedDot)
         dot_visitor->visit(*source.program, "");
-      }
 
       if (flags & CompilerFlags::DumpAST) {
         yume::diagnostic::PrintVisitor(llvm::errs(), true).visit(*source.program, "");
@@ -114,9 +113,8 @@ auto compile(const std::optional<std::string>& target_triple, std::vector<std::s
       auto token_it = source.iterator;
       if (!token_it.at_end()) {
         llvm::outs() << "unconsumed tokens:\n";
-        while (!token_it.at_end()) {
+        while (!token_it.at_end())
           llvm::outs() << "  " << *token_it++ << "\n";
-        }
         llvm::outs() << "\n";
         llvm::outs().flush();
 
@@ -192,25 +190,25 @@ auto main(int argc, const char* argv[]) -> int {
       emit_version();
       return EXIT_SUCCESS;
     }
-    if (arg == "--target"s)
+    if (arg == "--target"s) {
       consuming_target = true;
-    else if (arg == "-c"s)
+    } else if (arg == "-c"s) {
       flags |= CompilerFlags::NoLink;
-    else if (arg == "--emit-llvm"s)
+    } else if (arg == "--emit-llvm"s) {
       flags |= CompilerFlags::EmitLLVM;
-    else if (arg == "--emit-asm"s)
+    } else if (arg == "--emit-asm"s) {
       flags |= CompilerFlags::EmitASM;
-    else if (arg == "--emit-dot"s)
+    } else if (arg == "--emit-dot"s) {
       flags |= CompilerFlags::EmitDot;
-    else if (arg == "--emit-untyped-dot"s)
+    } else if (arg == "--emit-untyped-dot"s) {
       flags |= CompilerFlags::EmitUntypedDot;
-    else if (arg == "--dump-ast"s)
+    } else if (arg == "--dump-ast"s) {
       flags |= CompilerFlags::DumpAST;
-    else if (arg == "--no-prelude"s)
+    } else if (arg == "--no-prelude"s) {
       flags |= CompilerFlags::NoPrelude;
-    else if (arg == "--"s)
+    } else if (arg == "--"s) {
       done_with_flags = true;
-    else if (!done_with_flags && std::string(arg).starts_with('-')) {
+    } else if (!done_with_flags && std::string(arg).starts_with('-')) {
       fatal_error() << "unknown flag " << arg << "\n";
       return 3;
     } else {

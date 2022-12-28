@@ -29,9 +29,7 @@ struct Overload {
   [[nodiscard]] auto better_candidate_than(Overload other) const -> bool;
   void dump(llvm::raw_ostream& stream) const;
 
-  [[nodiscard]] auto location() const -> Loc {
-    return fn->ast().location();
-  }
+  [[nodiscard]] auto location() const -> Loc { return fn->ast().location(); }
 };
 
 struct OverloadSet {

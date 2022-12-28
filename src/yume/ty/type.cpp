@@ -68,10 +68,12 @@ static auto visit_subs(Type a, Type b, optional<Sub> sub) -> optional<Sub> {
   // `Foo{Bar}` -> `Foo{T}`, with `T = Foo`.
   // TODO(rymiel): This could technically have multiple type variables... Currently only handling the "1" case.
   if (auto a_st_ty = a.base_dyn_cast<Struct>(), b_st_ty = b.base_dyn_cast<Struct>();
-      a_st_ty != nullptr && b_st_ty != nullptr)
-    if (a_st_ty->base_name() == b_st_ty->base_name())
+      a_st_ty != nullptr && b_st_ty != nullptr) {
+    if (a_st_ty->base_name() == b_st_ty->base_name()) {
       if (a_st_ty->subs().size() == 1 && b_st_ty->subs().size() == 1)
         return visit_subs(a_st_ty->subs().begin()->second, b_st_ty->subs().begin()->second, sub);
+    }
+  }
 
   // Substitution impossible! For example, `Foo` -> `T ptr`.
   if (!b.base_isa<Generic>())
@@ -111,9 +113,10 @@ auto Type::determine_generic_subs(Type generic, Substitution& subs) const -> opt
 
   optional<Sub> sub{};
   sub = visit_subs(*this, generic, sub);
-  if (sub)
+  if (sub) {
     if (auto intersection = intersect_generics(subs, sub->target, sub->replace))
       sub->replace = *intersection;
+  }
 
   return sub;
 }
@@ -239,9 +242,10 @@ auto Type::is_trivially_destructible() const -> bool {
   if (is_slice())
     return false;
 
-  if (const auto* struct_type = base_dyn_cast<ty::Struct>())
+  if (const auto* struct_type = base_dyn_cast<ty::Struct>()) {
     return std::ranges::all_of(
         struct_type->fields(), [](const auto& i) { return i.is_trivially_destructible(); }, &ast::TypeName::ensure_ty);
+  }
 
   // A generic or something, shouldn't occur
   throw std::logic_error("Cannot check if "s + name() + " is trivially destructible");
@@ -271,9 +275,8 @@ auto Type::apply_generic_substitution(Sub sub) const -> optional<Type> {
   if (const auto* st_this = base_dyn_cast<Struct>()) {
     // Gah!
     auto subs = Substitution{};
-    for (const auto& [k, v] : st_this->subs()) {
+    for (const auto& [k, v] : st_this->subs())
       subs.try_emplace(k, v.apply_generic_substitution(sub).value());
-    }
 
     return &st_this->emplace_subbed(move(subs));
   }
@@ -408,9 +411,8 @@ auto Function::name() const -> string {
     ss << i.value().name();
   }
   ss << "->";
-  if (m_fn_ptr) {
+  if (m_fn_ptr)
     ss << "ptr";
-  }
   if (m_ret.has_value())
     ss << m_ret->name();
   ss << ")";

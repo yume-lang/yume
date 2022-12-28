@@ -254,9 +254,8 @@ public:
   }
   void val_ty(optional<ty::Type> type) {
     m_val_ty = type;
-    for (auto* i : m_attach->observers) {
+    for (auto* i : m_attach->observers)
       i->unify_val_ty();
-    }
   }
 
   /// Make the type of this node depend on the type of `other`.

@@ -81,11 +81,12 @@ constexpr bool ENABLE_ASSERT = true;
 template <typename T>
 constexpr inline void yume_assert(T&& assertion, const std::string_view log_msg = {},
                                   const source_location location = source_location::current()) noexcept {
-  if constexpr (ENABLE_ASSERT)
+  if constexpr (ENABLE_ASSERT) {
     if (!assertion) {
       llvm::errs() << "*** assertion failed: " << at(location) << " " << log_msg << '\n';
       std::abort();
     }
+  }
 }
 
 /// Opens a writeable stream to a file with the given filename relative to the current working directory.

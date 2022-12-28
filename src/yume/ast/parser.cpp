@@ -22,9 +22,10 @@ void Parser::expect(Token::Type token_type, const source_location location) cons
   if (tokens.at_end())
     throw std::runtime_error("Expected token type "s + Token::type_name(token_type) + ", got the end of the file");
 
-  if (tokens->type != token_type)
+  if (tokens->type != token_type) {
     throw std::runtime_error("Expected token type "s + Token::type_name(token_type) + ", got " + to_string(*tokens) +
                              " at " + at(location));
+  }
 }
 
 void Parser::require_separator(const source_location location) {
@@ -57,9 +58,8 @@ void Parser::consume(TokenAtom token_atom, const source_location location) {
 
 auto Parser::try_consume(TokenAtom token_atom, [[maybe_unused]] const source_location location) -> bool {
   auto [token_type, payload] = token_atom;
-  if (tokens.at_end() || tokens->type != token_type || tokens->payload != payload) {
+  if (tokens.at_end() || tokens->type != token_type || tokens->payload != payload)
     return false;
-  }
 
 #ifdef YUME_SPEW_CONSUMED_TOKENS
   errs() << "try_consume: " << *tokens << " at " << at(location) << "\n";
@@ -180,9 +180,10 @@ auto Parser::try_parse_function_type() -> optional<unique_ptr<FunctionType>> {
 }
 
 auto Parser::parse_type(bool implicit_self) -> unique_ptr<Type> {
-  if (!implicit_self)
+  if (!implicit_self) {
     if (auto maybe_fn_type = try_parse_function_type(); maybe_fn_type.has_value())
       return move(*maybe_fn_type);
+  }
 
   auto entry = tokens.begin();
   auto base = [&]() -> unique_ptr<Type> {
@@ -610,11 +611,10 @@ auto Parser::parse_if_stmt() -> unique_ptr<IfStmt> {
         require_separator();
     }
     auto st = parse_stmt();
-    if (in_else) {
+    if (in_else)
       else_body.emplace_back(move(st));
-    } else {
+    else
       current_body.emplace_back(move(st));
-    }
   }
 
   if (else_body.empty())

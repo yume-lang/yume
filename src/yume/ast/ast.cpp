@@ -72,9 +72,8 @@ template <typename T> auto dup(const optional<T>& opt) {
 template <typename T> auto dup(const vector<T>& items) {
   auto dup_vec = vector<T>();
   dup_vec.reserve(items.size());
-  for (auto& i : items) {
+  for (auto& i : items)
     dup_vec.push_back(move(dup(i)));
-  }
 
   return dup_vec;
 }

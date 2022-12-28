@@ -24,17 +24,15 @@ public:
   auto add(std::string_view key, T object) noexcept { return m_scopes.back().try_emplace(key, move(object)); }
   auto add_to_front(std::string_view key, T object) noexcept { return m_scopes.front().try_emplace(key, move(object)); }
   [[nodiscard]] auto find(std::string_view key) const noexcept -> nullable<const T*> {
-    for (const auto& scope : llvm::reverse(m_scopes)) {
+    for (const auto& scope : llvm::reverse(m_scopes))
       if (auto lookup = scope.find(key); lookup != scope.end())
         return &lookup->getValue();
-    }
     return nullptr;
   }
   [[nodiscard]] auto find(std::string_view key) noexcept -> nullable<T*> {
-    for (auto& scope : llvm::reverse(m_scopes)) {
+    for (auto& scope : llvm::reverse(m_scopes))
       if (auto lookup = scope.find(key); lookup != scope.end())
         return &lookup->getValue();
-    }
     return nullptr;
   }
   void clear() noexcept { m_scopes.clear(); }

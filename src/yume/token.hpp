@@ -46,19 +46,17 @@ struct Loc {
 
   [[nodiscard]] auto to_string() const -> string {
     stringstream ss{};
-    if (file != nullptr) {
+    if (file != nullptr)
       ss << fs::path(file).stem().native();
-    }
 
     if (!valid()) {
       ss << ":?";
     } else {
       ss << ':' << begin_line << ':' << begin_col;
-      if (end_line != begin_line) {
+      if (end_line != begin_line)
         ss << ' ' << end_line << ':' << end_col;
-      } else if (end_col != begin_col) {
+      else if (end_col != begin_col)
         ss << " :" << end_col;
-      }
     }
     return ss.str();
   }

@@ -232,9 +232,10 @@ void Compiler::run() {
       extern_fns.push_back(&fn);
   }
 
-  if (extern_fns.empty())
+  if (extern_fns.empty()) {
     throw std::logic_error("Program is missing any declarations with external linkage. Perhaps you meant to declare a "
                            "`main` function?"); // Related: #10
+  }
   for (auto* ext : extern_fns)
     declare(*ext);
 
@@ -377,11 +378,10 @@ static auto build_function_type(Compiler& compiler, const ty::Function& type) ->
 
   auto* fn_ty = llvm::FunctionType::get(return_type, args, type.is_c_varargs());
 
-  if (type.is_fn_ptr()) {
+  if (type.is_fn_ptr())
     memo = fn_ty->getPointerTo();
-  } else {
+  else
     memo = llvm::StructType::get(fn_ty->getPointerTo(), erased_closure_ty);
-  }
 
   type.fn_memo(compiler, fn_ty);
   type.closure_memo(compiler, closure_ty);
@@ -589,17 +589,14 @@ static void destruct_indirect(Compiler& compiler, const InScope& v) {
 }
 
 void Compiler::destruct_last_scope() {
-  for (const auto& i : m_scope.last_scope()) {
+  for (const auto& i : m_scope.last_scope())
     destruct_indirect(*this, i.second);
-  }
 }
 
 void Compiler::destruct_all_scopes() {
-  for (const auto& scope : llvm::reverse(llvm::drop_begin(m_scope.all_scopes()))) {
-    for (const auto& i : scope) {
+  for (const auto& scope : llvm::reverse(llvm::drop_begin(m_scope.all_scopes())))
+    for (const auto& i : scope)
       destruct_indirect(*this, i.second);
-    }
-  }
 }
 
 void Compiler::expose_parameter_as_local(ty::Type type, const string& name, const ast::AST& ast, Val val) {
@@ -627,9 +624,8 @@ void Compiler::setup_fn_base(Fn& fn) {
   auto arg_offset = fn.fn_ty->closure_memo() == nullptr ? 0 : 1;
   auto llvm_fn_args = llvm::drop_begin(fn.llvm->args(), arg_offset);
   // Allocate local variables for each parameter
-  for (auto [arg, ast_arg] : llvm::zip(llvm_fn_args, fn.args())) {
+  for (auto [arg, ast_arg] : llvm::zip(llvm_fn_args, fn.args()))
     expose_parameter_as_local(ast_arg.type, ast_arg.name, ast_arg.ast, &arg);
-  }
 }
 
 void Compiler::define(Const& cn) {
@@ -713,9 +709,8 @@ void Compiler::define(Fn& fn) {
     else
       m_builder->CreateRet(call_result);
   } else if (isa<ast::FnDecl>(&fn.ast())) {
-    if (auto* body = get_if<ast::Compound>(&fn.fn_body()); body != nullptr) {
+    if (auto* body = get_if<ast::Compound>(&fn.fn_body()); body != nullptr)
       statement(*body);
-    }
 
     if (m_builder->GetInsertBlock()->getTerminator() == nullptr) {
       destruct_all_scopes();
@@ -955,10 +950,9 @@ template <> auto Compiler::expression(ast::VarExpr& expr) -> Val {
 }
 
 template <> auto Compiler::expression(ast::ConstExpr& expr) -> Val {
-  for (const auto& cn : m_consts) {
+  for (const auto& cn : m_consts)
     if (cn.referred_to_by(expr))
       return m_builder->CreateLoad(llvm_type(cn.ast().ensure_ty()), cn.llvm, "cn." + expr.name);
-  }
 
   throw std::runtime_error("Nonexistent constant called "s + expr.name);
 }
@@ -1040,9 +1034,8 @@ auto Compiler::primitive(Fn* fn, const vector<Val>& args, const vector<ty::Type>
     base = m_builder->CreateGEP(result_type, base, args.at(1).llvm, "p.get_at.gep");
     return base;
   }
-  if (primitive == "ptr_cast") {
+  if (primitive == "ptr_cast")
     return m_builder->CreateBitCast(args[0], llvm_type(types.at(1).without_meta()), "builtin.ptr_cast");
-  }
   if (primitive == "ptr_gep") {
     return m_builder->CreateGEP(llvm_type(types.at(0).ensure_ptr_base()), args.at(0), args.at(1).llvm,
                                 "builtin.ptr_gep");
@@ -1302,9 +1295,8 @@ template <> auto Compiler::expression(ast::CtorExpr& expr) -> Val {
     auto& cast_from = expr.args[0];
     yume_assert(cast_from->ensure_ty().without_mut().base_isa<ty::Int>(), "Numeric cast must convert from int");
     auto base = body_expression(*cast_from);
-    if (cast_from->ensure_ty().without_mut().base_cast<ty::Int>()->is_signed()) {
+    if (cast_from->ensure_ty().without_mut().base_cast<ty::Int>()->is_signed())
       return m_builder->CreateSExtOrTrunc(base, llvm_type(*int_type));
-    }
     return m_builder->CreateZExtOrTrunc(base, llvm_type(*int_type));
   }
 
@@ -1464,12 +1456,10 @@ template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
     }
   }
 
-  if (expr.conversion.kind == ty::Conv::None) {
+  if (expr.conversion.kind == ty::Conv::None)
     return base;
-  }
-  if (expr.conversion.kind == ty::Conv::Int) {
+  if (expr.conversion.kind == ty::Conv::Int)
     return m_builder->CreateIntCast(base, llvm_type(target_ty), current_ty.base_cast<ty::Int>()->is_signed(), "ic.int");
-  }
   if (expr.conversion.kind == ty::Conv::FnPtr) {
     yume_assert(current_ty.base_isa<ty::Function>(), "fnptr conversion source must be a function type");
     yume_assert(isa<ast::LambdaExpr>(*expr.base), "fnptr conversion source must be a lambda");
