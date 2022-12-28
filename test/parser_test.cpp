@@ -263,10 +263,11 @@ TEST_CASE("Parse slice literal", "[parse]") {
   CHECK_PARSER("I32:[]", ast<SliceExpr>("I32"_Type, ptr_vec<Expr>()));
 }
 
-TEST_CASE("Parse bare type", "[parse][throws]") {
-  CHECK_PARSER_THROWS("T ptr");
-  CHECK_PARSER_THROWS("I32");
-  CHECK_PARSER_THROWS("I32[]");
+TEST_CASE("Parse type expression", "[parse]") {
+  CHECK_PARSER("T ptr", ast<TypeExpr>("T"_Type & Ptr));
+  CHECK_PARSER("I32", ast<TypeExpr>("I32"_Type));
+  CHECK_PARSER("I32[]", ast<TypeExpr>("I32"_Type & Slice));
+  CHECK_PARSER("0.as(I64)", make_call("as", 0_Num, ast<TypeExpr>("I64"_Type)));
 }
 
 TEST_CASE("Parse index operator", "[parse]") {
