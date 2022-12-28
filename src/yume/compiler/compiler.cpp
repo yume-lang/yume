@@ -1150,6 +1150,16 @@ template <> auto Compiler::expression(ast::AssignExpr& expr) -> Val {
     const int base_offset = field_access->offset;
 
     auto expr_val = body_expression(*expr.value);
+    if (expr_val.scope != nullptr && expr_val.scope->owning) {
+      expr_val.scope->owning = false;
+    } else if (!expr.value->ensure_ty().is_trivially_destructible() && expr_val.scope != nullptr &&
+               !expr_val.scope->owning) {
+      auto* ast_dup = m_walker->make_dup(expr.value);
+      auto* llvm_fn = declare(*ast_dup);
+      vector<llvm::Value*> llvm_args{};
+      llvm_args.push_back(expr_val.llvm);
+      expr_val.llvm = m_builder->CreateCall(llvm_fn, llvm_args);
+    }
     auto* struct_type = llvm_type(struct_base.ensure_mut_base().base_cast<ty::Struct>());
 
     yume_assert(base_offset >= 0, "Field access has unknown offset into struct");
