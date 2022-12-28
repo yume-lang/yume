@@ -1399,6 +1399,8 @@ template <> auto Compiler::expression(ast::SliceExpr& expr) -> Val {
   slice_inst = m_builder->CreateInsertValue(slice_inst, data_ptr, 0);
   slice_inst = m_builder->CreateInsertValue(slice_inst, slice_size, 1);
 
+  make_temporary_in_scope(slice_inst, expr, "tmpsl");
+
   return slice_inst;
 }
 
