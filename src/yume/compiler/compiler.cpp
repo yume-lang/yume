@@ -482,6 +482,14 @@ void Compiler::destruct(Val val, ty::Type type) {
       m_builder->restoreIP(saved_insert_point);
     }
     create_free(ptr);
+    return;
+  }
+  if (const auto* struct_type = type.base_dyn_cast<ty::Struct>(); struct_type != nullptr) {
+    for (const auto& i : llvm::enumerate(struct_type->fields())) {
+      ty::Type type = i.value()->type->ensure_ty();
+      if (!type.is_trivially_destructible())
+        destruct(m_builder->CreateExtractValue(val, i.index(), "dt.field"), type);
+    }
   }
 }
 

@@ -105,9 +105,9 @@ public:
 
   auto ptr_bitsize() -> unsigned int;
 
-  /// Default-constructs an object of specified type \p type .
+  /// Default-constructs an object of specified type \p type
   auto default_init(ty::Type type) -> Val;
-  /// Destructs an object \p val of specified type \p type .
+  /// Destructs an object \p val of specified type \p type
   void destruct(Val val, ty::Type type);
 
   [[nodiscard]] auto source_files() -> const auto& { return m_sources; }
