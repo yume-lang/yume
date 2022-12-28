@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-12-17 22:26:36</td>
+            <td class="headerValue">2022-12-28 11:40:11</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -334,7 +334,7 @@
 <a name="276"><span class="lineNum">     276 </span><span class="lineNoCov">          0 :   ast::TokenIterator iterator;</span></a>
 <a name="277"><span class="lineNum">     277 </span><span class="lineNoCov">          0 :   unique_ptr&lt;ast::Program&gt; program;</span></a>
 <a name="278"><span class="lineNum">     278 </span>            : </a>
-<a name="279"><span class="lineNum">     279 </span><span class="lineNoCov">          0 :   static auto name_or_stdin(const fs::path&amp; path) -&gt; string { return path.empty() ? path.native() : &quot;&lt;stdin&gt;&quot;s; }</span></a>
+<a name="279"><span class="lineNum">     279 </span><span class="lineNoCov">          0 :   static auto name_or_stdin(const fs::path&amp; path) -&gt; string { return path.empty() ? &quot;&lt;stdin&gt;&quot;s : path.native(); }</span></a>
 <a name="280"><span class="lineNum">     280 </span>            : </a>
 <a name="281"><span class="lineNum">     281 </span><span class="lineNoCov">          0 :   SourceFile(std::istream&amp; in, fs::path path)</span></a>
 <a name="282"><span class="lineNum">     282 </span>            :       : path(move(path)), name(name_or_stdin(this-&gt;path)),</a>

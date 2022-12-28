@@ -24,6 +24,7 @@ var searchData=
   ['kwd_5fstruct_21',['KWD_STRUCT',['../namespaceyume_1_1ast_1_1parser.html#a68fd402689c9b322f54f9ca8419d0128',1,'yume::ast::parser']]],
   ['kwd_5fthen_22',['KWD_THEN',['../namespaceyume_1_1ast_1_1parser.html#a928488f267e0d9e1704712194a49c1ae',1,'yume::ast::parser']]],
   ['kwd_5ftrue_23',['KWD_TRUE',['../namespaceyume_1_1ast_1_1parser.html#ad8f9f6804ef68ab94eec5a069662fe0b',1,'yume::ast::parser']]],
-  ['kwd_5fvarargs_24',['KWD_VARARGS',['../namespaceyume_1_1ast_1_1parser.html#a6944885aed90134d6719990a2a0f6bde',1,'yume::ast::parser']]],
-  ['kwd_5fwhile_25',['KWD_WHILE',['../namespaceyume_1_1ast_1_1parser.html#ad6a5b8b63b88a8101f08f02286b4c8c3',1,'yume::ast::parser']]]
+  ['kwd_5ftype_24',['KWD_TYPE',['../namespaceyume_1_1ast_1_1parser.html#a0408869509d023262d452c0c6f2ac281',1,'yume::ast::parser']]],
+  ['kwd_5fvarargs_25',['KWD_VARARGS',['../namespaceyume_1_1ast_1_1parser.html#a6944885aed90134d6719990a2a0f6bde',1,'yume::ast::parser']]],
+  ['kwd_5fwhile_26',['KWD_WHILE',['../namespaceyume_1_1ast_1_1parser.html#ad6a5b8b63b88a8101f08f02286b4c8c3',1,'yume::ast::parser']]]
 ];

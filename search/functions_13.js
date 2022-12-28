@@ -22,7 +22,8 @@ var searchData=
   ['ts_19',['ts',['../structyume_1_1ast_1_1parser_1_1Parser.html#ac8f67f2d37a791d0f090f5016364fd6d',1,'yume::ast::parser::Parser::ts(T &amp;&amp;begin, U &amp;&amp;end) -&gt; span&lt; Token &gt;'],['../structyume_1_1ast_1_1parser_1_1Parser.html#a7b7d8dbfe1bdb7e9f9fdcd60c61913a1',1,'yume::ast::parser::Parser::ts(const VectorTokenIterator &amp;entry) const -&gt; span&lt; Token &gt;']]],
   ['type_20',['Type',['../classyume_1_1ty_1_1Type.html#afc83e332e9c9e53b94cbc47406dfaae2',1,'yume::ty::Type::Type(nonnull&lt; const BaseType * &gt; base, bool mut, bool ref) noexcept'],['../classyume_1_1ty_1_1Type.html#a33a0cd649e3a60ede6c9150801081045',1,'yume::ty::Type::Type(nonnull&lt; const BaseType * &gt; base) noexcept']]],
   ['type_5fname_21',['type_name',['../structyume_1_1Token.html#a875fb29a632b8c8f77f98b00af8b3807',1,'yume::Token']]],
-  ['typeholder_22',['TypeHolder',['../structyume_1_1TypeHolder.html#ae38748fdb7b8d1059a87c5a3119acc8c',1,'yume::TypeHolder']]],
-  ['typename_23',['TypeName',['../structyume_1_1ast_1_1TypeName.html#ab42ed4a9cc6b1e4847aaa3129642eab3',1,'yume::ast::TypeName']]],
-  ['typewalker_24',['TypeWalker',['../structyume_1_1semantic_1_1TypeWalker.html#ae0feaffa86a7970827a360c257b6eae3',1,'yume::semantic::TypeWalker']]]
+  ['typeexpr_22',['TypeExpr',['../structyume_1_1ast_1_1TypeExpr.html#a7b84df7804ec10b133879ac218e71678',1,'yume::ast::TypeExpr']]],
+  ['typeholder_23',['TypeHolder',['../structyume_1_1TypeHolder.html#ae38748fdb7b8d1059a87c5a3119acc8c',1,'yume::TypeHolder']]],
+  ['typename_24',['TypeName',['../structyume_1_1ast_1_1TypeName.html#ab42ed4a9cc6b1e4847aaa3129642eab3',1,'yume::ast::TypeName']]],
+  ['typewalker_25',['TypeWalker',['../structyume_1_1semantic_1_1TypeWalker.html#ae0feaffa86a7970827a360c257b6eae3',1,'yume::semantic::TypeWalker']]]
 ];

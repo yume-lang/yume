@@ -99,6 +99,9 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Int.html">Int</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A built-in integral type, such as I32 or Bool.  <a href="classyume_1_1ty_1_1Int.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Meta.html">Meta</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A metatype, that is, a type referring to a type.  <a href="classyume_1_1ty_1_1Meta.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Nil.html">Nil</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The null type, <a class="el" href="classyume_1_1ty_1_1Nil.html" title="The null type, Nil.">Nil</a>.  <a href="classyume_1_1ty_1_1Nil.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -129,6 +132,8 @@ Enumerations</h2></td></tr>
 , <a class="el" href="namespaceyume_1_1ty.html#a4c255b641f0b91ee4ff8bc878e7bd04ea4da89960e6e393a88f24bd51c147ca6c">K_Function</a>
 , <a class="el" href="namespaceyume_1_1ty.html#a4c255b641f0b91ee4ff8bc878e7bd04ea21c2013a1384b0842784a97713aced5a">K_Generic</a>
 , <a class="el" href="namespaceyume_1_1ty.html#a4c255b641f0b91ee4ff8bc878e7bd04ea3c3bdcaccf6e21e58342c733c0928616">K_OpaqueSelf</a>
+, <br />
+&#160;&#160;<a class="el" href="namespaceyume_1_1ty.html#a4c255b641f0b91ee4ff8bc878e7bd04ead3adfd920bb590e0a759110f10226ef1">K_Meta</a>
 <br />
  }</td></tr>
 <tr class="separator:a4c255b641f0b91ee4ff8bc878e7bd04e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -171,6 +176,8 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="a4c255b641f0b91ee4ff8bc878e7bd04ea21c2013a1384b0842784a97713aced5a" name="a4c255b641f0b91ee4ff8bc878e7bd04ea21c2013a1384b0842784a97713aced5a"></a>K_Generic&#160;</td><td class="fielddoc"><p ><code><a class="el" href="classyume_1_1ty_1_1Generic.html" title="An unsubstituted generic type variable, usually something like T.">Generic</a></code> </p>
 </td></tr>
 <tr><td class="fieldname"><a id="a4c255b641f0b91ee4ff8bc878e7bd04ea3c3bdcaccf6e21e58342c733c0928616" name="a4c255b641f0b91ee4ff8bc878e7bd04ea3c3bdcaccf6e21e58342c733c0928616"></a>K_OpaqueSelf&#160;</td><td class="fielddoc"><p ><code><a class="el" href="classyume_1_1ty_1_1OpaqueSelf.html" title="The &quot;self&quot; type of abstract or overriding functions. An extra layer of indirection is introduced for ...">OpaqueSelf</a></code> </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a4c255b641f0b91ee4ff8bc878e7bd04ead3adfd920bb590e0a759110f10226ef1" name="a4c255b641f0b91ee4ff8bc878e7bd04ead3adfd920bb590e0a759110f10226ef1"></a>K_Meta&#160;</td><td class="fielddoc"><p ><code><a class="el" href="classyume_1_1ty_1_1Meta.html" title="A metatype, that is, a type referring to a type.">Meta</a></code> </p>
 </td></tr>
 </table>
 
@@ -222,9 +229,9 @@ Functions</h2></td></tr>
 <p>Add the substitution <code>gen_sub</code> for the generic type variable <code>gen</code> in template instantiation <code>instantiation</code>. If a substitution already exists for the same type variable, the two substitutions are intersected. </p>
 <dl class="section return"><dt>Returns</dt><dd>nullopt if substitution failed </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00079">79</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00088">88</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00100">yume::ty::Type::determine_generic_subs()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00109">yume::ty::Type::determine_generic_subs()</a>.</p>
 
 </div>
 </div>
@@ -256,7 +263,7 @@ Functions</h2></td></tr>
 
 <p class="reference">References <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>, <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a165d3d525f6d0cbd55e42cc3058cafcc">yume::Ptr</a>, and <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a60baadb22e80b147e4885ad16760e569">yume::Ref</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00342">yume::ty::Type::name()</a>, and <a class="el" href="type_8cpp_source.html#l00352">yume::ty::Ptr::name()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00365">yume::ty::Type::name()</a>, and <a class="el" href="type_8cpp_source.html#l00375">yume::ty::Ptr::name()</a>.</p>
 
 </div>
 </div>
@@ -300,11 +307,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00043">43</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00049">49</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="type_8hpp_source.html#l00071">yume::ty::Ptr::qualifier()</a>, <a class="el" href="type_8cpp_source.html#l00043">visit_subs()</a>, and <a class="el" href="util_8hpp_source.html#l00082">yume::yume_assert()</a>.</p>
+<p class="reference">References <a class="el" href="type_8hpp_source.html#l00072">yume::ty::Ptr::qualifier()</a>, <a class="el" href="type_8cpp_source.html#l00049">visit_subs()</a>, and <a class="el" href="util_8hpp_source.html#l00082">yume::yume_assert()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00100">yume::ty::Type::determine_generic_subs()</a>, and <a class="el" href="type_8cpp_source.html#l00043">visit_subs()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00109">yume::ty::Type::determine_generic_subs()</a>, and <a class="el" href="type_8cpp_source.html#l00049">visit_subs()</a>.</p>
 
 </div>
 </div>

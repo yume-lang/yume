@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-12-17 22:26:36</td>
+            <td class="headerValue">2022-12-28 11:40:11</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -207,16 +207,17 @@
 <a name="149"><span class="lineNum">     149 </span><span class="lineNoCov">          0 :   auto create_free(Val ptr) -&gt; Val;</span></a>
 <a name="150"><span class="lineNum">     150 </span>            : </a>
 <a name="151"><span class="lineNum">     151 </span>            :   /// Handle all primitive, built-in functions</a>
-<a name="152"><span class="lineNum">     152 </span><span class="lineCov">          1 :   auto primitive(Fn* fn, const vector&lt;Val&gt;&amp; args, const vector&lt;ty::Type&gt;&amp; types) -&gt; optional&lt;Val&gt;;</span></a>
-<a name="153"><span class="lineNum">     153 </span>            :   /// Handle primitive functions taking two integral values, such as most arithmetic operations (add, multiply, etc).</a>
-<a name="154"><span class="lineNum">     154 </span><span class="lineCov">          1 :   auto int_bin_primitive(const string&amp; primitive, const vector&lt;Val&gt;&amp; args) -&gt; Val;</span></a>
-<a name="155"><span class="lineNum">     155 </span>            : </a>
-<a name="156"><span class="lineNum">     156 </span>            :   /// Instruct the `TypeWalker` to perform semantic analysis and infer types for the given declaration.</a>
-<a name="157"><span class="lineNum">     157 </span><span class="lineCov">          1 :   void walk_types(DeclLike);</span></a>
-<a name="158"><span class="lineNum">     158 </span>            : </a>
-<a name="159"><span class="lineNum">     159 </span><span class="lineNoCov">          0 :   void declare_default_ctor(Struct&amp;);</span></a>
-<a name="160"><span class="lineNum">     160 </span>            : };</a>
-<a name="161"><span class="lineNum">     161 </span>            : } // namespace yume</a>
+<a name="152"><span class="lineNum">     152 </span><span class="lineCov">          1 :   auto primitive(Fn* fn, const vector&lt;Val&gt;&amp; args, const vector&lt;ty::Type&gt;&amp; types, vector&lt;ast::AnyExpr*&gt;&amp; ast_args)</span></a>
+<a name="153"><span class="lineNum">     153 </span>            :       -&gt; optional&lt;Val&gt;;</a>
+<a name="154"><span class="lineNum">     154 </span>            :   /// Handle primitive functions taking two integral values, such as most arithmetic operations (add, multiply, etc).</a>
+<a name="155"><span class="lineNum">     155 </span><span class="lineCov">          1 :   auto int_bin_primitive(const string&amp; primitive, const vector&lt;Val&gt;&amp; args) -&gt; Val;</span></a>
+<a name="156"><span class="lineNum">     156 </span>            : </a>
+<a name="157"><span class="lineNum">     157 </span>            :   /// Instruct the `TypeWalker` to perform semantic analysis and infer types for the given declaration.</a>
+<a name="158"><span class="lineNum">     158 </span><span class="lineCov">          1 :   void walk_types(DeclLike);</span></a>
+<a name="159"><span class="lineNum">     159 </span>            : </a>
+<a name="160"><span class="lineNum">     160 </span><span class="lineNoCov">          0 :   void declare_default_ctor(Struct&amp;);</span></a>
+<a name="161"><span class="lineNum">     161 </span>            : };</a>
+<a name="162"><span class="lineNum">     162 </span>            : } // namespace yume</a>
 </pre>
       </td>
     </tr>

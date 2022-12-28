@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-12-17 22:26:36</td>
+            <td class="headerValue">2022-12-28 11:40:11</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -115,20 +115,21 @@
 <a name="57"><span class="lineNum">      57 </span>            :     case ast::K_Slice: return conv_expression&lt;ast::SliceExpr&gt;(expr, args...);</a>
 <a name="58"><span class="lineNum">      58 </span>            :     case ast::K_FieldAccess: return conv_expression&lt;ast::FieldAccessExpr&gt;(expr, args...);</a>
 <a name="59"><span class="lineNum">      59 </span>            :     case ast::K_ImplicitCast: return conv_expression&lt;ast::ImplicitCastExpr&gt;(expr, args...);</a>
-<a name="60"><span class="lineNum">      60 </span>            :     default: return (static_cast&lt;Derived*&gt;(this))-&gt;template expression(expr, args...);</a>
-<a name="61"><span class="lineNum">      61 </span>            :     }</a>
-<a name="62"><span class="lineNum">      62 </span>            :   }</a>
-<a name="63"><span class="lineNum">      63 </span>            : </a>
-<a name="64"><span class="lineNum">      64 </span>            : private:</a>
-<a name="65"><span class="lineNum">      65 </span><span class="lineNoCov">          0 :   template &lt;std::derived_from&lt;ast::Expr&gt; T&gt; auto conv_expression(ast::Expr&amp; expr, auto... args) {</span></a>
-<a name="66"><span class="lineNum">      66 </span>            :     return (static_cast&lt;Derived*&gt;(this))-&gt;expression(llvm::cast&lt;T&gt;(expr), args...);</a>
-<a name="67"><span class="lineNum">      67 </span>            :   }</a>
-<a name="68"><span class="lineNum">      68 </span>            : </a>
-<a name="69"><span class="lineNum">      69 </span><span class="lineNoCov">          0 :   template &lt;OnlyStmt T&gt; void conv_statement(ast::Stmt&amp; stat, auto... args) {</span></a>
-<a name="70"><span class="lineNum">      70 </span>            :     return (static_cast&lt;Derived*&gt;(this))-&gt;statement(llvm::cast&lt;T&gt;(stat), args...);</a>
-<a name="71"><span class="lineNum">      71 </span>            :   }</a>
-<a name="72"><span class="lineNum">      72 </span>            : };</a>
-<a name="73"><span class="lineNum">      73 </span>            : } // namespace yume</a>
+<a name="60"><span class="lineNum">      60 </span>            :     case ast::K_TypeExpr: return conv_expression&lt;ast::TypeExpr&gt;(expr, args...);</a>
+<a name="61"><span class="lineNum">      61 </span>            :     default: return (static_cast&lt;Derived*&gt;(this))-&gt;template expression(expr, args...);</a>
+<a name="62"><span class="lineNum">      62 </span>            :     }</a>
+<a name="63"><span class="lineNum">      63 </span>            :   }</a>
+<a name="64"><span class="lineNum">      64 </span>            : </a>
+<a name="65"><span class="lineNum">      65 </span>            : private:</a>
+<a name="66"><span class="lineNum">      66 </span><span class="lineNoCov">          0 :   template &lt;std::derived_from&lt;ast::Expr&gt; T&gt; auto conv_expression(ast::Expr&amp; expr, auto... args) {</span></a>
+<a name="67"><span class="lineNum">      67 </span>            :     return (static_cast&lt;Derived*&gt;(this))-&gt;expression(llvm::cast&lt;T&gt;(expr), args...);</a>
+<a name="68"><span class="lineNum">      68 </span>            :   }</a>
+<a name="69"><span class="lineNum">      69 </span>            : </a>
+<a name="70"><span class="lineNum">      70 </span><span class="lineNoCov">          0 :   template &lt;OnlyStmt T&gt; void conv_statement(ast::Stmt&amp; stat, auto... args) {</span></a>
+<a name="71"><span class="lineNum">      71 </span>            :     return (static_cast&lt;Derived*&gt;(this))-&gt;statement(llvm::cast&lt;T&gt;(stat), args...);</a>
+<a name="72"><span class="lineNum">      72 </span>            :   }</a>
+<a name="73"><span class="lineNum">      73 </span>            : };</a>
+<a name="74"><span class="lineNum">      74 </span>            : } // namespace yume</a>
 </pre>
       </td>
     </tr>

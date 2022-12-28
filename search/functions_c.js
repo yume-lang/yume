@@ -10,7 +10,8 @@ var searchData=
   ['make_5fimplicit_5fconversion_7',['make_implicit_conversion',['../namespaceyume_1_1semantic.html#a5348db715ad76c2a0f15c96d95b00f92',1,'yume::semantic']]],
   ['mangle_5fname_8',['mangle_name',['../namespaceyume_1_1mangle.html#aa4af1cc87b85baf390419a18e1a97b20',1,'yume::mangle::mangle_name(ty::Type ast_type, DeclLike parent) -&gt; string'],['../namespaceyume_1_1mangle.html#a442be92213a61e4346fc92fb8163cc76',1,'yume::mangle::mangle_name(Fn &amp;fn) -&gt; string']]],
   ['memo_9',['memo',['../classyume_1_1ty_1_1Function.html#ae38b8fdd82aa39c8687217e382320bc6',1,'yume::ty::Function::memo(Compiler &amp;, llvm::Type *memo) const'],['../classyume_1_1ty_1_1Function.html#af7394c8b8ae91fe68a64c1428918b9cd',1,'yume::ty::Function::memo() const -&gt; auto *'],['../classyume_1_1ty_1_1Struct.html#a46c8a6f1597770ab76bbd761ded4b626',1,'yume::ty::Struct::memo(Compiler &amp;, llvm::Type *memo) const'],['../classyume_1_1ty_1_1Struct.html#a277cb85876533e746f4ff3e8f1b3409e',1,'yume::ty::Struct::memo() const -&gt; auto *']]],
-  ['minmax_5ffor_5fbits_10',['minmax_for_bits',['../namespaceyume_1_1ty_1_1detail.html#a17405818461b5d8506584bf5ea1aac8a',1,'yume::ty::detail::minmax_for_bits() -&gt; MinMax'],['../namespaceyume_1_1ty_1_1detail.html#af8728198456043e47c77a9b1606121c0',1,'yume::ty::detail::minmax_for_bits(size_t bits) -&gt; MinMax']]],
-  ['module_11',['module',['../classyume_1_1Compiler.html#acebe062c6f524b71429058a98442e747',1,'yume::Compiler']]],
-  ['mut_5fbase_12',['mut_base',['../classyume_1_1ty_1_1Type.html#a231d6b5f703dbf9be68258de8ed392ba',1,'yume::ty::Type']]]
+  ['meta_10',['Meta',['../classyume_1_1ty_1_1Meta.html#a88235a0ade8047684eacd423be118a37',1,'yume::ty::Meta']]],
+  ['minmax_5ffor_5fbits_11',['minmax_for_bits',['../namespaceyume_1_1ty_1_1detail.html#a17405818461b5d8506584bf5ea1aac8a',1,'yume::ty::detail::minmax_for_bits() -&gt; MinMax'],['../namespaceyume_1_1ty_1_1detail.html#af8728198456043e47c77a9b1606121c0',1,'yume::ty::detail::minmax_for_bits(size_t bits) -&gt; MinMax']]],
+  ['module_12',['module',['../classyume_1_1Compiler.html#acebe062c6f524b71429058a98442e747',1,'yume::Compiler']]],
+  ['mut_5fbase_13',['mut_base',['../classyume_1_1ty_1_1Type.html#a231d6b5f703dbf9be68258de8ed392ba',1,'yume::ty::Type']]]
 ];

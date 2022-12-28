@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-12-17 22:26:36</td>
+            <td class="headerValue">2022-12-28 11:40:11</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -178,8 +178,9 @@
 <a name="120"><span class="lineNum">     120 </span>            : auto AssignExpr::clone() const -&gt; AssignExpr* { return new AssignExpr(tok(), dup(target), dup(value)); }</a>
 <a name="121"><span class="lineNum">     121 </span>            : auto FieldAccessExpr::clone() const -&gt; FieldAccessExpr* { return new FieldAccessExpr(tok(), dup(base), field); }</a>
 <a name="122"><span class="lineNum">     122 </span>            : auto ImplicitCastExpr::clone() const -&gt; ImplicitCastExpr* { return new ImplicitCastExpr(tok(), dup(base), conversion); }</a>
-<a name="123"><span class="lineNum">     123 </span>            : auto Program::clone() const -&gt; Program* { return new Program(tok(), dup(body)); }</a>
-<a name="124"><span class="lineNum">     124 </span>            : } // namespace yume::ast</a>
+<a name="123"><span class="lineNum">     123 </span>            : auto TypeExpr::clone() const -&gt; TypeExpr* { return new TypeExpr(tok(), dup(type)); }</a>
+<a name="124"><span class="lineNum">     124 </span>            : auto Program::clone() const -&gt; Program* { return new Program(tok(), dup(body)); }</a>
+<a name="125"><span class="lineNum">     125 </span>            : } // namespace yume::ast</a>
 </pre>
       </td>
     </tr>

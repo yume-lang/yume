@@ -32,12 +32,12 @@
             <td></td>
             <td class="headerItem">Lines:</td>
             <td class="headerCovTableEntry">0</td>
-            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">2</td>
             <td class="headerCovTableEntryLo">0.0 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-12-17 22:26:36</td>
+            <td class="headerValue">2022-12-28 11:40:11</td>
             <td></td>
           </tr>
           <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -60,16 +60,13 @@
 <a name="2"><span class="lineNum">       2 </span>            : </a>
 <a name="3"><span class="lineNum">       3 </span>            : namespace yume {</a>
 <a name="4"><span class="lineNum">       4 </span><span class="lineNoCov">          0 : enum struct Qualifier {</span></a>
-<a name="5"><span class="lineNum">       5 </span>            :   Ptr, ///&lt; `ptr`</a>
-<a name="6"><span class="lineNum">       6 </span>            :   Mut, ///&lt; `mut`</a>
-<a name="7"><span class="lineNum">       7 </span>            :   Ref, ///&lt; `ref`</a>
-<a name="8"><span class="lineNum">       8 </span>            : };</a>
-<a name="9"><span class="lineNum">       9 </span>            : </a>
-<a name="10"><span class="lineNum">      10 </span><span class="lineNoCov">          0 : enum struct PtrLikeQualifier {</span></a>
-<a name="11"><span class="lineNum">      11 </span>            :   Ptr = static_cast&lt;int&gt;(Qualifier::Ptr), ///&lt; `ptr`</a>
-<a name="12"><span class="lineNum">      12 </span>            :   Q_END</a>
-<a name="13"><span class="lineNum">      13 </span>            : };</a>
-<a name="14"><span class="lineNum">      14 </span>            : } // namespace yume</a>
+<a name="5"><span class="lineNum">       5 </span>            :   Ptr,    ///&lt; `ptr`</a>
+<a name="6"><span class="lineNum">       6 </span>            :   Mut,    ///&lt; `mut`</a>
+<a name="7"><span class="lineNum">       7 </span>            :   Ref,    ///&lt; `ref`</a>
+<a name="8"><span class="lineNum">       8 </span>            :   Type,   ///&lt; `type`</a>
+<a name="9"><span class="lineNum">       9 </span>            :   Opaque, ///&lt; Opaque self types</a>
+<a name="10"><span class="lineNum">      10 </span>            : };</a>
+<a name="11"><span class="lineNum">      11 </span>            : } // namespace yume</a>
 </pre>
       </td>
     </tr>

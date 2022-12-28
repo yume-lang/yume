@@ -1,0 +1,4 @@
+<map id="yume::ty::Meta" name="yume::ty::Meta">
+<area shape="rect" id="node1" title="A metatype, that is, a type referring to a type." alt="" coords="20,80,124,107"/>
+<area shape="rect" id="node2" href="$classyume_1_1ty_1_1BaseType.html" title="Represents a type in the type system. NOTE: that this isn&#39;t the class to use for type introspection,..." alt="" coords="5,5,139,32"/>
+</map>

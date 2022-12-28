@@ -1,5 +1,5 @@
 <map id="yume::ast::Expr" name="yume::ast::Expr">
-<area shape="rect" id="node1" title="Expressions have an associated value and type." alt="" coords="321,360,429,387"/>
+<area shape="rect" id="node1" title="Expressions have an associated value and type." alt="" coords="321,385,429,412"/>
 <area shape="rect" id="node4" href="$structyume_1_1ast_1_1AssignExpr.html" title="An assignment (=)." alt="" coords="493,5,641,32"/>
 <area shape="rect" id="node5" href="$structyume_1_1ast_1_1BinaryLogicExpr.html" title="A logical operator such as || or &amp;&amp;. Since these aren&#39;t overloadable, they have their own AST node." alt="" coords="479,56,655,83"/>
 <area shape="rect" id="node6" href="$structyume_1_1ast_1_1BoolExpr.html" title="Bool literals (true or false)." alt="" coords="500,107,635,133"/>
@@ -14,7 +14,8 @@
 <area shape="rect" id="node15" href="$structyume_1_1ast_1_1NumberExpr.html" title="Number literals." alt="" coords="490,563,645,589"/>
 <area shape="rect" id="node16" href="$structyume_1_1ast_1_1SliceExpr.html" title="A slice literal, i.e. an array." alt="" coords="499,613,636,640"/>
 <area shape="rect" id="node17" href="$structyume_1_1ast_1_1StringExpr.html" title="String literals." alt="" coords="496,664,639,691"/>
-<area shape="rect" id="node18" href="$structyume_1_1ast_1_1VarExpr.html" title="A variable, i.e. just an identifier." alt="" coords="503,715,631,741"/>
-<area shape="rect" id="node2" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="163,360,273,387"/>
-<area shape="rect" id="node3" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,360,115,387"/>
+<area shape="rect" id="node18" href="$structyume_1_1ast_1_1TypeExpr.html" title="Represents a reference to a type." alt="" coords="499,715,635,741"/>
+<area shape="rect" id="node19" href="$structyume_1_1ast_1_1VarExpr.html" title="A variable, i.e. just an identifier." alt="" coords="503,765,631,792"/>
+<area shape="rect" id="node2" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="163,385,273,412"/>
+<area shape="rect" id="node3" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,385,115,412"/>
 </map>

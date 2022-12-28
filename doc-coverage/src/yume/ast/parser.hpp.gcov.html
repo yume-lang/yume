@@ -32,12 +32,12 @@
             <td></td>
             <td class="headerItem">Lines:</td>
             <td class="headerCovTableEntry">18</td>
-            <td class="headerCovTableEntry">133</td>
-            <td class="headerCovTableEntryLo">13.5 %</td>
+            <td class="headerCovTableEntry">134</td>
+            <td class="headerCovTableEntryLo">13.4 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-12-17 22:26:36</td>
+            <td class="headerValue">2022-12-28 11:40:11</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -94,7 +94,7 @@
 <a name="36"><span class="lineNum">      36 </span>            :       : m_iterator{iterator}, m_end{end} {}</a>
 <a name="37"><span class="lineNum">      37 </span>            : </a>
 <a name="38"><span class="lineNum">      38 </span>            :   /// Check if the iterator is at the end and no more `Token`s could possibly be read.</a>
-<a name="39"><span class="lineNum">      39 </span><span class="lineCov">          1 :   [[nodiscard]] auto at_end() const noexcept -&gt; bool { return m_iterator == m_end; }</span></a>
+<a name="39"><span class="lineNum">      39 </span><span class="lineCov">          1 :   [[nodiscard]] auto at_end() const noexcept -&gt; bool { return m_iterator &gt;= m_end; }</span></a>
 <a name="40"><span class="lineNum">      40 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto operator-&gt;() const -&gt; Token* {</span></a>
 <a name="41"><span class="lineNum">      41 </span>            :     if (at_end())</a>
 <a name="42"><span class="lineNum">      42 </span>            :       throw std::runtime_error(&quot;Can't dereference at end&quot;);</a>
@@ -144,271 +144,272 @@
 <a name="86"><span class="lineNum">      86 </span><span class="lineNoCov">          0 : static const TokenAtom KWD_SELF_TYPE = {Word, &quot;Self&quot;_a};</span></a>
 <a name="87"><span class="lineNum">      87 </span><span class="lineNoCov">          0 : static const TokenAtom KWD_THEN = {Word, &quot;then&quot;_a};</span></a>
 <a name="88"><span class="lineNum">      88 </span><span class="lineNoCov">          0 : static const TokenAtom KWD_TRUE = {Word, &quot;true&quot;_a};</span></a>
-<a name="89"><span class="lineNum">      89 </span><span class="lineNoCov">          0 : static const TokenAtom KWD_FALSE = {Word, &quot;false&quot;_a};</span></a>
-<a name="90"><span class="lineNum">      90 </span><span class="lineNoCov">          0 : static const TokenAtom KWD_WHILE = {Word, &quot;while&quot;_a};</span></a>
-<a name="91"><span class="lineNum">      91 </span><span class="lineNoCov">          0 : static const TokenAtom KWD_CONST = {Word, &quot;const&quot;_a};</span></a>
-<a name="92"><span class="lineNum">      92 </span><span class="lineNoCov">          0 : static const TokenAtom KWD_STRUCT = {Word, &quot;struct&quot;_a};</span></a>
-<a name="93"><span class="lineNum">      93 </span><span class="lineNoCov">          0 : static const TokenAtom KWD_RETURN = {Word, &quot;return&quot;_a};</span></a>
-<a name="94"><span class="lineNum">      94 </span><span class="lineNoCov">          0 : static const TokenAtom KWD_ABSTRACT = {Word, &quot;abstract&quot;_a};</span></a>
-<a name="95"><span class="lineNum">      95 </span><span class="lineNoCov">          0 : static const TokenAtom KWD_INTERFACE = {Word, &quot;interface&quot;_a};</span></a>
-<a name="96"><span class="lineNum">      96 </span>            : </a>
-<a name="97"><span class="lineNum">      97 </span><span class="lineNoCov">          0 : static const TokenAtom KWD_EXTERN = {Word, &quot;__extern__&quot;_a};</span></a>
-<a name="98"><span class="lineNum">      98 </span><span class="lineNoCov">          0 : static const TokenAtom KWD_VARARGS = {Word, &quot;__varargs__&quot;_a};</span></a>
-<a name="99"><span class="lineNum">      99 </span><span class="lineNoCov">          0 : static const TokenAtom KWD_PRIMITIVE = {Word, &quot;__primitive__&quot;_a};</span></a>
-<a name="100"><span class="lineNum">     100 </span>            : </a>
-<a name="101"><span class="lineNum">     101 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_COMMA = {Symbol, &quot;,&quot;_a};</span></a>
-<a name="102"><span class="lineNum">     102 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_DOT = {Symbol, &quot;.&quot;_a};</span></a>
-<a name="103"><span class="lineNum">     103 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_EQ = {Symbol, &quot;=&quot;_a};</span></a>
-<a name="104"><span class="lineNum">     104 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_AT = {Symbol, &quot;@&quot;_a};</span></a>
-<a name="105"><span class="lineNum">     105 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_LPAREN = {Symbol, &quot;(&quot;_a};</span></a>
-<a name="106"><span class="lineNum">     106 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_RPAREN = {Symbol, &quot;)&quot;_a};</span></a>
-<a name="107"><span class="lineNum">     107 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_LBRACKET = {Symbol, &quot;[&quot;_a};</span></a>
-<a name="108"><span class="lineNum">     108 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_RBRACKET = {Symbol, &quot;]&quot;_a};</span></a>
-<a name="109"><span class="lineNum">     109 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_LBRACE = {Symbol, &quot;{&quot;_a};</span></a>
-<a name="110"><span class="lineNum">     110 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_RBRACE = {Symbol, &quot;}&quot;_a};</span></a>
-<a name="111"><span class="lineNum">     111 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_EQ_EQ = {Symbol, &quot;==&quot;_a};</span></a>
-<a name="112"><span class="lineNum">     112 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_NEQ = {Symbol, &quot;!=&quot;_a};</span></a>
-<a name="113"><span class="lineNum">     113 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_AND = {Symbol, &quot;&amp;&quot;_a};</span></a>
-<a name="114"><span class="lineNum">     114 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_LT = {Symbol, &quot;&lt;&quot;_a};</span></a>
-<a name="115"><span class="lineNum">     115 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_GT = {Symbol, &quot;&gt;&quot;_a};</span></a>
-<a name="116"><span class="lineNum">     116 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_PLUS = {Symbol, &quot;+&quot;_a};</span></a>
-<a name="117"><span class="lineNum">     117 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_MINUS = {Symbol, &quot;-&quot;_a};</span></a>
-<a name="118"><span class="lineNum">     118 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_PERCENT = {Symbol, &quot;%&quot;_a};</span></a>
-<a name="119"><span class="lineNum">     119 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_SLASH_SLASH = {Symbol, &quot;//&quot;_a};</span></a>
-<a name="120"><span class="lineNum">     120 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_STAR = {Symbol, &quot;*&quot;_a};</span></a>
-<a name="121"><span class="lineNum">     121 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_BANG = {Symbol, &quot;!&quot;_a};</span></a>
-<a name="122"><span class="lineNum">     122 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_COLON = {Symbol, &quot;:&quot;_a};</span></a>
-<a name="123"><span class="lineNum">     123 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_COLON_COLON = {Symbol, &quot;::&quot;_a};</span></a>
-<a name="124"><span class="lineNum">     124 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_OR_OR = {Symbol, &quot;||&quot;_a};</span></a>
-<a name="125"><span class="lineNum">     125 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_AND_AND = {Symbol, &quot;&amp;&amp;&quot;_a};</span></a>
-<a name="126"><span class="lineNum">     126 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_ARROW = {Symbol, &quot;-&gt;&quot;_a};</span></a>
-<a name="127"><span class="lineNum">     127 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_DOLLAR = {Symbol, &quot;$&quot;_a};</span></a>
-<a name="128"><span class="lineNum">     128 </span>            : </a>
-<a name="129"><span class="lineNum">     129 </span><span class="lineNoCov">          0 : class TokenRange {</span></a>
-<a name="130"><span class="lineNum">     130 </span><span class="lineNoCov">          0 :   span&lt;Token&gt; m_span;</span></a>
-<a name="131"><span class="lineNum">     131 </span>            : </a>
-<a name="132"><span class="lineNum">     132 </span>            : public:</a>
-<a name="133"><span class="lineNum">     133 </span><span class="lineNoCov">          0 :   constexpr TokenRange(auto&amp;&amp; begin, int end) : m_span{begin.base(), static_cast&lt;size_t&gt;(end)} {}</span></a>
-<a name="134"><span class="lineNum">     134 </span><span class="lineNoCov">          0 :   constexpr TokenRange(auto&amp;&amp; begin, auto&amp;&amp; end) : m_span{begin.base(), end.base()} {}</span></a>
-<a name="135"><span class="lineNum">     135 </span>            : </a>
-<a name="136"><span class="lineNum">     136 </span><span class="lineNoCov">          0 :   /* implicit */ operator span&lt;Token&gt;() const { return m_span; }</span></a>
-<a name="137"><span class="lineNum">     137 </span>            : };</a>
-<a name="138"><span class="lineNum">     138 </span>            : </a>
-<a name="139"><span class="lineNum">     139 </span><span class="lineNoCov">          0 : struct Parser {</span></a>
-<a name="140"><span class="lineNum">     140 </span><span class="lineNoCov">          0 :   TokenIterator&amp; tokens;</span></a>
-<a name="141"><span class="lineNum">     141 </span>            : </a>
-<a name="142"><span class="lineNum">     142 </span><span class="lineNoCov">          0 :   template &lt;typename T, typename U&gt; static auto ts(T&amp;&amp; begin, U&amp;&amp; end) -&gt; span&lt;Token&gt; {</span></a>
-<a name="143"><span class="lineNum">     143 </span>            :     return TokenRange{std::forward&lt;T&gt;(begin), std::forward&lt;U&gt;(end)};</a>
-<a name="144"><span class="lineNum">     144 </span>            :   }</a>
-<a name="145"><span class="lineNum">     145 </span>            : </a>
-<a name="146"><span class="lineNum">     146 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ts(const VectorTokenIterator&amp; entry) const -&gt; span&lt;Token&gt; {</span></a>
-<a name="147"><span class="lineNum">     147 </span>            :     return span&lt;Token&gt;{entry.base(), tokens.begin().base()};</a>
-<a name="148"><span class="lineNum">     148 </span>            :   }</a>
-<a name="149"><span class="lineNum">     149 </span>            : </a>
-<a name="150"><span class="lineNum">     150 </span><span class="lineNoCov">          0 :   template &lt;typename T, typename... Args&gt; auto ast_ptr(const VectorTokenIterator&amp; entry, Args&amp;&amp;... args) {</span></a>
-<a name="151"><span class="lineNum">     151 </span>            :     return std::make_unique&lt;T&gt;(span&lt;Token&gt;{entry.base(), tokens.begin().base()}, std::forward&lt;Args&gt;(args)...);</a>
-<a name="152"><span class="lineNum">     152 </span>            :   }</a>
-<a name="153"><span class="lineNum">     153 </span>            : </a>
-<a name="154"><span class="lineNum">     154 </span><span class="lineNoCov">          0 :   template &lt;typename T, typename... Args&gt; auto ast_ptr(TokenRange&amp;&amp; range, Args&amp;&amp;... args) {</span></a>
-<a name="155"><span class="lineNum">     155 </span>            :     return std::make_unique&lt;T&gt;(static_cast&lt;span&lt;Token&gt;&gt;(range), std::forward&lt;Args&gt;(args)...);</a>
-<a name="156"><span class="lineNum">     156 </span>            :   }</a>
-<a name="157"><span class="lineNum">     157 </span>            : </a>
-<a name="158"><span class="lineNum">     158 </span><span class="lineNoCov">          0 :   template &lt;typename T, typename... Args&gt; auto make_ast(const VectorTokenIterator&amp; entry, Args&amp;&amp;... args) {</span></a>
-<a name="159"><span class="lineNum">     159 </span>            :     return T(span&lt;Token&gt;{entry.base(), tokens.begin().base()}, std::forward&lt;Args&gt;(args)...);</a>
-<a name="160"><span class="lineNum">     160 </span>            :   }</a>
-<a name="161"><span class="lineNum">     161 </span>            : </a>
-<a name="162"><span class="lineNum">     162 </span><span class="lineNoCov">          0 :   struct FnArg {</span></a>
-<a name="163"><span class="lineNum">     163 </span><span class="lineNoCov">          0 :     unique_ptr&lt;TypeName&gt; type_name;</span></a>
-<a name="164"><span class="lineNum">     164 </span><span class="lineNoCov">          0 :     OptionalStmt extra_body;</span></a>
-<a name="165"><span class="lineNum">     165 </span>            :   };</a>
-<a name="166"><span class="lineNum">     166 </span>            : </a>
-<a name="167"><span class="lineNum">     167 </span><span class="lineNoCov">          0 :   constexpr static auto Symbol = Token::Type::Symbol;</span></a>
-<a name="168"><span class="lineNum">     168 </span><span class="lineNoCov">          0 :   constexpr static auto Word = Token::Type::Word;</span></a>
-<a name="169"><span class="lineNum">     169 </span><span class="lineNoCov">          0 :   constexpr static auto Separator = Token::Type::Separator;</span></a>
-<a name="170"><span class="lineNum">     170 </span><span class="lineNoCov">          0 :   constexpr static auto Number = Token::Type::Number;</span></a>
-<a name="171"><span class="lineNum">     171 </span>            : </a>
-<a name="172"><span class="lineNum">     172 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto make_guard(const string&amp; message) const -&gt; ParserStackTrace { return {message, *tokens}; }</span></a>
-<a name="173"><span class="lineNum">     173 </span>            : </a>
-<a name="174"><span class="lineNum">     174 </span><span class="lineNoCov">          0 :   static auto operators() {</span></a>
-<a name="175"><span class="lineNum">     175 </span>            :     const static array OPERATORS = {</a>
-<a name="176"><span class="lineNum">     176 </span>            :         vector{SYM_AND},</a>
-<a name="177"><span class="lineNum">     177 </span>            :         vector{SYM_EQ_EQ, SYM_NEQ, SYM_GT, SYM_LT},</a>
-<a name="178"><span class="lineNum">     178 </span>            :         vector{SYM_PLUS, SYM_MINUS},</a>
-<a name="179"><span class="lineNum">     179 </span>            :         vector{SYM_PERCENT, SYM_SLASH_SLASH, SYM_STAR},</a>
-<a name="180"><span class="lineNum">     180 </span>            :     };</a>
-<a name="181"><span class="lineNum">     181 </span>            :     return OPERATORS;</a>
-<a name="182"><span class="lineNum">     182 </span>            :   };</a>
-<a name="183"><span class="lineNum">     183 </span>            : </a>
-<a name="184"><span class="lineNum">     184 </span><span class="lineNoCov">          0 :   static auto unary_operators() {</span></a>
-<a name="185"><span class="lineNum">     185 </span>            :     const static vector UNARY_OPERATORS = {</a>
-<a name="186"><span class="lineNum">     186 </span>            :         SYM_MINUS,</a>
-<a name="187"><span class="lineNum">     187 </span>            :         SYM_PLUS,</a>
-<a name="188"><span class="lineNum">     188 </span>            :         SYM_BANG,</a>
-<a name="189"><span class="lineNum">     189 </span>            :     };</a>
-<a name="190"><span class="lineNum">     190 </span>            :     return UNARY_OPERATORS;</a>
-<a name="191"><span class="lineNum">     191 </span>            :   };</a>
-<a name="192"><span class="lineNum">     192 </span>            : </a>
-<a name="193"><span class="lineNum">     193 </span><span class="lineNoCov">          0 :   static auto to_string(Token token) -&gt; string;</span></a>
-<a name="194"><span class="lineNum">     194 </span>            : </a>
-<a name="195"><span class="lineNum">     195 </span>            :   /// Ignore any `Separator` tokens if any are present.</a>
-<a name="196"><span class="lineNum">     196 </span>            :   /// \returns true if a separator was encountered (and consumed)</a>
-<a name="197"><span class="lineNum">     197 </span><span class="lineCov">          1 :   auto ignore_separator(source_location location = source_location::current()) -&gt; bool;</span></a>
-<a name="198"><span class="lineNum">     198 </span>            : </a>
-<a name="199"><span class="lineNum">     199 </span>            :   /// If the next token doesn't have the type, `token_type`, throw a runtime exception.</a>
-<a name="200"><span class="lineNum">     200 </span><span class="lineCov">          1 :   void expect(Token::Type token_type, source_location location = source_location::current()) const;</span></a>
-<a name="201"><span class="lineNum">     201 </span>            : </a>
-<a name="202"><span class="lineNum">     202 </span>            :   /// Consume all subsequent `Separator` tokens. Throws if none were found.</a>
-<a name="203"><span class="lineNum">     203 </span><span class="lineCov">          1 :   void require_separator(source_location location = source_location::current());</span></a>
-<a name="204"><span class="lineNum">     204 </span>            : </a>
-<a name="205"><span class="lineNum">     205 </span>            :   /// Consume a token of the given type and payload. Throws if it wasn't encountered.</a>
-<a name="206"><span class="lineNum">     206 </span><span class="lineCov">          1 :   void consume(TokenAtom token_atom, source_location location = source_location::current());</span></a>
-<a name="207"><span class="lineNum">     207 </span>            : </a>
-<a name="208"><span class="lineNum">     208 </span>            :   /// Attempt to consume a token of the given type and payload. Returns false if it wasn't encountered.</a>
-<a name="209"><span class="lineNum">     209 </span><span class="lineCov">          1 :   auto try_consume(TokenAtom token_atom, source_location location = source_location::current()) -&gt; bool;</span></a>
-<a name="210"><span class="lineNum">     210 </span>            : </a>
-<a name="211"><span class="lineNum">     211 </span>            :   /// Check if the token ahead by `ahead` is of the given type and payload.</a>
-<a name="212"><span class="lineNum">     212 </span><span class="lineCov">          1 :   [[nodiscard]] auto try_peek(int ahead, TokenAtom token_atom,</span></a>
-<a name="213"><span class="lineNum">     213 </span>            :                               source_location location = source_location::current()) const -&gt; bool;</a>
-<a name="214"><span class="lineNum">     214 </span>            : </a>
-<a name="215"><span class="lineNum">     215 </span>            :   /// Check if the token ahead by `ahead` is of type `token_type`.</a>
-<a name="216"><span class="lineNum">     216 </span><span class="lineCov">          1 :   [[nodiscard]] auto try_peek(int ahead, Token::Type token_type,</span></a>
-<a name="217"><span class="lineNum">     217 </span>            :                               source_location location = source_location::current()) const -&gt; bool;</a>
-<a name="218"><span class="lineNum">     218 </span>            : </a>
-<a name="219"><span class="lineNum">     219 </span>            :   /// Consume tokens until a token of the given type and payload is encountered.</a>
-<a name="220"><span class="lineNum">     220 </span>            :   /// `action` (a no-arg function) is called every time. Between each call, a comma is expected.</a>
-<a name="221"><span class="lineNum">     221 </span><span class="lineCov">          1 :   void consume_with_commas_until(TokenAtom token_atom, std::invocable auto action,</span></a>
-<a name="222"><span class="lineNum">     222 </span>            :                                  const source_location location = source_location::current()) {</a>
-<a name="223"><span class="lineNum">     223 </span>            :     int i = 0;</a>
-<a name="224"><span class="lineNum">     224 </span>            :     while (!try_consume(token_atom, location)) {</a>
-<a name="225"><span class="lineNum">     225 </span>            :       if (i++ &gt; 0)</a>
-<a name="226"><span class="lineNum">     226 </span>            :         consume(SYM_COMMA, location);</a>
-<a name="227"><span class="lineNum">     227 </span>            :       action();</a>
-<a name="228"><span class="lineNum">     228 </span>            :     }</a>
-<a name="229"><span class="lineNum">     229 </span>            :   }</a>
-<a name="230"><span class="lineNum">     230 </span>            : </a>
-<a name="231"><span class="lineNum">     231 </span>            :   /// Consume tokens until a token of the given type and payload is encountered.</a>
-<a name="232"><span class="lineNum">     232 </span>            :   /// `action` (a no-arg member function) is called every time and its result is appended to `vec`. Between each call, a</a>
-<a name="233"><span class="lineNum">     233 </span>            :   /// comma is expected.</a>
-<a name="234"><span class="lineNum">     234 </span>            :   template &lt;typename T, std::convertible_to&lt;T&gt; U&gt;</a>
-<a name="235"><span class="lineNum">     235 </span><span class="lineCov">          1 :   void collect_with_commas_until(TokenAtom token_atom, U (Parser::*action)(), vector&lt;T&gt;&amp; vec,</span></a>
-<a name="236"><span class="lineNum">     236 </span>            :                                  const source_location location = source_location::current()) {</a>
-<a name="237"><span class="lineNum">     237 </span>            :     int i = 0;</a>
-<a name="238"><span class="lineNum">     238 </span>            :     while (!try_consume(token_atom, location)) {</a>
-<a name="239"><span class="lineNum">     239 </span>            :       if (i++ &gt; 0)</a>
-<a name="240"><span class="lineNum">     240 </span>            :         consume(SYM_COMMA, location);</a>
-<a name="241"><span class="lineNum">     241 </span>            :       vec.emplace_back((this-&gt;*action)());</a>
-<a name="242"><span class="lineNum">     242 </span>            :     }</a>
-<a name="243"><span class="lineNum">     243 </span>            :   }</a>
-<a name="244"><span class="lineNum">     244 </span>            : </a>
-<a name="245"><span class="lineNum">     245 </span>            :   /// Consume tokens until a token of the given type and payload is encountered.</a>
-<a name="246"><span class="lineNum">     246 </span>            :   /// `action` (a no-arg member function) is called every time. Between each call, a comma is expected.</a>
-<a name="247"><span class="lineNum">     247 </span>            :   /// Returns a vector of all the results of calling `action`.</a>
-<a name="248"><span class="lineNum">     248 </span>            :   template &lt;typename T, std::convertible_to&lt;T&gt; U&gt;</a>
-<a name="249"><span class="lineNum">     249 </span><span class="lineCov">          1 :   [[nodiscard]] auto collect_with_commas_until(TokenAtom token_atom, U (Parser::*action)(),</span></a>
-<a name="250"><span class="lineNum">     250 </span>            :                                                const source_location location = source_location::current())</a>
-<a name="251"><span class="lineNum">     251 </span>            :       -&gt; vector&lt;T&gt; {</a>
-<a name="252"><span class="lineNum">     252 </span>            :     vector&lt;T&gt; vec{};</a>
-<a name="253"><span class="lineNum">     253 </span>            :     int i = 0;</a>
-<a name="254"><span class="lineNum">     254 </span>            :     while (!try_consume(token_atom, location)) {</a>
-<a name="255"><span class="lineNum">     255 </span>            :       if (i++ &gt; 0)</a>
-<a name="256"><span class="lineNum">     256 </span>            :         consume(SYM_COMMA, location);</a>
-<a name="257"><span class="lineNum">     257 </span>            :       vec.emplace_back((this-&gt;*action)());</a>
-<a name="258"><span class="lineNum">     258 </span>            :     }</a>
-<a name="259"><span class="lineNum">     259 </span>            :     return vec;</a>
-<a name="260"><span class="lineNum">     260 </span>            :   }</a>
-<a name="261"><span class="lineNum">     261 </span>            : </a>
-<a name="262"><span class="lineNum">     262 </span>            :   /// Return the next token and increment the iterator.</a>
-<a name="263"><span class="lineNum">     263 </span><span class="lineCov">          1 :   auto next([[maybe_unused]] source_location location = source_location::current()) -&gt; Token;</span></a>
-<a name="264"><span class="lineNum">     264 </span>            : </a>
-<a name="265"><span class="lineNum">     265 </span>            :   /// Returns the payload of the next token and increment the iterator.</a>
-<a name="266"><span class="lineNum">     266 </span>            :   /// \throws if the next token has no payload</a>
-<a name="267"><span class="lineNum">     267 </span><span class="lineCov">          1 :   auto assert_payload_next([[maybe_unused]] source_location location = source_location::current()) -&gt; Atom;</span></a>
-<a name="268"><span class="lineNum">     268 </span>            : </a>
-<a name="269"><span class="lineNum">     269 </span>            :   /// Return the payload of the next token. Throws if the next token isn't a `Word`.</a>
-<a name="270"><span class="lineNum">     270 </span><span class="lineCov">          1 :   auto consume_word(source_location location = source_location::current()) -&gt; string;</span></a>
-<a name="271"><span class="lineNum">     271 </span>            : </a>
-<a name="272"><span class="lineNum">     272 </span>            :   /// Check if the string begins with a capital letter. Used for types, as all types must be capitalized.</a>
-<a name="273"><span class="lineNum">     273 </span><span class="lineCov">          1 :   static auto is_uword(string_view word) -&gt; bool { return isupper(word.front()) != 0; }</span></a>
-<a name="274"><span class="lineNum">     274 </span>            : </a>
-<a name="275"><span class="lineNum">     275 </span>            :   /// Check if the ahead by `ahead` is a capitalized word.</a>
-<a name="276"><span class="lineNum">     276 </span><span class="lineCov">          1 :   [[nodiscard]] auto try_peek_uword(int ahead, source_location location = source_location::current()) const -&gt; bool;</span></a>
-<a name="277"><span class="lineNum">     277 </span>            : </a>
-<a name="278"><span class="lineNum">     278 </span><span class="lineNoCov">          0 :   auto parse_stmt(bool require_sep = true) -&gt; unique_ptr&lt;Stmt&gt;;</span></a>
-<a name="279"><span class="lineNum">     279 </span><span class="lineNoCov">          0 :   auto parse_expr() -&gt; unique_ptr&lt;Expr&gt;;</span></a>
-<a name="280"><span class="lineNum">     280 </span>            : </a>
-<a name="281"><span class="lineNum">     281 </span><span class="lineNoCov">          0 :   auto parse_fn_arg() -&gt; FnArg;</span></a>
-<a name="282"><span class="lineNum">     282 </span>            : </a>
-<a name="283"><span class="lineNum">     283 </span><span class="lineNoCov">          0 :   auto try_parse_function_type() -&gt; optional&lt;unique_ptr&lt;FunctionType&gt;&gt;;</span></a>
-<a name="284"><span class="lineNum">     284 </span><span class="lineNoCov">          0 :   auto try_parse_type() -&gt; optional&lt;unique_ptr&lt;Type&gt;&gt;;</span></a>
-<a name="285"><span class="lineNum">     285 </span><span class="lineNoCov">          0 :   auto parse_type(bool implicit_self = false) -&gt; unique_ptr&lt;Type&gt;;</span></a>
-<a name="286"><span class="lineNum">     286 </span>            : </a>
-<a name="287"><span class="lineNum">     287 </span><span class="lineNoCov">          0 :   auto parse_type_name() -&gt; unique_ptr&lt;TypeName&gt;;</span></a>
-<a name="288"><span class="lineNum">     288 </span>            : </a>
-<a name="289"><span class="lineNum">     289 </span><span class="lineNoCov">          0 :   auto parse_fn_name() -&gt; string;</span></a>
-<a name="290"><span class="lineNum">     290 </span>            : </a>
-<a name="291"><span class="lineNum">     291 </span><span class="lineNoCov">          0 :   auto parse_struct_decl() -&gt; unique_ptr&lt;StructDecl&gt;;</span></a>
-<a name="292"><span class="lineNum">     292 </span>            : </a>
-<a name="293"><span class="lineNum">     293 </span><span class="lineNoCov">          0 :   auto parse_fn_or_ctor_decl() -&gt; unique_ptr&lt;Stmt&gt;;</span></a>
-<a name="294"><span class="lineNum">     294 </span><span class="lineNoCov">          0 :   auto parse_fn_decl() -&gt; unique_ptr&lt;FnDecl&gt;;</span></a>
-<a name="295"><span class="lineNum">     295 </span><span class="lineNoCov">          0 :   auto parse_ctor_decl() -&gt; unique_ptr&lt;CtorDecl&gt;;</span></a>
-<a name="296"><span class="lineNum">     296 </span>            : </a>
-<a name="297"><span class="lineNum">     297 </span><span class="lineNoCov">          0 :   auto parse_var_decl() -&gt; unique_ptr&lt;VarDecl&gt;;</span></a>
-<a name="298"><span class="lineNum">     298 </span>            : </a>
-<a name="299"><span class="lineNum">     299 </span><span class="lineNoCov">          0 :   auto parse_const_decl() -&gt; unique_ptr&lt;ConstDecl&gt;;</span></a>
-<a name="300"><span class="lineNum">     300 </span>            : </a>
-<a name="301"><span class="lineNum">     301 </span><span class="lineNoCov">          0 :   auto parse_while_stmt() -&gt; unique_ptr&lt;WhileStmt&gt;;</span></a>
-<a name="302"><span class="lineNum">     302 </span>            : </a>
-<a name="303"><span class="lineNum">     303 </span><span class="lineNoCov">          0 :   auto parse_return_stmt() -&gt; unique_ptr&lt;ReturnStmt&gt;;</span></a>
-<a name="304"><span class="lineNum">     304 </span>            : </a>
-<a name="305"><span class="lineNum">     305 </span><span class="lineNoCov">          0 :   auto parse_if_stmt() -&gt; unique_ptr&lt;IfStmt&gt;;</span></a>
-<a name="306"><span class="lineNum">     306 </span>            : </a>
-<a name="307"><span class="lineNum">     307 </span><span class="lineNoCov">          0 :   auto parse_number_expr() -&gt; unique_ptr&lt;NumberExpr&gt;;</span></a>
-<a name="308"><span class="lineNum">     308 </span>            : </a>
-<a name="309"><span class="lineNum">     309 </span><span class="lineNoCov">          0 :   auto parse_string_expr() -&gt; unique_ptr&lt;StringExpr&gt;;</span></a>
-<a name="310"><span class="lineNum">     310 </span>            : </a>
-<a name="311"><span class="lineNum">     311 </span><span class="lineNoCov">          0 :   auto parse_char_expr() -&gt; unique_ptr&lt;CharExpr&gt;;</span></a>
-<a name="312"><span class="lineNum">     312 </span>            : </a>
-<a name="313"><span class="lineNum">     313 </span><span class="lineNoCov">          0 :   auto parse_primary() -&gt; unique_ptr&lt;Expr&gt;;</span></a>
-<a name="314"><span class="lineNum">     314 </span>            : </a>
-<a name="315"><span class="lineNum">     315 </span><span class="lineNoCov">          0 :   auto parse_receiver(unique_ptr&lt;Expr&gt; receiver, VectorTokenIterator receiver_entry) -&gt; unique_ptr&lt;Expr&gt;;</span></a>
-<a name="316"><span class="lineNum">     316 </span>            : </a>
-<a name="317"><span class="lineNum">     317 </span><span class="lineNoCov">          0 :   auto parse_receiver() -&gt; unique_ptr&lt;Expr&gt;;</span></a>
-<a name="318"><span class="lineNum">     318 </span>            : </a>
-<a name="319"><span class="lineNum">     319 </span><span class="lineNoCov">          0 :   auto parse_unary() -&gt; unique_ptr&lt;Expr&gt;;</span></a>
-<a name="320"><span class="lineNum">     320 </span>            : </a>
-<a name="321"><span class="lineNum">     321 </span><span class="lineNoCov">          0 :   auto parse_lambda() -&gt; unique_ptr&lt;LambdaExpr&gt;;</span></a>
-<a name="322"><span class="lineNum">     322 </span>            : </a>
-<a name="323"><span class="lineNum">     323 </span><span class="lineNoCov">          0 :   auto parse_logical_or() -&gt; unique_ptr&lt;Expr&gt;;</span></a>
-<a name="324"><span class="lineNum">     324 </span><span class="lineNoCov">          0 :   auto parse_logical_and() -&gt; unique_ptr&lt;Expr&gt;;</span></a>
-<a name="325"><span class="lineNum">     325 </span>            : </a>
-<a name="326"><span class="lineNum">     326 </span><span class="lineNoCov">          0 :   template &lt;size_t N = 0&gt; auto parse_operator() -&gt; unique_ptr&lt;Expr&gt; {</span></a>
-<a name="327"><span class="lineNum">     327 </span>            :     auto entry = tokens.begin();</a>
-<a name="328"><span class="lineNum">     328 </span>            :     const auto ops = operators();</a>
-<a name="329"><span class="lineNum">     329 </span>            :     if constexpr (N == ops.size()) {</a>
-<a name="330"><span class="lineNum">     330 </span>            :       return parse_unary();</a>
-<a name="331"><span class="lineNum">     331 </span>            :     } else {</a>
-<a name="332"><span class="lineNum">     332 </span>            :       auto left = parse_operator&lt;N + 1&gt;();</a>
-<a name="333"><span class="lineNum">     333 </span>            :       while (true) {</a>
-<a name="334"><span class="lineNum">     334 </span>            :         auto found_operator = false;</a>
-<a name="335"><span class="lineNum">     335 </span>            :         for (const auto&amp; op : ops[N]) {</a>
-<a name="336"><span class="lineNum">     336 </span>            :           if (try_consume(op)) {</a>
-<a name="337"><span class="lineNum">     337 </span>            :             auto right = parse_operator&lt;N + 1&gt;();</a>
-<a name="338"><span class="lineNum">     338 </span>            :             auto args = vector&lt;AnyExpr&gt;{};</a>
-<a name="339"><span class="lineNum">     339 </span>            :             args.emplace_back(move(left));</a>
-<a name="340"><span class="lineNum">     340 </span>            :             args.emplace_back(move(right));</a>
-<a name="341"><span class="lineNum">     341 </span>            :             left = ast_ptr&lt;CallExpr&gt;(entry, string(std::get&lt;Atom&gt;(op)), std::nullopt, move(args));</a>
-<a name="342"><span class="lineNum">     342 </span>            :             found_operator = true;</a>
-<a name="343"><span class="lineNum">     343 </span>            :             break;</a>
-<a name="344"><span class="lineNum">     344 </span>            :           }</a>
-<a name="345"><span class="lineNum">     345 </span>            :         }</a>
-<a name="346"><span class="lineNum">     346 </span>            :         if (!found_operator)</a>
-<a name="347"><span class="lineNum">     347 </span>            :           break;</a>
-<a name="348"><span class="lineNum">     348 </span>            :       }</a>
-<a name="349"><span class="lineNum">     349 </span>            :       return left;</a>
-<a name="350"><span class="lineNum">     350 </span>            :     }</a>
-<a name="351"><span class="lineNum">     351 </span>            :   }</a>
-<a name="352"><span class="lineNum">     352 </span>            : };</a>
-<a name="353"><span class="lineNum">     353 </span>            : } // namespace yume::ast::parser</a>
+<a name="89"><span class="lineNum">      89 </span><span class="lineNoCov">          0 : static const TokenAtom KWD_TYPE = {Word, &quot;type&quot;_a};</span></a>
+<a name="90"><span class="lineNum">      90 </span><span class="lineNoCov">          0 : static const TokenAtom KWD_FALSE = {Word, &quot;false&quot;_a};</span></a>
+<a name="91"><span class="lineNum">      91 </span><span class="lineNoCov">          0 : static const TokenAtom KWD_WHILE = {Word, &quot;while&quot;_a};</span></a>
+<a name="92"><span class="lineNum">      92 </span><span class="lineNoCov">          0 : static const TokenAtom KWD_CONST = {Word, &quot;const&quot;_a};</span></a>
+<a name="93"><span class="lineNum">      93 </span><span class="lineNoCov">          0 : static const TokenAtom KWD_STRUCT = {Word, &quot;struct&quot;_a};</span></a>
+<a name="94"><span class="lineNum">      94 </span><span class="lineNoCov">          0 : static const TokenAtom KWD_RETURN = {Word, &quot;return&quot;_a};</span></a>
+<a name="95"><span class="lineNum">      95 </span><span class="lineNoCov">          0 : static const TokenAtom KWD_ABSTRACT = {Word, &quot;abstract&quot;_a};</span></a>
+<a name="96"><span class="lineNum">      96 </span><span class="lineNoCov">          0 : static const TokenAtom KWD_INTERFACE = {Word, &quot;interface&quot;_a};</span></a>
+<a name="97"><span class="lineNum">      97 </span>            : </a>
+<a name="98"><span class="lineNum">      98 </span><span class="lineNoCov">          0 : static const TokenAtom KWD_EXTERN = {Word, &quot;__extern__&quot;_a};</span></a>
+<a name="99"><span class="lineNum">      99 </span><span class="lineNoCov">          0 : static const TokenAtom KWD_VARARGS = {Word, &quot;__varargs__&quot;_a};</span></a>
+<a name="100"><span class="lineNum">     100 </span><span class="lineNoCov">          0 : static const TokenAtom KWD_PRIMITIVE = {Word, &quot;__primitive__&quot;_a};</span></a>
+<a name="101"><span class="lineNum">     101 </span>            : </a>
+<a name="102"><span class="lineNum">     102 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_COMMA = {Symbol, &quot;,&quot;_a};</span></a>
+<a name="103"><span class="lineNum">     103 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_DOT = {Symbol, &quot;.&quot;_a};</span></a>
+<a name="104"><span class="lineNum">     104 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_EQ = {Symbol, &quot;=&quot;_a};</span></a>
+<a name="105"><span class="lineNum">     105 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_AT = {Symbol, &quot;@&quot;_a};</span></a>
+<a name="106"><span class="lineNum">     106 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_LPAREN = {Symbol, &quot;(&quot;_a};</span></a>
+<a name="107"><span class="lineNum">     107 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_RPAREN = {Symbol, &quot;)&quot;_a};</span></a>
+<a name="108"><span class="lineNum">     108 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_LBRACKET = {Symbol, &quot;[&quot;_a};</span></a>
+<a name="109"><span class="lineNum">     109 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_RBRACKET = {Symbol, &quot;]&quot;_a};</span></a>
+<a name="110"><span class="lineNum">     110 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_LBRACE = {Symbol, &quot;{&quot;_a};</span></a>
+<a name="111"><span class="lineNum">     111 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_RBRACE = {Symbol, &quot;}&quot;_a};</span></a>
+<a name="112"><span class="lineNum">     112 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_EQ_EQ = {Symbol, &quot;==&quot;_a};</span></a>
+<a name="113"><span class="lineNum">     113 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_NEQ = {Symbol, &quot;!=&quot;_a};</span></a>
+<a name="114"><span class="lineNum">     114 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_AND = {Symbol, &quot;&amp;&quot;_a};</span></a>
+<a name="115"><span class="lineNum">     115 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_LT = {Symbol, &quot;&lt;&quot;_a};</span></a>
+<a name="116"><span class="lineNum">     116 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_GT = {Symbol, &quot;&gt;&quot;_a};</span></a>
+<a name="117"><span class="lineNum">     117 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_PLUS = {Symbol, &quot;+&quot;_a};</span></a>
+<a name="118"><span class="lineNum">     118 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_MINUS = {Symbol, &quot;-&quot;_a};</span></a>
+<a name="119"><span class="lineNum">     119 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_PERCENT = {Symbol, &quot;%&quot;_a};</span></a>
+<a name="120"><span class="lineNum">     120 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_SLASH_SLASH = {Symbol, &quot;//&quot;_a};</span></a>
+<a name="121"><span class="lineNum">     121 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_STAR = {Symbol, &quot;*&quot;_a};</span></a>
+<a name="122"><span class="lineNum">     122 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_BANG = {Symbol, &quot;!&quot;_a};</span></a>
+<a name="123"><span class="lineNum">     123 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_COLON = {Symbol, &quot;:&quot;_a};</span></a>
+<a name="124"><span class="lineNum">     124 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_COLON_COLON = {Symbol, &quot;::&quot;_a};</span></a>
+<a name="125"><span class="lineNum">     125 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_OR_OR = {Symbol, &quot;||&quot;_a};</span></a>
+<a name="126"><span class="lineNum">     126 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_AND_AND = {Symbol, &quot;&amp;&amp;&quot;_a};</span></a>
+<a name="127"><span class="lineNum">     127 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_ARROW = {Symbol, &quot;-&gt;&quot;_a};</span></a>
+<a name="128"><span class="lineNum">     128 </span><span class="lineNoCov">          0 : static const TokenAtom SYM_DOLLAR = {Symbol, &quot;$&quot;_a};</span></a>
+<a name="129"><span class="lineNum">     129 </span>            : </a>
+<a name="130"><span class="lineNum">     130 </span><span class="lineNoCov">          0 : class TokenRange {</span></a>
+<a name="131"><span class="lineNum">     131 </span><span class="lineNoCov">          0 :   span&lt;Token&gt; m_span;</span></a>
+<a name="132"><span class="lineNum">     132 </span>            : </a>
+<a name="133"><span class="lineNum">     133 </span>            : public:</a>
+<a name="134"><span class="lineNum">     134 </span><span class="lineNoCov">          0 :   constexpr TokenRange(auto&amp;&amp; begin, int end) : m_span{begin.base(), static_cast&lt;size_t&gt;(end)} {}</span></a>
+<a name="135"><span class="lineNum">     135 </span><span class="lineNoCov">          0 :   constexpr TokenRange(auto&amp;&amp; begin, auto&amp;&amp; end) : m_span{begin.base(), end.base()} {}</span></a>
+<a name="136"><span class="lineNum">     136 </span>            : </a>
+<a name="137"><span class="lineNum">     137 </span><span class="lineNoCov">          0 :   /* implicit */ operator span&lt;Token&gt;() const { return m_span; }</span></a>
+<a name="138"><span class="lineNum">     138 </span>            : };</a>
+<a name="139"><span class="lineNum">     139 </span>            : </a>
+<a name="140"><span class="lineNum">     140 </span><span class="lineNoCov">          0 : struct Parser {</span></a>
+<a name="141"><span class="lineNum">     141 </span><span class="lineNoCov">          0 :   TokenIterator&amp; tokens;</span></a>
+<a name="142"><span class="lineNum">     142 </span>            : </a>
+<a name="143"><span class="lineNum">     143 </span><span class="lineNoCov">          0 :   template &lt;typename T, typename U&gt; static auto ts(T&amp;&amp; begin, U&amp;&amp; end) -&gt; span&lt;Token&gt; {</span></a>
+<a name="144"><span class="lineNum">     144 </span>            :     return TokenRange{std::forward&lt;T&gt;(begin), std::forward&lt;U&gt;(end)};</a>
+<a name="145"><span class="lineNum">     145 </span>            :   }</a>
+<a name="146"><span class="lineNum">     146 </span>            : </a>
+<a name="147"><span class="lineNum">     147 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ts(const VectorTokenIterator&amp; entry) const -&gt; span&lt;Token&gt; {</span></a>
+<a name="148"><span class="lineNum">     148 </span>            :     return span&lt;Token&gt;{entry.base(), tokens.begin().base()};</a>
+<a name="149"><span class="lineNum">     149 </span>            :   }</a>
+<a name="150"><span class="lineNum">     150 </span>            : </a>
+<a name="151"><span class="lineNum">     151 </span><span class="lineNoCov">          0 :   template &lt;typename T, typename... Args&gt; auto ast_ptr(const VectorTokenIterator&amp; entry, Args&amp;&amp;... args) {</span></a>
+<a name="152"><span class="lineNum">     152 </span>            :     return std::make_unique&lt;T&gt;(span&lt;Token&gt;{entry.base(), tokens.begin().base()}, std::forward&lt;Args&gt;(args)...);</a>
+<a name="153"><span class="lineNum">     153 </span>            :   }</a>
+<a name="154"><span class="lineNum">     154 </span>            : </a>
+<a name="155"><span class="lineNum">     155 </span><span class="lineNoCov">          0 :   template &lt;typename T, typename... Args&gt; auto ast_ptr(TokenRange&amp;&amp; range, Args&amp;&amp;... args) {</span></a>
+<a name="156"><span class="lineNum">     156 </span>            :     return std::make_unique&lt;T&gt;(static_cast&lt;span&lt;Token&gt;&gt;(range), std::forward&lt;Args&gt;(args)...);</a>
+<a name="157"><span class="lineNum">     157 </span>            :   }</a>
+<a name="158"><span class="lineNum">     158 </span>            : </a>
+<a name="159"><span class="lineNum">     159 </span><span class="lineNoCov">          0 :   template &lt;typename T, typename... Args&gt; auto make_ast(const VectorTokenIterator&amp; entry, Args&amp;&amp;... args) {</span></a>
+<a name="160"><span class="lineNum">     160 </span>            :     return T(span&lt;Token&gt;{entry.base(), tokens.begin().base()}, std::forward&lt;Args&gt;(args)...);</a>
+<a name="161"><span class="lineNum">     161 </span>            :   }</a>
+<a name="162"><span class="lineNum">     162 </span>            : </a>
+<a name="163"><span class="lineNum">     163 </span><span class="lineNoCov">          0 :   struct FnArg {</span></a>
+<a name="164"><span class="lineNum">     164 </span><span class="lineNoCov">          0 :     unique_ptr&lt;TypeName&gt; type_name;</span></a>
+<a name="165"><span class="lineNum">     165 </span><span class="lineNoCov">          0 :     OptionalStmt extra_body;</span></a>
+<a name="166"><span class="lineNum">     166 </span>            :   };</a>
+<a name="167"><span class="lineNum">     167 </span>            : </a>
+<a name="168"><span class="lineNum">     168 </span><span class="lineNoCov">          0 :   constexpr static auto Symbol = Token::Type::Symbol;</span></a>
+<a name="169"><span class="lineNum">     169 </span><span class="lineNoCov">          0 :   constexpr static auto Word = Token::Type::Word;</span></a>
+<a name="170"><span class="lineNum">     170 </span><span class="lineNoCov">          0 :   constexpr static auto Separator = Token::Type::Separator;</span></a>
+<a name="171"><span class="lineNum">     171 </span><span class="lineNoCov">          0 :   constexpr static auto Number = Token::Type::Number;</span></a>
+<a name="172"><span class="lineNum">     172 </span>            : </a>
+<a name="173"><span class="lineNum">     173 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto make_guard(const string&amp; message) const -&gt; ParserStackTrace { return {message, *tokens}; }</span></a>
+<a name="174"><span class="lineNum">     174 </span>            : </a>
+<a name="175"><span class="lineNum">     175 </span><span class="lineNoCov">          0 :   static auto operators() {</span></a>
+<a name="176"><span class="lineNum">     176 </span>            :     const static array OPERATORS = {</a>
+<a name="177"><span class="lineNum">     177 </span>            :         vector{SYM_AND},</a>
+<a name="178"><span class="lineNum">     178 </span>            :         vector{SYM_EQ_EQ, SYM_NEQ, SYM_GT, SYM_LT},</a>
+<a name="179"><span class="lineNum">     179 </span>            :         vector{SYM_PLUS, SYM_MINUS},</a>
+<a name="180"><span class="lineNum">     180 </span>            :         vector{SYM_PERCENT, SYM_SLASH_SLASH, SYM_STAR},</a>
+<a name="181"><span class="lineNum">     181 </span>            :     };</a>
+<a name="182"><span class="lineNum">     182 </span>            :     return OPERATORS;</a>
+<a name="183"><span class="lineNum">     183 </span>            :   };</a>
+<a name="184"><span class="lineNum">     184 </span>            : </a>
+<a name="185"><span class="lineNum">     185 </span><span class="lineNoCov">          0 :   static auto unary_operators() {</span></a>
+<a name="186"><span class="lineNum">     186 </span>            :     const static vector UNARY_OPERATORS = {</a>
+<a name="187"><span class="lineNum">     187 </span>            :         SYM_MINUS,</a>
+<a name="188"><span class="lineNum">     188 </span>            :         SYM_PLUS,</a>
+<a name="189"><span class="lineNum">     189 </span>            :         SYM_BANG,</a>
+<a name="190"><span class="lineNum">     190 </span>            :     };</a>
+<a name="191"><span class="lineNum">     191 </span>            :     return UNARY_OPERATORS;</a>
+<a name="192"><span class="lineNum">     192 </span>            :   };</a>
+<a name="193"><span class="lineNum">     193 </span>            : </a>
+<a name="194"><span class="lineNum">     194 </span><span class="lineNoCov">          0 :   static auto to_string(Token token) -&gt; string;</span></a>
+<a name="195"><span class="lineNum">     195 </span>            : </a>
+<a name="196"><span class="lineNum">     196 </span>            :   /// Ignore any `Separator` tokens if any are present.</a>
+<a name="197"><span class="lineNum">     197 </span>            :   /// \returns true if a separator was encountered (and consumed)</a>
+<a name="198"><span class="lineNum">     198 </span><span class="lineCov">          1 :   auto ignore_separator(source_location location = source_location::current()) -&gt; bool;</span></a>
+<a name="199"><span class="lineNum">     199 </span>            : </a>
+<a name="200"><span class="lineNum">     200 </span>            :   /// If the next token doesn't have the type, `token_type`, throw a runtime exception.</a>
+<a name="201"><span class="lineNum">     201 </span><span class="lineCov">          1 :   void expect(Token::Type token_type, source_location location = source_location::current()) const;</span></a>
+<a name="202"><span class="lineNum">     202 </span>            : </a>
+<a name="203"><span class="lineNum">     203 </span>            :   /// Consume all subsequent `Separator` tokens. Throws if none were found.</a>
+<a name="204"><span class="lineNum">     204 </span><span class="lineCov">          1 :   void require_separator(source_location location = source_location::current());</span></a>
+<a name="205"><span class="lineNum">     205 </span>            : </a>
+<a name="206"><span class="lineNum">     206 </span>            :   /// Consume a token of the given type and payload. Throws if it wasn't encountered.</a>
+<a name="207"><span class="lineNum">     207 </span><span class="lineCov">          1 :   void consume(TokenAtom token_atom, source_location location = source_location::current());</span></a>
+<a name="208"><span class="lineNum">     208 </span>            : </a>
+<a name="209"><span class="lineNum">     209 </span>            :   /// Attempt to consume a token of the given type and payload. Returns false if it wasn't encountered.</a>
+<a name="210"><span class="lineNum">     210 </span><span class="lineCov">          1 :   auto try_consume(TokenAtom token_atom, source_location location = source_location::current()) -&gt; bool;</span></a>
+<a name="211"><span class="lineNum">     211 </span>            : </a>
+<a name="212"><span class="lineNum">     212 </span>            :   /// Check if the token ahead by `ahead` is of the given type and payload.</a>
+<a name="213"><span class="lineNum">     213 </span><span class="lineCov">          1 :   [[nodiscard]] auto try_peek(int ahead, TokenAtom token_atom,</span></a>
+<a name="214"><span class="lineNum">     214 </span>            :                               source_location location = source_location::current()) const -&gt; bool;</a>
+<a name="215"><span class="lineNum">     215 </span>            : </a>
+<a name="216"><span class="lineNum">     216 </span>            :   /// Check if the token ahead by `ahead` is of type `token_type`.</a>
+<a name="217"><span class="lineNum">     217 </span><span class="lineCov">          1 :   [[nodiscard]] auto try_peek(int ahead, Token::Type token_type,</span></a>
+<a name="218"><span class="lineNum">     218 </span>            :                               source_location location = source_location::current()) const -&gt; bool;</a>
+<a name="219"><span class="lineNum">     219 </span>            : </a>
+<a name="220"><span class="lineNum">     220 </span>            :   /// Consume tokens until a token of the given type and payload is encountered.</a>
+<a name="221"><span class="lineNum">     221 </span>            :   /// `action` (a no-arg function) is called every time. Between each call, a comma is expected.</a>
+<a name="222"><span class="lineNum">     222 </span><span class="lineCov">          1 :   void consume_with_commas_until(TokenAtom token_atom, std::invocable auto action,</span></a>
+<a name="223"><span class="lineNum">     223 </span>            :                                  const source_location location = source_location::current()) {</a>
+<a name="224"><span class="lineNum">     224 </span>            :     int i = 0;</a>
+<a name="225"><span class="lineNum">     225 </span>            :     while (!try_consume(token_atom, location)) {</a>
+<a name="226"><span class="lineNum">     226 </span>            :       if (i++ &gt; 0)</a>
+<a name="227"><span class="lineNum">     227 </span>            :         consume(SYM_COMMA, location);</a>
+<a name="228"><span class="lineNum">     228 </span>            :       action();</a>
+<a name="229"><span class="lineNum">     229 </span>            :     }</a>
+<a name="230"><span class="lineNum">     230 </span>            :   }</a>
+<a name="231"><span class="lineNum">     231 </span>            : </a>
+<a name="232"><span class="lineNum">     232 </span>            :   /// Consume tokens until a token of the given type and payload is encountered.</a>
+<a name="233"><span class="lineNum">     233 </span>            :   /// `action` (a no-arg member function) is called every time and its result is appended to `vec`. Between each call, a</a>
+<a name="234"><span class="lineNum">     234 </span>            :   /// comma is expected.</a>
+<a name="235"><span class="lineNum">     235 </span>            :   template &lt;typename T, std::convertible_to&lt;T&gt; U&gt;</a>
+<a name="236"><span class="lineNum">     236 </span><span class="lineCov">          1 :   void collect_with_commas_until(TokenAtom token_atom, U (Parser::*action)(), vector&lt;T&gt;&amp; vec,</span></a>
+<a name="237"><span class="lineNum">     237 </span>            :                                  const source_location location = source_location::current()) {</a>
+<a name="238"><span class="lineNum">     238 </span>            :     int i = 0;</a>
+<a name="239"><span class="lineNum">     239 </span>            :     while (!try_consume(token_atom, location)) {</a>
+<a name="240"><span class="lineNum">     240 </span>            :       if (i++ &gt; 0)</a>
+<a name="241"><span class="lineNum">     241 </span>            :         consume(SYM_COMMA, location);</a>
+<a name="242"><span class="lineNum">     242 </span>            :       vec.emplace_back((this-&gt;*action)());</a>
+<a name="243"><span class="lineNum">     243 </span>            :     }</a>
+<a name="244"><span class="lineNum">     244 </span>            :   }</a>
+<a name="245"><span class="lineNum">     245 </span>            : </a>
+<a name="246"><span class="lineNum">     246 </span>            :   /// Consume tokens until a token of the given type and payload is encountered.</a>
+<a name="247"><span class="lineNum">     247 </span>            :   /// `action` (a no-arg member function) is called every time. Between each call, a comma is expected.</a>
+<a name="248"><span class="lineNum">     248 </span>            :   /// Returns a vector of all the results of calling `action`.</a>
+<a name="249"><span class="lineNum">     249 </span>            :   template &lt;typename T, std::convertible_to&lt;T&gt; U&gt;</a>
+<a name="250"><span class="lineNum">     250 </span><span class="lineCov">          1 :   [[nodiscard]] auto collect_with_commas_until(TokenAtom token_atom, U (Parser::*action)(),</span></a>
+<a name="251"><span class="lineNum">     251 </span>            :                                                const source_location location = source_location::current())</a>
+<a name="252"><span class="lineNum">     252 </span>            :       -&gt; vector&lt;T&gt; {</a>
+<a name="253"><span class="lineNum">     253 </span>            :     vector&lt;T&gt; vec{};</a>
+<a name="254"><span class="lineNum">     254 </span>            :     int i = 0;</a>
+<a name="255"><span class="lineNum">     255 </span>            :     while (!try_consume(token_atom, location)) {</a>
+<a name="256"><span class="lineNum">     256 </span>            :       if (i++ &gt; 0)</a>
+<a name="257"><span class="lineNum">     257 </span>            :         consume(SYM_COMMA, location);</a>
+<a name="258"><span class="lineNum">     258 </span>            :       vec.emplace_back((this-&gt;*action)());</a>
+<a name="259"><span class="lineNum">     259 </span>            :     }</a>
+<a name="260"><span class="lineNum">     260 </span>            :     return vec;</a>
+<a name="261"><span class="lineNum">     261 </span>            :   }</a>
+<a name="262"><span class="lineNum">     262 </span>            : </a>
+<a name="263"><span class="lineNum">     263 </span>            :   /// Return the next token and increment the iterator.</a>
+<a name="264"><span class="lineNum">     264 </span><span class="lineCov">          1 :   auto next([[maybe_unused]] source_location location = source_location::current()) -&gt; Token;</span></a>
+<a name="265"><span class="lineNum">     265 </span>            : </a>
+<a name="266"><span class="lineNum">     266 </span>            :   /// Returns the payload of the next token and increment the iterator.</a>
+<a name="267"><span class="lineNum">     267 </span>            :   /// \throws if the next token has no payload</a>
+<a name="268"><span class="lineNum">     268 </span><span class="lineCov">          1 :   auto assert_payload_next([[maybe_unused]] source_location location = source_location::current()) -&gt; Atom;</span></a>
+<a name="269"><span class="lineNum">     269 </span>            : </a>
+<a name="270"><span class="lineNum">     270 </span>            :   /// Return the payload of the next token. Throws if the next token isn't a `Word`.</a>
+<a name="271"><span class="lineNum">     271 </span><span class="lineCov">          1 :   auto consume_word(source_location location = source_location::current()) -&gt; string;</span></a>
+<a name="272"><span class="lineNum">     272 </span>            : </a>
+<a name="273"><span class="lineNum">     273 </span>            :   /// Check if the string begins with a capital letter. Used for types, as all types must be capitalized.</a>
+<a name="274"><span class="lineNum">     274 </span><span class="lineCov">          1 :   static auto is_uword(string_view word) -&gt; bool { return isupper(word.front()) != 0; }</span></a>
+<a name="275"><span class="lineNum">     275 </span>            : </a>
+<a name="276"><span class="lineNum">     276 </span>            :   /// Check if the ahead by `ahead` is a capitalized word.</a>
+<a name="277"><span class="lineNum">     277 </span><span class="lineCov">          1 :   [[nodiscard]] auto try_peek_uword(int ahead, source_location location = source_location::current()) const -&gt; bool;</span></a>
+<a name="278"><span class="lineNum">     278 </span>            : </a>
+<a name="279"><span class="lineNum">     279 </span><span class="lineNoCov">          0 :   auto parse_stmt(bool require_sep = true) -&gt; unique_ptr&lt;Stmt&gt;;</span></a>
+<a name="280"><span class="lineNum">     280 </span><span class="lineNoCov">          0 :   auto parse_expr() -&gt; unique_ptr&lt;Expr&gt;;</span></a>
+<a name="281"><span class="lineNum">     281 </span>            : </a>
+<a name="282"><span class="lineNum">     282 </span><span class="lineNoCov">          0 :   auto parse_fn_arg() -&gt; FnArg;</span></a>
+<a name="283"><span class="lineNum">     283 </span>            : </a>
+<a name="284"><span class="lineNum">     284 </span><span class="lineNoCov">          0 :   auto try_parse_function_type() -&gt; optional&lt;unique_ptr&lt;FunctionType&gt;&gt;;</span></a>
+<a name="285"><span class="lineNum">     285 </span><span class="lineNoCov">          0 :   auto try_parse_type() -&gt; optional&lt;unique_ptr&lt;Type&gt;&gt;;</span></a>
+<a name="286"><span class="lineNum">     286 </span><span class="lineNoCov">          0 :   auto parse_type(bool implicit_self = false) -&gt; unique_ptr&lt;Type&gt;;</span></a>
+<a name="287"><span class="lineNum">     287 </span>            : </a>
+<a name="288"><span class="lineNum">     288 </span><span class="lineNoCov">          0 :   auto parse_type_name() -&gt; unique_ptr&lt;TypeName&gt;;</span></a>
+<a name="289"><span class="lineNum">     289 </span>            : </a>
+<a name="290"><span class="lineNum">     290 </span><span class="lineNoCov">          0 :   auto parse_fn_name() -&gt; string;</span></a>
+<a name="291"><span class="lineNum">     291 </span>            : </a>
+<a name="292"><span class="lineNum">     292 </span><span class="lineNoCov">          0 :   auto parse_struct_decl() -&gt; unique_ptr&lt;StructDecl&gt;;</span></a>
+<a name="293"><span class="lineNum">     293 </span>            : </a>
+<a name="294"><span class="lineNum">     294 </span><span class="lineNoCov">          0 :   auto parse_fn_or_ctor_decl() -&gt; unique_ptr&lt;Stmt&gt;;</span></a>
+<a name="295"><span class="lineNum">     295 </span><span class="lineNoCov">          0 :   auto parse_fn_decl() -&gt; unique_ptr&lt;FnDecl&gt;;</span></a>
+<a name="296"><span class="lineNum">     296 </span><span class="lineNoCov">          0 :   auto parse_ctor_decl() -&gt; unique_ptr&lt;CtorDecl&gt;;</span></a>
+<a name="297"><span class="lineNum">     297 </span>            : </a>
+<a name="298"><span class="lineNum">     298 </span><span class="lineNoCov">          0 :   auto parse_var_decl() -&gt; unique_ptr&lt;VarDecl&gt;;</span></a>
+<a name="299"><span class="lineNum">     299 </span>            : </a>
+<a name="300"><span class="lineNum">     300 </span><span class="lineNoCov">          0 :   auto parse_const_decl() -&gt; unique_ptr&lt;ConstDecl&gt;;</span></a>
+<a name="301"><span class="lineNum">     301 </span>            : </a>
+<a name="302"><span class="lineNum">     302 </span><span class="lineNoCov">          0 :   auto parse_while_stmt() -&gt; unique_ptr&lt;WhileStmt&gt;;</span></a>
+<a name="303"><span class="lineNum">     303 </span>            : </a>
+<a name="304"><span class="lineNum">     304 </span><span class="lineNoCov">          0 :   auto parse_return_stmt() -&gt; unique_ptr&lt;ReturnStmt&gt;;</span></a>
+<a name="305"><span class="lineNum">     305 </span>            : </a>
+<a name="306"><span class="lineNum">     306 </span><span class="lineNoCov">          0 :   auto parse_if_stmt() -&gt; unique_ptr&lt;IfStmt&gt;;</span></a>
+<a name="307"><span class="lineNum">     307 </span>            : </a>
+<a name="308"><span class="lineNum">     308 </span><span class="lineNoCov">          0 :   auto parse_number_expr() -&gt; unique_ptr&lt;NumberExpr&gt;;</span></a>
+<a name="309"><span class="lineNum">     309 </span>            : </a>
+<a name="310"><span class="lineNum">     310 </span><span class="lineNoCov">          0 :   auto parse_string_expr() -&gt; unique_ptr&lt;StringExpr&gt;;</span></a>
+<a name="311"><span class="lineNum">     311 </span>            : </a>
+<a name="312"><span class="lineNum">     312 </span><span class="lineNoCov">          0 :   auto parse_char_expr() -&gt; unique_ptr&lt;CharExpr&gt;;</span></a>
+<a name="313"><span class="lineNum">     313 </span>            : </a>
+<a name="314"><span class="lineNum">     314 </span><span class="lineNoCov">          0 :   auto parse_primary() -&gt; unique_ptr&lt;Expr&gt;;</span></a>
+<a name="315"><span class="lineNum">     315 </span>            : </a>
+<a name="316"><span class="lineNum">     316 </span><span class="lineNoCov">          0 :   auto parse_receiver(unique_ptr&lt;Expr&gt; receiver, VectorTokenIterator receiver_entry) -&gt; unique_ptr&lt;Expr&gt;;</span></a>
+<a name="317"><span class="lineNum">     317 </span>            : </a>
+<a name="318"><span class="lineNum">     318 </span><span class="lineNoCov">          0 :   auto parse_receiver() -&gt; unique_ptr&lt;Expr&gt;;</span></a>
+<a name="319"><span class="lineNum">     319 </span>            : </a>
+<a name="320"><span class="lineNum">     320 </span><span class="lineNoCov">          0 :   auto parse_unary() -&gt; unique_ptr&lt;Expr&gt;;</span></a>
+<a name="321"><span class="lineNum">     321 </span>            : </a>
+<a name="322"><span class="lineNum">     322 </span><span class="lineNoCov">          0 :   auto parse_lambda() -&gt; unique_ptr&lt;LambdaExpr&gt;;</span></a>
+<a name="323"><span class="lineNum">     323 </span>            : </a>
+<a name="324"><span class="lineNum">     324 </span><span class="lineNoCov">          0 :   auto parse_logical_or() -&gt; unique_ptr&lt;Expr&gt;;</span></a>
+<a name="325"><span class="lineNum">     325 </span><span class="lineNoCov">          0 :   auto parse_logical_and() -&gt; unique_ptr&lt;Expr&gt;;</span></a>
+<a name="326"><span class="lineNum">     326 </span>            : </a>
+<a name="327"><span class="lineNum">     327 </span><span class="lineNoCov">          0 :   template &lt;size_t N = 0&gt; auto parse_operator() -&gt; unique_ptr&lt;Expr&gt; {</span></a>
+<a name="328"><span class="lineNum">     328 </span>            :     auto entry = tokens.begin();</a>
+<a name="329"><span class="lineNum">     329 </span>            :     const auto ops = operators();</a>
+<a name="330"><span class="lineNum">     330 </span>            :     if constexpr (N == ops.size()) {</a>
+<a name="331"><span class="lineNum">     331 </span>            :       return parse_unary();</a>
+<a name="332"><span class="lineNum">     332 </span>            :     } else {</a>
+<a name="333"><span class="lineNum">     333 </span>            :       auto left = parse_operator&lt;N + 1&gt;();</a>
+<a name="334"><span class="lineNum">     334 </span>            :       while (true) {</a>
+<a name="335"><span class="lineNum">     335 </span>            :         auto found_operator = false;</a>
+<a name="336"><span class="lineNum">     336 </span>            :         for (const auto&amp; op : ops[N]) {</a>
+<a name="337"><span class="lineNum">     337 </span>            :           if (try_consume(op)) {</a>
+<a name="338"><span class="lineNum">     338 </span>            :             auto right = parse_operator&lt;N + 1&gt;();</a>
+<a name="339"><span class="lineNum">     339 </span>            :             auto args = vector&lt;AnyExpr&gt;{};</a>
+<a name="340"><span class="lineNum">     340 </span>            :             args.emplace_back(move(left));</a>
+<a name="341"><span class="lineNum">     341 </span>            :             args.emplace_back(move(right));</a>
+<a name="342"><span class="lineNum">     342 </span>            :             left = ast_ptr&lt;CallExpr&gt;(entry, string(std::get&lt;Atom&gt;(op)), std::nullopt, move(args));</a>
+<a name="343"><span class="lineNum">     343 </span>            :             found_operator = true;</a>
+<a name="344"><span class="lineNum">     344 </span>            :             break;</a>
+<a name="345"><span class="lineNum">     345 </span>            :           }</a>
+<a name="346"><span class="lineNum">     346 </span>            :         }</a>
+<a name="347"><span class="lineNum">     347 </span>            :         if (!found_operator)</a>
+<a name="348"><span class="lineNum">     348 </span>            :           break;</a>
+<a name="349"><span class="lineNum">     349 </span>            :       }</a>
+<a name="350"><span class="lineNum">     350 </span>            :       return left;</a>
+<a name="351"><span class="lineNum">     351 </span>            :     }</a>
+<a name="352"><span class="lineNum">     352 </span>            :   }</a>
+<a name="353"><span class="lineNum">     353 </span>            : };</a>
+<a name="354"><span class="lineNum">     354 </span>            : } // namespace yume::ast::parser</a>
 </pre>
       </td>
     </tr>

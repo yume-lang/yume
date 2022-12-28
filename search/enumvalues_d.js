@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['virtual_0',['Virtual',['../structyume_1_1ty_1_1Conv.html#a52dc705eb4433198881d0a5b76ad7aa6a615e6f9baca5553d44683a098d342b70',1,'yume::ty::Conv']]]
+  ['type_0',['Type',['../namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aa1fa27779242b4902f7ae3bdd5c6d508',1,'yume']]]
 ];
