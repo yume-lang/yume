@@ -116,8 +116,11 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
   // Note that a receiver is always a type, such as `Foo.method`. Calls with an "object" as a receiver look similar,
   // but `foo.method` is always rewritten to `method(foo)` and thus uses the "argument dependent lookup" rules below.
   if (overload_receiver(call) != parent) {
-    if (!parent.has_value())
+    if (!parent.has_value()) {
+      notes.emit(overload.location()) << "Overload not considered due to ADL";
+      notes.emit(overload.location()) << "  Because no receiver was specified";
       return false;
+    }
 
     // If there is no matching receiver, check if any arguments are of the type of the struct.
     // This perform "argument dependent lookup" and is required for "member functions"
@@ -134,11 +137,7 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
 
   // The overload is only viable if the amount of arguments matches the amount of parameters.
   if (!parameter_count_matches(args, fn)) {
-#ifdef YUME_SPEW_OVERLOAD_SELECTION
-    errs() << "!!! Unsuitable (parameter count): ";
-    overload.dump(errs());
-    errs() << "\n";
-#endif
+    notes.emit(overload.location()) << "Overload not considered due to mismatch in parameter count";
     return false;
   }
 
@@ -183,6 +182,7 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
 
     // Couldn't perform any kind of valid cast: one invalid conversion disqualifies the function entirely
     if (!compat.valid) {
+      // TODO(rymiel): #17 Actually keep track of *why* a type is not viable, for diagnostics.
       notes.emit(overload.location()) << "Overload not valid";
       notes.emit(overload.location()) << "  Because `" << arg_type->name() << "' is not convertible to `"
                                       << param_type->name() << "'";
@@ -203,7 +203,6 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
 
 void OverloadSet::determine_valid_overloads() {
   // All `Overload`s are determined to not be viable by default, so determine the ones which actually are
-  // TODO(rymiel): #17 Actually keep track of *why* a type is not viable, for diagnostics.
   for (auto& i : overloads)
     i.viable = is_valid_overload(i);
 }
