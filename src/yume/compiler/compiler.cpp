@@ -640,6 +640,9 @@ void Compiler::define(Const& cn) {
   m_builder->SetInsertPoint(&m_global_ctor_fn->getEntryBlock(), m_global_ctor_fn->getEntryBlock().begin());
 
   auto init = body_expression(*cn.ast().init);
+  if ((init.scope != nullptr) && init.scope->owning)
+    init.scope->owning = false;
+
   if (isa<llvm::Constant>(init.llvm)) {
     cn.llvm->setConstant(true);
     auto* const_val = cast<llvm::Constant>(init.llvm);
