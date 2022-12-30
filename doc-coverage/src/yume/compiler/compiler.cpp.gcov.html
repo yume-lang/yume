@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-12-28 12:42:10</td>
+            <td class="headerValue">2022-12-30 11:29:09</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -1206,462 +1206,467 @@
 <a name="1148"><span class="lineNum">    1148 </span>            :       expr_val.scope-&gt;owning = false;</a>
 <a name="1149"><span class="lineNum">    1149 </span>            :     } else if (!expr.value-&gt;ensure_ty().is_trivially_destructible() &amp;&amp; expr_val.scope != nullptr &amp;&amp;</a>
 <a name="1150"><span class="lineNum">    1150 </span>            :                !expr_val.scope-&gt;owning) {</a>
-<a name="1151"><span class="lineNum">    1151 </span>            :       auto* ast_dup = m_walker-&gt;make_dup(expr.value);</a>
-<a name="1152"><span class="lineNum">    1152 </span>            :       auto* llvm_fn = declare(*ast_dup);</a>
-<a name="1153"><span class="lineNum">    1153 </span>            :       vector&lt;llvm::Value*&gt; llvm_args{};</a>
-<a name="1154"><span class="lineNum">    1154 </span>            :       llvm_args.push_back(expr_val.llvm);</a>
-<a name="1155"><span class="lineNum">    1155 </span>            :       expr_val.llvm = m_builder-&gt;CreateCall(llvm_fn, llvm_args);</a>
-<a name="1156"><span class="lineNum">    1156 </span>            :     }</a>
-<a name="1157"><span class="lineNum">    1157 </span>            :     auto* struct_type = llvm_type(struct_base.ensure_mut_base().base_cast&lt;ty::Struct&gt;());</a>
-<a name="1158"><span class="lineNum">    1158 </span>            : </a>
-<a name="1159"><span class="lineNum">    1159 </span>            :     yume_assert(base_offset &gt;= 0, &quot;Field access has unknown offset into struct&quot;);</a>
-<a name="1160"><span class="lineNum">    1160 </span>            : </a>
-<a name="1161"><span class="lineNum">    1161 </span>            :     auto* gep = m_builder-&gt;CreateStructGEP(struct_type, base, base_offset, &quot;s.sf.&quot;s + base_name);</a>
-<a name="1162"><span class="lineNum">    1162 </span>            :     m_builder-&gt;CreateStore(expr_val, gep);</a>
-<a name="1163"><span class="lineNum">    1163 </span>            :     return expr_val;</a>
-<a name="1164"><span class="lineNum">    1164 </span>            :   }</a>
-<a name="1165"><span class="lineNum">    1165 </span>            :   throw std::runtime_error(&quot;Can't assign to target &quot;s + expr.target-&gt;kind_name());</a>
-<a name="1166"><span class="lineNum">    1166 </span>            : }</a>
+<a name="1151"><span class="lineNum">    1151 </span>            :       make_dup(expr_val, expr.value);</a>
+<a name="1152"><span class="lineNum">    1152 </span>            :     }</a>
+<a name="1153"><span class="lineNum">    1153 </span>            :     auto* struct_type = llvm_type(struct_base.ensure_mut_base().base_cast&lt;ty::Struct&gt;());</a>
+<a name="1154"><span class="lineNum">    1154 </span>            : </a>
+<a name="1155"><span class="lineNum">    1155 </span>            :     yume_assert(base_offset &gt;= 0, &quot;Field access has unknown offset into struct&quot;);</a>
+<a name="1156"><span class="lineNum">    1156 </span>            : </a>
+<a name="1157"><span class="lineNum">    1157 </span>            :     auto* gep = m_builder-&gt;CreateStructGEP(struct_type, base, base_offset, &quot;s.sf.&quot;s + base_name);</a>
+<a name="1158"><span class="lineNum">    1158 </span>            :     m_builder-&gt;CreateStore(expr_val, gep);</a>
+<a name="1159"><span class="lineNum">    1159 </span>            :     return expr_val;</a>
+<a name="1160"><span class="lineNum">    1160 </span>            :   }</a>
+<a name="1161"><span class="lineNum">    1161 </span>            :   throw std::runtime_error(&quot;Can't assign to target &quot;s + expr.target-&gt;kind_name());</a>
+<a name="1162"><span class="lineNum">    1162 </span>            : }</a>
+<a name="1163"><span class="lineNum">    1163 </span>            : </a>
+<a name="1164"><span class="lineNum">    1164 </span><span class="lineNoCov">          0 : template &lt;&gt; auto Compiler::expression(ast::LambdaExpr&amp; expr) -&gt; Val {</span></a>
+<a name="1165"><span class="lineNum">    1165 </span>            :   auto fn = Fn{&amp;expr, m_current_fn-&gt;member, m_current_fn-&gt;self_ty};</a>
+<a name="1166"><span class="lineNum">    1166 </span>            :   fn.fn_ty = expr.ensure_ty().base_cast&lt;ty::Function&gt;();</a>
 <a name="1167"><span class="lineNum">    1167 </span>            : </a>
-<a name="1168"><span class="lineNum">    1168 </span><span class="lineNoCov">          0 : template &lt;&gt; auto Compiler::expression(ast::LambdaExpr&amp; expr) -&gt; Val {</span></a>
-<a name="1169"><span class="lineNum">    1169 </span>            :   auto fn = Fn{&amp;expr, m_current_fn-&gt;member, m_current_fn-&gt;self_ty};</a>
-<a name="1170"><span class="lineNum">    1170 </span>            :   fn.fn_ty = expr.ensure_ty().base_cast&lt;ty::Function&gt;();</a>
-<a name="1171"><span class="lineNum">    1171 </span>            : </a>
-<a name="1172"><span class="lineNum">    1172 </span>            :   declare(fn);</a>
-<a name="1173"><span class="lineNum">    1173 </span>            :   expr.llvm_fn = fn.llvm;</a>
-<a name="1174"><span class="lineNum">    1174 </span>            : </a>
-<a name="1175"><span class="lineNum">    1175 </span>            :   Val fn_bundle = llvm::UndefValue::get(fn.fn_ty-&gt;memo());</a>
-<a name="1176"><span class="lineNum">    1176 </span>            :   fn_bundle = m_builder-&gt;CreateInsertValue(fn_bundle, fn.llvm, 0);</a>
-<a name="1177"><span class="lineNum">    1177 </span>            : </a>
-<a name="1178"><span class="lineNum">    1178 </span>            :   auto* llvm_closure_ty = fn.fn_ty-&gt;closure_memo();</a>
-<a name="1179"><span class="lineNum">    1179 </span>            :   auto* llvm_closure = m_builder-&gt;CreateAlloca(llvm_closure_ty);</a>
-<a name="1180"><span class="lineNum">    1180 </span>            : </a>
-<a name="1181"><span class="lineNum">    1181 </span>            :   // Capture every closured local in the closure object</a>
-<a name="1182"><span class="lineNum">    1182 </span>            :   for (const auto&amp; i : llvm::enumerate(llvm::zip(expr.closured_names, expr.closured_nodes))) {</a>
-<a name="1183"><span class="lineNum">    1183 </span>            :     auto [name, ast_arg] = i.value();</a>
-<a name="1184"><span class="lineNum">    1184 </span>            :     auto type = ast_arg-&gt;ensure_ty();</a>
-<a name="1185"><span class="lineNum">    1185 </span>            :     auto* val = m_scope.find(name);</a>
-<a name="1186"><span class="lineNum">    1186 </span>            :     yume_assert(val != nullptr, &quot;Captured variable not found in outer scope&quot;);</a>
-<a name="1187"><span class="lineNum">    1187 </span>            :     yume_assert(val-&gt;ast.ensure_ty() == type, &quot;Capture variable does not match expected type: wanted &quot;s + type.name() +</a>
-<a name="1188"><span class="lineNum">    1188 </span>            :                                                   &quot;, but got &quot; + val-&gt;ast.ensure_ty().name());</a>
+<a name="1168"><span class="lineNum">    1168 </span>            :   declare(fn);</a>
+<a name="1169"><span class="lineNum">    1169 </span>            :   expr.llvm_fn = fn.llvm;</a>
+<a name="1170"><span class="lineNum">    1170 </span>            : </a>
+<a name="1171"><span class="lineNum">    1171 </span>            :   Val fn_bundle = llvm::UndefValue::get(fn.fn_ty-&gt;memo());</a>
+<a name="1172"><span class="lineNum">    1172 </span>            :   fn_bundle = m_builder-&gt;CreateInsertValue(fn_bundle, fn.llvm, 0);</a>
+<a name="1173"><span class="lineNum">    1173 </span>            : </a>
+<a name="1174"><span class="lineNum">    1174 </span>            :   auto* llvm_closure_ty = fn.fn_ty-&gt;closure_memo();</a>
+<a name="1175"><span class="lineNum">    1175 </span>            :   auto* llvm_closure = m_builder-&gt;CreateAlloca(llvm_closure_ty);</a>
+<a name="1176"><span class="lineNum">    1176 </span>            : </a>
+<a name="1177"><span class="lineNum">    1177 </span>            :   // Capture every closured local in the closure object</a>
+<a name="1178"><span class="lineNum">    1178 </span>            :   for (const auto&amp; i : llvm::enumerate(llvm::zip(expr.closured_names, expr.closured_nodes))) {</a>
+<a name="1179"><span class="lineNum">    1179 </span>            :     auto [name, ast_arg] = i.value();</a>
+<a name="1180"><span class="lineNum">    1180 </span>            :     auto type = ast_arg-&gt;ensure_ty();</a>
+<a name="1181"><span class="lineNum">    1181 </span>            :     auto* val = m_scope.find(name);</a>
+<a name="1182"><span class="lineNum">    1182 </span>            :     yume_assert(val != nullptr, &quot;Captured variable not found in outer scope&quot;);</a>
+<a name="1183"><span class="lineNum">    1183 </span>            :     yume_assert(val-&gt;ast.ensure_ty() == type, &quot;Capture variable does not match expected type: wanted &quot;s + type.name() +</a>
+<a name="1184"><span class="lineNum">    1184 </span>            :                                                   &quot;, but got &quot; + val-&gt;ast.ensure_ty().name());</a>
+<a name="1185"><span class="lineNum">    1185 </span>            : </a>
+<a name="1186"><span class="lineNum">    1186 </span>            :     m_builder-&gt;CreateStore(val-&gt;value,</a>
+<a name="1187"><span class="lineNum">    1187 </span>            :                            m_builder-&gt;CreateConstInBoundsGEP2_32(llvm_closure_ty, llvm_closure, 0, i.index()));</a>
+<a name="1188"><span class="lineNum">    1188 </span>            :   }</a>
 <a name="1189"><span class="lineNum">    1189 </span>            : </a>
-<a name="1190"><span class="lineNum">    1190 </span>            :     m_builder-&gt;CreateStore(val-&gt;value,</a>
-<a name="1191"><span class="lineNum">    1191 </span>            :                            m_builder-&gt;CreateConstInBoundsGEP2_32(llvm_closure_ty, llvm_closure, 0, i.index()));</a>
-<a name="1192"><span class="lineNum">    1192 </span>            :   }</a>
+<a name="1190"><span class="lineNum">    1190 </span>            :   // TODO(LLVM MIN &gt;= 15): BitCast obsoleted by opaque pointers</a>
+<a name="1191"><span class="lineNum">    1191 </span>            :   fn_bundle =</a>
+<a name="1192"><span class="lineNum">    1192 </span>            :       m_builder-&gt;CreateInsertValue(fn_bundle, m_builder-&gt;CreateBitCast(llvm_closure, m_builder-&gt;getInt8PtrTy()), 1);</a>
 <a name="1193"><span class="lineNum">    1193 </span>            : </a>
-<a name="1194"><span class="lineNum">    1194 </span>            :   // TODO(LLVM MIN &gt;= 15): BitCast obsoleted by opaque pointers</a>
-<a name="1195"><span class="lineNum">    1195 </span>            :   fn_bundle =</a>
-<a name="1196"><span class="lineNum">    1196 </span>            :       m_builder-&gt;CreateInsertValue(fn_bundle, m_builder-&gt;CreateBitCast(llvm_closure, m_builder-&gt;getInt8PtrTy()), 1);</a>
-<a name="1197"><span class="lineNum">    1197 </span>            : </a>
-<a name="1198"><span class="lineNum">    1198 </span>            :   auto saved_scope = m_scope;</a>
-<a name="1199"><span class="lineNum">    1199 </span>            :   auto* saved_insert_point = m_builder-&gt;GetInsertBlock();</a>
-<a name="1200"><span class="lineNum">    1200 </span>            :   auto* saved_fn = m_current_fn;</a>
-<a name="1201"><span class="lineNum">    1201 </span>            :   auto saved_debug_location = m_builder-&gt;getCurrentDebugLocation();</a>
-<a name="1202"><span class="lineNum">    1202 </span>            : </a>
-<a name="1203"><span class="lineNum">    1203 </span>            :   setup_fn_base(fn);</a>
+<a name="1194"><span class="lineNum">    1194 </span>            :   auto saved_scope = m_scope;</a>
+<a name="1195"><span class="lineNum">    1195 </span>            :   auto* saved_insert_point = m_builder-&gt;GetInsertBlock();</a>
+<a name="1196"><span class="lineNum">    1196 </span>            :   auto* saved_fn = m_current_fn;</a>
+<a name="1197"><span class="lineNum">    1197 </span>            :   auto saved_debug_location = m_builder-&gt;getCurrentDebugLocation();</a>
+<a name="1198"><span class="lineNum">    1198 </span>            : </a>
+<a name="1199"><span class="lineNum">    1199 </span>            :   setup_fn_base(fn);</a>
+<a name="1200"><span class="lineNum">    1200 </span>            : </a>
+<a name="1201"><span class="lineNum">    1201 </span>            :   // TODO(LLVM MIN &gt;= 15): BitCast obsoleted by opaque pointers</a>
+<a name="1202"><span class="lineNum">    1202 </span>            :   const Val closure_val = m_builder-&gt;CreateLoad(</a>
+<a name="1203"><span class="lineNum">    1203 </span>            :       llvm_closure_ty, m_builder-&gt;CreateBitCast(fn.llvm-&gt;arg_begin(), llvm_closure_ty-&gt;getPointerTo()), &quot;closure&quot;);</a>
 <a name="1204"><span class="lineNum">    1204 </span>            : </a>
-<a name="1205"><span class="lineNum">    1205 </span>            :   // TODO(LLVM MIN &gt;= 15): BitCast obsoleted by opaque pointers</a>
-<a name="1206"><span class="lineNum">    1206 </span>            :   const Val closure_val = m_builder-&gt;CreateLoad(</a>
-<a name="1207"><span class="lineNum">    1207 </span>            :       llvm_closure_ty, m_builder-&gt;CreateBitCast(fn.llvm-&gt;arg_begin(), llvm_closure_ty-&gt;getPointerTo()), &quot;closure&quot;);</a>
-<a name="1208"><span class="lineNum">    1208 </span>            : </a>
-<a name="1209"><span class="lineNum">    1209 </span>            :   // Add local variables for every captured variable</a>
-<a name="1210"><span class="lineNum">    1210 </span>            :   for (const auto&amp; i : llvm::enumerate(llvm::zip(expr.closured_names, expr.closured_nodes))) {</a>
-<a name="1211"><span class="lineNum">    1211 </span>            :     auto [name, ast_arg] = i.value();</a>
-<a name="1212"><span class="lineNum">    1212 </span>            :     auto type = ast_arg-&gt;ensure_ty();</a>
-<a name="1213"><span class="lineNum">    1213 </span>            :     const Val arg = m_builder-&gt;CreateExtractValue(closure_val, i.index());</a>
-<a name="1214"><span class="lineNum">    1214 </span>            :     expose_parameter_as_local(type, name, *ast_arg, arg);</a>
-<a name="1215"><span class="lineNum">    1215 </span>            :   }</a>
+<a name="1205"><span class="lineNum">    1205 </span>            :   // Add local variables for every captured variable</a>
+<a name="1206"><span class="lineNum">    1206 </span>            :   for (const auto&amp; i : llvm::enumerate(llvm::zip(expr.closured_names, expr.closured_nodes))) {</a>
+<a name="1207"><span class="lineNum">    1207 </span>            :     auto [name, ast_arg] = i.value();</a>
+<a name="1208"><span class="lineNum">    1208 </span>            :     auto type = ast_arg-&gt;ensure_ty();</a>
+<a name="1209"><span class="lineNum">    1209 </span>            :     const Val arg = m_builder-&gt;CreateExtractValue(closure_val, i.index());</a>
+<a name="1210"><span class="lineNum">    1210 </span>            :     expose_parameter_as_local(type, name, *ast_arg, arg);</a>
+<a name="1211"><span class="lineNum">    1211 </span>            :   }</a>
+<a name="1212"><span class="lineNum">    1212 </span>            : </a>
+<a name="1213"><span class="lineNum">    1213 </span>            :   body_statement(expr.body);</a>
+<a name="1214"><span class="lineNum">    1214 </span>            :   if (m_builder-&gt;GetInsertBlock()-&gt;getTerminator() == nullptr)</a>
+<a name="1215"><span class="lineNum">    1215 </span>            :     m_builder-&gt;CreateRetVoid();</a>
 <a name="1216"><span class="lineNum">    1216 </span>            : </a>
-<a name="1217"><span class="lineNum">    1217 </span>            :   body_statement(expr.body);</a>
-<a name="1218"><span class="lineNum">    1218 </span>            :   if (m_builder-&gt;GetInsertBlock()-&gt;getTerminator() == nullptr)</a>
-<a name="1219"><span class="lineNum">    1219 </span>            :     m_builder-&gt;CreateRetVoid();</a>
-<a name="1220"><span class="lineNum">    1220 </span>            : </a>
-<a name="1221"><span class="lineNum">    1221 </span>            :   m_scope = saved_scope;</a>
-<a name="1222"><span class="lineNum">    1222 </span>            :   m_builder-&gt;SetInsertPoint(saved_insert_point);</a>
-<a name="1223"><span class="lineNum">    1223 </span>            :   m_current_fn = saved_fn;</a>
-<a name="1224"><span class="lineNum">    1224 </span>            :   m_builder-&gt;SetCurrentDebugLocation(saved_debug_location);</a>
-<a name="1225"><span class="lineNum">    1225 </span>            : </a>
-<a name="1226"><span class="lineNum">    1226 </span>            :   return fn_bundle;</a>
-<a name="1227"><span class="lineNum">    1227 </span>            : }</a>
+<a name="1217"><span class="lineNum">    1217 </span>            :   m_scope = saved_scope;</a>
+<a name="1218"><span class="lineNum">    1218 </span>            :   m_builder-&gt;SetInsertPoint(saved_insert_point);</a>
+<a name="1219"><span class="lineNum">    1219 </span>            :   m_current_fn = saved_fn;</a>
+<a name="1220"><span class="lineNum">    1220 </span>            :   m_builder-&gt;SetCurrentDebugLocation(saved_debug_location);</a>
+<a name="1221"><span class="lineNum">    1221 </span>            : </a>
+<a name="1222"><span class="lineNum">    1222 </span>            :   return fn_bundle;</a>
+<a name="1223"><span class="lineNum">    1223 </span>            : }</a>
+<a name="1224"><span class="lineNum">    1224 </span>            : </a>
+<a name="1225"><span class="lineNum">    1225 </span>            : auto Compiler::direct_call_operator(ast::CallExpr&amp; expr) -&gt; Val {</a>
+<a name="1226"><span class="lineNum">    1226 </span>            :   yume_assert(expr.args.size() &gt; 1, &quot;Direct call must have at least 1 argument&quot;);</a>
+<a name="1227"><span class="lineNum">    1227 </span>            :   auto&amp; base_expr = *expr.args[0];</a>
 <a name="1228"><span class="lineNum">    1228 </span>            : </a>
-<a name="1229"><span class="lineNum">    1229 </span>            : auto Compiler::direct_call_operator(ast::CallExpr&amp; expr) -&gt; Val {</a>
-<a name="1230"><span class="lineNum">    1230 </span>            :   yume_assert(expr.args.size() &gt; 1, &quot;Direct call must have at least 1 argument&quot;);</a>
-<a name="1231"><span class="lineNum">    1231 </span>            :   auto&amp; base_expr = *expr.args[0];</a>
-<a name="1232"><span class="lineNum">    1232 </span>            : </a>
-<a name="1233"><span class="lineNum">    1233 </span>            :   auto call_target_ty = base_expr.ensure_ty();</a>
-<a name="1234"><span class="lineNum">    1234 </span>            :   yume_assert(call_target_ty.base_isa&lt;ty::Function&gt;(), &quot;Direct call target must be a function type&quot;);</a>
-<a name="1235"><span class="lineNum">    1235 </span>            :   auto* llvm_fn_ty = call_target_ty.base_cast&lt;ty::Function&gt;()-&gt;fn_memo();</a>
-<a name="1236"><span class="lineNum">    1236 </span>            :   auto* llvm_fn_bundle_ty = llvm_type(call_target_ty.without_mut());</a>
+<a name="1229"><span class="lineNum">    1229 </span>            :   auto call_target_ty = base_expr.ensure_ty();</a>
+<a name="1230"><span class="lineNum">    1230 </span>            :   yume_assert(call_target_ty.base_isa&lt;ty::Function&gt;(), &quot;Direct call target must be a function type&quot;);</a>
+<a name="1231"><span class="lineNum">    1231 </span>            :   auto* llvm_fn_ty = call_target_ty.base_cast&lt;ty::Function&gt;()-&gt;fn_memo();</a>
+<a name="1232"><span class="lineNum">    1232 </span>            :   auto* llvm_fn_bundle_ty = llvm_type(call_target_ty.without_mut());</a>
+<a name="1233"><span class="lineNum">    1233 </span>            : </a>
+<a name="1234"><span class="lineNum">    1234 </span>            :   auto base = body_expression(base_expr);</a>
+<a name="1235"><span class="lineNum">    1235 </span>            :   if (call_target_ty.is_mut())</a>
+<a name="1236"><span class="lineNum">    1236 </span>            :     base = m_builder-&gt;CreateLoad(llvm_fn_bundle_ty, base.llvm, &quot;indir.fnptr.deref&quot;);</a>
 <a name="1237"><span class="lineNum">    1237 </span>            : </a>
-<a name="1238"><span class="lineNum">    1238 </span>            :   auto base = body_expression(base_expr);</a>
-<a name="1239"><span class="lineNum">    1239 </span>            :   if (call_target_ty.is_mut())</a>
-<a name="1240"><span class="lineNum">    1240 </span>            :     base = m_builder-&gt;CreateLoad(llvm_fn_bundle_ty, base.llvm, &quot;indir.fnptr.deref&quot;);</a>
-<a name="1241"><span class="lineNum">    1241 </span>            : </a>
-<a name="1242"><span class="lineNum">    1242 </span>            :   auto* llvm_fn_ptr = m_builder-&gt;CreateExtractValue(base, 0, &quot;fnptr.fn&quot;);</a>
-<a name="1243"><span class="lineNum">    1243 </span>            :   auto* llvm_fn_closure = m_builder-&gt;CreateExtractValue(base, 1, &quot;fnptr.closure&quot;);</a>
+<a name="1238"><span class="lineNum">    1238 </span>            :   auto* llvm_fn_ptr = m_builder-&gt;CreateExtractValue(base, 0, &quot;fnptr.fn&quot;);</a>
+<a name="1239"><span class="lineNum">    1239 </span>            :   auto* llvm_fn_closure = m_builder-&gt;CreateExtractValue(base, 1, &quot;fnptr.closure&quot;);</a>
+<a name="1240"><span class="lineNum">    1240 </span>            : </a>
+<a name="1241"><span class="lineNum">    1241 </span>            :   vector&lt;llvm::Value*&gt; args{};</a>
+<a name="1242"><span class="lineNum">    1242 </span>            :   args.reserve(expr.args.size() - 1);</a>
+<a name="1243"><span class="lineNum">    1243 </span>            :   args.push_back(llvm_fn_closure);</a>
 <a name="1244"><span class="lineNum">    1244 </span>            : </a>
-<a name="1245"><span class="lineNum">    1245 </span>            :   vector&lt;llvm::Value*&gt; args{};</a>
-<a name="1246"><span class="lineNum">    1246 </span>            :   args.reserve(expr.args.size() - 1);</a>
-<a name="1247"><span class="lineNum">    1247 </span>            :   args.push_back(llvm_fn_closure);</a>
-<a name="1248"><span class="lineNum">    1248 </span>            : </a>
-<a name="1249"><span class="lineNum">    1249 </span>            :   for (auto&amp; i : llvm::drop_begin(expr.args))</a>
-<a name="1250"><span class="lineNum">    1250 </span>            :     args.push_back(body_expression(*i));</a>
+<a name="1245"><span class="lineNum">    1245 </span>            :   for (auto&amp; i : llvm::drop_begin(expr.args))</a>
+<a name="1246"><span class="lineNum">    1246 </span>            :     args.push_back(body_expression(*i));</a>
+<a name="1247"><span class="lineNum">    1247 </span>            : </a>
+<a name="1248"><span class="lineNum">    1248 </span>            :   return m_builder-&gt;CreateCall(llvm_fn_ty, llvm_fn_ptr, args,</a>
+<a name="1249"><span class="lineNum">    1249 </span>            :                                llvm_fn_ty-&gt;getReturnType()-&gt;isVoidTy() ? &quot;&quot; : &quot;indir.call&quot;);</a>
+<a name="1250"><span class="lineNum">    1250 </span>            : }</a>
 <a name="1251"><span class="lineNum">    1251 </span>            : </a>
-<a name="1252"><span class="lineNum">    1252 </span>            :   return m_builder-&gt;CreateCall(llvm_fn_ty, llvm_fn_ptr, args,</a>
-<a name="1253"><span class="lineNum">    1253 </span>            :                                llvm_fn_ty-&gt;getReturnType()-&gt;isVoidTy() ? &quot;&quot; : &quot;indir.call&quot;);</a>
-<a name="1254"><span class="lineNum">    1254 </span>            : }</a>
-<a name="1255"><span class="lineNum">    1255 </span>            : </a>
-<a name="1256"><span class="lineNum">    1256 </span><span class="lineNoCov">          0 : template &lt;&gt; auto Compiler::expression(ast::CtorExpr&amp; expr) -&gt; Val {</span></a>
-<a name="1257"><span class="lineNum">    1257 </span>            :   auto type = expr.ensure_ty();</a>
-<a name="1258"><span class="lineNum">    1258 </span>            :   if (type.without_mut().base_isa&lt;ty::Struct&gt;()) {</a>
-<a name="1259"><span class="lineNum">    1259 </span>            :     // TODO(rymiel): #4 determine what kind of allocation must be done, and if at all. It'll probably require a</a>
-<a name="1260"><span class="lineNum">    1260 </span>            :     // complicated semantic step to determine object lifetime, which would probably be evaluated before compilation of</a>
-<a name="1261"><span class="lineNum">    1261 </span>            :     // these expressions.</a>
-<a name="1262"><span class="lineNum">    1262 </span>            : </a>
-<a name="1263"><span class="lineNum">    1263 </span>            :     //// Heap allocation</a>
-<a name="1264"><span class="lineNum">    1264 </span>            :     // auto* llvm_struct_type = llvm_type(*struct_type);</a>
-<a name="1265"><span class="lineNum">    1265 </span>            :     // llvm::Value* alloc = nullptr;</a>
-<a name="1266"><span class="lineNum">    1266 </span>            :     // auto* alloc_size = llvm::ConstantExpr::getSizeOf(llvm_struct_type);</a>
-<a name="1267"><span class="lineNum">    1267 </span>            :     // alloc = llvm::CallInst::CreateMalloc(m_builder-&gt;GetInsertBlock(), m_builder-&gt;getInt64Ty(), llvm_struct_type,</a>
-<a name="1268"><span class="lineNum">    1268 </span>            :     //                                      alloc_size, nullptr, nullptr, &quot;s.ctor.malloc&quot;);</a>
-<a name="1269"><span class="lineNum">    1269 </span>            :     // alloc = m_builder-&gt;Insert(alloc);</a>
-<a name="1270"><span class="lineNum">    1270 </span>            : </a>
-<a name="1271"><span class="lineNum">    1271 </span>            :     //// Stack allocation</a>
-<a name="1272"><span class="lineNum">    1272 </span>            :     // alloc = m_builder-&gt;CreateAlloca(llvm_struct_type, 0, nullptr, &quot;s.ctor.alloca&quot;);</a>
-<a name="1273"><span class="lineNum">    1273 </span>            : </a>
-<a name="1274"><span class="lineNum">    1274 </span>            :     //// Value allocation</a>
-<a name="1275"><span class="lineNum">    1275 </span>            :     auto* selected_ctor_overload = expr.selected_overload;</a>
-<a name="1276"><span class="lineNum">    1276 </span>            : </a>
-<a name="1277"><span class="lineNum">    1277 </span>            :     auto* llvm_fn = declare(*selected_ctor_overload);</a>
-<a name="1278"><span class="lineNum">    1278 </span>            :     vector&lt;llvm::Value*&gt; llvm_args{};</a>
-<a name="1279"><span class="lineNum">    1279 </span>            :     for (auto&amp; i : expr.args) {</a>
-<a name="1280"><span class="lineNum">    1280 </span>            :       auto arg = body_expression(*i);</a>
-<a name="1281"><span class="lineNum">    1281 </span>            :       llvm_args.push_back(arg.llvm);</a>
-<a name="1282"><span class="lineNum">    1282 </span>            :     }</a>
-<a name="1283"><span class="lineNum">    1283 </span>            :     Val base_value = m_builder-&gt;CreateCall(llvm_fn, llvm_args);</a>
-<a name="1284"><span class="lineNum">    1284 </span>            : </a>
-<a name="1285"><span class="lineNum">    1285 </span>            :     //// Heap allocation</a>
-<a name="1286"><span class="lineNum">    1286 </span>            :     // if (mut) {</a>
-<a name="1287"><span class="lineNum">    1287 </span>            :     //   m_builder-&gt;CreateStore(base_value, alloc);</a>
-<a name="1288"><span class="lineNum">    1288 </span>            :     //   base_value = alloc;</a>
-<a name="1289"><span class="lineNum">    1289 </span>            :     // }</a>
-<a name="1290"><span class="lineNum">    1290 </span>            : </a>
-<a name="1291"><span class="lineNum">    1291 </span>            :     return base_value;</a>
-<a name="1292"><span class="lineNum">    1292 </span>            :   }</a>
-<a name="1293"><span class="lineNum">    1293 </span>            :   if (auto int_type = type.without_mut().try_as&lt;ty::Int&gt;()) {</a>
-<a name="1294"><span class="lineNum">    1294 </span>            :     yume_assert(expr.args.size() == 1, &quot;Numeric cast can only contain a single argument&quot;);</a>
-<a name="1295"><span class="lineNum">    1295 </span>            :     auto&amp; cast_from = expr.args[0];</a>
-<a name="1296"><span class="lineNum">    1296 </span>            :     yume_assert(cast_from-&gt;ensure_ty().without_mut().base_isa&lt;ty::Int&gt;(), &quot;Numeric cast must convert from int&quot;);</a>
-<a name="1297"><span class="lineNum">    1297 </span>            :     auto base = body_expression(*cast_from);</a>
-<a name="1298"><span class="lineNum">    1298 </span>            :     if (cast_from-&gt;ensure_ty().without_mut().base_cast&lt;ty::Int&gt;()-&gt;is_signed())</a>
-<a name="1299"><span class="lineNum">    1299 </span>            :       return m_builder-&gt;CreateSExtOrTrunc(base, llvm_type(*int_type));</a>
-<a name="1300"><span class="lineNum">    1300 </span>            :     return m_builder-&gt;CreateZExtOrTrunc(base, llvm_type(*int_type));</a>
-<a name="1301"><span class="lineNum">    1301 </span>            :   }</a>
-<a name="1302"><span class="lineNum">    1302 </span>            : </a>
-<a name="1303"><span class="lineNum">    1303 </span>            :   //// Stack allocation of slice</a>
-<a name="1304"><span class="lineNum">    1304 </span>            :   // if (auto* const_value = dyn_cast&lt;llvm::ConstantInt&gt;(slice_size.llvm())) {</a>
-<a name="1305"><span class="lineNum">    1305 </span>            :   //   auto slice_size_val = const_value-&gt;getLimitedValue();</a>
-<a name="1306"><span class="lineNum">    1306 </span>            :   //   auto* array_type = ArrayType::get(base_type, slice_size_val);</a>
-<a name="1307"><span class="lineNum">    1307 </span>            :   //   auto* array_alloc = m_builder-&gt;CreateAlloca(array_type, nullptr, &quot;sl.ctor.alloc&quot;);</a>
-<a name="1308"><span class="lineNum">    1308 </span>            : </a>
-<a name="1309"><span class="lineNum">    1309 </span>            :   //   auto* data_ptr = m_builder-&gt;CreateBitCast(array_alloc, base_type-&gt;getPointerTo(), &quot;sl.ctor.ptr&quot;);</a>
-<a name="1310"><span class="lineNum">    1310 </span>            :   //   llvm::Value* slice_inst = llvm::UndefValue::get(llvm_slice_type);</a>
-<a name="1311"><span class="lineNum">    1311 </span>            :   //   slice_inst = m_builder-&gt;CreateInsertValue(slice_inst, data_ptr, 0);</a>
-<a name="1312"><span class="lineNum">    1312 </span>            :   //   slice_inst = m_builder-&gt;CreateInsertValue(slice_inst, m_builder-&gt;getInt64(slice_size_val), 1);</a>
-<a name="1313"><span class="lineNum">    1313 </span>            :   //   slice_inst-&gt;setName(&quot;sl.ctor.inst&quot;);</a>
-<a name="1314"><span class="lineNum">    1314 </span>            : </a>
-<a name="1315"><span class="lineNum">    1315 </span>            :   //   return slice_inst;</a>
-<a name="1316"><span class="lineNum">    1316 </span>            :   // }</a>
-<a name="1317"><span class="lineNum">    1317 </span>            : </a>
-<a name="1318"><span class="lineNum">    1318 </span>            :   // TODO(rymiel): the commented-out block above stack-allocates a slice constructor if its size can be determined</a>
-<a name="1319"><span class="lineNum">    1319 </span>            :   // trivially. However, since it references stack memory, a slice allocated this way could never be feasibly returned</a>
-<a name="1320"><span class="lineNum">    1320 </span>            :   // or passed into a function which stores a reference to it, etc. The compiler currently does nothing resembling</a>
-<a name="1321"><span class="lineNum">    1321 </span>            :   // &quot;escape analysis&quot;, however something like that might be needed to perform an optimization like shown above.</a>
+<a name="1252"><span class="lineNum">    1252 </span><span class="lineNoCov">          0 : template &lt;&gt; auto Compiler::expression(ast::CtorExpr&amp; expr) -&gt; Val {</span></a>
+<a name="1253"><span class="lineNum">    1253 </span>            :   auto type = expr.ensure_ty();</a>
+<a name="1254"><span class="lineNum">    1254 </span>            :   if (type.without_mut().base_isa&lt;ty::Struct&gt;()) {</a>
+<a name="1255"><span class="lineNum">    1255 </span>            :     // TODO(rymiel): #4 determine what kind of allocation must be done, and if at all. It'll probably require a</a>
+<a name="1256"><span class="lineNum">    1256 </span>            :     // complicated semantic step to determine object lifetime, which would probably be evaluated before compilation of</a>
+<a name="1257"><span class="lineNum">    1257 </span>            :     // these expressions.</a>
+<a name="1258"><span class="lineNum">    1258 </span>            : </a>
+<a name="1259"><span class="lineNum">    1259 </span>            :     //// Heap allocation</a>
+<a name="1260"><span class="lineNum">    1260 </span>            :     // auto* llvm_struct_type = llvm_type(*struct_type);</a>
+<a name="1261"><span class="lineNum">    1261 </span>            :     // llvm::Value* alloc = nullptr;</a>
+<a name="1262"><span class="lineNum">    1262 </span>            :     // auto* alloc_size = llvm::ConstantExpr::getSizeOf(llvm_struct_type);</a>
+<a name="1263"><span class="lineNum">    1263 </span>            :     // alloc = llvm::CallInst::CreateMalloc(m_builder-&gt;GetInsertBlock(), m_builder-&gt;getInt64Ty(), llvm_struct_type,</a>
+<a name="1264"><span class="lineNum">    1264 </span>            :     //                                      alloc_size, nullptr, nullptr, &quot;s.ctor.malloc&quot;);</a>
+<a name="1265"><span class="lineNum">    1265 </span>            :     // alloc = m_builder-&gt;Insert(alloc);</a>
+<a name="1266"><span class="lineNum">    1266 </span>            : </a>
+<a name="1267"><span class="lineNum">    1267 </span>            :     //// Stack allocation</a>
+<a name="1268"><span class="lineNum">    1268 </span>            :     // alloc = m_builder-&gt;CreateAlloca(llvm_struct_type, 0, nullptr, &quot;s.ctor.alloca&quot;);</a>
+<a name="1269"><span class="lineNum">    1269 </span>            : </a>
+<a name="1270"><span class="lineNum">    1270 </span>            :     //// Value allocation</a>
+<a name="1271"><span class="lineNum">    1271 </span>            :     auto* selected_ctor_overload = expr.selected_overload;</a>
+<a name="1272"><span class="lineNum">    1272 </span>            : </a>
+<a name="1273"><span class="lineNum">    1273 </span>            :     auto* llvm_fn = declare(*selected_ctor_overload);</a>
+<a name="1274"><span class="lineNum">    1274 </span>            :     vector&lt;llvm::Value*&gt; llvm_args{};</a>
+<a name="1275"><span class="lineNum">    1275 </span>            :     for (auto&amp; i : expr.args) {</a>
+<a name="1276"><span class="lineNum">    1276 </span>            :       auto arg = body_expression(*i);</a>
+<a name="1277"><span class="lineNum">    1277 </span>            :       llvm_args.push_back(arg.llvm);</a>
+<a name="1278"><span class="lineNum">    1278 </span>            :     }</a>
+<a name="1279"><span class="lineNum">    1279 </span>            :     Val base_value = m_builder-&gt;CreateCall(llvm_fn, llvm_args);</a>
+<a name="1280"><span class="lineNum">    1280 </span>            : </a>
+<a name="1281"><span class="lineNum">    1281 </span>            :     //// Heap allocation</a>
+<a name="1282"><span class="lineNum">    1282 </span>            :     // if (mut) {</a>
+<a name="1283"><span class="lineNum">    1283 </span>            :     //   m_builder-&gt;CreateStore(base_value, alloc);</a>
+<a name="1284"><span class="lineNum">    1284 </span>            :     //   base_value = alloc;</a>
+<a name="1285"><span class="lineNum">    1285 </span>            :     // }</a>
+<a name="1286"><span class="lineNum">    1286 </span>            : </a>
+<a name="1287"><span class="lineNum">    1287 </span>            :     return base_value;</a>
+<a name="1288"><span class="lineNum">    1288 </span>            :   }</a>
+<a name="1289"><span class="lineNum">    1289 </span>            :   if (auto int_type = type.without_mut().try_as&lt;ty::Int&gt;()) {</a>
+<a name="1290"><span class="lineNum">    1290 </span>            :     yume_assert(expr.args.size() == 1, &quot;Numeric cast can only contain a single argument&quot;);</a>
+<a name="1291"><span class="lineNum">    1291 </span>            :     auto&amp; cast_from = expr.args[0];</a>
+<a name="1292"><span class="lineNum">    1292 </span>            :     yume_assert(cast_from-&gt;ensure_ty().without_mut().base_isa&lt;ty::Int&gt;(), &quot;Numeric cast must convert from int&quot;);</a>
+<a name="1293"><span class="lineNum">    1293 </span>            :     auto base = body_expression(*cast_from);</a>
+<a name="1294"><span class="lineNum">    1294 </span>            :     if (cast_from-&gt;ensure_ty().without_mut().base_cast&lt;ty::Int&gt;()-&gt;is_signed())</a>
+<a name="1295"><span class="lineNum">    1295 </span>            :       return m_builder-&gt;CreateSExtOrTrunc(base, llvm_type(*int_type));</a>
+<a name="1296"><span class="lineNum">    1296 </span>            :     return m_builder-&gt;CreateZExtOrTrunc(base, llvm_type(*int_type));</a>
+<a name="1297"><span class="lineNum">    1297 </span>            :   }</a>
+<a name="1298"><span class="lineNum">    1298 </span>            : </a>
+<a name="1299"><span class="lineNum">    1299 </span>            :   //// Stack allocation of slice</a>
+<a name="1300"><span class="lineNum">    1300 </span>            :   // if (auto* const_value = dyn_cast&lt;llvm::ConstantInt&gt;(slice_size.llvm())) {</a>
+<a name="1301"><span class="lineNum">    1301 </span>            :   //   auto slice_size_val = const_value-&gt;getLimitedValue();</a>
+<a name="1302"><span class="lineNum">    1302 </span>            :   //   auto* array_type = ArrayType::get(base_type, slice_size_val);</a>
+<a name="1303"><span class="lineNum">    1303 </span>            :   //   auto* array_alloc = m_builder-&gt;CreateAlloca(array_type, nullptr, &quot;sl.ctor.alloc&quot;);</a>
+<a name="1304"><span class="lineNum">    1304 </span>            : </a>
+<a name="1305"><span class="lineNum">    1305 </span>            :   //   auto* data_ptr = m_builder-&gt;CreateBitCast(array_alloc, base_type-&gt;getPointerTo(), &quot;sl.ctor.ptr&quot;);</a>
+<a name="1306"><span class="lineNum">    1306 </span>            :   //   llvm::Value* slice_inst = llvm::UndefValue::get(llvm_slice_type);</a>
+<a name="1307"><span class="lineNum">    1307 </span>            :   //   slice_inst = m_builder-&gt;CreateInsertValue(slice_inst, data_ptr, 0);</a>
+<a name="1308"><span class="lineNum">    1308 </span>            :   //   slice_inst = m_builder-&gt;CreateInsertValue(slice_inst, m_builder-&gt;getInt64(slice_size_val), 1);</a>
+<a name="1309"><span class="lineNum">    1309 </span>            :   //   slice_inst-&gt;setName(&quot;sl.ctor.inst&quot;);</a>
+<a name="1310"><span class="lineNum">    1310 </span>            : </a>
+<a name="1311"><span class="lineNum">    1311 </span>            :   //   return slice_inst;</a>
+<a name="1312"><span class="lineNum">    1312 </span>            :   // }</a>
+<a name="1313"><span class="lineNum">    1313 </span>            : </a>
+<a name="1314"><span class="lineNum">    1314 </span>            :   // TODO(rymiel): the commented-out block above stack-allocates a slice constructor if its size can be determined</a>
+<a name="1315"><span class="lineNum">    1315 </span>            :   // trivially. However, since it references stack memory, a slice allocated this way could never be feasibly returned</a>
+<a name="1316"><span class="lineNum">    1316 </span>            :   // or passed into a function which stores a reference to it, etc. The compiler currently does nothing resembling</a>
+<a name="1317"><span class="lineNum">    1317 </span>            :   // &quot;escape analysis&quot;, however something like that might be needed to perform an optimization like shown above.</a>
+<a name="1318"><span class="lineNum">    1318 </span>            : </a>
+<a name="1319"><span class="lineNum">    1319 </span>            :   // TODO(rymiel): Note that also a slice could be stack-allocated even if its size *wasn't* known at compile time,</a>
+<a name="1320"><span class="lineNum">    1320 </span>            :   // however, I simply didn't know how to do that when i wrote the above snippet. But, since its problematic anyway,</a>
+<a name="1321"><span class="lineNum">    1321 </span>            :   // it remains unfixed (and commented out); revisit later.</a>
 <a name="1322"><span class="lineNum">    1322 </span>            : </a>
-<a name="1323"><span class="lineNum">    1323 </span>            :   // TODO(rymiel): Note that also a slice could be stack-allocated even if its size *wasn't* known at compile time,</a>
-<a name="1324"><span class="lineNum">    1324 </span>            :   // however, I simply didn't know how to do that when i wrote the above snippet. But, since its problematic anyway,</a>
-<a name="1325"><span class="lineNum">    1325 </span>            :   // it remains unfixed (and commented out); revisit later.</a>
-<a name="1326"><span class="lineNum">    1326 </span>            : </a>
-<a name="1327"><span class="lineNum">    1327 </span>            :   // TODO(rymiel): A large slice may be unfeasible to be stack-allocated anyway, so in addition to the above points,</a>
-<a name="1328"><span class="lineNum">    1328 </span>            :   // slice size could also be a consideration. Perhaps we don't *want* to stack-allocate unknown-sized slices as they</a>
-<a name="1329"><span class="lineNum">    1329 </span>            :   // may be absurdly huge in size and cause stack overflow.</a>
-<a name="1330"><span class="lineNum">    1330 </span>            :   // Related: #4</a>
+<a name="1323"><span class="lineNum">    1323 </span>            :   // TODO(rymiel): A large slice may be unfeasible to be stack-allocated anyway, so in addition to the above points,</a>
+<a name="1324"><span class="lineNum">    1324 </span>            :   // slice size could also be a consideration. Perhaps we don't *want* to stack-allocate unknown-sized slices as they</a>
+<a name="1325"><span class="lineNum">    1325 </span>            :   // may be absurdly huge in size and cause stack overflow.</a>
+<a name="1326"><span class="lineNum">    1326 </span>            :   // Related: #4</a>
+<a name="1327"><span class="lineNum">    1327 </span>            : </a>
+<a name="1328"><span class="lineNum">    1328 </span>            :   // NOTE: The above comments are now largely irrelevant as slice allocation is sort-of performed in-source, with the</a>
+<a name="1329"><span class="lineNum">    1329 </span>            :   // __builtin_slice_malloc primitive. For the above to apply, the compiler must more invasively track the lifetime of</a>
+<a name="1330"><span class="lineNum">    1330 </span>            :   // slices, and skip the constructor entirely, or something like that</a>
 <a name="1331"><span class="lineNum">    1331 </span>            : </a>
-<a name="1332"><span class="lineNum">    1332 </span>            :   // NOTE: The above comments are now largely irrelevant as slice allocation is sort-of performed in-source, with the</a>
-<a name="1333"><span class="lineNum">    1333 </span>            :   // __builtin_slice_malloc primitive. For the above to apply, the compiler must more invasively track the lifetime of</a>
-<a name="1334"><span class="lineNum">    1334 </span>            :   // slices, and skip the constructor entirely, or something like that</a>
-<a name="1335"><span class="lineNum">    1335 </span>            : </a>
-<a name="1336"><span class="lineNum">    1336 </span>            :   throw std::runtime_error(&quot;Can't construct non-struct, non-integer type&quot;);</a>
-<a name="1337"><span class="lineNum">    1337 </span>            : }</a>
-<a name="1338"><span class="lineNum">    1338 </span>            : </a>
-<a name="1339"><span class="lineNum">    1339 </span>            : auto Compiler::ptr_bitsize() -&gt; unsigned int { return m_module-&gt;getDataLayout().getPointerSizeInBits(); }</a>
-<a name="1340"><span class="lineNum">    1340 </span>            : </a>
-<a name="1341"><span class="lineNum">    1341 </span>            : auto Compiler::create_malloc(llvm::Type* base_type, Val slice_size, string_view name) -&gt; Val {</a>
-<a name="1342"><span class="lineNum">    1342 </span>            :   auto* size_type = m_builder-&gt;getIntNTy(ptr_bitsize());</a>
-<a name="1343"><span class="lineNum">    1343 </span>            :   slice_size = m_builder-&gt;CreateSExtOrTrunc(slice_size, size_type);</a>
-<a name="1344"><span class="lineNum">    1344 </span>            :   Val alloc_size = llvm::ConstantExpr::getTrunc(llvm::ConstantExpr::getSizeOf(base_type), size_type);</a>
-<a name="1345"><span class="lineNum">    1345 </span>            : </a>
-<a name="1346"><span class="lineNum">    1346 </span>            :   alloc_size = m_builder-&gt;CreateMul(slice_size, alloc_size, &quot;mallocsize&quot;);</a>
-<a name="1347"><span class="lineNum">    1347 </span>            : </a>
-<a name="1348"><span class="lineNum">    1348 </span>            :   // prototype malloc as &quot;void *malloc(size_t)&quot;</a>
-<a name="1349"><span class="lineNum">    1349 </span>            :   llvm::FunctionCallee malloc_func = m_module-&gt;getOrInsertFunction(&quot;malloc&quot;, m_builder-&gt;getInt8PtrTy(), size_type);</a>
-<a name="1350"><span class="lineNum">    1350 </span>            :   auto* m_call = m_builder-&gt;CreateCall(malloc_func, alloc_size.llvm, &quot;malloccall&quot;);</a>
-<a name="1351"><span class="lineNum">    1351 </span>            :   Val result = m_builder-&gt;CreateBitCast(m_call, base_type-&gt;getPointerTo(), name);</a>
-<a name="1352"><span class="lineNum">    1352 </span>            : </a>
-<a name="1353"><span class="lineNum">    1353 </span>            :   m_call-&gt;setTailCall();</a>
-<a name="1354"><span class="lineNum">    1354 </span>            :   if (auto* fn = dyn_cast&lt;llvm::Function&gt;(malloc_func.getCallee())) {</a>
-<a name="1355"><span class="lineNum">    1355 </span>            :     m_call-&gt;setCallingConv(fn-&gt;getCallingConv());</a>
-<a name="1356"><span class="lineNum">    1356 </span>            :     if (!fn-&gt;returnDoesNotAlias())</a>
-<a name="1357"><span class="lineNum">    1357 </span>            :       fn-&gt;setReturnDoesNotAlias();</a>
-<a name="1358"><span class="lineNum">    1358 </span>            :   }</a>
-<a name="1359"><span class="lineNum">    1359 </span>            : </a>
-<a name="1360"><span class="lineNum">    1360 </span>            :   return result;</a>
+<a name="1332"><span class="lineNum">    1332 </span>            :   throw std::runtime_error(&quot;Can't construct non-struct, non-integer type&quot;);</a>
+<a name="1333"><span class="lineNum">    1333 </span>            : }</a>
+<a name="1334"><span class="lineNum">    1334 </span>            : </a>
+<a name="1335"><span class="lineNum">    1335 </span>            : auto Compiler::ptr_bitsize() -&gt; unsigned int { return m_module-&gt;getDataLayout().getPointerSizeInBits(); }</a>
+<a name="1336"><span class="lineNum">    1336 </span>            : </a>
+<a name="1337"><span class="lineNum">    1337 </span>            : auto Compiler::create_malloc(llvm::Type* base_type, Val slice_size, string_view name) -&gt; Val {</a>
+<a name="1338"><span class="lineNum">    1338 </span>            :   auto* size_type = m_builder-&gt;getIntNTy(ptr_bitsize());</a>
+<a name="1339"><span class="lineNum">    1339 </span>            :   slice_size = m_builder-&gt;CreateSExtOrTrunc(slice_size, size_type);</a>
+<a name="1340"><span class="lineNum">    1340 </span>            :   Val alloc_size = llvm::ConstantExpr::getTrunc(llvm::ConstantExpr::getSizeOf(base_type), size_type);</a>
+<a name="1341"><span class="lineNum">    1341 </span>            : </a>
+<a name="1342"><span class="lineNum">    1342 </span>            :   alloc_size = m_builder-&gt;CreateMul(slice_size, alloc_size, &quot;mallocsize&quot;);</a>
+<a name="1343"><span class="lineNum">    1343 </span>            : </a>
+<a name="1344"><span class="lineNum">    1344 </span>            :   // prototype malloc as &quot;void *malloc(size_t)&quot;</a>
+<a name="1345"><span class="lineNum">    1345 </span>            :   llvm::FunctionCallee malloc_func = m_module-&gt;getOrInsertFunction(&quot;malloc&quot;, m_builder-&gt;getInt8PtrTy(), size_type);</a>
+<a name="1346"><span class="lineNum">    1346 </span>            :   auto* m_call = m_builder-&gt;CreateCall(malloc_func, alloc_size.llvm, &quot;malloccall&quot;);</a>
+<a name="1347"><span class="lineNum">    1347 </span>            :   Val result = m_builder-&gt;CreateBitCast(m_call, base_type-&gt;getPointerTo(), name);</a>
+<a name="1348"><span class="lineNum">    1348 </span>            : </a>
+<a name="1349"><span class="lineNum">    1349 </span>            :   m_call-&gt;setTailCall();</a>
+<a name="1350"><span class="lineNum">    1350 </span>            :   if (auto* fn = dyn_cast&lt;llvm::Function&gt;(malloc_func.getCallee())) {</a>
+<a name="1351"><span class="lineNum">    1351 </span>            :     m_call-&gt;setCallingConv(fn-&gt;getCallingConv());</a>
+<a name="1352"><span class="lineNum">    1352 </span>            :     if (!fn-&gt;returnDoesNotAlias())</a>
+<a name="1353"><span class="lineNum">    1353 </span>            :       fn-&gt;setReturnDoesNotAlias();</a>
+<a name="1354"><span class="lineNum">    1354 </span>            :   }</a>
+<a name="1355"><span class="lineNum">    1355 </span>            : </a>
+<a name="1356"><span class="lineNum">    1356 </span>            :   return result;</a>
+<a name="1357"><span class="lineNum">    1357 </span>            : }</a>
+<a name="1358"><span class="lineNum">    1358 </span>            : </a>
+<a name="1359"><span class="lineNum">    1359 </span>            : auto Compiler::create_malloc(llvm::Type* base_type, uint64_t slice_size, string_view name) -&gt; Val {</a>
+<a name="1360"><span class="lineNum">    1360 </span>            :   return create_malloc(base_type, m_builder-&gt;getIntN(ptr_bitsize(), slice_size), name);</a>
 <a name="1361"><span class="lineNum">    1361 </span>            : }</a>
 <a name="1362"><span class="lineNum">    1362 </span>            : </a>
-<a name="1363"><span class="lineNum">    1363 </span>            : auto Compiler::create_malloc(llvm::Type* base_type, uint64_t slice_size, string_view name) -&gt; Val {</a>
-<a name="1364"><span class="lineNum">    1364 </span>            :   return create_malloc(base_type, m_builder-&gt;getIntN(ptr_bitsize(), slice_size), name);</a>
-<a name="1365"><span class="lineNum">    1365 </span>            : }</a>
-<a name="1366"><span class="lineNum">    1366 </span>            : </a>
-<a name="1367"><span class="lineNum">    1367 </span>            : auto Compiler::create_free(Val ptr) -&gt; Val {</a>
-<a name="1368"><span class="lineNum">    1368 </span>            :   auto* void_ty = m_builder-&gt;getVoidTy();</a>
-<a name="1369"><span class="lineNum">    1369 </span>            :   auto* int_ptr_ty = m_builder-&gt;getInt8PtrTy();</a>
-<a name="1370"><span class="lineNum">    1370 </span>            :   // prototype free as &quot;void free(void*)&quot;</a>
-<a name="1371"><span class="lineNum">    1371 </span>            :   llvm::FunctionCallee free_func = m_module-&gt;getOrInsertFunction(&quot;free&quot;, void_ty, int_ptr_ty);</a>
-<a name="1372"><span class="lineNum">    1372 </span>            :   auto* result = m_builder-&gt;CreateCall(free_func, m_builder-&gt;CreateBitCast(ptr, int_ptr_ty));</a>
-<a name="1373"><span class="lineNum">    1373 </span>            :   result-&gt;setTailCall();</a>
-<a name="1374"><span class="lineNum">    1374 </span>            :   if (auto* fn = dyn_cast&lt;llvm::Function&gt;(free_func.getCallee()))</a>
-<a name="1375"><span class="lineNum">    1375 </span>            :     result-&gt;setCallingConv(fn-&gt;getCallingConv());</a>
-<a name="1376"><span class="lineNum">    1376 </span>            : </a>
-<a name="1377"><span class="lineNum">    1377 </span>            :   return result;</a>
-<a name="1378"><span class="lineNum">    1378 </span>            : }</a>
-<a name="1379"><span class="lineNum">    1379 </span>            : </a>
-<a name="1380"><span class="lineNum">    1380 </span><span class="lineNoCov">          0 : template &lt;&gt; auto Compiler::expression(ast::SliceExpr&amp; expr) -&gt; Val {</span></a>
-<a name="1381"><span class="lineNum">    1381 </span>            :   auto* slice_size = m_builder-&gt;getIntN(ptr_bitsize(), expr.args.size());</a>
-<a name="1382"><span class="lineNum">    1382 </span>            : </a>
-<a name="1383"><span class="lineNum">    1383 </span>            :   yume_assert(expr.ensure_ty().is_slice(), &quot;Slice expression must contain slice type&quot;);</a>
-<a name="1384"><span class="lineNum">    1384 </span>            :   auto* slice_type = llvm_type(expr.ensure_ty());</a>
-<a name="1385"><span class="lineNum">    1385 </span>            :   auto base_type = expr.ensure_ty().base_cast&lt;ty::Struct&gt;()-&gt;fields().at(0)-&gt;ensure_ty().ensure_ptr_base(); // ???</a>
-<a name="1386"><span class="lineNum">    1386 </span>            :   auto* base_llvm_type = llvm_type(base_type);</a>
-<a name="1387"><span class="lineNum">    1387 </span>            : </a>
-<a name="1388"><span class="lineNum">    1388 </span>            :   const Val data_ptr = create_malloc(base_llvm_type, slice_size, &quot;sl.ctor.malloc&quot;);</a>
-<a name="1389"><span class="lineNum">    1389 </span>            : </a>
-<a name="1390"><span class="lineNum">    1390 </span>            :   unsigned j = 0;</a>
-<a name="1391"><span class="lineNum">    1391 </span>            :   for (auto&amp; i : expr.args) {</a>
-<a name="1392"><span class="lineNum">    1392 </span>            :     if (!base_type.is_trivially_destructible()) {</a>
-<a name="1393"><span class="lineNum">    1393 </span>            :       auto dup_args = vector&lt;ast::AnyExpr&gt;{};</a>
-<a name="1394"><span class="lineNum">    1394 </span>            :       dup_args.emplace_back(move(i));</a>
-<a name="1395"><span class="lineNum">    1395 </span>            :       auto ast_dup =</a>
-<a name="1396"><span class="lineNum">    1396 </span>            :           std::make_unique&lt;ast::CtorExpr&gt;(expr.token_range(), ast::AnyType{expr.type-&gt;clone()}, move(dup_args));</a>
-<a name="1397"><span class="lineNum">    1397 </span>            :       m_walker-&gt;body_expression(*ast_dup);</a>
-<a name="1398"><span class="lineNum">    1398 </span>            :       i = ast::AnyExpr{move(ast_dup)};</a>
-<a name="1399"><span class="lineNum">    1399 </span>            :     }</a>
-<a name="1400"><span class="lineNum">    1400 </span>            :     Val val = body_expression(*i);</a>
-<a name="1401"><span class="lineNum">    1401 </span>            :     m_builder-&gt;CreateStore(val, m_builder-&gt;CreateConstInBoundsGEP1_32(base_llvm_type, data_ptr, j++));</a>
-<a name="1402"><span class="lineNum">    1402 </span>            :   }</a>
+<a name="1363"><span class="lineNum">    1363 </span>            : auto Compiler::create_free(Val ptr) -&gt; Val {</a>
+<a name="1364"><span class="lineNum">    1364 </span>            :   auto* void_ty = m_builder-&gt;getVoidTy();</a>
+<a name="1365"><span class="lineNum">    1365 </span>            :   auto* int_ptr_ty = m_builder-&gt;getInt8PtrTy();</a>
+<a name="1366"><span class="lineNum">    1366 </span>            :   // prototype free as &quot;void free(void*)&quot;</a>
+<a name="1367"><span class="lineNum">    1367 </span>            :   llvm::FunctionCallee free_func = m_module-&gt;getOrInsertFunction(&quot;free&quot;, void_ty, int_ptr_ty);</a>
+<a name="1368"><span class="lineNum">    1368 </span>            :   auto* result = m_builder-&gt;CreateCall(free_func, m_builder-&gt;CreateBitCast(ptr, int_ptr_ty));</a>
+<a name="1369"><span class="lineNum">    1369 </span>            :   result-&gt;setTailCall();</a>
+<a name="1370"><span class="lineNum">    1370 </span>            :   if (auto* fn = dyn_cast&lt;llvm::Function&gt;(free_func.getCallee()))</a>
+<a name="1371"><span class="lineNum">    1371 </span>            :     result-&gt;setCallingConv(fn-&gt;getCallingConv());</a>
+<a name="1372"><span class="lineNum">    1372 </span>            : </a>
+<a name="1373"><span class="lineNum">    1373 </span>            :   return result;</a>
+<a name="1374"><span class="lineNum">    1374 </span>            : }</a>
+<a name="1375"><span class="lineNum">    1375 </span>            : </a>
+<a name="1376"><span class="lineNum">    1376 </span><span class="lineNoCov">          0 : template &lt;&gt; auto Compiler::expression(ast::SliceExpr&amp; expr) -&gt; Val {</span></a>
+<a name="1377"><span class="lineNum">    1377 </span>            :   auto* slice_size = m_builder-&gt;getIntN(ptr_bitsize(), expr.args.size());</a>
+<a name="1378"><span class="lineNum">    1378 </span>            : </a>
+<a name="1379"><span class="lineNum">    1379 </span>            :   yume_assert(expr.ensure_ty().is_slice(), &quot;Slice expression must contain slice type&quot;);</a>
+<a name="1380"><span class="lineNum">    1380 </span>            :   auto* slice_type = llvm_type(expr.ensure_ty());</a>
+<a name="1381"><span class="lineNum">    1381 </span>            :   auto base_type = expr.ensure_ty().base_cast&lt;ty::Struct&gt;()-&gt;fields().at(0)-&gt;ensure_ty().ensure_ptr_base(); // ???</a>
+<a name="1382"><span class="lineNum">    1382 </span>            :   auto* base_llvm_type = llvm_type(base_type);</a>
+<a name="1383"><span class="lineNum">    1383 </span>            : </a>
+<a name="1384"><span class="lineNum">    1384 </span>            :   const Val data_ptr = create_malloc(base_llvm_type, slice_size, &quot;sl.ctor.malloc&quot;);</a>
+<a name="1385"><span class="lineNum">    1385 </span>            : </a>
+<a name="1386"><span class="lineNum">    1386 </span>            :   unsigned j = 0;</a>
+<a name="1387"><span class="lineNum">    1387 </span>            :   for (auto&amp; i : expr.args) {</a>
+<a name="1388"><span class="lineNum">    1388 </span>            :     if (!base_type.is_trivially_destructible()) {</a>
+<a name="1389"><span class="lineNum">    1389 </span>            :       auto dup_args = vector&lt;ast::AnyExpr&gt;{};</a>
+<a name="1390"><span class="lineNum">    1390 </span>            :       dup_args.emplace_back(move(i));</a>
+<a name="1391"><span class="lineNum">    1391 </span>            :       auto ast_dup =</a>
+<a name="1392"><span class="lineNum">    1392 </span>            :           std::make_unique&lt;ast::CtorExpr&gt;(expr.token_range(), ast::AnyType{expr.type-&gt;clone()}, move(dup_args));</a>
+<a name="1393"><span class="lineNum">    1393 </span>            :       m_walker-&gt;body_expression(*ast_dup);</a>
+<a name="1394"><span class="lineNum">    1394 </span>            :       i = ast::AnyExpr{move(ast_dup)};</a>
+<a name="1395"><span class="lineNum">    1395 </span>            :     }</a>
+<a name="1396"><span class="lineNum">    1396 </span>            :     Val val = body_expression(*i);</a>
+<a name="1397"><span class="lineNum">    1397 </span>            :     m_builder-&gt;CreateStore(val, m_builder-&gt;CreateConstInBoundsGEP1_32(base_llvm_type, data_ptr, j++));</a>
+<a name="1398"><span class="lineNum">    1398 </span>            :   }</a>
+<a name="1399"><span class="lineNum">    1399 </span>            : </a>
+<a name="1400"><span class="lineNum">    1400 </span>            :   Val slice_inst = llvm::UndefValue::get(slice_type);</a>
+<a name="1401"><span class="lineNum">    1401 </span>            :   slice_inst = m_builder-&gt;CreateInsertValue(slice_inst, data_ptr, 0);</a>
+<a name="1402"><span class="lineNum">    1402 </span>            :   slice_inst = m_builder-&gt;CreateInsertValue(slice_inst, slice_size, 1);</a>
 <a name="1403"><span class="lineNum">    1403 </span>            : </a>
-<a name="1404"><span class="lineNum">    1404 </span>            :   Val slice_inst = llvm::UndefValue::get(slice_type);</a>
-<a name="1405"><span class="lineNum">    1405 </span>            :   slice_inst = m_builder-&gt;CreateInsertValue(slice_inst, data_ptr, 0);</a>
-<a name="1406"><span class="lineNum">    1406 </span>            :   slice_inst = m_builder-&gt;CreateInsertValue(slice_inst, slice_size, 1);</a>
-<a name="1407"><span class="lineNum">    1407 </span>            : </a>
-<a name="1408"><span class="lineNum">    1408 </span>            :   make_temporary_in_scope(slice_inst, expr, &quot;tmpsl&quot;);</a>
-<a name="1409"><span class="lineNum">    1409 </span>            : </a>
-<a name="1410"><span class="lineNum">    1410 </span>            :   return slice_inst;</a>
-<a name="1411"><span class="lineNum">    1411 </span>            : }</a>
-<a name="1412"><span class="lineNum">    1412 </span>            : </a>
-<a name="1413"><span class="lineNum">    1413 </span><span class="lineNoCov">          0 : template &lt;&gt; auto Compiler::expression(ast::FieldAccessExpr&amp; expr) -&gt; Val {</span></a>
-<a name="1414"><span class="lineNum">    1414 </span>            :   optional&lt;Val&gt; base;</a>
-<a name="1415"><span class="lineNum">    1415 </span>            :   optional&lt;ty::Type&gt; base_type;</a>
-<a name="1416"><span class="lineNum">    1416 </span>            :   if (expr.base.has_value()) {</a>
-<a name="1417"><span class="lineNum">    1417 </span>            :     base = body_expression(*expr.base);</a>
-<a name="1418"><span class="lineNum">    1418 </span>            :     base_type = expr.base-&gt;ensure_ty().mut_base();</a>
-<a name="1419"><span class="lineNum">    1419 </span>            :   } else {</a>
-<a name="1420"><span class="lineNum">    1420 </span>            :     yume_assert(m_scope_ctor.has_value(), &quot;Cannot access field without receiver outside of a constructor&quot;);</a>
-<a name="1421"><span class="lineNum">    1421 </span>            :     // NOLINTNEXTLINE(bugprone-unchecked-optional-access): clang-tidy doesn't accept yume_assert as an assertion</a>
-<a name="1422"><span class="lineNum">    1422 </span>            :     base = m_scope_ctor-&gt;value;</a>
-<a name="1423"><span class="lineNum">    1423 </span>            :     base_type = m_current_fn-&gt;self_ty;</a>
-<a name="1424"><span class="lineNum">    1424 </span>            :   }</a>
-<a name="1425"><span class="lineNum">    1425 </span>            : </a>
-<a name="1426"><span class="lineNum">    1426 </span>            :   const string base_name = expr.field;</a>
-<a name="1427"><span class="lineNum">    1427 </span>            :   const int base_offset = expr.offset;</a>
-<a name="1428"><span class="lineNum">    1428 </span>            : </a>
-<a name="1429"><span class="lineNum">    1429 </span>            :   if (!expr.ensure_ty().is_mut())</a>
-<a name="1430"><span class="lineNum">    1430 </span>            :     return m_builder-&gt;CreateExtractValue(*base, base_offset, &quot;s.field.nm.&quot;s + base_name);</a>
-<a name="1431"><span class="lineNum">    1431 </span>            : </a>
-<a name="1432"><span class="lineNum">    1432 </span>            :   yume_assert(base_type.has_value(), &quot;Cannot access field of unknown type&quot;);</a>
-<a name="1433"><span class="lineNum">    1433 </span>            :   // NOLINTNEXTLINE(bugprone-unchecked-optional-access): clang-tidy doesn't accept yume_assert as an assertion</a>
-<a name="1434"><span class="lineNum">    1434 </span>            :   return m_builder-&gt;CreateStructGEP(llvm_type(base_type.value()), *base, base_offset, &quot;s.field.m.&quot;s + base_name);</a>
-<a name="1435"><span class="lineNum">    1435 </span>            : }</a>
-<a name="1436"><span class="lineNum">    1436 </span>            : </a>
-<a name="1437"><span class="lineNum">    1437 </span><span class="lineNoCov">          0 : template &lt;&gt; auto Compiler::expression(ast::ImplicitCastExpr&amp; expr) -&gt; Val {</span></a>
-<a name="1438"><span class="lineNum">    1438 </span>            :   auto target_ty = expr.ensure_ty();</a>
-<a name="1439"><span class="lineNum">    1439 </span>            :   auto current_ty = expr.base-&gt;ensure_ty();</a>
-<a name="1440"><span class="lineNum">    1440 </span>            :   Val base = body_expression(*expr.base);</a>
-<a name="1441"><span class="lineNum">    1441 </span>            : </a>
-<a name="1442"><span class="lineNum">    1442 </span>            :   if (expr.conversion.dereference) {</a>
-<a name="1443"><span class="lineNum">    1443 </span>            :     // TODO(rymiel): Hack on top of a hack (see Type::compatibility)</a>
-<a name="1444"><span class="lineNum">    1444 </span>            :     yume_assert(current_ty.is_mut() || current_ty.is_opaque_self(),</a>
-<a name="1445"><span class="lineNum">    1445 </span>            :                 &quot;Source type must be mutable or opaque when implicitly derefencing&quot;);</a>
-<a name="1446"><span class="lineNum">    1446 </span>            :     // TODO(rymiel): Should really just be .ensure_mut_base()</a>
-<a name="1447"><span class="lineNum">    1447 </span>            :     current_ty = current_ty.without_mut().without_opaque();</a>
-<a name="1448"><span class="lineNum">    1448 </span>            :     base.llvm = m_builder-&gt;CreateLoad(llvm_type(current_ty), base, &quot;ic.deref&quot;);</a>
-<a name="1449"><span class="lineNum">    1449 </span>            :     if (!current_ty.is_trivially_destructible() &amp;&amp; base.scope != nullptr &amp;&amp; base.scope-&gt;owning &amp;&amp;</a>
-<a name="1450"><span class="lineNum">    1450 </span>            :         m_return_value == &amp;expr) {</a>
-<a name="1451"><span class="lineNum">    1451 </span>            :       auto* ast_dup = m_walker-&gt;make_dup(expr.base);</a>
-<a name="1452"><span class="lineNum">    1452 </span>            :       auto* llvm_fn = declare(*ast_dup);</a>
-<a name="1453"><span class="lineNum">    1453 </span>            :       vector&lt;llvm::Value*&gt; llvm_args{};</a>
-<a name="1454"><span class="lineNum">    1454 </span>            :       llvm_args.push_back(base.llvm);</a>
-<a name="1455"><span class="lineNum">    1455 </span>            :       base.llvm = m_builder-&gt;CreateCall(llvm_fn, llvm_args);</a>
-<a name="1456"><span class="lineNum">    1456 </span>            :     }</a>
-<a name="1457"><span class="lineNum">    1457 </span>            :   }</a>
-<a name="1458"><span class="lineNum">    1458 </span>            : </a>
-<a name="1459"><span class="lineNum">    1459 </span>            :   if (expr.conversion.kind == ty::Conv::None)</a>
-<a name="1460"><span class="lineNum">    1460 </span>            :     return base;</a>
-<a name="1461"><span class="lineNum">    1461 </span>            :   if (expr.conversion.kind == ty::Conv::Int)</a>
-<a name="1462"><span class="lineNum">    1462 </span>            :     return m_builder-&gt;CreateIntCast(base, llvm_type(target_ty), current_ty.base_cast&lt;ty::Int&gt;()-&gt;is_signed(), &quot;ic.int&quot;);</a>
-<a name="1463"><span class="lineNum">    1463 </span>            :   if (expr.conversion.kind == ty::Conv::FnPtr) {</a>
-<a name="1464"><span class="lineNum">    1464 </span>            :     yume_assert(current_ty.base_isa&lt;ty::Function&gt;(), &quot;fnptr conversion source must be a function type&quot;);</a>
-<a name="1465"><span class="lineNum">    1465 </span>            :     yume_assert(isa&lt;ast::LambdaExpr&gt;(*expr.base), &quot;fnptr conversion source must be a lambda&quot;);</a>
-<a name="1466"><span class="lineNum">    1466 </span>            :     yume_assert(target_ty.base_isa&lt;ty::Function&gt;(), &quot;fnptr conversion target must be a function type&quot;);</a>
-<a name="1467"><span class="lineNum">    1467 </span>            :     auto&amp; lambda_expr = cast&lt;ast::LambdaExpr&gt;(*expr.base);</a>
-<a name="1468"><span class="lineNum">    1468 </span>            : </a>
-<a name="1469"><span class="lineNum">    1469 </span>            :     auto fn = Fn{&amp;lambda_expr, nullptr};</a>
-<a name="1470"><span class="lineNum">    1470 </span>            :     fn.fn_ty = target_ty.base_cast&lt;ty::Function&gt;();</a>
-<a name="1471"><span class="lineNum">    1471 </span>            : </a>
-<a name="1472"><span class="lineNum">    1472 </span>            :     declare(fn);</a>
+<a name="1404"><span class="lineNum">    1404 </span>            :   make_temporary_in_scope(slice_inst, expr, &quot;tmpsl&quot;);</a>
+<a name="1405"><span class="lineNum">    1405 </span>            : </a>
+<a name="1406"><span class="lineNum">    1406 </span>            :   return slice_inst;</a>
+<a name="1407"><span class="lineNum">    1407 </span>            : }</a>
+<a name="1408"><span class="lineNum">    1408 </span>            : </a>
+<a name="1409"><span class="lineNum">    1409 </span><span class="lineNoCov">          0 : template &lt;&gt; auto Compiler::expression(ast::FieldAccessExpr&amp; expr) -&gt; Val {</span></a>
+<a name="1410"><span class="lineNum">    1410 </span>            :   optional&lt;Val&gt; base;</a>
+<a name="1411"><span class="lineNum">    1411 </span>            :   optional&lt;ty::Type&gt; base_type;</a>
+<a name="1412"><span class="lineNum">    1412 </span>            :   if (expr.base.has_value()) {</a>
+<a name="1413"><span class="lineNum">    1413 </span>            :     base = body_expression(*expr.base);</a>
+<a name="1414"><span class="lineNum">    1414 </span>            :     base_type = expr.base-&gt;ensure_ty().mut_base();</a>
+<a name="1415"><span class="lineNum">    1415 </span>            :   } else {</a>
+<a name="1416"><span class="lineNum">    1416 </span>            :     yume_assert(m_scope_ctor.has_value(), &quot;Cannot access field without receiver outside of a constructor&quot;);</a>
+<a name="1417"><span class="lineNum">    1417 </span>            :     // NOLINTNEXTLINE(bugprone-unchecked-optional-access): clang-tidy doesn't accept yume_assert as an assertion</a>
+<a name="1418"><span class="lineNum">    1418 </span>            :     base = m_scope_ctor-&gt;value;</a>
+<a name="1419"><span class="lineNum">    1419 </span>            :     base_type = m_current_fn-&gt;self_ty;</a>
+<a name="1420"><span class="lineNum">    1420 </span>            :   }</a>
+<a name="1421"><span class="lineNum">    1421 </span>            : </a>
+<a name="1422"><span class="lineNum">    1422 </span>            :   const string base_name = expr.field;</a>
+<a name="1423"><span class="lineNum">    1423 </span>            :   const int base_offset = expr.offset;</a>
+<a name="1424"><span class="lineNum">    1424 </span>            : </a>
+<a name="1425"><span class="lineNum">    1425 </span>            :   if (!expr.ensure_ty().is_mut())</a>
+<a name="1426"><span class="lineNum">    1426 </span>            :     return m_builder-&gt;CreateExtractValue(*base, base_offset, &quot;s.field.nm.&quot;s + base_name);</a>
+<a name="1427"><span class="lineNum">    1427 </span>            : </a>
+<a name="1428"><span class="lineNum">    1428 </span>            :   yume_assert(base_type.has_value(), &quot;Cannot access field of unknown type&quot;);</a>
+<a name="1429"><span class="lineNum">    1429 </span>            :   // NOLINTNEXTLINE(bugprone-unchecked-optional-access): clang-tidy doesn't accept yume_assert as an assertion</a>
+<a name="1430"><span class="lineNum">    1430 </span>            :   return m_builder-&gt;CreateStructGEP(llvm_type(base_type.value()), *base, base_offset, &quot;s.field.m.&quot;s + base_name);</a>
+<a name="1431"><span class="lineNum">    1431 </span>            : }</a>
+<a name="1432"><span class="lineNum">    1432 </span>            : </a>
+<a name="1433"><span class="lineNum">    1433 </span>            : void Compiler::make_dup(Val&amp; value, ast::AnyExpr&amp; ast) {</a>
+<a name="1434"><span class="lineNum">    1434 </span>            :   auto* ast_dup = m_walker-&gt;make_dup(ast);</a>
+<a name="1435"><span class="lineNum">    1435 </span>            :   auto* llvm_fn = declare(*ast_dup);</a>
+<a name="1436"><span class="lineNum">    1436 </span>            :   vector&lt;llvm::Value*&gt; llvm_args{};</a>
+<a name="1437"><span class="lineNum">    1437 </span>            :   llvm_args.push_back(value.llvm);</a>
+<a name="1438"><span class="lineNum">    1438 </span>            :   value.llvm = m_builder-&gt;CreateCall(llvm_fn, llvm_args);</a>
+<a name="1439"><span class="lineNum">    1439 </span>            : }</a>
+<a name="1440"><span class="lineNum">    1440 </span>            : </a>
+<a name="1441"><span class="lineNum">    1441 </span>            : auto Compiler::get_vtable(Struct&amp; st, const Struct&amp; iface) -&gt; nonnull&lt;llvm::GlobalVariable*&gt; {</a>
+<a name="1442"><span class="lineNum">    1442 </span>            :   if (st.vtable_memo == nullptr) {</a>
+<a name="1443"><span class="lineNum">    1443 </span>            :     auto vtable_entries = vector&lt;llvm::Constant*&gt;();</a>
+<a name="1444"><span class="lineNum">    1444 </span>            :     auto vtable_types = vector&lt;llvm::Type*&gt;();</a>
+<a name="1445"><span class="lineNum">    1445 </span>            :     vtable_entries.resize(iface.vtable_members.size());</a>
+<a name="1446"><span class="lineNum">    1446 </span>            :     vtable_types.resize(iface.vtable_members.size());</a>
+<a name="1447"><span class="lineNum">    1447 </span>            : </a>
+<a name="1448"><span class="lineNum">    1448 </span>            :     for (const auto&amp; i : st.body()) {</a>
+<a name="1449"><span class="lineNum">    1449 </span>            :       if (!isa&lt;ast::FnDecl&gt;(*i))</a>
+<a name="1450"><span class="lineNum">    1450 </span>            :         continue;</a>
+<a name="1451"><span class="lineNum">    1451 </span>            : </a>
+<a name="1452"><span class="lineNum">    1452 </span>            :       const auto&amp; fn_ast = cast&lt;ast::FnDecl&gt;(*i);</a>
+<a name="1453"><span class="lineNum">    1453 </span>            :       auto* fn = fn_ast.sema_decl;</a>
+<a name="1454"><span class="lineNum">    1454 </span>            :       yume_assert(fn != nullptr, &quot;Fn not found from fn ast?&quot;);</a>
+<a name="1455"><span class="lineNum">    1455 </span>            : </a>
+<a name="1456"><span class="lineNum">    1456 </span>            :       auto vtable_match = std::ranges::find(iface.vtable_members, vtable_entry_for(*fn));</a>
+<a name="1457"><span class="lineNum">    1457 </span>            :       if (vtable_match == iface.vtable_members.end())</a>
+<a name="1458"><span class="lineNum">    1458 </span>            :         continue;</a>
+<a name="1459"><span class="lineNum">    1459 </span>            : </a>
+<a name="1460"><span class="lineNum">    1460 </span>            :       auto index = std::distance(iface.vtable_members.begin(), vtable_match);</a>
+<a name="1461"><span class="lineNum">    1461 </span>            :       vtable_entries[index] = declare(*fn);</a>
+<a name="1462"><span class="lineNum">    1462 </span>            :       vtable_types[index] = fn-&gt;fn_ty-&gt;memo();</a>
+<a name="1463"><span class="lineNum">    1463 </span>            :     }</a>
+<a name="1464"><span class="lineNum">    1464 </span>            : </a>
+<a name="1465"><span class="lineNum">    1465 </span>            :     if (std::ranges::any_of(vtable_entries, [](auto* ptr) { return ptr == nullptr; })) {</a>
+<a name="1466"><span class="lineNum">    1466 </span>            :       std::stringstream str;</a>
+<a name="1467"><span class="lineNum">    1467 </span>            :       str &lt;&lt; &quot;The struct `&quot; &lt;&lt; st.name() &lt;&lt; &quot;' implements the interface `&quot; &lt;&lt; iface.name()</a>
+<a name="1468"><span class="lineNum">    1468 </span>            :           &lt;&lt; &quot;', but does not implement an abstract method.\n&quot;;</a>
+<a name="1469"><span class="lineNum">    1469 </span>            :       str &lt;&lt; &quot;These abstract methods were unimplemented:&quot;;</a>
+<a name="1470"><span class="lineNum">    1470 </span>            :       for (const auto&amp; i : llvm::enumerate(vtable_entries)) {</a>
+<a name="1471"><span class="lineNum">    1471 </span>            :         if (i.value() != nullptr)</a>
+<a name="1472"><span class="lineNum">    1472 </span>            :           continue;</a>
 <a name="1473"><span class="lineNum">    1473 </span>            : </a>
-<a name="1474"><span class="lineNum">    1474 </span>            :     auto saved_scope = m_scope;</a>
-<a name="1475"><span class="lineNum">    1475 </span>            :     auto* saved_insert_point = m_builder-&gt;GetInsertBlock();</a>
-<a name="1476"><span class="lineNum">    1476 </span>            :     auto* saved_fn = m_current_fn;</a>
-<a name="1477"><span class="lineNum">    1477 </span>            : </a>
-<a name="1478"><span class="lineNum">    1478 </span>            :     setup_fn_base(fn);</a>
+<a name="1474"><span class="lineNum">    1474 </span>            :         // TODO(rymiel): Also write the types, as there can be overloads</a>
+<a name="1475"><span class="lineNum">    1475 </span>            :         str &lt;&lt; &quot;\n  &quot; &lt;&lt; iface.vtable_members.at(i.index()).name;</a>
+<a name="1476"><span class="lineNum">    1476 </span>            :       }</a>
+<a name="1477"><span class="lineNum">    1477 </span>            :       throw std::runtime_error(str.str());</a>
+<a name="1478"><span class="lineNum">    1478 </span>            :     }</a>
 <a name="1479"><span class="lineNum">    1479 </span>            : </a>
-<a name="1480"><span class="lineNum">    1480 </span>            :     body_statement(lambda_expr.body);</a>
-<a name="1481"><span class="lineNum">    1481 </span>            :     if (m_builder-&gt;GetInsertBlock()-&gt;getTerminator() == nullptr &amp;&amp; !fn.fn_ty-&gt;m_ret.has_value())</a>
-<a name="1482"><span class="lineNum">    1482 </span>            :       m_builder-&gt;CreateRetVoid();</a>
-<a name="1483"><span class="lineNum">    1483 </span>            : </a>
-<a name="1484"><span class="lineNum">    1484 </span>            :     m_scope = saved_scope;</a>
-<a name="1485"><span class="lineNum">    1485 </span>            :     m_builder-&gt;SetInsertPoint(saved_insert_point);</a>
-<a name="1486"><span class="lineNum">    1486 </span>            :     m_current_fn = saved_fn;</a>
-<a name="1487"><span class="lineNum">    1487 </span>            : </a>
-<a name="1488"><span class="lineNum">    1488 </span>            :     return fn.llvm;</a>
-<a name="1489"><span class="lineNum">    1489 </span>            :   }</a>
-<a name="1490"><span class="lineNum">    1490 </span>            :   if (expr.conversion.kind == ty::Conv::Virtual) {</a>
-<a name="1491"><span class="lineNum">    1491 </span>            :     yume_assert(target_ty.base_isa&lt;ty::Struct&gt;(), &quot;Virtual cast must cast into a struct type&quot;);</a>
-<a name="1492"><span class="lineNum">    1492 </span>            :     yume_assert(current_ty.base_isa&lt;ty::Struct&gt;(), &quot;Virtual cast must cast from a struct type&quot;);</a>
-<a name="1493"><span class="lineNum">    1493 </span>            :     const auto* target_st_ty = target_ty.base_cast&lt;ty::Struct&gt;();</a>
-<a name="1494"><span class="lineNum">    1494 </span>            :     const auto* current_st_ty = current_ty.base_cast&lt;ty::Struct&gt;();</a>
-<a name="1495"><span class="lineNum">    1495 </span>            : </a>
-<a name="1496"><span class="lineNum">    1496 </span>            :     const auto* target_st = target_st_ty-&gt;decl();</a>
-<a name="1497"><span class="lineNum">    1497 </span>            :     yume_assert(target_st != nullptr, &quot;Struct not found from struct type?&quot;);</a>
-<a name="1498"><span class="lineNum">    1498 </span>            :     yume_assert(target_st-&gt;ast().is_interface, &quot;Virtual cast must cast into an interface type&quot;);</a>
-<a name="1499"><span class="lineNum">    1499 </span>            : </a>
-<a name="1500"><span class="lineNum">    1500 </span>            :     auto* current_st = current_st_ty-&gt;decl();</a>
-<a name="1501"><span class="lineNum">    1501 </span>            :     yume_assert(current_st != nullptr, &quot;Struct not found from struct type?&quot;);</a>
-<a name="1502"><span class="lineNum">    1502 </span>            : </a>
-<a name="1503"><span class="lineNum">    1503 </span>            :     // TODO(rymiel): Extract out</a>
-<a name="1504"><span class="lineNum">    1504 </span>            :     if (current_st-&gt;vtable_memo == nullptr) {</a>
-<a name="1505"><span class="lineNum">    1505 </span>            :       auto vtable_entries = vector&lt;llvm::Constant*&gt;();</a>
-<a name="1506"><span class="lineNum">    1506 </span>            :       auto vtable_types = vector&lt;llvm::Type*&gt;();</a>
-<a name="1507"><span class="lineNum">    1507 </span>            :       vtable_entries.resize(target_st-&gt;vtable_members.size());</a>
-<a name="1508"><span class="lineNum">    1508 </span>            :       vtable_types.resize(target_st-&gt;vtable_members.size());</a>
-<a name="1509"><span class="lineNum">    1509 </span>            : </a>
-<a name="1510"><span class="lineNum">    1510 </span>            :       for (const auto&amp; i : current_st-&gt;body()) {</a>
-<a name="1511"><span class="lineNum">    1511 </span>            :         if (!isa&lt;ast::FnDecl&gt;(*i))</a>
-<a name="1512"><span class="lineNum">    1512 </span>            :           continue;</a>
-<a name="1513"><span class="lineNum">    1513 </span>            : </a>
-<a name="1514"><span class="lineNum">    1514 </span>            :         const auto&amp; fn_ast = cast&lt;ast::FnDecl&gt;(*i);</a>
-<a name="1515"><span class="lineNum">    1515 </span>            :         auto* fn = fn_ast.sema_decl;</a>
-<a name="1516"><span class="lineNum">    1516 </span>            :         yume_assert(fn != nullptr, &quot;Fn not found from fn ast?&quot;);</a>
+<a name="1480"><span class="lineNum">    1480 </span>            :     auto* vtable_struct = llvm::ConstantStruct::getAnon(vtable_entries);</a>
+<a name="1481"><span class="lineNum">    1481 </span>            :     st.vtable_memo =</a>
+<a name="1482"><span class="lineNum">    1482 </span>            :         new llvm::GlobalVariable(*m_module, vtable_struct-&gt;getType(), true, llvm::GlobalVariable::PrivateLinkage,</a>
+<a name="1483"><span class="lineNum">    1483 </span>            :                                  vtable_struct, &quot;.vtable.&quot; + iface.name() + &quot;.&quot; + st.name());</a>
+<a name="1484"><span class="lineNum">    1484 </span>            :   }</a>
+<a name="1485"><span class="lineNum">    1485 </span>            : </a>
+<a name="1486"><span class="lineNum">    1486 </span>            :   // The above check will always make the memoized value nonnull.</a>
+<a name="1487"><span class="lineNum">    1487 </span>            :   return static_cast&lt;nonnull&lt;llvm::GlobalVariable*&gt;&gt;(st.vtable_memo);</a>
+<a name="1488"><span class="lineNum">    1488 </span>            : }</a>
+<a name="1489"><span class="lineNum">    1489 </span>            : </a>
+<a name="1490"><span class="lineNum">    1490 </span><span class="lineNoCov">          0 : template &lt;&gt; auto Compiler::expression(ast::ImplicitCastExpr&amp; expr) -&gt; Val {</span></a>
+<a name="1491"><span class="lineNum">    1491 </span>            :   auto target_ty = expr.ensure_ty();</a>
+<a name="1492"><span class="lineNum">    1492 </span>            :   auto current_ty = expr.base-&gt;ensure_ty();</a>
+<a name="1493"><span class="lineNum">    1493 </span>            :   Val base = body_expression(*expr.base);</a>
+<a name="1494"><span class="lineNum">    1494 </span>            : </a>
+<a name="1495"><span class="lineNum">    1495 </span>            :   if (expr.conversion.dereference) {</a>
+<a name="1496"><span class="lineNum">    1496 </span>            :     // TODO(rymiel): Hack on top of a hack (see Type::compatibility)</a>
+<a name="1497"><span class="lineNum">    1497 </span>            :     yume_assert(current_ty.is_mut() || current_ty.is_opaque_self(),</a>
+<a name="1498"><span class="lineNum">    1498 </span>            :                 &quot;Source type must be mutable or opaque when implicitly derefencing&quot;);</a>
+<a name="1499"><span class="lineNum">    1499 </span>            :     // TODO(rymiel): Should really just be .ensure_mut_base()</a>
+<a name="1500"><span class="lineNum">    1500 </span>            :     current_ty = current_ty.without_mut().without_opaque();</a>
+<a name="1501"><span class="lineNum">    1501 </span>            :     base.llvm = m_builder-&gt;CreateLoad(llvm_type(current_ty), base, &quot;ic.deref&quot;);</a>
+<a name="1502"><span class="lineNum">    1502 </span>            :     if (!current_ty.is_trivially_destructible() &amp;&amp; base.scope != nullptr &amp;&amp; base.scope-&gt;owning &amp;&amp;</a>
+<a name="1503"><span class="lineNum">    1503 </span>            :         m_return_value == &amp;expr) {</a>
+<a name="1504"><span class="lineNum">    1504 </span>            :       make_dup(base, expr.base);</a>
+<a name="1505"><span class="lineNum">    1505 </span>            :     }</a>
+<a name="1506"><span class="lineNum">    1506 </span>            :   }</a>
+<a name="1507"><span class="lineNum">    1507 </span>            : </a>
+<a name="1508"><span class="lineNum">    1508 </span>            :   if (expr.conversion.kind == ty::Conv::None)</a>
+<a name="1509"><span class="lineNum">    1509 </span>            :     return base;</a>
+<a name="1510"><span class="lineNum">    1510 </span>            :   if (expr.conversion.kind == ty::Conv::Int)</a>
+<a name="1511"><span class="lineNum">    1511 </span>            :     return m_builder-&gt;CreateIntCast(base, llvm_type(target_ty), current_ty.base_cast&lt;ty::Int&gt;()-&gt;is_signed(), &quot;ic.int&quot;);</a>
+<a name="1512"><span class="lineNum">    1512 </span>            :   if (expr.conversion.kind == ty::Conv::FnPtr) {</a>
+<a name="1513"><span class="lineNum">    1513 </span>            :     yume_assert(current_ty.base_isa&lt;ty::Function&gt;(), &quot;fnptr conversion source must be a function type&quot;);</a>
+<a name="1514"><span class="lineNum">    1514 </span>            :     yume_assert(isa&lt;ast::LambdaExpr&gt;(*expr.base), &quot;fnptr conversion source must be a lambda&quot;);</a>
+<a name="1515"><span class="lineNum">    1515 </span>            :     yume_assert(target_ty.base_isa&lt;ty::Function&gt;(), &quot;fnptr conversion target must be a function type&quot;);</a>
+<a name="1516"><span class="lineNum">    1516 </span>            :     auto&amp; lambda_expr = cast&lt;ast::LambdaExpr&gt;(*expr.base);</a>
 <a name="1517"><span class="lineNum">    1517 </span>            : </a>
-<a name="1518"><span class="lineNum">    1518 </span>            :         auto vtable_match = std::ranges::find(target_st-&gt;vtable_members, vtable_entry_for(*fn));</a>
-<a name="1519"><span class="lineNum">    1519 </span>            :         if (vtable_match == target_st-&gt;vtable_members.end())</a>
-<a name="1520"><span class="lineNum">    1520 </span>            :           continue;</a>
-<a name="1521"><span class="lineNum">    1521 </span>            : </a>
-<a name="1522"><span class="lineNum">    1522 </span>            :         auto index = std::distance(target_st-&gt;vtable_members.begin(), vtable_match);</a>
-<a name="1523"><span class="lineNum">    1523 </span>            :         vtable_entries[index] = declare(*fn);</a>
-<a name="1524"><span class="lineNum">    1524 </span>            :         vtable_types[index] = fn-&gt;fn_ty-&gt;memo();</a>
-<a name="1525"><span class="lineNum">    1525 </span>            :       }</a>
+<a name="1518"><span class="lineNum">    1518 </span>            :     auto fn = Fn{&amp;lambda_expr, nullptr};</a>
+<a name="1519"><span class="lineNum">    1519 </span>            :     fn.fn_ty = target_ty.base_cast&lt;ty::Function&gt;();</a>
+<a name="1520"><span class="lineNum">    1520 </span>            : </a>
+<a name="1521"><span class="lineNum">    1521 </span>            :     declare(fn);</a>
+<a name="1522"><span class="lineNum">    1522 </span>            : </a>
+<a name="1523"><span class="lineNum">    1523 </span>            :     auto saved_scope = m_scope;</a>
+<a name="1524"><span class="lineNum">    1524 </span>            :     auto* saved_insert_point = m_builder-&gt;GetInsertBlock();</a>
+<a name="1525"><span class="lineNum">    1525 </span>            :     auto* saved_fn = m_current_fn;</a>
 <a name="1526"><span class="lineNum">    1526 </span>            : </a>
-<a name="1527"><span class="lineNum">    1527 </span>            :       if (std::ranges::any_of(vtable_entries, [](auto* ptr) { return ptr == nullptr; })) {</a>
-<a name="1528"><span class="lineNum">    1528 </span>            :         std::stringstream str;</a>
-<a name="1529"><span class="lineNum">    1529 </span>            :         str &lt;&lt; &quot;The struct `&quot; &lt;&lt; current_st-&gt;name() &lt;&lt; &quot;' implements the interface `&quot; &lt;&lt; target_st-&gt;name()</a>
-<a name="1530"><span class="lineNum">    1530 </span>            :             &lt;&lt; &quot;', but does not implement an abstract method.\n&quot;;</a>
-<a name="1531"><span class="lineNum">    1531 </span>            :         str &lt;&lt; &quot;These abstract methods were unimplemented:&quot;;</a>
-<a name="1532"><span class="lineNum">    1532 </span>            :         for (const auto&amp; i : llvm::enumerate(vtable_entries)) {</a>
-<a name="1533"><span class="lineNum">    1533 </span>            :           if (i.value() != nullptr)</a>
-<a name="1534"><span class="lineNum">    1534 </span>            :             continue;</a>
-<a name="1535"><span class="lineNum">    1535 </span>            : </a>
-<a name="1536"><span class="lineNum">    1536 </span>            :           // TODO(rymiel): Also write the types, as there can be overloads</a>
-<a name="1537"><span class="lineNum">    1537 </span>            :           str &lt;&lt; &quot;\n  &quot; &lt;&lt; target_st-&gt;vtable_members.at(i.index()).name;</a>
-<a name="1538"><span class="lineNum">    1538 </span>            :         }</a>
-<a name="1539"><span class="lineNum">    1539 </span>            :         throw std::runtime_error(str.str());</a>
-<a name="1540"><span class="lineNum">    1540 </span>            :       }</a>
-<a name="1541"><span class="lineNum">    1541 </span>            : </a>
-<a name="1542"><span class="lineNum">    1542 </span>            :       auto* vtable_struct = llvm::ConstantStruct::getAnon(vtable_entries);</a>
-<a name="1543"><span class="lineNum">    1543 </span>            :       current_st-&gt;vtable_memo =</a>
-<a name="1544"><span class="lineNum">    1544 </span>            :           new llvm::GlobalVariable(*m_module, vtable_struct-&gt;getType(), true, llvm::GlobalVariable::PrivateLinkage,</a>
-<a name="1545"><span class="lineNum">    1545 </span>            :                                    vtable_struct, &quot;.vtable.&quot; + target_st-&gt;name() + &quot;.&quot; + current_st-&gt;name());</a>
-<a name="1546"><span class="lineNum">    1546 </span>            :       ;</a>
-<a name="1547"><span class="lineNum">    1547 </span>            :     }</a>
+<a name="1527"><span class="lineNum">    1527 </span>            :     setup_fn_base(fn);</a>
+<a name="1528"><span class="lineNum">    1528 </span>            : </a>
+<a name="1529"><span class="lineNum">    1529 </span>            :     body_statement(lambda_expr.body);</a>
+<a name="1530"><span class="lineNum">    1530 </span>            :     if (m_builder-&gt;GetInsertBlock()-&gt;getTerminator() == nullptr &amp;&amp; !fn.fn_ty-&gt;m_ret.has_value())</a>
+<a name="1531"><span class="lineNum">    1531 </span>            :       m_builder-&gt;CreateRetVoid();</a>
+<a name="1532"><span class="lineNum">    1532 </span>            : </a>
+<a name="1533"><span class="lineNum">    1533 </span>            :     m_scope = saved_scope;</a>
+<a name="1534"><span class="lineNum">    1534 </span>            :     m_builder-&gt;SetInsertPoint(saved_insert_point);</a>
+<a name="1535"><span class="lineNum">    1535 </span>            :     m_current_fn = saved_fn;</a>
+<a name="1536"><span class="lineNum">    1536 </span>            : </a>
+<a name="1537"><span class="lineNum">    1537 </span>            :     return fn.llvm;</a>
+<a name="1538"><span class="lineNum">    1538 </span>            :   }</a>
+<a name="1539"><span class="lineNum">    1539 </span>            :   if (expr.conversion.kind == ty::Conv::Virtual) {</a>
+<a name="1540"><span class="lineNum">    1540 </span>            :     yume_assert(target_ty.base_isa&lt;ty::Struct&gt;(), &quot;Virtual cast must cast into a struct type&quot;);</a>
+<a name="1541"><span class="lineNum">    1541 </span>            :     yume_assert(current_ty.base_isa&lt;ty::Struct&gt;(), &quot;Virtual cast must cast from a struct type&quot;);</a>
+<a name="1542"><span class="lineNum">    1542 </span>            :     const auto* target_st_ty = target_ty.base_cast&lt;ty::Struct&gt;();</a>
+<a name="1543"><span class="lineNum">    1543 </span>            :     const auto* current_st_ty = current_ty.base_cast&lt;ty::Struct&gt;();</a>
+<a name="1544"><span class="lineNum">    1544 </span>            : </a>
+<a name="1545"><span class="lineNum">    1545 </span>            :     const auto* target_st = target_st_ty-&gt;decl();</a>
+<a name="1546"><span class="lineNum">    1546 </span>            :     yume_assert(target_st != nullptr, &quot;Struct not found from struct type?&quot;);</a>
+<a name="1547"><span class="lineNum">    1547 </span>            :     yume_assert(target_st-&gt;ast().is_interface, &quot;Virtual cast must cast into an interface type&quot;);</a>
 <a name="1548"><span class="lineNum">    1548 </span>            : </a>
-<a name="1549"><span class="lineNum">    1549 </span>            :     Val erased_original = nullptr;</a>
-<a name="1550"><span class="lineNum">    1550 </span>            :     if (current_ty.is_mut()) {</a>
-<a name="1551"><span class="lineNum">    1551 </span>            :       erased_original = base;</a>
-<a name="1552"><span class="lineNum">    1552 </span>            :     } else {</a>
-<a name="1553"><span class="lineNum">    1553 </span>            :       erased_original = entrypoint_builder().CreateAlloca(llvm_type(current_st_ty));</a>
-<a name="1554"><span class="lineNum">    1554 </span>            :       m_builder-&gt;CreateStore(base, erased_original);</a>
-<a name="1555"><span class="lineNum">    1555 </span>            :     }</a>
-<a name="1556"><span class="lineNum">    1556 </span>            : </a>
-<a name="1557"><span class="lineNum">    1557 </span>            :     auto* interface_struct_ty = llvm::StructType::get(m_builder-&gt;getInt8PtrTy(), m_builder-&gt;getInt8PtrTy());</a>
-<a name="1558"><span class="lineNum">    1558 </span>            :     Val interface_struct = llvm::UndefValue::get(interface_struct_ty);</a>
-<a name="1559"><span class="lineNum">    1559 </span>            :     interface_struct = m_builder-&gt;CreateInsertValue(</a>
-<a name="1560"><span class="lineNum">    1560 </span>            :         interface_struct, m_builder-&gt;CreateBitCast(current_st-&gt;vtable_memo, m_builder-&gt;getInt8PtrTy()), 0);</a>
-<a name="1561"><span class="lineNum">    1561 </span>            :     interface_struct = m_builder-&gt;CreateInsertValue(</a>
-<a name="1562"><span class="lineNum">    1562 </span>            :         interface_struct, m_builder-&gt;CreateBitCast(erased_original, m_builder-&gt;getInt8PtrTy()), 1);</a>
-<a name="1563"><span class="lineNum">    1563 </span>            : </a>
-<a name="1564"><span class="lineNum">    1564 </span>            :     return interface_struct;</a>
-<a name="1565"><span class="lineNum">    1565 </span>            :   }</a>
-<a name="1566"><span class="lineNum">    1566 </span>            :   throw std::runtime_error(&quot;Unknown implicit conversion &quot; + expr.conversion.to_string());</a>
-<a name="1567"><span class="lineNum">    1567 </span>            : }</a>
+<a name="1549"><span class="lineNum">    1549 </span>            :     auto* current_st = current_st_ty-&gt;decl();</a>
+<a name="1550"><span class="lineNum">    1550 </span>            :     yume_assert(current_st != nullptr, &quot;Struct not found from struct type?&quot;);</a>
+<a name="1551"><span class="lineNum">    1551 </span>            : </a>
+<a name="1552"><span class="lineNum">    1552 </span>            :     auto* vtable = get_vtable(*current_st, *target_st);</a>
+<a name="1553"><span class="lineNum">    1553 </span>            : </a>
+<a name="1554"><span class="lineNum">    1554 </span>            :     Val erased_original = nullptr;</a>
+<a name="1555"><span class="lineNum">    1555 </span>            :     if (current_ty.is_mut()) {</a>
+<a name="1556"><span class="lineNum">    1556 </span>            :       erased_original = base;</a>
+<a name="1557"><span class="lineNum">    1557 </span>            :     } else {</a>
+<a name="1558"><span class="lineNum">    1558 </span>            :       erased_original = entrypoint_builder().CreateAlloca(llvm_type(current_st_ty));</a>
+<a name="1559"><span class="lineNum">    1559 </span>            :       m_builder-&gt;CreateStore(base, erased_original);</a>
+<a name="1560"><span class="lineNum">    1560 </span>            :     }</a>
+<a name="1561"><span class="lineNum">    1561 </span>            : </a>
+<a name="1562"><span class="lineNum">    1562 </span>            :     auto* interface_struct_ty = llvm::StructType::get(m_builder-&gt;getInt8PtrTy(), m_builder-&gt;getInt8PtrTy());</a>
+<a name="1563"><span class="lineNum">    1563 </span>            :     Val interface_struct = llvm::UndefValue::get(interface_struct_ty);</a>
+<a name="1564"><span class="lineNum">    1564 </span>            :     interface_struct =</a>
+<a name="1565"><span class="lineNum">    1565 </span>            :         m_builder-&gt;CreateInsertValue(interface_struct, m_builder-&gt;CreateBitCast(vtable, m_builder-&gt;getInt8PtrTy()), 0);</a>
+<a name="1566"><span class="lineNum">    1566 </span>            :     interface_struct = m_builder-&gt;CreateInsertValue(</a>
+<a name="1567"><span class="lineNum">    1567 </span>            :         interface_struct, m_builder-&gt;CreateBitCast(erased_original, m_builder-&gt;getInt8PtrTy()), 1);</a>
 <a name="1568"><span class="lineNum">    1568 </span>            : </a>
-<a name="1569"><span class="lineNum">    1569 </span><span class="lineNoCov">          0 : template &lt;&gt; auto Compiler::expression(ast::TypeExpr&amp; expr) -&gt; Val {</span></a>
-<a name="1570"><span class="lineNum">    1570 </span>            :   yume_assert(expr.ensure_ty().is_meta(), &quot;Type expr must have metatype as its type&quot;);</a>
-<a name="1571"><span class="lineNum">    1571 </span>            :   return m_builder-&gt;getInt8(0);</a>
+<a name="1569"><span class="lineNum">    1569 </span>            :     return interface_struct;</a>
+<a name="1570"><span class="lineNum">    1570 </span>            :   }</a>
+<a name="1571"><span class="lineNum">    1571 </span>            :   throw std::runtime_error(&quot;Unknown implicit conversion &quot; + expr.conversion.to_string());</a>
 <a name="1572"><span class="lineNum">    1572 </span>            : }</a>
 <a name="1573"><span class="lineNum">    1573 </span>            : </a>
-<a name="1574"><span class="lineNum">    1574 </span>            : void Compiler::write_object(const char* filename, bool binary) {</a>
-<a name="1575"><span class="lineNum">    1575 </span>            :   auto dest = open_file(filename);</a>
-<a name="1576"><span class="lineNum">    1576 </span>            : </a>
-<a name="1577"><span class="lineNum">    1577 </span>            :   llvm::legacy::PassManager pass;</a>
-<a name="1578"><span class="lineNum">    1578 </span>            :   auto file_type = binary ? llvm::CGFT_ObjectFile : llvm::CGFT_AssemblyFile;</a>
-<a name="1579"><span class="lineNum">    1579 </span>            : </a>
-<a name="1580"><span class="lineNum">    1580 </span>            :   if (m_target_machine-&gt;addPassesToEmitFile(pass, *dest, nullptr, file_type)) {</a>
-<a name="1581"><span class="lineNum">    1581 </span>            :     errs() &lt;&lt; &quot;TargetMachine can't emit a file of this type&quot;;</a>
-<a name="1582"><span class="lineNum">    1582 </span>            :     throw std::exception();</a>
-<a name="1583"><span class="lineNum">    1583 </span>            :   }</a>
+<a name="1574"><span class="lineNum">    1574 </span><span class="lineNoCov">          0 : template &lt;&gt; auto Compiler::expression(ast::TypeExpr&amp; expr) -&gt; Val {</span></a>
+<a name="1575"><span class="lineNum">    1575 </span>            :   yume_assert(expr.ensure_ty().is_meta(), &quot;Type expr must have metatype as its type&quot;);</a>
+<a name="1576"><span class="lineNum">    1576 </span>            :   return m_builder-&gt;getInt8(0);</a>
+<a name="1577"><span class="lineNum">    1577 </span>            : }</a>
+<a name="1578"><span class="lineNum">    1578 </span>            : </a>
+<a name="1579"><span class="lineNum">    1579 </span>            : void Compiler::write_object(const char* filename, bool binary) {</a>
+<a name="1580"><span class="lineNum">    1580 </span>            :   auto dest = open_file(filename);</a>
+<a name="1581"><span class="lineNum">    1581 </span>            : </a>
+<a name="1582"><span class="lineNum">    1582 </span>            :   llvm::legacy::PassManager pass;</a>
+<a name="1583"><span class="lineNum">    1583 </span>            :   auto file_type = binary ? llvm::CGFT_ObjectFile : llvm::CGFT_AssemblyFile;</a>
 <a name="1584"><span class="lineNum">    1584 </span>            : </a>
-<a name="1585"><span class="lineNum">    1585 </span>            :   pass.run(*m_module);</a>
-<a name="1586"><span class="lineNum">    1586 </span>            :   dest-&gt;flush();</a>
-<a name="1587"><span class="lineNum">    1587 </span>            : }</a>
-<a name="1588"><span class="lineNum">    1588 </span>            : </a>
-<a name="1589"><span class="lineNum">    1589 </span>            : void Compiler::body_statement(ast::Stmt&amp; stat) {</a>
-<a name="1590"><span class="lineNum">    1590 </span>            :   const ASTStackTrace guard(&quot;Codegen: &quot;s + stat.kind_name() + &quot; statement&quot;, stat);</a>
-<a name="1591"><span class="lineNum">    1591 </span>            :   m_builder-&gt;SetCurrentDebugLocation({});</a>
-<a name="1592"><span class="lineNum">    1592 </span>            :   return CRTPWalker::body_statement(stat);</a>
-<a name="1593"><span class="lineNum">    1593 </span>            : }</a>
-<a name="1594"><span class="lineNum">    1594 </span>            : </a>
-<a name="1595"><span class="lineNum">    1595 </span>            : auto Compiler::body_expression(ast::Expr&amp; expr) -&gt; Val {</a>
-<a name="1596"><span class="lineNum">    1596 </span>            :   const ASTStackTrace guard(&quot;Codegen: &quot;s + expr.kind_name() + &quot; expression&quot;, expr);</a>
-<a name="1597"><span class="lineNum">    1597 </span>            :   m_builder-&gt;SetCurrentDebugLocation({});</a>
-<a name="1598"><span class="lineNum">    1598 </span>            :   if (m_current_fn != nullptr &amp;&amp; m_current_fn-&gt;llvm != nullptr) {</a>
-<a name="1599"><span class="lineNum">    1599 </span>            :     if (llvm::DIScope* scope = m_current_fn-&gt;llvm-&gt;getSubprogram(); scope != nullptr) {</a>
-<a name="1600"><span class="lineNum">    1600 </span>            :       m_builder-&gt;SetCurrentDebugLocation(</a>
-<a name="1601"><span class="lineNum">    1601 </span>            :           llvm::DILocation::get(scope-&gt;getContext(), expr.location().begin_line, expr.location().begin_col, scope));</a>
-<a name="1602"><span class="lineNum">    1602 </span>            :     }</a>
-<a name="1603"><span class="lineNum">    1603 </span>            :   }</a>
-<a name="1604"><span class="lineNum">    1604 </span>            :   return CRTPWalker::body_expression(expr);</a>
-<a name="1605"><span class="lineNum">    1605 </span>            : }</a>
-<a name="1606"><span class="lineNum">    1606 </span>            : } // namespace yume</a>
+<a name="1585"><span class="lineNum">    1585 </span>            :   if (m_target_machine-&gt;addPassesToEmitFile(pass, *dest, nullptr, file_type)) {</a>
+<a name="1586"><span class="lineNum">    1586 </span>            :     errs() &lt;&lt; &quot;TargetMachine can't emit a file of this type&quot;;</a>
+<a name="1587"><span class="lineNum">    1587 </span>            :     throw std::exception();</a>
+<a name="1588"><span class="lineNum">    1588 </span>            :   }</a>
+<a name="1589"><span class="lineNum">    1589 </span>            : </a>
+<a name="1590"><span class="lineNum">    1590 </span>            :   pass.run(*m_module);</a>
+<a name="1591"><span class="lineNum">    1591 </span>            :   dest-&gt;flush();</a>
+<a name="1592"><span class="lineNum">    1592 </span>            : }</a>
+<a name="1593"><span class="lineNum">    1593 </span>            : </a>
+<a name="1594"><span class="lineNum">    1594 </span>            : void Compiler::body_statement(ast::Stmt&amp; stat) {</a>
+<a name="1595"><span class="lineNum">    1595 </span>            :   const ASTStackTrace guard(&quot;Codegen: &quot;s + stat.kind_name() + &quot; statement&quot;, stat);</a>
+<a name="1596"><span class="lineNum">    1596 </span>            :   m_builder-&gt;SetCurrentDebugLocation({});</a>
+<a name="1597"><span class="lineNum">    1597 </span>            :   return CRTPWalker::body_statement(stat);</a>
+<a name="1598"><span class="lineNum">    1598 </span>            : }</a>
+<a name="1599"><span class="lineNum">    1599 </span>            : </a>
+<a name="1600"><span class="lineNum">    1600 </span>            : auto Compiler::body_expression(ast::Expr&amp; expr) -&gt; Val {</a>
+<a name="1601"><span class="lineNum">    1601 </span>            :   const ASTStackTrace guard(&quot;Codegen: &quot;s + expr.kind_name() + &quot; expression&quot;, expr);</a>
+<a name="1602"><span class="lineNum">    1602 </span>            :   m_builder-&gt;SetCurrentDebugLocation({});</a>
+<a name="1603"><span class="lineNum">    1603 </span>            :   if (m_current_fn != nullptr &amp;&amp; m_current_fn-&gt;llvm != nullptr) {</a>
+<a name="1604"><span class="lineNum">    1604 </span>            :     if (llvm::DIScope* scope = m_current_fn-&gt;llvm-&gt;getSubprogram(); scope != nullptr) {</a>
+<a name="1605"><span class="lineNum">    1605 </span>            :       m_builder-&gt;SetCurrentDebugLocation(</a>
+<a name="1606"><span class="lineNum">    1606 </span>            :           llvm::DILocation::get(scope-&gt;getContext(), expr.location().begin_line, expr.location().begin_col, scope));</a>
+<a name="1607"><span class="lineNum">    1607 </span>            :     }</a>
+<a name="1608"><span class="lineNum">    1608 </span>            :   }</a>
+<a name="1609"><span class="lineNum">    1609 </span>            :   return CRTPWalker::body_expression(expr);</a>
+<a name="1610"><span class="lineNum">    1610 </span>            : }</a>
+<a name="1611"><span class="lineNum">    1611 </span>            : } // namespace yume</a>
 </pre>
       </td>
     </tr>
