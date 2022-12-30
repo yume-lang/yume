@@ -157,6 +157,8 @@ private:
   /// Instruct the `TypeWalker` to perform semantic analysis and infer types for the given declaration.
   void walk_types(DeclLike);
 
+  void make_dup(Val& value, ast::AnyExpr& ast);
+
   void declare_default_ctor(Struct&);
 };
 } // namespace yume

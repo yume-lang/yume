@@ -1148,11 +1148,7 @@ template <> auto Compiler::expression(ast::AssignExpr& expr) -> Val {
       expr_val.scope->owning = false;
     } else if (!expr.value->ensure_ty().is_trivially_destructible() && expr_val.scope != nullptr &&
                !expr_val.scope->owning) {
-      auto* ast_dup = m_walker->make_dup(expr.value);
-      auto* llvm_fn = declare(*ast_dup);
-      vector<llvm::Value*> llvm_args{};
-      llvm_args.push_back(expr_val.llvm);
-      expr_val.llvm = m_builder->CreateCall(llvm_fn, llvm_args);
+      make_dup(expr_val, expr.value);
     }
     auto* struct_type = llvm_type(struct_base.ensure_mut_base().base_cast<ty::Struct>());
 
@@ -1434,6 +1430,14 @@ template <> auto Compiler::expression(ast::FieldAccessExpr& expr) -> Val {
   return m_builder->CreateStructGEP(llvm_type(base_type.value()), *base, base_offset, "s.field.m."s + base_name);
 }
 
+void Compiler::make_dup(Val& value, ast::AnyExpr& ast) {
+  auto* ast_dup = m_walker->make_dup(ast);
+  auto* llvm_fn = declare(*ast_dup);
+  vector<llvm::Value*> llvm_args{};
+  llvm_args.push_back(value.llvm);
+  value.llvm = m_builder->CreateCall(llvm_fn, llvm_args);
+}
+
 template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
   auto target_ty = expr.ensure_ty();
   auto current_ty = expr.base->ensure_ty();
@@ -1448,11 +1452,7 @@ template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
     base.llvm = m_builder->CreateLoad(llvm_type(current_ty), base, "ic.deref");
     if (!current_ty.is_trivially_destructible() && base.scope != nullptr && base.scope->owning &&
         m_return_value == &expr) {
-      auto* ast_dup = m_walker->make_dup(expr.base);
-      auto* llvm_fn = declare(*ast_dup);
-      vector<llvm::Value*> llvm_args{};
-      llvm_args.push_back(base.llvm);
-      base.llvm = m_builder->CreateCall(llvm_fn, llvm_args);
+      make_dup(base, expr.base);
     }
   }
 
