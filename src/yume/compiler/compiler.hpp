@@ -8,6 +8,7 @@
 #include "vals.hpp"
 #include <deque>
 #include <llvm/IR/DIBuilder.h>
+#include <llvm/IR/GlobalVariable.h>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
@@ -158,6 +159,8 @@ private:
   void walk_types(DeclLike);
 
   void make_dup(Val& value, ast::AnyExpr& ast);
+
+  auto get_vtable(Struct& st, const Struct& iface) noexcept(false) -> nonnull<llvm::GlobalVariable*>;
 
   void declare_default_ctor(Struct&);
 };

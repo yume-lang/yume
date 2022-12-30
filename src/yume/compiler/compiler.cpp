@@ -1438,6 +1438,55 @@ void Compiler::make_dup(Val& value, ast::AnyExpr& ast) {
   value.llvm = m_builder->CreateCall(llvm_fn, llvm_args);
 }
 
+auto Compiler::get_vtable(Struct& st, const Struct& iface) -> nonnull<llvm::GlobalVariable*> {
+  if (st.vtable_memo == nullptr) {
+    auto vtable_entries = vector<llvm::Constant*>();
+    auto vtable_types = vector<llvm::Type*>();
+    vtable_entries.resize(iface.vtable_members.size());
+    vtable_types.resize(iface.vtable_members.size());
+
+    for (const auto& i : st.body()) {
+      if (!isa<ast::FnDecl>(*i))
+        continue;
+
+      const auto& fn_ast = cast<ast::FnDecl>(*i);
+      auto* fn = fn_ast.sema_decl;
+      yume_assert(fn != nullptr, "Fn not found from fn ast?");
+
+      auto vtable_match = std::ranges::find(iface.vtable_members, vtable_entry_for(*fn));
+      if (vtable_match == iface.vtable_members.end())
+        continue;
+
+      auto index = std::distance(iface.vtable_members.begin(), vtable_match);
+      vtable_entries[index] = declare(*fn);
+      vtable_types[index] = fn->fn_ty->memo();
+    }
+
+    if (std::ranges::any_of(vtable_entries, [](auto* ptr) { return ptr == nullptr; })) {
+      std::stringstream str;
+      str << "The struct `" << st.name() << "' implements the interface `" << iface.name()
+          << "', but does not implement an abstract method.\n";
+      str << "These abstract methods were unimplemented:";
+      for (const auto& i : llvm::enumerate(vtable_entries)) {
+        if (i.value() != nullptr)
+          continue;
+
+        // TODO(rymiel): Also write the types, as there can be overloads
+        str << "\n  " << iface.vtable_members.at(i.index()).name;
+      }
+      throw std::runtime_error(str.str());
+    }
+
+    auto* vtable_struct = llvm::ConstantStruct::getAnon(vtable_entries);
+    st.vtable_memo =
+        new llvm::GlobalVariable(*m_module, vtable_struct->getType(), true, llvm::GlobalVariable::PrivateLinkage,
+                                 vtable_struct, ".vtable." + iface.name() + "." + st.name());
+  }
+
+  // The above check will always make the memoized value nonnull.
+  return static_cast<nonnull<llvm::GlobalVariable*>>(st.vtable_memo);
+}
+
 template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
   auto target_ty = expr.ensure_ty();
   auto current_ty = expr.base->ensure_ty();
@@ -1500,51 +1549,7 @@ template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
     auto* current_st = current_st_ty->decl();
     yume_assert(current_st != nullptr, "Struct not found from struct type?");
 
-    // TODO(rymiel): Extract out
-    if (current_st->vtable_memo == nullptr) {
-      auto vtable_entries = vector<llvm::Constant*>();
-      auto vtable_types = vector<llvm::Type*>();
-      vtable_entries.resize(target_st->vtable_members.size());
-      vtable_types.resize(target_st->vtable_members.size());
-
-      for (const auto& i : current_st->body()) {
-        if (!isa<ast::FnDecl>(*i))
-          continue;
-
-        const auto& fn_ast = cast<ast::FnDecl>(*i);
-        auto* fn = fn_ast.sema_decl;
-        yume_assert(fn != nullptr, "Fn not found from fn ast?");
-
-        auto vtable_match = std::ranges::find(target_st->vtable_members, vtable_entry_for(*fn));
-        if (vtable_match == target_st->vtable_members.end())
-          continue;
-
-        auto index = std::distance(target_st->vtable_members.begin(), vtable_match);
-        vtable_entries[index] = declare(*fn);
-        vtable_types[index] = fn->fn_ty->memo();
-      }
-
-      if (std::ranges::any_of(vtable_entries, [](auto* ptr) { return ptr == nullptr; })) {
-        std::stringstream str;
-        str << "The struct `" << current_st->name() << "' implements the interface `" << target_st->name()
-            << "', but does not implement an abstract method.\n";
-        str << "These abstract methods were unimplemented:";
-        for (const auto& i : llvm::enumerate(vtable_entries)) {
-          if (i.value() != nullptr)
-            continue;
-
-          // TODO(rymiel): Also write the types, as there can be overloads
-          str << "\n  " << target_st->vtable_members.at(i.index()).name;
-        }
-        throw std::runtime_error(str.str());
-      }
-
-      auto* vtable_struct = llvm::ConstantStruct::getAnon(vtable_entries);
-      current_st->vtable_memo =
-          new llvm::GlobalVariable(*m_module, vtable_struct->getType(), true, llvm::GlobalVariable::PrivateLinkage,
-                                   vtable_struct, ".vtable." + target_st->name() + "." + current_st->name());
-      ;
-    }
+    auto* vtable = get_vtable(*current_st, *target_st);
 
     Val erased_original = nullptr;
     if (current_ty.is_mut()) {
@@ -1556,8 +1561,8 @@ template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
 
     auto* interface_struct_ty = llvm::StructType::get(m_builder->getInt8PtrTy(), m_builder->getInt8PtrTy());
     Val interface_struct = llvm::UndefValue::get(interface_struct_ty);
-    interface_struct = m_builder->CreateInsertValue(
-        interface_struct, m_builder->CreateBitCast(current_st->vtable_memo, m_builder->getInt8PtrTy()), 0);
+    interface_struct =
+        m_builder->CreateInsertValue(interface_struct, m_builder->CreateBitCast(vtable, m_builder->getInt8PtrTy()), 0);
     interface_struct = m_builder->CreateInsertValue(
         interface_struct, m_builder->CreateBitCast(erased_original, m_builder->getInt8PtrTy()), 1);
 
