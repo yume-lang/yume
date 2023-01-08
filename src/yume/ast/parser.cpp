@@ -360,8 +360,12 @@ auto Parser::parse_struct_decl() -> unique_ptr<StructDecl> {
     throw std::runtime_error("Expected capitalized name for struct decl");
 
   auto type_args = vector<string>{};
-  if (try_consume(SYM_LBRACE))
-    consume_with_commas_until(SYM_RBRACE, [&] { type_args.push_back(consume_word()); });
+  if (try_consume(SYM_LBRACE)) {
+    consume_with_commas_until(SYM_RBRACE, [&] {
+      emit_note_at_current_token(diagnostic::Severity::Warn) << "Type parameter with no specifier will be deprecated";
+      type_args.push_back(consume_word());
+    });
+  }
 
   auto fields = vector<TypeName>{};
   if (try_consume(SYM_LPAREN))
@@ -418,8 +422,12 @@ auto Parser::parse_fn_decl() -> unique_ptr<FnDecl> {
 
   const string name = parse_fn_name();
   auto type_args = vector<string>{};
-  if (try_consume(SYM_LBRACE))
-    consume_with_commas_until(SYM_RBRACE, [&] { type_args.push_back(consume_word()); });
+  if (try_consume(SYM_LBRACE)) {
+    consume_with_commas_until(SYM_RBRACE, [&] {
+      emit_note_at_current_token(diagnostic::Severity::Warn) << "Type parameter with no specifier will be deprecated";
+      type_args.push_back(consume_word());
+    });
+  }
 
   consume(SYM_LPAREN);
 
