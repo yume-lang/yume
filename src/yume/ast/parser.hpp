@@ -3,6 +3,7 @@
 #include "ast/ast.hpp"
 #include "atom.hpp"
 #include "diagnostic/errors.hpp"
+#include "diagnostic/notes.hpp"
 #include "diagnostic/source_location.hpp"
 #include "token.hpp"
 #include "util.hpp"
@@ -139,6 +140,12 @@ public:
 
 struct Parser {
   TokenIterator& tokens;
+  diagnostic::NotesHolder& notes;
+
+  auto emit_note_at_current_token(diagnostic::Severity severity = diagnostic::Severity::Note)
+      -> llvm::raw_string_ostream {
+    return notes.emit(tokens->loc, severity);
+  };
 
   template <typename T, typename U> static auto ts(T&& begin, U&& end) -> span<Token> {
     return TokenRange{std::forward<T>(begin), std::forward<U>(end)};

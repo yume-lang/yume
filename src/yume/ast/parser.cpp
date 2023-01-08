@@ -1,6 +1,7 @@
 #include "parser.hpp"
 
 #include "ast/ast.hpp"
+#include "diagnostic/notes.hpp"
 #include "qualifier.hpp"
 #include <algorithm>
 #include <llvm/Support/raw_ostream.h>
@@ -845,8 +846,8 @@ auto Parser::parse_unary() -> unique_ptr<Expr> {
 } // namespace yume::ast::parser
 
 namespace yume::ast {
-auto Program::parse(TokenIterator& tokens) -> unique_ptr<Program> {
-  auto parser = parser::Parser{tokens};
+auto Program::parse(TokenIterator& tokens, diagnostic::NotesHolder& notes) -> unique_ptr<Program> {
+  auto parser = parser::Parser{tokens, notes};
   parser.ignore_separator();
   auto entry = tokens.begin();
 

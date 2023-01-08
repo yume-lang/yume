@@ -24,11 +24,11 @@ namespace yume {
  * be equal to its end line and column. There is no way to store a location representing "zero characters".
  */
 struct Loc {
-  const int begin_line;
-  const int begin_col;
-  const int end_line;
-  const int end_col;
-  const char* const file;
+  int begin_line;
+  int begin_col;
+  int end_line;
+  int end_col;
+  const char* file;
 
   constexpr auto operator<=>(const Loc& other) const noexcept = default;
 

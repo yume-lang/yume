@@ -26,6 +26,9 @@ namespace yume {
 class Visitor;
 struct Fn;
 struct Ctor;
+namespace diagnostic {
+class NotesHolder;
+}
 } // namespace yume
 
 namespace yume::ast {
@@ -908,7 +911,7 @@ public:
 
   explicit Program(span<Token> tok, vector<AnyStmt> body) : Stmt(K_Program, tok), body{move(body)} {}
   void visit(Visitor& visitor) const override;
-  [[nodiscard]] static auto parse(TokenIterator& tokens) -> unique_ptr<Program>;
+  [[nodiscard]] static auto parse(TokenIterator& tokens, diagnostic::NotesHolder& notes) -> unique_ptr<Program>;
 
   static auto classof(const AST* a) -> bool { return a->kind() == K_Program; }
   [[nodiscard]] auto clone() const -> Program* override;
