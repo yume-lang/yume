@@ -1110,6 +1110,9 @@ template <> auto Compiler::expression(ast::BinaryLogicExpr& expr) -> Val {
 }
 
 template <> auto Compiler::expression(ast::AssignExpr& expr) -> Val {
+  // TODO(rymiel): The two branches here handle assigning to variable or fields. In reality, these have a lot of
+  // logic in common, such as to do with tracking ownership, which should be shared instead of being duplicated
+  // across both branches.
   if (const auto* target_var = dyn_cast<ast::VarExpr>(expr.target.raw_ptr())) {
     auto* in_scope = m_scope.find(target_var->name);
     yume_assert(in_scope != nullptr, "Variable "s + target_var->name + " is not in scope");
@@ -1144,17 +1147,26 @@ template <> auto Compiler::expression(ast::AssignExpr& expr) -> Val {
     const int base_offset = field_access->offset;
 
     auto expr_val = body_expression(*expr.value);
+
     if (expr_val.scope != nullptr && expr_val.scope->owning) {
       expr_val.scope->owning = false;
     } else if (!expr.value->ensure_ty().is_trivially_destructible() && expr_val.scope != nullptr &&
                !expr_val.scope->owning) {
       make_dup(expr_val, expr.value);
     }
-    auto* struct_type = llvm_type(struct_base.ensure_mut_base().base_cast<ty::Struct>());
+    const auto* struct_type = struct_base.ensure_mut_base().base_cast<ty::Struct>();
 
     yume_assert(base_offset >= 0, "Field access has unknown offset into struct");
 
-    auto* gep = m_builder->CreateStructGEP(struct_type, base, base_offset, "s.sf."s + base_name);
+    auto* gep = m_builder->CreateStructGEP(llvm_type(struct_type), base, base_offset, "s.sf."s + base_name);
+
+    // This check is in place to not attempt to destruct fields when they are being constructed.
+    // TODO(rymiel): Replace this naive check with some sort of "first definite assignment" analysis
+    if (field_base.has_value() && !expr.value->ensure_ty().is_trivially_destructible()) {
+      auto field_type = struct_type->m_fields.at(base_offset)->type->ensure_ty();
+      destruct(m_builder->CreateLoad(llvm_type(field_type), gep), field_type);
+    }
+
     m_builder->CreateStore(expr_val, gep);
     return expr_val;
   }
