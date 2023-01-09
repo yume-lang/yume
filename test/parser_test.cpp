@@ -2,6 +2,7 @@
 #include "ast/ast.hpp"
 #include "ast/parser.hpp"
 #include "atom.hpp"
+#include "diagnostic/notes.hpp"
 #include "diagnostic/visitor/hash_visitor.hpp"
 #include "token.hpp"
 #include "util.hpp"
@@ -18,7 +19,9 @@ auto prog(const std::string& str) -> std::unique_ptr<Program> {
   auto in_stream = std::stringstream(str);
   auto tokens = yume::tokenize(in_stream, TEST_FILENAME);
   auto iter = TokenIterator{tokens.begin(), tokens.end()};
-  return Program::parse(iter);
+  auto notes = yume::diagnostic::NotesHolder{};
+  // TODO(rymiel): Maybe make some sort of special notesholder which fails the test if a diagnostic is emitted
+  return Program::parse(iter, notes);
 }
 
 template <typename T, typename... Ts> auto ast(Ts&&... ts) -> std::unique_ptr<T> {
