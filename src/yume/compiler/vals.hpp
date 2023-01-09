@@ -277,7 +277,7 @@ struct SourceFile {
   vector<yume::Token> tokens;
   ast::TokenIterator iterator;
   unique_ptr<ast::Program> program;
-  diagnostic::NotesHolder notes{};
+  diagnostic::NotesHolder notes{{this}};
 
   static auto name_or_stdin(const fs::path& path) -> string { return path.empty() ? "<stdin>"s : path.native(); }
 
@@ -291,8 +291,9 @@ struct SourceFile {
     llvm::outs() << "\n";
     llvm::outs().flush();
 #endif
+
     program = ast::Program::parse(iterator, this->notes);
-    this->notes.dump(errs(), {this});
   }
 };
+
 } // namespace yume

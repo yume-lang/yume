@@ -27,7 +27,7 @@ class Visitor;
 struct Fn;
 struct Ctor;
 namespace diagnostic {
-class NotesHolder;
+struct NotesHolder;
 }
 } // namespace yume
 

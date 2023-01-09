@@ -49,6 +49,7 @@ public:
     return m_iterator.operator*();
   }
   [[nodiscard]] auto operator+(int i) const noexcept -> TokenIterator { return TokenIterator{m_iterator + i, m_end}; }
+  [[nodiscard]] auto operator-(int i) const noexcept -> TokenIterator { return TokenIterator{m_iterator - i, m_end}; }
   auto operator++() -> TokenIterator& {
     if (at_end())
       throw std::runtime_error("Can't increment past end");
@@ -142,9 +143,17 @@ struct Parser {
   TokenIterator& tokens;
   diagnostic::NotesHolder& notes;
 
-  auto emit_note_at_current_token(diagnostic::Severity severity = diagnostic::Severity::Note)
-      -> llvm::raw_string_ostream {
+  auto emit_note_at_current_token(diagnostic::Severity severity = diagnostic::Severity::Note) -> diagnostic::Note {
     return notes.emit(tokens->loc, severity);
+  };
+
+  auto emit_note_relative(int offset, diagnostic::Severity severity = diagnostic::Severity::Note)
+      -> diagnostic::Note {
+    return notes.emit((tokens + offset)->loc, severity);
+  };
+
+  auto emit_fatal_at_current_token_and_terminate() -> diagnostic::Note {
+    return notes.emit(tokens->loc, diagnostic::Severity::Fatal);
   };
 
   template <typename T, typename U> static auto ts(T&& begin, U&& end) -> span<Token> {

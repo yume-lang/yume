@@ -117,8 +117,8 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
   // but `foo.method` is always rewritten to `method(foo)` and thus uses the "argument dependent lookup" rules below.
   if (overload_receiver(call) != parent) {
     if (!parent.has_value()) {
-      notes.emit(overload.location()) << "Overload not considered due to ADL";
-      notes.emit(overload.location()) << "  Because no receiver was specified";
+      notes->emit(overload.location()) << "Overload not considered due to ADL";
+      notes->emit(overload.location()) << "  Because no receiver was specified";
       return false;
     }
 
@@ -126,10 +126,10 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
     // This perform "argument dependent lookup" and is required for "member functions"
     if (std::ranges::none_of(
             args, [parent](ast::AST* ast) { return ast->ensure_ty().without_mut().without_opaque() == *parent; })) {
-      notes.emit(overload.location()) << "Overload not considered due to ADL";
+      notes->emit(overload.location()) << "Overload not considered due to ADL";
       for (const auto* ast : args) {
-        notes.emit(overload.location()) << "  Because `" << ast->ensure_ty().without_mut().without_opaque().name()
-                                        << "' is not `" << parent->name() << "'";
+        notes->emit(overload.location()) << "  Because `" << ast->ensure_ty().without_mut().without_opaque().name()
+                                         << "' is not `" << parent->name() << "'";
       }
       return false;
     }
@@ -137,7 +137,7 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
 
   // The overload is only viable if the amount of arguments matches the amount of parameters.
   if (!parameter_count_matches(args, fn)) {
-    notes.emit(overload.location()) << "Overload not considered due to mismatch in parameter count";
+    notes->emit(overload.location()) << "Overload not considered due to mismatch in parameter count";
     return false;
   }
 
@@ -157,19 +157,19 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
 
       // No valid substitution found
       if (!sub) {
-        notes.emit(overload.location()) << "Overload not valid";
-        notes.emit(overload.location()) << "  Because no generic substitution could be found for `"
-                                        << param_type->name() << "' using `" << arg_type->name() << "'";
+        notes->emit(overload.location()) << "Overload not valid";
+        notes->emit(overload.location()) << "  Because no generic substitution could be found for `"
+                                         << param_type->name() << "' using `" << arg_type->name() << "'";
         return false;
       }
 
       param_type = param_type->apply_generic_substitution(*sub);
 
       if (!param_type) {
-        notes.emit(overload.location()) << "Overload not valid";
-        notes.emit(overload.location()) << "  Because the generic type `" << param_type_r.name()
-                                        << "' wasn't able to be substituted with `" << sub->target->name() << "' = `"
-                                        << sub->replace.name() << "'";
+        notes->emit(overload.location()) << "Overload not valid";
+        notes->emit(overload.location()) << "  Because the generic type `" << param_type_r.name()
+                                         << "' wasn't able to be substituted with `" << sub->target->name() << "' = `"
+                                         << sub->replace.name() << "'";
         return false;
       }
     }
@@ -183,9 +183,9 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
     // Couldn't perform any kind of valid cast: one invalid conversion disqualifies the function entirely
     if (!compat.valid) {
       // TODO(rymiel): #17 Actually keep track of *why* a type is not viable, for diagnostics.
-      notes.emit(overload.location()) << "Overload not valid";
-      notes.emit(overload.location()) << "  Because `" << arg_type->name() << "' is not convertible to `"
-                                      << param_type->name() << "'";
+      notes->emit(overload.location()) << "Overload not valid";
+      notes->emit(overload.location()) << "  Because `" << arg_type->name() << "' is not convertible to `"
+                                       << param_type->name() << "'";
       return false;
     }
 
@@ -250,10 +250,12 @@ auto Overload::better_candidate_than(Overload other) const -> bool {
 auto OverloadSet::try_best_viable_overload() const -> const Overload* {
   const Overload* best = nullptr;
 
-  for (const auto& candidate : overloads)
-    if (candidate.viable)
+  for (const auto& candidate : overloads) {
+    if (candidate.viable) {
       if (best == nullptr || candidate.better_candidate_than(*best))
         best = &candidate;
+    }
+  }
 
   return best;
 }
@@ -272,16 +274,18 @@ auto OverloadSet::best_viable_overload() const -> Overload {
       ss << "\n";
     }
     ss << "\n";
-    notes.dump(ss);
+    ss << notes->buffer;
     throw std::logic_error(str);
   }
 
   vector<const Overload*> ambiguous;
 
-  for (const auto& candidate : overloads)
-    if (candidate.viable && &candidate != best)
+  for (const auto& candidate : overloads) {
+    if (candidate.viable && &candidate != best) {
       if (!best->better_candidate_than(candidate))
         ambiguous.push_back(&candidate);
+    }
+  }
 
   if (ambiguous.empty())
     return *best;

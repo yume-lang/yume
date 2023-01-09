@@ -6,6 +6,8 @@
 #include "ty/compatibility.hpp"
 #include "ty/substitution.hpp"
 #include "util.hpp"
+#include <llvm/Support/raw_ostream.h>
+#include <utility>
 #include <vector>
 
 namespace yume::ast {
@@ -36,7 +38,7 @@ struct OverloadSet {
   ast::AST* call;
   vector<Overload> overloads;
   vector<ast::AST*> args;
-  diagnostic::NotesHolder notes{};
+  unique_ptr<diagnostic::StringNotesHolder> notes = std::make_unique<diagnostic::StringNotesHolder>();
 
   [[nodiscard]] auto empty() const -> bool { return overloads.empty(); }
   void dump(llvm::raw_ostream& stream, bool hide_invalid = false) const;

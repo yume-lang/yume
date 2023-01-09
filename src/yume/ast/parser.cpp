@@ -44,7 +44,15 @@ auto Parser::to_string(Token token) -> string {
 void Parser::consume(TokenAtom token_atom, const source_location location) {
   auto [token_type, payload] = token_atom;
   ignore_separator();
-  expect(token_type, location);
+  if (tokens.at_end()) {
+    throw std::runtime_error("Expected token type "s + Token::type_name(token_type) + " for payload " +
+                             string(payload) + ", got the end of the file");
+  }
+
+  if (tokens->type != token_type) {
+    throw std::runtime_error("Expected token type "s + Token::type_name(token_type) + " for payload " +
+                             string(payload) + ", got " + to_string(*tokens) + " at " + at(location));
+  }
   if (tokens->payload != payload) {
     throw std::runtime_error("Expected payload atom "s + string(payload) + ", got " + to_string(*tokens) + " at " +
                              at(location));
@@ -424,8 +432,13 @@ auto Parser::parse_fn_decl() -> unique_ptr<FnDecl> {
   auto type_args = vector<string>{};
   if (try_consume(SYM_LBRACE)) {
     consume_with_commas_until(SYM_RBRACE, [&] {
-      emit_note_at_current_token(diagnostic::Severity::Warn) << "Type parameter with no specifier will be deprecated";
-      type_args.push_back(consume_word());
+      if (try_peek_uword(0)) {
+        type_args.push_back(consume_word());
+        if (!try_consume(KWD_TYPE))
+          emit_note_relative(-1, diagnostic::Severity::Warn) << "Type parameter with no specifier will be deprecated";
+      } else {
+        emit_fatal_at_current_token_and_terminate() << "Non-type generic parameter is unimplemented";
+      }
     });
   }
 
