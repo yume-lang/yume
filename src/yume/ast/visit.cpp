@@ -109,6 +109,7 @@ void FunctionType::visit(Visitor& visitor) const {
 }
 void ProxyType::visit(Visitor& visitor) const { helper(visitor).visit(field, "field"); }
 void TypeName::visit(Visitor& visitor) const { helper(visitor).visit(name, "name").visit(type, "type"); }
+void GenericParam::visit(Visitor& visitor) const { helper(visitor).visit(name, "name").visit(type, "type"); }
 void Compound::visit(Visitor& visitor) const { helper(visitor).visit(body, "body"); }
 void VarExpr::visit(Visitor& visitor) const { helper(visitor).visit(name, "name"); }
 void ConstExpr::visit(Visitor& visitor) const { helper(visitor).visit(name, "name").visit(parent, "name"); }

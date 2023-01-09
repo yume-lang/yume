@@ -103,6 +103,7 @@ auto SelfType::clone() const -> SelfType* { return new SelfType(tok()); }
 auto ProxyType::clone() const -> ProxyType* { return new ProxyType(tok(), field); }
 auto FunctionType::clone() const -> FunctionType* { return new FunctionType(tok(), dup(ret), dup(args), fn_ptr); }
 auto TypeName::clone() const -> TypeName* { return new TypeName(tok(), dup(type), name); }
+auto GenericParam::clone() const -> GenericParam* { return new GenericParam(tok(), dup(type), name); }
 auto Compound::clone() const -> Compound* { return new Compound(tok(), dup(body)); }
 auto VarExpr::clone() const -> VarExpr* { return new VarExpr(tok(), name); }
 auto ConstExpr::clone() const -> ConstExpr* { return new ConstExpr(tok(), name, parent); }

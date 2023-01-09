@@ -34,9 +34,10 @@ struct NotesHolder;
 namespace yume::ast {
 
 enum Kind {
-  K_Unknown,  ///< Unknown, default, zero value. Hopefully never encountered!
-  K_IfClause, ///< `IfClause`
-  K_TypeName, ///< `TypeName`
+  K_Unknown,      ///< Unknown, default, zero value. Hopefully never encountered!
+  K_IfClause,     ///< `IfClause`
+  K_TypeName,     ///< `TypeName`
+  K_GenericParam, ///< `GenericParam`
 
   /** subclasses of Stmt */
   /**/ K_Stmt,     ///< `Stmt`
@@ -107,6 +108,7 @@ auto inline constexpr kind_name(Kind type) -> const char* {
   case K_SelfType: return "self type";
   case K_ProxyType: return "proxy type";
   case K_TypeName: return "type name";
+  case K_GenericParam: return "generic param";
   case K_Compound: return "compound";
   case K_While: return "while statement";
   case K_If: return "if statement";
@@ -416,6 +418,33 @@ struct TypeName final : public AST {
 
   static auto classof(const AST* a) -> bool { return a->kind() == K_TypeName; }
   [[nodiscard]] auto clone() const -> TypeName* override;
+};
+
+/// A generic, compile-time argument to a struct or function definition, comparable to C++ template parameters.
+/// Like C++ templates, these can be non-type parameters. If it's a generic type parameter, such as the following:
+///
+/// \code{.ym}
+/// struct Array{T type}
+/// \endcode
+///
+/// The \p type field will be absent, and the \p name will be uppercased. Otherwise, it's a non-type generic parameter:
+///
+/// \code{.ym}
+/// struct StaticArray{n I32}
+/// \endcode
+///
+/// In this case, the \p type field be filled out with the specified type, and the \p name will be lowercase.
+struct GenericParam final : public AST {
+  OptionalType type;
+  string name;
+
+  GenericParam(span<Token> tok, OptionalType type, string name)
+      : AST(K_GenericParam, tok), type{move(type)}, name{move(name)} {}
+  void visit(Visitor& visitor) const override;
+  [[nodiscard]] auto describe() const -> string override { return name; }
+
+  static auto classof(const AST* a) -> bool { return a->kind() == K_GenericParam; }
+  [[nodiscard]] auto clone() const -> GenericParam* override;
 };
 
 /// Expressions have an associated value and type.
