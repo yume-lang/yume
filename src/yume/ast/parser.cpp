@@ -4,6 +4,7 @@
 #include "diagnostic/notes.hpp"
 #include "qualifier.hpp"
 #include <algorithm>
+#include <llvm/Support/ErrorHandling.h>
 #include <llvm/Support/raw_ostream.h>
 
 namespace yume::ast::parser {
@@ -21,11 +22,11 @@ auto Parser::ignore_separator([[maybe_unused]] const source_location location) -
 
 void Parser::expect(Token::Type token_type, const source_location location) const {
   if (tokens.at_end())
-    throw std::runtime_error("Expected token type "s + Token::type_name(token_type) + ", got the end of the file");
+    emit_fatal_and_terminate() << "Expected token type " << Token::type_name(token_type) << ", got the end of the file";
 
   if (tokens->type != token_type) {
-    throw std::runtime_error("Expected token type "s + Token::type_name(token_type) + ", got " + to_string(*tokens) +
-                             " at " + at(location));
+    emit_fatal_and_terminate() << "Expected token type " << Token::type_name(token_type) << ", got "
+                               << to_string(*tokens) << " at " + at(location);
   }
 }
 
@@ -45,17 +46,17 @@ void Parser::consume(TokenAtom token_atom, const source_location location) {
   auto [token_type, payload] = token_atom;
   ignore_separator();
   if (tokens.at_end()) {
-    throw std::runtime_error("Expected token type "s + Token::type_name(token_type) + " for payload " +
-                             string(payload) + ", got the end of the file");
+    emit_fatal_and_terminate() << "Expected token type " << Token::type_name(token_type)
+                               << " for payload " + string(payload) << ", got the end of the file at " << at(location);
   }
 
   if (tokens->type != token_type) {
-    throw std::runtime_error("Expected token type "s + Token::type_name(token_type) + " for payload " +
-                             string(payload) + ", got " + to_string(*tokens) + " at " + at(location));
+    emit_fatal_and_terminate() << "Expected token type " << Token::type_name(token_type) << " for payload "
+                               << string(payload) << ", got " << to_string(*tokens) << " at " << at(location);
   }
   if (tokens->payload != payload) {
-    throw std::runtime_error("Expected payload atom "s + string(payload) + ", got " + to_string(*tokens) + " at " +
-                             at(location));
+    emit_fatal_and_terminate() << "Expected payload atom " << string(payload) << ", got " << to_string(*tokens)
+                               << " at " << at(location);
   }
 
 #ifdef YUME_SPEW_CONSUMED_TOKENS
@@ -122,8 +123,10 @@ auto Parser::next([[maybe_unused]] const source_location location) -> Token {
 
 auto Parser::assert_payload_next([[maybe_unused]] const source_location location) -> Atom {
   auto payload = tokens->payload;
-  if (!payload)
-    throw std::runtime_error("Expected a payload, but wasn't found: "s + to_string(*tokens) + " at " + at(location));
+  if (!payload) {
+    emit_fatal_and_terminate() << "Expected a payload, but wasn't found: " << to_string(*tokens) << " at "
+                               << at(location);
+  }
 
   next(location);
   return payload.value();
@@ -132,9 +135,9 @@ auto Parser::assert_payload_next([[maybe_unused]] const source_location location
 auto Parser::consume_word(const source_location location) -> string {
   ignore_separator();
   if (tokens.at_end())
-    throw std::runtime_error("Expected word, got the end of the file");
+    emit_fatal_and_terminate() << "Expected word, got the end of the file";
   if (tokens->type != Word)
-    throw std::runtime_error("Expected word, got "s + to_string(*tokens) + " at " + at(location));
+    emit_fatal_and_terminate() << "Expected word, got " << to_string(*tokens) << " at " << at(location);
 
   return string(assert_payload_next());
 }
@@ -201,7 +204,7 @@ auto Parser::parse_type(bool implicit_self) -> unique_ptr<Type> {
 
     const string name = consume_word();
     if (!is_uword(name))
-      throw std::runtime_error("Expected capitalized payload for simple type");
+      emit_fatal_and_terminate() << "Expected capitalized payload for simple type";
 
     return ast_ptr<SimpleType>(entry, name);
   }();
@@ -365,13 +368,18 @@ auto Parser::parse_struct_decl() -> unique_ptr<StructDecl> {
 
   const string name = consume_word();
   if (!is_uword(name))
-    throw std::runtime_error("Expected capitalized name for struct decl");
+    emit_fatal_and_terminate() << "Expected capitalized name for struct decl";
 
   auto type_args = vector<string>{};
   if (try_consume(SYM_LBRACE)) {
     consume_with_commas_until(SYM_RBRACE, [&] {
-      emit_note_at_current_token(diagnostic::Severity::Warn) << "Type parameter with no specifier will be deprecated";
-      type_args.push_back(consume_word());
+      if (try_peek_uword(0)) {
+        type_args.push_back(consume_word());
+        if (!try_consume(KWD_TYPE))
+          emit_note(-1, diagnostic::Severity::Warn) << "Type parameter with no specifier will be deprecated";
+      } else {
+        emit_fatal_and_terminate() << "Non-type generic parameter is unimplemented";
+      }
     });
   }
 
@@ -435,9 +443,9 @@ auto Parser::parse_fn_decl() -> unique_ptr<FnDecl> {
       if (try_peek_uword(0)) {
         type_args.push_back(consume_word());
         if (!try_consume(KWD_TYPE))
-          emit_note_relative(-1, diagnostic::Severity::Warn) << "Type parameter with no specifier will be deprecated";
+          emit_note(-1, diagnostic::Severity::Warn) << "Type parameter with no specifier will be deprecated";
       } else {
-        emit_fatal_at_current_token_and_terminate() << "Non-type generic parameter is unimplemented";
+        emit_fatal_and_terminate() << "Non-type generic parameter is unimplemented";
       }
     });
   }
@@ -728,7 +736,7 @@ auto Parser::parse_primary() -> unique_ptr<Expr> {
       }
       if (try_consume(SYM_DOT)) {
         if (try_peek_uword(0))
-          throw std::runtime_error("Nested types aren't yet implemented");
+          emit_fatal_and_terminate() << "Nested types aren't yet implemented";
 
         auto name = consume_word();
         auto call_args = vector<AnyExpr>{};
@@ -746,7 +754,8 @@ auto Parser::parse_primary() -> unique_ptr<Expr> {
     }
     return ast_ptr<VarExpr>({entry, 1}, name);
   }
-  throw std::runtime_error("Couldn't make an expression from here");
+  emit_fatal_and_terminate() << "Couldn't make an expression from here";
+  llvm_unreachable("Fatal error encountered");
 }
 
 auto Parser::parse_receiver(unique_ptr<Expr> receiver, VectorTokenIterator receiver_entry) -> unique_ptr<Expr> {

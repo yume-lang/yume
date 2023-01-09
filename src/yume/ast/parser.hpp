@@ -65,6 +65,8 @@ public:
   }
   /// Returns the underlying iterator. This shouldn't really be needed but I'm too lazy to properly model an iterator.
   [[nodiscard]] auto begin() const -> VectorTokenIterator { return m_iterator; }
+
+  [[nodiscard]] auto end() const -> VectorTokenIterator { return m_end; }
 };
 } // namespace yume::ast
 
@@ -143,17 +145,19 @@ struct Parser {
   TokenIterator& tokens;
   diagnostic::NotesHolder& notes;
 
-  auto emit_note_at_current_token(diagnostic::Severity severity = diagnostic::Severity::Note) -> diagnostic::Note {
-    return notes.emit(tokens->loc, severity);
-  };
+  [[nodiscard]] auto clamped_iterator(const TokenIterator& iter) const -> TokenIterator {
+    if (iter.at_end())
+      return {tokens.end() - 1, tokens.end()};
+    return iter;
+  }
 
-  auto emit_note_relative(int offset, diagnostic::Severity severity = diagnostic::Severity::Note)
+  [[nodiscard]] auto emit_note(int offset = 0, diagnostic::Severity severity = diagnostic::Severity::Note) const
       -> diagnostic::Note {
-    return notes.emit((tokens + offset)->loc, severity);
+    return notes.emit(clamped_iterator(tokens + offset)->loc, severity);
   };
 
-  auto emit_fatal_at_current_token_and_terminate() -> diagnostic::Note {
-    return notes.emit(tokens->loc, diagnostic::Severity::Fatal);
+  [[nodiscard]] auto emit_fatal_and_terminate(int offset = 0) const noexcept(false) -> diagnostic::Note {
+    return notes.emit(clamped_iterator(tokens + offset)->loc, diagnostic::Severity::Fatal);
   };
 
   template <typename T, typename U> static auto ts(T&& begin, U&& end) -> span<Token> {
