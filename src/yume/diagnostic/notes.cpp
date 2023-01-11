@@ -13,7 +13,7 @@ void Note::emit() const {
     if (matching_file != holder->context_files.end()) {
       *holder->stream << "\n    |\n" << llvm::right_justify(std::to_string(this->location.begin_line), 4) << "| ";
       std::string line;
-      std::fstream file = (*matching_file)->path;
+      auto file = std::fstream{(*matching_file)->path};
       for (int i = 0; i < this->location.begin_line - 1; ++i)
         file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
       std::getline(file, line);
