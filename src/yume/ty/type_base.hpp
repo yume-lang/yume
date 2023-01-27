@@ -5,11 +5,11 @@
 #include "util.hpp"
 
 namespace yume {
-struct Substitution;
-}
+struct Substitutions;
+struct GenericTypeReplacements;
+} // namespace yume
 
 namespace yume::ty {
-struct Sub;
 class Type;
 
 enum Kind {
@@ -93,8 +93,8 @@ public:
   [[nodiscard]] auto name() const -> string;
   [[nodiscard]] auto base_name() const -> string;
 
-  [[nodiscard]] auto determine_generic_subs(Type generic, Substitution& subs) const -> optional<Sub>;
-  [[nodiscard]] auto apply_generic_substitution(Sub sub) const -> optional<Type>;
+  [[nodiscard]] auto determine_generic_subs(Type generic, Substitutions& subs) const -> GenericTypeReplacements;
+  [[nodiscard]] auto apply_generic_substitution(GenericTypeReplacements sub) const -> optional<Type>;
   [[nodiscard]] auto compatibility(Type other, Compat compat = Compat()) const -> Compat;
 
   /// Get this type with a given qualifier applied.
@@ -144,5 +144,7 @@ public:
   /// If this type is a opaque wrapper type, return the wrapper type, otherwise return itself.
   [[nodiscard]] auto without_opaque() const noexcept -> Type;
   [[nodiscard]] auto without_meta() const noexcept -> Type;
+
+  [[nodiscard]] auto generic_base() const noexcept -> Type;
 };
 } // namespace yume::ty

@@ -22,11 +22,11 @@ namespace yume::semantic {
 struct Overload {
   Fn* fn{};
   vector<ty::Compat> compatibilities{};
-  Substitution subs{};
+  Substitutions subs;
   bool viable = false;
 
-  Overload() = default;
-  explicit Overload(Fn* fn) noexcept : fn{fn} {}
+  [[deprecated]] Overload() = delete;
+  explicit Overload(Fn* fn) noexcept : fn{fn}, subs{fn->subs.deep_copy()} {}
 
   [[nodiscard]] auto better_candidate_than(Overload other) const -> bool;
   void dump(llvm::raw_ostream& stream) const;

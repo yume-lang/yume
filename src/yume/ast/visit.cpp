@@ -43,8 +43,8 @@ struct VisitorHelper {
     return *this;
   }
 
-  template <typename... Ts> [[deprecated]] auto visit(const std::variant<Ts...>& var, string_view label) -> auto& {
-    std::visit([this, label](auto&& x) { visit(std::forward<decltype(x)>(x), label); }, var);
+  template <typename... Ts> auto visit(const std::variant<Ts...>& var, string_view label) -> auto& {
+    std::visit([label, this](auto&& x) { this->visit(std::forward<decltype(x)>(x), label); }, var);
     return *this;
   }
 

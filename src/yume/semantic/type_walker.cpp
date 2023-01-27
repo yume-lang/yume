@@ -16,6 +16,7 @@
 #include <llvm/ADT/StringMapEntry.h>
 #include <llvm/ADT/iterator.h>
 #include <llvm/Support/Casting.h>
+#include <llvm/Support/ErrorHandling.h>
 #include <llvm/Support/raw_ostream.h>
 #include <memory>
 #include <optional>
@@ -56,7 +57,8 @@ void make_implicit_conversion(ast::OptionalExpr& expr, optional<ty::Type> target
 
   if (!try_implicit_conversion(expr, target_ty)) {
     throw std::runtime_error("Invalid implicit conversion ('"s + expr->ensure_ty().name() + "' -> '" +
-                             target_ty->name() + "')");
+                             target_ty->name() + "', " + std::to_string(expr->ensure_ty().kind()) + " -> " +
+                             std::to_string(target_ty->kind()) + ")");
   }
 }
 
@@ -147,9 +149,41 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
     errs() << "\n*** END CTOR OVERLOAD EVALUATION ***\n\n";
 #endif
 
-    const auto& subs = best_overload.subs;
+    auto& subs = best_overload.subs;
     auto* selected = best_overload.fn;
-    yume_assert(subs.empty(), "Constructors cannot be generic"); // TODO(rymiel): revisit?
+    yume_assert(subs.fully_substituted(), "Constructors cannot be generic"); // TODO(rymiel): revisit?
+
+    // XXX: STILL Duplicated from function overload handling
+    // It is an instantiation of a function template
+    if (!subs.empty()) {
+      // Try to find an already existing instantiation with the same substitutions
+      auto [already_existed, inst_fn] = selected->get_or_create_instantiation(subs);
+      if (!already_existed) {
+        // An existing one wasn't found. We've been given a duplicate of the template's AST but without types
+        // The duplicate will have its types set again according to the substitutions being used.
+        auto& new_fn = inst_fn;
+
+        // The types of the instantiated function must be set immediately (i.e. with in_depth = false)
+        // This is because the implicit cast logic below depends on the direct type being set here and bound type
+        // information doesn't propagate across ImplicitCastExpr...
+        // TODO(rymiel): Find a better solution; such as moving cast logic also into queue?
+        // However, that would require evaluation of the queue very eagerly (i.e. immediately when the function is used,
+        // which kinda defeats the purpose of the queue). So I guess we'll just keep this until I think of a better
+        // solution
+        // TODO(rymiel): find a better solution other than the solution proposed above
+        with_saved_scope([&] {
+          in_depth = false;
+          current_decl = &new_fn;
+          body_statement(new_fn.ast());
+        });
+
+        decl_queue.emplace(&new_fn);
+
+        selected = &new_fn;
+      } else {
+        selected = &inst_fn;
+      }
+    }
 
     // XXX: STILL Duplicated from function overload handling
     for (auto [target, expr_arg, compat] : llvm::zip(selected->arg_types(), expr.args, best_overload.compatibilities)) {
@@ -210,9 +244,42 @@ auto TypeWalker::make_dup(ast::AnyExpr& expr) -> Fn* {
   errs() << "\n*** END CTOR OVERLOAD EVALUATION ***\n\n";
 #endif
 
-  const auto& subs = best_overload.subs;
+  auto& subs = best_overload.subs;
   auto* selected = best_overload.fn;
-  yume_assert(subs.empty(), "Constructors cannot be generic"); // TODO(rymiel): revisit?
+
+  yume_assert(subs.fully_substituted(), "Constructors cannot be generic"); // TODO(rymiel): revisit?
+
+  // XXX: STILL Duplicated from function overload handling
+  // It is an instantiation of a function template
+  if (!subs.empty()) {
+    // Try to find an already existing instantiation with the same substitutions
+    auto [already_existed, inst_fn] = selected->get_or_create_instantiation(subs);
+    if (!already_existed) {
+      // An existing one wasn't found. We've been given a duplicate of the template's AST but without types
+      // The duplicate will have its types set again according to the substitutions being used.
+      auto& new_fn = inst_fn;
+
+      // The types of the instantiated function must be set immediately (i.e. with in_depth = false)
+      // This is because the implicit cast logic below depends on the direct type being set here and bound type
+      // information doesn't propagate across ImplicitCastExpr...
+      // TODO(rymiel): Find a better solution; such as moving cast logic also into queue?
+      // However, that would require evaluation of the queue very eagerly (i.e. immediately when the function is used,
+      // which kinda defeats the purpose of the queue). So I guess we'll just keep this until I think of a better
+      // solution
+      // TODO(rymiel): find a better solution other than the solution proposed above
+      with_saved_scope([&] {
+        in_depth = false;
+        current_decl = &new_fn;
+        body_statement(new_fn.ast());
+      });
+
+      decl_queue.emplace(&new_fn);
+
+      selected = &new_fn;
+    } else {
+      selected = &inst_fn;
+    }
+  }
 
   // XXX: STILL Duplicated from function overload handling
   auto target = selected->arg_types().front();
@@ -372,6 +439,9 @@ template <> void TypeWalker::expression(ast::FieldAccessExpr& expr) {
     base_is_mut = true;
   }
 
+  if (!type.has_value())
+    llvm_unreachable("Type must be set in either branch above");
+
   if (type->is_opaque_self())
     make_implicit_conversion(expr.base, type->without_opaque());
 
@@ -401,7 +471,7 @@ auto TypeWalker::all_ctor_overloads_by_type(Struct& st, ast::CtorExpr& call) -> 
   auto ctors_by_type = vector<Overload>();
 
   for (auto& ctor : compiler.m_ctors)
-    if (ctor.self_ty == st.self_ty)
+    if (ctor.self_ty && st.self_ty && *ctor.self_ty == st.self_ty->generic_base())
       ctors_by_type.emplace_back(&ctor);
 
   return OverloadSet{&call, ctors_by_type, {}};
@@ -539,7 +609,7 @@ template <> void TypeWalker::statement(ast::Compound& stat) {
 
 template <> void TypeWalker::statement(ast::StructDecl& stat) {
   // This decl still has unsubstituted generics, can't instantiate its body
-  if (std::ranges::any_of(*current_decl.subs(), [](const auto& sub) noexcept { return sub.second.is_generic(); }))
+  if (!current_decl.fully_substituted())
     return;
 
   for (auto& i : stat.fields)
@@ -571,7 +641,7 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
   std::get<Fn*>(current_decl)->fn_ty = compiler.m_types.find_or_create_fn_ptr_type(args, ret, stat.varargs());
 
   // This decl still has unsubstituted generics, can't instantiate its body
-  if (std::ranges::any_of(*current_decl.subs(), [](const auto& sub) noexcept { return sub.second.is_generic(); }))
+  if (!current_decl.fully_substituted())
     return;
 
   if (in_depth && std::holds_alternative<ast::Compound>(stat.body))
@@ -603,6 +673,10 @@ template <> void TypeWalker::statement(ast::CtorDecl& stat) {
   }
 
   std::get<Fn*>(current_decl)->fn_ty = compiler.m_types.find_or_create_fn_ptr_type(args, current_decl.self_ty());
+
+  // This decl still has unsubstituted generics, can't instantiate its body
+  if (!current_decl.fully_substituted())
+    return;
 
   if (in_depth)
     statement(stat.body);
@@ -681,7 +755,7 @@ void TypeWalker::body_expression(ast::Expr& expr) {
   return CRTPWalker::body_expression(expr);
 }
 
-auto TypeWalker::get_or_declare_instantiation(Struct* struct_obj, Substitution subs) -> ty::Type {
+auto TypeWalker::get_or_declare_instantiation(Struct* struct_obj, Substitutions subs) -> ty::Type {
   auto [already_existed, inst_struct] = struct_obj->get_or_create_instantiation(subs);
 
   if (!already_existed) {
@@ -701,21 +775,24 @@ auto TypeWalker::get_or_declare_instantiation(Struct* struct_obj, Substitution s
 }
 
 auto TypeWalker::create_slice_type(const ty::Type& base_type) -> ty::Type {
-  auto* struct_obj = compiler.m_slice_struct;
-  Substitution subs = {{{struct_obj->type_args.at(0)->name(), base_type}}};
+  Struct* struct_obj = compiler.m_slice_struct;
+  Substitutions subs = struct_obj->subs.deep_copy();
+  subs.associate(subs.all_keys().at(0)->as_type(), base_type);
   return get_or_declare_instantiation(struct_obj, subs);
 }
 
 auto TypeWalker::convert_type(ast::Type& ast_type) -> ty::Type {
   auto parent = current_decl.self_ty();
-  const auto* context = static_cast<const DeclLike>(current_decl).subs();
+  const auto* context = current_decl.subs();
 
   if (const auto* simple_type = dyn_cast<ast::SimpleType>(&ast_type)) {
     auto name = simple_type->name;
-    if (context != nullptr) {
-      auto generic = context->find(name);
-      if (generic != context->end())
-        return generic->second;
+    if (context != nullptr && !context->empty()) {
+      const auto* generic = context->mapping_ref_or_null(name);
+      if (generic != nullptr && generic->holds_type())
+        return generic->as_type();
+      if (generic != nullptr && generic->unassigned())
+        return context->get_generic_fallback(name);
     }
     auto val = compiler.m_types.known.find(name);
     if (val != compiler.m_types.known.end())
@@ -760,13 +837,19 @@ auto TypeWalker::convert_type(ast::Type& ast_type) -> ty::Type {
       throw std::logic_error("Can't add template arguments to non-struct types");
 
     for (auto& i : templated->type_args)
-      expression(*i);
+      i.visit([&](ast::AnyType& v) { expression(*v); }, [&](ast::AnyExpr& v) { body_expression(*v); });
 
-    Substitution subs = {};
-    for (const auto& [gen, gen_sub] : llvm::zip(struct_obj->type_args, templated->type_args))
-      subs.try_emplace(gen->name(), gen_sub->ensure_ty());
+    Substitutions gen_base = struct_obj->get_subs().deep_copy();
+    for (const auto& [gen, gen_sub] : llvm::zip(gen_base.all_keys(), templated->type_args))
+      if (gen->holds_type())
+        gen_base.associate(gen->name(), gen_sub.as_type()->ensure_ty());
+      else
+        gen_base.associate(gen->as_value(), gen_sub.as_expr().raw_ptr());
 
-    return get_or_declare_instantiation(struct_obj, subs);
+    // yume_assert(gen_base.fully_substituted(), "Can't convert templated type which isn't fully substituted: "s +
+    //                                               template_base.describe() + " (" + ast_type.describe() + ")");
+
+    return get_or_declare_instantiation(struct_obj, gen_base);
   }
 
   throw std::runtime_error("Cannot convert AST type to actual type! "s + ast_type.kind_name() + " (" +
@@ -785,17 +868,7 @@ void TypeWalker::resolve_queue() {
                    in_depth = true;
                    compiler.declare(*fn);
                  },
-                 [&](Struct* st) {
-                   for (auto& i : st->body()) {
-                     auto decl = compiler.decl_statement(*i, st->self_ty, st->member);
-
-                     // "Inherit" substitutions
-                     // TODO(rymiel): Shadowing type variables should be an error
-                     for (auto& [k, v] : st->subs)
-                       decl.subs()->try_emplace(k, v);
-                     compiler.walk_types(decl);
-                   }
-                 });
+                 [](Struct* /* st */) {});
     });
   }
 }

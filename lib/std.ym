@@ -18,7 +18,7 @@ def __builtin_slice_malloc{T}(ptr T ptr, size ISize) T ptr = __primitive__(slice
 
 def as{T,U}(from T, to U type) U = __primitive__(cast)
 
-struct Slice{T}(pointer T ptr, size ISize)
+struct Slice{T type}(pointer T ptr, size ISize)
   def :new(pointer T ptr, ::size)
     ::pointer = __builtin_slice_malloc(pointer, size)
     copy(pointer, ::pointer, size)
@@ -75,6 +75,11 @@ struct Slice{T}(pointer T ptr, size ISize)
       fn->(self::pointer[i], i)
       i = i + 1
     end
+  end
+end
+
+struct StaticArray{T type, n ISize}(pointer T ptr)
+  def :new()
   end
 end
 

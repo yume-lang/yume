@@ -352,21 +352,6 @@ public:
   [[nodiscard]] auto clone() const -> QualType* override;
 };
 
-/// A type with explicit type parameters \e i.e. `Foo<Bar,Baz>`.
-struct TemplatedType final : public Type {
-public:
-  AnyType base;
-  vector<AnyType> type_args;
-
-  TemplatedType(span<Token> tok, AnyType base, vector<AnyType> type_args)
-      : Type(K_TemplatedType, tok), base{move(base)}, type_args{move(type_args)} {}
-  void visit(Visitor& visitor) const override;
-  [[nodiscard]] auto describe() const -> string override;
-
-  static auto classof(const AST* a) -> bool { return a->kind() == K_TemplatedType; }
-  [[nodiscard]] auto clone() const -> TemplatedType* override;
-};
-
 /// The `self` type.
 struct SelfType final : public Type {
 public:
@@ -443,6 +428,8 @@ struct GenericParam final : public AST {
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto describe() const -> string override { return name; }
 
+  [[nodiscard]] auto is_type_parameter() const -> bool { return !type.has_value(); }
+
   static auto classof(const AST* a) -> bool { return a->kind() == K_GenericParam; }
   [[nodiscard]] auto clone() const -> GenericParam* override;
 };
@@ -461,6 +448,35 @@ public:
 using AnyExpr = AnyBase<Expr>;
 /// \see OptionalAnyBase
 using OptionalExpr = OptionalAnyBase<Expr>;
+
+struct AnyTypeOrExpr final : visitable_variant<AnyType, AnyExpr> {
+  using visitable_variant::visitable_variant;
+
+  [[nodiscard]] auto ast() -> AST* {
+    return visit([](auto& v) -> AST* { return v.raw_ptr(); });
+  }
+  [[nodiscard]] auto ast() const -> const AST* {
+    return visit([](auto& v) -> const AST* { return v.raw_ptr(); });
+  }
+
+  [[nodiscard]] auto as_type() -> AnyType& { return std::get<AnyType>(*this); }
+  [[nodiscard]] auto as_expr() -> AnyExpr& { return std::get<AnyExpr>(*this); }
+};
+
+/// A type with explicit type parameters \e i.e. `Foo<Bar,Baz>`.
+struct TemplatedType final : public Type {
+public:
+  AnyType base;
+  vector<AnyTypeOrExpr> type_args;
+
+  TemplatedType(span<Token> tok, AnyType base, vector<AnyTypeOrExpr> type_args)
+      : Type(K_TemplatedType, tok), base{move(base)}, type_args{move(type_args)} {}
+  void visit(Visitor& visitor) const override;
+  [[nodiscard]] auto describe() const -> string override;
+
+  static auto classof(const AST* a) -> bool { return a->kind() == K_TemplatedType; }
+  [[nodiscard]] auto clone() const -> TemplatedType* override;
+};
 
 /// Number literals.
 struct NumberExpr final : public Expr {
@@ -762,7 +778,7 @@ public:
   string name;
   std::set<string> annotations;
   vector<TypeName> args;
-  vector<string> type_args;
+  vector<GenericParam> type_args;
   OptionalType ret;
   /// If this function declaration refers to a primitive, this field is a string representing the name of the primitive.
   /// If it's an external method, this field is a pair of the extern name and whether the method is varargs.
@@ -772,8 +788,8 @@ public:
   /// will be set once said conversion is performed.
   Fn* sema_decl{};
 
-  FnDecl(span<Token> tok, string name, vector<TypeName> args, vector<string> type_args, OptionalType ret, Body body,
-         std::set<string> annotations)
+  FnDecl(span<Token> tok, string name, vector<TypeName> args, vector<GenericParam> type_args, OptionalType ret,
+         Body body, std::set<string> annotations)
       : Decl(K_FnDecl, tok), name{move(name)},
         annotations(move(annotations)), args{move(args)}, type_args{move(type_args)}, ret{move(ret)}, body{move(body)} {
   }
@@ -832,12 +848,12 @@ struct StructDecl final : public Decl {
 public:
   string name;
   vector<TypeName> fields;
-  vector<string> type_args;
+  vector<GenericParam> type_args;
   Compound body;
   OptionalType implements;
   bool is_interface;
 
-  StructDecl(span<Token> tok, string name, vector<TypeName> fields, vector<string> type_args, Compound body,
+  StructDecl(span<Token> tok, string name, vector<TypeName> fields, vector<GenericParam> type_args, Compound body,
              OptionalType implements, bool is_interface = false)
       : Decl(K_StructDecl, tok), name{move(name)}, fields{move(fields)}, type_args{move(type_args)}, body{move(body)},
         implements{move(implements)}, is_interface{is_interface} {}

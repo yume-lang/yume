@@ -90,11 +90,11 @@ auto WhileStmt::clone() const -> WhileStmt* { return new WhileStmt(tok(), dup(co
 auto VarDecl::clone() const -> VarDecl* { return new VarDecl(tok(), name, dup(type), dup(init)); }
 auto ConstDecl::clone() const -> ConstDecl* { return new ConstDecl(tok(), name, dup(type), dup(init)); }
 auto FnDecl::clone() const -> FnDecl* {
-  return new FnDecl(tok(), name, dup(args), type_args, dup(ret), dup(body), dup(annotations));
+  return new FnDecl(tok(), name, dup(args), dup(type_args), dup(ret), dup(body), dup(annotations));
 }
 auto CtorDecl::clone() const -> CtorDecl* { return new CtorDecl(tok(), dup(args), dup(body)); }
 auto StructDecl::clone() const -> StructDecl* {
-  return new StructDecl(tok(), name, dup(fields), type_args, dup(body), dup(implements), is_interface);
+  return new StructDecl(tok(), name, dup(fields), dup(type_args), dup(body), dup(implements), is_interface);
 }
 auto SimpleType::clone() const -> SimpleType* { return new SimpleType(tok(), name); }
 auto QualType::clone() const -> QualType* { return new QualType(tok(), dup(base), qualifier); }

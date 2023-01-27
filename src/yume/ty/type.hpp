@@ -22,6 +22,7 @@ namespace yume {
 class Compiler;
 struct Instantiation;
 struct Struct;
+struct GenericTypeReplacements;
 namespace ast {
 struct TypeName;
 class Type;
@@ -30,7 +31,6 @@ class Type;
 
 namespace yume::ty {
 class Type;
-struct Sub;
 
 /// A built-in integral type, such as I32 or Bool.
 class Int final : public BaseType {
@@ -78,11 +78,11 @@ public:
 /// An user-defined struct type with associated fields.
 class Struct final : public BaseType {
   vector<ast::TypeName*> m_fields;
-  nullable<const Substitution*> m_subs;
+  nullable<const Substitutions*> m_subs;
   nullable<const Struct*> m_parent{};
   nonnull<yume::Struct*> m_decl{};
-  mutable std::map<Substitution, unique_ptr<Struct>> m_subbed{}; // HACK
-  auto emplace_subbed(Substitution sub) const -> const Struct&;
+  [[deprecated]] mutable std::map<Substitutions, unique_ptr<Struct>> m_subbed{}; // HACK
+  auto apply_substitutions(Substitutions sub) const -> const Struct&;
   mutable llvm::Type* m_memo{};
 
   // TODO(rymiel): why are these here?
@@ -91,11 +91,12 @@ class Struct final : public BaseType {
   friend Type;
 
 public:
-  Struct(string name, vector<ast::TypeName*> fields, nonnull<yume::Struct*> decl, nullable<const Substitution*> subs)
+  Struct(string name, vector<ast::TypeName*> fields, nonnull<yume::Struct*> decl, nullable<const Substitutions*> subs)
       : BaseType(K_Struct, move(name)), m_fields(move(fields)), m_subs(subs), m_decl(decl) {}
   [[nodiscard]] auto fields() const -> const auto& { return m_fields; }
   [[nodiscard]] auto fields() -> auto& { return m_fields; }
-  [[nodiscard]] auto subs() const -> const auto& { return *m_subs; }
+  [[nodiscard]] auto subs() const -> const auto* { return m_subs; }
+  [[nodiscard]] auto subs() -> auto* { return m_subs; }
   [[nodiscard]] auto decl() const -> nonnull<yume::Struct*> { return m_decl; }
   [[nodiscard]] auto is_interface() const -> bool;
   [[nodiscard]] auto implements() const -> const ast::OptionalType&;

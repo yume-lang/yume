@@ -300,6 +300,7 @@ struct Parser {
   auto parse_expr() -> unique_ptr<Expr>;
 
   auto parse_fn_arg() -> FnArg;
+  auto parse_generic_type_params() -> vector<GenericParam>;
 
   auto try_parse_function_type() -> optional<unique_ptr<FunctionType>>;
   auto try_parse_type() -> optional<unique_ptr<Type>>;

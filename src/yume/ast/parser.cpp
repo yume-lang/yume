@@ -126,6 +126,7 @@ auto Parser::assert_payload_next([[maybe_unused]] const source_location location
   if (!payload) {
     emit_fatal_and_terminate() << "Expected a payload, but wasn't found: " << to_string(*tokens) << " at "
                                << at(location);
+    llvm_unreachable("Fatal error should have terminated by now");
   }
 
   next(location);
@@ -223,14 +224,19 @@ auto Parser::parse_type(bool implicit_self) -> unique_ptr<Type> {
       consume(SYM_RBRACKET);
 
       auto slice_ty = ast_ptr<SimpleType>(entry, "Slice");
-      auto type_args = vector<AnyType>{};
-      type_args.emplace_back(move(base));
-      base = ast_ptr<TemplatedType>(entry, move(slice_ty), move(type_args));
+      auto generic_args = vector<AnyTypeOrExpr>{};
+      generic_args.emplace_back(move(base));
+      base = ast_ptr<TemplatedType>(entry, move(slice_ty), move(generic_args));
     } else if (try_consume(SYM_LBRACE)) {
-      auto type_args = vector<AnyType>{};
-      consume_with_commas_until(SYM_RBRACE, [&] { type_args.emplace_back(parse_type()); });
+      auto generic_args = vector<AnyTypeOrExpr>{};
+      consume_with_commas_until(SYM_RBRACE, [&] {
+        if (auto type = try_parse_type(); type.has_value())
+          generic_args.emplace_back(move(*type));
+        else
+          generic_args.emplace_back(parse_expr());
+      });
 
-      base = ast_ptr<TemplatedType>(entry, move(base), move(type_args));
+      base = ast_ptr<TemplatedType>(entry, move(base), move(generic_args));
     } else {
       break;
     }
@@ -275,14 +281,19 @@ auto Parser::try_parse_type() -> optional<unique_ptr<Type>> {
       consume(SYM_RBRACKET);
 
       auto slice_ty = ast_ptr<SimpleType>(entry, "Slice");
-      auto type_args = vector<AnyType>{};
-      type_args.emplace_back(move(base));
-      base = ast_ptr<TemplatedType>(entry, move(slice_ty), move(type_args));
+      auto generic_args = vector<AnyTypeOrExpr>{};
+      generic_args.emplace_back(move(base));
+      base = ast_ptr<TemplatedType>(entry, move(slice_ty), move(generic_args));
     } else if (try_consume(SYM_LBRACE)) {
-      auto type_args = vector<AnyType>{};
-      consume_with_commas_until(SYM_RBRACE, [&] { type_args.emplace_back(parse_type()); });
+      auto generic_args = vector<AnyTypeOrExpr>{};
+      consume_with_commas_until(SYM_RBRACE, [&] {
+        if (auto type = try_parse_type(); type.has_value())
+          generic_args.emplace_back(move(*type));
+        else
+          generic_args.emplace_back(parse_expr());
+      });
 
-      base = ast_ptr<TemplatedType>(entry, move(base), move(type_args));
+      base = ast_ptr<TemplatedType>(entry, move(base), move(generic_args));
     } else {
       break;
     }
@@ -370,18 +381,7 @@ auto Parser::parse_struct_decl() -> unique_ptr<StructDecl> {
   if (!is_uword(name))
     emit_fatal_and_terminate() << "Expected capitalized name for struct decl";
 
-  auto type_args = vector<string>{};
-  if (try_consume(SYM_LBRACE)) {
-    consume_with_commas_until(SYM_RBRACE, [&] {
-      if (try_peek_uword(0)) {
-        type_args.push_back(consume_word());
-        if (!try_consume(KWD_TYPE))
-          emit_note(-1, diagnostic::Severity::Warn) << "Type parameter with no specifier will be deprecated";
-      } else {
-        emit_fatal_and_terminate() << "Non-type generic parameter is unimplemented";
-      }
-    });
-  }
+  auto type_args = parse_generic_type_params();
 
   auto fields = vector<TypeName>{};
   if (try_consume(SYM_LPAREN))
@@ -400,7 +400,7 @@ auto Parser::parse_struct_decl() -> unique_ptr<StructDecl> {
     ignore_separator();
   }
 
-  return ast_ptr<StructDecl>(entry, name, move(fields), type_args, make_ast<Compound>(body_begin, move(body)),
+  return ast_ptr<StructDecl>(entry, name, move(fields), move(type_args), make_ast<Compound>(body_begin, move(body)),
                              move(implements), interface);
 }
 
@@ -421,6 +421,26 @@ auto Parser::parse_fn_arg() -> FnArg {
   return {parse_type_name(), std::nullopt};
 }
 
+auto Parser::parse_generic_type_params() -> vector<GenericParam> {
+  auto type_args = vector<GenericParam>{};
+  if (try_consume(SYM_LBRACE)) {
+    consume_with_commas_until(SYM_RBRACE, [&] {
+      auto entry = tokens.begin();
+      auto name = consume_word();
+      if (is_uword(name)) {
+        if (!try_consume(KWD_TYPE))
+          emit_note(-1, diagnostic::Severity::Warn) << "Type parameter with no specifier will be deprecated";
+        type_args.push_back(make_ast<GenericParam>(entry, std::nullopt, name));
+      } else {
+        auto type = parse_type();
+        type_args.push_back(make_ast<GenericParam>(entry, move(type), name));
+      }
+    });
+  }
+
+  return type_args;
+}
+
 auto Parser::parse_fn_or_ctor_decl() -> unique_ptr<Stmt> {
   if (try_peek(1, SYM_COLON))
     return parse_ctor_decl();
@@ -437,18 +457,7 @@ auto Parser::parse_fn_decl() -> unique_ptr<FnDecl> {
     annotations.emplace(consume_word());
 
   const string name = parse_fn_name();
-  auto type_args = vector<string>{};
-  if (try_consume(SYM_LBRACE)) {
-    consume_with_commas_until(SYM_RBRACE, [&] {
-      if (try_peek_uword(0)) {
-        type_args.push_back(consume_word());
-        if (!try_consume(KWD_TYPE))
-          emit_note(-1, diagnostic::Severity::Warn) << "Type parameter with no specifier will be deprecated";
-      } else {
-        emit_fatal_and_terminate() << "Non-type generic parameter is unimplemented";
-      }
-    });
-  }
+  auto type_args = parse_generic_type_params();
 
   consume(SYM_LPAREN);
 
@@ -470,15 +479,15 @@ auto Parser::parse_fn_decl() -> unique_ptr<FnDecl> {
       consume(SYM_LPAREN);
       auto primitive = consume_word();
       consume(SYM_RPAREN);
-      return ast_ptr<FnDecl>(entry, name, move(args), type_args, move(ret_type), primitive, move(annotations));
+      return ast_ptr<FnDecl>(entry, name, move(args), move(type_args), move(ret_type), primitive, move(annotations));
     }
     if (try_consume(KWD_EXTERN)) {
       // consume(SYM_LPAREN);
       // auto primitive = consume_word();
       // consume(SYM_RPAREN);
       auto varargs = try_consume(KWD_VARARGS);
-      return ast_ptr<FnDecl>(entry, name, move(args), type_args, move(ret_type), FnDecl::extern_decl_t{name, varargs},
-                             move(annotations));
+      return ast_ptr<FnDecl>(entry, name, move(args), move(type_args), move(ret_type),
+                             FnDecl::extern_decl_t{name, varargs}, move(annotations));
     }
     if (try_consume(KWD_ABSTRACT)) {
       if (args.empty()) {
@@ -495,7 +504,7 @@ auto Parser::parse_fn_decl() -> unique_ptr<FnDecl> {
         // dirty, though.
         args.emplace_back(make_ast<TypeName>(entry, ast_ptr<SelfType>(entry), ""));
       }
-      return ast_ptr<FnDecl>(entry, name, move(args), type_args, move(ret_type), FnDecl::abstract_decl_t{},
+      return ast_ptr<FnDecl>(entry, name, move(args), move(type_args), move(ret_type), FnDecl::abstract_decl_t{},
                              move(annotations));
     }
     body_begin = tokens.begin();
@@ -512,8 +521,8 @@ auto Parser::parse_fn_decl() -> unique_ptr<FnDecl> {
     }
   }
 
-  return ast_ptr<FnDecl>(entry, name, move(args), type_args, move(ret_type), make_ast<Compound>(body_begin, move(body)),
-                         move(annotations));
+  return ast_ptr<FnDecl>(entry, name, move(args), move(type_args), move(ret_type),
+                         make_ast<Compound>(body_begin, move(body)), move(annotations));
 }
 
 auto Parser::parse_ctor_decl() -> unique_ptr<CtorDecl> {

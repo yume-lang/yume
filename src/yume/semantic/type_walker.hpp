@@ -3,6 +3,7 @@
 #include "ast/crtp_walker.hpp"
 #include "compiler/scope_container.hpp"
 #include "semantic/overload.hpp"
+#include "ty/type_base.hpp"
 #include "util.hpp"
 #include <map>
 #include <queue>
@@ -66,7 +67,7 @@ private:
   auto create_slice_type(const ty::Type& base_type) -> ty::Type;
   void direct_call_operator(ast::CallExpr& expr);
 
-  auto get_or_declare_instantiation(Struct* struct_obj, Substitution subs) -> ty::Type;
+  auto get_or_declare_instantiation(Struct* struct_obj, Substitutions subs) -> ty::Type;
 
   auto all_fn_overloads_by_name(ast::CallExpr& call) -> OverloadSet;
   auto all_ctor_overloads_by_type(Struct& st, ast::CtorExpr& call) -> OverloadSet;
