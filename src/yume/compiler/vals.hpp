@@ -83,7 +83,6 @@ struct Fn {
   [[nodiscard]] auto get_self_ty() const -> optional<ty::Type> { return self_ty; }
   [[nodiscard]] auto get_subs() const -> const Substitutions& { return subs; }
   [[nodiscard]] auto get_subs() -> Substitutions& { return subs; }
-  [[nodiscard, deprecated]] auto get_generics() const -> nonnull<const Generics*> { return subs.generics(); }
 
   [[nodiscard]] auto ret() const -> optional<ty::Type>;
   [[nodiscard]] auto arg_count() const -> size_t;
@@ -166,7 +165,6 @@ struct Struct {
   [[nodiscard]] auto get_self_ty() const noexcept -> optional<ty::Type> { return self_ty; };
   [[nodiscard]] auto get_subs() const -> const Substitutions& { return subs; }
   [[nodiscard]] auto get_subs() -> Substitutions& { return subs; }
-  [[nodiscard, deprecated]] auto get_generics() const -> nonnull<const Generics*> { return subs.generics(); }
 
   [[nodiscard]] auto name() const noexcept -> string;
 
@@ -229,40 +227,13 @@ public:
                  });
   };
 
-  [[nodiscard]] auto direct_subs() noexcept -> Substitutions* {
+  [[nodiscard]] auto subs() noexcept -> Substitutions* {
     return visit([](std::monostate /*absent*/) noexcept -> Substitutions* { return nullptr; },
                  [](Const* /*cn*/) noexcept -> Substitutions* { return nullptr; },
                  [](auto* decl) noexcept -> Substitutions* {
                    if (decl == nullptr)
                      return nullptr;
                    return &decl->get_subs();
-                 });
-  };
-
-  [[nodiscard, deprecated]] auto generics() const noexcept -> const Generics* {
-    return visit([](std::monostate /*absent*/) noexcept -> const Generics* { return nullptr; },
-                 [](Const* /*cn*/) noexcept -> const Generics* { return nullptr; },
-                 [](auto* decl) noexcept -> const Generics* {
-                   if (decl == nullptr)
-                     return nullptr;
-                   auto* generics = decl->get_generics();
-
-                   if (auto self = decl->get_self_ty(); generics->empty() && self.has_value()) {
-                     if (const ty::Struct* self_st = self->template base_dyn_cast<ty::Struct>())
-                       return self_st->decl()->get_generics();
-                   }
-
-                   return generics;
-                 });
-  };
-
-  [[nodiscard, deprecated]] auto direct_generics() noexcept -> const Generics* {
-    return visit([](std::monostate /*absent*/) noexcept -> const Generics* { return nullptr; },
-                 [](Const* /*cn*/) noexcept -> const Generics* { return nullptr; },
-                 [](auto* decl) noexcept -> const Generics* {
-                   if (decl == nullptr)
-                     return nullptr;
-                   return decl->get_generics();
                  });
   };
 

@@ -25,7 +25,7 @@ struct Overload {
   Substitutions subs;
   bool viable = false;
 
-  [[deprecated]] Overload() = delete;
+  Overload() = delete;
   explicit Overload(Fn* fn) noexcept : fn{fn}, subs{fn->subs.deep_copy()} {}
 
   [[nodiscard]] auto better_candidate_than(Overload other) const -> bool;
