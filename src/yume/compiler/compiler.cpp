@@ -152,7 +152,10 @@ void Compiler::declare_default_ctor(Struct& st) {
   auto& new_ct = st.body().body.emplace_back(
       std::make_unique<ast::CtorDecl>(span<Token>{}, move(ctor_args), ast::Compound({}, move(ctor_body))));
 
-  walk_types(decl_statement(*new_ct, st.get_self_ty(), st.member));
+  // if (!st.subs.fully_substituted())
+  //   return;
+
+  walk_types(decl_statement(*new_ct, st.get_self_ty(), st.member, &st.get_subs()));
 }
 
 static inline auto vtable_entry_for(const Fn& fn) -> VTableEntry {
@@ -281,8 +284,8 @@ auto Compiler::create_struct(Struct& st) -> bool {
 
   auto iter = m_types.known.find(s_decl.name);
   if (iter == m_types.known.end()) {
-    auto empl =
-        m_types.known.try_emplace(s_decl.name, std::make_unique<ty::Struct>(s_decl.name, move(fields), &st, &st.subs));
+    auto empl = m_types.known.try_emplace(s_decl.name,
+                                          std::make_unique<ty::Struct>(s_decl.name, move(fields), &st, &st.get_subs()));
     yume_assert(isa<ty::Struct>(*empl.first->second));
     st.self_ty = &*empl.first->second;
     return true;
@@ -291,35 +294,48 @@ auto Compiler::create_struct(Struct& st) -> bool {
   yume_assert(isa<ty::Struct>(*iter->second));
   auto& existing = cast<ty::Struct>(*iter->second);
 
-  if (std::ranges::any_of(st.subs, [](const auto& sub) noexcept { return sub.second.is_generic(); }))
+  if (!st.get_subs().fully_substituted())
     return false;
 
   existing.m_fields = move(fields);
-  st.self_ty = &existing.emplace_subbed(st.subs);
+  st.self_ty = &existing.apply_substitutions(st.get_subs());
   return true;
 }
 
-auto Compiler::decl_statement(ast::Stmt& stmt, optional<ty::Type> parent, ast::Program* member) -> DeclLike {
+auto Compiler::decl_statement(ast::Stmt& stmt, optional<ty::Type> parent, ast::Program* member,
+                              nullable<Substitutions*> parent_subs) -> DeclLike {
   if (auto* fn_decl = dyn_cast<ast::FnDecl>(&stmt)) {
-    vector<unique_ptr<ty::Generic>> type_args{};
-    Substitution subs{};
+    Generics generics;
+    vector<unique_ptr<ty::Generic>> primary_generics;
     for (auto& i : fn_decl->type_args) {
-      auto& gen = type_args.emplace_back(std::make_unique<ty::Generic>(i));
-      subs.try_emplace(i, gen.get());
+      if (i.is_type_parameter()) {
+        primary_generics.emplace_back(std::make_unique<ty::Generic>(i.name));
+        generics.emplace_back(i.name);
+      } else {
+        yume_assert(i.type.has_value(), "Non-type generic parameter must have associated value type");
+        generics.push_back(GenericValueKey{i.name, i.type.raw_ptr()});
+      }
     }
-    auto& fn = m_fns.emplace_back(fn_decl, member, parent, move(subs), move(type_args));
+    auto& fn = m_fns.emplace_back(fn_decl, member, parent, parent_subs, move(generics), move(primary_generics));
     fn_decl->sema_decl = &fn;
 
     return &fn;
   }
   if (auto* s_decl = dyn_cast<ast::StructDecl>(&stmt)) {
-    vector<unique_ptr<ty::Generic>> type_args{};
-    Substitution subs{};
+    // XXX: Lots of duplication from above
+    Generics generics;
+    vector<unique_ptr<ty::Generic>> primary_generics;
     for (auto& i : s_decl->type_args) {
-      auto& gen = type_args.emplace_back(std::make_unique<ty::Generic>(i));
-      subs.try_emplace(i, gen.get());
+      if (i.is_type_parameter()) {
+        primary_generics.emplace_back(std::make_unique<ty::Generic>(i.name));
+        generics.emplace_back(i.name);
+      } else {
+        yume_assert(i.type.has_value(), "Non-type generic parameter must have associated value type");
+        generics.push_back(GenericValueKey{i.name, i.type.raw_ptr()});
+      }
     }
-    auto& st = m_structs.emplace_back(*s_decl, member, std::nullopt, subs, move(type_args));
+    auto& st =
+        m_structs.emplace_back(*s_decl, member, std::nullopt, parent_subs, move(generics), move(primary_generics));
     if (!create_struct(st)) {
       m_structs.pop_back();
       return {};
@@ -328,14 +344,15 @@ auto Compiler::decl_statement(ast::Stmt& stmt, optional<ty::Type> parent, ast::P
     if (st.name() == "Slice") // TODO(rymiel): magic value?
       m_slice_struct = &st;
 
-    for (auto& f : s_decl->body)
-      if (st.type_args.empty() || isa<ast::CtorDecl>(*f))
-        decl_statement(*f, st.self_ty, member);
+    for (auto& f : s_decl->body) {
+      // if (st.get_subs().empty() || isa<ast::CtorDecl>(*f))
+      decl_statement(*f, st.self_ty, member, &st.get_subs());
+    }
 
     return &st;
   }
   if (auto* ctor_decl = dyn_cast<ast::CtorDecl>(&stmt)) {
-    auto& ctor = m_ctors.emplace_back(ctor_decl, member, parent);
+    auto& ctor = m_ctors.emplace_back(ctor_decl, member, parent, parent_subs);
 
     return &ctor;
   }
@@ -662,7 +679,9 @@ void Compiler::define(Fn& fn) {
 
   if (fn.abstract()) {
     yume_assert(fn.self_ty.has_value(), "Abstract function must refer to a self type");
+    // NOLINTNEXTLINE(bugprone-unchecked-optional-access): clang-tidy doesn't accept yume_assert as an assertion
     yume_assert(fn.self_ty->base_isa<ty::Struct>(), "Abstract function must be within a struct");
+    // NOLINTNEXTLINE(bugprone-unchecked-optional-access): clang-tidy doesn't accept yume_assert as an assertion
     const auto* interface = fn.self_ty->base_cast<ty::Struct>()->decl();
     yume_assert(interface != nullptr, "Struct not found from struct type?");
     yume_assert(interface->ast().is_interface, "Abstract function must be within interface");
@@ -675,8 +694,8 @@ void Compiler::define(Fn& fn) {
     auto* vtable_deref_ret = m_builder->getVoidTy();
     for (const auto& arg : vtable_match->args)
       vtable_deref_args.emplace_back(llvm_type(arg, true));
-    if (vtable_match->ret)
-      vtable_deref_ret = llvm_type(*vtable_match->ret, true);
+    if (auto ret = vtable_match->ret; ret.has_value())
+      vtable_deref_ret = llvm_type(*ret, true);
 
     auto call_args = vector<llvm::Value*>();
     llvm::FunctionType* call_fn_type = nullptr;
@@ -1174,7 +1193,7 @@ template <> auto Compiler::expression(ast::AssignExpr& expr) -> Val {
 }
 
 template <> auto Compiler::expression(ast::LambdaExpr& expr) -> Val {
-  auto fn = Fn{&expr, m_current_fn->member, m_current_fn->self_ty};
+  auto fn = Fn{&expr, m_current_fn->member, m_current_fn->self_ty, &m_current_fn->subs};
   fn.fn_ty = expr.ensure_ty().base_cast<ty::Function>();
 
   declare(fn);
@@ -1527,7 +1546,7 @@ template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
     yume_assert(target_ty.base_isa<ty::Function>(), "fnptr conversion target must be a function type");
     auto& lambda_expr = cast<ast::LambdaExpr>(*expr.base);
 
-    auto fn = Fn{&lambda_expr, nullptr};
+    auto fn = Fn{&lambda_expr, nullptr, std::nullopt, nullptr};
     fn.fn_ty = target_ty.base_cast<ty::Function>();
 
     declare(fn);

@@ -60,25 +60,30 @@ struct Fn {
   optional<ty::Type> self_ty{};
   /// The program this declaration is a member of.
   ast::Program* member{};
+
+  vector<unique_ptr<ty::Generic>> primary_generics{};
   /// If this is an instantiation of a template, a mapping between type variables and their substitutions.
-  Substitution subs{};
+  Substitutions subs;
   /// The LLVM function definition corresponding to this function or constructor.
   llvm::Function* llvm{};
+  std::map<Substitutions, unique_ptr<Fn>> instantiations{};
 
-  vector<unique_ptr<ty::Generic>> type_args{};
-  std::map<Substitution, unique_ptr<Fn>> instantiations{};
+  Fn(Def def, ast::Program* member, optional<ty::Type> parent, Substitutions subs)
+      : def{def}, self_ty{parent}, member{member}, subs(move(subs)) {}
 
-  Fn(Def def, ast::Program* member, optional<ty::Type> parent = std::nullopt, Substitution subs = {},
-     vector<unique_ptr<ty::Generic>> type_args = {})
-      : def{def}, self_ty{parent}, member{member}, subs{move(subs)}, type_args(move(type_args)) {}
+  Fn(Def def, ast::Program* member, optional<ty::Type> parent, nullable<Substitutions*> parent_subs,
+     Generics generic = {}, vector<unique_ptr<ty::Generic>> primary_generics = {})
+      : def{def}, self_ty{parent}, member{member},
+        primary_generics{move(primary_generics)}, subs{move(generic), this->primary_generics, parent_subs} {}
 
   [[nodiscard]] auto fn_body() -> ast::FnDecl::Body&;
   [[nodiscard]] auto compound_body() -> ast::Compound&;
   [[nodiscard]] auto ast() const -> const ast::Stmt&;
   [[nodiscard]] auto ast() -> ast::Stmt&;
   [[nodiscard]] auto get_self_ty() const -> optional<ty::Type> { return self_ty; }
-  [[nodiscard]] auto get_subs() const -> const Substitution& { return subs; }
-  [[nodiscard]] auto get_subs() -> Substitution& { return subs; }
+  [[nodiscard]] auto get_subs() const -> const Substitutions& { return subs; }
+  [[nodiscard]] auto get_subs() -> Substitutions& { return subs; }
+  [[nodiscard, deprecated]] auto get_generics() const -> nonnull<const Generics*> { return subs.generics(); }
 
   [[nodiscard]] auto ret() const -> optional<ty::Type>;
   [[nodiscard]] auto arg_count() const -> size_t;
@@ -97,8 +102,8 @@ struct Fn {
 
   [[nodiscard]] auto name() const noexcept -> string;
 
-  [[nodiscard]] auto get_or_create_instantiation(Substitution& subs) noexcept -> std::pair<bool, Fn&>;
-  [[nodiscard]] auto create_instantiation(Substitution& subs) noexcept -> Fn&;
+  [[nodiscard]] auto get_or_create_instantiation(Substitutions& subs) noexcept -> std::pair<bool, Fn&>;
+  [[nodiscard]] auto create_instantiation(Substitutions& subs) noexcept -> Fn&;
 
 private:
   template <std::invocable<ast::TypeName&> F, typename..., typename T = std::invoke_result_t<F, ast::TypeName&>>
@@ -138,29 +143,35 @@ struct Struct {
   optional<ty::Type> self_ty{};
   /// The program this declaration is a member of.
   ast::Program* member{};
-  vector<unique_ptr<ty::Generic>> type_args{};
+
+  vector<unique_ptr<ty::Generic>> primary_generics{};
   /// If this is an instantiation of a template, a mapping between type variables and their substitutions.
-  Substitution subs{};
-  std::map<Substitution, unique_ptr<Struct>> instantiations{};
+  Substitutions subs;
+  std::map<Substitutions, unique_ptr<Struct>> instantiations{};
   std::vector<VTableEntry> vtable_members{};
   nullable<llvm::GlobalVariable*> vtable_memo{};
 
-  Struct(ast::StructDecl& ast_decl, ast::Program* member, optional<ty::Type> type = std::nullopt,
-         Substitution subs = {}, vector<unique_ptr<ty::Generic>> type_args = {}) noexcept
-      : st_ast(ast_decl), self_ty(type), member(member), type_args(move(type_args)), subs(move(subs)) {}
+  Struct(ast::StructDecl& ast_decl, ast::Program* member, optional<ty::Type> type, Substitutions subs) noexcept
+      : st_ast(ast_decl), self_ty(type), member(member), subs(move(subs)) {}
+
+  Struct(ast::StructDecl& ast_decl, ast::Program* member, optional<ty::Type> type, nullable<Substitutions*> parent_subs,
+         Generics generic = {}, vector<unique_ptr<ty::Generic>> primary_generics = {}) noexcept
+      : st_ast(ast_decl), self_ty{type}, member{member},
+        primary_generics{move(primary_generics)}, subs{move(generic), this->primary_generics, parent_subs} {}
 
   [[nodiscard]] auto ast() const noexcept -> const auto& { return st_ast; }
   [[nodiscard]] auto ast() noexcept -> auto& { return st_ast; }
   [[nodiscard]] auto body() const noexcept -> const auto& { return st_ast.body; }
   [[nodiscard]] auto body() noexcept -> auto& { return st_ast.body; }
   [[nodiscard]] auto get_self_ty() const noexcept -> optional<ty::Type> { return self_ty; };
-  [[nodiscard]] auto get_subs() const noexcept -> const Substitution& { return subs; };
-  [[nodiscard]] auto get_subs() noexcept -> Substitution& { return subs; };
+  [[nodiscard]] auto get_subs() const -> const Substitutions& { return subs; }
+  [[nodiscard]] auto get_subs() -> Substitutions& { return subs; }
+  [[nodiscard, deprecated]] auto get_generics() const -> nonnull<const Generics*> { return subs.generics(); }
 
   [[nodiscard]] auto name() const noexcept -> string;
 
-  [[nodiscard]] auto get_or_create_instantiation(Substitution& subs) noexcept -> std::pair<bool, Struct&>;
-  [[nodiscard]] auto create_instantiation(Substitution& subs) noexcept -> Struct&;
+  [[nodiscard]] auto get_or_create_instantiation(Substitutions& subs) noexcept -> std::pair<bool, Struct&>;
+  [[nodiscard]] auto create_instantiation(Substitutions& subs) noexcept -> Struct&;
 };
 
 /// A constant declaration in the compiler.
@@ -202,29 +213,56 @@ struct DeclLike : public DeclLike_t {
 public:
   using DeclLike_t::DeclLike_t;
 
-  [[nodiscard]] auto subs() const noexcept -> const Substitution* {
-    return visit([](std::monostate /*absent*/) noexcept -> const Substitution* { return nullptr; },
-                 [](Const* /*cn*/) noexcept -> const Substitution* { return nullptr; },
-                 [](auto* decl) noexcept -> const Substitution* {
-                   if (decl == nullptr)
-                     return nullptr;
-                   auto& subs = decl->get_subs();
-                   if (auto self = decl->get_self_ty(); subs.empty() && self.has_value()) {
-                     if (auto* self_st = self->template base_dyn_cast<ty::Struct>())
-                       return &self_st->subs();
-                   }
+  [[nodiscard]] auto fully_substituted() const noexcept -> bool {
+    if (const auto* subs = this->subs(); subs != nullptr)
+      return subs->fully_substituted();
+    return true;
+  }
 
-                   return &subs;
-                 });
-  };
-
-  [[nodiscard]] auto subs() noexcept -> Substitution* {
-    return visit([](std::monostate /*absent*/) noexcept -> Substitution* { return nullptr; },
-                 [](Const* /*cn*/) noexcept -> Substitution* { return nullptr; },
-                 [](auto* decl) noexcept -> Substitution* {
+  [[nodiscard]] auto subs() const noexcept -> const Substitutions* {
+    return visit([](std::monostate /*absent*/) noexcept -> const Substitutions* { return nullptr; },
+                 [](Const* /*cn*/) noexcept -> const Substitutions* { return nullptr; },
+                 [](auto* decl) noexcept -> const Substitutions* {
                    if (decl == nullptr)
                      return nullptr;
                    return &decl->get_subs();
+                 });
+  };
+
+  [[nodiscard]] auto direct_subs() noexcept -> Substitutions* {
+    return visit([](std::monostate /*absent*/) noexcept -> Substitutions* { return nullptr; },
+                 [](Const* /*cn*/) noexcept -> Substitutions* { return nullptr; },
+                 [](auto* decl) noexcept -> Substitutions* {
+                   if (decl == nullptr)
+                     return nullptr;
+                   return &decl->get_subs();
+                 });
+  };
+
+  [[nodiscard, deprecated]] auto generics() const noexcept -> const Generics* {
+    return visit([](std::monostate /*absent*/) noexcept -> const Generics* { return nullptr; },
+                 [](Const* /*cn*/) noexcept -> const Generics* { return nullptr; },
+                 [](auto* decl) noexcept -> const Generics* {
+                   if (decl == nullptr)
+                     return nullptr;
+                   auto* generics = decl->get_generics();
+
+                   if (auto self = decl->get_self_ty(); generics->empty() && self.has_value()) {
+                     if (const ty::Struct* self_st = self->template base_dyn_cast<ty::Struct>())
+                       return self_st->decl()->get_generics();
+                   }
+
+                   return generics;
+                 });
+  };
+
+  [[nodiscard, deprecated]] auto direct_generics() noexcept -> const Generics* {
+    return visit([](std::monostate /*absent*/) noexcept -> const Generics* { return nullptr; },
+                 [](Const* /*cn*/) noexcept -> const Generics* { return nullptr; },
+                 [](auto* decl) noexcept -> const Generics* {
+                   if (decl == nullptr)
+                     return nullptr;
+                   return decl->get_generics();
                  });
   };
 

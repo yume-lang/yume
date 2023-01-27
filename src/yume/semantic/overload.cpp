@@ -54,12 +54,13 @@ void Overload::dump(llvm::raw_ostream& stream) const {
   if (!subs.empty()) {
     stream << " with ";
     int i = 0;
-    for (const auto& [k, v] : subs) {
+    for (const auto& [k, v] : subs.mapping()) {
       if (i++ > 0)
         stream << ", ";
 
-      stream << k << " = " << v.name();
+      stream << k->name() << " = " << v->name();
     }
+    // TODO(rymiel): Non-type things
   }
 }
 
@@ -107,15 +108,23 @@ auto parameter_count_matches(const vector<ast::AST*>& args, const Fn& fn) -> boo
   return false;
 }
 
+static auto generic_base(optional<ty::Type> type) -> optional<ty::Type> {
+  if (type.has_value())
+    return type->generic_base();
+  return type;
+}
+
 auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
   const auto& fn = *overload.fn;
-  const auto parent = fn.self_ty;
+  auto parent = generic_base(fn.self_ty);
+
+  auto receiver = overload_receiver(call);
 
   // Check if the call has a receiver matching the type of the struct this method is in.
   // If the call has a receiver, it will always fail to match against against a top level function.
   // Note that a receiver is always a type, such as `Foo.method`. Calls with an "object" as a receiver look similar,
   // but `foo.method` is always rewritten to `method(foo)` and thus uses the "argument dependent lookup" rules below.
-  if (overload_receiver(call) != parent) {
+  if (generic_base(receiver) != parent) {
     if (!parent.has_value()) {
       notes->emit(overload.location()) << "Overload not considered due to ADL";
       notes->emit(overload.location()) << "  Because no receiver was specified";
@@ -124,8 +133,9 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
 
     // If there is no matching receiver, check if any arguments are of the type of the struct.
     // This perform "argument dependent lookup" and is required for "member functions"
-    if (std::ranges::none_of(
-            args, [parent](ast::AST* ast) { return ast->ensure_ty().without_mut().without_opaque() == *parent; })) {
+    if (std::ranges::none_of(args, [parent](ast::AST* ast) {
+          return ast->ensure_ty().without_mut().without_opaque().generic_base() == parent->generic_base();
+        })) {
       notes->emit(overload.location()) << "Overload not considered due to ADL";
       for (const auto* ast : args) {
         notes->emit(overload.location()) << "  Because `" << ast->ensure_ty().without_mut().without_opaque().name()
@@ -141,6 +151,9 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
     return false;
   }
 
+  if (receiver.has_value() && receiver->base_isa<ty::Struct>())
+    overload.subs = receiver->base_cast<ty::Struct>()->subs()->deep_copy();
+
   overload.compatibilities.reserve(args.size());
 
   // Determine the type compatibility of each argument individually. The performed conversions are also recorded for
@@ -155,21 +168,14 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
     if (param_type->is_generic()) {
       auto sub = arg_type->determine_generic_subs(*param_type, overload.subs);
 
-      // No valid substitution found
-      if (!sub) {
-        notes->emit(overload.location()) << "Overload not valid";
-        notes->emit(overload.location()) << "  Because no generic substitution could be found for `"
-                                         << param_type->name() << "' using `" << arg_type->name() << "'";
-        return false;
-      }
+      // TODO(rymiel): The above `sub` thing should probably survive longer, or be removed entirely
 
-      param_type = param_type->apply_generic_substitution(*sub);
+      param_type = param_type->apply_generic_substitution(sub);
 
       if (!param_type) {
         notes->emit(overload.location()) << "Overload not valid";
         notes->emit(overload.location()) << "  Because the generic type `" << param_type_r.name()
-                                         << "' wasn't able to be substituted with `" << sub->target->name() << "' = `"
-                                         << sub->replace.name() << "'";
+                                         << "' wasn't able to be substituted with ...?"; // TODO(rymiel)
         return false;
       }
     }
@@ -191,6 +197,13 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
 
     // Save the steps needed to perform the conversion
     overload.compatibilities.push_back(compat);
+  }
+
+  if (!overload.subs.fully_substituted()) {
+    notes->emit(overload.location()) << "Overload not valid because not all generic parameters could be deduced";
+    overload.subs.dump(*notes->buffer_stream);
+    // TODO(rymiel): Try to find which ones failed
+    return false;
   }
 
   // Add dummy conversions for each argument which maps to a variadic

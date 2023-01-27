@@ -16,19 +16,28 @@ static constexpr const auto fwd = [](auto&&... args) -> R { return std::invoke(p
 template <auto pm>
 static constexpr const auto fwd<pm, void> = [](auto&&... args) -> decltype(auto) { return std::invoke(pm, args...); };
 
-auto Fn::create_instantiation(Substitution& subs) noexcept -> Fn& {
+auto Fn::create_instantiation(Substitutions& subs) noexcept -> Fn& {
   auto def_clone = def.visit([this](auto* ast) -> Def {
     auto* cloned = ast->clone();
     member->body.emplace_back(cloned);
     return cloned;
   });
 
-  auto fn_ptr = std::make_unique<Fn>(def_clone, member, self_ty, subs);
+  auto self_ty_clone = self_ty;
+  if (self_ty.has_value()) {
+    GenericTypeReplacements replacements{};
+    for (auto [k, v] : subs.type_mappings())
+      replacements.try_emplace(k, v);
+
+    self_ty_clone = self_ty->apply_generic_substitution(replacements);
+  }
+
+  auto fn_ptr = std::make_unique<Fn>(def_clone, member, self_ty_clone, subs);
   auto new_emplace = instantiations.emplace(subs, move(fn_ptr));
   return *new_emplace.first->second;
 }
 
-auto Fn::get_or_create_instantiation(Substitution& subs) noexcept -> std::pair<bool, Fn&> {
+auto Fn::get_or_create_instantiation(Substitutions& subs) noexcept -> std::pair<bool, Fn&> {
   auto existing_instantiation = instantiations.find(subs);
   if (existing_instantiation == instantiations.end())
     return {false, create_instantiation(subs)};
@@ -36,16 +45,19 @@ auto Fn::get_or_create_instantiation(Substitution& subs) noexcept -> std::pair<b
   return {true, *existing_instantiation->second};
 }
 
-auto Struct::create_instantiation(Substitution& subs) noexcept -> Struct& {
+auto Struct::create_instantiation(Substitutions& subs) noexcept -> Struct& {
   auto* decl_clone = st_ast.clone();
   member->body.emplace_back(decl_clone);
 
+  // errs() << " !!! Instantiating new " << name() << " with ";
+  // subs.dump(errs());
+  // errs() << "\n";
   auto st_ptr = std::make_unique<Struct>(*decl_clone, member, self_ty, subs);
   auto new_emplace = instantiations.emplace(subs, move(st_ptr));
   return *new_emplace.first->second;
 }
 
-auto Struct::get_or_create_instantiation(Substitution& subs) noexcept -> std::pair<bool, Struct&> {
+auto Struct::get_or_create_instantiation(Substitutions& subs) noexcept -> std::pair<bool, Struct&> {
   auto existing_instantiation = instantiations.find(subs);
   if (existing_instantiation == instantiations.end())
     return {false, create_instantiation(subs)};

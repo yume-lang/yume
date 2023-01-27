@@ -23,7 +23,7 @@ auto TemplatedType::describe() const -> string {
   for (const auto& i : llvm::enumerate(type_args)) {
     if (i.index() > 0)
       ss << ",";
-    ss << i.value()->describe();
+    ss << i.value().ast()->describe();
   }
   ss << "}";
   return ss.str();

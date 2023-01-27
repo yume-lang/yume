@@ -95,7 +95,7 @@ public:
   void define(Const&);
 
   void body_statement(ast::Stmt&);
-  auto decl_statement(ast::Stmt&, optional<ty::Type> parent = std::nullopt, ast::Program* member = nullptr) -> DeclLike;
+  auto decl_statement(ast::Stmt&, optional<ty::Type> parent = std::nullopt, ast::Program* member = nullptr, nullable<Substitutions*> parent_subs = nullptr) -> DeclLike;
   auto body_expression(ast::Expr& expr) -> Val;
   auto direct_call_operator(ast::CallExpr& expr) -> Val;
 

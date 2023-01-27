@@ -4,6 +4,8 @@
 #include "qualifier.hpp"
 #include "ty/compatibility.hpp"
 #include "ty/substitution.hpp"
+#include "ty/type_base.hpp"
+#include "util.hpp"
 #include <cstddef>
 #include <limits>
 #include <llvm/Support/Casting.h>
@@ -13,6 +15,7 @@
 #include <stdexcept>
 #include <type_traits>
 #include <utility>
+#include <variant>
 
 namespace yume::ty {
 static auto qual_suffix(Qualifier qual) -> string {
@@ -46,7 +49,7 @@ auto Type::known_qual(Qualifier qual) const -> Type {
   }
 }
 
-static auto visit_subs(Type a, Type b, optional<Sub> sub) -> optional<Sub> {
+static void visit_subs(Type a, Type b, GenericTypeReplacements& sub) {
   yume_assert(b.is_generic(), "Cannot substitute generics in a non-generic type");
 
   // `Foo ptr` -> `T ptr`, with `T = Foo`.
@@ -70,55 +73,63 @@ static auto visit_subs(Type a, Type b, optional<Sub> sub) -> optional<Sub> {
   if (auto a_st_ty = a.base_dyn_cast<Struct>(), b_st_ty = b.base_dyn_cast<Struct>();
       a_st_ty != nullptr && b_st_ty != nullptr) {
     if (a_st_ty->base_name() == b_st_ty->base_name()) {
-      if (a_st_ty->subs().size() == 1 && b_st_ty->subs().size() == 1)
-        return visit_subs(a_st_ty->subs().begin()->second, b_st_ty->subs().begin()->second, sub);
+      // TODO(rymiel): Currently only handling type parameters
+      auto a_ty_mapping = a_st_ty->subs()->type_mappings();
+      const auto* b_subs = b_st_ty->subs();
+      for (auto [a_key, a_sub] : a_ty_mapping) {
+        const auto* b_mapping = b_subs->mapping_ref_or_null(a_key);
+        if (b_mapping != nullptr && b_mapping->unassigned())
+          sub.try_emplace(a_key, a_sub);
+      }
     }
   }
 
   // Substitution impossible! For example, `Foo` -> `T ptr`.
   if (!b.base_isa<Generic>())
-    return sub;
+    return;
 
   // Any other generic that didn't match above.
   // `Foo ptr` -> `T`, with `T = Foo ptr`.
-  return Sub{b.base_cast<Generic>(), a};
+  sub.try_emplace(b.base_cast<Generic>()->name(), a);
 }
 
 /// Add the substitution `gen_sub` for the generic type variable `gen` in template instantiation `instantiation`.
 /// If a substitution already exists for the same type variable, the two substitutions are intersected.
 /// \returns nullopt if substitution failed
-static auto intersect_generics(Substitution& subs, const Generic* gen, ty::Type gen_sub) -> optional<ty::Type> {
-  if (gen == nullptr)
-    return {};
-
-  auto name = gen->name();
-  auto existing = subs.find(name);
-  // The substitution must have an intersection with an already deduced value for the same type variable
-  if (existing != subs.end()) {
-    auto intersection = gen_sub.intersect(existing->second);
+static auto intersect_generics(Substitutions& subs, const string& gen, ty::Type gen_sub) -> optional<ty::Type> {
+  // errs() << "Intersecting " << gen << "=" << gen_sub.name() << " into (";
+  // subs.dump(errs());
+  // errs() << ")\n";
+  auto existing = subs.find_type(gen);
+  if (existing.has_value()) {
+    // The substitution must have an intersection with an already deduced value for the same type variable
+    auto intersection = gen_sub.intersect(*existing);
     if (!intersection) {
       // The types don't have a common intersection, they cannot coexist.
       return {};
     }
-    subs.try_emplace(name, *intersection);
+    subs.associate(gen, *intersection);
   } else {
-    subs.try_emplace(name, gen_sub);
+    subs.associate(gen, gen_sub);
   }
 
-  return subs.at(name).base();
+  // errs() << "Intersection result: (";
+  // subs.dump(errs());
+  // errs() << ")\n";
+
+  return subs.find_type(gen)->base();
 }
 
-auto Type::determine_generic_subs(Type generic, Substitution& subs) const -> optional<Sub> {
+auto Type::determine_generic_subs(Type generic, Substitutions& subs) const -> GenericTypeReplacements {
   yume_assert(generic.is_generic(), "Cannot substitute generics in a non-generic type");
 
-  optional<Sub> sub{};
-  sub = visit_subs(*this, generic, sub);
-  if (sub) {
-    if (auto intersection = intersect_generics(subs, sub->target, sub->replace))
-      sub->replace = *intersection;
-  }
+  GenericTypeReplacements replacements{};
+  visit_subs(*this, generic, replacements);
+  for (auto [k, v] : replacements)
+    if (auto intersection = intersect_generics(subs, k, v))
+      replacements.insert_or_assign(k, *intersection);
 
-  return sub;
+  return replacements;
 }
 
 auto Type::compatibility(Type other, Compat compat) const -> Compat {
@@ -218,8 +229,7 @@ auto Type::is_generic() const noexcept -> bool {
     return without_meta().is_generic(); // TODO(rymiel): Needs a `ensure_meta_indirect` or something idk
 
   if (const auto* struct_ty = base_dyn_cast<Struct>())
-    return std::ranges::any_of(struct_ty->subs(), [](const auto& sub) noexcept { return sub.second.is_generic(); });
-  // XXX: The above ranges call is repeated often
+    return !struct_ty->subs()->fully_substituted();
 
   return false;
 }
@@ -261,34 +271,45 @@ auto Type::has_qualifier(Qualifier qual) const -> bool {
   return false;
 }
 
-auto Type::apply_generic_substitution(Sub sub) const -> optional<Type> {
+auto Type::apply_generic_substitution(GenericTypeReplacements sub) const -> optional<Type> {
   yume_assert(is_generic(), "Can't perform generic substitution without a generic type");
-  if (m_base == sub.target)
-    return Type{sub.replace.base(), m_mut, m_ref};
 
-  if (const auto* ptr_this = base_dyn_cast<Ptr>())
-    return ensure_ptr_base().apply_generic_substitution(sub)->known_qual(ptr_this->qualifier());
+  if (const auto* generic_this = base_dyn_cast<Generic>()) {
+    if (sub.contains(generic_this->name()))
+      return Type{sub.at(generic_this->name()).base(), m_mut, m_ref};
+  }
 
-  if (is_meta())
-    return without_meta().apply_generic_substitution(sub)->known_meta();
+  if (const auto* ptr_this = base_dyn_cast<Ptr>()) {
+    auto base = ensure_ptr_base().apply_generic_substitution(sub);
+    if (!base.has_value())
+      return {};
+    return base->known_qual(ptr_this->qualifier());
+  }
+
+  if (is_meta()) {
+    auto base = without_meta().apply_generic_substitution(sub);
+    if (!base.has_value())
+      return {};
+    return base->known_meta();
+  }
 
   if (const auto* st_this = base_dyn_cast<Struct>()) {
-    // Gah!
-    auto subs = Substitution{};
-    for (const auto& [k, v] : st_this->subs())
-      subs.try_emplace(k, v.apply_generic_substitution(sub).value());
+    auto subs = st_this->subs()->deep_copy();
+    for (const auto& [k, v] : st_this->subs()->mapping())
+      if (k->holds_type() && sub.contains(k->as_type()))
+        subs.associate(k->as_type(), sub.at(k->as_type()));
 
-    return &st_this->emplace_subbed(move(subs));
+    return &st_this->apply_substitutions(move(subs));
   }
 
   return {};
 }
 
-auto Struct::emplace_subbed(Substitution sub) const -> const Struct& {
+auto Struct::apply_substitutions(Substitutions sub) const -> const Struct& {
   if (m_parent != nullptr)
-    return m_parent->emplace_subbed(move(sub));
+    return m_parent->apply_substitutions(move(sub));
 
-  if (sub == *m_subs)
+  if (m_subs != nullptr && sub == *m_subs)
     return *this;
 
   auto existing = m_subbed.find(sub);
@@ -365,6 +386,16 @@ auto Type::without_meta() const noexcept -> Type {
   return *this;
 }
 
+auto Type::generic_base() const noexcept -> Type {
+  if (const auto* st = base_dyn_cast<Struct>(); st != nullptr) {
+    auto primary_generic = st->decl()->get_self_ty();
+    yume_assert(primary_generic.has_value(), "Generic type doesn't have a known primary unsubstituted type");
+    // NOLINTNEXTLINE(bugprone-unchecked-optional-access): clang-tidy doesn't accept yume_assert as an assertion
+    return {*primary_generic};
+  }
+  return *this;
+}
+
 auto Type::name() const -> string {
   auto name = m_base->name();
   if (m_mut)
@@ -378,15 +409,16 @@ auto Type::base_name() const -> string { return m_base->name(); }
 auto Ptr::name() const -> string { return m_base.name() + qual_suffix(m_qual); }
 
 auto Struct::name() const -> string {
-  if (m_subs->empty())
+  if (m_subs == nullptr || m_subs->empty())
     return base_name();
 
   auto ss = stringstream{};
   ss << base_name() << "{";
-  for (const auto& i : llvm::enumerate(*m_subs)) {
+  for (const auto& i : llvm::enumerate(m_subs->mapping())) {
+    auto [key, mapping] = i.value();
     if (i.index() > 0)
       ss << ",";
-    ss << i.value().second.name();
+    ss << (mapping->unassigned() ? key->name() : mapping->name());
   }
   ss << "}";
 
