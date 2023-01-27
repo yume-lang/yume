@@ -103,14 +103,6 @@ auto inline open_file(nonnull<const char*> filename) -> unique_ptr<llvm::raw_pwr
   return dest;
 }
 
-/// \brief The stem of a path-like string, which is the component after the last slash.
-///
-/// "foo/bar/file.txt" -> "file.txt"
-[[nodiscard, deprecated]] auto inline stem(std::string_view sv) -> std::string_view {
-  auto delim = sv.rfind('/');
-  return sv.substr(delim == string::npos ? 0 : delim + 1);
-}
-
 template <size_t N> struct StringLiteral {
   // NOLINTNEXTLINE(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
   constexpr StringLiteral(const char (&str)[N]) { std::copy_n(str, N, value); }

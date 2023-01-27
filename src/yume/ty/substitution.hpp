@@ -81,10 +81,6 @@ private:
 
 public:
   Substitutions() = delete;
-  [[deprecated]] Substitutions(vector<GenericKey> keys) : m_keys{move(keys)} {
-    for ([[maybe_unused]] const auto& i : m_keys)
-      m_mapping.emplace_back(std::monostate{});
-  }
   Substitutions(vector<GenericKey> keys, const vector<unique_ptr<ty::Generic>>& generic_type_fallbacks,
                 nullable<Substitutions*> parent = nullptr)
       : m_keys{move(keys)}, m_parent{parent} {
@@ -101,8 +97,6 @@ public:
   }
   Substitutions(nonnull<Substitutions*> parent) : m_parent{parent} {}
 
-  [[deprecated]] void types() const = delete;
-  [[deprecated]] void values() const = delete;
   [[nodiscard]] auto empty() const -> bool { return m_mapping.empty() && (m_parent == nullptr || m_parent->empty()); }
   [[nodiscard]] auto size() const -> size_t { return m_mapping.size() + (m_parent == nullptr ? 0 : m_parent->size()); }
   [[nodiscard]] auto fully_substituted() const -> bool {
@@ -165,10 +159,6 @@ public:
 
   [[nodiscard]] auto type_mappings() const -> std::map<string, ty::Type>;
 
-  [[deprecated]] void add(const string& key, ty::Type type) = delete;
-
-  [[deprecated]] void add(const string& key, ast::Expr* expr) = delete;
-
   void associate(string_view key, GenericTypeMapping mapping) { mapping_ref(key) = mapping; }
   void associate(const GenericValueKey& key, GenericValueMapping mapping) { mapping_ref(key) = mapping; }
   void associate_direct(GenericKey key, GenericMapping mapping) { mapping_ref_direct(move(key)) = mapping; }
@@ -178,16 +168,6 @@ public:
     return m_mapping.emplace_back(std::monostate{});
   }
 
-  [[nodiscard, deprecated]] auto all_ordered() const -> vector<std::pair<string, GenericMapping>> {
-    vector<std::pair<string, GenericMapping>> vec{};
-    if (m_parent != nullptr)
-      vec = m_parent->all_ordered(); // TODO(rymiel): wrong
-
-    for (const auto& [k, v] : llvm::zip(m_keys, m_mapping))
-      vec.emplace_back(k.name(), v);
-
-    return vec;
-  }
   void dump(llvm::raw_ostream& os) const {
     int i = 0;
     for (const auto& [k, v] : llvm::zip(m_keys, m_mapping)) {
@@ -200,8 +180,6 @@ public:
       m_parent->dump(os);
     }
   }
-
-  [[nodiscard, deprecated]] auto generics() const -> const Generics* { return &m_keys; }
 
   [[nodiscard]] auto all_keys() const -> vector<const GenericKey*> {
     vector<const GenericKey*> keys{};
