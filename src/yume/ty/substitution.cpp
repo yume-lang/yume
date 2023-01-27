@@ -97,12 +97,13 @@ auto Substitutions::mapping_ref_or_null_direct(GenericKey generic) const -> null
 auto Substitutions::type_mappings() const -> std::map<string, ty::Type> {
   auto mapping = std::map<string, ty::Type>{};
 
-  if (m_parent != nullptr)
-    mapping = m_parent->type_mappings(); // TODO(rymiel): wrong
-
   for (const auto& [k, v] : llvm::zip(m_keys, m_mapping))
     if (k.holds_type() && !v.unassigned())
       mapping.insert_or_assign(std::get<GenericTypeKey>(k), std::get<GenericTypeMapping>(v));
+
+  if (m_parent != nullptr)
+    for (const auto& [k, v] : m_parent->type_mappings())
+      mapping.insert_or_assign(k, v);
 
   return mapping;
 }

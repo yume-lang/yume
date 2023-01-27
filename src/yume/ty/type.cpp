@@ -69,7 +69,6 @@ static void visit_subs(Type a, Type b, GenericTypeReplacements& sub) {
     return visit_subs(a.ensure_mut_base(), b, sub);
 
   // `Foo{Bar}` -> `Foo{T}`, with `T = Foo`.
-  // TODO(rymiel): This could technically have multiple type variables... Currently only handling the "1" case.
   if (auto a_st_ty = a.base_dyn_cast<Struct>(), b_st_ty = b.base_dyn_cast<Struct>();
       a_st_ty != nullptr && b_st_ty != nullptr) {
     if (a_st_ty->base_name() == b_st_ty->base_name()) {

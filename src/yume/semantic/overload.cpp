@@ -60,7 +60,6 @@ void Overload::dump(llvm::raw_ostream& stream) const {
 
       stream << k->name() << " = " << v->name();
     }
-    // TODO(rymiel): Non-type things
   }
 }
 
