@@ -39,14 +39,4 @@ auto Substitutions::get_generic_fallback(string_view generic_name) const -> ty::
 
   return *iter;
 }
-auto Substitutions::deep_copy() const -> Substitutions {
-  vector<GenericKey> keys = {};
-  for (const auto* i : all_keys())
-    keys.emplace_back(*i);
-  Substitutions copy{move(keys), m_generic_type_fallbacks, nullptr};
-  for (const auto [k, v] : mapping())
-    copy.associate(*k, *v);
-
-  return copy;
-}
 } // namespace yume

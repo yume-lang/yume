@@ -20,7 +20,6 @@ struct TypeHolder {
   ty::Nil* nil_type{};
   llvm::StringMap<unique_ptr<ty::BaseType>> known{};
   std::vector<unique_ptr<ty::Function>> fn_types{};
-  std::vector<unique_ptr<ty::BaseType>> template_instantiations{};
 
   TypeHolder();
 

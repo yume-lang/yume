@@ -49,7 +49,7 @@ auto Type::known_qual(Qualifier qual) const -> Type {
   }
 }
 
-static void visit_subs(Type a, Type b, GenericTypeReplacements& sub) {
+static void visit_subs(Type a, Type b, std::unordered_map<string, ty::Type>& sub) {
   yume_assert(b.is_generic(), "Cannot substitute generics in a non-generic type");
 
   // `Foo ptr` -> `T ptr`, with `T = Foo`.
@@ -96,7 +96,7 @@ auto Type::determine_generic_subs(Type generic, const Substitutions& subs) const
   yume_assert(generic.is_generic(), "Cannot substitute generics in a non-generic type");
 
   auto clean_subs = subs;
-  GenericTypeReplacements replacements{};
+  std::unordered_map<string, ty::Type> replacements{};
 
   visit_subs(*this, generic, replacements);
   for (auto [k, v] : subs.mapping()) {
@@ -273,40 +273,6 @@ auto Type::has_qualifier(Qualifier qual) const -> bool {
   if (const auto* ptr_base = base_dyn_cast<Ptr>(); ptr_base)
     return ptr_base->has_qualifier(qual);
   return false;
-}
-
-auto Type::apply_generic_substitution(GenericTypeReplacements sub) const -> optional<Type> {
-  yume_assert(is_generic(), "Can't perform generic substitution without a generic type");
-
-  if (const auto* generic_this = base_dyn_cast<Generic>()) {
-    if (sub.contains(generic_this->name()))
-      return Type{sub.at(generic_this->name()).base(), m_mut, m_ref};
-  }
-
-  if (const auto* ptr_this = base_dyn_cast<Ptr>()) {
-    auto base = ensure_ptr_base().apply_generic_substitution(sub);
-    if (!base.has_value())
-      return {};
-    return base->known_qual(ptr_this->qualifier());
-  }
-
-  if (is_meta()) {
-    auto base = without_meta().apply_generic_substitution(sub);
-    if (!base.has_value())
-      return {};
-    return base->known_meta();
-  }
-
-  if (const auto* st_this = base_dyn_cast<Struct>()) {
-    auto subs = st_this->subs()->deep_copy();
-    for (const auto& [k, v] : st_this->subs()->mapping())
-      if (k->holds_type() && sub.contains(k->name))
-        subs.associate(*k, sub.at(k->name));
-
-    return Type{&st_this->apply_substitutions(move(subs)), m_mut, m_ref};
-  }
-
-  return {};
 }
 
 auto Type::apply_generic_substitution(const Substitutions& sub) const -> optional<Type> {
