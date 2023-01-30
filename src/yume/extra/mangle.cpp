@@ -44,6 +44,12 @@ auto mangle_name(ty::Type ast_type, DeclLike parent) -> string {
   if (ast_type.is_mut())
     ss << "&";
 
+  if (ast_type.is_ref())
+    ss << "^";
+
+  if (ast_type.is_meta())
+    ss << "+";
+
   return ss.str();
 }
 
