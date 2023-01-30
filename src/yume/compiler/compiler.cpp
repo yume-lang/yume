@@ -408,6 +408,9 @@ static auto build_function_type(Compiler& compiler, const ty::Function& type) ->
 
 static auto build_struct_type(Compiler& compiler, const ty::Struct& type) -> llvm::Type* {
   llvm::Type* memo = nullptr;
+
+  // errs() << "build_struct_type for [`" << type.name() << "'@" << &type << "]\n";
+
   if (type.is_interface()) {
     memo = llvm::StructType::get(compiler.builder()->getInt8PtrTy(), compiler.builder()->getInt8PtrTy());
   } else {
