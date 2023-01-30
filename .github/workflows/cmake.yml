@@ -6,7 +6,7 @@ env:
   BUILD_TYPE: Debug
   TARGET_CLANG: 15
   TARGET_LLVM: 15
-  CATCH2_REF: "5a1ef7e4a6caf3d5f696eb82302e3d87ff5c2303"
+  CATCH2_REF: "2ab20a0e008845e02bd06248e61ca6e5ad1aba33"
   LLVM_REF: "4a5184f4c357eeafcced3371cd8539fa0ac9f24d"
   LLVM_REF_VER: 16
   BUILD_DIR: ${{ github.workspace }}/build
@@ -19,8 +19,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        clang: [13, 14, 15, 16]
-        llvm: [13, 14, 15, 16]
+        clang: [13, 14, 15, 16, 17]
+        llvm: [13, 14, 15, 16, 17]
     env:
       CC: clang-${{ matrix.clang }}
       CXX: clang++-${{ matrix.clang }}
@@ -37,9 +37,11 @@ jobs:
       - name: Add LLVM repos
         run: |
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-          sudo add-apt-repository 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy main'
+          sudo add-apt-repository 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-13 main'
           sudo add-apt-repository 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-14 main'
           sudo add-apt-repository 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-15 main'
+          sudo add-apt-repository 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-16 main'
+          sudo add-apt-repository 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy main'
           sudo apt update
 
       - name: Install LLVM ${{ matrix.llvm }}
@@ -47,6 +49,10 @@ jobs:
 
       - name: Install Clang ${{ matrix.clang }}
         run: sudo apt install clang-${{ matrix.clang }}
+
+      - name: Install Libclang-rt ${{ matrix.clang }}
+        if: matrix.clang >= 14
+        run: sudo apt install libclang-rt-${{ matrix.clang }}-dev clang-${{ matrix.clang }}
 
       - name: Cache Catch2
         id: cache-catch2
@@ -138,7 +144,7 @@ jobs:
         if: steps.cache-llvm.outputs.cache-hit != 'true'
         run: |
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-          sudo add-apt-repository 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy main'
+          sudo add-apt-repository 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-${{ env.LLVM_REF_VER }} main'
           sudo apt update
           sudo apt install ninja-build ccache libc++-${{ env.LLVM_REF_VER }}-dev libc++abi-${{ env.LLVM_REF_VER }}-dev ${{ env.CC }}
       - name: Checkout LLVM
@@ -184,7 +190,7 @@ jobs:
       - name: Install ninja, libc++, clang
         run: |
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-          sudo add-apt-repository 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy main'
+          sudo add-apt-repository 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-${{ env.LLVM_REF_VER }} main'
           sudo apt update
           sudo apt install ninja-build ccache libc++-${{ env.LLVM_REF_VER }}-dev libc++abi-${{ env.LLVM_REF_VER }}-dev lld-${{ env.LLVM_REF_VER }} ${{ env.CC }}
       - name: Cache LLVM
