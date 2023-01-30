@@ -227,6 +227,11 @@ auto Type::is_generic() const noexcept -> bool {
   if (base_isa<Meta>())
     return without_meta().is_generic(); // TODO(rymiel): Needs a `ensure_meta_indirect` or something idk
 
+  if (const auto* fn_base = base_dyn_cast<Function>(); fn_base != nullptr) {
+    auto ret = fn_base->ret();
+    return std::ranges::any_of(fn_base->args(), &Type::is_generic) || (ret.has_value() && ret->is_generic());
+  }
+
   if (const auto* struct_ty = base_dyn_cast<Struct>())
     return !struct_ty->subs()->fully_substituted();
 
