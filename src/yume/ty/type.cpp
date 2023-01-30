@@ -95,7 +95,7 @@ static void visit_subs(Type a, Type b, GenericTypeReplacements& sub) {
 auto Type::determine_generic_subs(Type generic, const Substitutions& subs) const -> optional<Substitutions> {
   yume_assert(generic.is_generic(), "Cannot substitute generics in a non-generic type");
 
-  auto clean_subs = subs.deep_copy();
+  auto clean_subs = subs;
   GenericTypeReplacements replacements{};
 
   visit_subs(*this, generic, replacements);
