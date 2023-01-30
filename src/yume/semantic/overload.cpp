@@ -155,17 +155,18 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
 
   overload.compatibilities.reserve(args.size());
 
-  // Determine the type compatibility of each argument individually. The performed conversions are also recorded for
-  // each step.
-  // As `llvm::zip` only iterates up to the size of the shorter argument, we don't try to determine type
-  // compatibility of the "variadic" part of varargs functions. Currently, varargs methods can only be primitives and
-  // carry no type information for their variadic part. This will change in the future.
+  // Look at generic parameters first in order to deduce generic parameters. This is done first, since later arguments
+  // could change the deduced type via intersection, which would lead to mismatching types, if deduction was done at
+  // the same time as substitution.
+  // As `llvm::zip` only iterates up to the size of the shorter argument, we don't try to deduce anything about the
+  // "variadic" part of varargs functions, since variadics don't yet carry any type information. This will change in the
+  // future.
   for (const auto& [param_type_r, arg] : llvm::zip_first(fn.arg_types(), args)) {
     auto arg_type = arg->ensure_ty();
-    optional<ty::Type> param_type = param_type_r;
+    ty::Type param_type = param_type_r;
 
-    if (param_type->is_generic()) {
-      auto new_subs = arg_type.determine_generic_subs(*param_type, overload.subs);
+    if (param_type.is_generic()) {
+      auto new_subs = arg_type.determine_generic_subs(param_type, overload.subs);
 
       if (!new_subs) {
         notes->emit(overload.location()) << "Overload not valid";
@@ -174,46 +175,7 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
         return false;
       }
       overload.subs = *new_subs;
-
-      // TODO(rymiel): All the parameters should probably be checked and intersected, before any of them are actually
-      // applied, to ensure compatibility between them all.
-
-      param_type = param_type->apply_generic_substitution(overload.subs);
-
-      if (param_type.has_value()) {
-        yume_assert(!param_type->is_generic(),
-                    "Generic substitution must either fail, or produce a fully-substituted type, but `"s +
-                        param_type->name() + "' is not fully substituted");
-      }
-
-      if (!param_type) {
-        notes->emit(overload.location()) << "Overload not valid";
-        auto subs_dumped = std::string{};
-        auto os = llvm::raw_string_ostream{subs_dumped};
-        overload.subs.dump(os); // TODO(rymiel): nasty
-        notes->emit(overload.location()) << "  Because the generic type `" << param_type_r.name()
-                                         << "' wasn't able to be substituted with " << subs_dumped;
-        return false;
-      }
     }
-
-    // Attempt to do a literal cast
-    auto compat = literal_cast(*arg, *param_type);
-    // Couldn't perform a literal cast, try regular casts
-    if (!compat.valid)
-      compat = arg_type.compatibility(*param_type);
-
-    // Couldn't perform any kind of valid cast: one invalid conversion disqualifies the function entirely
-    if (!compat.valid) {
-      // TODO(rymiel): #17 Actually keep track of *why* a type is not viable, for diagnostics.
-      notes->emit(overload.location()) << "Overload not valid";
-      notes->emit(overload.location()) << "  Because `" << arg_type.name() << "' is not convertible to `"
-                                       << param_type->name() << "'";
-      return false;
-    }
-
-    // Save the steps needed to perform the conversion
-    overload.compatibilities.push_back(compat);
   }
 
   if (!overload.subs.fully_substituted()) {
@@ -221,6 +183,51 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
     overload.subs.dump(*notes->buffer_stream);
     // TODO(rymiel): Try to find which ones failed
     return false;
+  }
+
+  // Determine the type compatibility of each argument individually. The performed conversions are also recorded for
+  // each step.
+  // As `llvm::zip` only iterates up to the size of the shorter argument, we don't try to determine type
+  // compatibility of the "variadic" part of varargs functions. Currently, varargs methods can only be primitives and
+  // carry no type information for their variadic part. This will change in the future.
+  for (const auto& [param_type_r, arg] : llvm::zip_first(fn.arg_types(), args)) {
+    auto arg_type = arg->ensure_ty();
+    ty::Type param_type = param_type_r;
+
+    if (param_type.is_generic()) {
+      param_type = param_type.apply_generic_substitution(overload.subs);
+
+      yume_assert(!param_type.is_generic(), "Generic substitution must produce a fully-substituted type, but `"s +
+                                                param_type.name() + "' is not fully substituted");
+
+      // if (!param_type) {
+      //   notes->emit(overload.location()) << "Overload not valid";
+      //   auto subs_dumped = std::string{};
+      //   auto os = llvm::raw_string_ostream{subs_dumped};
+      //   overload.subs.dump(os); // TODO(rymiel): nasty
+      //   notes->emit(overload.location()) << "  Because the generic type `" << param_type_r.name()
+      //                                    << "' wasn't able to be substituted with " << subs_dumped;
+      //   return false;
+      // }
+    }
+
+    // Attempt to do a literal cast
+    auto compat = literal_cast(*arg, param_type);
+    // Couldn't perform a literal cast, try regular casts
+    if (!compat.valid)
+      compat = arg_type.compatibility(param_type);
+
+    // Couldn't perform any kind of valid cast: one invalid conversion disqualifies the function entirely
+    if (!compat.valid) {
+      // TODO(rymiel): #17 Actually keep track of *why* a type is not viable, for diagnostics.
+      notes->emit(overload.location()) << "Overload not valid";
+      notes->emit(overload.location()) << "  Because `" << arg_type.name() << "' is not convertible to `"
+                                       << param_type.name() << "'";
+      return false;
+    }
+
+    // Save the steps needed to perform the conversion
+    overload.compatibilities.push_back(compat);
   }
 
   // Add dummy conversions for each argument which maps to a variadic
