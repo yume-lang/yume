@@ -35,6 +35,9 @@ static constexpr std::string_view GIT_SHORTHASH = "???";
 } // namespace yume
 #endif
 
+// NOLINTNEXTLINE(bugprone-reserved-identifier,readability-identifier-naming): UBSan hook
+extern "C" auto __ubsan_default_options() -> const char* { return "print_stacktrace=1"; }
+
 using namespace std::string_literals;
 
 enum struct CompilerFlags {
