@@ -7,11 +7,8 @@ namespace yume {
 auto Substitutions::mapping_ref_or_null(const GenericKey& generic) -> nullable<GenericValue*> {
   auto iter = std::ranges::find(m_keys, generic);
 
-  if (iter == m_keys.end()) {
-    if (m_parent != nullptr)
-      return m_parent->mapping_ref_or_null(generic);
+  if (iter == m_keys.end())
     return nullptr;
-  }
 
   return &m_values.at(std::distance(m_keys.begin(), iter));
 }
@@ -19,11 +16,8 @@ auto Substitutions::mapping_ref_or_null(const GenericKey& generic) -> nullable<G
 auto Substitutions::mapping_ref_or_null(const GenericKey& generic) const -> nullable<const GenericValue*> {
   auto iter = std::ranges::find(m_keys, generic);
 
-  if (iter == m_keys.end()) {
-    if (m_parent != nullptr)
-      return m_parent->mapping_ref_or_null(generic);
+  if (iter == m_keys.end())
     return nullptr;
-  }
 
   return &m_values.at(std::distance(m_keys.begin(), iter));
 }
@@ -35,20 +29,13 @@ auto Substitutions::type_mappings() const -> std::map<string, ty::Type> {
     if (k.holds_type() && !v.unassigned())
       mapping.insert_or_assign(k.name, v.as_type());
 
-  if (m_parent != nullptr)
-    for (const auto& [k, v] : m_parent->type_mappings())
-      mapping.insert_or_assign(k, v);
-
   return mapping;
 }
 auto Substitutions::get_generic_fallback(string_view generic_name) const -> ty::Generic* {
   auto iter = std::ranges::find(m_generic_type_fallbacks, generic_name, &ty::Generic::name);
 
-  if (iter == m_generic_type_fallbacks.end()) {
-    if (m_parent != nullptr)
-      return m_parent->get_generic_fallback(generic_name);
+  if (iter == m_generic_type_fallbacks.end())
     return nullptr;
-  }
 
   return *iter;
 }

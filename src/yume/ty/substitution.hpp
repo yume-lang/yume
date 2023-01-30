@@ -69,33 +69,48 @@ struct Substitutions {
 private:
   vector<GenericKey> m_keys;
   vector<GenericValue> m_values;
-  nullable<Substitutions*> m_parent = nullptr;
   vector<ty::Generic*> m_generic_type_fallbacks;
 
 public:
   Substitutions() = delete;
   Substitutions(vector<GenericKey> keys, const vector<unique_ptr<ty::Generic>>& generic_type_fallbacks,
-                nullable<Substitutions*> parent = nullptr)
-      : m_keys{move(keys)}, m_parent{parent} {
+                               nullable<Substitutions*> parent = nullptr)
+      : m_keys{move(keys)} {
     for (const auto& i : generic_type_fallbacks)
       m_generic_type_fallbacks.emplace_back(i.get());
     for ([[maybe_unused]] const auto& i : m_keys)
       m_values.emplace_back();
+
+    if (parent != nullptr) {
+      for (auto [k, v] : llvm::zip(parent->m_keys, parent->m_values)) {
+        m_keys.push_back(k);
+        m_values.push_back(v);
+      }
+      for (auto* f : parent->m_generic_type_fallbacks)
+        m_generic_type_fallbacks.push_back(f);
+    }
   }
   Substitutions(vector<GenericKey> keys, vector<ty::Generic*> generic_type_fallbacks,
                 nullable<Substitutions*> parent = nullptr)
-      : m_keys{move(keys)}, m_parent{parent}, m_generic_type_fallbacks{move(generic_type_fallbacks)} {
+      : m_keys{move(keys)}, m_generic_type_fallbacks{move(generic_type_fallbacks)} {
     for ([[maybe_unused]] const auto& i : m_keys)
       m_values.emplace_back();
-  }
-  Substitutions(nonnull<Substitutions*> parent) : m_parent{parent} {}
 
-  [[nodiscard]] auto empty() const -> bool { return m_values.empty() && (m_parent == nullptr || m_parent->empty()); }
-  [[nodiscard]] auto size() const -> size_t { return m_values.size() + (m_parent == nullptr ? 0 : m_parent->size()); }
+    if (parent != nullptr) {
+      for (auto [k, v] : llvm::zip(parent->m_keys, parent->m_values)) {
+        m_keys.push_back(k);
+        m_values.push_back(v);
+      }
+      for (auto* f : parent->m_generic_type_fallbacks)
+        m_generic_type_fallbacks.push_back(f);
+    }
+  }
+
+  [[nodiscard]] auto empty() const -> bool { return m_values.empty(); }
+  [[nodiscard]] auto size() const -> size_t { return m_values.size(); }
   [[nodiscard]] auto fully_substituted() const -> bool {
     // We consider types with no generic arguments at all to be fully substituted
-    return (empty() || std::ranges::none_of(m_values, &GenericValue::unassigned_or_unsubstituted)) &&
-           ((m_parent == nullptr) || m_parent->fully_substituted());
+    return (empty() || std::ranges::none_of(m_values, &GenericValue::unassigned_or_unsubstituted));
   }
 
   [[nodiscard]] auto mapping_ref_or_null(const GenericKey& generic) -> nullable<GenericValue*>;
@@ -127,11 +142,11 @@ public:
 
   [[nodiscard]] auto type_mappings() const -> std::map<string, ty::Type>;
 
-  void associate(GenericKey key, GenericValue value) { mapping_ref(move(key)) = value; }
+  void associate(const GenericKey& key, GenericValue value) { mapping_ref(key) = value; }
 
   auto append_new_association(GenericKey key) -> GenericValue& {
     m_keys.emplace_back(move(key));
-    return m_values.emplace_back(GenericValue{});
+    return m_values.emplace_back();
   }
 
   void dump(llvm::raw_ostream& os) const {
@@ -141,10 +156,6 @@ public:
         os << ", ";
       os << k.name << "=" << v.name();
     }
-    if (m_parent != nullptr) {
-      os << "; ";
-      m_parent->dump(os);
-    }
   }
 
   [[nodiscard]] auto all_keys() const -> vector<const GenericKey*> {
@@ -152,10 +163,6 @@ public:
     keys.reserve(m_keys.size());
     for (const auto& k : m_keys)
       keys.push_back(&k);
-    if (m_parent != nullptr) {
-      auto parent_keys = m_parent->all_keys();
-      keys.insert(keys.end(), parent_keys.begin(), parent_keys.end());
-    }
 
     return keys;
   }
@@ -164,10 +171,6 @@ public:
     values.reserve(m_values.size());
     for (const auto& m : m_values)
       values.push_back(&m);
-    if (m_parent != nullptr) {
-      auto parent_values = m_parent->all_values();
-      values.insert(values.end(), parent_values.begin(), parent_values.end());
-    }
 
     return values;
   }
@@ -176,10 +179,6 @@ public:
     values.reserve(m_values.size());
     for (auto& m : m_values)
       values.push_back(&m);
-    if (m_parent != nullptr) {
-      auto parent_values = m_parent->all_values();
-      values.insert(values.end(), parent_values.begin(), parent_values.end());
-    }
 
     return values;
   }
@@ -189,7 +188,7 @@ public:
 
   [[nodiscard]] auto get_generic_fallback(string_view generic_name) const -> ty::Generic*;
 
-  [[nodiscard]] auto deep_copy() const -> Substitutions;
+  [[nodiscard, deprecated]] auto deep_copy() const -> Substitutions;
 
   auto operator==(const Substitutions& other) const noexcept -> bool {
     auto this_keys = this->all_keys();

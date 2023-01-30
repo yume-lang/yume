@@ -26,7 +26,7 @@ struct Overload {
   bool viable = false;
 
   Overload() = delete;
-  explicit Overload(Fn* fn) noexcept : fn{fn}, subs{fn->subs.deep_copy()} {}
+  explicit Overload(Fn* fn) noexcept : fn{fn}, subs{fn->subs} {}
 
   [[nodiscard]] auto better_candidate_than(Overload other) const -> bool;
   void dump(llvm::raw_ostream& stream) const;

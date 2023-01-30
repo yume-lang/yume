@@ -151,7 +151,7 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
   }
 
   if (receiver.has_value() && receiver->base_isa<ty::Struct>())
-    overload.subs = receiver->base_cast<ty::Struct>()->subs()->deep_copy();
+    overload.subs = *receiver->base_cast<ty::Struct>()->subs();
 
   overload.compatibilities.reserve(args.size());
 

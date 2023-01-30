@@ -776,7 +776,7 @@ auto TypeWalker::get_or_declare_instantiation(Struct* struct_obj, Substitutions 
 
 auto TypeWalker::create_slice_type(const ty::Type& base_type) -> ty::Type {
   Struct* struct_obj = compiler.m_slice_struct;
-  Substitutions subs = struct_obj->subs.deep_copy();
+  Substitutions subs = struct_obj->subs;
   subs.associate(*subs.all_keys().at(0), {base_type});
   return get_or_declare_instantiation(struct_obj, subs);
 }
@@ -839,7 +839,7 @@ auto TypeWalker::convert_type(ast::Type& ast_type) -> ty::Type {
     for (auto& i : templated->type_args)
       i.visit([&](ast::AnyType& v) { expression(*v); }, [&](ast::AnyExpr& v) { body_expression(*v); });
 
-    Substitutions gen_base = struct_obj->get_subs().deep_copy();
+    Substitutions gen_base = struct_obj->get_subs();
     for (const auto& [gen, gen_sub] : llvm::zip(gen_base.all_keys(), templated->type_args))
       if (gen->holds_type())
         gen_base.associate(*gen, {gen_sub.as_type()->ensure_ty()});
