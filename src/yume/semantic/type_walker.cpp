@@ -777,7 +777,7 @@ auto TypeWalker::get_or_declare_instantiation(Struct* struct_obj, Substitutions 
 auto TypeWalker::create_slice_type(const ty::Type& base_type) -> ty::Type {
   Struct* struct_obj = compiler.m_slice_struct;
   Substitutions subs = struct_obj->subs.deep_copy();
-  subs.associate(subs.all_keys().at(0)->as_type(), base_type);
+  subs.associate(*subs.all_keys().at(0), {base_type});
   return get_or_declare_instantiation(struct_obj, subs);
 }
 
@@ -788,7 +788,7 @@ auto TypeWalker::convert_type(ast::Type& ast_type) -> ty::Type {
   if (const auto* simple_type = dyn_cast<ast::SimpleType>(&ast_type)) {
     auto name = simple_type->name;
     if (context != nullptr && !context->empty()) {
-      const auto* generic = context->mapping_ref_or_null(name);
+      const auto* generic = context->mapping_ref_or_null({name});
       if (generic != nullptr && generic->holds_type())
         return generic->as_type();
       if (generic != nullptr && generic->unassigned())
@@ -842,9 +842,9 @@ auto TypeWalker::convert_type(ast::Type& ast_type) -> ty::Type {
     Substitutions gen_base = struct_obj->get_subs().deep_copy();
     for (const auto& [gen, gen_sub] : llvm::zip(gen_base.all_keys(), templated->type_args))
       if (gen->holds_type())
-        gen_base.associate(gen->name(), gen_sub.as_type()->ensure_ty());
+        gen_base.associate(*gen, {gen_sub.as_type()->ensure_ty()});
       else
-        gen_base.associate(gen->as_value(), gen_sub.as_expr().raw_ptr());
+        gen_base.associate(*gen, {gen_sub.as_expr().raw_ptr()});
 
     // yume_assert(gen_base.fully_substituted(), "Can't convert templated type which isn't fully substituted: "s +
     //                                               template_base.describe() + " (" + ast_type.describe() + ")");

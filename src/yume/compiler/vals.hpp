@@ -72,7 +72,7 @@ struct Fn {
       : def{def}, self_ty{parent}, member{member}, subs(move(subs)) {}
 
   Fn(Def def, ast::Program* member, optional<ty::Type> parent, nullable<Substitutions*> parent_subs,
-     Generics generic = {}, vector<unique_ptr<ty::Generic>> primary_generics = {})
+     vector<GenericKey> generic = {}, vector<unique_ptr<ty::Generic>> primary_generics = {})
       : def{def}, self_ty{parent}, member{member},
         primary_generics{move(primary_generics)}, subs{move(generic), this->primary_generics, parent_subs} {}
 
@@ -154,7 +154,7 @@ struct Struct {
       : st_ast(ast_decl), self_ty(type), member(member), subs(move(subs)) {}
 
   Struct(ast::StructDecl& ast_decl, ast::Program* member, optional<ty::Type> type, nullable<Substitutions*> parent_subs,
-         Generics generic = {}, vector<unique_ptr<ty::Generic>> primary_generics = {}) noexcept
+         vector<GenericKey> generic = {}, vector<unique_ptr<ty::Generic>> primary_generics = {}) noexcept
       : st_ast(ast_decl), self_ty{type}, member{member},
         primary_generics{move(primary_generics)}, subs{move(generic), this->primary_generics, parent_subs} {}
 

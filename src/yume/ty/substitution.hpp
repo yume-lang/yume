@@ -6,6 +6,7 @@
 #include <concepts>
 #include <llvm/Support/raw_ostream.h>
 #include <map>
+#include <stdexcept>
 #include <variant>
 
 namespace yume {
@@ -14,68 +15,60 @@ class Generic;
 } // namespace ty
 
 using generic_type_replacements_t = std::unordered_map<string, ty::Type>;
-struct GenericTypeReplacements : generic_type_replacements_t {
+struct [[deprecated]] GenericTypeReplacements : generic_type_replacements_t {
   auto operator==(const GenericTypeReplacements& other) const noexcept -> bool = default;
 };
 
-struct GenericValueKey {
-  string name;
-  nonnull<ast::Type*> type;
+struct GenericKey {
+  string name{};
+  nullable<ast::Type*> expr_type{};
   // std::vector<unique_ptr<ast::Expr>> exprs{};
 
-  auto operator==(const GenericValueKey& other) const noexcept -> bool = default;
-  auto operator<=>(const GenericValueKey& other) const noexcept = default;
-};
-using GenericTypeKey = std::string;
+  /* implicit */ GenericKey(string_view name) : name{name} {}
+  GenericKey(string_view name, nonnull<ast::Type*> type) : name{name}, expr_type{type} {}
 
-using generic_key_t = visitable_variant<GenericTypeKey, GenericValueKey>;
-struct GenericKey : generic_key_t {
-  using generic_key_t::visitable_variant;
+  [[nodiscard]] auto holds_type() const -> bool { return expr_type == nullptr; }
+  [[nodiscard]] auto holds_expr() const -> bool { return expr_type != nullptr; }
 
-  [[nodiscard]] auto name() const -> string;
-  [[nodiscard]] auto holds_type() const -> bool { return std::holds_alternative<GenericTypeKey>(*this); }
-  [[nodiscard]] auto holds_value() const -> bool { return std::holds_alternative<GenericValueKey>(*this); }
-
-  [[nodiscard]] auto as_type() const& -> const GenericTypeKey& { return std::get<GenericTypeKey>(*this); }
-  [[nodiscard]] auto as_value() const& -> const GenericValueKey& { return std::get<GenericValueKey>(*this); }
+  auto operator==(const GenericKey& other) const noexcept -> bool = default;
+  auto operator<=>(const GenericKey& other) const noexcept = default;
 };
 
-using Generics = std::vector<GenericKey>;
-static_assert(std::copy_constructible<Generics>,
-              "Generics should be copy-constructible for avoiding lifetime problems");
+struct GenericValue {
+  optional<ty::Type> type{};
+  nullable<ast::Expr*> expr{};
 
-using GenericTypeMapping = ty::Type;
-using GenericValueMapping = ast::Expr*;
+  GenericValue() = default;
+  GenericValue(ty::Type type) : type{type} {}
+  GenericValue(nonnull<ast::Expr*> expr) : expr{expr} {}
 
-using generic_mapping_t = visitable_variant<std::monostate, GenericTypeMapping, GenericValueMapping>;
-struct GenericMapping : generic_mapping_t {
-  using generic_mapping_t::visitable_variant;
+  [[nodiscard]] auto unassigned() const -> bool { return expr == nullptr && !type.has_value(); }
+  [[nodiscard]] auto holds_type() const -> bool { return type.has_value(); }
+  [[nodiscard]] auto holds_expr() const -> bool { return expr != nullptr; }
 
-  [[nodiscard]] auto unassigned() const -> bool { return std::holds_alternative<std::monostate>(*this); }
+  [[nodiscard]] auto as_type() const& -> const ty::Type& { return *type; }
+  [[nodiscard]] auto as_expr() const& -> const ast::Expr* { return expr; }
 
-  [[nodiscard]] auto unsubstituted_primary() const -> bool {
-    return visit([](ty::Type type) { return type.is_generic(); }, [](auto /* else */) { return false; });
-  }
+  [[nodiscard]] auto unsubstituted_primary() const -> bool { return type.has_value() && type->is_generic(); }
 
   [[nodiscard]] auto unassigned_or_unsubstituted() const -> bool { return unassigned() || unsubstituted_primary(); }
 
   [[nodiscard]] auto name() const -> string {
-    return visit([](std::monostate /* unassigned */) { return "?"s; }, //
-                 [](ty::Type type) { return type.name(); },            //
-                 [](const ast::Expr* expr) { return expr->describe(); });
+    if (unassigned())
+      return "?"s;
+    if (holds_type())
+      return type->name();
+    return expr->describe();
   }
 
-  [[nodiscard]] auto holds_type() const -> bool { return std::holds_alternative<GenericTypeMapping>(*this); }
-  [[nodiscard]] auto holds_value() const -> bool { return std::holds_alternative<GenericValueMapping>(*this); }
-
-  [[nodiscard]] auto as_type() const& -> const GenericTypeMapping& { return std::get<GenericTypeMapping>(*this); }
-  [[nodiscard]] auto as_value() const& -> const GenericValueMapping& { return std::get<GenericValueMapping>(*this); }
+  auto operator==(const GenericValue& other) const noexcept -> bool = default;
+  auto operator<=>(const GenericValue& other) const noexcept = default;
 };
 
 struct Substitutions {
 private:
   vector<GenericKey> m_keys;
-  vector<GenericMapping> m_mapping;
+  vector<GenericValue> m_values;
   nullable<Substitutions*> m_parent = nullptr;
   vector<ty::Generic*> m_generic_type_fallbacks;
 
@@ -87,57 +80,33 @@ public:
     for (const auto& i : generic_type_fallbacks)
       m_generic_type_fallbacks.emplace_back(i.get());
     for ([[maybe_unused]] const auto& i : m_keys)
-      m_mapping.emplace_back(std::monostate{});
+      m_values.emplace_back();
   }
   Substitutions(vector<GenericKey> keys, vector<ty::Generic*> generic_type_fallbacks,
                 nullable<Substitutions*> parent = nullptr)
       : m_keys{move(keys)}, m_parent{parent}, m_generic_type_fallbacks{move(generic_type_fallbacks)} {
     for ([[maybe_unused]] const auto& i : m_keys)
-      m_mapping.emplace_back(std::monostate{});
+      m_values.emplace_back();
   }
   Substitutions(nonnull<Substitutions*> parent) : m_parent{parent} {}
 
-  [[nodiscard]] auto empty() const -> bool { return m_mapping.empty() && (m_parent == nullptr || m_parent->empty()); }
-  [[nodiscard]] auto size() const -> size_t { return m_mapping.size() + (m_parent == nullptr ? 0 : m_parent->size()); }
+  [[nodiscard]] auto empty() const -> bool { return m_values.empty() && (m_parent == nullptr || m_parent->empty()); }
+  [[nodiscard]] auto size() const -> size_t { return m_values.size() + (m_parent == nullptr ? 0 : m_parent->size()); }
   [[nodiscard]] auto fully_substituted() const -> bool {
     // We consider types with no generic arguments at all to be fully substituted
-    return (empty() || std::ranges::none_of(m_mapping, &GenericMapping::unassigned_or_unsubstituted)) &&
+    return (empty() || std::ranges::none_of(m_values, &GenericValue::unassigned_or_unsubstituted)) &&
            ((m_parent == nullptr) || m_parent->fully_substituted());
   }
 
-  [[nodiscard]] auto mapping_ref_or_null(string_view generic) -> nullable<GenericMapping*>;
-  [[nodiscard]] auto mapping_ref_or_null(string_view generic) const -> nullable<const GenericMapping*>;
-  [[nodiscard]] auto mapping_ref_or_null(const GenericValueKey& generic) -> nullable<GenericMapping*>;
-  [[nodiscard]] auto mapping_ref_or_null(const GenericValueKey& generic) const -> nullable<const GenericMapping*>;
-  [[nodiscard]] auto mapping_ref_or_null_direct(GenericKey generic) -> nullable<GenericMapping*>;
-  [[nodiscard]] auto mapping_ref_or_null_direct(GenericKey generic) const -> nullable<const GenericMapping*>;
-  [[nodiscard]] auto mapping_ref(string_view generic) -> GenericMapping& {
+  [[nodiscard]] auto mapping_ref_or_null(const GenericKey& generic) -> nullable<GenericValue*>;
+  [[nodiscard]] auto mapping_ref_or_null(const GenericKey& generic) const -> nullable<const GenericValue*>;
+  [[nodiscard]] auto mapping_ref(const GenericKey& generic) -> GenericValue& {
     auto* ptr = mapping_ref_or_null(generic);
     yume_assert(ptr != nullptr, "Mapped value must not be null");
     return *ptr;
   };
-  [[nodiscard]] auto mapping_ref(string_view generic) const -> const GenericMapping& {
+  [[nodiscard]] auto mapping_ref(const GenericKey& generic) const -> const GenericValue& {
     const auto* ptr = mapping_ref_or_null(generic);
-    yume_assert(ptr != nullptr, "Mapped value must not be null");
-    return *ptr;
-  };
-  [[nodiscard]] auto mapping_ref(const GenericValueKey& generic) -> GenericMapping& {
-    auto* ptr = mapping_ref_or_null(generic);
-    yume_assert(ptr != nullptr, "Mapped value must not be null");
-    return *ptr;
-  };
-  [[nodiscard]] auto mapping_ref(const GenericValueKey& generic) const -> const GenericMapping& {
-    const auto* ptr = mapping_ref_or_null(generic);
-    yume_assert(ptr != nullptr, "Mapped value must not be null");
-    return *ptr;
-  };
-  [[nodiscard]] auto mapping_ref_direct(GenericKey generic) -> GenericMapping& {
-    auto* ptr = mapping_ref_or_null_direct(move(generic));
-    yume_assert(ptr != nullptr, "Mapped value must not be null");
-    return *ptr;
-  };
-  [[nodiscard]] auto mapping_ref_direct(GenericKey generic) const -> const GenericMapping& {
-    const auto* ptr = mapping_ref_or_null_direct(move(generic));
     yume_assert(ptr != nullptr, "Mapped value must not be null");
     return *ptr;
   };
@@ -151,29 +120,26 @@ public:
     if (mapping->unassigned())
       return std::nullopt;
 
-    yume_assert(std::holds_alternative<GenericTypeMapping>(*mapping),
-                "A generic type key must correspond to a generic type mapping");
+    yume_assert(mapping->holds_type(), "A generic type key must correspond to a generic type mapping");
 
-    return std::get<GenericTypeMapping>(*mapping);
+    return mapping->as_type();
   }
 
   [[nodiscard]] auto type_mappings() const -> std::map<string, ty::Type>;
 
-  void associate(string_view key, GenericTypeMapping mapping) { mapping_ref(key) = mapping; }
-  void associate(const GenericValueKey& key, GenericValueMapping mapping) { mapping_ref(key) = mapping; }
-  void associate_direct(GenericKey key, GenericMapping mapping) { mapping_ref_direct(move(key)) = mapping; }
+  void associate(GenericKey key, GenericValue value) { mapping_ref(move(key)) = value; }
 
-  auto append_new_association(GenericKey key) -> GenericMapping& {
+  auto append_new_association(GenericKey key) -> GenericValue& {
     m_keys.emplace_back(move(key));
-    return m_mapping.emplace_back(std::monostate{});
+    return m_values.emplace_back(GenericValue{});
   }
 
   void dump(llvm::raw_ostream& os) const {
     int i = 0;
-    for (const auto& [k, v] : llvm::zip(m_keys, m_mapping)) {
+    for (const auto& [k, v] : llvm::zip(m_keys, m_values)) {
       if (i++ > 0)
         os << ", ";
-      os << k.name() << "=" << v.name();
+      os << k.name << "=" << v.name();
     }
     if (m_parent != nullptr) {
       os << "; ";
@@ -193,33 +159,33 @@ public:
 
     return keys;
   }
-  [[nodiscard]] auto all_mappings() const -> vector<const GenericMapping*> {
-    vector<const GenericMapping*> mappings{};
-    mappings.reserve(m_mapping.size());
-    for (const auto& m : m_mapping)
-      mappings.push_back(&m);
+  [[nodiscard]] auto all_values() const -> vector<const GenericValue*> {
+    vector<const GenericValue*> values{};
+    values.reserve(m_values.size());
+    for (const auto& m : m_values)
+      values.push_back(&m);
     if (m_parent != nullptr) {
-      auto parent_mappings = m_parent->all_mappings();
-      mappings.insert(mappings.end(), parent_mappings.begin(), parent_mappings.end());
+      auto parent_values = m_parent->all_values();
+      values.insert(values.end(), parent_values.begin(), parent_values.end());
     }
 
-    return mappings;
+    return values;
   }
-  [[nodiscard]] auto all_mappings() -> vector<GenericMapping*> {
-    vector<GenericMapping*> mappings{};
-    mappings.reserve(m_mapping.size());
-    for (auto& m : m_mapping)
-      mappings.push_back(&m);
+  [[nodiscard]] auto all_values() -> vector<GenericValue*> {
+    vector<GenericValue*> values{};
+    values.reserve(m_values.size());
+    for (auto& m : m_values)
+      values.push_back(&m);
     if (m_parent != nullptr) {
-      auto parent_mappings = m_parent->all_mappings();
-      mappings.insert(mappings.end(), parent_mappings.begin(), parent_mappings.end());
+      auto parent_values = m_parent->all_values();
+      values.insert(values.end(), parent_values.begin(), parent_values.end());
     }
 
-    return mappings;
+    return values;
   }
 
-  [[nodiscard]] auto mapping() { return llvm::zip(all_keys(), all_mappings()); }
-  [[nodiscard]] auto mapping() const { return llvm::zip(all_keys(), all_mappings()); }
+  [[nodiscard]] auto mapping() { return llvm::zip(all_keys(), all_values()); }
+  [[nodiscard]] auto mapping() const { return llvm::zip(all_keys(), all_values()); }
 
   [[nodiscard]] auto get_generic_fallback(string_view generic_name) const -> ty::Generic*;
 
@@ -228,8 +194,8 @@ public:
   auto operator==(const Substitutions& other) const noexcept -> bool {
     auto this_keys = this->all_keys();
     auto other_keys = other.all_keys();
-    auto this_vals = this->all_mappings();
-    auto other_vals = other.all_mappings();
+    auto this_vals = this->all_values();
+    auto other_vals = other.all_values();
 
     return std::ranges::equal(this_keys, other_keys, [](auto* a, auto* b) { return *a == *b; }) &&
            std::ranges::equal(this_vals, other_vals, [](auto* a, auto* b) { return *a == *b; });
@@ -237,44 +203,22 @@ public:
 };
 } // namespace yume
 
-template <> struct std::hash<yume::GenericKey> {
-  auto operator()(const yume::GenericKey& key) const noexcept -> std::size_t {
-    uint64_t seed = key.index();
-    if (key.holds_type()) {
-      yume::hash_combine(seed, key.as_type());
-    } else {
-      const auto& value = key.as_value();
-      yume::hash_combine(seed, value.name);
-      yume::hash_combine(seed, value.type);
-    }
-
-    return seed;
-  }
-};
-
-template <> struct std::hash<yume::GenericMapping> {
-  auto operator()(const yume::GenericMapping& val) const noexcept -> std::size_t {
-    uint64_t seed = val.index();
-    if (val.holds_type()) {
-      const auto& type = val.as_type();
-      yume::hash_combine(seed, type.base());
-      yume::hash_combine(seed, type.is_mut());
-      yume::hash_combine(seed, type.is_ref());
-    } else {
-      yume::hash_combine(seed, val.as_value());
-    }
-
-    return seed;
-  }
-};
-
 template <> struct std::hash<yume::Substitutions> {
   auto operator()(const yume::Substitutions& s) const noexcept -> std::size_t {
     uint64_t seed = 0;
-    for (const auto* k : s.all_keys())
-      yume::hash_combine(seed, *k);
-    for (const auto* v : s.all_mappings())
-      yume::hash_combine(seed, *v);
+    for (const auto* k : s.all_keys()) {
+      yume::hash_combine(seed, k->name);
+      yume::hash_combine(seed, k->expr_type);
+    }
+    for (const auto* v : s.all_values()) {
+      yume::hash_combine(seed, v->type.has_value());
+      if (v->type.has_value()) {
+        yume::hash_combine(seed, v->type->base());
+        yume::hash_combine(seed, v->type->is_mut());
+        yume::hash_combine(seed, v->type->is_ref());
+      }
+      yume::hash_combine(seed, v->expr);
+    }
 
     return seed;
   }
