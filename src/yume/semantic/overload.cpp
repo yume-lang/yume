@@ -58,7 +58,7 @@ void Overload::dump(llvm::raw_ostream& stream) const {
       if (i++ > 0)
         stream << ", ";
 
-      stream << k->name() << " = " << v->name();
+      stream << k->name << " = " << v->name();
     }
   }
 }

@@ -76,7 +76,7 @@ static void visit_subs(Type a, Type b, GenericTypeReplacements& sub) {
       auto a_ty_mapping = a_st_ty->subs()->type_mappings();
       const auto* b_subs = b_st_ty->subs();
       for (auto [a_key, a_sub] : a_ty_mapping) {
-        const auto* b_mapping = b_subs->mapping_ref_or_null(a_key);
+        const auto* b_mapping = b_subs->mapping_ref_or_null({a_key});
         if (b_mapping != nullptr && b_mapping->unassigned())
           sub.try_emplace(a_key, a_sub);
       }
@@ -103,7 +103,7 @@ auto Type::determine_generic_subs(Type generic, const Substitutions& subs) const
     if (!k->holds_type())
       continue; // Only determining type arguments
 
-    auto iter = replacements.find(k->as_type());
+    auto iter = replacements.find(k->name);
     if (iter == replacements.end()) {
       // No new value was found for this key, so leave it as it was
       continue;
@@ -113,7 +113,7 @@ auto Type::determine_generic_subs(Type generic, const Substitutions& subs) const
 
     if (v->unassigned()) {
       // No value existed anyway, so we can put the new value in directly
-      clean_subs.associate(k->as_type(), new_v);
+      clean_subs.associate(*k, new_v);
       continue;
     }
 
@@ -125,7 +125,7 @@ auto Type::determine_generic_subs(Type generic, const Substitutions& subs) const
       return {};
     }
 
-    clean_subs.associate(k->as_type(), *intersection);
+    clean_subs.associate(*k, *intersection);
   }
 
   return clean_subs;
@@ -300,8 +300,8 @@ auto Type::apply_generic_substitution(GenericTypeReplacements sub) const -> opti
   if (const auto* st_this = base_dyn_cast<Struct>()) {
     auto subs = st_this->subs()->deep_copy();
     for (const auto& [k, v] : st_this->subs()->mapping())
-      if (k->holds_type() && sub.contains(k->as_type()))
-        subs.associate(k->as_type(), sub.at(k->as_type()));
+      if (k->holds_type() && sub.contains(k->name))
+        subs.associate(*k, sub.at(k->name));
 
     return Type{&st_this->apply_substitutions(move(subs)), m_mut, m_ref};
   }
@@ -450,7 +450,7 @@ auto Struct::name() const -> string {
     auto [key, mapping] = i.value();
     if (i.index() > 0)
       ss << ",";
-    ss << (mapping->unassigned() ? key->name() : mapping->name());
+    ss << (mapping->unassigned() ? key->name : mapping->name());
   }
   ss << "}";
 

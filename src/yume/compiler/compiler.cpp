@@ -305,7 +305,7 @@ auto Compiler::create_struct(Struct& st) -> bool {
 auto Compiler::decl_statement(ast::Stmt& stmt, optional<ty::Type> parent, ast::Program* member,
                               nullable<Substitutions*> parent_subs) -> DeclLike {
   if (auto* fn_decl = dyn_cast<ast::FnDecl>(&stmt)) {
-    Generics generics;
+    vector<GenericKey> generics;
     vector<unique_ptr<ty::Generic>> primary_generics;
     for (auto& i : fn_decl->type_args) {
       if (i.is_type_parameter()) {
@@ -313,7 +313,7 @@ auto Compiler::decl_statement(ast::Stmt& stmt, optional<ty::Type> parent, ast::P
         generics.emplace_back(i.name);
       } else {
         yume_assert(i.type.has_value(), "Non-type generic parameter must have associated value type");
-        generics.push_back(GenericValueKey{i.name, i.type.raw_ptr()});
+        generics.emplace_back(i.name, i.type.raw_ptr());
       }
     }
     auto& fn = m_fns.emplace_back(fn_decl, member, parent, parent_subs, move(generics), move(primary_generics));
@@ -323,7 +323,7 @@ auto Compiler::decl_statement(ast::Stmt& stmt, optional<ty::Type> parent, ast::P
   }
   if (auto* s_decl = dyn_cast<ast::StructDecl>(&stmt)) {
     // XXX: Lots of duplication from above
-    Generics generics;
+    vector<GenericKey> generics;
     vector<unique_ptr<ty::Generic>> primary_generics;
     for (auto& i : s_decl->type_args) {
       if (i.is_type_parameter()) {
@@ -331,7 +331,7 @@ auto Compiler::decl_statement(ast::Stmt& stmt, optional<ty::Type> parent, ast::P
         generics.emplace_back(i.name);
       } else {
         yume_assert(i.type.has_value(), "Non-type generic parameter must have associated value type");
-        generics.push_back(GenericValueKey{i.name, i.type.raw_ptr()});
+        generics.emplace_back(i.name, i.type.raw_ptr());
       }
     }
     auto& st =
