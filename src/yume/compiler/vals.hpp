@@ -66,7 +66,7 @@ struct Fn {
   Substitutions subs;
   /// The LLVM function definition corresponding to this function or constructor.
   llvm::Function* llvm{};
-  std::map<Substitutions, unique_ptr<Fn>> instantiations{};
+  std::unordered_map<Substitutions, unique_ptr<Fn>> instantiations{};
 
   Fn(Def def, ast::Program* member, optional<ty::Type> parent, Substitutions subs)
       : def{def}, self_ty{parent}, member{member}, subs(move(subs)) {}
@@ -146,7 +146,7 @@ struct Struct {
   vector<unique_ptr<ty::Generic>> primary_generics{};
   /// If this is an instantiation of a template, a mapping between type variables and their substitutions.
   Substitutions subs;
-  std::map<Substitutions, unique_ptr<Struct>> instantiations{};
+  std::unordered_map<Substitutions, unique_ptr<Struct>> instantiations{};
   std::vector<VTableEntry> vtable_members{};
   nullable<llvm::GlobalVariable*> vtable_memo{};
 

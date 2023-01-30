@@ -225,7 +225,57 @@ public:
 
   [[nodiscard]] auto deep_copy() const -> Substitutions;
 
-  auto operator==(const Substitutions& other) const noexcept -> bool = default;
-  auto operator<=>(const Substitutions& other) const noexcept = default;
+  auto operator==(const Substitutions& other) const noexcept -> bool {
+    auto this_keys = this->all_keys();
+    auto other_keys = other.all_keys();
+    auto this_vals = this->all_mappings();
+    auto other_vals = other.all_mappings();
+
+    return std::ranges::equal(this_keys, other_keys, [](auto* a, auto* b) { return *a == *b; }) &&
+           std::ranges::equal(this_vals, other_vals, [](auto* a, auto* b) { return *a == *b; });
+  }
 };
 } // namespace yume
+
+template <> struct std::hash<yume::GenericKey> {
+  auto operator()(const yume::GenericKey& key) const noexcept -> std::size_t {
+    uint64_t seed = key.index();
+    if (key.holds_type()) {
+      yume::hash_combine(seed, key.as_type());
+    } else {
+      const auto& value = key.as_value();
+      yume::hash_combine(seed, value.name);
+      yume::hash_combine(seed, value.type);
+    }
+
+    return seed;
+  }
+};
+
+template <> struct std::hash<yume::GenericMapping> {
+  auto operator()(const yume::GenericMapping& val) const noexcept -> std::size_t {
+    uint64_t seed = val.index();
+    if (val.holds_type()) {
+      const auto& type = val.as_type();
+      yume::hash_combine(seed, type.base());
+      yume::hash_combine(seed, type.is_mut());
+      yume::hash_combine(seed, type.is_ref());
+    } else {
+      yume::hash_combine(seed, val.as_value());
+    }
+
+    return seed;
+  }
+};
+
+template <> struct std::hash<yume::Substitutions> {
+  auto operator()(const yume::Substitutions& s) const noexcept -> std::size_t {
+    uint64_t seed = 0;
+    for (const auto* k : s.all_keys())
+      yume::hash_combine(seed, *k);
+    for (const auto* v : s.all_mappings())
+      yume::hash_combine(seed, *v);
+
+    return seed;
+  }
+};
