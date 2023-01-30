@@ -489,11 +489,6 @@ auto Type::opaque_equal(const Type& other) const noexcept -> bool {
 };
 
 namespace detail {
-static constexpr size_t BITSIZE_8 = 8;
-static constexpr size_t BITSIZE_16 = 16;
-static constexpr size_t BITSIZE_32 = 32;
-static constexpr size_t BITSIZE_64 = 64;
-
 struct MinMax {
   uint64_t u_min;
   uint64_t u_max;
@@ -510,10 +505,10 @@ template <typename UIntType> consteval auto minmax_for_bits() -> MinMax {
 
 constexpr auto minmax_for_bits(size_t bits) -> MinMax {
   switch (bits) {
-  case BITSIZE_8: return minmax_for_bits<uint8_t>();
-  case BITSIZE_16: return minmax_for_bits<uint16_t>();
-  case BITSIZE_32: return minmax_for_bits<uint32_t>();
-  case BITSIZE_64: return minmax_for_bits<uint64_t>();
+  case 8: return minmax_for_bits<uint8_t>();
+  case 16: return minmax_for_bits<uint16_t>();
+  case 32: return minmax_for_bits<uint32_t>();
+  case 64: return minmax_for_bits<uint64_t>();
   default: throw std::logic_error("Integer type must be 8, 16, 32, or 64 bits, not "s + std::to_string(bits));
   };
 }
