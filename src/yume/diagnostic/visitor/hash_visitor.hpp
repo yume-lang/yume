@@ -4,9 +4,6 @@
 #include "visitor.hpp"
 #include <cstddef>
 #include <cstdint>
-#include <functional>
-#include <limits>
-#include <numbers>
 #include <string>
 
 namespace yume::ast {

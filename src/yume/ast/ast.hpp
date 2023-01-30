@@ -1,11 +1,10 @@
 #pragma once
 
-#include "qualifier.hpp"
 #include "token.hpp"
 #include "ty/compatibility.hpp"
 #include "ty/type_base.hpp"
 #include "util.hpp"
-#include <cstddef>
+#include <concepts>
 #include <cstdint>
 #include <llvm/ADT/SmallPtrSet.h>
 #include <llvm/Support/ErrorHandling.h>
@@ -13,7 +12,6 @@
 #include <optional>
 #include <span>
 #include <string>
-#include <type_traits>
 #include <utility>
 #include <variant>
 #include <vector>
@@ -25,7 +23,7 @@ class Function;
 namespace yume {
 class Visitor;
 struct Fn;
-struct Ctor;
+enum struct Qualifier;
 namespace diagnostic {
 struct NotesHolder;
 }

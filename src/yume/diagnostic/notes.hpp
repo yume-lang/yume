@@ -2,9 +2,7 @@
 
 #include "token.hpp"
 #include "util.hpp"
-#include <llvm/Support/Format.h>
 #include <llvm/Support/raw_ostream.h>
-#include <sstream>
 #include <stdexcept>
 #include <utility>
 
