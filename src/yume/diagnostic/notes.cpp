@@ -1,6 +1,10 @@
 #include "diagnostic/notes.hpp"
 #include "compiler/vals.hpp"
+#include <filesystem>
 #include <fstream>
+#include <limits>
+#include <llvm/Support/Format.h>
+#include <ranges>
 #include <string>
 
 namespace yume::diagnostic {

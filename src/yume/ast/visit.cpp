@@ -3,6 +3,8 @@
 #include "diagnostic/visitor/visitor.hpp"
 #include "ty/compatibility.hpp"
 #include "util.hpp"
+#include <concepts>
+#include <ranges>
 #include <string>
 #include <variant>
 #include <vector>

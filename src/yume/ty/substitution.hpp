@@ -69,7 +69,7 @@ private:
 public:
   Substitutions() = delete;
   Substitutions(vector<GenericKey> keys, const vector<unique_ptr<ty::Generic>>& generic_type_fallbacks,
-                               nullable<Substitutions*> parent = nullptr)
+                nullable<Substitutions*> parent = nullptr)
       : m_keys{move(keys)} {
     for (const auto& i : generic_type_fallbacks)
       m_generic_type_fallbacks.emplace_back(i.get());
