@@ -111,4 +111,16 @@ template <size_t N> struct StringLiteral {
   auto operator<=>(const StringLiteral&) const = default;
 };
 
+template <typename T> static void hash_combine(uint64_t& seed, const T& v) {
+  static constexpr auto PHI_FRAC = std::numbers::phi_v<long double> - 1;
+  static constexpr auto ALL_BITS = std::numeric_limits<std::size_t>::max();
+  static constexpr auto FLOATING_HASH_CONST = PHI_FRAC * ALL_BITS;
+  static constexpr auto HASH_CONST = static_cast<std::size_t>(FLOATING_HASH_CONST);
+  static constexpr auto TWIST_LEFT = 6;
+  static constexpr auto TWIST_RIGHT = 2;
+
+  std::hash<T> hasher;
+  seed ^= hasher(v) + HASH_CONST + (seed << TWIST_LEFT) + (seed >> TWIST_RIGHT);
+}
+
 } // namespace yume

@@ -81,7 +81,7 @@ class Struct final : public BaseType {
   nullable<const Substitutions*> m_subs;
   nullable<const Struct*> m_parent{};
   nonnull<yume::Struct*> m_decl{};
-  [[deprecated]] mutable std::map<Substitutions, unique_ptr<Struct>> m_subbed{}; // HACK
+  [[deprecated]] mutable std::unordered_map<Substitutions, unique_ptr<Struct>> m_subbed{}; // HACK
   auto apply_substitutions(Substitutions sub) const -> const Struct&;
   mutable llvm::Type* m_memo{};
 
