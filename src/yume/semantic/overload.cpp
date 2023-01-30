@@ -180,9 +180,7 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
 
       param_type = param_type->apply_generic_substitution(overload.subs);
 
-      overload.subs.dump(errs());
       if (param_type.has_value()) {
-        errs() << " -> " << param_type->name() << "\n";
         yume_assert(!param_type->is_generic(),
                     "Generic substitution must either fail, or produce a fully-substituted type, but `"s +
                         param_type->name() + "' is not fully substituted");
