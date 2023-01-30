@@ -93,8 +93,9 @@ public:
   [[nodiscard]] auto name() const -> string;
   [[nodiscard]] auto base_name() const -> string;
 
-  [[nodiscard]] auto determine_generic_subs(Type generic, Substitutions& subs) const -> GenericTypeReplacements;
-  [[nodiscard]] auto apply_generic_substitution(GenericTypeReplacements sub) const -> optional<Type>;
+  [[nodiscard]] auto determine_generic_subs(Type generic, const Substitutions& subs) const -> optional<Substitutions>;
+  [[deprecated, nodiscard]] auto apply_generic_substitution(GenericTypeReplacements sub) const -> optional<Type>;
+  [[nodiscard]] auto apply_generic_substitution(const Substitutions& sub) const -> optional<Type>;
   [[nodiscard]] auto compatibility(Type other, Compat compat = Compat()) const -> Compat;
 
   /// Get this type with a given qualifier applied.

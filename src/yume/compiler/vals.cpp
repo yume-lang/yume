@@ -24,13 +24,8 @@ auto Fn::create_instantiation(Substitutions& subs) noexcept -> Fn& {
   });
 
   auto self_ty_clone = self_ty;
-  if (self_ty.has_value()) {
-    GenericTypeReplacements replacements{};
-    for (auto [k, v] : subs.type_mappings())
-      replacements.try_emplace(k, v);
-
-    self_ty_clone = self_ty->apply_generic_substitution(replacements);
-  }
+  if (self_ty.has_value())
+    self_ty_clone = self_ty->apply_generic_substitution(subs);
 
   auto fn_ptr = std::make_unique<Fn>(def_clone, member, self_ty_clone, subs);
   auto new_emplace = instantiations.emplace(subs, move(fn_ptr));

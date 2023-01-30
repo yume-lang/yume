@@ -92,43 +92,43 @@ static void visit_subs(Type a, Type b, GenericTypeReplacements& sub) {
   sub.try_emplace(b.base_cast<Generic>()->name(), a);
 }
 
-/// Add the substitution `gen_sub` for the generic type variable `gen` in template instantiation `instantiation`.
-/// If a substitution already exists for the same type variable, the two substitutions are intersected.
-/// \returns nullopt if substitution failed
-static auto intersect_generics(Substitutions& subs, const string& gen, ty::Type gen_sub) -> optional<ty::Type> {
-  // errs() << "Intersecting " << gen << "=" << gen_sub.name() << " into (";
-  // subs.dump(errs());
-  // errs() << ")\n";
-  auto existing = subs.find_type(gen);
-  if (existing.has_value()) {
-    // The substitution must have an intersection with an already deduced value for the same type variable
-    auto intersection = gen_sub.intersect(*existing);
-    if (!intersection) {
-      // The types don't have a common intersection, they cannot coexist.
-      return {};
-    }
-    subs.associate(gen, *intersection);
-  } else {
-    subs.associate(gen, gen_sub);
-  }
-
-  // errs() << "Intersection result: (";
-  // subs.dump(errs());
-  // errs() << ")\n";
-
-  return subs.find_type(gen)->base();
-}
-
-auto Type::determine_generic_subs(Type generic, Substitutions& subs) const -> GenericTypeReplacements {
+auto Type::determine_generic_subs(Type generic, const Substitutions& subs) const -> optional<Substitutions> {
   yume_assert(generic.is_generic(), "Cannot substitute generics in a non-generic type");
 
+  auto clean_subs = subs.deep_copy();
   GenericTypeReplacements replacements{};
-  visit_subs(*this, generic, replacements);
-  for (auto [k, v] : replacements)
-    if (auto intersection = intersect_generics(subs, k, v))
-      replacements.insert_or_assign(k, *intersection);
 
-  return replacements;
+  visit_subs(*this, generic, replacements);
+  for (auto [k, v] : subs.mapping()) {
+    if (!k->holds_type())
+      continue; // Only determining type arguments
+
+    auto iter = replacements.find(k->as_type());
+    if (iter == replacements.end()) {
+      // No new value was found for this key, so leave it as it was
+      continue;
+    }
+
+    auto new_v = iter->second;
+
+    if (v->unassigned()) {
+      // No value existed anyway, so we can put the new value in directly
+      clean_subs.associate(k->as_type(), new_v);
+      continue;
+    }
+
+    auto existing_v = v->as_type();
+    auto intersection = new_v.intersect(existing_v);
+
+    if (!intersection.has_value()) {
+      // The types cannot coexist; this substitution cannot proceed;
+      return {};
+    }
+
+    clean_subs.associate(k->as_type(), *intersection);
+  }
+
+  return clean_subs;
 }
 
 auto Type::compatibility(Type other, Compat compat) const -> Compat {
@@ -300,6 +300,34 @@ auto Type::apply_generic_substitution(GenericTypeReplacements sub) const -> opti
 
     return Type{&st_this->apply_substitutions(move(subs)), m_mut, m_ref};
   }
+
+  return {};
+}
+
+auto Type::apply_generic_substitution(const Substitutions& sub) const -> optional<Type> {
+  yume_assert(is_generic(), "Can't perform generic substitution without a generic type");
+
+  if (const auto* generic_this = base_dyn_cast<Generic>()) {
+    if (auto mapped = sub.find_type(generic_this->name()); mapped.has_value())
+      return Type{mapped->base(), mapped->is_mut() || m_mut, mapped->is_ref() || m_ref};
+  }
+
+  if (const auto* ptr_this = base_dyn_cast<Ptr>()) {
+    auto base = ensure_ptr_base().apply_generic_substitution(sub);
+    if (!base.has_value())
+      return {};
+    return base->known_qual(ptr_this->qualifier());
+  }
+
+  if (is_meta()) {
+    auto base = without_meta().apply_generic_substitution(sub);
+    if (!base.has_value())
+      return {};
+    return base->known_meta();
+  }
+
+  if (const auto* st_this = base_dyn_cast<Struct>())
+    return Type{&st_this->apply_substitutions(sub), m_mut, m_ref};
 
   return {};
 }
