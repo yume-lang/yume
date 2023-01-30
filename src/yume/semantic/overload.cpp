@@ -165,16 +165,36 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
     optional<ty::Type> param_type = param_type_r;
 
     if (param_type->is_generic()) {
-      auto sub = arg_type.determine_generic_subs(*param_type, overload.subs);
+      auto new_subs = arg_type.determine_generic_subs(*param_type, overload.subs);
 
-      // TODO(rymiel): The above `sub` thing should probably survive longer, or be removed entirely
+      if (!new_subs) {
+        notes->emit(overload.location()) << "Overload not valid";
+        notes->emit(overload.location()) << "  Because the generic variables of `" << param_type_r.name()
+                                         << "' weren't able to be determined"; // TODO(rymiel): why?
+        return false;
+      }
+      overload.subs = *new_subs;
 
-      param_type = param_type->apply_generic_substitution(sub);
+      // TODO(rymiel): All the parameters should probably be checked and intersected, before any of them are actually
+      // applied, to ensure compatibility between them all.
+
+      param_type = param_type->apply_generic_substitution(overload.subs);
+
+      overload.subs.dump(errs());
+      if (param_type.has_value()) {
+        errs() << " -> " << param_type->name() << "\n";
+        yume_assert(!param_type->is_generic(),
+                    "Generic substitution must either fail, or produce a fully-substituted type, but `"s +
+                        param_type->name() + "' is not fully substituted");
+      }
 
       if (!param_type) {
         notes->emit(overload.location()) << "Overload not valid";
+        auto subs_dumped = std::string{};
+        auto os = llvm::raw_string_ostream{subs_dumped};
+        overload.subs.dump(os); // TODO(rymiel): nasty
         notes->emit(overload.location()) << "  Because the generic type `" << param_type_r.name()
-                                         << "' wasn't able to be substituted with ...?"; // TODO(rymiel)
+                                         << "' wasn't able to be substituted with " << subs_dumped;
         return false;
       }
     }
