@@ -9,7 +9,8 @@ namespace yume {
 static constexpr const auto always_false = [](auto&&... /* ignored */) { return false; };
 
 template <StringLiteral msg, typename RetT = void>
-static constexpr const auto always_throw = [](auto&&... /* ignored */) -> RetT { throw std::runtime_error(msg.value); };
+static constexpr const auto always_throw =
+    [](auto&&... /* ignored */) -> RetT { throw std::runtime_error{static_cast<const char*>(msg.value)}; };
 
 template <auto pm, typename R = void>
 static constexpr const auto fwd = [](auto&&... args) -> R { return std::invoke(pm, args...); };

@@ -16,6 +16,7 @@ Checks: >-
   hicpp-multiway-paths-covered,
   -bugprone-exception-escape,
   -cppcoreguidelines-owning-memory,
+  -cppcoreguidelines-avoid-magic-numbers,
   -readability-identifier-length,
   -readability-braces-around-statements,
   -misc-no-recursion,
