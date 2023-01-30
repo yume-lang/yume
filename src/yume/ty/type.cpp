@@ -298,7 +298,7 @@ auto Type::apply_generic_substitution(GenericTypeReplacements sub) const -> opti
       if (k->holds_type() && sub.contains(k->as_type()))
         subs.associate(k->as_type(), sub.at(k->as_type()));
 
-    return &st_this->apply_substitutions(move(subs));
+    return Type{&st_this->apply_substitutions(move(subs)), m_mut, m_ref};
   }
 
   return {};

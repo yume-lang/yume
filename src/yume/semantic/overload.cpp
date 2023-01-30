@@ -161,11 +161,11 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
   // compatibility of the "variadic" part of varargs functions. Currently, varargs methods can only be primitives and
   // carry no type information for their variadic part. This will change in the future.
   for (const auto& [param_type_r, arg] : llvm::zip_first(fn.arg_types(), args)) {
-    auto arg_type = arg->val_ty();
+    auto arg_type = arg->ensure_ty();
     optional<ty::Type> param_type = param_type_r;
 
     if (param_type->is_generic()) {
-      auto sub = arg_type->determine_generic_subs(*param_type, overload.subs);
+      auto sub = arg_type.determine_generic_subs(*param_type, overload.subs);
 
       // TODO(rymiel): The above `sub` thing should probably survive longer, or be removed entirely
 
@@ -183,13 +183,13 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
     auto compat = literal_cast(*arg, *param_type);
     // Couldn't perform a literal cast, try regular casts
     if (!compat.valid)
-      compat = arg_type->compatibility(*param_type);
+      compat = arg_type.compatibility(*param_type);
 
     // Couldn't perform any kind of valid cast: one invalid conversion disqualifies the function entirely
     if (!compat.valid) {
       // TODO(rymiel): #17 Actually keep track of *why* a type is not viable, for diagnostics.
       notes->emit(overload.location()) << "Overload not valid";
-      notes->emit(overload.location()) << "  Because `" << arg_type->name() << "' is not convertible to `"
+      notes->emit(overload.location()) << "  Because `" << arg_type.name() << "' is not convertible to `"
                                        << param_type->name() << "'";
       return false;
     }
