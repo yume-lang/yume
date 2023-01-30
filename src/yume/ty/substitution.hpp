@@ -14,11 +14,6 @@ namespace ty {
 class Generic;
 } // namespace ty
 
-using generic_type_replacements_t = std::unordered_map<string, ty::Type>;
-struct [[deprecated]] GenericTypeReplacements : generic_type_replacements_t {
-  auto operator==(const GenericTypeReplacements& other) const noexcept -> bool = default;
-};
-
 struct GenericKey {
   string name{};
   nullable<ast::Type*> expr_type{};
@@ -187,8 +182,6 @@ public:
   [[nodiscard]] auto mapping() const { return llvm::zip(all_keys(), all_values()); }
 
   [[nodiscard]] auto get_generic_fallback(string_view generic_name) const -> ty::Generic*;
-
-  [[nodiscard, deprecated]] auto deep_copy() const -> Substitutions;
 
   auto operator==(const Substitutions& other) const noexcept -> bool {
     auto this_keys = this->all_keys();

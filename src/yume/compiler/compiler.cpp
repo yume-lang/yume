@@ -298,7 +298,7 @@ auto Compiler::create_struct(Struct& st) -> bool {
     return false;
 
   existing.m_fields = move(fields);
-  st.self_ty = &existing.apply_substitutions(st.get_subs());
+  st.self_ty = &existing.get_or_create_instantiation(st.get_subs());
   return true;
 }
 
