@@ -3,6 +3,7 @@
 #include "ast/parser.hpp"
 #include "atom.hpp"
 #include "diagnostic/notes.hpp"
+#include "diagnostic/source_location.hpp"
 #include "diagnostic/visitor/hash_visitor.hpp"
 #include "token.hpp"
 #include "util.hpp"
@@ -14,17 +15,18 @@
 namespace {
 using namespace yume::ast;
 
-auto prog(const std::string& str) -> std::unique_ptr<Program> {
-  static const std::string TEST_FILENAME = "<test>";
+auto prog(const std::string& str, yume::source_location src = yume::source_location::current())
+    -> std::unique_ptr<Program> {
+  auto test_filename = std::string{"< parser_test"} + ":" + std::to_string(src.line()) + " >";
   auto in_stream = std::stringstream(str);
-  auto tokens = yume::tokenize(in_stream, TEST_FILENAME);
+  auto tokens = yume::tokenize(in_stream, test_filename);
   auto iter = TokenIterator{tokens.begin(), tokens.end()};
   auto notes = yume::diagnostic::NotesHolder{};
   // TODO(rymiel): Maybe make some sort of special notesholder which fails the test if a diagnostic is emitted
   return Program::parse(iter, notes);
 }
 
-template <typename T, typename... Ts> auto ast(Ts&&... ts) -> std::unique_ptr<T> {
+template <typename T, typename... Ts> inline auto ast(Ts&&... ts) -> std::unique_ptr<T> {
   return std::make_unique<T>(std::span<yume::Token>{}, std::forward<Ts>(ts)...);
 }
 
@@ -63,10 +65,15 @@ struct TName {
   explicit operator TypeName() const { return std::move(*ast<TypeName>(std::move(type), name)); }
 };
 
+struct GenericParamArgs {
+  std::string name;
+  mutable OptionalType type = std::nullopt;
+};
+
 struct FnDeclArgs {
   std::string name;
   std::initializer_list<TName> args = {};
-  std::vector<std::string> type_args = {};
+  std::initializer_list<GenericParamArgs> type_args = {};
   OptionalType ret = std::nullopt;
   std::set<std::string> attributes = {};
 };
@@ -76,7 +83,14 @@ template <typename... Ts> auto make_fn_decl(FnDeclArgs a, Ts&&... ts) -> std::un
   ast_args.reserve(a.args.size());
   std::transform(a.args.begin(), a.args.end(), std::back_inserter(ast_args),
                  [](auto& tn) { return static_cast<TypeName>(tn); });
-  return ast<FnDecl>(a.name, std::move(ast_args), std::move(a.type_args), std::move(a.ret),
+
+  auto ast_type_args = std::vector<GenericParam>();
+  ast_type_args.reserve(a.type_args.size());
+  std::transform(a.type_args.begin(), a.type_args.end(), std::back_inserter(ast_type_args), [](auto& gp) {
+    return GenericParam{{}, std::move(gp.type), gp.name};
+  });
+
+  return ast<FnDecl>(a.name, std::move(ast_args), std::move(ast_type_args), std::move(a.ret),
                      make_compound(std::forward<Ts>(ts)...), std::move(a.attributes));
 }
 
@@ -87,7 +101,7 @@ auto make_primitive_decl(const std::string& name, std::initializer_list<TName> a
   ast_args.reserve(args.size());
   std::transform(args.begin(), args.end(), std::back_inserter(ast_args),
                  [](auto& tn) { return static_cast<TypeName>(tn); });
-  return ast<FnDecl>(name, std::move(ast_args), std::vector<std::string>{}, std::move(ret), primitive,
+  return ast<FnDecl>(name, std::move(ast_args), std::vector<GenericParam>{}, std::move(ret), primitive,
                      std::move(attributes));
 }
 
@@ -97,7 +111,7 @@ auto make_extern_decl(const std::string& name, std::initializer_list<TName> args
   ast_args.reserve(args.size());
   std::transform(args.begin(), args.end(), std::back_inserter(ast_args),
                  [](auto& tn) { return static_cast<TypeName>(tn); });
-  return ast<FnDecl>(name, std::move(ast_args), std::vector<std::string>{}, std::move(ret),
+  return ast<FnDecl>(name, std::move(ast_args), std::vector<GenericParam>{}, std::move(ret),
                      FnDecl::extern_decl_t{extern_name, varargs}, std::set<std::string>{});
 }
 
@@ -107,30 +121,38 @@ auto make_abstract_decl(const std::string& name, std::initializer_list<TName> ar
   ast_args.reserve(args.size());
   std::transform(args.begin(), args.end(), std::back_inserter(ast_args),
                  [](auto& tn) { return static_cast<TypeName>(tn); });
-  return ast<FnDecl>(name, std::move(ast_args), std::vector<std::string>{}, std::move(ret), FnDecl::abstract_decl_t{},
+  return ast<FnDecl>(name, std::move(ast_args), std::vector<GenericParam>{}, std::move(ret), FnDecl::abstract_decl_t{},
                      std::move(attributes));
 }
 
 template <typename... Ts>
-auto make_struct_decl(const std::string& name, std::initializer_list<TName> args, std::vector<std::string> type_vars,
-                      std::unique_ptr<Type> implements, Ts&&... ts) -> std::unique_ptr<StructDecl> {
+auto make_struct_decl(const std::string& name, std::initializer_list<TName> args,
+                      std::initializer_list<GenericParamArgs> type_vars, std::unique_ptr<Type> implements, Ts&&... ts)
+    -> std::unique_ptr<StructDecl> {
   auto ast_args = std::vector<TypeName>();
   ast_args.reserve(args.size());
   std::transform(args.begin(), args.end(), std::back_inserter(ast_args),
                  [](auto& tn) { return static_cast<TypeName>(tn); });
-  return ast<StructDecl>(name, std::move(ast_args), type_vars, make_compound(std::forward<Ts>(ts)...), move(implements),
-                         false);
+
+  auto ast_type_args = std::vector<GenericParam>();
+  ast_type_args.reserve(type_vars.size());
+  std::transform(type_vars.begin(), type_vars.end(), std::back_inserter(ast_type_args), [](auto& gp) {
+    return GenericParam{{}, std::move(gp.type), gp.name};
+  });
+
+  return ast<StructDecl>(name, std::move(ast_args), std::move(ast_type_args), make_compound(std::forward<Ts>(ts)...),
+                         move(implements), false);
 }
 
 template <typename... Ts>
-auto make_interface_decl(const std::string& name, std::initializer_list<TName> args, std::vector<std::string> type_vars,
-                         Ts&&... ts) -> std::unique_ptr<StructDecl> {
+auto make_interface_decl(const std::string& name, std::initializer_list<TName> args,
+                         std::vector<GenericParam> type_vars, Ts&&... ts) -> std::unique_ptr<StructDecl> {
   auto ast_args = std::vector<TypeName>();
   ast_args.reserve(args.size());
   std::transform(args.begin(), args.end(), std::back_inserter(ast_args),
                  [](auto& tn) { return static_cast<TypeName>(tn); });
-  return ast<StructDecl>(name, std::move(ast_args), type_vars, make_compound(std::forward<Ts>(ts)...), std::nullopt,
-                         true);
+  return ast<StructDecl>(name, std::move(ast_args), std::move(type_vars), make_compound(std::forward<Ts>(ts)...),
+                         std::nullopt, true);
 }
 
 auto operator""_Var(const char* str, size_t size) { return ast<VarExpr>(std::string{str, size}); }
@@ -172,7 +194,7 @@ struct {
 
 auto operator&(std::unique_ptr<Type> type, Qualifier qual) { return ::ast<QualType>(std::move(type), qual); }
 auto operator&(std::unique_ptr<Type> type, decltype(Slice) /* tag */) {
-  std::vector<yume::ast::AnyType> type_args = {};
+  std::vector<yume::ast::AnyTypeOrExpr> type_args = {};
   type_args.emplace_back(std::move(type));
   return ::ast<TemplatedType>(::ast<SimpleType>("Slice"), std::move(type_args));
 }
@@ -323,19 +345,19 @@ TEST_CASE("Parse short function declaration", "[parse][fn]") {
 }
 
 TEST_CASE("Parse templated function declaration", "[parse][fn]") {
-  CHECK_PARSER("def templated{T}()\nend", make_fn_decl({.name = "templated", .type_args = {"T"}}));
+  CHECK_PARSER("def templated{T}()\nend", make_fn_decl({.name = "templated", .type_args = {{"T"}}}));
 
   CHECK_PARSER("def templated{T}(t T) T\nend",
-               make_fn_decl({.name = "templated", .args = {{"t", "T"_Type}}, .type_args = {"T"}, .ret = "T"_Type}));
+               make_fn_decl({.name = "templated", .args = {{"t", "T"_Type}}, .type_args = {{"T"}}, .ret = "T"_Type}));
 
   CHECK_PARSER("def templated{T}(t T) T = t",
-               make_fn_decl({.name = "templated", .args = {{"t", "T"_Type}}, .type_args = {"T"}, .ret = "T"_Type},
+               make_fn_decl({.name = "templated", .args = {{"t", "T"_Type}}, .type_args = {{"T"}}, .ret = "T"_Type},
                             ast<ReturnStmt>("t"_Var)));
 
   CHECK_PARSER("def templated{T,U,V,X,Y,Z}(t T, u U, v V) X = Y() + Z()",
                make_fn_decl({.name = "templated",
                              .args = {{"t", "T"_Type}, {"u", "U"_Type}, {"v", "V"_Type}},
-                             .type_args = {"T", "U", "V", "X", "Y", "Z"},
+                             .type_args = {{"T"}, {"U"}, {"V"}, {"X"}, {"Y"}, {"Z"}},
                              .ret = "X"_Type},
                             ast<ReturnStmt>(make_call("+", make_ctor("Y"_Type), make_ctor("Z"_Type)))));
 
@@ -345,7 +367,7 @@ TEST_CASE("Parse templated function declaration", "[parse][fn]") {
                                       {"pointer", "T"_Type & Ptr},
                                       {"mutable", "T"_Type & Mut},
                                       {"mix", "T"_Type & Ptr & Slice & Mut}},
-                             .type_args{"T"}}));
+                             .type_args = {{"T"}}}));
 }
 
 TEST_CASE("Parse operator function declaration", "[parse][fn]") {
@@ -438,8 +460,8 @@ TEST_CASE("Parse struct declaration", "[parse][struct]") {
   CHECK_PARSER("struct Foo(i I32, bar Bar)\nend",
                make_struct_decl("Foo", {{"i", "I32"_Type}, {"bar", "Bar"_Type}}, {}, {}));
 
-  CHECK_PARSER("struct Foo{T}()\nend", make_struct_decl("Foo", {}, {"T"}, {}));
-  CHECK_PARSER("struct Foo{T}(t T)\nend", make_struct_decl("Foo", {{"t", "T"_Type}}, {"T"}, {}));
+  CHECK_PARSER("struct Foo{T}()\nend", make_struct_decl("Foo", {}, {{"T"}}, {}));
+  CHECK_PARSER("struct Foo{T}(t T)\nend", make_struct_decl("Foo", {{"t", "T"_Type}}, {{"T"}}, {}));
 
   CHECK_PARSER("struct Foo()\ndef method()\nend\nend",
                make_struct_decl("Foo", {}, {}, {}, make_fn_decl({.name = "method"})));

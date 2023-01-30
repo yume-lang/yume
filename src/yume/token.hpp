@@ -46,8 +46,14 @@ struct Loc {
 
   [[nodiscard]] auto to_string() const -> string {
     stringstream ss{};
-    if (file != nullptr)
-      ss << fs::path(file).stem().native();
+    if (file != nullptr) {
+      if (auto filename = string{file}; filename.front() == '<' && filename.back() == '>') {
+        // This is a special "fake path", so we don't try to normalize it.
+        ss << filename;
+      } else {
+        ss << fs::path(file).stem().native();
+      }
+    }
 
     if (!valid()) {
       ss << ":?";
