@@ -10,6 +10,7 @@
 #include <limits>
 #include <llvm/Support/Casting.h>
 #include <llvm/Support/ErrorHandling.h>
+#include <llvm/Support/raw_ostream.h>
 #include <map>
 #include <sstream>
 #include <stdexcept>
@@ -275,46 +276,99 @@ auto Type::has_qualifier(Qualifier qual) const -> bool {
   return false;
 }
 
-auto Type::apply_generic_substitution(const Substitutions& sub) const -> optional<Type> {
-  yume_assert(is_generic(), "Can't perform generic substitution without a generic type");
+auto Type::apply_generic_substitution(const Substitutions& sub) const -> Type {
+  if (!is_generic())
+    return *this; // Nothing to do!
 
   if (const auto* generic_this = base_dyn_cast<Generic>()) {
     if (auto mapped = sub.find_type(generic_this->name()); mapped.has_value())
       return Type{mapped->base(), mapped->is_mut() || m_mut, mapped->is_ref() || m_ref};
   }
 
-  if (const auto* ptr_this = base_dyn_cast<Ptr>()) {
-    auto base = ensure_ptr_base().apply_generic_substitution(sub);
-    if (!base.has_value())
-      return {};
-    return base->known_qual(ptr_this->qualifier());
-  }
+  if (const auto* ptr_this = base_dyn_cast<Ptr>())
+    return ensure_ptr_base().apply_generic_substitution(sub).known_qual(ptr_this->qualifier());
 
-  if (is_meta()) {
-    auto base = without_meta().apply_generic_substitution(sub);
-    if (!base.has_value())
-      return {};
-    return base->known_meta();
-  }
+  if (is_meta())
+    return without_meta().apply_generic_substitution(sub).known_meta();
 
   if (const auto* st_this = base_dyn_cast<Struct>())
-    return Type{&st_this->apply_substitutions(sub), m_mut, m_ref};
+    return Type{&st_this->get_or_create_instantiation(sub), m_mut, m_ref};
 
-  return {};
+  if (const auto* fn_this = base_dyn_cast<Function>())
+    return Type{&fn_this->get_or_create_instantiation(sub), m_mut, m_ref};
+
+  std::string dump;
+  llvm::raw_string_ostream os{dump};
+  sub.dump(os);
+  throw std::logic_error("Cannot apply generic substitution (" + dump + ") to type `" + name() + "'");
 }
 
-auto Struct::apply_substitutions(Substitutions sub) const -> const Struct& {
-  if (m_parent != nullptr)
-    return m_parent->apply_substitutions(move(sub));
+auto Struct::get_or_create_instantiation(Substitutions sub) const -> const Struct& {
+  // auto detailed_dump = [](const Struct& st) -> auto& {
+  //   errs() << "[`" << st.name() << "'@" << &st << ", parent@" << st.m_parent << ", decl@" << st.m_decl << "]";
+  //   return errs();
+  // };
 
+  // errs() << "Struct::goci for ", detailed_dump(*this) << " with `";
+  // sub.dump(errs());
+  // errs() << "'\n";
+
+  if (m_parent != nullptr)
+    return m_parent->get_or_create_instantiation(move(sub));
+
+  // TODO(rymiel): What does this accomplish? If the subs are equivalent, it means the current object is already
+  // substituted, and this function shouldn't really be called at all. This should *probably* be replaced with a
+  // guard checking that we're not fully substituted.
+  // Also, I think a class invariant is that m_parent and m_subs are mutually exclusive, and we already checked for
+  // m_parent above.
   if (m_subs != nullptr && sub == *m_subs)
     return *this;
 
-  auto existing = m_subbed.find(sub);
-  if (existing == m_subbed.end()) {
-    auto [iter, success] = m_subbed.emplace(move(sub), make_unique<Struct>(base_name(), fields(), m_decl, nullptr));
+  auto existing = m_instantiations.find(sub);
+  if (existing == m_instantiations.end()) {
+    // errs() << "Struct::goci for ", detailed_dump(*this) << ": Creating new type: `";
+    auto [iter, ok] = m_instantiations.emplace(move(sub), make_unique<Struct>(base_name(), m_fields, m_decl, nullptr));
     iter->second->m_subs = &iter->first;
     iter->second->m_parent = this;
+    // detailed_dump(*iter->second) << "'\n";
+    return *iter->second;
+  }
+  return *existing->second;
+}
+
+auto Function::get_or_create_instantiation(Substitutions sub) const -> const Function& {
+  // auto detailed_dump = [](const Function& st) -> auto& {
+  //   errs() << "[`" << st.name() << "'@" << &st << ", parent@" << st.m_parent << "]";
+  //   return errs();
+  // };
+
+  // errs() << "Function::goci for ", detailed_dump(*this) << " with `";
+  // sub.dump(errs());
+  // errs() << "'\n";
+
+  if (m_parent != nullptr)
+    return m_parent->get_or_create_instantiation(move(sub));
+
+  auto existing = m_instantiations.find(sub);
+  if (existing == m_instantiations.end()) {
+    // errs() << "Function::goci for ", detailed_dump(*this) << ": Creating new type: ";
+
+    auto args = vector<ty::Type>{};
+    auto ret = optional<ty::Type>{};
+
+    for (const auto& arg : m_args)
+      args.push_back(arg.apply_generic_substitution(sub));
+
+    if (m_ret.has_value())
+      ret = m_ret->apply_generic_substitution(sub);
+
+    // TODO(rymiel): Is this necessary?
+    yume_assert(m_closure.empty(), "Cannot substitute function type with closure.");
+
+    auto [iter, ok] = m_instantiations.emplace(
+        move(sub), make_unique<Function>(base_name(), move(args), ret, m_closure, m_fn_ptr, m_c_varargs));
+    iter->second->m_parent = this;
+    // detailed_dump(*iter->second) << "'\n";
     return *iter->second;
   }
   return *existing->second;
