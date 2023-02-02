@@ -1,7 +1,8 @@
 var searchData=
 [
-  ['parent_0',['parent',['../structyume_1_1ast_1_1ConstExpr.html#aad96668d6dd34446e6ddf4a6a9b3fe84',1,'yume::ast::ConstExpr']]],
-  ['path_1',['path',['../structyume_1_1SourceFile.html#acdde1cc4beacecacea005ad8ba8a9487',1,'yume::SourceFile']]],
-  ['payload_2',['payload',['../structyume_1_1Token.html#a39737a8e055ffb71b836f4e0b525f2fd',1,'yume::Token']]],
-  ['program_3',['program',['../structyume_1_1SourceFile.html#afc76a93b86868ed720f2de2c676e9b4c',1,'yume::SourceFile']]]
+  ['observers_0',['observers',['../structyume_1_1ast_1_1Attachment.html#aaf00c7ebfdefd53592f5cf336be0aecd',1,'yume::ast::Attachment']]],
+  ['offset_1',['offset',['../structyume_1_1ast_1_1FieldAccessExpr.html#ade4d66a57b3356d2931a957dc859c13f',1,'yume::ast::FieldAccessExpr']]],
+  ['operation_2',['operation',['../structyume_1_1ast_1_1BinaryLogicExpr.html#a7a46d5c224790c7cbc803825981a63d3',1,'yume::ast::BinaryLogicExpr']]],
+  ['overloads_3',['overloads',['../structyume_1_1semantic_1_1OverloadSet.html#a52f1c40db404db3f3c71b47573454550',1,'yume::semantic::OverloadSet']]],
+  ['owning_4',['owning',['../structyume_1_1InScope.html#a8ddcc9d3da0ab6e89861d5544a05386d',1,'yume::InScope']]]
 ];

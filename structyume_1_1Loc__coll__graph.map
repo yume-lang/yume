@@ -1,5 +1,5 @@
 <map id="yume::Loc" name="yume::Loc">
-<area shape="rect" id="node1" title="Represents a location in source code, as a range starting at a line and column and ending at some oth..." alt="" coords="60,139,141,165"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,5,76,32"/>
-<area shape="rect" id="node3" title=" " alt="" coords="101,5,223,32"/>
+<area shape="rect" id="node1" title="Represents a location in source code, as a range starting at a line and column and ending at some oth..." alt="" coords="28,139,109,165"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,5,44,32"/>
+<area shape="rect" id="node3" title=" " alt="" coords="69,5,159,32"/>
 </map>

@@ -12,9 +12,8 @@ var searchData=
   ['stmt_9',['Stmt',['../classyume_1_1ast_1_1Stmt.html',1,'yume::ast']]],
   ['stringexpr_10',['StringExpr',['../structyume_1_1ast_1_1StringExpr.html',1,'yume::ast']]],
   ['stringliteral_11',['StringLiteral',['../structyume_1_1StringLiteral.html',1,'yume']]],
-  ['struct_12',['Struct',['../structyume_1_1Struct.html',1,'yume::Struct'],['../classyume_1_1ty_1_1Struct.html',1,'yume::ty::Struct']]],
-  ['structdecl_13',['StructDecl',['../structyume_1_1ast_1_1StructDecl.html',1,'yume::ast']]],
-  ['sub_14',['Sub',['../structyume_1_1ty_1_1Sub.html',1,'yume::ty']]],
-  ['substitution_15',['Substitution',['../structyume_1_1Substitution.html',1,'yume']]],
-  ['substitution_5ft_16',['substitution_t',['../classsubstitution__t.html',1,'']]]
+  ['stringnotesholder_12',['StringNotesHolder',['../structyume_1_1diagnostic_1_1StringNotesHolder.html',1,'yume::diagnostic']]],
+  ['struct_13',['Struct',['../structyume_1_1Struct.html',1,'yume::Struct'],['../classyume_1_1ty_1_1Struct.html',1,'yume::ty::Struct']]],
+  ['structdecl_14',['StructDecl',['../structyume_1_1ast_1_1StructDecl.html',1,'yume::ast']]],
+  ['substitutions_15',['Substitutions',['../structyume_1_1Substitutions.html',1,'yume']]]
 ];

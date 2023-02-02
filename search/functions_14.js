@@ -1,5 +1,30 @@
 var searchData=
 [
-  ['unary_5foperators_0',['unary_operators',['../structyume_1_1ast_1_1parser_1_1Parser.html#a2c041ddd31fc86d7c675bb043badf9ff',1,'yume::ast::parser::Parser']]],
-  ['unify_5fval_5fty_1',['unify_val_ty',['../classyume_1_1ast_1_1AST.html#a93dae9f197941e67b1e3066e5cff52c8',1,'yume::ast::AST']]]
+  ['templatedtype_0',['TemplatedType',['../structyume_1_1ast_1_1TemplatedType.html#a412329cf215d32b7c577d47d07ec87c7',1,'yume::ast::TemplatedType']]],
+  ['to_5fstring_1',['to_string',['../structyume_1_1ast_1_1parser_1_1Parser.html#a542aaa80900834ca2e7f1698960f267d',1,'yume::ast::parser::Parser::to_string()'],['../structyume_1_1Loc.html#a493d9b113701c8de755594d35f463160',1,'yume::Loc::to_string()'],['../structyume_1_1ty_1_1Conv.html#aa667c501f5b00165f8facac5d5b4360e',1,'yume::ty::Conv::to_string()']]],
+  ['tok_2',['tok',['../classyume_1_1ast_1_1AST.html#aef0323c4bfe9d210c3edeef11f7fa9b4',1,'yume::ast::AST']]],
+  ['token_3',['Token',['../structyume_1_1Token.html#abe8a1376fcb43d484398c187bfca5c25',1,'yume::Token::Token(Type type)'],['../structyume_1_1Token.html#a6da503c3b96f1884a894dd161ceff29b',1,'yume::Token::Token(Type type, Payload payload) noexcept'],['../structyume_1_1Token.html#a1d1accb3b06a72a559bc0bc26edd06c1',1,'yume::Token::Token(Type type, Payload payload, int i, Loc loc) noexcept']]],
+  ['token_5frange_4',['token_range',['../classyume_1_1ast_1_1AST.html#a7c6bcf1def2d39183937cff5e6a16e78',1,'yume::ast::AST']]],
+  ['tokeniterator_5',['TokenIterator',['../classyume_1_1ast_1_1TokenIterator.html#a83847969ddcae521f1003226a48feb82',1,'yume::ast::TokenIterator']]],
+  ['tokenize_6',['tokenize',['../namespaceyume.html#add085d2c7691142e008ebdede18cce21',1,'yume::tokenize()'],['../classyume_1_1Tokenizer.html#a22a004a45ee76d84fb7c7922909c9f72',1,'yume::Tokenizer::tokenize()']]],
+  ['tokenize_5fpreserve_5fskipped_7',['tokenize_preserve_skipped',['../namespaceyume.html#a4920534072ee0bb3deb3389fce655517',1,'yume']]],
+  ['tokenizer_8',['Tokenizer',['../classyume_1_1Tokenizer.html#abacd02cab431d1e520ebdada9e7fbb0e',1,'yume::Tokenizer']]],
+  ['tokenrange_9',['TokenRange',['../classyume_1_1ast_1_1parser_1_1TokenRange.html#a007f7a4d59935e02945659fd7a26a10f',1,'yume::ast::parser::TokenRange::TokenRange(auto &amp;&amp;begin, int end)'],['../classyume_1_1ast_1_1parser_1_1TokenRange.html#aaa35d3b19aba44c94962fba7ed79436b',1,'yume::ast::parser::TokenRange::TokenRange(auto &amp;&amp;begin, auto &amp;&amp;end)']]],
+  ['tokens_10',['tokens',['../classyume_1_1Tokenizer.html#a72b459b3ad960df15412cf5a7f9bd2c0',1,'yume::Tokenizer']]],
+  ['try_5fas_11',['try_as',['../classyume_1_1ty_1_1Type.html#a4060b517fa5f58d8ed077bdc40dcdfa5',1,'yume::ty::Type']]],
+  ['try_5fbest_5fviable_5foverload_12',['try_best_viable_overload',['../structyume_1_1semantic_1_1OverloadSet.html#a79ab99c580919d69943c85aa8fcc3811',1,'yume::semantic::OverloadSet']]],
+  ['try_5fconsume_13',['try_consume',['../structyume_1_1ast_1_1parser_1_1Parser.html#a6284b99bb4a1236e43c03bce08e9da58',1,'yume::ast::parser::Parser']]],
+  ['try_5fimplicit_5fconversion_14',['try_implicit_conversion',['../namespaceyume_1_1semantic.html#a81acd10251839376166fd5c944b47d91',1,'yume::semantic']]],
+  ['try_5fparse_5ffunction_5ftype_15',['try_parse_function_type',['../structyume_1_1ast_1_1parser_1_1Parser.html#a232f6ef90e7c5f8f34e6831e70af98d6',1,'yume::ast::parser::Parser']]],
+  ['try_5fparse_5ftype_16',['try_parse_type',['../structyume_1_1ast_1_1parser_1_1Parser.html#a5395a4bce412b8f14e3fdbc76ae51cdb',1,'yume::ast::parser::Parser']]],
+  ['try_5fpeek_17',['try_peek',['../structyume_1_1ast_1_1parser_1_1Parser.html#aa2c08351233ab7af82b284b2f8744d1a',1,'yume::ast::parser::Parser::try_peek(int ahead, Token::Type token_type, source_location location=source_location::current()) const -&gt; bool'],['../structyume_1_1ast_1_1parser_1_1Parser.html#a8eae45afdb4e463e5202f93d35318661',1,'yume::ast::parser::Parser::try_peek(int ahead, TokenAtom token_atom, source_location location=source_location::current()) const -&gt; bool']]],
+  ['try_5fpeek_5fuword_18',['try_peek_uword',['../structyume_1_1ast_1_1parser_1_1Parser.html#adcca7d42f93ad3a5b3835b582a70ac10',1,'yume::ast::parser::Parser']]],
+  ['ts_19',['ts',['../structyume_1_1ast_1_1parser_1_1Parser.html#ac8f67f2d37a791d0f090f5016364fd6d',1,'yume::ast::parser::Parser::ts(T &amp;&amp;begin, U &amp;&amp;end) -&gt; span&lt; Token &gt;'],['../structyume_1_1ast_1_1parser_1_1Parser.html#a7b7d8dbfe1bdb7e9f9fdcd60c61913a1',1,'yume::ast::parser::Parser::ts(const VectorTokenIterator &amp;entry) const -&gt; span&lt; Token &gt;']]],
+  ['type_20',['Type',['../classyume_1_1ty_1_1Type.html#afc83e332e9c9e53b94cbc47406dfaae2',1,'yume::ty::Type::Type(nonnull&lt; const BaseType * &gt; base, bool mut, bool ref) noexcept'],['../classyume_1_1ty_1_1Type.html#a33a0cd649e3a60ede6c9150801081045',1,'yume::ty::Type::Type(nonnull&lt; const BaseType * &gt; base) noexcept']]],
+  ['type_5fmappings_21',['type_mappings',['../structyume_1_1Substitutions.html#aed53f930a4bafbd0879c437765256b8a',1,'yume::Substitutions']]],
+  ['type_5fname_22',['type_name',['../structyume_1_1Token.html#a875fb29a632b8c8f77f98b00af8b3807',1,'yume::Token']]],
+  ['typeexpr_23',['TypeExpr',['../structyume_1_1ast_1_1TypeExpr.html#a7b84df7804ec10b133879ac218e71678',1,'yume::ast::TypeExpr']]],
+  ['typeholder_24',['TypeHolder',['../structyume_1_1TypeHolder.html#ae38748fdb7b8d1059a87c5a3119acc8c',1,'yume::TypeHolder']]],
+  ['typename_25',['TypeName',['../structyume_1_1ast_1_1TypeName.html#ab42ed4a9cc6b1e4847aaa3129642eab3',1,'yume::ast::TypeName']]],
+  ['typewalker_26',['TypeWalker',['../structyume_1_1semantic_1_1TypeWalker.html#ae0feaffa86a7970827a360c257b6eae3',1,'yume::semantic::TypeWalker']]]
 ];

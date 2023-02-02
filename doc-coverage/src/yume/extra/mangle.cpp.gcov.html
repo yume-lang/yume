@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-12-30 11:29:09</td>
+            <td class="headerValue">2023-02-02 15:26:22</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -91,9 +91,9 @@
 <a name="33"><span class="lineNum">      33 </span>            :     if (ptr_type-&gt;has_qualifier(Qualifier::Ptr))</a>
 <a name="34"><span class="lineNum">      34 </span>            :       ss &lt;&lt; &quot;*&quot;;</a>
 <a name="35"><span class="lineNum">      35 </span>            :   } else if (const auto* generic_type = ast_type.base_dyn_cast&lt;ty::Generic&gt;()) {</a>
-<a name="36"><span class="lineNum">      36 </span>            :     auto match = parent.subs()-&gt;find(generic_type-&gt;name());</a>
-<a name="37"><span class="lineNum">      37 </span>            :     yume_assert(match != parent.subs()-&gt;end(), &quot;Cannot mangle unsubstituted generic&quot;);</a>
-<a name="38"><span class="lineNum">      38 </span>            :     ss &lt;&lt; match-&gt;second.name();</a>
+<a name="36"><span class="lineNum">      36 </span>            :     auto match = parent.subs()-&gt;find_type(generic_type-&gt;name());</a>
+<a name="37"><span class="lineNum">      37 </span>            :     YUME_ASSERT(match.has_value(), &quot;Cannot mangle unsubstituted generic&quot;);</a>
+<a name="38"><span class="lineNum">      38 </span>            :     ss &lt;&lt; match-&gt;name();</a>
 <a name="39"><span class="lineNum">      39 </span>            :   } else {</a>
 <a name="40"><span class="lineNum">      40 </span>            :     ss &lt;&lt; ast_type.base_name();</a>
 <a name="41"><span class="lineNum">      41 </span>            :   }</a>
@@ -101,10 +101,16 @@
 <a name="43"><span class="lineNum">      43 </span>            :   if (ast_type.is_mut())</a>
 <a name="44"><span class="lineNum">      44 </span>            :     ss &lt;&lt; &quot;&amp;&quot;;</a>
 <a name="45"><span class="lineNum">      45 </span>            : </a>
-<a name="46"><span class="lineNum">      46 </span>            :   return ss.str();</a>
-<a name="47"><span class="lineNum">      47 </span>            : }</a>
+<a name="46"><span class="lineNum">      46 </span>            :   if (ast_type.is_ref())</a>
+<a name="47"><span class="lineNum">      47 </span>            :     ss &lt;&lt; &quot;^&quot;;</a>
 <a name="48"><span class="lineNum">      48 </span>            : </a>
-<a name="49"><span class="lineNum">      49 </span>            : } // namespace yume::mangle</a>
+<a name="49"><span class="lineNum">      49 </span>            :   if (ast_type.is_meta())</a>
+<a name="50"><span class="lineNum">      50 </span>            :     ss &lt;&lt; &quot;+&quot;;</a>
+<a name="51"><span class="lineNum">      51 </span>            : </a>
+<a name="52"><span class="lineNum">      52 </span>            :   return ss.str();</a>
+<a name="53"><span class="lineNum">      53 </span>            : }</a>
+<a name="54"><span class="lineNum">      54 </span>            : </a>
+<a name="55"><span class="lineNum">      55 </span>            : } // namespace yume::mangle</a>
 </pre>
       </td>
     </tr>

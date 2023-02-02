@@ -70,9 +70,9 @@ $(function() {
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#concepts">Concepts</a> &#124;
+<a href="#define-members">Macros</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
-<a href="#func-members">Functions</a> &#124;
-<a href="#var-members">Variables</a>  </div>
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">util.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -84,6 +84,7 @@ $(function() {
 <code>#include &lt;llvm/Support/FileSystem.h&gt;</code><br />
 <code>#include &lt;llvm/Support/raw_ostream.h&gt;</code><br />
 <code>#include &lt;memory&gt;</code><br />
+<code>#include &lt;numbers&gt;</code><br />
 <code>#include &lt;optional&gt;</code><br />
 <code>#include &lt;set&gt;</code><br />
 <code>#include &lt;span&gt;</code><br />
@@ -99,7 +100,7 @@ Include dependency graph for util.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="util_8hpp__incl.png" border="0" usemap="#asrc_2yume_2util_8hpp" alt=""/></div>
 <map name="asrc_2yume_2util_8hpp" id="asrc_2yume_2util_8hpp">
-<area shape="rect" title=" " alt="" coords="1188,5,1308,32"/>
+<area shape="rect" title=" " alt="" coords="1245,5,1365,32"/>
 <area shape="rect" href="source__location_8hpp.html" title=" " alt="" coords="5,80,205,107"/>
 <area shape="rect" title=" " alt="" coords="229,80,280,107"/>
 <area shape="rect" title=" " alt="" coords="305,80,370,107"/>
@@ -108,16 +109,17 @@ Include dependency graph for util.hpp:</div>
 <area shape="rect" title=" " alt="" coords="675,80,850,107"/>
 <area shape="rect" title=" " alt="" coords="875,80,1059,107"/>
 <area shape="rect" title=" " alt="" coords="1083,80,1151,107"/>
-<area shape="rect" title=" " alt="" coords="1176,80,1243,107"/>
-<area shape="rect" title=" " alt="" coords="1267,80,1307,107"/>
-<area shape="rect" title=" " alt="" coords="1331,80,1381,107"/>
-<area shape="rect" title=" " alt="" coords="1405,80,1475,107"/>
-<area shape="rect" title=" " alt="" coords="1499,80,1587,107"/>
-<area shape="rect" title=" " alt="" coords="1611,80,1661,107"/>
-<area shape="rect" title=" " alt="" coords="1685,80,1768,107"/>
-<area shape="rect" title=" " alt="" coords="1793,80,1845,107"/>
-<area shape="rect" title=" " alt="" coords="1869,80,1931,107"/>
-<area shape="rect" title=" " alt="" coords="1955,80,2013,107"/>
+<area shape="rect" title=" " alt="" coords="1176,80,1248,107"/>
+<area shape="rect" title=" " alt="" coords="1272,80,1339,107"/>
+<area shape="rect" title=" " alt="" coords="1363,80,1403,107"/>
+<area shape="rect" title=" " alt="" coords="1427,80,1477,107"/>
+<area shape="rect" title=" " alt="" coords="1501,80,1571,107"/>
+<area shape="rect" title=" " alt="" coords="1595,80,1683,107"/>
+<area shape="rect" title=" " alt="" coords="1707,80,1757,107"/>
+<area shape="rect" title=" " alt="" coords="1781,80,1864,107"/>
+<area shape="rect" title=" " alt="" coords="1889,80,1941,107"/>
+<area shape="rect" title=" " alt="" coords="1965,80,2027,107"/>
+<area shape="rect" title=" " alt="" coords="2051,80,2109,107"/>
 <area shape="rect" title=" " alt="" coords="78,155,133,181"/>
 </map>
 </div>
@@ -126,43 +128,45 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="util_8hpp__dep__incl.png" border="0" usemap="#asrc_2yume_2util_8hppdep" alt=""/></div>
 <map name="asrc_2yume_2util_8hppdep" id="asrc_2yume_2util_8hppdep">
-<area shape="rect" title=" " alt="" coords="1403,5,1523,32"/>
-<area shape="rect" href="ast_8hpp.html" title=" " alt="" coords="1619,237,1762,263"/>
-<area shape="rect" href="compiler_8hpp.html" title=" " alt="" coords="2808,676,3013,703"/>
-<area shape="rect" href="compiler_8cpp.html" title=" " alt="" coords="2097,758,2303,785"/>
-<area shape="rect" href="type__holder_8cpp.html" title=" " alt="" coords="3342,751,3498,792"/>
-<area shape="rect" href="yumec_8cpp.html" title=" " alt="" coords="397,758,504,785"/>
-<area shape="rect" href="type__walker_8hpp.html" title=" " alt="" coords="2691,587,2851,628"/>
-<area shape="rect" href="describe_8cpp.html" title=" " alt="" coords="870,326,1045,353"/>
-<area shape="rect" href="parser_8hpp.html" title=" " alt="" coords="2262,326,2423,353"/>
-<area shape="rect" href="vals_8hpp.html" title=" " alt="" coords="2149,415,2329,442"/>
-<area shape="rect" href="overload_8hpp.html" title=" " alt="" coords="1406,505,1615,531"/>
-<area shape="rect" href="overload_8cpp.html" title=" " alt="" coords="1406,594,1615,621"/>
-<area shape="rect" href="visit_8cpp.html" title=" " alt="" coords="733,415,883,442"/>
-<area shape="rect" href="errors_8cpp.html" title=" " alt="" coords="2099,319,2237,360"/>
-<area shape="rect" href="dot__visitor_8cpp.html" title=" " alt="" coords="667,497,816,539"/>
-<area shape="rect" href="visitor_8hpp.html" title=" " alt="" coords="453,319,592,360"/>
-<area shape="rect" href="dot__visitor_8hpp.html" title=" " alt="" coords="376,408,525,449"/>
-<area shape="rect" href="hash__visitor_8hpp.html" title=" " alt="" coords="550,408,709,449"/>
-<area shape="rect" href="print__visitor_8hpp.html" title=" " alt="" coords="43,408,199,449"/>
-<area shape="rect" href="type_8hpp.html" title=" " alt="" coords="2955,326,3096,353"/>
-<area shape="rect" href="scope__container_8hpp.html" title=" " alt="" coords="2987,497,3154,539"/>
-<area shape="rect" href="notes_8hpp.html" title=" " alt="" coords="1272,229,1411,271"/>
-<area shape="rect" href="token_8hpp.html" title=" " alt="" coords="1633,155,1767,181"/>
-<area shape="rect" href="compatibility_8hpp.html" title=" " alt="" coords="1368,80,1557,107"/>
-<area shape="rect" href="type__base_8hpp.html" title=" " alt="" coords="2479,155,2655,181"/>
-<area shape="rect" href="substitution_8hpp.html" title=" " alt="" coords="2760,237,2944,263"/>
-<area shape="rect" href="ast_8cpp.html" title=" " alt="" coords="1931,326,2074,353"/>
-<area shape="rect" href="crtp__walker_8hpp.html" title=" " alt="" coords="2720,505,2912,531"/>
-<area shape="rect" href="type__walker_8cpp.html" title=" " alt="" coords="3128,751,3288,792"/>
-<area shape="rect" href="parser_8cpp.html" title=" " alt="" coords="1770,415,1931,442"/>
-<area shape="rect" href="vals_8cpp.html" title=" " alt="" coords="1793,505,1973,531"/>
-<area shape="rect" href="type_8cpp.html" title=" " alt="" coords="2403,505,2544,531"/>
-<area shape="rect" href="hash__visitor_8cpp.html" title=" " alt="" coords="1171,497,1330,539"/>
-<area shape="rect" href="mangle_8hpp.html" title=" " alt="" coords="2150,505,2327,531"/>
-<area shape="rect" href="mangle_8cpp.html" title=" " alt="" coords="2238,594,2415,621"/>
-<area shape="rect" href="type__holder_8hpp.html" title=" " alt="" coords="3089,587,3245,628"/>
-<area shape="rect" href="token_8cpp.html" title=" " alt="" coords="1889,237,2023,263"/>
+<area shape="rect" title=" " alt="" coords="1432,5,1552,32"/>
+<area shape="rect" href="ast_8hpp.html" title=" " alt="" coords="2042,237,2185,263"/>
+<area shape="rect" href="compiler_8hpp.html" title=" " alt="" coords="1756,765,1961,792"/>
+<area shape="rect" href="compiler_8cpp.html" title=" " alt="" coords="2840,847,3045,874"/>
+<area shape="rect" href="type__holder_8cpp.html" title=" " alt="" coords="1911,840,2067,881"/>
+<area shape="rect" href="yumec_8cpp.html" title=" " alt="" coords="253,847,360,874"/>
+<area shape="rect" href="type__walker_8hpp.html" title=" " alt="" coords="1903,676,2063,717"/>
+<area shape="rect" href="describe_8cpp.html" title=" " alt="" coords="826,326,1001,353"/>
+<area shape="rect" href="parser_8hpp.html" title=" " alt="" coords="1711,326,1873,353"/>
+<area shape="rect" href="vals_8hpp.html" title=" " alt="" coords="2019,505,2199,531"/>
+<area shape="rect" href="overload_8hpp.html" title=" " alt="" coords="2493,594,2702,621"/>
+<area shape="rect" href="overload_8cpp.html" title=" " alt="" coords="2981,683,3190,710"/>
+<area shape="rect" href="type_8cpp.html" title=" " alt="" coords="3081,594,3223,621"/>
+<area shape="rect" href="visit_8cpp.html" title=" " alt="" coords="2404,415,2553,442"/>
+<area shape="rect" href="errors_8cpp.html" title=" " alt="" coords="1076,319,1215,360"/>
+<area shape="rect" href="dot__visitor_8cpp.html" title=" " alt="" coords="528,497,677,539"/>
+<area shape="rect" href="visitor_8hpp.html" title=" " alt="" coords="663,319,801,360"/>
+<area shape="rect" href="dot__visitor_8hpp.html" title=" " alt="" coords="528,408,677,449"/>
+<area shape="rect" href="hash__visitor_8hpp.html" title=" " alt="" coords="702,408,861,449"/>
+<area shape="rect" href="print__visitor_8hpp.html" title=" " alt="" coords="145,408,301,449"/>
+<area shape="rect" href="substitution_8hpp.html" title=" " alt="" coords="2831,326,3015,353"/>
+<area shape="rect" href="type_8hpp.html" title=" " alt="" coords="3327,415,3468,442"/>
+<area shape="rect" href="scope__container_8hpp.html" title=" " alt="" coords="497,587,663,628"/>
+<area shape="rect" href="notes_8hpp.html" title=" " alt="" coords="1508,229,1647,271"/>
+<area shape="rect" href="token_8hpp.html" title=" " alt="" coords="1274,155,1409,181"/>
+<area shape="rect" href="compatibility_8hpp.html" title=" " alt="" coords="2957,80,3147,107"/>
+<area shape="rect" href="type__base_8hpp.html" title=" " alt="" coords="3376,155,3552,181"/>
+<area shape="rect" href="ast_8cpp.html" title=" " alt="" coords="1290,326,1433,353"/>
+<area shape="rect" href="crtp__walker_8hpp.html" title=" " alt="" coords="1665,594,1857,621"/>
+<area shape="rect" href="type__walker_8cpp.html" title=" " alt="" coords="2439,840,2599,881"/>
+<area shape="rect" href="parser_8cpp.html" title=" " alt="" coords="1711,415,1873,442"/>
+<area shape="rect" href="vals_8cpp.html" title=" " alt="" coords="2237,594,2417,621"/>
+<area shape="rect" href="hash__visitor_8cpp.html" title=" " alt="" coords="1005,497,1163,539"/>
+<area shape="rect" href="notes_8cpp.html" title=" " alt="" coords="1452,587,1591,628"/>
+<area shape="rect" href="mangle_8hpp.html" title=" " alt="" coords="1983,594,2161,621"/>
+<area shape="rect" href="mangle_8cpp.html" title=" " alt="" coords="2138,683,2315,710"/>
+<area shape="rect" href="substitution_8cpp.html" title=" " alt="" coords="3183,505,3367,531"/>
+<area shape="rect" href="type__holder_8hpp.html" title=" " alt="" coords="3266,676,3422,717"/>
+<area shape="rect" href="token_8cpp.html" title=" " alt="" coords="1241,237,1375,263"/>
 </map>
 </div>
 </div>
@@ -185,6 +189,11 @@ Concepts</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">concept &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="conceptyume_1_1visitable.html">yume::visitable</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:a0bce880fe5dba9821cb3e500a0c31353"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="util_8hpp.html#a0bce880fe5dba9821cb3e500a0c31353">YUME_ASSERT</a>(assertion,  message)&#160;&#160;&#160;(static_cast&lt;bool&gt;(assertion) ? ((void)0) : yume_assert_failure(message))</td></tr>
+<tr class="separator:a0bce880fe5dba9821cb3e500a0c31353"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
 <tr class="memitem:a38932a6efdeba0de668a05650c45b8b3"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
@@ -196,21 +205,46 @@ Typedefs</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a64670ac9f02bffbee6be875e64e4e7f6"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a64670ac9f02bffbee6be875e64e4e7f6"><td class="memTemplItemLeft" align="right" valign="top">constexpr void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a64670ac9f02bffbee6be875e64e4e7f6">yume::yume_assert</a> (T &amp;&amp;assertion, const std::string_view log_msg={}, const source_location location=source_location::current()) noexcept</td></tr>
-<tr class="separator:a64670ac9f02bffbee6be875e64e4e7f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae364b85a1fba7512cefa50efeef07fe8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#ae364b85a1fba7512cefa50efeef07fe8">yume::yume_assert_failure</a> (const std::string_view log_msg={}, const source_location location=source_location::current()) noexcept</td></tr>
+<tr class="separator:ae364b85a1fba7512cefa50efeef07fe8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aab3b7eeccbdb81edb6e93db797e6594d"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#aab3b7eeccbdb81edb6e93db797e6594d">yume::open_file</a> (nonnull&lt; const char * &gt; filename) -&gt; unique_ptr&lt; llvm::raw_pwrite_stream &gt;</td></tr>
 <tr class="memdesc:aab3b7eeccbdb81edb6e93db797e6594d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Opens a writeable stream to a file with the given filename relative to the current working directory.  <a href="namespaceyume.html#aab3b7eeccbdb81edb6e93db797e6594d">More...</a><br /></td></tr>
 <tr class="separator:aab3b7eeccbdb81edb6e93db797e6594d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a84da801f2471cee6b1007cf0c0e98ce5"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#a84da801f2471cee6b1007cf0c0e98ce5">yume::stem</a> (std::string_view sv) -&gt; std::string_view</td></tr>
-<tr class="memdesc:a84da801f2471cee6b1007cf0c0e98ce5"><td class="mdescLeft">&#160;</td><td class="mdescRight">The stem of a path-like string, which is the component after the last slash.  <a href="namespaceyume.html#a84da801f2471cee6b1007cf0c0e98ce5">More...</a><br /></td></tr>
-<tr class="separator:a84da801f2471cee6b1007cf0c0e98ce5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
-Variables</h2></td></tr>
-<tr class="memitem:aedb12619c04c37318fc716c081ebb968"><td class="memItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume.html#aedb12619c04c37318fc716c081ebb968">yume::ENABLE_ASSERT</a> = true</td></tr>
-<tr class="separator:aedb12619c04c37318fc716c081ebb968"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afca3d17e36e390b33141a7f21ccbb4bb"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:afca3d17e36e390b33141a7f21ccbb4bb"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceyume.html#afca3d17e36e390b33141a7f21ccbb4bb">yume::hash_combine</a> (uint64_t &amp;seed, const T &amp;v)</td></tr>
+<tr class="separator:afca3d17e36e390b33141a7f21ccbb4bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="a0bce880fe5dba9821cb3e500a0c31353" name="a0bce880fe5dba9821cb3e500a0c31353"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0bce880fe5dba9821cb3e500a0c31353">&#9670;&nbsp;</a></span>YUME_ASSERT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define YUME_ASSERT</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">assertion, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">message&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;(static_cast&lt;bool&gt;(assertion) ? ((void)0) : yume_assert_failure(message))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="util_8hpp_source.html#l00081">81</a> of file <a class="el" href="util_8hpp_source.html">util.hpp</a>.</p>
+
+</div>
+</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

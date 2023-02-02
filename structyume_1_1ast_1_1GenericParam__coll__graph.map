@@ -1,0 +1,7 @@
+<map id="yume::ast::GenericParam" name="yume::ast::GenericParam">
+<area shape="rect" id="node1" title="A generic, compile&#45;time argument to a struct or function definition, comparable to C++ template param..." alt="" coords="147,199,314,225"/>
+<area shape="rect" id="node2" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,102,115,129"/>
+<area shape="rect" id="node3" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title=" " alt="" coords="139,95,322,136"/>
+<area shape="rect" id="node4" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T, or the absence of one. See OptionalExpr and OptionalType..." alt="" coords="124,5,337,32"/>
+<area shape="rect" id="node5" title=" " alt="" coords="346,102,401,129"/>
+</map>

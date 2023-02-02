@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['yume_5fassert_0',['yume_assert',['../namespaceyume.html#a64670ac9f02bffbee6be875e64e4e7f6',1,'yume']]]
+  ['xml_5fescape_0',['xml_escape',['../namespaceyume_1_1diagnostic.html#a52c8406462987511376ab26342a13a56',1,'yume::diagnostic']]]
 ];

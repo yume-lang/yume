@@ -1,7 +1,7 @@
 <map id="yume::semantic::OverloadSet" name="yume::semantic::OverloadSet">
-<area shape="rect" id="node1" title=" " alt="" coords="311,97,501,124"/>
-<area shape="rect" id="node2" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="49,5,159,32"/>
-<area shape="rect" id="node3" title=" " alt="" coords="25,57,183,98"/>
-<area shape="rect" id="node4" title=" " alt="" coords="39,122,169,163"/>
-<area shape="rect" id="node5" href="$classyume_1_1diagnostic_1_1NotesHolder.html" title=" " alt="" coords="5,188,203,215"/>
+<area shape="rect" id="node1" title=" " alt="" coords="303,97,493,124"/>
+<area shape="rect" id="node2" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="45,5,155,32"/>
+<area shape="rect" id="node3" title=" " alt="" coords="21,57,179,98"/>
+<area shape="rect" id="node4" title=" " alt="" coords="35,122,165,163"/>
+<area shape="rect" id="node5" title=" " alt="" coords="5,187,195,229"/>
 </map>

@@ -1,0 +1,8 @@
+<map id="yume::diagnostic::NotesHolder" name="yume::diagnostic::NotesHolder">
+<area shape="rect" id="node1" title=" " alt="" coords="171,228,368,255"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,139,192,165"/>
+<area shape="rect" id="node3" title=" " alt="" coords="217,139,322,165"/>
+<area shape="rect" id="node4" href="$structyume_1_1Loc.html" title="Represents a location in source code, as a range starting at a line and column and ending at some oth..." alt="" coords="346,139,427,165"/>
+<area shape="rect" id="node5" title=" " alt="" coords="323,5,362,32"/>
+<area shape="rect" id="node6" title=" " alt="" coords="387,5,477,32"/>
+</map>

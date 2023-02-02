@@ -1,5 +1,11 @@
 <map id="yume::ast::parser::Parser" name="yume::ast::parser::Parser">
-<area shape="rect" id="node1" title=" " alt="" coords="109,139,235,180"/>
-<area shape="rect" id="node2" href="$classyume_1_1ast_1_1TokenIterator.html" title="An iterator&#45;like holding Tokens, used when parsing." alt="" coords="5,5,165,32"/>
-<area shape="rect" id="node3" title=" " alt="" coords="189,5,331,32"/>
+<area shape="rect" id="node1" title=" " alt="" coords="225,361,351,403"/>
+<area shape="rect" id="node2" href="$classyume_1_1ast_1_1TokenIterator.html" title="An iterator&#45;like holding Tokens, used when parsing." alt="" coords="5,228,165,255"/>
+<area shape="rect" id="node3" href="$structyume_1_1diagnostic_1_1NotesHolder.html" title=" " alt="" coords="189,228,387,255"/>
+<area shape="rect" id="node4" title=" " alt="" coords="24,139,211,165"/>
+<area shape="rect" id="node5" title=" " alt="" coords="235,139,341,165"/>
+<area shape="rect" id="node6" href="$structyume_1_1Loc.html" title="Represents a location in source code, as a range starting at a line and column and ending at some oth..." alt="" coords="365,139,446,165"/>
+<area shape="rect" id="node7" title=" " alt="" coords="341,5,379,32"/>
+<area shape="rect" id="node8" title=" " alt="" coords="404,5,495,32"/>
+<area shape="rect" id="node9" title=" " alt="" coords="411,228,552,255"/>
 </map>

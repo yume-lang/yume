@@ -10,8 +10,9 @@ var searchData=
   ['compatibilities_7',['compatibilities',['../structyume_1_1semantic_1_1Overload.html#a671e03f61e4161feb846bcbdbb73447e',1,'yume::semantic::Overload']]],
   ['compiler_8',['compiler',['../structyume_1_1semantic_1_1TypeWalker.html#a6053cbc38e92823c902b934bf51fd76e',1,'yume::semantic::TypeWalker']]],
   ['cond_9',['cond',['../structyume_1_1ast_1_1WhileStmt.html#a9f0905cb9a44a1fd47e350ec2bc4500a',1,'yume::ast::WhileStmt::cond()'],['../structyume_1_1ast_1_1IfClause.html#af2e16cb6d7d8c583ba02d6d8d5fa8912',1,'yume::ast::IfClause::cond()']]],
-  ['conv_10',['conv',['../structyume_1_1ty_1_1Compat.html#acba0f7199e1b796c405c1d02b408f9aa',1,'yume::ty::Compat']]],
-  ['conversion_11',['conversion',['../structyume_1_1ast_1_1ImplicitCastExpr.html#a0175f16da5cd51b632827f39b63f522b',1,'yume::ast::ImplicitCastExpr']]],
-  ['crtpwalker_12',['CRTPWalker',['../structyume_1_1semantic_1_1TypeWalker.html#a0e0e1d03919b2640bb3fc9d3b231aae6',1,'yume::semantic::TypeWalker']]],
-  ['current_5fdecl_13',['current_decl',['../structyume_1_1semantic_1_1TypeWalker.html#aa2ac89481a5ce7a5a5db6e1b447ce100',1,'yume::semantic::TypeWalker']]]
+  ['context_5ffiles_10',['context_files',['../structyume_1_1diagnostic_1_1NotesHolder.html#a7950968732ca48c80984b98f1a2651b1',1,'yume::diagnostic::NotesHolder']]],
+  ['conv_11',['conv',['../structyume_1_1ty_1_1Compat.html#acba0f7199e1b796c405c1d02b408f9aa',1,'yume::ty::Compat']]],
+  ['conversion_12',['conversion',['../structyume_1_1ast_1_1ImplicitCastExpr.html#a0175f16da5cd51b632827f39b63f522b',1,'yume::ast::ImplicitCastExpr']]],
+  ['crtpwalker_13',['CRTPWalker',['../structyume_1_1semantic_1_1TypeWalker.html#a0e0e1d03919b2640bb3fc9d3b231aae6',1,'yume::semantic::TypeWalker']]],
+  ['current_5fdecl_14',['current_decl',['../structyume_1_1semantic_1_1TypeWalker.html#aa2ac89481a5ce7a5a5db6e1b447ce100',1,'yume::semantic::TypeWalker']]]
 ];

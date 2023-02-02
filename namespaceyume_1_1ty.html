@@ -114,8 +114,6 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Struct.html">Struct</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An user-defined struct type with associated fields.  <a href="classyume_1_1ty_1_1Struct.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1ty_1_1Sub.html">Sub</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ty_1_1Type.html">Type</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A "qualified" type, with a non-stackable qualifier, <em>i.e</em>. <code>mut</code>.  <a href="classyume_1_1ty_1_1Type.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -142,11 +140,8 @@ Enumerations</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:a57a89e61c2dc52a531245495b3371dcb"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ty.html#a57a89e61c2dc52a531245495b3371dcb">qual_suffix</a> (<a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706">Qualifier</a> qual) -&gt; string</td></tr>
 <tr class="separator:a57a89e61c2dc52a531245495b3371dcb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af95ed3d4eb9e88a2d50effbc4fb615f5"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ty.html#af95ed3d4eb9e88a2d50effbc4fb615f5">visit_subs</a> (<a class="el" href="classyume_1_1ty_1_1Type.html">Type</a> a, <a class="el" href="classyume_1_1ty_1_1Type.html">Type</a> b, optional&lt; <a class="el" href="structyume_1_1ty_1_1Sub.html">Sub</a> &gt; sub) -&gt; optional&lt; <a class="el" href="structyume_1_1ty_1_1Sub.html">Sub</a> &gt;</td></tr>
-<tr class="separator:af95ed3d4eb9e88a2d50effbc4fb615f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4ec73eb24ffdf445c2f71362589c5e3c"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ty.html#a4ec73eb24ffdf445c2f71362589c5e3c">intersect_generics</a> (<a class="el" href="structyume_1_1Substitution.html">Substitution</a> &amp;subs, const <a class="el" href="classyume_1_1ty_1_1Generic.html">Generic</a> *gen, <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> gen_sub) -&gt; optional&lt; <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> &gt;</td></tr>
-<tr class="memdesc:a4ec73eb24ffdf445c2f71362589c5e3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add the substitution <code>gen_sub</code> for the generic type variable <code>gen</code> in template instantiation <code>instantiation</code>. If a substitution already exists for the same type variable, the two substitutions are intersected.  <a href="namespaceyume_1_1ty.html#a4ec73eb24ffdf445c2f71362589c5e3c">More...</a><br /></td></tr>
-<tr class="separator:a4ec73eb24ffdf445c2f71362589c5e3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b685eac7a38070750c17094bf85dd53"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceyume_1_1ty.html#a4b685eac7a38070750c17094bf85dd53">visit_subs</a> (<a class="el" href="classyume_1_1ty_1_1Type.html">Type</a> a, <a class="el" href="classyume_1_1ty_1_1Type.html">Type</a> b, std::unordered_map&lt; string, <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> &gt; &amp;sub)</td></tr>
+<tr class="separator:a4b685eac7a38070750c17094bf85dd53"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="a4c255b641f0b91ee4ff8bc878e7bd04e" name="a4c255b641f0b91ee4ff8bc878e7bd04e"></a>
@@ -186,55 +181,6 @@ Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a4ec73eb24ffdf445c2f71362589c5e3c" name="a4ec73eb24ffdf445c2f71362589c5e3c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4ec73eb24ffdf445c2f71362589c5e3c">&#9670;&nbsp;</a></span>intersect_generics()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static auto yume::ty::intersect_generics </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structyume_1_1Substitution.html">Substitution</a> &amp;&#160;</td>
-          <td class="paramname"><em>subs</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="classyume_1_1ty_1_1Generic.html">Generic</a> *&#160;</td>
-          <td class="paramname"><em>gen</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a>&#160;</td>
-          <td class="paramname"><em>gen_sub</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> -&gt; optional&lt;<a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a>&gt; </td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Add the substitution <code>gen_sub</code> for the generic type variable <code>gen</code> in template instantiation <code>instantiation</code>. If a substitution already exists for the same type variable, the two substitutions are intersected. </p>
-<dl class="section return"><dt>Returns</dt><dd>nullopt if substitution failed </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00090">90</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00111">yume::ty::Type::determine_generic_subs()</a>.</p>
-
-</div>
-</div>
 <a id="a57a89e61c2dc52a531245495b3371dcb" name="a57a89e61c2dc52a531245495b3371dcb"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a57a89e61c2dc52a531245495b3371dcb">&#9670;&nbsp;</a></span>qual_suffix()</h2>
 
@@ -259,16 +205,16 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00018">18</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00022">22</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706aebb87a770abac0e394d963d20ed574b7">yume::Mut</a>, <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a165d3d525f6d0cbd55e42cc3058cafcc">yume::Ptr</a>, and <a class="el" href="namespaceyume.html#a16573f8f7608bab0d8e989c83bc50706a60baadb22e80b147e4885ad16760e569">yume::Ref</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00368">yume::ty::Type::name()</a>, and <a class="el" href="type_8cpp_source.html#l00378">yume::ty::Ptr::name()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00450">yume::ty::Type::name()</a>, and <a class="el" href="type_8cpp_source.html#l00460">yume::ty::Ptr::name()</a>.</p>
 
 </div>
 </div>
-<a id="af95ed3d4eb9e88a2d50effbc4fb615f5" name="af95ed3d4eb9e88a2d50effbc4fb615f5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af95ed3d4eb9e88a2d50effbc4fb615f5">&#9670;&nbsp;</a></span>visit_subs()</h2>
+<a id="a4b685eac7a38070750c17094bf85dd53" name="a4b685eac7a38070750c17094bf85dd53"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b685eac7a38070750c17094bf85dd53">&#9670;&nbsp;</a></span>visit_subs()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -277,7 +223,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static auto yume::ty::visit_subs </td>
+          <td class="memname">static void yume::ty::visit_subs </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classyume_1_1ty_1_1Type.html">Type</a>&#160;</td>
           <td class="paramname"><em>a</em>, </td>
@@ -291,13 +237,13 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">optional&lt; <a class="el" href="structyume_1_1ty_1_1Sub.html">Sub</a> &gt;&#160;</td>
+          <td class="paramtype">std::unordered_map&lt; string, <a class="el" href="classyume_1_1ty_1_1Type.html">ty::Type</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>sub</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td> -&gt; optional&lt;<a class="el" href="structyume_1_1ty_1_1Sub.html">Sub</a>&gt; </td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -307,11 +253,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00049">49</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="type_8cpp_source.html#l00053">53</a> of file <a class="el" href="type_8cpp_source.html">type.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="type_8hpp_source.html#l00072">yume::ty::Ptr::qualifier()</a>, <a class="el" href="type_8cpp_source.html#l00049">visit_subs()</a>, and <a class="el" href="util_8hpp_source.html#l00082">yume::yume_assert()</a>.</p>
+<p class="reference">References <a class="el" href="type__base_8hpp_source.html#l00081">yume::ty::Type::base_cast()</a>, <a class="el" href="type__base_8hpp_source.html#l00082">yume::ty::Type::base_dyn_cast()</a>, <a class="el" href="type__base_8hpp_source.html#l00091">yume::ty::Type::base_isa()</a>, <a class="el" href="type_8cpp_source.html#l00387">yume::ty::Type::ensure_mut_base()</a>, <a class="el" href="type_8cpp_source.html#l00221">yume::ty::Type::is_generic()</a>, <a class="el" href="type_8cpp_source.html#l00251">yume::ty::Type::is_meta()</a>, <a class="el" href="type__base_8hpp_source.html#l00115">yume::ty::Type::is_mut()</a>, <a class="el" href="type_8hpp_source.html#l00182">yume::ty::Generic::name()</a>, <a class="el" href="type_8cpp_source.html#l00393">yume::ty::Type::ptr_base()</a>, <a class="el" href="type_8hpp_source.html#l00072">yume::ty::Ptr::qualifier()</a>, <a class="el" href="type_8cpp_source.html#l00053">visit_subs()</a>, <a class="el" href="type_8cpp_source.html#l00435">yume::ty::Type::without_meta()</a>, and <a class="el" href="util_8hpp_source.html#l00081">YUME_ASSERT</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00111">yume::ty::Type::determine_generic_subs()</a>, and <a class="el" href="type_8cpp_source.html#l00049">visit_subs()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="type_8cpp_source.html#l00096">yume::ty::Type::determine_generic_subs()</a>, and <a class="el" href="type_8cpp_source.html#l00053">visit_subs()</a>.</p>
 
 </div>
 </div>

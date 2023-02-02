@@ -84,12 +84,18 @@ Collaboration diagram for yume::SourceFile:</div>
 <div class="dyncontent">
 <div class="center"><img src="structyume_1_1SourceFile__coll__graph.png" border="0" usemap="#ayume_1_1SourceFile_coll__map" alt="Collaboration graph"/></div>
 <map name="ayume_1_1SourceFile_coll__map" id="ayume_1_1SourceFile_coll__map">
-<area shape="rect" title="A source file with its associated Syntax Tree." alt="" coords="264,107,385,133"/>
-<area shape="rect" title=" " alt="" coords="62,5,109,32"/>
-<area shape="rect" title=" " alt="" coords="58,56,113,83"/>
-<area shape="rect" title=" " alt="" coords="9,107,162,133"/>
-<area shape="rect" href="classyume_1_1ast_1_1TokenIterator.html" title="An iterator&#45;like holding Tokens, used when parsing." alt="" coords="5,157,165,184"/>
-<area shape="rect" title=" " alt="" coords="11,209,159,250"/>
+<area shape="rect" title="A source file with its associated Syntax Tree." alt="" coords="809,132,931,159"/>
+<area shape="rect" title=" " alt="" coords="589,5,635,32"/>
+<area shape="rect" title=" " alt="" coords="585,56,639,83"/>
+<area shape="rect" title=" " alt="" coords="535,107,689,133"/>
+<area shape="rect" href="classyume_1_1ast_1_1TokenIterator.html" title="An iterator&#45;like holding Tokens, used when parsing." alt="" coords="532,157,692,184"/>
+<area shape="rect" title=" " alt="" coords="538,209,686,250"/>
+<area shape="rect" href="structyume_1_1diagnostic_1_1NotesHolder.html" title=" " alt="" coords="513,275,711,301"/>
+<area shape="rect" title=" " alt="" coords="203,224,389,251"/>
+<area shape="rect" title=" " alt="" coords="243,275,349,301"/>
+<area shape="rect" href="structyume_1_1Loc.html" title="Represents a location in source code, as a range starting at a line and column and ending at some oth..." alt="" coords="255,325,337,352"/>
+<area shape="rect" title=" " alt="" coords="31,300,70,327"/>
+<area shape="rect" title=" " alt="" coords="5,351,96,377"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -115,11 +121,13 @@ Public Attributes</h2></td></tr>
 <tr class="separator:aced874c55e1d611053e688b11f6a39ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afc76a93b86868ed720f2de2c676e9b4c"><td class="memItemLeft" align="right" valign="top">unique_ptr&lt; <a class="el" href="structyume_1_1ast_1_1Program.html">ast::Program</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1SourceFile.html#afc76a93b86868ed720f2de2c676e9b4c">program</a></td></tr>
 <tr class="separator:afc76a93b86868ed720f2de2c676e9b4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ac9c38bea827588f6ef4afbd82a3ec6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structyume_1_1diagnostic_1_1NotesHolder.html">diagnostic::NotesHolder</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structyume_1_1SourceFile.html#a0ac9c38bea827588f6ef4afbd82a3ec6">notes</a> {{this}}</td></tr>
+<tr class="separator:a0ac9c38bea827588f6ef4afbd82a3ec6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >A source file with its associated Syntax Tree. </p>
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00273">273</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00280">280</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ab0fa2288c9cbb0b6430bbf6dfc41a15e" name="ab0fa2288c9cbb0b6430bbf6dfc41a15e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab0fa2288c9cbb0b6430bbf6dfc41a15e">&#9670;&nbsp;</a></span>SourceFile()</h2>
@@ -155,9 +163,9 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00282">282</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00290">290</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="parser_8cpp_source.html#l00848">yume::ast::Program::parse()</a>.</p>
+<p class="reference">References <a class="el" href="parser_8cpp_source.html#l00888">yume::ast::Program::parse()</a>.</p>
 
 </div>
 </div>
@@ -186,7 +194,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00280">280</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00288">288</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
 </div>
 </div>
@@ -203,7 +211,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00277">277</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00284">284</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
 </div>
 </div>
@@ -219,7 +227,23 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00275">275</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00282">282</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a0ac9c38bea827588f6ef4afbd82a3ec6" name="a0ac9c38bea827588f6ef4afbd82a3ec6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ac9c38bea827588f6ef4afbd82a3ec6">&#9670;&nbsp;</a></span>notes</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structyume_1_1diagnostic_1_1NotesHolder.html">diagnostic::NotesHolder</a> yume::SourceFile::notes {{this}}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00286">286</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
 </div>
 </div>
@@ -235,7 +259,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00274">274</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00281">281</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
 </div>
 </div>
@@ -251,7 +275,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00278">278</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00285">285</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
 </div>
 </div>
@@ -267,7 +291,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00276">276</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vals_8hpp_source.html#l00283">283</a> of file <a class="el" href="vals_8hpp_source.html">vals.hpp</a>.</p>
 
 </div>
 </div>

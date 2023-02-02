@@ -1,0 +1,4 @@
+<map id="yume::ast::GenericParam" name="yume::ast::GenericParam">
+<area shape="rect" id="node1" title="A generic, compile&#45;time argument to a struct or function definition, comparable to C++ template param..." alt="" coords="5,80,172,107"/>
+<area shape="rect" id="node2" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="34,5,143,32"/>
+</map>

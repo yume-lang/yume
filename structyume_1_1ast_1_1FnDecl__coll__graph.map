@@ -1,30 +1,29 @@
 <map id="yume::ast::FnDecl" name="yume::ast::FnDecl">
-<area shape="rect" id="node1" title="A declaration of a function (def)." alt="" coords="1151,431,1275,457"/>
-<area shape="rect" id="node2" href="$classyume_1_1ast_1_1Decl.html" title="Base class for a named declaration." alt="" coords="659,503,769,529"/>
-<area shape="rect" id="node3" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="197,499,307,525"/>
-<area shape="rect" id="node22" href="$structyume_1_1ast_1_1Program.html" title="The top level structure of a file of source code." alt="" coords="438,457,570,484"/>
-<area shape="rect" id="node4" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="16,499,125,525"/>
-<area shape="rect" id="node5" title=" " alt="" coords="885,352,932,379"/>
-<area shape="rect" id="node6" title=" " alt="" coords="838,403,979,429"/>
-<area shape="rect" id="node7" title=" " alt="" coords="881,453,936,480"/>
-<area shape="rect" id="node8" title=" " alt="" coords="861,504,956,531"/>
-<area shape="rect" id="node9" title=" " alt="" coords="843,555,974,597"/>
-<area shape="rect" id="node10" title=" " alt="" coords="853,621,965,648"/>
-<area shape="rect" id="node11" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title=" " alt="" coords="817,673,1000,714"/>
-<area shape="rect" id="node12" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T, or the absence of one. See OptionalExpr and OptionalType..." alt="" coords="397,680,611,707"/>
+<area shape="rect" id="node1" title="A declaration of a function (def)." alt="" coords="1151,440,1275,467"/>
+<area shape="rect" id="node2" href="$classyume_1_1ast_1_1Decl.html" title="Base class for a named declaration." alt="" coords="659,515,769,541"/>
+<area shape="rect" id="node3" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="197,512,307,539"/>
+<area shape="rect" id="node22" href="$structyume_1_1ast_1_1Program.html" title="The top level structure of a file of source code." alt="" coords="438,471,570,497"/>
+<area shape="rect" id="node4" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="16,512,125,539"/>
+<area shape="rect" id="node5" title=" " alt="" coords="885,361,932,388"/>
+<area shape="rect" id="node6" title=" " alt="" coords="838,412,979,439"/>
+<area shape="rect" id="node7" title=" " alt="" coords="881,463,936,489"/>
+<area shape="rect" id="node8" title=" " alt="" coords="861,513,956,540"/>
+<area shape="rect" id="node9" title=" " alt="" coords="843,565,974,606"/>
+<area shape="rect" id="node10" title=" " alt="" coords="843,630,974,671"/>
+<area shape="rect" id="node11" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title=" " alt="" coords="817,695,1000,737"/>
+<area shape="rect" id="node12" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T, or the absence of one. See OptionalExpr and OptionalType..." alt="" coords="397,703,611,729"/>
 <area shape="rect" id="node13" href="$structyume_1_1ast_1_1FnDecl_1_1Body.html" title=" " alt="" coords="635,17,793,44"/>
 <area shape="rect" id="node14" href="$structyume_1_1visitable__variant.html" title=" " alt="" coords="205,5,299,32"/>
 <area shape="rect" id="node15" title=" " alt="" coords="5,36,136,63"/>
 <area shape="rect" id="node18" href="$structyume_1_1visitable__variant.html" title=" " alt="" coords="225,56,279,83"/>
-<area shape="rect" id="node16" href="$structyume_1_1Fn.html" title="A function declaration in the compiler." alt="" coords="871,251,946,277"/>
+<area shape="rect" id="node16" href="$structyume_1_1Fn.html" title="A function declaration in the compiler." alt="" coords="871,260,946,287"/>
 <area shape="rect" id="node17" href="$structyume_1_1Def.html" title=" " alt="" coords="465,56,543,83"/>
 <area shape="rect" id="node19" href="$classyume_1_1ty_1_1Function.html" title="A function pointer type." alt="" coords="441,107,567,133"/>
 <area shape="rect" id="node20" href="$classyume_1_1ty_1_1BaseType.html" title="Represents a type in the type system. NOTE: that this isn&#39;t the class to use for type introspection,..." alt="" coords="185,107,319,133"/>
 <area shape="rect" id="node21" title=" " alt="" coords="441,158,567,199"/>
-<area shape="rect" id="node23" title=" " alt="" coords="187,423,317,465"/>
-<area shape="rect" id="node24" href="$structyume_1_1Substitution.html" title=" " alt="" coords="440,224,568,251"/>
-<area shape="rect" id="node25" href="$classsubstitution__t.html" title=" " alt="" coords="202,224,302,251"/>
-<area shape="rect" id="node26" title=" " alt="" coords="464,275,544,301"/>
-<area shape="rect" id="node27" title=" " alt="" coords="427,326,581,367"/>
-<area shape="rect" id="node28" title=" " alt="" coords="419,391,589,433"/>
+<area shape="rect" id="node23" title=" " alt="" coords="187,437,317,478"/>
+<area shape="rect" id="node24" title=" " alt="" coords="427,223,581,265"/>
+<area shape="rect" id="node25" href="$structyume_1_1Substitutions.html" title=" " alt="" coords="437,289,571,316"/>
+<area shape="rect" id="node26" title=" " alt="" coords="464,340,544,367"/>
+<area shape="rect" id="node27" title=" " alt="" coords="427,391,581,447"/>
 </map>

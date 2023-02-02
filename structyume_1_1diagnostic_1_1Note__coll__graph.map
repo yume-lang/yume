@@ -1,7 +1,11 @@
 <map id="yume::diagnostic::Note" name="yume::diagnostic::Note">
-<area shape="rect" id="node1" title=" " alt="" coords="5,228,157,255"/>
-<area shape="rect" id="node2" title=" " alt="" coords="10,139,65,165"/>
-<area shape="rect" id="node3" href="$structyume_1_1Loc.html" title="Represents a location in source code, as a range starting at a line and column and ending at some oth..." alt="" coords="89,139,170,165"/>
-<area shape="rect" id="node4" title=" " alt="" coords="34,5,105,32"/>
-<area shape="rect" id="node5" title=" " alt="" coords="129,5,252,32"/>
+<area shape="rect" id="node1" title=" " alt="" coords="391,317,543,344"/>
+<area shape="rect" id="node2" href="$structyume_1_1diagnostic_1_1NotesHolder.html" title=" " alt="" coords="172,228,369,255"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,139,192,165"/>
+<area shape="rect" id="node4" title=" " alt="" coords="217,139,322,165"/>
+<area shape="rect" id="node5" href="$structyume_1_1Loc.html" title="Represents a location in source code, as a range starting at a line and column and ending at some oth..." alt="" coords="362,139,443,165"/>
+<area shape="rect" id="node6" title=" " alt="" coords="338,5,377,32"/>
+<area shape="rect" id="node7" title=" " alt="" coords="401,5,492,32"/>
+<area shape="rect" id="node8" title=" " alt="" coords="491,228,546,255"/>
+<area shape="rect" id="node9" title=" " alt="" coords="571,228,640,255"/>
 </map>

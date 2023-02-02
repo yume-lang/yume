@@ -1,20 +1,4 @@
 var searchData=
 [
-  ['implements_0',['implements',['../structyume_1_1ast_1_1StructDecl.html#a76010059ddb1b7fa7e9d39bac12a1b41',1,'yume::ast::StructDecl']]],
-  ['in_5fdepth_1',['in_depth',['../structyume_1_1semantic_1_1TypeWalker.html#af9a74becf44b236bec8bf38365735c59',1,'yume::semantic::TypeWalker']]],
-  ['index_2',['index',['../structyume_1_1TokenState.html#ae28aa12a65948f99f52c4c0708bd0103',1,'yume::TokenState::index()'],['../structyume_1_1Token.html#a559dd11a57e8fcb30382803050da5d24',1,'yume::Token::index()']]],
-  ['indirect_3',['indirect',['../namespaceyume_1_1semantic.html#ab3220834a177744682338bd9cf424009',1,'yume::semantic']]],
-  ['init_4',['init',['../structyume_1_1ast_1_1ConstDecl.html#a9fd253ed15dc624e2beaa2b090013739',1,'yume::ast::ConstDecl::init()'],['../structyume_1_1ast_1_1VarDecl.html#a5386cda718a47dcc47e6f0a25bc13414',1,'yume::ast::VarDecl::init()']]],
-  ['instantiations_5',['instantiations',['../structyume_1_1Fn.html#a1e93d5e55cf14fb68ef3e9809ada66bb',1,'yume::Fn::instantiations()'],['../structyume_1_1Struct.html#a44ab678362978025805488845bc31dbc',1,'yume::Struct::instantiations()']]],
-  ['int_5ftypes_6',['int_types',['../structyume_1_1TypeHolder.html#ab4fc219009a89b1fc1ec0d4956730109',1,'yume::TypeHolder']]],
-  ['is_5fany_5fof_7',['is_any_of',['../classyume_1_1Tokenizer.html#afb116232034da760da9f64203b6ad571',1,'yume::Tokenizer']]],
-  ['is_5fchar_8',['is_char',['../classyume_1_1Tokenizer.html#a2fbd3cdf879588411b60432bf30e48ea',1,'yume::Tokenizer']]],
-  ['is_5fchar_5flit_9',['is_char_lit',['../classyume_1_1Tokenizer.html#ab9d9bc52d21ed445282c701bbb68e769',1,'yume::Tokenizer']]],
-  ['is_5fcomment_10',['is_comment',['../classyume_1_1Tokenizer.html#ae5a5dee99b35e1be405a8b75b0f48bf6',1,'yume::Tokenizer']]],
-  ['is_5fexactly_11',['is_exactly',['../classyume_1_1Tokenizer.html#a7268b59e8bba44ca25c0fe7d8da451b0',1,'yume::Tokenizer']]],
-  ['is_5fhex_5fnum_12',['is_hex_num',['../classyume_1_1Tokenizer.html#a08f0daccf0938b3babf6d834bfab9658',1,'yume::Tokenizer']]],
-  ['is_5finterface_13',['is_interface',['../structyume_1_1ast_1_1StructDecl.html#a8acb4e7d0ed9fbc6bd7ca1068e885e44',1,'yume::ast::StructDecl']]],
-  ['is_5fstr_14',['is_str',['../classyume_1_1Tokenizer.html#a7709893797eac3f850d5563eda75fa54',1,'yume::Tokenizer']]],
-  ['is_5fword_15',['is_word',['../classyume_1_1Tokenizer.html#a658e562b7f9671a12b3e833fc5c97f17',1,'yume::Tokenizer']]],
-  ['iterator_16',['iterator',['../structyume_1_1SourceFile.html#aced874c55e1d611053e688b11f6a39ad',1,'yume::SourceFile']]]
+  ['holder_0',['holder',['../structyume_1_1diagnostic_1_1Note.html#a7304cc363b3c3cbea356365ff917a005',1,'yume::diagnostic::Note']]]
 ];

@@ -1,8 +1,14 @@
 <map id="yume::SourceFile" name="yume::SourceFile">
-<area shape="rect" id="node1" title="A source file with its associated Syntax Tree." alt="" coords="264,107,385,133"/>
-<area shape="rect" id="node2" title=" " alt="" coords="62,5,109,32"/>
-<area shape="rect" id="node3" title=" " alt="" coords="58,56,113,83"/>
-<area shape="rect" id="node4" title=" " alt="" coords="9,107,162,133"/>
-<area shape="rect" id="node5" href="$classyume_1_1ast_1_1TokenIterator.html" title="An iterator&#45;like holding Tokens, used when parsing." alt="" coords="5,157,165,184"/>
-<area shape="rect" id="node6" title=" " alt="" coords="11,209,159,250"/>
+<area shape="rect" id="node1" title="A source file with its associated Syntax Tree." alt="" coords="809,132,931,159"/>
+<area shape="rect" id="node2" title=" " alt="" coords="589,5,635,32"/>
+<area shape="rect" id="node3" title=" " alt="" coords="585,56,639,83"/>
+<area shape="rect" id="node4" title=" " alt="" coords="535,107,689,133"/>
+<area shape="rect" id="node5" href="$classyume_1_1ast_1_1TokenIterator.html" title="An iterator&#45;like holding Tokens, used when parsing." alt="" coords="532,157,692,184"/>
+<area shape="rect" id="node6" title=" " alt="" coords="538,209,686,250"/>
+<area shape="rect" id="node7" href="$structyume_1_1diagnostic_1_1NotesHolder.html" title=" " alt="" coords="513,275,711,301"/>
+<area shape="rect" id="node8" title=" " alt="" coords="203,224,389,251"/>
+<area shape="rect" id="node9" title=" " alt="" coords="243,275,349,301"/>
+<area shape="rect" id="node10" href="$structyume_1_1Loc.html" title="Represents a location in source code, as a range starting at a line and column and ending at some oth..." alt="" coords="255,325,337,352"/>
+<area shape="rect" id="node11" title=" " alt="" coords="31,300,70,327"/>
+<area shape="rect" id="node12" title=" " alt="" coords="5,351,96,377"/>
 </map>

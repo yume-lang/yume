@@ -1,26 +1,25 @@
 <map id="yume::ast::CtorExpr" name="yume::ast::CtorExpr">
-<area shape="rect" id="node1" title="A construction of a struct or cast of a primitive." alt="" coords="1175,475,1307,501"/>
-<area shape="rect" id="node2" href="$classyume_1_1ast_1_1Expr.html" title="Expressions have an associated value and type." alt="" coords="707,457,815,484"/>
-<area shape="rect" id="node3" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="237,448,347,475"/>
-<area shape="rect" id="node18" href="$structyume_1_1ast_1_1Program.html" title="The top level structure of a file of source code." alt="" coords="525,407,657,433"/>
-<area shape="rect" id="node4" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="16,448,125,475"/>
-<area shape="rect" id="node5" href="$classyume_1_1ast_1_1AnyBase.html" title=" " alt="" coords="861,509,995,550"/>
-<area shape="rect" id="node6" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title=" " alt="" coords="500,509,683,550"/>
-<area shape="rect" id="node7" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T, or the absence of one. See OptionalExpr and OptionalType..." alt="" coords="185,516,399,543"/>
-<area shape="rect" id="node8" href="$classyume_1_1ast_1_1AnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T. See AnyExpr, AnyStmt and AnyType." alt="" coords="509,575,674,601"/>
-<area shape="rect" id="node9" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T, or the absence of one. See OptionalExpr and OptionalType..." alt="" coords="185,575,399,601"/>
-<area shape="rect" id="node10" title=" " alt="" coords="839,575,1017,601"/>
-<area shape="rect" id="node11" href="$structyume_1_1Fn.html" title="A function declaration in the compiler." alt="" coords="891,224,965,251"/>
+<area shape="rect" id="node1" title="A construction of a struct or cast of a primitive." alt="" coords="1175,488,1307,515"/>
+<area shape="rect" id="node2" href="$classyume_1_1ast_1_1Expr.html" title="Expressions have an associated value and type." alt="" coords="707,471,815,497"/>
+<area shape="rect" id="node3" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="237,461,347,488"/>
+<area shape="rect" id="node18" href="$structyume_1_1ast_1_1Program.html" title="The top level structure of a file of source code." alt="" coords="525,420,657,447"/>
+<area shape="rect" id="node4" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="16,461,125,488"/>
+<area shape="rect" id="node5" href="$classyume_1_1ast_1_1AnyBase.html" title=" " alt="" coords="861,522,995,563"/>
+<area shape="rect" id="node6" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title=" " alt="" coords="500,522,683,563"/>
+<area shape="rect" id="node7" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T, or the absence of one. See OptionalExpr and OptionalType..." alt="" coords="185,529,399,556"/>
+<area shape="rect" id="node8" href="$classyume_1_1ast_1_1AnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T. See AnyExpr, AnyStmt and AnyType." alt="" coords="509,588,674,615"/>
+<area shape="rect" id="node9" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T, or the absence of one. See OptionalExpr and OptionalType..." alt="" coords="185,588,399,615"/>
+<area shape="rect" id="node10" title=" " alt="" coords="839,588,1017,615"/>
+<area shape="rect" id="node11" href="$structyume_1_1Fn.html" title="A function declaration in the compiler." alt="" coords="891,239,965,265"/>
 <area shape="rect" id="node12" href="$structyume_1_1Def.html" title=" " alt="" coords="552,5,631,32"/>
 <area shape="rect" id="node13" href="$structyume_1_1visitable__variant.html" title=" " alt="" coords="265,5,319,32"/>
 <area shape="rect" id="node14" title=" " alt="" coords="5,5,136,32"/>
 <area shape="rect" id="node15" href="$classyume_1_1ty_1_1Function.html" title="A function pointer type." alt="" coords="529,56,654,83"/>
 <area shape="rect" id="node16" href="$classyume_1_1ty_1_1BaseType.html" title="Represents a type in the type system. NOTE: that this isn&#39;t the class to use for type introspection,..." alt="" coords="225,56,359,83"/>
 <area shape="rect" id="node17" title=" " alt="" coords="529,107,654,149"/>
-<area shape="rect" id="node19" title=" " alt="" coords="227,373,357,414"/>
-<area shape="rect" id="node20" href="$structyume_1_1Substitution.html" title=" " alt="" coords="527,173,655,200"/>
-<area shape="rect" id="node21" href="$classsubstitution__t.html" title=" " alt="" coords="242,173,342,200"/>
-<area shape="rect" id="node22" title=" " alt="" coords="551,224,631,251"/>
-<area shape="rect" id="node23" title=" " alt="" coords="515,275,668,317"/>
-<area shape="rect" id="node24" title=" " alt="" coords="506,341,677,382"/>
+<area shape="rect" id="node19" title=" " alt="" coords="227,386,357,427"/>
+<area shape="rect" id="node20" title=" " alt="" coords="515,173,668,214"/>
+<area shape="rect" id="node21" href="$structyume_1_1Substitutions.html" title=" " alt="" coords="524,239,659,265"/>
+<area shape="rect" id="node22" title=" " alt="" coords="551,289,631,316"/>
+<area shape="rect" id="node23" title=" " alt="" coords="515,340,668,396"/>
 </map>

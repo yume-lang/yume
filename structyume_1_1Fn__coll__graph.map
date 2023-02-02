@@ -1,18 +1,17 @@
 <map id="yume::Fn" name="yume::Fn">
-<area shape="rect" id="node1" title="A function declaration in the compiler." alt="" coords="697,197,772,224"/>
-<area shape="rect" id="node2" href="$structyume_1_1Def.html" title=" " alt="" coords="443,5,522,32"/>
+<area shape="rect" id="node1" title="A function declaration in the compiler." alt="" coords="700,203,775,229"/>
+<area shape="rect" id="node2" href="$structyume_1_1Def.html" title=" " alt="" coords="435,5,513,32"/>
 <area shape="rect" id="node3" href="$structyume_1_1visitable__variant.html" title=" " alt="" coords="225,5,279,32"/>
 <area shape="rect" id="node4" title=" " alt="" coords="5,5,136,32"/>
-<area shape="rect" id="node5" href="$classyume_1_1ty_1_1Function.html" title="A function pointer type." alt="" coords="420,56,545,83"/>
+<area shape="rect" id="node5" href="$classyume_1_1ty_1_1Function.html" title="A function pointer type." alt="" coords="411,56,537,83"/>
 <area shape="rect" id="node6" href="$classyume_1_1ty_1_1BaseType.html" title="Represents a type in the type system. NOTE: that this isn&#39;t the class to use for type introspection,..." alt="" coords="185,56,319,83"/>
-<area shape="rect" id="node7" title=" " alt="" coords="420,107,545,149"/>
-<area shape="rect" id="node8" href="$structyume_1_1ast_1_1Program.html" title="The top level structure of a file of source code." alt="" coords="417,173,549,200"/>
-<area shape="rect" id="node9" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="197,115,307,141"/>
-<area shape="rect" id="node10" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="16,115,125,141"/>
-<area shape="rect" id="node11" title=" " alt="" coords="187,166,317,207"/>
-<area shape="rect" id="node12" href="$structyume_1_1Substitution.html" title=" " alt="" coords="419,224,547,251"/>
-<area shape="rect" id="node13" href="$classsubstitution__t.html" title=" " alt="" coords="202,232,302,259"/>
-<area shape="rect" id="node14" title=" " alt="" coords="443,275,523,301"/>
-<area shape="rect" id="node15" title=" " alt="" coords="406,326,559,367"/>
-<area shape="rect" id="node16" title=" " alt="" coords="397,391,568,433"/>
+<area shape="rect" id="node7" title=" " alt="" coords="411,107,537,149"/>
+<area shape="rect" id="node8" href="$structyume_1_1ast_1_1Program.html" title="The top level structure of a file of source code." alt="" coords="408,173,540,200"/>
+<area shape="rect" id="node9" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="197,137,307,164"/>
+<area shape="rect" id="node10" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="16,137,125,164"/>
+<area shape="rect" id="node11" title=" " alt="" coords="187,189,317,230"/>
+<area shape="rect" id="node12" title=" " alt="" coords="397,225,551,266"/>
+<area shape="rect" id="node13" href="$structyume_1_1Substitutions.html" title=" " alt="" coords="407,291,541,317"/>
+<area shape="rect" id="node14" title=" " alt="" coords="434,341,514,368"/>
+<area shape="rect" id="node15" title=" " alt="" coords="397,392,551,448"/>
 </map>

@@ -1,4 +1,3 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$structyume_1_1CRTPWalker.html" title=" " alt="" coords="5,5,212,32"/>
-<area shape="rect" id="node2" href="$classyume_1_1Compiler.html" title="The Compiler the the primary top&#45;level type during compilation. A single instance is created during t..." alt="" coords="260,5,371,32"/>
+<area shape="rect" id="node1" href="$structyume_1_1CRTPWalker.html" title="A helper template to walk the Abstract Syntax Tree (AST), utilizing the Curiously Recurring Template ..." alt="" coords="5,5,205,32"/>
 </map>
