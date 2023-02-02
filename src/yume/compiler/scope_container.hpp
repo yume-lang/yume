@@ -47,7 +47,7 @@ public:
   ScopeContainerGuard(ScopeContainer<T>& container, size_t prev_size)
       : m_container(container), m_prev_size(prev_size) {}
   ~ScopeContainerGuard() {
-    yume_assert(m_container.size() == m_prev_size, "Cannot pop scope when scope is in invalid state");
+    YUME_ASSERT(m_container.size() == m_prev_size, "Cannot pop scope when scope is in invalid state");
     m_container.pop_scope();
   }
   ScopeContainerGuard(const ScopeContainerGuard<T>&) = delete;

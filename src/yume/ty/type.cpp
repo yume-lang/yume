@@ -51,7 +51,7 @@ auto Type::known_qual(Qualifier qual) const -> Type {
 }
 
 static void visit_subs(Type a, Type b, std::unordered_map<string, ty::Type>& sub) {
-  yume_assert(b.is_generic(), "Cannot substitute generics in a non-generic type");
+  YUME_ASSERT(b.is_generic(), "Cannot substitute generics in a non-generic type");
 
   // `Foo ptr` -> `T ptr`, with `T = Foo`.
   if (auto a_ptr_base = a.ptr_base(), b_ptr_base = b.ptr_base();
@@ -94,7 +94,7 @@ static void visit_subs(Type a, Type b, std::unordered_map<string, ty::Type>& sub
 }
 
 auto Type::determine_generic_subs(Type generic, const Substitutions& subs) const -> optional<Substitutions> {
-  yume_assert(generic.is_generic(), "Cannot substitute generics in a non-generic type");
+  YUME_ASSERT(generic.is_generic(), "Cannot substitute generics in a non-generic type");
 
   auto clean_subs = subs;
   std::unordered_map<string, ty::Type> replacements{};
@@ -363,7 +363,7 @@ auto Function::get_or_create_instantiation(Substitutions sub) const -> const Fun
       ret = m_ret->apply_generic_substitution(sub);
 
     // TODO(rymiel): Is this necessary?
-    yume_assert(m_closure.empty(), "Cannot substitute function type with closure.");
+    YUME_ASSERT(m_closure.empty(), "Cannot substitute function type with closure.");
 
     auto [iter, ok] = m_instantiations.emplace(
         move(sub), make_unique<Function>(base_name(), move(args), ret, m_closure, m_fn_ptr, m_c_varargs));
@@ -441,8 +441,7 @@ auto Type::without_meta() const noexcept -> Type {
 auto Type::generic_base() const noexcept -> Type {
   if (const auto* st = base_dyn_cast<Struct>(); st != nullptr) {
     auto primary_generic = st->decl()->get_self_ty();
-    yume_assert(primary_generic.has_value(), "Generic type doesn't have a known primary unsubstituted type");
-    // NOLINTNEXTLINE(bugprone-unchecked-optional-access): clang-tidy doesn't accept yume_assert as an assertion
+    YUME_ASSERT(primary_generic.has_value(), "Generic type doesn't have a known primary unsubstituted type");
     return {*primary_generic};
   }
   return *this;

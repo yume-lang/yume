@@ -27,7 +27,7 @@ struct VisitorHelper {
   }
 
   template <typename T> auto visit(const ast::AnyBase<T>& any_base, string_view label) -> auto& {
-    yume_assert(any_base.raw_ptr() != nullptr, "AnyBase should never be null");
+    YUME_ASSERT(any_base.raw_ptr() != nullptr, "AnyBase should never be null");
     return visit(*any_base, label);
   }
 

@@ -185,9 +185,9 @@ template <typename T> class AnyBase : public OptionalAnyBase<T> {
 
 public:
   AnyBase() = delete;
-  explicit AnyBase(T* raw_ptr) : Super{raw_ptr} { yume_assert(raw_ptr != nullptr, "AnyBase should never be null"); }
+  explicit AnyBase(T* raw_ptr) : Super{raw_ptr} { YUME_ASSERT(raw_ptr != nullptr, "AnyBase should never be null"); }
   template <std::convertible_to<unique_ptr<T>> U> AnyBase(U uptr) noexcept : Super{move(uptr)} {
-    yume_assert(Super::m_val.get() != nullptr, "AnyBase should never be null");
+    YUME_ASSERT(Super::m_val.get() != nullptr, "AnyBase should never be null");
   }
   AnyBase(OptionalAnyBase<T>&& other) : Super(move(other.m_val)) {}
 
@@ -251,8 +251,7 @@ public:
 
   [[nodiscard]] auto val_ty() const noexcept -> optional<ty::Type> { return m_val_ty; }
   [[nodiscard]] auto ensure_ty() const -> ty::Type {
-    yume_assert(m_val_ty.has_value(), "Ensured that AST node has type, but one has not been assigned");
-    // NOLINTNEXTLINE(bugprone-unchecked-optional-access): clang-tidy doesn't accept yume_assert as an assertion
+    YUME_ASSERT(m_val_ty.has_value(), "Ensured that AST node has type, but one has not been assigned");
     return *m_val_ty;
   }
   void val_ty(optional<ty::Type> type) {

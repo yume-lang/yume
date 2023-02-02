@@ -197,7 +197,7 @@ auto OverloadSet::is_valid_overload(Overload& overload) -> bool {
     if (param_type.is_generic()) {
       param_type = param_type.apply_generic_substitution(overload.subs);
 
-      yume_assert(!param_type.is_generic(), "Generic substitution must produce a fully-substituted type, but `"s +
+      YUME_ASSERT(!param_type.is_generic(), "Generic substitution must produce a fully-substituted type, but `"s +
                                                 param_type.name() + "' is not fully substituted");
 
       // if (!param_type) {

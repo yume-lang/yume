@@ -34,8 +34,7 @@ auto mangle_name(ty::Type ast_type, DeclLike parent) -> string {
       ss << "*";
   } else if (const auto* generic_type = ast_type.base_dyn_cast<ty::Generic>()) {
     auto match = parent.subs()->find_type(generic_type->name());
-    yume_assert(!match.has_value(), "Cannot mangle unsubstituted generic");
-    // NOLINTNEXTLINE(bugprone-unchecked-optional-access): clang-tidy doesn't accept yume_assert as an assertion
+    YUME_ASSERT(match.has_value(), "Cannot mangle unsubstituted generic");
     ss << match->name();
   } else {
     ss << ast_type.base_name();

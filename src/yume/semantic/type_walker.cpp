@@ -151,7 +151,7 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
 
     auto& subs = best_overload.subs;
     auto* selected = best_overload.fn;
-    yume_assert(subs.fully_substituted(), "Constructors cannot be generic"); // TODO(rymiel): revisit?
+    YUME_ASSERT(subs.fully_substituted(), "Constructors cannot be generic"); // TODO(rymiel): revisit?
 
     // XXX: STILL Duplicated from function overload handling
     // It is an instantiation of a function template
@@ -187,7 +187,7 @@ template <> void TypeWalker::expression(ast::CtorExpr& expr) {
 
     // XXX: STILL Duplicated from function overload handling
     for (auto [target, expr_arg, compat] : llvm::zip(selected->arg_types(), expr.args, best_overload.compatibilities)) {
-      yume_assert(compat.valid, "Invalid compatibility after overload already selected?????");
+      YUME_ASSERT(compat.valid, "Invalid compatibility after overload already selected?????");
       if (compat.conv.empty())
         continue;
 
@@ -208,7 +208,7 @@ auto TypeWalker::make_dup(ast::AnyExpr& expr) -> Fn* {
       st = &i;
   });
 
-  yume_assert(st != nullptr, "Cannot duplicate non-struct type " + base_type.name());
+  YUME_ASSERT(st != nullptr, "Cannot duplicate non-struct type " + base_type.name());
   OverloadSet ctor_overloads{};
 
   auto ctor_receiver = std::make_unique<ast::SelfType>(expr->token_range());
@@ -247,7 +247,7 @@ auto TypeWalker::make_dup(ast::AnyExpr& expr) -> Fn* {
   auto& subs = best_overload.subs;
   auto* selected = best_overload.fn;
 
-  yume_assert(subs.fully_substituted(), "Constructors cannot be generic"); // TODO(rymiel): revisit?
+  YUME_ASSERT(subs.fully_substituted(), "Constructors cannot be generic"); // TODO(rymiel): revisit?
 
   // XXX: STILL Duplicated from function overload handling
   // It is an instantiation of a function template
@@ -285,7 +285,7 @@ auto TypeWalker::make_dup(ast::AnyExpr& expr) -> Fn* {
   auto target = selected->arg_types().front();
   auto& expr_arg = ctor_expr->args.front();
   auto compat = best_overload.compatibilities.front();
-  yume_assert(compat.valid, "Invalid compatibility after overload already selected?????");
+  YUME_ASSERT(compat.valid, "Invalid compatibility after overload already selected?????");
   if (!compat.conv.empty())
     wrap_in_implicit_cast(expr_arg, compat.conv, target);
   expr = move(ctor_expr);
@@ -340,18 +340,18 @@ template <> void TypeWalker::expression(ast::LambdaExpr& expr) {
 }
 
 void TypeWalker::direct_call_operator(ast::CallExpr& expr) {
-  yume_assert(expr.args.size() > 1, "Direct call must have at least 1 argument");
+  YUME_ASSERT(expr.args.size() > 1, "Direct call must have at least 1 argument");
   auto& base = *expr.args.front();
   body_expression(base);
 
-  yume_assert(base.ensure_ty().base_isa<ty::Function>(), "Direct call target must be a function type");
+  YUME_ASSERT(base.ensure_ty().base_isa<ty::Function>(), "Direct call target must be a function type");
   const auto* base_ptr_ty = base.ensure_ty().base_cast<ty::Function>();
 
   for (auto [target, expr_arg] : llvm::zip(base_ptr_ty->args(), llvm::drop_begin(expr.args))) {
     body_expression(*expr_arg);
 
     auto compat = expr_arg->ensure_ty().compatibility(target);
-    yume_assert(compat.valid, "Invalid direct call with incompatible argument types");
+    YUME_ASSERT(compat.valid, "Invalid direct call with incompatible argument types");
     if (compat.conv.empty())
       continue;
 
@@ -562,7 +562,7 @@ template <> void TypeWalker::expression(ast::CallExpr& expr) {
   }
 
   for (auto [target, expr_arg, compat] : llvm::zip(selected->arg_types(), expr.args, best_overload.compatibilities)) {
-    yume_assert(compat.valid, "Invalid compatibility after overload already selected?????");
+    YUME_ASSERT(compat.valid, "Invalid compatibility after overload already selected?????");
     if (compat.conv.empty())
       continue;
 
@@ -589,15 +589,15 @@ template <> void TypeWalker::expression(ast::BinaryLogicExpr& expr) {
   ty::Type bool_ty = compiler.m_types.bool_type;
   body_expression(*expr.lhs);
   body_expression(*expr.rhs);
-  yume_assert(expr.lhs->ensure_ty() == bool_ty);
-  yume_assert(expr.rhs->ensure_ty() == bool_ty);
+  YUME_ASSERT(expr.lhs->ensure_ty() == bool_ty, "BinaryLogicExpr lhs must be boolean");
+  YUME_ASSERT(expr.rhs->ensure_ty() == bool_ty, "BinaryLogicExpr rhs must be boolean");
   expr.val_ty(bool_ty);
 }
 
 template <> void TypeWalker::expression(ast::TypeExpr& expr) {
   expression(*expr.type);
   ty::Type base_type = expr.type->ensure_ty();
-  yume_assert(base_type.is_unqualified(), "Type expression must be unqualified"); // TODO(rymiel): revisit
+  YUME_ASSERT(base_type.is_unqualified(), "Type expression must be unqualified"); // TODO(rymiel): revisit
   expr.val_ty(base_type.known_meta());
 }
 
@@ -647,7 +647,7 @@ template <> void TypeWalker::statement(ast::FnDecl& stat) {
   if (in_depth && std::holds_alternative<ast::Compound>(stat.body))
     statement(get<ast::Compound>(stat.body));
 
-  yume_assert(scope.size() == 1, "End of function should end with only the function scope remaining");
+  YUME_ASSERT(scope.size() == 1, "End of function should end with only the function scope remaining");
 }
 
 template <> void TypeWalker::statement(ast::CtorDecl& stat) {
@@ -681,7 +681,7 @@ template <> void TypeWalker::statement(ast::CtorDecl& stat) {
   if (in_depth)
     statement(stat.body);
 
-  yume_assert(scope.size() == 1, "End of function should end with only the function scope remaining");
+  YUME_ASSERT(scope.size() == 1, "End of function should end with only the function scope remaining");
 }
 
 template <> void TypeWalker::statement(ast::ReturnStmt& stat) {
@@ -846,7 +846,7 @@ auto TypeWalker::convert_type(ast::Type& ast_type) -> ty::Type {
       else
         gen_base.associate(*gen, {gen_sub.as_expr().raw_ptr()});
 
-    // yume_assert(gen_base.fully_substituted(), "Can't convert templated type which isn't fully substituted: "s +
+    // YUME_ASSERT(gen_base.fully_substituted(), "Can't convert templated type which isn't fully substituted: "s +
     //                                               template_base.describe() + " (" + ast_type.describe() + ")");
 
     return get_or_declare_instantiation(struct_obj, gen_base);

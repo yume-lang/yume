@@ -74,20 +74,17 @@ template <typename T> using nonnull = T;
 #endif
 
 #ifdef NDEBUG
-constexpr bool ENABLE_ASSERT = false;
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
+#define YUME_ASSERT(...) ((void)0);
 #else
-constexpr bool ENABLE_ASSERT = true;
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
+#define YUME_ASSERT(assertion, message) (static_cast<bool>(assertion) ? ((void)0) : yume_assert_failure(message))
 #endif
 
-template <typename T>
-constexpr inline void yume_assert(T&& assertion, const std::string_view log_msg = {},
-                                  const source_location location = source_location::current()) noexcept {
-  if constexpr (ENABLE_ASSERT) {
-    if (!assertion) {
-      llvm::errs() << "*** assertion failed: " << at(location) << " " << log_msg << '\n';
-      std::abort();
-    }
-  }
+[[noreturn]] inline void yume_assert_failure(const std::string_view log_msg = {},
+                                             const source_location location = source_location::current()) noexcept {
+  llvm::errs() << "*** assertion failed: " << at(location) << " " << log_msg << '\n';
+  std::abort();
 }
 
 /// Opens a writeable stream to a file with the given filename relative to the current working directory.

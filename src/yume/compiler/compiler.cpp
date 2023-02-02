@@ -163,14 +163,14 @@ static inline auto vtable_entry_for(const Fn& fn) -> VTableEntry {
 }
 
 static inline void create_vtable_for(Struct& st) {
-  yume_assert(st.ast().is_interface, "Cannot create vtable for non-interface struct");
+  YUME_ASSERT(st.ast().is_interface, "Cannot create vtable for non-interface struct");
 
   for (auto& i : st.body()) {
     if (auto* fn_ast = dyn_cast<ast::FnDecl>(i.raw_ptr())) {
       if (!fn_ast->abstract())
         continue;
       auto* fn = fn_ast->sema_decl;
-      yume_assert(fn != nullptr, "Semantic Fn not set in FnDecl AST node");
+      YUME_ASSERT(fn != nullptr, "Semantic Fn not set in FnDecl AST node");
 
       st.vtable_members.emplace_back(vtable_entry_for(*fn));
     }
@@ -251,7 +251,7 @@ void Compiler::run() {
                [&](Struct* /*st*/) { throw std::logic_error("Cannot define a struct"); });
   }
 
-  yume_assert(m_scope.size() == 1, "End of compilation should end with only the global scope remaining");
+  YUME_ASSERT(m_scope.size() == 1, "End of compilation should end with only the global scope remaining");
 
   m_builder->SetInsertPoint(&m_global_dtor_fn->getEntryBlock(), m_global_dtor_fn->getEntryBlock().begin());
   destruct_last_scope();
@@ -286,12 +286,12 @@ auto Compiler::create_struct(Struct& st) -> bool {
   if (iter == m_types.known.end()) {
     auto empl = m_types.known.try_emplace(s_decl.name,
                                           std::make_unique<ty::Struct>(s_decl.name, move(fields), &st, &st.get_subs()));
-    yume_assert(isa<ty::Struct>(*empl.first->second));
+    YUME_ASSERT((isa<ty::Struct>(*empl.first->second)), "Struct type must be a struct");
     st.self_ty = &*empl.first->second;
     return true;
   }
 
-  yume_assert(isa<ty::Struct>(*iter->second));
+  YUME_ASSERT((isa<ty::Struct>(*iter->second)), "Struct type must be a struct");
   auto& existing = cast<ty::Struct>(*iter->second);
 
   if (!st.get_subs().fully_substituted())
@@ -312,7 +312,7 @@ auto Compiler::decl_statement(ast::Stmt& stmt, optional<ty::Type> parent, ast::P
         primary_generics.emplace_back(std::make_unique<ty::Generic>(i.name));
         generics.emplace_back(i.name);
       } else {
-        yume_assert(i.type.has_value(), "Non-type generic parameter must have associated value type");
+        YUME_ASSERT(i.type.has_value(), "Non-type generic parameter must have associated value type");
         generics.emplace_back(i.name, i.type.raw_ptr());
       }
     }
@@ -330,7 +330,7 @@ auto Compiler::decl_statement(ast::Stmt& stmt, optional<ty::Type> parent, ast::P
         primary_generics.emplace_back(std::make_unique<ty::Generic>(i.name));
         generics.emplace_back(i.name);
       } else {
-        yume_assert(i.type.has_value(), "Non-type generic parameter must have associated value type");
+        YUME_ASSERT(i.type.has_value(), "Non-type generic parameter must have associated value type");
         generics.emplace_back(i.name, i.type.raw_ptr());
       }
     }
@@ -431,7 +431,7 @@ auto Compiler::llvm_type(ty::Type type, bool erase_opaque) -> llvm::Type* {
   if (const auto* int_type = type.base_dyn_cast<ty::Int>()) {
     base = llvm::Type::getIntNTy(*m_context, int_type->size());
   } else if (const auto* ptr_type = type.base_dyn_cast<ty::Ptr>()) {
-    yume_assert(ptr_type->qualifier() == Qualifier::Ptr, "Ptr type must hold pointer");
+    YUME_ASSERT(ptr_type->qualifier() == Qualifier::Ptr, "Ptr type must hold pointer");
     base = llvm::PointerType::getUnqual(llvm_type(ptr_type->pointee()));
   } else if (const auto* struct_type = type.base_dyn_cast<ty::Struct>()) {
     llvm::Type* memo = struct_type->memo();
@@ -545,7 +545,7 @@ auto Compiler::declare(Fn& fn) -> llvm::Function* {
   if (fn.primitive())
     return nullptr;
 
-  yume_assert(fn.fn_ty != nullptr, "Function declaration "s + fn.name() + " has no function type set");
+  YUME_ASSERT(fn.fn_ty != nullptr, "Function declaration "s + fn.name() + " has no function type set");
   (void)llvm_type(fn.fn_ty); // Ensure we've created a function type
   llvm::FunctionType* fn_t = fn.fn_ty->fn_memo();
 
@@ -600,7 +600,8 @@ template <> void Compiler::statement(ast::Compound& stat) {
 static void destruct_indirect(Compiler& compiler, const InScope& v) {
   const auto ty = v.ast.ensure_ty();
   if (v.owning && !ty.is_trivially_destructible()) {
-    yume_assert(v.value.llvm->getType() == compiler.llvm_type(ty.without_mut())->getPointerTo());
+    YUME_ASSERT(v.value.llvm->getType() == compiler.llvm_type(ty.without_mut())->getPointerTo(),
+                "Value tracked in scope must be indirect");
     Val llvm_val = v.value;
     if (!ty.is_mut())
       llvm_val = compiler.builder()->CreateLoad(compiler.llvm_type(ty), v.value, "dt.l");
@@ -681,16 +682,14 @@ void Compiler::define(Fn& fn) {
   setup_fn_base(fn);
 
   if (fn.abstract()) {
-    yume_assert(fn.self_ty.has_value(), "Abstract function must refer to a self type");
-    // NOLINTNEXTLINE(bugprone-unchecked-optional-access): clang-tidy doesn't accept yume_assert as an assertion
-    yume_assert(fn.self_ty->base_isa<ty::Struct>(), "Abstract function must be within a struct");
-    // NOLINTNEXTLINE(bugprone-unchecked-optional-access): clang-tidy doesn't accept yume_assert as an assertion
+    YUME_ASSERT(fn.self_ty.has_value(), "Abstract function must refer to a self type");
+    YUME_ASSERT(fn.self_ty->base_isa<ty::Struct>(), "Abstract function must be within a struct");
     const auto* interface = fn.self_ty->base_cast<ty::Struct>()->decl();
-    yume_assert(interface != nullptr, "Struct not found from struct type?");
-    yume_assert(interface->ast().is_interface, "Abstract function must be within interface");
+    YUME_ASSERT(interface != nullptr, "Struct not found from struct type?");
+    YUME_ASSERT(interface->ast().is_interface, "Abstract function must be within interface");
 
     auto vtable_match = std::ranges::find(interface->vtable_members, vtable_entry_for(fn));
-    yume_assert(vtable_match != interface->vtable_members.end(), "abstract method not found in vtable?");
+    YUME_ASSERT(vtable_match != interface->vtable_members.end(), "abstract method not found in vtable?");
     auto vtable_entry_index = std::distance(interface->vtable_members.begin(), vtable_match);
 
     auto vtable_deref_args = vector<llvm::Type*>();
@@ -739,8 +738,7 @@ void Compiler::define(Fn& fn) {
       m_builder->CreateRetVoid();
     }
   } else {
-    yume_assert(fn.self_ty.has_value(), "Cannot define constructor when the type being constructed is unknown");
-    // NOLINTNEXTLINE(bugprone-unchecked-optional-access): clang-tidy doesn't accept yume_assert as an assertion
+    YUME_ASSERT(fn.self_ty.has_value(), "Cannot define constructor when the type being constructed is unknown");
     auto* ctor_type = llvm_type(*fn.self_ty);
     const Val base_value = llvm::UndefValue::get(ctor_type);
     auto* base_alloc = m_builder->CreateAlloca(ctor_type, nullptr, "ctor.base");
@@ -757,7 +755,7 @@ void Compiler::define(Fn& fn) {
   }
 
   m_scope.pop_scope();
-  yume_assert(m_scope.size() == 1, "End of function should end with only the global scope remaining");
+  YUME_ASSERT(m_scope.size() == 1, "End of function should end with only the global scope remaining");
   // llvm::verifyFunction(*fn.llvm, &errs());
 }
 
@@ -910,7 +908,7 @@ void Compiler::make_temporary_in_scope(Val& val, const ast::AST& ast, const stri
       llvm::MDNode::get(*m_context, llvm::MDString::get(*m_context, std::to_string(m_scope.size()) + ": " + tmp_name));
 
   auto ast_ty = ast.ensure_ty();
-  yume_assert(llvm_type(ast_ty) == val.llvm->getType());
+  YUME_ASSERT(llvm_type(ast_ty) == val.llvm->getType(), "Temporary value type must match type in scope");
   auto* val_ty = llvm_type(ast_ty.without_mut());
   Val ptr = nullptr;
   if (m_scope.size() > 1) {
@@ -962,7 +960,7 @@ template <> auto Compiler::expression(ast::StringExpr& expr) -> Val {
 
 template <> auto Compiler::expression(ast::VarExpr& expr) -> Val {
   auto* in_scope = m_scope.find(expr.name);
-  yume_assert(in_scope != nullptr, "Variable "s + expr.name + " is not in scope");
+  YUME_ASSERT(in_scope != nullptr, "Variable "s + expr.name + " is not in scope");
   auto* val = in_scope->value.llvm;
   // Function arguments act as locals, but they are immutable, but still behind a reference (alloca)
   if (!in_scope->ast.ensure_ty().is_mut())
@@ -1137,7 +1135,7 @@ template <> auto Compiler::expression(ast::AssignExpr& expr) -> Val {
   // across both branches.
   if (const auto* target_var = dyn_cast<ast::VarExpr>(expr.target.raw_ptr())) {
     auto* in_scope = m_scope.find(target_var->name);
-    yume_assert(in_scope != nullptr, "Variable "s + target_var->name + " is not in scope");
+    YUME_ASSERT(in_scope != nullptr, "Variable "s + target_var->name + " is not in scope");
 
     destruct_indirect(*this, *in_scope);
 
@@ -1163,7 +1161,7 @@ template <> auto Compiler::expression(ast::AssignExpr& expr) -> Val {
       return {ast.ensure_ty().known_mut(), value};
     }();
 
-    yume_assert(struct_base.is_mut(), "Cannot assign into field of immutable structure");
+    YUME_ASSERT(struct_base.is_mut(), "Cannot assign into field of immutable structure");
 
     const string base_name = field_access->field;
     const int base_offset = field_access->offset;
@@ -1178,7 +1176,7 @@ template <> auto Compiler::expression(ast::AssignExpr& expr) -> Val {
     }
     const auto* struct_type = struct_base.ensure_mut_base().base_cast<ty::Struct>();
 
-    yume_assert(base_offset >= 0, "Field access has unknown offset into struct");
+    YUME_ASSERT(base_offset >= 0, "Field access has unknown offset into struct");
 
     auto* gep = m_builder->CreateStructGEP(llvm_type(struct_type), base, base_offset, "s.sf."s + base_name);
 
@@ -1213,8 +1211,8 @@ template <> auto Compiler::expression(ast::LambdaExpr& expr) -> Val {
     auto [name, ast_arg] = i.value();
     auto type = ast_arg->ensure_ty();
     auto* val = m_scope.find(name);
-    yume_assert(val != nullptr, "Captured variable not found in outer scope");
-    yume_assert(val->ast.ensure_ty() == type, "Capture variable does not match expected type: wanted "s + type.name() +
+    YUME_ASSERT(val != nullptr, "Captured variable not found in outer scope");
+    YUME_ASSERT(val->ast.ensure_ty() == type, "Capture variable does not match expected type: wanted "s + type.name() +
                                                   ", but got " + val->ast.ensure_ty().name());
 
     m_builder->CreateStore(val->value,
@@ -1257,11 +1255,11 @@ template <> auto Compiler::expression(ast::LambdaExpr& expr) -> Val {
 }
 
 auto Compiler::direct_call_operator(ast::CallExpr& expr) -> Val {
-  yume_assert(expr.args.size() > 1, "Direct call must have at least 1 argument");
+  YUME_ASSERT(expr.args.size() > 1, "Direct call must have at least 1 argument");
   auto& base_expr = *expr.args[0];
 
   auto call_target_ty = base_expr.ensure_ty();
-  yume_assert(call_target_ty.base_isa<ty::Function>(), "Direct call target must be a function type");
+  YUME_ASSERT(call_target_ty.base_isa<ty::Function>(), "Direct call target must be a function type");
   auto* llvm_fn_ty = call_target_ty.base_cast<ty::Function>()->fn_memo();
   auto* llvm_fn_bundle_ty = llvm_type(call_target_ty.without_mut());
 
@@ -1321,9 +1319,9 @@ template <> auto Compiler::expression(ast::CtorExpr& expr) -> Val {
     return base_value;
   }
   if (auto int_type = type.without_mut().try_as<ty::Int>()) {
-    yume_assert(expr.args.size() == 1, "Numeric cast can only contain a single argument");
+    YUME_ASSERT(expr.args.size() == 1, "Numeric cast can only contain a single argument");
     auto& cast_from = expr.args[0];
-    yume_assert(cast_from->ensure_ty().without_mut().base_isa<ty::Int>(), "Numeric cast must convert from int");
+    YUME_ASSERT(cast_from->ensure_ty().without_mut().base_isa<ty::Int>(), "Numeric cast must convert from int");
     auto base = body_expression(*cast_from);
     if (cast_from->ensure_ty().without_mut().base_cast<ty::Int>()->is_signed())
       return m_builder->CreateSExtOrTrunc(base, llvm_type(*int_type));
@@ -1410,7 +1408,7 @@ auto Compiler::create_free(Val ptr) -> Val {
 template <> auto Compiler::expression(ast::SliceExpr& expr) -> Val {
   auto* slice_size = m_builder->getIntN(ptr_bitsize(), expr.args.size());
 
-  yume_assert(expr.ensure_ty().is_slice(), "Slice expression must contain slice type");
+  YUME_ASSERT(expr.ensure_ty().is_slice(), "Slice expression must contain slice type");
   auto* slice_type = llvm_type(expr.ensure_ty());
   auto base_type = expr.ensure_ty().base_cast<ty::Struct>()->fields().at(0)->ensure_ty().ensure_ptr_base(); // ???
   auto* base_llvm_type = llvm_type(base_type);
@@ -1447,8 +1445,7 @@ template <> auto Compiler::expression(ast::FieldAccessExpr& expr) -> Val {
     base = body_expression(*expr.base);
     base_type = expr.base->ensure_ty().mut_base();
   } else {
-    yume_assert(m_scope_ctor.has_value(), "Cannot access field without receiver outside of a constructor");
-    // NOLINTNEXTLINE(bugprone-unchecked-optional-access): clang-tidy doesn't accept yume_assert as an assertion
+    YUME_ASSERT(m_scope_ctor.has_value(), "Cannot access field without receiver outside of a constructor");
     base = m_scope_ctor->value;
     base_type = m_current_fn->self_ty;
   }
@@ -1459,8 +1456,7 @@ template <> auto Compiler::expression(ast::FieldAccessExpr& expr) -> Val {
   if (!expr.ensure_ty().is_mut())
     return m_builder->CreateExtractValue(*base, base_offset, "s.field.nm."s + base_name);
 
-  yume_assert(base_type.has_value(), "Cannot access field of unknown type");
-  // NOLINTNEXTLINE(bugprone-unchecked-optional-access): clang-tidy doesn't accept yume_assert as an assertion
+  YUME_ASSERT(base_type.has_value(), "Cannot access field of unknown type");
   return m_builder->CreateStructGEP(llvm_type(base_type.value()), *base, base_offset, "s.field.m."s + base_name);
 }
 
@@ -1485,7 +1481,7 @@ auto Compiler::get_vtable(Struct& st, const Struct& iface) -> nonnull<llvm::Glob
 
       const auto& fn_ast = cast<ast::FnDecl>(*i);
       auto* fn = fn_ast.sema_decl;
-      yume_assert(fn != nullptr, "Fn not found from fn ast?");
+      YUME_ASSERT(fn != nullptr, "Fn not found from fn ast?");
 
       auto vtable_match = std::ranges::find(iface.vtable_members, vtable_entry_for(*fn));
       if (vtable_match == iface.vtable_members.end())
@@ -1528,7 +1524,7 @@ template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
 
   if (expr.conversion.dereference) {
     // TODO(rymiel): Hack on top of a hack (see Type::compatibility)
-    yume_assert(current_ty.is_mut() || current_ty.is_opaque_self(),
+    YUME_ASSERT(current_ty.is_mut() || current_ty.is_opaque_self(),
                 "Source type must be mutable or opaque when implicitly derefencing");
     // TODO(rymiel): Should really just be .ensure_mut_base()
     current_ty = current_ty.without_mut().without_opaque();
@@ -1544,9 +1540,9 @@ template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
   if (expr.conversion.kind == ty::Conv::Int)
     return m_builder->CreateIntCast(base, llvm_type(target_ty), current_ty.base_cast<ty::Int>()->is_signed(), "ic.int");
   if (expr.conversion.kind == ty::Conv::FnPtr) {
-    yume_assert(current_ty.base_isa<ty::Function>(), "fnptr conversion source must be a function type");
-    yume_assert(isa<ast::LambdaExpr>(*expr.base), "fnptr conversion source must be a lambda");
-    yume_assert(target_ty.base_isa<ty::Function>(), "fnptr conversion target must be a function type");
+    YUME_ASSERT(current_ty.base_isa<ty::Function>(), "fnptr conversion source must be a function type");
+    YUME_ASSERT(isa<ast::LambdaExpr>(*expr.base), "fnptr conversion source must be a lambda");
+    YUME_ASSERT(target_ty.base_isa<ty::Function>(), "fnptr conversion target must be a function type");
     auto& lambda_expr = cast<ast::LambdaExpr>(*expr.base);
 
     auto fn = Fn{&lambda_expr, nullptr, std::nullopt, nullptr};
@@ -1571,17 +1567,17 @@ template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
     return fn.llvm;
   }
   if (expr.conversion.kind == ty::Conv::Virtual) {
-    yume_assert(target_ty.base_isa<ty::Struct>(), "Virtual cast must cast into a struct type");
-    yume_assert(current_ty.base_isa<ty::Struct>(), "Virtual cast must cast from a struct type");
+    YUME_ASSERT(target_ty.base_isa<ty::Struct>(), "Virtual cast must cast into a struct type");
+    YUME_ASSERT(current_ty.base_isa<ty::Struct>(), "Virtual cast must cast from a struct type");
     const auto* target_st_ty = target_ty.base_cast<ty::Struct>();
     const auto* current_st_ty = current_ty.base_cast<ty::Struct>();
 
     const auto* target_st = target_st_ty->decl();
-    yume_assert(target_st != nullptr, "Struct not found from struct type?");
-    yume_assert(target_st->ast().is_interface, "Virtual cast must cast into an interface type");
+    YUME_ASSERT(target_st != nullptr, "Struct not found from struct type?");
+    YUME_ASSERT(target_st->ast().is_interface, "Virtual cast must cast into an interface type");
 
     auto* current_st = current_st_ty->decl();
-    yume_assert(current_st != nullptr, "Struct not found from struct type?");
+    YUME_ASSERT(current_st != nullptr, "Struct not found from struct type?");
 
     auto* vtable = get_vtable(*current_st, *target_st);
 
@@ -1606,7 +1602,7 @@ template <> auto Compiler::expression(ast::ImplicitCastExpr& expr) -> Val {
 }
 
 template <> auto Compiler::expression(ast::TypeExpr& expr) -> Val {
-  yume_assert(expr.ensure_ty().is_meta(), "Type expr must have metatype as its type");
+  YUME_ASSERT(expr.ensure_ty().is_meta(), "Type expr must have metatype as its type");
   return m_builder->getInt8(0);
 }
 

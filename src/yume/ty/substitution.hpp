@@ -41,7 +41,10 @@ struct GenericValue {
   [[nodiscard]] auto holds_type() const -> bool { return type.has_value(); }
   [[nodiscard]] auto holds_expr() const -> bool { return expr != nullptr; }
 
-  [[nodiscard]] auto as_type() const& -> const ty::Type& { return *type; }
+  [[nodiscard]] auto as_type() const& -> const ty::Type& {
+    YUME_ASSERT(type.has_value(), "Generic value does not hold a type");
+    return *type;
+  }
   [[nodiscard]] auto as_expr() const& -> const ast::Expr* { return expr; }
 
   [[nodiscard]] auto unsubstituted_primary() const -> bool { return type.has_value() && type->is_generic(); }
@@ -51,7 +54,7 @@ struct GenericValue {
   [[nodiscard]] auto name() const -> string {
     if (unassigned())
       return "?"s;
-    if (holds_type())
+    if (type.has_value())
       return type->name();
     return expr->describe();
   }
@@ -111,12 +114,12 @@ public:
   [[nodiscard]] auto mapping_ref_or_null(const GenericKey& generic) const -> nullable<const GenericValue*>;
   [[nodiscard]] auto mapping_ref(const GenericKey& generic) -> GenericValue& {
     auto* ptr = mapping_ref_or_null(generic);
-    yume_assert(ptr != nullptr, "Mapped value must not be null");
+    YUME_ASSERT(ptr != nullptr, "Mapped value must not be null");
     return *ptr;
   };
   [[nodiscard]] auto mapping_ref(const GenericKey& generic) const -> const GenericValue& {
     const auto* ptr = mapping_ref_or_null(generic);
-    yume_assert(ptr != nullptr, "Mapped value must not be null");
+    YUME_ASSERT(ptr != nullptr, "Mapped value must not be null");
     return *ptr;
   };
 
@@ -129,7 +132,7 @@ public:
     if (mapping->unassigned())
       return std::nullopt;
 
-    yume_assert(mapping->holds_type(), "A generic type key must correspond to a generic type mapping");
+    YUME_ASSERT(mapping->holds_type(), "A generic type key must correspond to a generic type mapping");
 
     return mapping->as_type();
   }
