@@ -11,12 +11,12 @@ def assert(condition Bool)
   end
 end
 
-def __builtin_ptr_cast{T,U}(from T ptr, to U ptr type) U ptr = __primitive__(ptr_cast)
-def __builtin_ptr_offset{T}(ptr T ptr, offset ISize) T ptr = __primitive__(ptr_gep)
-def __builtin_ptrto{T}(t T mut) T ptr = __primitive__(ptrto)
-def __builtin_slice_malloc{T}(ptr T ptr, size ISize) T ptr = __primitive__(slice_malloc)
+def __builtin_ptr_cast{T type, U type}(from T ptr, to U ptr type) U ptr = __primitive__(ptr_cast)
+def __builtin_ptr_offset{T type}(ptr T ptr, offset ISize) T ptr = __primitive__(ptr_gep)
+def __builtin_ptrto{T type}(t T mut) T ptr = __primitive__(ptrto)
+def __builtin_slice_malloc{T type}(ptr T ptr, size ISize) T ptr = __primitive__(slice_malloc)
 
-def as{T,U}(from T, to U type) U = __primitive__(cast)
+def as{T type, U type}(from T, to U type) U = __primitive__(cast)
 
 struct Slice{T type}(pointer T ptr, size ISize)
   def :new(pointer T ptr, ::size)
@@ -83,9 +83,9 @@ struct StaticArray{T type, n ISize}(pointer T ptr)
   end
 end
 
-def []{T}(ptr T ptr, offset ISize) T mut = __primitive__(get_at)
-def []={T}(ptr T ptr, offset ISize, val T) Nil = __primitive__(set_at)
-def __builtin_default_init{T}(obj T mut) = __primitive__(default_init)
+def []{T type}(ptr T ptr, offset ISize) T mut = __primitive__(get_at)
+def []={T type}(ptr T ptr, offset ISize, val T) Nil = __primitive__(set_at)
+def __builtin_default_init{T type}(obj T mut) = __primitive__(default_init)
 
 # TODO: most of these should be templated
 def +(a I16, b I16) I16 = __primitive__(ib_add)
@@ -216,7 +216,7 @@ def !(a Bool) Bool
   end
 end
 
-def copy{T}(source T ptr, dest T ptr, amount ISize)
+def copy{T type}(source T ptr, dest T ptr, amount ISize)
   let count ISize = amount
   while count > 0
     count = count - 1

@@ -1,4 +1,4 @@
-struct Array{T}(body T[], size I64)
+struct Array{T type}(body T[], size I64)
   def capacity(self) I64 = self::body.size
   def size(self) I64 = self::size
 end
