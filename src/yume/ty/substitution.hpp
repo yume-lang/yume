@@ -57,7 +57,6 @@ struct GenericValue {
   }
 
   auto operator==(const GenericValue& other) const noexcept -> bool = default;
-  auto operator<=>(const GenericValue& other) const noexcept = default;
 };
 
 struct Substitutions {
