@@ -140,7 +140,3 @@ TEST_CASE("Tokenize empty char", "[token][throws]") { CHECK_TOKENIZER_THROWS("?"
 TEST_CASE("Tokenize incomplete string", "[token][throws]") {
   CHECK_TOKENIZER_THROWS(R"("who stole the closing quote)");
 }
-
-#undef CHECK_TOKENIZER
-#undef CHECK_TOKENIZER_THROWS
-#undef CHECK_TOKENIZER_PRESERVED

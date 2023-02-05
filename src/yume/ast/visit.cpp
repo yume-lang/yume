@@ -26,6 +26,12 @@ struct VisitorHelper {
     return visit(nullptr, label);
   }
 
+  template <typename T> auto maybe(const ast::OptionalAnyBase<T>& any_base, string_view label) -> auto& {
+    if (any_base.raw_ptr() != nullptr)
+      return visit(*any_base, label);
+    return *this;
+  }
+
   template <typename T> auto visit(const ast::AnyBase<T>& any_base, string_view label) -> auto& {
     YUME_ASSERT(any_base.raw_ptr() != nullptr, "AnyBase should never be null");
     return visit(*any_base, label);
@@ -86,10 +92,10 @@ void FnDecl::visit(Visitor& visitor) const {
                  .visit(args, "arg")
                  .visit(type_args, "type arg")
                  .visit(annotations, "annotation")
-                 .visit(ret, "ret");
+                 .maybe(ret, "ret");
 
   body.visit([&](const string& s) { vis.visit(s, "primitive"); },
-             [&](const extern_decl_t& s) { vis.visit(s.name, "extern").maybe(s.varargs, "varags"); },
+             [&](const extern_decl_t& s) { vis.visit(s.name, "extern").maybe(s.varargs, "varargs"); },
              [&](const Compound& s) { vis.visit(s, "body"); },
              [&](const abstract_decl_t& /*s*/) { vis.visit(true, "abstract"); });
 }
@@ -97,7 +103,7 @@ void CtorDecl::visit(Visitor& visitor) const { helper(visitor).visit(args, "arg"
 void StructDecl::visit(Visitor& visitor) const {
   helper(visitor)
       .visit(name, "name")
-      .visit(implements, "implements")
+      .maybe(implements, "implements")
       .visit(fields, "field")
       .visit(type_args, "type arg")
       .visit(body, "body")
@@ -116,7 +122,7 @@ void Compound::visit(Visitor& visitor) const { helper(visitor).visit(body, "body
 void VarExpr::visit(Visitor& visitor) const { helper(visitor).visit(name, "name"); }
 void ConstExpr::visit(Visitor& visitor) const { helper(visitor).visit(name, "name").visit(parent, "name"); }
 void CallExpr::visit(Visitor& visitor) const {
-  helper(visitor).visit(name, "name").visit(receiver, "receiver").visit(args, "args");
+  helper(visitor).visit(name, "name").maybe(receiver, "receiver").visit(args, "args");
 }
 void BinaryLogicExpr::visit(Visitor& visitor) const {
   helper(visitor).visit(string{operation}, "operation").visit(lhs, "lhs").visit(rhs, "rhs");
