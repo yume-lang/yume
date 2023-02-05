@@ -90,7 +90,7 @@ void FnDecl::visit(Visitor& visitor) const {
   auto vis = helper(visitor)
                  .visit(name, "name")
                  .visit(args, "arg")
-                 .visit(type_args, "type arg")
+                 .visit(type_args, "type-arg")
                  .visit(annotations, "annotation")
                  .maybe(ret, "ret");
 
@@ -105,15 +105,15 @@ void StructDecl::visit(Visitor& visitor) const {
       .visit(name, "name")
       .maybe(implements, "implements")
       .visit(fields, "field")
-      .visit(type_args, "type arg")
+      .visit(type_args, "type-arg")
       .visit(body, "body")
       .maybe(is_interface, "interface");
 }
 void SimpleType::visit(Visitor& visitor) const { helper(visitor).visit(name, "name"); }
 void QualType::visit(Visitor& visitor) const { helper(visitor).visit(base, describe().c_str()); }
-void TemplatedType::visit(Visitor& visitor) const { helper(visitor).visit(base, "base").visit(type_args, "type arg"); }
+void TemplatedType::visit(Visitor& visitor) const { helper(visitor).visit(base, "base").visit(type_args, "type-arg"); }
 void FunctionType::visit(Visitor& visitor) const {
-  helper(visitor).visit(ret, "ret").visit(args, "args").maybe(fn_ptr, "fn ptr");
+  helper(visitor).visit(ret, "ret").visit(args, "args").maybe(fn_ptr, "fn-ptr");
 }
 void ProxyType::visit(Visitor& visitor) const { helper(visitor).visit(field, "field"); }
 void TypeName::visit(Visitor& visitor) const { helper(visitor).visit(name, "name").visit(type, "type"); }
