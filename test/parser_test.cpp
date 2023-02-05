@@ -429,6 +429,13 @@ TEST_CASE("Parse incomplete def", "[parse][fn][throws]") {
   CHECK_PARSER_THROWS("def foo() = __primitive__(foo");
 }
 
+TEST_CASE("Parse incomplete type", "[parse][throws]") {
+  CHECK_PARSER_THROWS("let x I32[");
+  CHECK_PARSER_THROWS("let x y");
+  CHECK_PARSER_THROWS("let x y z");
+  CHECK_PARSER_THROWS("let x y = z");
+}
+
 TEST_CASE("Parse struct declaration", "[parse][struct]") {
   CHECK_PARSER("struct Foo()\nend", StructDecl("Foo"));
   CHECK_PARSER("struct Foo\nend", StructDecl("Foo"));
