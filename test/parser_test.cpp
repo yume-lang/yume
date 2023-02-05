@@ -89,9 +89,7 @@ auto operator""_Var(const char* str, size_t /*size*/) -> Tree { return {"var", {
 auto operator""_Num(unsigned long long val) -> Tree { return {"number", {"value", std::to_string(val).c_str()}}; }
 auto operator""_String(const char* str, size_t /*size*/) -> Tree { return {"string", {"value", str}}; }
 auto operator""_Char(char chr) -> Tree { return {"char", {"value", std::string(1, chr).c_str()}}; }
-// NOLINTNEXTLINE(readability-identifier-naming)
 auto Bool(bool value) -> Tree { return {"bool", {"value", value ? "true" : "false"}}; }
-// NOLINTNEXTLINE(readability-identifier-naming)
 auto Self() -> Tree { return {"self-type", nullptr}; }
 
 struct TypeBuilder {
@@ -118,7 +116,6 @@ struct CallBuilder {
 
   operator Tree() { return {"call", std::move(nested), true}; }
 };
-// NOLINTNEXTLINE(readability-identifier-naming)
 auto Call(const char* name) { return CallBuilder{}.name(name); }
 
 struct CtorBuilder {
@@ -129,7 +126,6 @@ struct CtorBuilder {
 
   operator Tree() { return {"constructor", std::move(nested), true}; }
 };
-// NOLINTNEXTLINE(readability-identifier-naming)
 auto Ctor(Tree type) { return CtorBuilder{}.type(std::move(type)); }
 
 struct SliceBuilder {
@@ -140,17 +136,9 @@ struct SliceBuilder {
 
   operator Tree() { return {"slice", std::move(nested), true}; }
 };
-// NOLINTNEXTLINE(readability-identifier-naming)
 auto Slice(Tree type) { return SliceBuilder{}.type(std::move(type)); }
 
-struct TName {
-  const char* name{};
-  Tree type;
-
-  operator Tree() { return {"type-name", {{"name", name}, {"type", std::move(type)}}}; }
-};
-
-auto operator/(const char* name, Tree type) -> TName { return {name, std::move(type)}; }
+auto operator/(const char* name, Tree type) -> Tree { return {"type-name", {{"name", name}, {"type", std::move(type)}}}; }
 
 struct FnDeclBuilder {
   std::vector<Tree> nested{};
@@ -170,7 +158,6 @@ struct FnDeclBuilder {
 
   operator Tree() { return {"fn-decl", std::move(nested), true}; }
 };
-// NOLINTNEXTLINE(readability-identifier-naming)
 auto FnDecl(const char* name) { return FnDeclBuilder{}.name(name); }
 
 struct StructDeclBuilder {
@@ -188,34 +175,25 @@ struct StructDeclBuilder {
 
   operator Tree() { return {"struct-decl", std::move(nested), true}; }
 };
-// NOLINTNEXTLINE(readability-identifier-naming)
 auto StructDecl(const char* name) { return StructDeclBuilder{}.name(name); }
 
-// NOLINTNEXTLINE(readability-identifier-naming)
 auto Assign(auto target, auto value) -> Tree {
   return {"assign", {{"target", std::move(target)}, {"value", std::move(value)}}};
 }
-// NOLINTNEXTLINE(readability-identifier-naming)
 auto FieldAccess(auto target, const char* field) -> Tree {
   return {"field-access", {{"base", std::move(target)}, {"field", field}}};
 }
-// NOLINTNEXTLINE(readability-identifier-naming)
 auto BinaryLogic(const char* operation, auto lhs, auto rhs) -> Tree {
   return {"binary-logic", {{"operation", operation}, {"lhs", std::move(lhs)}, {"rhs", std::move(rhs)}}};
 }
-// NOLINTNEXTLINE(readability-identifier-naming)
 auto VarDecl(const char* name, auto type, auto init) -> Tree {
   return {"var-decl", {{"name", name}, {"type", std::move(type)}, {"init", std::move(init)}}};
 }
-// NOLINTNEXTLINE(readability-identifier-naming)
 auto Return(auto value) -> Tree { return {"return-statement", {{"expr", std::move(value)}}}; }
-// NOLINTNEXTLINE(readability-identifier-naming)
 auto ProxyType(const char* name) -> Tree { return {"proxy-type", {{"field", name}}}; }
 
-#define CHECK_PARSER_OLD(body, ...) CHECK_THAT(*prog(body), equals_ast({}))
-#define CHECK_PARSER_THROWS(body) CHECK_THROWS(*prog(body))
-
 #define CHECK_PARSER(body, ...) CHECK_THAT(*prog(body), equals_ast({__VA_ARGS__}))
+#define CHECK_PARSER_THROWS(body) CHECK_THROWS(*prog(body))
 
 // using namespace yume::ast;
 using enum yume::Qualifier;

@@ -2,5 +2,6 @@ Checks: >-
   -cppcoreguidelines-avoid-non-const-global-variables,
   -cppcoreguidelines-macro-usage,
   -readability-function-cognitive-complexity,
+  -readability-identifier-naming,
   -google-runtime-int
 InheritParentConfig: true
