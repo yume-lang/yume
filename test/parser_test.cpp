@@ -418,7 +418,13 @@ TEST_CASE("Parse incomplete def", "[parse][fn][throws]") {
   CHECK_PARSER_THROWS("def (");
   CHECK_PARSER_THROWS("def .");
   CHECK_PARSER_THROWS("def foo{");
+  CHECK_PARSER_THROWS("def foo{T");
+  CHECK_PARSER_THROWS("def foo{T type");
+  CHECK_PARSER_THROWS("def foo{t");
+  CHECK_PARSER_THROWS("def foo{t I32");
   CHECK_PARSER_THROWS("def foo(");
+  CHECK_PARSER_THROWS("def foo(a");
+  CHECK_PARSER_THROWS("def foo(a I32");
   CHECK_PARSER_THROWS("def foo.");
   CHECK_PARSER_THROWS("def foo =");
   CHECK_PARSER_THROWS("def foo() =");
@@ -429,11 +435,21 @@ TEST_CASE("Parse incomplete def", "[parse][fn][throws]") {
   CHECK_PARSER_THROWS("def foo() = __primitive__(foo");
 }
 
-TEST_CASE("Parse incomplete type", "[parse][throws]") {
+TEST_CASE("Parse invalid type", "[parse][throws]") {
   CHECK_PARSER_THROWS("let x I32[");
   CHECK_PARSER_THROWS("let x y");
   CHECK_PARSER_THROWS("let x y z");
   CHECK_PARSER_THROWS("let x y = z");
+  CHECK_PARSER_THROWS("def foo(a b)");
+  CHECK_PARSER_THROWS("def foo(a self)");
+  CHECK_PARSER_THROWS("def foo(a I32) b");
+  CHECK_PARSER_THROWS("def foo(a I32) self");
+  CHECK_PARSER_THROWS("def foo{t u}()");
+  CHECK_PARSER_THROWS("def foo{T u}()");
+  CHECK_PARSER_THROWS("def foo{T U}()");
+  CHECK_PARSER_THROWS("struct Foo(a b)");
+  CHECK_PARSER_THROWS("struct Foo(a self)");
+  CHECK_PARSER_THROWS("struct Foo(self)");
 }
 
 TEST_CASE("Parse struct declaration", "[parse][struct]") {
