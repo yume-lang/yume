@@ -331,14 +331,14 @@ TEST_CASE("Parse short function declaration", "[parse][fn]") {
 }
 
 TEST_CASE("Parse templated function declaration", "[parse][fn]") {
-  CHECK_PARSER("def templated{T}()\nend", FnDecl("templated").type_arg("T"));
+  CHECK_PARSER("def templated{T type}()\nend", FnDecl("templated").type_arg("T"));
 
-  CHECK_PARSER("def templated{T}(t T) T\nend", FnDecl("templated")("t" / "T"_Type).type_arg("T").ret("T"_Type));
+  CHECK_PARSER("def templated{T type}(t T) T\nend", FnDecl("templated")("t" / "T"_Type).type_arg("T").ret("T"_Type));
 
-  CHECK_PARSER("def templated{T}(t T) T = t",
+  CHECK_PARSER("def templated{T type}(t T) T = t",
                FnDecl("templated")("t" / "T"_Type).type_arg("T").ret("T"_Type).body(Return("t"_Var)));
 
-  CHECK_PARSER("def templated{T,U,V,X,Y,Z}(t T, u U, v V) X = Y() + Z()",
+  CHECK_PARSER("def templated{T type,U type,V type,X type,Y type,Z type}(t T, u U, v V) X = Y() + Z()",
                FnDecl("templated")(("t" / "T"_Type), ("u" / "U"_Type), ("v" / "V"_Type))
                    .type_arg("T")
                    .type_arg("U")
@@ -349,10 +349,12 @@ TEST_CASE("Parse templated function declaration", "[parse][fn]") {
                    .ret("X"_Type)
                    .body(Return(Call("+")(Ctor("Y"_Type), Ctor("Z"_Type)))));
 
-  CHECK_PARSER("def templated{T}(slice T[], pointer T ptr, mutable T mut, mix T ptr[] mut)\nend",
+  CHECK_PARSER("def templated{T type}(slice T[], pointer T ptr, mutable T mut, mix T ptr[] mut)\nend",
                FnDecl("templated")(("slice" / "T"_Type.slice()), ("pointer" / "T"_Type.ptr()),
                                    ("mutable" / "T"_Type.mut()), ("mix" / "T"_Type.ptr().slice().mut()))
                    .type_arg("T"));
+
+  // TODO(rymiel): non-type generic parameters
 }
 
 TEST_CASE("Parse operator function declaration", "[parse][fn]") {
@@ -458,8 +460,8 @@ TEST_CASE("Parse struct declaration", "[parse][struct]") {
   CHECK_PARSER("struct Foo(i I32)\nend", StructDecl("Foo")("i" / "I32"_Type));
   CHECK_PARSER("struct Foo(i I32, bar Bar)\nend", StructDecl("Foo")(("i" / "I32"_Type), ("bar" / "Bar"_Type)));
 
-  CHECK_PARSER("struct Foo{T}()\nend", StructDecl("Foo").type_arg("T"));
-  CHECK_PARSER("struct Foo{T}(t T)\nend", StructDecl("Foo")("t" / "T"_Type).type_arg("T"));
+  CHECK_PARSER("struct Foo{T type}()\nend", StructDecl("Foo").type_arg("T"));
+  CHECK_PARSER("struct Foo{T type}(t T)\nend", StructDecl("Foo")("t" / "T"_Type).type_arg("T"));
 
   CHECK_PARSER("struct Foo()\ndef method()\nend\nend", StructDecl("Foo").body(FnDecl("method")));
 
