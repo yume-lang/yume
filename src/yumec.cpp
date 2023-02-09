@@ -100,8 +100,9 @@ auto compile(const std::optional<std::string>& target_triple, std::vector<std::s
 
     for (auto& src_input : inputs) {
       auto src_name = src_input->getBufferIdentifier().str();
+      auto src_special = src_name.front() == '<' && src_name.back() == '>';
       auto src_path =
-          src_name == "-" ? std::filesystem::path{} : std::filesystem::canonical(std::filesystem::absolute(src_name));
+          src_special ? std::filesystem::path{} : std::filesystem::canonical(std::filesystem::absolute(src_name));
       auto src_stream = std::stringstream(std::string(src_input->getBufferStart(), src_input->getBufferSize()));
       auto& source = source_files.emplace_back(src_stream, src_path);
 
