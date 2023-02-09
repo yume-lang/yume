@@ -25,11 +25,12 @@ struct Tree {
   std::string value;
   std::vector<Tree> nested;
   bool is_null = false;
+  bool is_object = false;
 
   Tree(std::string_view key, const char* value) : key(key), value(std::string(value)) {}
   Tree(std::string_view key, Tree value) : key(key), nested{move(value)} {}
   Tree(std::string_view key, std::nullptr_t /*null*/) : key(key), is_null(true) {}
-  Tree(std::string_view key, std::vector<Tree>& value) : key(key), nested{std::vector<Tree>(value)} {}
+  Tree(std::string_view key, std::vector<Tree>& value) : key(key), nested{std::vector<Tree>(value)}, is_object(true) {}
   Tree(std::string_view key, Tree v1, Tree v2) : key(key), nested{move(v1), move(v2)} {}
   Tree(std::string_view key, Tree v1, Tree v2, Tree v3) : key(key), nested{move(v1), move(v2), move(v3)} {}
 
@@ -37,7 +38,7 @@ struct Tree {
     os << key;
     if (is_null) {
       os << (within_object ? "=null" : "()");
-    } else if (!nested.empty()) {
+    } else if (is_object || !nested.empty()) {
       os << (within_object ? "=" : "(");
       bool write_space = false;
       for (const auto& child : nested) {
@@ -98,8 +99,14 @@ struct TypeBuilder {
   Tree value;
 
   auto slice() { return value = {"templated-type", {"base", SimpleType("Slice")}, {"type-arg", move(value)}}, *this; }
+  auto operator()(auto... args) {
+    std::vector<Tree> vec{{"base", move(value)}};
+    (vec.emplace_back("type-arg", args), ...);
+    return value = Tree{"templated-type", vec}, *this;
+  }
   auto mut() { return value = {"qual-type", {"mut", move(value)}}, *this; }
   auto ptr() { return value = {"qual-type", {"ptr", move(value)}}, *this; }
+  auto meta() { return value = {"qual-type", {"meta", move(value)}}, *this; }
   auto expr() { return Tree{"type-expr", {"type", move(value)}}; }
 
   operator Tree() const { return value; }
@@ -117,6 +124,12 @@ protected:
     return *self;
   }
 };
+
+struct FunctionTypeBuilder : Builder<"function-type"> {
+  auto ret(auto v) { return add(this, "ret", move(v)); }
+  auto operator()(auto... v) { return (add(this, "args", move(v)), ...); }
+};
+auto FunctionType(auto ret) { return FunctionTypeBuilder{}.ret(move(ret)); }
 
 struct CallBuilder : Builder<"call"> {
   auto name(const char* v) { return add(this, "name", v); }
@@ -152,6 +165,12 @@ struct FnDeclBuilder : Builder<"fn-decl"> {
   auto annotation(const char* v) { return add(this, "annotation", v); }
 };
 auto FnDecl(const char* name) { return FnDeclBuilder{}.name(name); }
+
+struct CtorDeclBuilder : Builder<"ctor-decl"> {
+  auto body(auto v) { return add(this, "body", v); }
+  auto operator()(auto... rest) { return (add(this, "arg", move(rest)), ...); }
+};
+auto CtorDecl() { return CtorDeclBuilder{}; }
 
 struct StructDeclBuilder : Builder<"struct-decl"> {
   auto name(const char* v) { return add(this, "name", v); }
@@ -242,12 +261,19 @@ TEST_CASE_PARSE("assignment", "") {
   CHECK_PARSER("a = b = 2", Assign("a"_Var, Assign("b"_Var, 2_Num)));
 }
 
-TEST_CASE_PARSE("direct calling", "") {
+TEST_CASE_PARSE("plain calling", "") {
   CHECK_PARSER("a", "a"_Var);
   CHECK_PARSER("(a)", "a"_Var);
   CHECK_PARSER("a()", Call("a"));
   CHECK_PARSER("a(1, 2, 3)", Call("a")(1_Num, 2_Num, 3_Num));
   CHECK_PARSER("a(b(1), c(2, 3))", Call("a")(Call("b")(1_Num), Call("c")(2_Num, 3_Num)));
+}
+
+TEST_CASE_PARSE("direct calling", "") {
+  CHECK_PARSER("a->()", Call("->")("a"_Var));
+  CHECK_PARSER("(a)->()", Call("->")("a"_Var));
+  CHECK_PARSER("a->(1, 2, 3)", Call("->")("a"_Var, 1_Num, 2_Num, 3_Num));
+  CHECK_PARSER("a->(1)->(2)->(3)", Call("->")(Call("->")(Call("->")("a"_Var, 1_Num), 2_Num), 3_Num));
 }
 
 TEST_CASE_PARSE("member calling", "") {
@@ -272,8 +298,12 @@ TEST_CASE_PARSE("setter calling", "") {
 TEST_CASE_PARSE("direct field access", "") {
   CHECK_PARSER("widget::field", FieldAccess("widget"_Var, "field"));
   CHECK_PARSER("widget::field.run", Call("run")(FieldAccess("widget"_Var, "field")));
-
   CHECK_PARSER("widget::field = 0", Assign(FieldAccess("widget"_Var, "field"), 0_Num));
+
+  // The following are only actually valid within constructors (for now)
+  CHECK_PARSER("::field", FieldAccess(nullptr, "field"));
+  CHECK_PARSER("::field.run", Call("run")(FieldAccess(nullptr, "field")));
+  CHECK_PARSER("::field = 0", Assign(FieldAccess(nullptr, "field"), 0_Num));
 }
 
 TEST_CASE_PARSE("constructor calling", "") {
@@ -327,6 +357,64 @@ TEST_CASE_PARSE("function declaration", "[fn]") {
                FnDecl("baz")(("l" / "Left"_Type), ("r" / "Right"_Type)).ret("U32"_Type));
 
   CHECK_PARSER("def foo(a I32) I32\na\nend", FnDecl("foo")("a" / "I32"_Type).ret("I32"_Type).body("a"_Var));
+}
+
+TEST_CASE_PARSE("function declaration with body", "[fn]") {
+  CHECK_PARSER("def foo()\nbar()\nend", FnDecl("foo").body(Call("bar")));
+  CHECK_PARSER("def foo() I32\nreturn 0\nend", FnDecl("foo").ret("I32"_Type).body(Return(0_Num)));
+  CHECK_PARSER("def bar() Nil\nreturn\nend", FnDecl("bar").ret("Nil"_Type).body(Return(nullptr)));
+}
+
+TEST_CASE_PARSE("ctor declaration", "[fn]") {
+  CHECK_PARSER("def :new()\nend", CtorDecl());
+  CHECK_PARSER("def :new() end", CtorDecl());
+  CHECK_PARSER("def :new(::field)\nend",
+               CtorDecl()("field" / ProxyType("field")).body(Assign(FieldAccess(nullptr, "field"), "field"_Var)));
+  CHECK_PARSER("def :new(field I32)\n::field = field\nend",
+               CtorDecl()("field" / "I32"_Type).body(Assign(FieldAccess(nullptr, "field"), "field"_Var)));
+  CHECK_PARSER("def :new(foo I32, bar U32) end", CtorDecl()(("foo" / "I32"_Type), ("bar" / "U32"_Type)));
+}
+
+TEST_CASE_PARSE("function declaration with function type parameter", "[fn]") {
+  CHECK_PARSER("def foo(fn (->)) = fn->()",
+               FnDecl("foo")("fn" / FunctionType(nullptr)).body(Return(Call("->")("fn"_Var))));
+  CHECK_PARSER("def foo(fn (I32 ->)) = fn->(0)",
+               FnDecl("foo")("fn" / FunctionType(nullptr)("I32"_Type)).body(Return(Call("->")("fn"_Var, 0_Num))));
+  CHECK_PARSER("def foo(fn (-> I32)) I32 = fn->()",
+               FnDecl("foo")("fn" / FunctionType("I32"_Type)).ret("I32"_Type).body(Return(Call("->")("fn"_Var))));
+  CHECK_PARSER("def foo(fn (I32 -> I32)) I32 = fn->(0)", FnDecl("foo")("fn" / FunctionType("I32"_Type)("I32"_Type))
+                                                             .ret("I32"_Type)
+                                                             .body(Return(Call("->")("fn"_Var, 0_Num))));
+  CHECK_PARSER("def foo(fn (I32, I32 -> I32)) I32 = fn->(0, 1)",
+               FnDecl("foo")("fn" / FunctionType("I32"_Type)("I32"_Type, "I32"_Type))
+                   .ret("I32"_Type)
+                   .body(Return(Call("->")("fn"_Var, 0_Num, 1_Num))));
+  CHECK_PARSER("def foo(fn ((I32 ->) -> (-> I32))) I32 = fn->(magic)->()",
+               FnDecl("foo")("fn" / FunctionType(FunctionType("I32"_Type))(FunctionType(nullptr)("I32"_Type)))
+                   .ret("I32"_Type)
+                   .body(Return(Call("->")(Call("->")("fn"_Var, "magic"_Var)))));
+}
+
+TEST_CASE_PARSE("function declaration with metatype parameter", "[fn]") {
+  CHECK_PARSER("def foo{T type}(type T type) T = T()",
+               FnDecl("foo")("type" / "T"_Type.meta()).type_arg("T").ret("T"_Type).body(Return(Ctor("T"_Type))));
+}
+
+TEST_CASE_PARSE("function declaration with generic parameter", "[fn]") {
+  CHECK_PARSER("def first{T type}(arr Array{T}) T = arr[0]", FnDecl("first")("arr" / "Array"_Type("T"_Type))
+                                                                 .type_arg("T")
+                                                                 .ret("T"_Type)
+                                                                 .body(Return(Call("[]")("arr"_Var, 0_Num))));
+  CHECK_PARSER("def first{T type}(arr Array{T mut}) T mut = arr[0]",
+               FnDecl("first")("arr" / "Array"_Type("T"_Type.mut()))
+                   .type_arg("T")
+                   .ret("T"_Type.mut())
+                   .body(Return(Call("[]")("arr"_Var, 0_Num))));
+  CHECK_PARSER(
+      "def first{T type, U type}(arr Container{T, Array{U}, (T -> U)})\nend",
+      FnDecl("first")("arr" / "Container"_Type("T"_Type, "Array"_Type("U"_Type), FunctionType("U"_Type)("T"_Type)))
+          .type_arg("T")
+          .type_arg("U"));
 }
 
 TEST_CASE_PARSE("short function declaration", "[fn]") {
@@ -465,6 +553,7 @@ TEST_CASE_PARSE("invalid type", "[throws]") {
   CHECK_PARSER_FATAL("struct Foo(a b)", expected_uword_type());
   CHECK_PARSER_FATAL("struct Foo(a self)", expected_uword_type());
   CHECK_PARSER_FATAL("struct Foo(self)");
+  CHECK_PARSER_FATAL("def :new() I32");
 }
 
 TEST_CASE_PARSE("struct declaration", "[struct]") {
