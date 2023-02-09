@@ -31,7 +31,7 @@ void Parser::expect(Token::Type token_type, const source_location location) cons
 }
 
 void Parser::require_separator(const source_location location) {
-  if (!tokens.at_end())
+  if (!tokens.at_end() && tokens->type != Token::Type::EndOfFile)
     expect(Separator, location);
   ignore_separator(location);
 }
@@ -891,8 +891,9 @@ auto Program::parse(TokenIterator& tokens, diagnostic::NotesHolder& notes) -> un
   auto entry = tokens.begin();
 
   auto statements = vector<AnyStmt>{};
-  while (!tokens.at_end())
+  while (tokens->type != Token::Type::EndOfFile)
     statements.emplace_back(parser.parse_stmt());
+  tokens++; // Consume the EOF token
 
   return make_unique<Program>(parser.ts(entry), move(statements));
 }

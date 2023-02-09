@@ -219,6 +219,9 @@ public:
       }
       m_count++;
     }
+
+    m_tokens.emplace_back(Token::Type::EndOfFile, std::nullopt, m_count,
+                          Loc{m_line, m_col, m_line, m_col, m_source_file});
   }
 
   Tokenizer(std::istream& in, const char* source_file) : m_in(in), m_last(next()), m_source_file(source_file) {}

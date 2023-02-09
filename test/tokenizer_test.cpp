@@ -10,7 +10,8 @@ constexpr auto token_comparison = [](const yume::Token& a, const yume::Token& b)
 };
 
 template <typename... Ts> auto equals_tokens(Ts... ts) {
-  return EqualsRangeMatcher<std::vector<yume::Token>, decltype(token_comparison)>{{ts...}};
+  return EqualsRangeMatcher<std::vector<yume::Token>, decltype(token_comparison)>{
+      {ts..., yume::Token{yume::Token::Type::EndOfFile, std::nullopt}}};
 }
 
 using yume::make_atom;
@@ -127,7 +128,7 @@ TEST_CASE("Token stringification", "[token][str]") {
   auto filename = "<filename>"s;
   auto tokens = yume::tokenize(in_stream, filename);
 
-  REQUIRE(tokens.size() == 1);
+  REQUIRE(tokens.size() == 2);
   ss << tokens[0];
 
   CHECK(str == "Token   0(<filename>:1:1 :3,Word,\"foo\")");

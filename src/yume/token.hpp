@@ -79,13 +79,14 @@ struct Loc {
  */
 struct Token {
   enum struct Type {
-    Word,     ///< Any form of keyword or identifier, essentially the "default" token type
-    Skip,     ///< Tokens which should be ignored, i.e. insignificant whitespace
-    Symbol,   ///< Special characters, such as those representing operators
-    Literal,  ///< A string literal, enclosed in quotes
-    Number,   ///< A number literal
-    Char,     ///< A character literal, beginning with `?`
-    Separator ///< A newline or a semicolon `;`
+    Word,      ///< Any form of keyword or identifier, essentially the "default" token type
+    Skip,      ///< Tokens which should be ignored, i.e. insignificant whitespace
+    Symbol,    ///< Special characters, such as those representing operators
+    Literal,   ///< A string literal, enclosed in quotes
+    Number,    ///< A number literal
+    Char,      ///< A character literal, beginning with `?`
+    Separator, ///< A newline or a semicolon `;`
+    EndOfFile  ///< A token added at the very end of the file
   };
   static auto inline constexpr type_name(Type type) -> const char* {
     using enum Token::Type;
@@ -97,6 +98,7 @@ struct Token {
     case Number: return "Number";
     case Char: return "Char";
     case Separator: return "Separator";
+    case EndOfFile: return "End of File";
     }
   }
 
