@@ -14,7 +14,8 @@ auto QualType::describe() const -> string {
   case Qualifier::Ptr: return "ptr";
   case Qualifier::Mut: return "mut";
   case Qualifier::Ref: return "ref";
-  default: return "";
+  case Qualifier::Type: return "meta";
+  case Qualifier::Opaque: return "opaque";
   }
 }
 auto TemplatedType::describe() const -> string {
