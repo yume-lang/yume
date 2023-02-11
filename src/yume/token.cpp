@@ -16,31 +16,12 @@
 #include <vector>
 
 namespace yume {
-#if __cpp_lib_ranges >= 201911L
-static constexpr auto any_of = std::ranges::any_of;
-#else
-struct any_of_fn {
-  template <std::input_iterator I, std::sentinel_for<I> S, std::indirect_unary_predicate<I> Pred>
-  constexpr auto operator()(I first, S last, Pred pred) const -> bool {
-    return std::find_if(first, last, std::ref(pred)) != last;
-  }
-
-  template <std::ranges::input_range R, std::indirect_unary_predicate<std::ranges::iterator_t<R>> Pred>
-  constexpr auto operator()(R&& r, Pred pred) const -> bool {
-    return operator()(std::ranges::begin(r), std::ranges::end(r), std::ref(pred));
-  }
-};
-
-static constexpr any_of_fn any_of;
-#endif
-
 using char_raw_fn = bool(char);
-using char_pos_fn = bool(char, size_t);
 struct TokenState {
   bool valid;
   char c;
   size_t index;
-  stringstream& stream;
+  llvm::raw_string_ostream& stream;
 
   auto validate(bool val = true) -> bool {
     valid |= val;
@@ -49,55 +30,40 @@ struct TokenState {
 
   auto accept(bool ok) -> bool {
     if (ok)
-      stream.put(c);
+      stream.write(c);
     return ok;
   }
 
+  auto accept() -> bool {
+    stream.write(c);
+    return true;
+  }
+
   auto accept(char chr) -> bool { return accept(c == chr); }
+  auto accept_not(char chr) -> bool { return accept(c != chr); }
   auto accept(char_raw_fn fn) -> bool { return accept(fn(c)); }
-  auto accept(char_pos_fn fn) -> bool { return accept(fn(c, index)); }
 
   auto accept_validate(auto x) -> bool { return validate(accept(x)); }
 };
 
-using char_fn = std::function<bool(TokenState&)>;
-
-/// A criterion for classifying a stream of characters as a specific type of token \link Token::Type
-/**
- * TODO: requires doc update regarding TokenState (and TokenState itself needs docs)
- *
- * The criterion is a function taking three arguments:
- * an `int` representing the current character being evaluated, a second `int` representing the
- * index of this character relative to the current character sequence (that is, since the end of the previous token),
- * and a `stringstream`, where matching characters should be written to. The function should return a `bool`,
- * whether or not this character is viable as this type of token. As soon as `false` is returned, this token ends and
- * the process is repeated.
- *
- * Note that while usually the same character (the first `int` argument) should be appended, tokens such as string
- * literals may include escapes and thus output the corresponding unescaped value.
- */
-struct Characteristic {
-  char_fn fn;
-  Token::Type type;
-
-  /// Criterion doesn't take a stringstream: if `true` is returned the same character is appended. This is usually
-  /// preferred.
-  Characteristic(Token::Type type, char_pos_fn* fn)
-      : fn([fn](TokenState& state) { return state.accept_validate(fn); }), type(type) {}
-  Characteristic(Token::Type type, char_raw_fn* fn)
-      : fn([fn](TokenState& state) { return state.accept_validate(fn); }), type(type) {}
-  Characteristic(Token::Type type, char_fn fn) : fn(move(fn)), type(type) {}
-};
+template <typename T>
+concept char_fn = requires(T t, TokenState& state) {
+                    { t(state) } -> std::same_as<bool>;
+                  };
 
 /// Contains the state while the tokenizer is running, such as the position within the file currently being read
 class Tokenizer {
   vector<Token> m_tokens{};
   std::istream& m_in;
   char m_last;
+  bool m_error_state = false;
   int m_count{};
   int m_line = 1;
   int m_col = 1;
+  int m_begin_line = 1;
+  int m_begin_col = 1;
   const char* m_source_file;
+  std::string m_stream_buffer;
 
   static auto unescape(char c) -> char {
     switch (c) {
@@ -111,8 +77,10 @@ class Tokenizer {
 
 public:
   /// Words consist of alphanumeric characters, or underscores, but *must* begin with a letter.
-  constexpr static const auto is_word = [](char c, size_t i) {
-    return (i == 0 && llvm::isAlpha(c)) || llvm::isAlnum(c) || c == '_';
+  constexpr static const auto is_word = [](TokenState& state) {
+    if (state.index == 0)
+      return state.accept_validate(llvm::isAlpha(state.c) || state.c == '_');
+    return state.accept_validate(llvm::isAlnum(state.c) || state.c == '_');
   };
 
   /// Strings are delimited by double quotes `"` and may contain escapes.
@@ -129,10 +97,10 @@ public:
       end = true;
       state.validate();
     } else if (escape) {
-      state.stream.put(unescape(state.c));
+      state.stream.write(unescape(state.c));
       escape = false;
     } else {
-      state.stream.put(state.c);
+      state.stream.write(state.c);
     }
     return true;
   };
@@ -146,28 +114,41 @@ public:
       if (state.c == '\\')
         escape = true;
       else
-        state.stream.put(state.c);
+        state.stream.write(state.c);
       return state.validate();
     }
     if (state.index == 2 && escape) {
-      state.stream.put(unescape(state.c));
+      state.stream.write(unescape(state.c));
       return state.validate();
     }
     return false;
   };
 
   /// Comments begin with an octothorpe `#` and last until the end of the line.
-  constexpr static const auto is_comment = [](char c, size_t i) {
-    return (i == 0 && c == '#') || (i > 0 && c != '\n');
+  constexpr static const auto is_comment = [](TokenState& state) {
+    if (state.index == 0)
+      return state.accept_validate('#');
+    return state.accept_validate(state.c != '\n');
   };
 
-  /// Hex numbers begin with `0x`, and consist of any of 0-9, a-f or A-F
-  constexpr static const auto is_hex_num = [](TokenState& state) {
-    if (state.index == 0)
-      return state.accept('0');
-    if (state.index == 1)
-      return state.accept('x');
-    return state.accept_validate(llvm::isHexDigit);
+  /// This matches both regular numbers (0-9), and hex number. Hex numbers begin with `0x`, and consist of any of 0-9,
+  /// a-f or A-F. If the first character is a 0, is is ambiguous and must be checked further.
+  constexpr static const auto is_num_or_hex_num = [possibly_hex = false](TokenState& state) mutable {
+    if (state.index == 0 && state.c == '0') {
+      possibly_hex = true;
+      return state.accept_validate(true);
+    }
+    if (possibly_hex && state.index == 1) {
+      if (state.c == 'x') {
+        // Invalidate, since we need a character after the x
+        state.valid = false;
+        return state.accept();
+      }
+      possibly_hex = false;
+    }
+    if (possibly_hex)
+      return state.accept_validate(llvm::isHexDigit);
+    return state.accept_validate(llvm::isDigit);
   };
 
   /// Generate a criterion matching a single character from any within the string `checks`.
@@ -177,13 +158,14 @@ public:
     };
   };
 
-  /// Generate a criterion matching the string exactly.
-  constexpr static const auto is_exactly = [](string_view str) {
-    return [str](TokenState& state) {
-      if (state.index == str.size())
-        return false;
-      state.validate(state.index == str.size() - 1);
-      return state.accept(str[state.index]);
+  /// Generate a criterion matching one or both of the character
+  constexpr static const auto is_partial = [](char c1, char c2) {
+    return [c1, c2](TokenState& state) {
+      if (state.index == 0)
+        return state.accept_validate(c1);
+      if (state.index == 1)
+        return state.accept_validate(c2);
+      return false;
     };
   };
 
@@ -195,28 +177,33 @@ public:
   void tokenize() {
 
     while (!m_in.eof()) {
-      if (!select_characteristic({
-              {Token::Type::Separator, is_char('\n')},
-              {Token::Type::Skip, llvm::isSpace},
-              {Token::Type::Skip, is_comment},
-              {Token::Type::Number, is_hex_num},
-              {Token::Type::Number, llvm::isDigit},
-              {Token::Type::Literal, is_str},
-              {Token::Type::Char, is_char_lit},
-              {Token::Type::Word, is_word},
-              {Token::Type::Symbol, is_exactly("=="sv)},
-              {Token::Type::Symbol, is_exactly("!="sv)},
-              {Token::Type::Symbol, is_exactly("//"sv)},
-              {Token::Type::Symbol, is_exactly("::"sv)},
-              {Token::Type::Symbol, is_exactly("->"sv)},
-              {Token::Type::Symbol, is_exactly("||"sv)},
-              {Token::Type::Symbol, is_exactly("&&"sv)},
-              {Token::Type::Symbol, is_any_of(R"(()[]{}<>=:#%-+.,!/*&@$\)"sv)},
-          })) {
-        std::stringstream msg;
-        msg << "Tokenizer didn't recognize '" << m_last << "' at " << m_source_file << ":" << m_line << ":" << m_col;
-        throw std::runtime_error(msg.str());
+      m_begin_line = m_line;
+      m_begin_col = m_col;
+      // m_begin_last = m_last;
+      // m_begin_position = m_in.tellg();
+
+      if (check_characteristic(Token::Type::Separator, is_char('\n')) ||
+          check_characteristic(Token::Type::Skip, llvm::isSpace) ||
+          check_characteristic(Token::Type::Skip, is_comment) ||
+          check_characteristic(Token::Type::Number, is_num_or_hex_num) ||
+          check_characteristic(Token::Type::Literal, is_str) ||   //
+          check_characteristic(Token::Type::Char, is_char_lit) || //
+          check_characteristic(Token::Type::Word, is_word) ||
+          check_characteristic(Token::Type::Symbol, is_partial('=', '=')) || // = and ==
+          check_characteristic(Token::Type::Symbol, is_partial('!', '=')) || // ! and !=
+          check_characteristic(Token::Type::Symbol, is_partial('/', '/')) || // / and //
+          check_characteristic(Token::Type::Symbol, is_partial(':', ':')) || // : and ::
+          check_characteristic(Token::Type::Symbol, is_partial('-', '>')) || // - and ->
+          check_characteristic(Token::Type::Symbol, is_partial('|', '|')) || // | and ||
+          check_characteristic(Token::Type::Symbol, is_partial('&', '&')) || // & and &&
+          check_characteristic(Token::Type::Symbol, is_any_of(R"(()[]{}<>%+.,*@$)"))) {
+
+        if (!m_error_state)
+          continue;
       }
+      std::stringstream msg;
+      msg << "Tokenizer didn't recognize '" << m_last << "' at " << m_source_file << ":" << m_line << ":" << m_col;
+      throw std::runtime_error(msg.str());
       m_count++;
     }
 
@@ -240,47 +227,41 @@ private:
     return m_last;
   }
 
-  /// Find the first criterion for which the current character is viable as the first character, then consume tokens
+  /// Determine if the criterion is viable with the current character as the first character, then consume tokens
   /// until the criterion becomes false. The result is appended to the current list of tokens `m_tokens`.
   ///
-  /// \returns `false` if no criterion matched.
-  /// \sa consume_characteristic
-  auto select_characteristic(std::initializer_list<Characteristic> list) -> bool {
-    int begin_line = m_line;
-    int begin_col = m_col;
-    char begin_last = m_last;
-    auto begin_position = m_in.tellg();
-
-    return any_of(list, [&](const auto& c) {
-      m_line = begin_line;
-      m_col = begin_col;
-      m_last = begin_last;
-      m_in.clear();
-      m_in.seekg(begin_position);
-
-      auto stream = stringstream{};
-      auto state = TokenState{false, m_last, 0, stream};
-      if (c.fn(state)) {
-        auto [atom, end_line, end_col] = consume_characteristic(c.fn, state);
-        if (state.valid) {
-          m_tokens.emplace_back(c.type, atom, m_count, Loc{begin_line, begin_col, end_line, end_col, m_source_file});
-          return true;
-        }
+  /// \returns `true` if the first character is ok
+  auto check_characteristic(Token::Type type, char_fn auto fn) -> bool {
+    m_stream_buffer.clear();
+    auto stream = llvm::raw_string_ostream{m_stream_buffer};
+    auto state = TokenState{false, m_last, 0, stream};
+    if (fn(state)) {
+      auto [atom, end_line, end_col] = consume_characteristic(fn, state);
+      if (state.valid) {
+        m_tokens.emplace_back(type, atom, m_count, Loc{m_begin_line, m_begin_col, end_line, end_col, m_source_file});
+        return true;
       }
-      return false;
-    });
+
+      m_error_state = true;
+      return true;
+    }
+    return false;
+  }
+
+  auto check_characteristic(Token::Type type, char_raw_fn* fn) -> bool {
+    return check_characteristic(type, [fn](TokenState& state) { return state.accept_validate(fn); });
   }
 
   /// Consume characters until the criterion becomes false. Note that the first character is assumed to already be
   /// matched.
   /// \returns `Atom` containing the payload of the matched token, and the line and col number it stopped on.
-  auto consume_characteristic(const char_fn& fun, TokenState& state) -> std::tuple<Atom, int, int> {
+  auto consume_characteristic(char_fn auto fn, TokenState& state) -> std::tuple<Atom, int, int> {
     state.index++;
     int end_line = m_line;
     int end_col = m_col;
     next();
     state.c = m_last;
-    while (!m_in.eof() && fun(state)) {
+    while (!m_in.eof() && fn(state)) {
       state.index++;
       end_line = m_line;
       end_col = m_col;
