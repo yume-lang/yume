@@ -11,9 +11,9 @@ var searchData=
   ['is_5fchar_8',['is_char',['../classyume_1_1Tokenizer.html#a2fbd3cdf879588411b60432bf30e48ea',1,'yume::Tokenizer']]],
   ['is_5fchar_5flit_9',['is_char_lit',['../classyume_1_1Tokenizer.html#ab9d9bc52d21ed445282c701bbb68e769',1,'yume::Tokenizer']]],
   ['is_5fcomment_10',['is_comment',['../classyume_1_1Tokenizer.html#ae5a5dee99b35e1be405a8b75b0f48bf6',1,'yume::Tokenizer']]],
-  ['is_5fexactly_11',['is_exactly',['../classyume_1_1Tokenizer.html#a7268b59e8bba44ca25c0fe7d8da451b0',1,'yume::Tokenizer']]],
-  ['is_5fhex_5fnum_12',['is_hex_num',['../classyume_1_1Tokenizer.html#a08f0daccf0938b3babf6d834bfab9658',1,'yume::Tokenizer']]],
-  ['is_5finterface_13',['is_interface',['../structyume_1_1ast_1_1StructDecl.html#a8acb4e7d0ed9fbc6bd7ca1068e885e44',1,'yume::ast::StructDecl']]],
+  ['is_5finterface_11',['is_interface',['../structyume_1_1ast_1_1StructDecl.html#a8acb4e7d0ed9fbc6bd7ca1068e885e44',1,'yume::ast::StructDecl']]],
+  ['is_5fnum_5for_5fhex_5fnum_12',['is_num_or_hex_num',['../classyume_1_1Tokenizer.html#ae3ee0bc3e5a92de001e597fa3e05efc4',1,'yume::Tokenizer']]],
+  ['is_5fpartial_13',['is_partial',['../classyume_1_1Tokenizer.html#a3d3528b8f91f00dae00fcfa0e0bc1372',1,'yume::Tokenizer']]],
   ['is_5fstr_14',['is_str',['../classyume_1_1Tokenizer.html#a7709893797eac3f850d5563eda75fa54',1,'yume::Tokenizer']]],
   ['is_5fword_15',['is_word',['../classyume_1_1Tokenizer.html#a658e562b7f9671a12b3e833fc5c97f17',1,'yume::Tokenizer']]],
   ['iterator_16',['iterator',['../structyume_1_1SourceFile.html#aced874c55e1d611053e688b11f6a39ad',1,'yume::SourceFile']]]

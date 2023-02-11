@@ -11,7 +11,7 @@ var searchData=
   ['severity_8',['severity',['../structyume_1_1diagnostic_1_1Note.html#a1176aa6e5511a58814f3d6721f72be05',1,'yume::diagnostic::Note']]],
   ['size_5ftype_9',['size_type',['../structyume_1_1TypeHolder.html#aa7573aff3d314e07ef1b5b656c046969',1,'yume::TypeHolder']]],
   ['st_5fast_10',['st_ast',['../structyume_1_1Struct.html#a3285bd78ed6e9562fb0aa76c2e0daf9c',1,'yume::Struct']]],
-  ['stream_11',['stream',['../structyume_1_1diagnostic_1_1NotesHolder.html#ace59b72251a2be51a7471c7f8ba76c40',1,'yume::diagnostic::NotesHolder::stream()'],['../structyume_1_1TokenState.html#ae5a0ba67f1175cc37125f25ac9c9d1bb',1,'yume::TokenState::stream()']]],
+  ['stream_11',['stream',['../structyume_1_1diagnostic_1_1NotesHolder.html#ace59b72251a2be51a7471c7f8ba76c40',1,'yume::diagnostic::NotesHolder::stream()'],['../structyume_1_1TokenState.html#ac339965ba62495aec07c00c36aa75970',1,'yume::TokenState::stream()']]],
   ['subs_12',['subs',['../structyume_1_1Fn.html#aa27bfd70d4612bec1997a819aef710f7',1,'yume::Fn::subs()'],['../structyume_1_1Struct.html#a0adb868f117b2540fa6712d9cbc45696',1,'yume::Struct::subs()'],['../structyume_1_1semantic_1_1Overload.html#ab78a02b7086d32590ee7b8f5532d9280',1,'yume::semantic::Overload::subs()']]],
   ['sym_5fand_13',['SYM_AND',['../namespaceyume_1_1ast_1_1parser.html#ae40587abab344e039d1c0606eddaa27a',1,'yume::ast::parser']]],
   ['sym_5fand_5fand_14',['SYM_AND_AND',['../namespaceyume_1_1ast_1_1parser.html#ae9e41d91687cb555a4a75f5447949bb2',1,'yume::ast::parser']]],

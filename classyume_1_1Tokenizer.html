@@ -81,7 +81,7 @@ Collaboration diagram for yume::Tokenizer:</div>
 <div class="dyncontent">
 <div class="center"><img src="classyume_1_1Tokenizer__coll__graph.png" border="0" usemap="#ayume_1_1Tokenizer_coll__map" alt="Collaboration graph"/></div>
 <map name="ayume_1_1Tokenizer_coll__map" id="ayume_1_1Tokenizer_coll__map">
-<area shape="rect" title="Contains the state while the tokenizer is running, such as the position within the file currently bei..." alt="" coords="36,197,151,224"/>
+<area shape="rect" title="Contains the state while the tokenizer is running, such as the position within the file currently bei..." alt="" coords="36,212,151,239"/>
 <area shape="rect" title=" " alt="" coords="5,5,181,32"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
@@ -109,15 +109,15 @@ Static Public Attributes</h2></td></tr>
 <tr class="memitem:ae5a5dee99b35e1be405a8b75b0f48bf6"><td class="memItemLeft" align="right" valign="top">static constexpr const auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Tokenizer.html#ae5a5dee99b35e1be405a8b75b0f48bf6">is_comment</a></td></tr>
 <tr class="memdesc:ae5a5dee99b35e1be405a8b75b0f48bf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comments begin with an octothorpe <code>#</code> and last until the end of the line.  <a href="classyume_1_1Tokenizer.html#ae5a5dee99b35e1be405a8b75b0f48bf6">More...</a><br /></td></tr>
 <tr class="separator:ae5a5dee99b35e1be405a8b75b0f48bf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a08f0daccf0938b3babf6d834bfab9658"><td class="memItemLeft" align="right" valign="top">static constexpr const auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Tokenizer.html#a08f0daccf0938b3babf6d834bfab9658">is_hex_num</a></td></tr>
-<tr class="memdesc:a08f0daccf0938b3babf6d834bfab9658"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hex numbers begin with <code>0x</code>, and consist of any of 0-9, a-f or A-F.  <a href="classyume_1_1Tokenizer.html#a08f0daccf0938b3babf6d834bfab9658">More...</a><br /></td></tr>
-<tr class="separator:a08f0daccf0938b3babf6d834bfab9658"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3ee0bc3e5a92de001e597fa3e05efc4"><td class="memItemLeft" align="right" valign="top">static constexpr const auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Tokenizer.html#ae3ee0bc3e5a92de001e597fa3e05efc4">is_num_or_hex_num</a></td></tr>
+<tr class="memdesc:ae3ee0bc3e5a92de001e597fa3e05efc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">This matches both regular numbers (0-9), and hex number. Hex numbers begin with <code>0x</code>, and consist of any of 0-9, a-f or A-F. If the first character is a 0, is is ambiguous and must be checked further.  <a href="classyume_1_1Tokenizer.html#ae3ee0bc3e5a92de001e597fa3e05efc4">More...</a><br /></td></tr>
+<tr class="separator:ae3ee0bc3e5a92de001e597fa3e05efc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afb116232034da760da9f64203b6ad571"><td class="memItemLeft" align="right" valign="top">static constexpr const auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Tokenizer.html#afb116232034da760da9f64203b6ad571">is_any_of</a></td></tr>
 <tr class="memdesc:afb116232034da760da9f64203b6ad571"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a criterion matching a single character from any within the string <code>checks</code>.  <a href="classyume_1_1Tokenizer.html#afb116232034da760da9f64203b6ad571">More...</a><br /></td></tr>
 <tr class="separator:afb116232034da760da9f64203b6ad571"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7268b59e8bba44ca25c0fe7d8da451b0"><td class="memItemLeft" align="right" valign="top">static constexpr const auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Tokenizer.html#a7268b59e8bba44ca25c0fe7d8da451b0">is_exactly</a></td></tr>
-<tr class="memdesc:a7268b59e8bba44ca25c0fe7d8da451b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a criterion matching the string exactly.  <a href="classyume_1_1Tokenizer.html#a7268b59e8bba44ca25c0fe7d8da451b0">More...</a><br /></td></tr>
-<tr class="separator:a7268b59e8bba44ca25c0fe7d8da451b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d3528b8f91f00dae00fcfa0e0bc1372"><td class="memItemLeft" align="right" valign="top">static constexpr const auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Tokenizer.html#a3d3528b8f91f00dae00fcfa0e0bc1372">is_partial</a></td></tr>
+<tr class="memdesc:a3d3528b8f91f00dae00fcfa0e0bc1372"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a criterion matching one or both of the character.  <a href="classyume_1_1Tokenizer.html#a3d3528b8f91f00dae00fcfa0e0bc1372">More...</a><br /></td></tr>
+<tr class="separator:a3d3528b8f91f00dae00fcfa0e0bc1372"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2fbd3cdf879588411b60432bf30e48ea"><td class="memItemLeft" align="right" valign="top">static constexpr const auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1Tokenizer.html#a2fbd3cdf879588411b60432bf30e48ea">is_char</a></td></tr>
 <tr class="memdesc:a2fbd3cdf879588411b60432bf30e48ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a criterion matching the singular character.  <a href="classyume_1_1Tokenizer.html#a2fbd3cdf879588411b60432bf30e48ea">More...</a><br /></td></tr>
 <tr class="separator:a2fbd3cdf879588411b60432bf30e48ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -125,7 +125,7 @@ Static Public Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >Contains the state while the tokenizer is running, such as the position within the file currently being read. </p>
 
-<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00093">93</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00055">55</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="abacd02cab431d1e520ebdada9e7fbb0e" name="abacd02cab431d1e520ebdada9e7fbb0e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abacd02cab431d1e520ebdada9e7fbb0e">&#9670;&nbsp;</a></span>Tokenizer()</h2>
@@ -161,7 +161,7 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00227">227</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00214">214</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
 
 </div>
 </div>
@@ -189,9 +189,9 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00195">195</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00177">177</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1ca8e95e84813830072b7516cfaa7dbc1a9">yume::Token::Char</a>, <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1ca9556e151da49cd4bcf0352857cb33509">yume::Token::EndOfFile</a>, <a class="el" href="token_8cpp_source.html#l00174">is_any_of</a>, <a class="el" href="token_8cpp_source.html#l00191">is_char</a>, <a class="el" href="token_8cpp_source.html#l00141">is_char_lit</a>, <a class="el" href="token_8cpp_source.html#l00160">is_comment</a>, <a class="el" href="token_8cpp_source.html#l00181">is_exactly</a>, <a class="el" href="token_8cpp_source.html#l00165">is_hex_num</a>, <a class="el" href="token_8cpp_source.html#l00119">is_str</a>, <a class="el" href="token_8cpp_source.html#l00114">is_word</a>, <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1cad7da1b76e5799f53a399b7a96ba67437">yume::Token::Literal</a>, <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1cab2ee912b91d69b435159c7c3f6df7f5f">yume::Token::Number</a>, <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1ca04b2e4188d4ef8051e4699da8af01335">yume::Token::Separator</a>, <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1ca72ef2b9b6965d078e3c7f95487a82d1c">yume::Token::Skip</a>, <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1ca02c86eb2792f3262c21d030a87e19793">yume::Token::Symbol</a>, and <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1ca07a094a210794e74a0e5e1a1457a92ee">yume::Token::Word</a>.</p>
+<p class="reference">References <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1ca8e95e84813830072b7516cfaa7dbc1a9">yume::Token::Char</a>, <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1ca9556e151da49cd4bcf0352857cb33509">yume::Token::EndOfFile</a>, <a class="el" href="token_8cpp_source.html#l00155">is_any_of</a>, <a class="el" href="token_8cpp_source.html#l00173">is_char</a>, <a class="el" href="token_8cpp_source.html#l00109">is_char_lit</a>, <a class="el" href="token_8cpp_source.html#l00128">is_comment</a>, <a class="el" href="token_8cpp_source.html#l00136">is_num_or_hex_num</a>, <a class="el" href="token_8cpp_source.html#l00162">is_partial</a>, <a class="el" href="token_8cpp_source.html#l00087">is_str</a>, <a class="el" href="token_8cpp_source.html#l00080">is_word</a>, <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1cad7da1b76e5799f53a399b7a96ba67437">yume::Token::Literal</a>, <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1cab2ee912b91d69b435159c7c3f6df7f5f">yume::Token::Number</a>, <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1ca04b2e4188d4ef8051e4699da8af01335">yume::Token::Separator</a>, <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1ca72ef2b9b6965d078e3c7f95487a82d1c">yume::Token::Skip</a>, <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1ca02c86eb2792f3262c21d030a87e19793">yume::Token::Symbol</a>, and <a class="el" href="structyume_1_1Token.html#a13465ba79fcba211bad4eb7c0c3cec1ca07a094a210794e74a0e5e1a1457a92ee">yume::Token::Word</a>.</p>
 
 </div>
 </div>
@@ -218,7 +218,7 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00229">229</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00216">216</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
 
 </div>
 </div>
@@ -250,9 +250,9 @@ Static Public Attributes</h2></td></tr>
 </div><!-- fragment -->
 <p>Generate a criterion matching a single character from any within the string <code>checks</code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00174">174</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00155">155</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="token_8cpp_source.html#l00195">tokenize()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="token_8cpp_source.html#l00177">tokenize()</a>.</p>
 
 </div>
 </div>
@@ -281,9 +281,9 @@ Static Public Attributes</h2></td></tr>
 </div><!-- fragment -->
 <p>Generate a criterion matching the singular character. </p>
 
-<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00191">191</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00173">173</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="token_8cpp_source.html#l00195">tokenize()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="token_8cpp_source.html#l00177">tokenize()</a>.</p>
 
 </div>
 </div>
@@ -314,11 +314,11 @@ Static Public Attributes</h2></td></tr>
 <div class="line">      <span class="keywordflow">if</span> (state.c == <span class="charliteral">&#39;\\&#39;</span>)</div>
 <div class="line">        escape = <span class="keyword">true</span>;</div>
 <div class="line">      <span class="keywordflow">else</span></div>
-<div class="line">        state.stream.put(state.c);</div>
+<div class="line">        state.stream.write(state.c);</div>
 <div class="line">      <span class="keywordflow">return</span> state.validate();</div>
 <div class="line">    }</div>
 <div class="line">    <span class="keywordflow">if</span> (state.index == 2 &amp;&amp; escape) {</div>
-<div class="line">      state.stream.put(unescape(state.c));</div>
+<div class="line">      state.stream.write(unescape(state.c));</div>
 <div class="line">      <span class="keywordflow">return</span> state.validate();</div>
 <div class="line">    }</div>
 <div class="line">    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
@@ -326,9 +326,9 @@ Static Public Attributes</h2></td></tr>
 </div><!-- fragment -->
 <p>Character literals begin with a question mark <code>?</code> and may contain escapes. </p>
 
-<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00141">141</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00109">109</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="token_8cpp_source.html#l00195">tokenize()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="token_8cpp_source.html#l00177">tokenize()</a>.</p>
 
 </div>
 </div>
@@ -351,20 +351,22 @@ Static Public Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= [](<span class="keywordtype">char</span> c, <span class="keywordtype">size_t</span> i) {</div>
-<div class="line">    <span class="keywordflow">return</span> (i == 0 &amp;&amp; c == <span class="charliteral">&#39;#&#39;</span>) || (i &gt; 0 &amp;&amp; c != <span class="charliteral">&#39;\n&#39;</span>);</div>
+<b>Initial value:</b><div class="fragment"><div class="line">= [](TokenState&amp; state) {</div>
+<div class="line">    <span class="keywordflow">if</span> (state.index == 0)</div>
+<div class="line">      <span class="keywordflow">return</span> state.accept_validate(<span class="charliteral">&#39;#&#39;</span>);</div>
+<div class="line">    <span class="keywordflow">return</span> state.accept_validate(state.c != <span class="charliteral">&#39;\n&#39;</span>);</div>
 <div class="line">  }</div>
 </div><!-- fragment -->
 <p>Comments begin with an octothorpe <code>#</code> and last until the end of the line. </p>
 
-<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00160">160</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00128">128</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="token_8cpp_source.html#l00195">tokenize()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="token_8cpp_source.html#l00177">tokenize()</a>.</p>
 
 </div>
 </div>
-<a id="a7268b59e8bba44ca25c0fe7d8da451b0" name="a7268b59e8bba44ca25c0fe7d8da451b0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7268b59e8bba44ca25c0fe7d8da451b0">&#9670;&nbsp;</a></span>is_exactly</h2>
+<a id="ae3ee0bc3e5a92de001e597fa3e05efc4" name="ae3ee0bc3e5a92de001e597fa3e05efc4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae3ee0bc3e5a92de001e597fa3e05efc4">&#9670;&nbsp;</a></span>is_num_or_hex_num</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -373,7 +375,7 @@ Static Public Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">constexpr const auto yume::Tokenizer::is_exactly</td>
+          <td class="memname">constexpr const auto yume::Tokenizer::is_num_or_hex_num</td>
         </tr>
       </table>
   </td>
@@ -382,55 +384,66 @@ Static Public Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= [](string_view str) {</div>
-<div class="line">    <span class="keywordflow">return</span> [str](TokenState&amp; state) {</div>
-<div class="line">      <span class="keywordflow">if</span> (state.index == str.size())</div>
-<div class="line">        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line">      state.validate(state.index == str.size() - 1);</div>
-<div class="line">      <span class="keywordflow">return</span> state.accept(str[state.index]);</div>
+<b>Initial value:</b><div class="fragment"><div class="line">= [possibly_hex = <span class="keyword">false</span>](TokenState&amp; state) <span class="keyword">mutable</span> {</div>
+<div class="line">    <span class="keywordflow">if</span> (state.index == 0 &amp;&amp; state.c == <span class="charliteral">&#39;0&#39;</span>) {</div>
+<div class="line">      possibly_hex = <span class="keyword">true</span>;</div>
+<div class="line">      <span class="keywordflow">return</span> state.accept_validate(<span class="keyword">true</span>);</div>
+<div class="line">    }</div>
+<div class="line">    <span class="keywordflow">if</span> (possibly_hex &amp;&amp; state.index == 1) {</div>
+<div class="line">      <span class="keywordflow">if</span> (state.c == <span class="charliteral">&#39;x&#39;</span>) {</div>
+<div class="line">        </div>
+<div class="line">        state.valid = <span class="keyword">false</span>;</div>
+<div class="line">        <span class="keywordflow">return</span> state.accept();</div>
+<div class="line">      }</div>
+<div class="line">      possibly_hex = <span class="keyword">false</span>;</div>
+<div class="line">    }</div>
+<div class="line">    <span class="keywordflow">if</span> (possibly_hex)</div>
+<div class="line">      <span class="keywordflow">return</span> state.accept_validate(llvm::isHexDigit);</div>
+<div class="line">    <span class="keywordflow">return</span> state.accept_validate(llvm::isDigit);</div>
+<div class="line">  }</div>
+</div><!-- fragment -->
+<p>This matches both regular numbers (0-9), and hex number. Hex numbers begin with <code>0x</code>, and consist of any of 0-9, a-f or A-F. If the first character is a 0, is is ambiguous and must be checked further. </p>
+
+<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00136">136</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="token_8cpp_source.html#l00177">tokenize()</a>.</p>
+
+</div>
+</div>
+<a id="a3d3528b8f91f00dae00fcfa0e0bc1372" name="a3d3528b8f91f00dae00fcfa0e0bc1372"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3d3528b8f91f00dae00fcfa0e0bc1372">&#9670;&nbsp;</a></span>is_partial</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr const auto yume::Tokenizer::is_partial</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">= [](<span class="keywordtype">char</span> c1, <span class="keywordtype">char</span> c2) {</div>
+<div class="line">    <span class="keywordflow">return</span> [c1, c2](TokenState&amp; state) {</div>
+<div class="line">      <span class="keywordflow">if</span> (state.index == 0)</div>
+<div class="line">        <span class="keywordflow">return</span> state.accept_validate(c1);</div>
+<div class="line">      <span class="keywordflow">if</span> (state.index == 1)</div>
+<div class="line">        <span class="keywordflow">return</span> state.accept_validate(c2);</div>
+<div class="line">      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line">    };</div>
 <div class="line">  }</div>
 </div><!-- fragment -->
-<p>Generate a criterion matching the string exactly. </p>
+<p>Generate a criterion matching one or both of the character. </p>
 
-<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00181">181</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00162">162</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="token_8cpp_source.html#l00195">tokenize()</a>.</p>
-
-</div>
-</div>
-<a id="a08f0daccf0938b3babf6d834bfab9658" name="a08f0daccf0938b3babf6d834bfab9658"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a08f0daccf0938b3babf6d834bfab9658">&#9670;&nbsp;</a></span>is_hex_num</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">constexpr const auto yume::Tokenizer::is_hex_num</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= [](TokenState&amp; state) {</div>
-<div class="line">    <span class="keywordflow">if</span> (state.index == 0)</div>
-<div class="line">      <span class="keywordflow">return</span> state.accept(<span class="charliteral">&#39;0&#39;</span>);</div>
-<div class="line">    <span class="keywordflow">if</span> (state.index == 1)</div>
-<div class="line">      <span class="keywordflow">return</span> state.accept(<span class="charliteral">&#39;x&#39;</span>);</div>
-<div class="line">    <span class="keywordflow">return</span> state.accept_validate(llvm::isHexDigit);</div>
-<div class="line">  }</div>
-</div><!-- fragment -->
-<p>Hex numbers begin with <code>0x</code>, and consist of any of 0-9, a-f or A-F. </p>
-
-<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00165">165</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="token_8cpp_source.html#l00195">tokenize()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="token_8cpp_source.html#l00177">tokenize()</a>.</p>
 
 </div>
 </div>
@@ -466,10 +479,10 @@ Static Public Attributes</h2></td></tr>
 <div class="line">      <a class="code hl_variable" href="errors_8cpp.html#a9504e6a1750bc612cef338ee187ee1f0">end</a> = <span class="keyword">true</span>;</div>
 <div class="line">      state.validate();</div>
 <div class="line">    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (escape) {</div>
-<div class="line">      state.stream.put(unescape(state.c));</div>
+<div class="line">      state.stream.write(unescape(state.c));</div>
 <div class="line">      escape = <span class="keyword">false</span>;</div>
 <div class="line">    } <span class="keywordflow">else</span> {</div>
-<div class="line">      state.stream.put(state.c);</div>
+<div class="line">      state.stream.write(state.c);</div>
 <div class="line">    }</div>
 <div class="line">    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line">  }</div>
@@ -477,9 +490,9 @@ Static Public Attributes</h2></td></tr>
 </div><!-- fragment -->
 <p>Strings are delimited by double quotes <code>"</code> and may contain escapes. </p>
 
-<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00119">119</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00087">87</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="token_8cpp_source.html#l00195">tokenize()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="token_8cpp_source.html#l00177">tokenize()</a>.</p>
 
 </div>
 </div>
@@ -502,15 +515,17 @@ Static Public Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= [](<span class="keywordtype">char</span> c, <span class="keywordtype">size_t</span> i) {</div>
-<div class="line">    <span class="keywordflow">return</span> (i == 0 &amp;&amp; llvm::isAlpha(c)) || llvm::isAlnum(c) || c == <span class="charliteral">&#39;_&#39;</span>;</div>
+<b>Initial value:</b><div class="fragment"><div class="line">= [](TokenState&amp; state) {</div>
+<div class="line">    <span class="keywordflow">if</span> (state.index == 0)</div>
+<div class="line">      <span class="keywordflow">return</span> state.accept_validate(llvm::isAlpha(state.c) || state.c == <span class="charliteral">&#39;_&#39;</span>);</div>
+<div class="line">    <span class="keywordflow">return</span> state.accept_validate(llvm::isAlnum(state.c) || state.c == <span class="charliteral">&#39;_&#39;</span>);</div>
 <div class="line">  }</div>
 </div><!-- fragment -->
 <p>Words consist of alphanumeric characters, or underscores, but <em>must</em> begin with a letter. </p>
 
-<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00114">114</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="token_8cpp_source.html#l00080">80</a> of file <a class="el" href="token_8cpp_source.html">token.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="token_8cpp_source.html#l00195">tokenize()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="token_8cpp_source.html#l00177">tokenize()</a>.</p>
 
 </div>
 </div>
