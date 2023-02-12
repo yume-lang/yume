@@ -6,7 +6,6 @@
 
 namespace yume {
 struct Substitutions;
-struct GenericTypeReplacements;
 } // namespace yume
 
 namespace yume::ty {

@@ -22,7 +22,6 @@ namespace yume {
 class Compiler;
 struct Instantiation;
 struct Struct;
-struct GenericTypeReplacements;
 namespace ast {
 struct TypeName;
 class Type;

@@ -7,6 +7,7 @@
 #include "ty/compatibility.hpp"
 #include "ty/substitution.hpp"
 #include "ty/type.hpp"
+#include "util.hpp"
 #include <algorithm>
 #include <cstdint>
 #include <functional>
@@ -15,6 +16,8 @@
 #include <llvm/ADT/StringMap.h>
 #include <llvm/ADT/StringMapEntry.h>
 #include <llvm/ADT/iterator.h>
+#include <llvm/IR/Constants.h>
+#include <llvm/IR/Use.h>
 #include <llvm/Support/Casting.h>
 #include <llvm/Support/ErrorHandling.h>
 #include <llvm/Support/raw_ostream.h>
@@ -608,6 +611,10 @@ template <> void TypeWalker::statement(ast::Compound& stat) {
 }
 
 template <> void TypeWalker::statement(ast::StructDecl& stat) {
+  for (auto& type_arg : stat.type_args)
+    if (type_arg.type.has_value())
+      expression(*type_arg.type);
+
   // This decl still has unsubstituted generics, can't instantiate its body
   if (!current_decl.fully_substituted())
     return;
@@ -840,11 +847,21 @@ auto TypeWalker::convert_type(ast::Type& ast_type) -> ty::Type {
       i.visit([&](ast::AnyType& v) { expression(*v); }, [&](ast::AnyExpr& v) { body_expression(*v); });
 
     Substitutions gen_base = struct_obj->get_subs();
-    for (const auto& [gen, gen_sub] : llvm::zip(gen_base.all_keys(), templated->type_args))
-      if (gen->holds_type())
+    size_t i = 0;
+    for (const auto& [gen, gen_sub] : llvm::zip(gen_base.all_keys(), templated->type_args)) {
+      if (gen->holds_type()) {
         gen_base.associate(*gen, {gen_sub.as_type()->ensure_ty()});
-      else
-        gen_base.associate(*gen, {gen_sub.as_expr().raw_ptr()});
+      } else {
+        auto* expr = gen_sub.as_expr().raw_ptr();
+        auto expected_type = struct_obj->st_ast.type_args.at(i).type->ensure_ty();
+        auto compat = expr->ensure_ty().compatibility(expected_type);
+        YUME_ASSERT(compat.valid, "Non-type generic argument type must match or be implicitly convertible (got `" +
+                                      expr->ensure_ty().name() + "', expected `" + expected_type.name() + "')");
+
+        gen_base.associate(*gen, {expr});
+      }
+      ++i;
+    }
 
     // YUME_ASSERT(gen_base.fully_substituted(), "Can't convert templated type which isn't fully substituted: "s +
     //                                               template_base.describe() + " (" + ast_type.describe() + ")");

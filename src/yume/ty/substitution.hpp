@@ -59,7 +59,10 @@ struct GenericValue {
     return expr->describe();
   }
 
-  auto operator==(const GenericValue& other) const noexcept -> bool = default;
+  auto operator==(const GenericValue& other) const noexcept -> bool {
+    return this->type == other.type && static_cast<bool>(this->expr) == static_cast<bool>(other.expr) &&
+           ((this->expr == nullptr) || this->expr->equals_by_hash(*other.expr));
+  };
 };
 
 struct Substitutions {
@@ -211,7 +214,9 @@ template <> struct std::hash<yume::Substitutions> {
         yume::hash_combine(seed, v->type->is_mut());
         yume::hash_combine(seed, v->type->is_ref());
       }
-      yume::hash_combine(seed, v->expr);
+      yume::hash_combine(seed, v->expr != nullptr);
+      if (v->expr != nullptr)
+        yume::hash_combine(seed, std::hash<yume::ast::AST>{}(*v->expr));
     }
 
     return seed;
