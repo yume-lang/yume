@@ -13,7 +13,7 @@ var searchData=
   ['fn_5fbody_10',['fn_body',['../structyume_1_1Fn.html#a36cfa68dd771707b73bb70056258d7e6',1,'yume::Fn']]],
   ['fn_5fmemo_11',['fn_memo',['../classyume_1_1ty_1_1Function.html#ad65e2c4abc4e09c375133f152a0c9bd2',1,'yume::ty::Function::fn_memo() const -&gt; auto *'],['../classyume_1_1ty_1_1Function.html#a70ba7adf30bdc19d6e40a7929c505574',1,'yume::ty::Function::fn_memo(Compiler &amp;, llvm::FunctionType *memo) const']]],
   ['fnarg_12',['FnArg',['../structyume_1_1FnArg.html#ab74d5bd3f69c55bc26ade47ca5a6449e',1,'yume::FnArg']]],
-  ['fndecl_13',['FnDecl',['../structyume_1_1ast_1_1FnDecl.html#a49aff189495e3c3940b54ec71408f6f7',1,'yume::ast::FnDecl']]],
+  ['fndecl_13',['FnDecl',['../structyume_1_1ast_1_1FnDecl.html#a86e8d00173a39d1fbe7dd60331ad0213',1,'yume::ast::FnDecl']]],
   ['for_5fall_5finstantiations_14',['for_all_instantiations',['../namespaceyume_1_1semantic.html#a68a5711218da3ecacd244f68a4cd5f9b',1,'yume::semantic']]],
   ['fully_5fsubstituted_15',['fully_substituted',['../structyume_1_1DeclLike.html#a01201b7eb8cf8b0fb07455a2f5662be8',1,'yume::DeclLike::fully_substituted()'],['../structyume_1_1Substitutions.html#a7923d681fa07e5543142bc46c47939d0',1,'yume::Substitutions::fully_substituted()']]],
   ['function_16',['Function',['../classyume_1_1ty_1_1Function.html#a401636f0c251fafe3082ac4ced658281',1,'yume::ty::Function']]],

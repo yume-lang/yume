@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2023-02-11 05:14:47</td>
+            <td class="headerValue">2023-02-12 14:13:51</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -299,7 +299,7 @@
 <a name="241"><span class="lineNum">     241 </span>            : </a>
 <a name="242"><span class="lineNum">     242 </span>            : auto Type::is_slice() const noexcept -&gt; bool {</a>
 <a name="243"><span class="lineNum">     243 </span>            :   if (const auto* base = base_dyn_cast&lt;Struct&gt;())</a>
-<a name="244"><span class="lineNum">     244 </span>            :     return base-&gt;base_name() == &quot;Slice&quot; &amp;&amp; (base-&gt;m_subs != nullptr) &amp;&amp; base-&gt;m_subs-&gt;size() == 1;</a>
+<a name="244"><span class="lineNum">     244 </span>            :     return base-&gt;m_decl-&gt;has_annotation(ast::StructDecl::BUILTIN_TYPE_SLICE);</a>
 <a name="245"><span class="lineNum">     245 </span>            : </a>
 <a name="246"><span class="lineNum">     246 </span>            :   return false;</a>
 <a name="247"><span class="lineNum">     247 </span>            : };</a>

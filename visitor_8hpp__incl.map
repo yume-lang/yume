@@ -1,6 +1,6 @@
 <map id="src/yume/diagnostic/visitor/visitor.hpp" name="src/yume/diagnostic/visitor/visitor.hpp">
-<area shape="rect" id="node1" title=" " alt="" coords="1253,5,1391,47"/>
-<area shape="rect" id="node2" href="$ast_8hpp.html" title=" " alt="" coords="1636,95,1723,121"/>
+<area shape="rect" id="node1" title=" " alt="" coords="1305,5,1443,47"/>
+<area shape="rect" id="node2" href="$ast_8hpp.html" title=" " alt="" coords="1663,95,1749,121"/>
 <area shape="rect" id="node7" href="$util_8hpp.html" title=" " alt="" coords="1232,319,1295,345"/>
 <area shape="rect" id="node3" href="$token_8hpp.html" title=" " alt="" coords="1959,244,2037,271"/>
 <area shape="rect" id="node6" title=" " alt="" coords="2241,468,2296,495"/>
@@ -12,10 +12,11 @@
 <area shape="rect" id="node26" title=" " alt="" coords="1939,393,1998,420"/>
 <area shape="rect" id="node28" href="$compatibility_8hpp.html" title=" " alt="" coords="1536,244,1668,271"/>
 <area shape="rect" id="node29" title=" " alt="" coords="1607,319,1669,345"/>
-<area shape="rect" id="node30" href="$type__base_8hpp.html" title=" " alt="" coords="1439,169,1557,196"/>
+<area shape="rect" id="node30" href="$type__base_8hpp.html" title=" " alt="" coords="1431,169,1549,196"/>
 <area shape="rect" id="node32" title=" " alt="" coords="1845,169,1919,196"/>
 <area shape="rect" id="node33" title=" " alt="" coords="1943,169,2103,196"/>
 <area shape="rect" id="node34" title=" " alt="" coords="2127,169,2314,196"/>
+<area shape="rect" id="node35" title=" " alt="" coords="2338,169,2442,196"/>
 <area shape="rect" id="node4" href="$atom_8hpp.html" title=" " alt="" coords="2231,319,2306,345"/>
 <area shape="rect" id="node20" title=" " alt="" coords="1769,393,1838,420"/>
 <area shape="rect" id="node21" title=" " alt="" coords="2022,393,2110,420"/>

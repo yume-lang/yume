@@ -32,12 +32,12 @@
             <td></td>
             <td class="headerItem">Lines:</td>
             <td class="headerCovTableEntry">18</td>
-            <td class="headerCovTableEntry">109</td>
-            <td class="headerCovTableEntryLo">16.5 %</td>
+            <td class="headerCovTableEntry">110</td>
+            <td class="headerCovTableEntryLo">16.4 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2023-02-11 05:14:47</td>
+            <td class="headerValue">2023-02-12 14:13:51</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -220,147 +220,148 @@
 <a name="162"><span class="lineNum">     162 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_self_ty() const noexcept -&gt; optional&lt;ty::Type&gt; { return self_ty; };</span></a>
 <a name="163"><span class="lineNum">     163 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_subs() const -&gt; const Substitutions&amp; { return subs; }</span></a>
 <a name="164"><span class="lineNum">     164 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_subs() -&gt; Substitutions&amp; { return subs; }</span></a>
-<a name="165"><span class="lineNum">     165 </span>            : </a>
-<a name="166"><span class="lineNum">     166 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto name() const noexcept -&gt; string;</span></a>
-<a name="167"><span class="lineNum">     167 </span>            : </a>
-<a name="168"><span class="lineNum">     168 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_or_create_instantiation(Substitutions&amp; subs) noexcept -&gt; std::pair&lt;bool, Struct&amp;&gt;;</span></a>
-<a name="169"><span class="lineNum">     169 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto create_instantiation(Substitutions&amp; subs) noexcept -&gt; Struct&amp;;</span></a>
-<a name="170"><span class="lineNum">     170 </span>            : };</a>
-<a name="171"><span class="lineNum">     171 </span>            : </a>
-<a name="172"><span class="lineNum">     172 </span>            : /// A constant declaration in the compiler.</a>
-<a name="173"><span class="lineNum">     173 </span><span class="lineCov">          1 : struct Const {</span></a>
-<a name="174"><span class="lineNum">     174 </span><span class="lineNoCov">          0 :   ast::ConstDecl&amp; cn_ast;</span></a>
-<a name="175"><span class="lineNum">     175 </span>            :   /// If this function is in the body of a struct, this points to its type.</a>
-<a name="176"><span class="lineNum">     176 </span><span class="lineCov">          1 :   optional&lt;ty::Type&gt; self_ty;</span></a>
-<a name="177"><span class="lineNum">     177 </span>            :   /// The program this declaration is a member of.</a>
-<a name="178"><span class="lineNum">     178 </span><span class="lineCov">          1 :   ast::Program* member;</span></a>
-<a name="179"><span class="lineNum">     179 </span><span class="lineNoCov">          0 :   llvm::GlobalVariable* llvm{};</span></a>
-<a name="180"><span class="lineNum">     180 </span>            : </a>
-<a name="181"><span class="lineNum">     181 </span><span class="lineNoCov">          0 :   Const(ast::ConstDecl&amp; ast_decl, ast::Program* member = nullptr, optional&lt;ty::Type&gt; parent = std::nullopt) noexcept</span></a>
-<a name="182"><span class="lineNum">     182 </span>            :       : cn_ast(ast_decl), self_ty(parent), member(member) {}</a>
-<a name="183"><span class="lineNum">     183 </span>            : </a>
-<a name="184"><span class="lineNum">     184 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() const noexcept -&gt; const auto&amp; { return cn_ast; }</span></a>
-<a name="185"><span class="lineNum">     185 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() noexcept -&gt; auto&amp; { return cn_ast; }</span></a>
-<a name="186"><span class="lineNum">     186 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_self_ty() const noexcept -&gt; optional&lt;ty::Type&gt; { return self_ty; };</span></a>
-<a name="187"><span class="lineNum">     187 </span>            : </a>
-<a name="188"><span class="lineNum">     188 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto name() const noexcept -&gt; string;</span></a>
-<a name="189"><span class="lineNum">     189 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto referred_to_by(const ast::ConstExpr&amp; expr) const -&gt; bool {</span></a>
-<a name="190"><span class="lineNum">     190 </span>            :     if (name() != expr.name)</a>
-<a name="191"><span class="lineNum">     191 </span>            :       return false;</a>
-<a name="192"><span class="lineNum">     192 </span>            : </a>
-<a name="193"><span class="lineNum">     193 </span>            :     if (self_ty.has_value() != expr.parent.has_value())</a>
-<a name="194"><span class="lineNum">     194 </span>            :       return false;</a>
-<a name="195"><span class="lineNum">     195 </span>            : </a>
-<a name="196"><span class="lineNum">     196 </span>            :     if (self_ty.has_value() &amp;&amp; expr.parent.has_value())</a>
-<a name="197"><span class="lineNum">     197 </span>            :       return self_ty-&gt;name() == expr.parent.value();</a>
-<a name="198"><span class="lineNum">     198 </span>            : </a>
-<a name="199"><span class="lineNum">     199 </span>            :     return true;</a>
-<a name="200"><span class="lineNum">     200 </span>            :   }</a>
-<a name="201"><span class="lineNum">     201 </span>            : };</a>
-<a name="202"><span class="lineNum">     202 </span>            : </a>
-<a name="203"><span class="lineNum">     203 </span><span class="lineNoCov">          0 : using DeclLike_t = visitable_variant&lt;std::monostate, Fn*, Struct*, Const*&gt;;</span></a>
-<a name="204"><span class="lineNum">     204 </span>            : </a>
-<a name="205"><span class="lineNum">     205 </span>            : /// A common base between declarations in the compiler: `Fn`, `Struct` and `Const`. Its value may also be absent</a>
-<a name="206"><span class="lineNum">     206 </span>            : /// (`std::monostate`).</a>
-<a name="207"><span class="lineNum">     207 </span><span class="lineCov">          1 : struct DeclLike : public DeclLike_t {</span></a>
-<a name="208"><span class="lineNum">     208 </span>            : public:</a>
-<a name="209"><span class="lineNum">     209 </span>            :   using DeclLike_t::DeclLike_t;</a>
-<a name="210"><span class="lineNum">     210 </span>            : </a>
-<a name="211"><span class="lineNum">     211 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto fully_substituted() const noexcept -&gt; bool {</span></a>
-<a name="212"><span class="lineNum">     212 </span>            :     if (const auto* subs = this-&gt;subs(); subs != nullptr)</a>
-<a name="213"><span class="lineNum">     213 </span>            :       return subs-&gt;fully_substituted();</a>
-<a name="214"><span class="lineNum">     214 </span>            :     return true;</a>
-<a name="215"><span class="lineNum">     215 </span>            :   }</a>
-<a name="216"><span class="lineNum">     216 </span>            : </a>
-<a name="217"><span class="lineNum">     217 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto subs() const noexcept -&gt; const Substitutions* {</span></a>
-<a name="218"><span class="lineNum">     218 </span>            :     return visit([](std::monostate /*absent*/) noexcept -&gt; const Substitutions* { return nullptr; },</a>
-<a name="219"><span class="lineNum">     219 </span>            :                  [](Const* /*cn*/) noexcept -&gt; const Substitutions* { return nullptr; },</a>
-<a name="220"><span class="lineNum">     220 </span>            :                  [](auto* decl) noexcept -&gt; const Substitutions* {</a>
-<a name="221"><span class="lineNum">     221 </span>            :                    if (decl == nullptr)</a>
-<a name="222"><span class="lineNum">     222 </span>            :                      return nullptr;</a>
-<a name="223"><span class="lineNum">     223 </span>            :                    return &amp;decl-&gt;get_subs();</a>
-<a name="224"><span class="lineNum">     224 </span>            :                  });</a>
-<a name="225"><span class="lineNum">     225 </span>            :   };</a>
-<a name="226"><span class="lineNum">     226 </span>            : </a>
-<a name="227"><span class="lineNum">     227 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto subs() noexcept -&gt; Substitutions* {</span></a>
-<a name="228"><span class="lineNum">     228 </span>            :     return visit([](std::monostate /*absent*/) noexcept -&gt; Substitutions* { return nullptr; },</a>
-<a name="229"><span class="lineNum">     229 </span>            :                  [](Const* /*cn*/) noexcept -&gt; Substitutions* { return nullptr; },</a>
-<a name="230"><span class="lineNum">     230 </span>            :                  [](auto* decl) noexcept -&gt; Substitutions* {</a>
-<a name="231"><span class="lineNum">     231 </span>            :                    if (decl == nullptr)</a>
-<a name="232"><span class="lineNum">     232 </span>            :                      return nullptr;</a>
-<a name="233"><span class="lineNum">     233 </span>            :                    return &amp;decl-&gt;get_subs();</a>
-<a name="234"><span class="lineNum">     234 </span>            :                  });</a>
-<a name="235"><span class="lineNum">     235 </span>            :   };</a>
-<a name="236"><span class="lineNum">     236 </span>            : </a>
-<a name="237"><span class="lineNum">     237 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() const noexcept -&gt; const ast::AST* {</span></a>
-<a name="238"><span class="lineNum">     238 </span>            :     return visit([](std::monostate /*absent*/) noexcept -&gt; const ast::AST* { return nullptr; },</a>
-<a name="239"><span class="lineNum">     239 </span>            :                  [](const auto* decl) noexcept -&gt; const ast::AST* { return &amp;decl-&gt;ast(); });</a>
-<a name="240"><span class="lineNum">     240 </span>            :   };</a>
-<a name="241"><span class="lineNum">     241 </span>            : </a>
-<a name="242"><span class="lineNum">     242 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() noexcept -&gt; ast::AST* {</span></a>
-<a name="243"><span class="lineNum">     243 </span>            :     return visit([](std::monostate /*absent*/) noexcept -&gt; ast::AST* { return nullptr; },</a>
-<a name="244"><span class="lineNum">     244 </span>            :                  [](auto* decl) noexcept -&gt; ast::AST* { return &amp;decl-&gt;ast(); });</a>
-<a name="245"><span class="lineNum">     245 </span>            :   };</a>
-<a name="246"><span class="lineNum">     246 </span>            : </a>
-<a name="247"><span class="lineNum">     247 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto self_ty() const noexcept -&gt; optional&lt;ty::Type&gt; {</span></a>
-<a name="248"><span class="lineNum">     248 </span>            :     return visit([](std::monostate /*absent*/) noexcept { return optional&lt;ty::Type&gt;{}; },</a>
-<a name="249"><span class="lineNum">     249 </span>            :                  [](const auto* decl) noexcept { return decl-&gt;get_self_ty(); });</a>
-<a name="250"><span class="lineNum">     250 </span>            :   };</a>
-<a name="251"><span class="lineNum">     251 </span>            : </a>
-<a name="252"><span class="lineNum">     252 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto opaque_self() const noexcept -&gt; bool {</span></a>
-<a name="253"><span class="lineNum">     253 </span>            :     return visit([](Fn* fn) noexcept { return fn-&gt;abstract() || fn-&gt;has_annotation(ast::FnDecl::ANN_OVERRIDE); },</a>
-<a name="254"><span class="lineNum">     254 </span>            :                  [](auto&amp;&amp; /* default */) noexcept { return false; });</a>
-<a name="255"><span class="lineNum">     255 </span>            :   };</a>
-<a name="256"><span class="lineNum">     256 </span>            : };</a>
-<a name="257"><span class="lineNum">     257 </span>            : </a>
-<a name="258"><span class="lineNum">     258 </span>            : struct InScope;</a>
-<a name="259"><span class="lineNum">     259 </span>            : </a>
-<a name="260"><span class="lineNum">     260 </span>            : /// A value of a complied expression.</a>
-<a name="261"><span class="lineNum">     261 </span><span class="lineCov">          1 : struct Val {</span></a>
-<a name="262"><span class="lineNum">     262 </span><span class="lineNoCov">          0 :   llvm::Value* llvm{};</span></a>
-<a name="263"><span class="lineNum">     263 </span><span class="lineNoCov">          0 :   InScope* scope{};</span></a>
-<a name="264"><span class="lineNum">     264 </span>            : </a>
-<a name="265"><span class="lineNum">     265 </span><span class="lineNoCov">          0 :   /* implicit */ Val(llvm::Value* llvm_val) noexcept : llvm(llvm_val) {}</span></a>
-<a name="266"><span class="lineNum">     266 </span><span class="lineNoCov">          0 :   Val(llvm::Value* llvm_val, InScope* scope_val) noexcept : llvm(llvm_val), scope(scope_val) {}</span></a>
-<a name="267"><span class="lineNum">     267 </span>            : </a>
-<a name="268"><span class="lineNum">     268 </span><span class="lineNoCov">          0 :   /* implicit */ operator llvm::Value*() const { return llvm; }</span></a>
-<a name="269"><span class="lineNum">     269 </span>            : };</a>
-<a name="270"><span class="lineNum">     270 </span>            : </a>
-<a name="271"><span class="lineNum">     271 </span>            : /// A local variable in function scope. Used to track destructing when the scope ends.</a>
-<a name="272"><span class="lineNum">     272 </span><span class="lineCov">          1 : struct InScope {</span></a>
-<a name="273"><span class="lineNum">     273 </span><span class="lineNoCov">          0 :   Val value;</span></a>
-<a name="274"><span class="lineNum">     274 </span><span class="lineNoCov">          0 :   const ast::AST&amp; ast;</span></a>
-<a name="275"><span class="lineNum">     275 </span>            :   /// Whether the local scope &quot;owns&quot; the variable. Unowned variables are not destructed at the end of the scope.</a>
-<a name="276"><span class="lineNum">     276 </span><span class="lineCov">          1 :   bool owning{};</span></a>
-<a name="277"><span class="lineNum">     277 </span>            : };</a>
-<a name="278"><span class="lineNum">     278 </span>            : </a>
-<a name="279"><span class="lineNum">     279 </span>            : /// A source file with its associated Syntax Tree.</a>
-<a name="280"><span class="lineNum">     280 </span><span class="lineCov">          1 : struct SourceFile {</span></a>
-<a name="281"><span class="lineNum">     281 </span><span class="lineNoCov">          0 :   fs::path path;</span></a>
-<a name="282"><span class="lineNum">     282 </span><span class="lineNoCov">          0 :   string name;</span></a>
-<a name="283"><span class="lineNum">     283 </span><span class="lineNoCov">          0 :   vector&lt;yume::Token&gt; tokens;</span></a>
-<a name="284"><span class="lineNum">     284 </span><span class="lineNoCov">          0 :   ast::TokenIterator iterator;</span></a>
-<a name="285"><span class="lineNum">     285 </span><span class="lineNoCov">          0 :   unique_ptr&lt;ast::Program&gt; program;</span></a>
-<a name="286"><span class="lineNum">     286 </span><span class="lineNoCov">          0 :   diagnostic::NotesHolder notes{{this}};</span></a>
-<a name="287"><span class="lineNum">     287 </span>            : </a>
-<a name="288"><span class="lineNum">     288 </span><span class="lineNoCov">          0 :   static auto name_or_stdin(const fs::path&amp; path) -&gt; string { return path.empty() ? &quot;&lt;stdin&gt;&quot;s : path.native(); }</span></a>
-<a name="289"><span class="lineNum">     289 </span>            : </a>
-<a name="290"><span class="lineNum">     290 </span><span class="lineNoCov">          0 :   SourceFile(std::istream&amp; in, fs::path path)</span></a>
-<a name="291"><span class="lineNum">     291 </span>            :       : path(move(path)), name(name_or_stdin(this-&gt;path)),</a>
-<a name="292"><span class="lineNum">     292 </span>            :         tokens(yume::tokenize(in, this-&gt;name)), iterator{tokens.begin(), tokens.end()} {</a>
-<a name="293"><span class="lineNum">     293 </span>            : #ifdef YUME_SPEW_LIST_TOKENS</a>
-<a name="294"><span class="lineNum">     294 </span>            :     llvm::outs() &lt;&lt; &quot;tokens:\n&quot;;</a>
-<a name="295"><span class="lineNum">     295 </span>            :     for (auto&amp; i : tokens)</a>
-<a name="296"><span class="lineNum">     296 </span>            :       llvm::outs() &lt;&lt; &quot;  &quot; &lt;&lt; i &lt;&lt; &quot;\n&quot;;</a>
-<a name="297"><span class="lineNum">     297 </span>            :     llvm::outs() &lt;&lt; &quot;\n&quot;;</a>
-<a name="298"><span class="lineNum">     298 </span>            :     llvm::outs().flush();</a>
-<a name="299"><span class="lineNum">     299 </span>            : #endif</a>
-<a name="300"><span class="lineNum">     300 </span>            : </a>
-<a name="301"><span class="lineNum">     301 </span>            :     program = ast::Program::parse(iterator, this-&gt;notes);</a>
-<a name="302"><span class="lineNum">     302 </span>            :   }</a>
-<a name="303"><span class="lineNum">     303 </span>            : };</a>
-<a name="304"><span class="lineNum">     304 </span>            : </a>
-<a name="305"><span class="lineNum">     305 </span>            : } // namespace yume</a>
+<a name="165"><span class="lineNum">     165 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto has_annotation(const string&amp; name) const -&gt; bool { return st_ast.annotations.contains(name); };</span></a>
+<a name="166"><span class="lineNum">     166 </span>            : </a>
+<a name="167"><span class="lineNum">     167 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto name() const noexcept -&gt; string;</span></a>
+<a name="168"><span class="lineNum">     168 </span>            : </a>
+<a name="169"><span class="lineNum">     169 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_or_create_instantiation(Substitutions&amp; subs) noexcept -&gt; std::pair&lt;bool, Struct&amp;&gt;;</span></a>
+<a name="170"><span class="lineNum">     170 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto create_instantiation(Substitutions&amp; subs) noexcept -&gt; Struct&amp;;</span></a>
+<a name="171"><span class="lineNum">     171 </span>            : };</a>
+<a name="172"><span class="lineNum">     172 </span>            : </a>
+<a name="173"><span class="lineNum">     173 </span>            : /// A constant declaration in the compiler.</a>
+<a name="174"><span class="lineNum">     174 </span><span class="lineCov">          1 : struct Const {</span></a>
+<a name="175"><span class="lineNum">     175 </span><span class="lineNoCov">          0 :   ast::ConstDecl&amp; cn_ast;</span></a>
+<a name="176"><span class="lineNum">     176 </span>            :   /// If this function is in the body of a struct, this points to its type.</a>
+<a name="177"><span class="lineNum">     177 </span><span class="lineCov">          1 :   optional&lt;ty::Type&gt; self_ty;</span></a>
+<a name="178"><span class="lineNum">     178 </span>            :   /// The program this declaration is a member of.</a>
+<a name="179"><span class="lineNum">     179 </span><span class="lineCov">          1 :   ast::Program* member;</span></a>
+<a name="180"><span class="lineNum">     180 </span><span class="lineNoCov">          0 :   llvm::GlobalVariable* llvm{};</span></a>
+<a name="181"><span class="lineNum">     181 </span>            : </a>
+<a name="182"><span class="lineNum">     182 </span><span class="lineNoCov">          0 :   Const(ast::ConstDecl&amp; ast_decl, ast::Program* member = nullptr, optional&lt;ty::Type&gt; parent = std::nullopt) noexcept</span></a>
+<a name="183"><span class="lineNum">     183 </span>            :       : cn_ast(ast_decl), self_ty(parent), member(member) {}</a>
+<a name="184"><span class="lineNum">     184 </span>            : </a>
+<a name="185"><span class="lineNum">     185 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() const noexcept -&gt; const auto&amp; { return cn_ast; }</span></a>
+<a name="186"><span class="lineNum">     186 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() noexcept -&gt; auto&amp; { return cn_ast; }</span></a>
+<a name="187"><span class="lineNum">     187 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_self_ty() const noexcept -&gt; optional&lt;ty::Type&gt; { return self_ty; };</span></a>
+<a name="188"><span class="lineNum">     188 </span>            : </a>
+<a name="189"><span class="lineNum">     189 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto name() const noexcept -&gt; string;</span></a>
+<a name="190"><span class="lineNum">     190 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto referred_to_by(const ast::ConstExpr&amp; expr) const -&gt; bool {</span></a>
+<a name="191"><span class="lineNum">     191 </span>            :     if (name() != expr.name)</a>
+<a name="192"><span class="lineNum">     192 </span>            :       return false;</a>
+<a name="193"><span class="lineNum">     193 </span>            : </a>
+<a name="194"><span class="lineNum">     194 </span>            :     if (self_ty.has_value() != expr.parent.has_value())</a>
+<a name="195"><span class="lineNum">     195 </span>            :       return false;</a>
+<a name="196"><span class="lineNum">     196 </span>            : </a>
+<a name="197"><span class="lineNum">     197 </span>            :     if (self_ty.has_value() &amp;&amp; expr.parent.has_value())</a>
+<a name="198"><span class="lineNum">     198 </span>            :       return self_ty-&gt;name() == expr.parent.value();</a>
+<a name="199"><span class="lineNum">     199 </span>            : </a>
+<a name="200"><span class="lineNum">     200 </span>            :     return true;</a>
+<a name="201"><span class="lineNum">     201 </span>            :   }</a>
+<a name="202"><span class="lineNum">     202 </span>            : };</a>
+<a name="203"><span class="lineNum">     203 </span>            : </a>
+<a name="204"><span class="lineNum">     204 </span><span class="lineNoCov">          0 : using DeclLike_t = visitable_variant&lt;std::monostate, Fn*, Struct*, Const*&gt;;</span></a>
+<a name="205"><span class="lineNum">     205 </span>            : </a>
+<a name="206"><span class="lineNum">     206 </span>            : /// A common base between declarations in the compiler: `Fn`, `Struct` and `Const`. Its value may also be absent</a>
+<a name="207"><span class="lineNum">     207 </span>            : /// (`std::monostate`).</a>
+<a name="208"><span class="lineNum">     208 </span><span class="lineCov">          1 : struct DeclLike : public DeclLike_t {</span></a>
+<a name="209"><span class="lineNum">     209 </span>            : public:</a>
+<a name="210"><span class="lineNum">     210 </span>            :   using DeclLike_t::DeclLike_t;</a>
+<a name="211"><span class="lineNum">     211 </span>            : </a>
+<a name="212"><span class="lineNum">     212 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto fully_substituted() const noexcept -&gt; bool {</span></a>
+<a name="213"><span class="lineNum">     213 </span>            :     if (const auto* subs = this-&gt;subs(); subs != nullptr)</a>
+<a name="214"><span class="lineNum">     214 </span>            :       return subs-&gt;fully_substituted();</a>
+<a name="215"><span class="lineNum">     215 </span>            :     return true;</a>
+<a name="216"><span class="lineNum">     216 </span>            :   }</a>
+<a name="217"><span class="lineNum">     217 </span>            : </a>
+<a name="218"><span class="lineNum">     218 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto subs() const noexcept -&gt; const Substitutions* {</span></a>
+<a name="219"><span class="lineNum">     219 </span>            :     return visit([](std::monostate /*absent*/) noexcept -&gt; const Substitutions* { return nullptr; },</a>
+<a name="220"><span class="lineNum">     220 </span>            :                  [](Const* /*cn*/) noexcept -&gt; const Substitutions* { return nullptr; },</a>
+<a name="221"><span class="lineNum">     221 </span>            :                  [](auto* decl) noexcept -&gt; const Substitutions* {</a>
+<a name="222"><span class="lineNum">     222 </span>            :                    if (decl == nullptr)</a>
+<a name="223"><span class="lineNum">     223 </span>            :                      return nullptr;</a>
+<a name="224"><span class="lineNum">     224 </span>            :                    return &amp;decl-&gt;get_subs();</a>
+<a name="225"><span class="lineNum">     225 </span>            :                  });</a>
+<a name="226"><span class="lineNum">     226 </span>            :   };</a>
+<a name="227"><span class="lineNum">     227 </span>            : </a>
+<a name="228"><span class="lineNum">     228 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto subs() noexcept -&gt; Substitutions* {</span></a>
+<a name="229"><span class="lineNum">     229 </span>            :     return visit([](std::monostate /*absent*/) noexcept -&gt; Substitutions* { return nullptr; },</a>
+<a name="230"><span class="lineNum">     230 </span>            :                  [](Const* /*cn*/) noexcept -&gt; Substitutions* { return nullptr; },</a>
+<a name="231"><span class="lineNum">     231 </span>            :                  [](auto* decl) noexcept -&gt; Substitutions* {</a>
+<a name="232"><span class="lineNum">     232 </span>            :                    if (decl == nullptr)</a>
+<a name="233"><span class="lineNum">     233 </span>            :                      return nullptr;</a>
+<a name="234"><span class="lineNum">     234 </span>            :                    return &amp;decl-&gt;get_subs();</a>
+<a name="235"><span class="lineNum">     235 </span>            :                  });</a>
+<a name="236"><span class="lineNum">     236 </span>            :   };</a>
+<a name="237"><span class="lineNum">     237 </span>            : </a>
+<a name="238"><span class="lineNum">     238 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() const noexcept -&gt; const ast::AST* {</span></a>
+<a name="239"><span class="lineNum">     239 </span>            :     return visit([](std::monostate /*absent*/) noexcept -&gt; const ast::AST* { return nullptr; },</a>
+<a name="240"><span class="lineNum">     240 </span>            :                  [](const auto* decl) noexcept -&gt; const ast::AST* { return &amp;decl-&gt;ast(); });</a>
+<a name="241"><span class="lineNum">     241 </span>            :   };</a>
+<a name="242"><span class="lineNum">     242 </span>            : </a>
+<a name="243"><span class="lineNum">     243 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto ast() noexcept -&gt; ast::AST* {</span></a>
+<a name="244"><span class="lineNum">     244 </span>            :     return visit([](std::monostate /*absent*/) noexcept -&gt; ast::AST* { return nullptr; },</a>
+<a name="245"><span class="lineNum">     245 </span>            :                  [](auto* decl) noexcept -&gt; ast::AST* { return &amp;decl-&gt;ast(); });</a>
+<a name="246"><span class="lineNum">     246 </span>            :   };</a>
+<a name="247"><span class="lineNum">     247 </span>            : </a>
+<a name="248"><span class="lineNum">     248 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto self_ty() const noexcept -&gt; optional&lt;ty::Type&gt; {</span></a>
+<a name="249"><span class="lineNum">     249 </span>            :     return visit([](std::monostate /*absent*/) noexcept { return optional&lt;ty::Type&gt;{}; },</a>
+<a name="250"><span class="lineNum">     250 </span>            :                  [](const auto* decl) noexcept { return decl-&gt;get_self_ty(); });</a>
+<a name="251"><span class="lineNum">     251 </span>            :   };</a>
+<a name="252"><span class="lineNum">     252 </span>            : </a>
+<a name="253"><span class="lineNum">     253 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto opaque_self() const noexcept -&gt; bool {</span></a>
+<a name="254"><span class="lineNum">     254 </span>            :     return visit([](Fn* fn) noexcept { return fn-&gt;abstract() || fn-&gt;has_annotation(ast::FnDecl::ANN_OVERRIDE); },</a>
+<a name="255"><span class="lineNum">     255 </span>            :                  [](auto&amp;&amp; /* default */) noexcept { return false; });</a>
+<a name="256"><span class="lineNum">     256 </span>            :   };</a>
+<a name="257"><span class="lineNum">     257 </span>            : };</a>
+<a name="258"><span class="lineNum">     258 </span>            : </a>
+<a name="259"><span class="lineNum">     259 </span>            : struct InScope;</a>
+<a name="260"><span class="lineNum">     260 </span>            : </a>
+<a name="261"><span class="lineNum">     261 </span>            : /// A value of a complied expression.</a>
+<a name="262"><span class="lineNum">     262 </span><span class="lineCov">          1 : struct Val {</span></a>
+<a name="263"><span class="lineNum">     263 </span><span class="lineNoCov">          0 :   llvm::Value* llvm{};</span></a>
+<a name="264"><span class="lineNum">     264 </span><span class="lineNoCov">          0 :   InScope* scope{};</span></a>
+<a name="265"><span class="lineNum">     265 </span>            : </a>
+<a name="266"><span class="lineNum">     266 </span><span class="lineNoCov">          0 :   /* implicit */ Val(llvm::Value* llvm_val) noexcept : llvm(llvm_val) {}</span></a>
+<a name="267"><span class="lineNum">     267 </span><span class="lineNoCov">          0 :   Val(llvm::Value* llvm_val, InScope* scope_val) noexcept : llvm(llvm_val), scope(scope_val) {}</span></a>
+<a name="268"><span class="lineNum">     268 </span>            : </a>
+<a name="269"><span class="lineNum">     269 </span><span class="lineNoCov">          0 :   /* implicit */ operator llvm::Value*() const { return llvm; }</span></a>
+<a name="270"><span class="lineNum">     270 </span>            : };</a>
+<a name="271"><span class="lineNum">     271 </span>            : </a>
+<a name="272"><span class="lineNum">     272 </span>            : /// A local variable in function scope. Used to track destructing when the scope ends.</a>
+<a name="273"><span class="lineNum">     273 </span><span class="lineCov">          1 : struct InScope {</span></a>
+<a name="274"><span class="lineNum">     274 </span><span class="lineNoCov">          0 :   Val value;</span></a>
+<a name="275"><span class="lineNum">     275 </span><span class="lineNoCov">          0 :   const ast::AST&amp; ast;</span></a>
+<a name="276"><span class="lineNum">     276 </span>            :   /// Whether the local scope &quot;owns&quot; the variable. Unowned variables are not destructed at the end of the scope.</a>
+<a name="277"><span class="lineNum">     277 </span><span class="lineCov">          1 :   bool owning{};</span></a>
+<a name="278"><span class="lineNum">     278 </span>            : };</a>
+<a name="279"><span class="lineNum">     279 </span>            : </a>
+<a name="280"><span class="lineNum">     280 </span>            : /// A source file with its associated Syntax Tree.</a>
+<a name="281"><span class="lineNum">     281 </span><span class="lineCov">          1 : struct SourceFile {</span></a>
+<a name="282"><span class="lineNum">     282 </span><span class="lineNoCov">          0 :   fs::path path;</span></a>
+<a name="283"><span class="lineNum">     283 </span><span class="lineNoCov">          0 :   string name;</span></a>
+<a name="284"><span class="lineNum">     284 </span><span class="lineNoCov">          0 :   vector&lt;yume::Token&gt; tokens;</span></a>
+<a name="285"><span class="lineNum">     285 </span><span class="lineNoCov">          0 :   ast::TokenIterator iterator;</span></a>
+<a name="286"><span class="lineNum">     286 </span><span class="lineNoCov">          0 :   unique_ptr&lt;ast::Program&gt; program;</span></a>
+<a name="287"><span class="lineNum">     287 </span><span class="lineNoCov">          0 :   diagnostic::NotesHolder notes{{this}};</span></a>
+<a name="288"><span class="lineNum">     288 </span>            : </a>
+<a name="289"><span class="lineNum">     289 </span><span class="lineNoCov">          0 :   static auto name_or_stdin(const fs::path&amp; path) -&gt; string { return path.empty() ? &quot;&lt;stdin&gt;&quot;s : path.native(); }</span></a>
+<a name="290"><span class="lineNum">     290 </span>            : </a>
+<a name="291"><span class="lineNum">     291 </span><span class="lineNoCov">          0 :   SourceFile(std::istream&amp; in, fs::path path)</span></a>
+<a name="292"><span class="lineNum">     292 </span>            :       : path(move(path)), name(name_or_stdin(this-&gt;path)),</a>
+<a name="293"><span class="lineNum">     293 </span>            :         tokens(yume::tokenize(in, this-&gt;name)), iterator{tokens.begin(), tokens.end()} {</a>
+<a name="294"><span class="lineNum">     294 </span>            : #ifdef YUME_SPEW_LIST_TOKENS</a>
+<a name="295"><span class="lineNum">     295 </span>            :     llvm::outs() &lt;&lt; &quot;tokens:\n&quot;;</a>
+<a name="296"><span class="lineNum">     296 </span>            :     for (auto&amp; i : tokens)</a>
+<a name="297"><span class="lineNum">     297 </span>            :       llvm::outs() &lt;&lt; &quot;  &quot; &lt;&lt; i &lt;&lt; &quot;\n&quot;;</a>
+<a name="298"><span class="lineNum">     298 </span>            :     llvm::outs() &lt;&lt; &quot;\n&quot;;</a>
+<a name="299"><span class="lineNum">     299 </span>            :     llvm::outs().flush();</a>
+<a name="300"><span class="lineNum">     300 </span>            : #endif</a>
+<a name="301"><span class="lineNum">     301 </span>            : </a>
+<a name="302"><span class="lineNum">     302 </span>            :     program = ast::Program::parse(iterator, this-&gt;notes);</a>
+<a name="303"><span class="lineNum">     303 </span>            :   }</a>
+<a name="304"><span class="lineNum">     304 </span>            : };</a>
+<a name="305"><span class="lineNum">     305 </span>            : </a>
+<a name="306"><span class="lineNum">     306 </span>            : } // namespace yume</a>
 </pre>
       </td>
     </tr>

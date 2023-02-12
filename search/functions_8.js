@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['has_5fannotation_0',['has_annotation',['../structyume_1_1Fn.html#ab2e51789521a21ceca6c127db46f3a44',1,'yume::Fn']]],
+  ['has_5fannotation_0',['has_annotation',['../structyume_1_1Fn.html#ab2e51789521a21ceca6c127db46f3a44',1,'yume::Fn::has_annotation()'],['../structyume_1_1Struct.html#a2c7ddbc91d1ee06c91c8385506bbaf97',1,'yume::Struct::has_annotation()']]],
   ['has_5fqualifier_1',['has_qualifier',['../classyume_1_1ty_1_1Ptr.html#a2047c656c3f2fb5b637dd58645012210',1,'yume::ty::Ptr::has_qualifier()'],['../classyume_1_1ty_1_1Type.html#a99090f352aeb81a1d6dba964380d88f3',1,'yume::ty::Type::has_qualifier()']]],
   ['has_5fvalue_2',['has_value',['../classyume_1_1ast_1_1OptionalAnyBase.html#a0e8856bacf6351a3a3cd79000b4fa40a',1,'yume::ast::OptionalAnyBase']]],
   ['hash_5fcombine_3',['hash_combine',['../namespaceyume.html#afca3d17e36e390b33141a7f21ccbb4bb',1,'yume']]],

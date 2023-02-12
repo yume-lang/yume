@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['abstract_0',['abstract',['../structyume_1_1Fn.html#a8e892d0c57e99bba24bff4cbfda98dfc',1,'yume::Fn::abstract()'],['../structyume_1_1ast_1_1FnDecl.html#aeb16d8b0c6adae424b0865209e39712d',1,'yume::ast::FnDecl::abstract() const -&gt; bool']]],
+  ['abstract_0',['abstract',['../structyume_1_1ast_1_1FnDecl.html#aeb16d8b0c6adae424b0865209e39712d',1,'yume::ast::FnDecl::abstract()'],['../structyume_1_1Fn.html#a8e892d0c57e99bba24bff4cbfda98dfc',1,'yume::Fn::abstract()']]],
   ['abstract_5fdecl_5ft_1',['abstract_decl_t',['../structyume_1_1ast_1_1FnDecl.html#aa9c0511db801dcfeb8307135382b2e10',1,'yume::ast::FnDecl']]],
   ['accept_2',['accept',['../structyume_1_1TokenState.html#af8ca9ac5c905b007d21fb733714f3d90',1,'yume::TokenState::accept(char_raw_fn fn) -&gt; bool'],['../structyume_1_1TokenState.html#adf58be46e81ff4e7b5da3a58dcc20e5a',1,'yume::TokenState::accept(char chr) -&gt; bool'],['../structyume_1_1TokenState.html#a055d3ece830ac0497941be685e399198',1,'yume::TokenState::accept() -&gt; bool'],['../structyume_1_1TokenState.html#a871c28673a9af3f83e590b68af9c0f43',1,'yume::TokenState::accept(bool ok) -&gt; bool']]],
   ['accept_5fnot_3',['accept_not',['../structyume_1_1TokenState.html#a07deee534689e966472a47ced5986700',1,'yume::TokenState']]],
@@ -9,12 +9,12 @@ var searchData=
   ['add_5fto_5ffront_6',['add_to_front',['../classyume_1_1ScopeContainer.html#aa49122482639e03896fe5b3f1bc1a91d',1,'yume::ScopeContainer']]],
   ['all_5fkeys_7',['all_keys',['../structyume_1_1Substitutions.html#af0a137c6810f08fe2879d28874288251',1,'yume::Substitutions']]],
   ['all_5fscopes_8',['all_scopes',['../classyume_1_1ScopeContainer.html#ad9090b0eccaa535c012d0c15b3f176ee',1,'yume::ScopeContainer']]],
-  ['all_5fvalues_9',['all_values',['../structyume_1_1Substitutions.html#a17bd6be63ca9b5007b46e5b119d1366c',1,'yume::Substitutions::all_values() const -&gt; vector&lt; const GenericValue * &gt;'],['../structyume_1_1Substitutions.html#a93cf8540156e2d90f2996cd843c53c58',1,'yume::Substitutions::all_values() -&gt; vector&lt; GenericValue * &gt;']]],
+  ['all_5fvalues_9',['all_values',['../structyume_1_1Substitutions.html#a93cf8540156e2d90f2996cd843c53c58',1,'yume::Substitutions::all_values() -&gt; vector&lt; GenericValue * &gt;'],['../structyume_1_1Substitutions.html#a17bd6be63ca9b5007b46e5b119d1366c',1,'yume::Substitutions::all_values() const -&gt; vector&lt; const GenericValue * &gt;']]],
   ['always_5ffalse_10',['always_false',['../namespaceyume.html#ab4f9e9fd5d90999a9b64a0b3f295b5d3',1,'yume']]],
   ['always_5fthrow_11',['always_throw',['../namespaceyume.html#a949b1bfbd05b3ddf379651547830f74f',1,'yume']]],
   ['ann_5fextern_12',['ANN_EXTERN',['../structyume_1_1ast_1_1FnDecl.html#a5cde2f96fd5bbc781c490c452bb2fd7e',1,'yume::ast::FnDecl']]],
   ['ann_5foverride_13',['ANN_OVERRIDE',['../structyume_1_1ast_1_1FnDecl.html#ab542514fdd5699601691c50ae59cf19f',1,'yume::ast::FnDecl']]],
-  ['annotations_14',['annotations',['../structyume_1_1ast_1_1LambdaExpr.html#ae4a21eaa9c2f3561427ad34f6190dfc6',1,'yume::ast::LambdaExpr::annotations()'],['../structyume_1_1ast_1_1FnDecl.html#a08fb9883bf985e56df3006165f94df67',1,'yume::ast::FnDecl::annotations()']]],
+  ['annotations_14',['annotations',['../structyume_1_1ast_1_1LambdaExpr.html#ae4a21eaa9c2f3561427ad34f6190dfc6',1,'yume::ast::LambdaExpr::annotations()'],['../structyume_1_1ast_1_1FnDecl.html#a9d7669bd14dcde96c2ff465050fef87a',1,'yume::ast::FnDecl::annotations()'],['../structyume_1_1ast_1_1StructDecl.html#a4708e2c1e945e04dc0bde64ed262c8b6',1,'yume::ast::StructDecl::annotations()']]],
   ['anybase_15',['AnyBase',['../classyume_1_1ast_1_1AnyBase.html#ae29d0f9aff01ba2bbd8f2f1e5714c6ca',1,'yume::ast::AnyBase::AnyBase()=delete'],['../classyume_1_1ast_1_1AnyBase.html#a6b542480e824ef57bfee3a58cfb63503',1,'yume::ast::AnyBase::AnyBase(T *raw_ptr)'],['../classyume_1_1ast_1_1AnyBase.html#ab3b7dc8c5c8048a509d4ae911c74067b',1,'yume::ast::AnyBase::AnyBase(U uptr) noexcept'],['../classyume_1_1ast_1_1AnyBase.html#a9bf65d344ed989904de4550842cd846b',1,'yume::ast::AnyBase::AnyBase(OptionalAnyBase&lt; T &gt; &amp;&amp;other)'],['../classyume_1_1ast_1_1AnyBase.html',1,'yume::ast::AnyBase&lt; T &gt;']]],
   ['anybase_3c_20expr_20_3e_16',['AnyBase&lt; Expr &gt;',['../classyume_1_1ast_1_1AnyBase.html',1,'yume::ast']]],
   ['anybase_3c_20type_20_3e_17',['AnyBase&lt; Type &gt;',['../classyume_1_1ast_1_1AnyBase.html',1,'yume::ast']]],

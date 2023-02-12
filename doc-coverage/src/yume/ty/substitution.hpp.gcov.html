@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2023-02-11 05:14:47</td>
+            <td class="headerValue">2023-02-12 14:13:51</td>
             <td></td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -117,164 +117,169 @@
 <a name="59"><span class="lineNum">      59 </span>            :     return expr-&gt;describe();</a>
 <a name="60"><span class="lineNum">      60 </span>            :   }</a>
 <a name="61"><span class="lineNum">      61 </span>            : </a>
-<a name="62"><span class="lineNum">      62 </span><span class="lineNoCov">          0 :   auto operator==(const GenericValue&amp; other) const noexcept -&gt; bool = default;</span></a>
-<a name="63"><span class="lineNum">      63 </span>            : };</a>
-<a name="64"><span class="lineNum">      64 </span>            : </a>
-<a name="65"><span class="lineNum">      65 </span><span class="lineNoCov">          0 : struct Substitutions {</span></a>
-<a name="66"><span class="lineNum">      66 </span>            : private:</a>
-<a name="67"><span class="lineNum">      67 </span><span class="lineNoCov">          0 :   vector&lt;GenericKey&gt; m_keys;</span></a>
-<a name="68"><span class="lineNum">      68 </span><span class="lineNoCov">          0 :   vector&lt;GenericValue&gt; m_values;</span></a>
-<a name="69"><span class="lineNum">      69 </span><span class="lineNoCov">          0 :   vector&lt;ty::Generic*&gt; m_generic_type_fallbacks;</span></a>
-<a name="70"><span class="lineNum">      70 </span>            : </a>
-<a name="71"><span class="lineNum">      71 </span>            : public:</a>
-<a name="72"><span class="lineNum">      72 </span><span class="lineNoCov">          0 :   Substitutions() = delete;</span></a>
-<a name="73"><span class="lineNum">      73 </span><span class="lineNoCov">          0 :   Substitutions(vector&lt;GenericKey&gt; keys, const vector&lt;unique_ptr&lt;ty::Generic&gt;&gt;&amp; generic_type_fallbacks,</span></a>
-<a name="74"><span class="lineNum">      74 </span>            :                 nullable&lt;Substitutions*&gt; parent = nullptr)</a>
-<a name="75"><span class="lineNum">      75 </span>            :       : m_keys{move(keys)} {</a>
-<a name="76"><span class="lineNum">      76 </span>            :     for (const auto&amp; i : generic_type_fallbacks)</a>
-<a name="77"><span class="lineNum">      77 </span>            :       m_generic_type_fallbacks.emplace_back(i.get());</a>
-<a name="78"><span class="lineNum">      78 </span>            :     for ([[maybe_unused]] const auto&amp; i : m_keys)</a>
-<a name="79"><span class="lineNum">      79 </span>            :       m_values.emplace_back();</a>
-<a name="80"><span class="lineNum">      80 </span>            : </a>
-<a name="81"><span class="lineNum">      81 </span>            :     if (parent != nullptr) {</a>
-<a name="82"><span class="lineNum">      82 </span>            :       for (auto [k, v] : llvm::zip(parent-&gt;m_keys, parent-&gt;m_values)) {</a>
-<a name="83"><span class="lineNum">      83 </span>            :         m_keys.push_back(k);</a>
-<a name="84"><span class="lineNum">      84 </span>            :         m_values.push_back(v);</a>
-<a name="85"><span class="lineNum">      85 </span>            :       }</a>
-<a name="86"><span class="lineNum">      86 </span>            :       for (auto* f : parent-&gt;m_generic_type_fallbacks)</a>
-<a name="87"><span class="lineNum">      87 </span>            :         m_generic_type_fallbacks.push_back(f);</a>
-<a name="88"><span class="lineNum">      88 </span>            :     }</a>
-<a name="89"><span class="lineNum">      89 </span>            :   }</a>
-<a name="90"><span class="lineNum">      90 </span><span class="lineNoCov">          0 :   Substitutions(vector&lt;GenericKey&gt; keys, vector&lt;ty::Generic*&gt; generic_type_fallbacks,</span></a>
-<a name="91"><span class="lineNum">      91 </span>            :                 nullable&lt;Substitutions*&gt; parent = nullptr)</a>
-<a name="92"><span class="lineNum">      92 </span>            :       : m_keys{move(keys)}, m_generic_type_fallbacks{move(generic_type_fallbacks)} {</a>
-<a name="93"><span class="lineNum">      93 </span>            :     for ([[maybe_unused]] const auto&amp; i : m_keys)</a>
-<a name="94"><span class="lineNum">      94 </span>            :       m_values.emplace_back();</a>
-<a name="95"><span class="lineNum">      95 </span>            : </a>
-<a name="96"><span class="lineNum">      96 </span>            :     if (parent != nullptr) {</a>
-<a name="97"><span class="lineNum">      97 </span>            :       for (auto [k, v] : llvm::zip(parent-&gt;m_keys, parent-&gt;m_values)) {</a>
-<a name="98"><span class="lineNum">      98 </span>            :         m_keys.push_back(k);</a>
-<a name="99"><span class="lineNum">      99 </span>            :         m_values.push_back(v);</a>
-<a name="100"><span class="lineNum">     100 </span>            :       }</a>
-<a name="101"><span class="lineNum">     101 </span>            :       for (auto* f : parent-&gt;m_generic_type_fallbacks)</a>
-<a name="102"><span class="lineNum">     102 </span>            :         m_generic_type_fallbacks.push_back(f);</a>
-<a name="103"><span class="lineNum">     103 </span>            :     }</a>
-<a name="104"><span class="lineNum">     104 </span>            :   }</a>
-<a name="105"><span class="lineNum">     105 </span>            : </a>
-<a name="106"><span class="lineNum">     106 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto empty() const -&gt; bool { return m_values.empty(); }</span></a>
-<a name="107"><span class="lineNum">     107 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto size() const -&gt; size_t { return m_values.size(); }</span></a>
-<a name="108"><span class="lineNum">     108 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto fully_substituted() const -&gt; bool {</span></a>
-<a name="109"><span class="lineNum">     109 </span>            :     // We consider types with no generic arguments at all to be fully substituted</a>
-<a name="110"><span class="lineNum">     110 </span>            :     return (empty() || std::ranges::none_of(m_values, &amp;GenericValue::unassigned_or_unsubstituted));</a>
-<a name="111"><span class="lineNum">     111 </span>            :   }</a>
-<a name="112"><span class="lineNum">     112 </span>            : </a>
-<a name="113"><span class="lineNum">     113 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto mapping_ref_or_null(const GenericKey&amp; generic) -&gt; nullable&lt;GenericValue*&gt;;</span></a>
-<a name="114"><span class="lineNum">     114 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto mapping_ref_or_null(const GenericKey&amp; generic) const -&gt; nullable&lt;const GenericValue*&gt;;</span></a>
-<a name="115"><span class="lineNum">     115 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto mapping_ref(const GenericKey&amp; generic) -&gt; GenericValue&amp; {</span></a>
-<a name="116"><span class="lineNum">     116 </span>            :     auto* ptr = mapping_ref_or_null(generic);</a>
-<a name="117"><span class="lineNum">     117 </span>            :     YUME_ASSERT(ptr != nullptr, &quot;Mapped value must not be null&quot;);</a>
-<a name="118"><span class="lineNum">     118 </span>            :     return *ptr;</a>
-<a name="119"><span class="lineNum">     119 </span>            :   };</a>
-<a name="120"><span class="lineNum">     120 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto mapping_ref(const GenericKey&amp; generic) const -&gt; const GenericValue&amp; {</span></a>
-<a name="121"><span class="lineNum">     121 </span>            :     const auto* ptr = mapping_ref_or_null(generic);</a>
-<a name="122"><span class="lineNum">     122 </span>            :     YUME_ASSERT(ptr != nullptr, &quot;Mapped value must not be null&quot;);</a>
-<a name="123"><span class="lineNum">     123 </span>            :     return *ptr;</a>
-<a name="124"><span class="lineNum">     124 </span>            :   };</a>
-<a name="125"><span class="lineNum">     125 </span>            : </a>
-<a name="126"><span class="lineNum">     126 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto find_type(string_view generic_name) const -&gt; optional&lt;ty::Type&gt; {</span></a>
-<a name="127"><span class="lineNum">     127 </span>            :     const auto* mapping = mapping_ref_or_null(generic_name);</a>
+<a name="62"><span class="lineNum">      62 </span><span class="lineNoCov">          0 :   auto operator==(const GenericValue&amp; other) const noexcept -&gt; bool {</span></a>
+<a name="63"><span class="lineNum">      63 </span>            :     return this-&gt;type == other.type &amp;&amp; static_cast&lt;bool&gt;(this-&gt;expr) == static_cast&lt;bool&gt;(other.expr) &amp;&amp;</a>
+<a name="64"><span class="lineNum">      64 </span>            :            ((this-&gt;expr == nullptr) || this-&gt;expr-&gt;equals_by_hash(*other.expr));</a>
+<a name="65"><span class="lineNum">      65 </span>            :   };</a>
+<a name="66"><span class="lineNum">      66 </span>            : };</a>
+<a name="67"><span class="lineNum">      67 </span>            : </a>
+<a name="68"><span class="lineNum">      68 </span><span class="lineNoCov">          0 : struct Substitutions {</span></a>
+<a name="69"><span class="lineNum">      69 </span>            : private:</a>
+<a name="70"><span class="lineNum">      70 </span><span class="lineNoCov">          0 :   vector&lt;GenericKey&gt; m_keys;</span></a>
+<a name="71"><span class="lineNum">      71 </span><span class="lineNoCov">          0 :   vector&lt;GenericValue&gt; m_values;</span></a>
+<a name="72"><span class="lineNum">      72 </span><span class="lineNoCov">          0 :   vector&lt;ty::Generic*&gt; m_generic_type_fallbacks;</span></a>
+<a name="73"><span class="lineNum">      73 </span>            : </a>
+<a name="74"><span class="lineNum">      74 </span>            : public:</a>
+<a name="75"><span class="lineNum">      75 </span><span class="lineNoCov">          0 :   Substitutions() = delete;</span></a>
+<a name="76"><span class="lineNum">      76 </span><span class="lineNoCov">          0 :   Substitutions(vector&lt;GenericKey&gt; keys, const vector&lt;unique_ptr&lt;ty::Generic&gt;&gt;&amp; generic_type_fallbacks,</span></a>
+<a name="77"><span class="lineNum">      77 </span>            :                 nullable&lt;Substitutions*&gt; parent = nullptr)</a>
+<a name="78"><span class="lineNum">      78 </span>            :       : m_keys{move(keys)} {</a>
+<a name="79"><span class="lineNum">      79 </span>            :     for (const auto&amp; i : generic_type_fallbacks)</a>
+<a name="80"><span class="lineNum">      80 </span>            :       m_generic_type_fallbacks.emplace_back(i.get());</a>
+<a name="81"><span class="lineNum">      81 </span>            :     for ([[maybe_unused]] const auto&amp; i : m_keys)</a>
+<a name="82"><span class="lineNum">      82 </span>            :       m_values.emplace_back();</a>
+<a name="83"><span class="lineNum">      83 </span>            : </a>
+<a name="84"><span class="lineNum">      84 </span>            :     if (parent != nullptr) {</a>
+<a name="85"><span class="lineNum">      85 </span>            :       for (auto [k, v] : llvm::zip(parent-&gt;m_keys, parent-&gt;m_values)) {</a>
+<a name="86"><span class="lineNum">      86 </span>            :         m_keys.push_back(k);</a>
+<a name="87"><span class="lineNum">      87 </span>            :         m_values.push_back(v);</a>
+<a name="88"><span class="lineNum">      88 </span>            :       }</a>
+<a name="89"><span class="lineNum">      89 </span>            :       for (auto* f : parent-&gt;m_generic_type_fallbacks)</a>
+<a name="90"><span class="lineNum">      90 </span>            :         m_generic_type_fallbacks.push_back(f);</a>
+<a name="91"><span class="lineNum">      91 </span>            :     }</a>
+<a name="92"><span class="lineNum">      92 </span>            :   }</a>
+<a name="93"><span class="lineNum">      93 </span><span class="lineNoCov">          0 :   Substitutions(vector&lt;GenericKey&gt; keys, vector&lt;ty::Generic*&gt; generic_type_fallbacks,</span></a>
+<a name="94"><span class="lineNum">      94 </span>            :                 nullable&lt;Substitutions*&gt; parent = nullptr)</a>
+<a name="95"><span class="lineNum">      95 </span>            :       : m_keys{move(keys)}, m_generic_type_fallbacks{move(generic_type_fallbacks)} {</a>
+<a name="96"><span class="lineNum">      96 </span>            :     for ([[maybe_unused]] const auto&amp; i : m_keys)</a>
+<a name="97"><span class="lineNum">      97 </span>            :       m_values.emplace_back();</a>
+<a name="98"><span class="lineNum">      98 </span>            : </a>
+<a name="99"><span class="lineNum">      99 </span>            :     if (parent != nullptr) {</a>
+<a name="100"><span class="lineNum">     100 </span>            :       for (auto [k, v] : llvm::zip(parent-&gt;m_keys, parent-&gt;m_values)) {</a>
+<a name="101"><span class="lineNum">     101 </span>            :         m_keys.push_back(k);</a>
+<a name="102"><span class="lineNum">     102 </span>            :         m_values.push_back(v);</a>
+<a name="103"><span class="lineNum">     103 </span>            :       }</a>
+<a name="104"><span class="lineNum">     104 </span>            :       for (auto* f : parent-&gt;m_generic_type_fallbacks)</a>
+<a name="105"><span class="lineNum">     105 </span>            :         m_generic_type_fallbacks.push_back(f);</a>
+<a name="106"><span class="lineNum">     106 </span>            :     }</a>
+<a name="107"><span class="lineNum">     107 </span>            :   }</a>
+<a name="108"><span class="lineNum">     108 </span>            : </a>
+<a name="109"><span class="lineNum">     109 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto empty() const -&gt; bool { return m_values.empty(); }</span></a>
+<a name="110"><span class="lineNum">     110 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto size() const -&gt; size_t { return m_values.size(); }</span></a>
+<a name="111"><span class="lineNum">     111 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto fully_substituted() const -&gt; bool {</span></a>
+<a name="112"><span class="lineNum">     112 </span>            :     // We consider types with no generic arguments at all to be fully substituted</a>
+<a name="113"><span class="lineNum">     113 </span>            :     return (empty() || std::ranges::none_of(m_values, &amp;GenericValue::unassigned_or_unsubstituted));</a>
+<a name="114"><span class="lineNum">     114 </span>            :   }</a>
+<a name="115"><span class="lineNum">     115 </span>            : </a>
+<a name="116"><span class="lineNum">     116 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto mapping_ref_or_null(const GenericKey&amp; generic) -&gt; nullable&lt;GenericValue*&gt;;</span></a>
+<a name="117"><span class="lineNum">     117 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto mapping_ref_or_null(const GenericKey&amp; generic) const -&gt; nullable&lt;const GenericValue*&gt;;</span></a>
+<a name="118"><span class="lineNum">     118 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto mapping_ref(const GenericKey&amp; generic) -&gt; GenericValue&amp; {</span></a>
+<a name="119"><span class="lineNum">     119 </span>            :     auto* ptr = mapping_ref_or_null(generic);</a>
+<a name="120"><span class="lineNum">     120 </span>            :     YUME_ASSERT(ptr != nullptr, &quot;Mapped value must not be null&quot;);</a>
+<a name="121"><span class="lineNum">     121 </span>            :     return *ptr;</a>
+<a name="122"><span class="lineNum">     122 </span>            :   };</a>
+<a name="123"><span class="lineNum">     123 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto mapping_ref(const GenericKey&amp; generic) const -&gt; const GenericValue&amp; {</span></a>
+<a name="124"><span class="lineNum">     124 </span>            :     const auto* ptr = mapping_ref_or_null(generic);</a>
+<a name="125"><span class="lineNum">     125 </span>            :     YUME_ASSERT(ptr != nullptr, &quot;Mapped value must not be null&quot;);</a>
+<a name="126"><span class="lineNum">     126 </span>            :     return *ptr;</a>
+<a name="127"><span class="lineNum">     127 </span>            :   };</a>
 <a name="128"><span class="lineNum">     128 </span>            : </a>
-<a name="129"><span class="lineNum">     129 </span>            :     if (mapping == nullptr)</a>
-<a name="130"><span class="lineNum">     130 </span>            :       return std::nullopt;</a>
+<a name="129"><span class="lineNum">     129 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto find_type(string_view generic_name) const -&gt; optional&lt;ty::Type&gt; {</span></a>
+<a name="130"><span class="lineNum">     130 </span>            :     const auto* mapping = mapping_ref_or_null(generic_name);</a>
 <a name="131"><span class="lineNum">     131 </span>            : </a>
-<a name="132"><span class="lineNum">     132 </span>            :     if (mapping-&gt;unassigned())</a>
+<a name="132"><span class="lineNum">     132 </span>            :     if (mapping == nullptr)</a>
 <a name="133"><span class="lineNum">     133 </span>            :       return std::nullopt;</a>
 <a name="134"><span class="lineNum">     134 </span>            : </a>
-<a name="135"><span class="lineNum">     135 </span>            :     YUME_ASSERT(mapping-&gt;holds_type(), &quot;A generic type key must correspond to a generic type mapping&quot;);</a>
-<a name="136"><span class="lineNum">     136 </span>            : </a>
-<a name="137"><span class="lineNum">     137 </span>            :     return mapping-&gt;as_type();</a>
-<a name="138"><span class="lineNum">     138 </span>            :   }</a>
+<a name="135"><span class="lineNum">     135 </span>            :     if (mapping-&gt;unassigned())</a>
+<a name="136"><span class="lineNum">     136 </span>            :       return std::nullopt;</a>
+<a name="137"><span class="lineNum">     137 </span>            : </a>
+<a name="138"><span class="lineNum">     138 </span>            :     YUME_ASSERT(mapping-&gt;holds_type(), &quot;A generic type key must correspond to a generic type mapping&quot;);</a>
 <a name="139"><span class="lineNum">     139 </span>            : </a>
-<a name="140"><span class="lineNum">     140 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto type_mappings() const -&gt; std::map&lt;string, ty::Type&gt;;</span></a>
-<a name="141"><span class="lineNum">     141 </span>            : </a>
-<a name="142"><span class="lineNum">     142 </span><span class="lineNoCov">          0 :   void associate(const GenericKey&amp; key, GenericValue value) { mapping_ref(key) = value; }</span></a>
-<a name="143"><span class="lineNum">     143 </span>            : </a>
-<a name="144"><span class="lineNum">     144 </span><span class="lineNoCov">          0 :   auto append_new_association(GenericKey key) -&gt; GenericValue&amp; {</span></a>
-<a name="145"><span class="lineNum">     145 </span>            :     m_keys.emplace_back(move(key));</a>
-<a name="146"><span class="lineNum">     146 </span>            :     return m_values.emplace_back();</a>
-<a name="147"><span class="lineNum">     147 </span>            :   }</a>
-<a name="148"><span class="lineNum">     148 </span>            : </a>
-<a name="149"><span class="lineNum">     149 </span><span class="lineNoCov">          0 :   void dump(llvm::raw_ostream&amp; os) const {</span></a>
-<a name="150"><span class="lineNum">     150 </span>            :     int i = 0;</a>
-<a name="151"><span class="lineNum">     151 </span>            :     for (const auto&amp; [k, v] : llvm::zip(m_keys, m_values)) {</a>
-<a name="152"><span class="lineNum">     152 </span>            :       if (i++ &gt; 0)</a>
-<a name="153"><span class="lineNum">     153 </span>            :         os &lt;&lt; &quot;, &quot;;</a>
-<a name="154"><span class="lineNum">     154 </span>            :       os &lt;&lt; k.name &lt;&lt; &quot;=&quot; &lt;&lt; v.name();</a>
-<a name="155"><span class="lineNum">     155 </span>            :     }</a>
-<a name="156"><span class="lineNum">     156 </span>            :   }</a>
-<a name="157"><span class="lineNum">     157 </span>            : </a>
-<a name="158"><span class="lineNum">     158 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto all_keys() const -&gt; vector&lt;const GenericKey*&gt; {</span></a>
-<a name="159"><span class="lineNum">     159 </span>            :     vector&lt;const GenericKey*&gt; keys{};</a>
-<a name="160"><span class="lineNum">     160 </span>            :     keys.reserve(m_keys.size());</a>
-<a name="161"><span class="lineNum">     161 </span>            :     for (const auto&amp; k : m_keys)</a>
-<a name="162"><span class="lineNum">     162 </span>            :       keys.push_back(&amp;k);</a>
-<a name="163"><span class="lineNum">     163 </span>            : </a>
-<a name="164"><span class="lineNum">     164 </span>            :     return keys;</a>
-<a name="165"><span class="lineNum">     165 </span>            :   }</a>
-<a name="166"><span class="lineNum">     166 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto all_values() const -&gt; vector&lt;const GenericValue*&gt; {</span></a>
-<a name="167"><span class="lineNum">     167 </span>            :     vector&lt;const GenericValue*&gt; values{};</a>
-<a name="168"><span class="lineNum">     168 </span>            :     values.reserve(m_values.size());</a>
-<a name="169"><span class="lineNum">     169 </span>            :     for (const auto&amp; m : m_values)</a>
-<a name="170"><span class="lineNum">     170 </span>            :       values.push_back(&amp;m);</a>
-<a name="171"><span class="lineNum">     171 </span>            : </a>
-<a name="172"><span class="lineNum">     172 </span>            :     return values;</a>
-<a name="173"><span class="lineNum">     173 </span>            :   }</a>
-<a name="174"><span class="lineNum">     174 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto all_values() -&gt; vector&lt;GenericValue*&gt; {</span></a>
-<a name="175"><span class="lineNum">     175 </span>            :     vector&lt;GenericValue*&gt; values{};</a>
-<a name="176"><span class="lineNum">     176 </span>            :     values.reserve(m_values.size());</a>
-<a name="177"><span class="lineNum">     177 </span>            :     for (auto&amp; m : m_values)</a>
-<a name="178"><span class="lineNum">     178 </span>            :       values.push_back(&amp;m);</a>
-<a name="179"><span class="lineNum">     179 </span>            : </a>
-<a name="180"><span class="lineNum">     180 </span>            :     return values;</a>
-<a name="181"><span class="lineNum">     181 </span>            :   }</a>
+<a name="140"><span class="lineNum">     140 </span>            :     return mapping-&gt;as_type();</a>
+<a name="141"><span class="lineNum">     141 </span>            :   }</a>
+<a name="142"><span class="lineNum">     142 </span>            : </a>
+<a name="143"><span class="lineNum">     143 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto type_mappings() const -&gt; std::map&lt;string, ty::Type&gt;;</span></a>
+<a name="144"><span class="lineNum">     144 </span>            : </a>
+<a name="145"><span class="lineNum">     145 </span><span class="lineNoCov">          0 :   void associate(const GenericKey&amp; key, GenericValue value) { mapping_ref(key) = value; }</span></a>
+<a name="146"><span class="lineNum">     146 </span>            : </a>
+<a name="147"><span class="lineNum">     147 </span><span class="lineNoCov">          0 :   auto append_new_association(GenericKey key) -&gt; GenericValue&amp; {</span></a>
+<a name="148"><span class="lineNum">     148 </span>            :     m_keys.emplace_back(move(key));</a>
+<a name="149"><span class="lineNum">     149 </span>            :     return m_values.emplace_back();</a>
+<a name="150"><span class="lineNum">     150 </span>            :   }</a>
+<a name="151"><span class="lineNum">     151 </span>            : </a>
+<a name="152"><span class="lineNum">     152 </span><span class="lineNoCov">          0 :   void dump(llvm::raw_ostream&amp; os) const {</span></a>
+<a name="153"><span class="lineNum">     153 </span>            :     int i = 0;</a>
+<a name="154"><span class="lineNum">     154 </span>            :     for (const auto&amp; [k, v] : llvm::zip(m_keys, m_values)) {</a>
+<a name="155"><span class="lineNum">     155 </span>            :       if (i++ &gt; 0)</a>
+<a name="156"><span class="lineNum">     156 </span>            :         os &lt;&lt; &quot;, &quot;;</a>
+<a name="157"><span class="lineNum">     157 </span>            :       os &lt;&lt; k.name &lt;&lt; &quot;=&quot; &lt;&lt; v.name();</a>
+<a name="158"><span class="lineNum">     158 </span>            :     }</a>
+<a name="159"><span class="lineNum">     159 </span>            :   }</a>
+<a name="160"><span class="lineNum">     160 </span>            : </a>
+<a name="161"><span class="lineNum">     161 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto all_keys() const -&gt; vector&lt;const GenericKey*&gt; {</span></a>
+<a name="162"><span class="lineNum">     162 </span>            :     vector&lt;const GenericKey*&gt; keys{};</a>
+<a name="163"><span class="lineNum">     163 </span>            :     keys.reserve(m_keys.size());</a>
+<a name="164"><span class="lineNum">     164 </span>            :     for (const auto&amp; k : m_keys)</a>
+<a name="165"><span class="lineNum">     165 </span>            :       keys.push_back(&amp;k);</a>
+<a name="166"><span class="lineNum">     166 </span>            : </a>
+<a name="167"><span class="lineNum">     167 </span>            :     return keys;</a>
+<a name="168"><span class="lineNum">     168 </span>            :   }</a>
+<a name="169"><span class="lineNum">     169 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto all_values() const -&gt; vector&lt;const GenericValue*&gt; {</span></a>
+<a name="170"><span class="lineNum">     170 </span>            :     vector&lt;const GenericValue*&gt; values{};</a>
+<a name="171"><span class="lineNum">     171 </span>            :     values.reserve(m_values.size());</a>
+<a name="172"><span class="lineNum">     172 </span>            :     for (const auto&amp; m : m_values)</a>
+<a name="173"><span class="lineNum">     173 </span>            :       values.push_back(&amp;m);</a>
+<a name="174"><span class="lineNum">     174 </span>            : </a>
+<a name="175"><span class="lineNum">     175 </span>            :     return values;</a>
+<a name="176"><span class="lineNum">     176 </span>            :   }</a>
+<a name="177"><span class="lineNum">     177 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto all_values() -&gt; vector&lt;GenericValue*&gt; {</span></a>
+<a name="178"><span class="lineNum">     178 </span>            :     vector&lt;GenericValue*&gt; values{};</a>
+<a name="179"><span class="lineNum">     179 </span>            :     values.reserve(m_values.size());</a>
+<a name="180"><span class="lineNum">     180 </span>            :     for (auto&amp; m : m_values)</a>
+<a name="181"><span class="lineNum">     181 </span>            :       values.push_back(&amp;m);</a>
 <a name="182"><span class="lineNum">     182 </span>            : </a>
-<a name="183"><span class="lineNum">     183 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto mapping() { return llvm::zip(all_keys(), all_values()); }</span></a>
-<a name="184"><span class="lineNum">     184 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto mapping() const { return llvm::zip(all_keys(), all_values()); }</span></a>
+<a name="183"><span class="lineNum">     183 </span>            :     return values;</a>
+<a name="184"><span class="lineNum">     184 </span>            :   }</a>
 <a name="185"><span class="lineNum">     185 </span>            : </a>
-<a name="186"><span class="lineNum">     186 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_generic_fallback(string_view generic_name) const -&gt; ty::Generic*;</span></a>
-<a name="187"><span class="lineNum">     187 </span>            : </a>
-<a name="188"><span class="lineNum">     188 </span><span class="lineNoCov">          0 :   auto operator==(const Substitutions&amp; other) const noexcept -&gt; bool {</span></a>
-<a name="189"><span class="lineNum">     189 </span>            :     auto this_keys = this-&gt;all_keys();</a>
-<a name="190"><span class="lineNum">     190 </span>            :     auto other_keys = other.all_keys();</a>
-<a name="191"><span class="lineNum">     191 </span>            :     auto this_vals = this-&gt;all_values();</a>
-<a name="192"><span class="lineNum">     192 </span>            :     auto other_vals = other.all_values();</a>
-<a name="193"><span class="lineNum">     193 </span>            : </a>
-<a name="194"><span class="lineNum">     194 </span>            :     return std::ranges::equal(this_keys, other_keys, [](auto* a, auto* b) { return *a == *b; }) &amp;&amp;</a>
-<a name="195"><span class="lineNum">     195 </span>            :            std::ranges::equal(this_vals, other_vals, [](auto* a, auto* b) { return *a == *b; });</a>
-<a name="196"><span class="lineNum">     196 </span>            :   }</a>
-<a name="197"><span class="lineNum">     197 </span>            : };</a>
-<a name="198"><span class="lineNum">     198 </span>            : } // namespace yume</a>
-<a name="199"><span class="lineNum">     199 </span>            : </a>
-<a name="200"><span class="lineNum">     200 </span>            : template &lt;&gt; struct std::hash&lt;yume::Substitutions&gt; {</a>
-<a name="201"><span class="lineNum">     201 </span>            :   auto operator()(const yume::Substitutions&amp; s) const noexcept -&gt; std::size_t {</a>
-<a name="202"><span class="lineNum">     202 </span>            :     uint64_t seed = 0;</a>
-<a name="203"><span class="lineNum">     203 </span>            :     for (const auto* k : s.all_keys()) {</a>
-<a name="204"><span class="lineNum">     204 </span>            :       yume::hash_combine(seed, k-&gt;name);</a>
-<a name="205"><span class="lineNum">     205 </span>            :       yume::hash_combine(seed, k-&gt;expr_type);</a>
-<a name="206"><span class="lineNum">     206 </span>            :     }</a>
-<a name="207"><span class="lineNum">     207 </span>            :     for (const auto* v : s.all_values()) {</a>
-<a name="208"><span class="lineNum">     208 </span>            :       yume::hash_combine(seed, v-&gt;type.has_value());</a>
-<a name="209"><span class="lineNum">     209 </span>            :       if (v-&gt;type.has_value()) {</a>
-<a name="210"><span class="lineNum">     210 </span>            :         yume::hash_combine(seed, v-&gt;type-&gt;base());</a>
-<a name="211"><span class="lineNum">     211 </span>            :         yume::hash_combine(seed, v-&gt;type-&gt;is_mut());</a>
-<a name="212"><span class="lineNum">     212 </span>            :         yume::hash_combine(seed, v-&gt;type-&gt;is_ref());</a>
-<a name="213"><span class="lineNum">     213 </span>            :       }</a>
-<a name="214"><span class="lineNum">     214 </span>            :       yume::hash_combine(seed, v-&gt;expr);</a>
-<a name="215"><span class="lineNum">     215 </span>            :     }</a>
-<a name="216"><span class="lineNum">     216 </span>            : </a>
-<a name="217"><span class="lineNum">     217 </span>            :     return seed;</a>
-<a name="218"><span class="lineNum">     218 </span>            :   }</a>
-<a name="219"><span class="lineNum">     219 </span>            : };</a>
+<a name="186"><span class="lineNum">     186 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto mapping() { return llvm::zip(all_keys(), all_values()); }</span></a>
+<a name="187"><span class="lineNum">     187 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto mapping() const { return llvm::zip(all_keys(), all_values()); }</span></a>
+<a name="188"><span class="lineNum">     188 </span>            : </a>
+<a name="189"><span class="lineNum">     189 </span><span class="lineNoCov">          0 :   [[nodiscard]] auto get_generic_fallback(string_view generic_name) const -&gt; ty::Generic*;</span></a>
+<a name="190"><span class="lineNum">     190 </span>            : </a>
+<a name="191"><span class="lineNum">     191 </span><span class="lineNoCov">          0 :   auto operator==(const Substitutions&amp; other) const noexcept -&gt; bool {</span></a>
+<a name="192"><span class="lineNum">     192 </span>            :     auto this_keys = this-&gt;all_keys();</a>
+<a name="193"><span class="lineNum">     193 </span>            :     auto other_keys = other.all_keys();</a>
+<a name="194"><span class="lineNum">     194 </span>            :     auto this_vals = this-&gt;all_values();</a>
+<a name="195"><span class="lineNum">     195 </span>            :     auto other_vals = other.all_values();</a>
+<a name="196"><span class="lineNum">     196 </span>            : </a>
+<a name="197"><span class="lineNum">     197 </span>            :     return std::ranges::equal(this_keys, other_keys, [](auto* a, auto* b) { return *a == *b; }) &amp;&amp;</a>
+<a name="198"><span class="lineNum">     198 </span>            :            std::ranges::equal(this_vals, other_vals, [](auto* a, auto* b) { return *a == *b; });</a>
+<a name="199"><span class="lineNum">     199 </span>            :   }</a>
+<a name="200"><span class="lineNum">     200 </span>            : };</a>
+<a name="201"><span class="lineNum">     201 </span>            : } // namespace yume</a>
+<a name="202"><span class="lineNum">     202 </span>            : </a>
+<a name="203"><span class="lineNum">     203 </span>            : template &lt;&gt; struct std::hash&lt;yume::Substitutions&gt; {</a>
+<a name="204"><span class="lineNum">     204 </span>            :   auto operator()(const yume::Substitutions&amp; s) const noexcept -&gt; std::size_t {</a>
+<a name="205"><span class="lineNum">     205 </span>            :     uint64_t seed = 0;</a>
+<a name="206"><span class="lineNum">     206 </span>            :     for (const auto* k : s.all_keys()) {</a>
+<a name="207"><span class="lineNum">     207 </span>            :       yume::hash_combine(seed, k-&gt;name);</a>
+<a name="208"><span class="lineNum">     208 </span>            :       yume::hash_combine(seed, k-&gt;expr_type);</a>
+<a name="209"><span class="lineNum">     209 </span>            :     }</a>
+<a name="210"><span class="lineNum">     210 </span>            :     for (const auto* v : s.all_values()) {</a>
+<a name="211"><span class="lineNum">     211 </span>            :       yume::hash_combine(seed, v-&gt;type.has_value());</a>
+<a name="212"><span class="lineNum">     212 </span>            :       if (v-&gt;type.has_value()) {</a>
+<a name="213"><span class="lineNum">     213 </span>            :         yume::hash_combine(seed, v-&gt;type-&gt;base());</a>
+<a name="214"><span class="lineNum">     214 </span>            :         yume::hash_combine(seed, v-&gt;type-&gt;is_mut());</a>
+<a name="215"><span class="lineNum">     215 </span>            :         yume::hash_combine(seed, v-&gt;type-&gt;is_ref());</a>
+<a name="216"><span class="lineNum">     216 </span>            :       }</a>
+<a name="217"><span class="lineNum">     217 </span>            :       yume::hash_combine(seed, v-&gt;expr != nullptr);</a>
+<a name="218"><span class="lineNum">     218 </span>            :       if (v-&gt;expr != nullptr)</a>
+<a name="219"><span class="lineNum">     219 </span>            :         yume::hash_combine(seed, std::hash&lt;yume::ast::AST&gt;{}(*v-&gt;expr));</a>
+<a name="220"><span class="lineNum">     220 </span>            :     }</a>
+<a name="221"><span class="lineNum">     221 </span>            : </a>
+<a name="222"><span class="lineNum">     222 </span>            :     return seed;</a>
+<a name="223"><span class="lineNum">     223 </span>            :   }</a>
+<a name="224"><span class="lineNum">     224 </span>            : };</a>
 </pre>
       </td>
     </tr>

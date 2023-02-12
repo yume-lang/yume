@@ -156,6 +156,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a35e3f20abd8401f7ac9b50dcc8cfff9e inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c6bcf1def2d39183937cff5e6a16e78 inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AST.html#a7c6bcf1def2d39183937cff5e6a16e78">token_range</a> () const -&gt; const span&lt; <a class="el" href="structyume_1_1Token.html">Token</a> &gt; &amp;</td></tr>
 <tr class="separator:a7c6bcf1def2d39183937cff5e6a16e78 inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a975434078ca27f596eff4a84de386dd5 inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AST.html#a975434078ca27f596eff4a84de386dd5">equals_by_hash</a> (<a class="el" href="classyume_1_1ast_1_1AST.html">ast::AST</a> &amp;other) const -&gt; bool</td></tr>
+<tr class="separator:a975434078ca27f596eff4a84de386dd5 inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab30cf0f1bcb19522b1a27a95098c4cc2 inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyume_1_1ast_1_1AST.html#ab30cf0f1bcb19522b1a27a95098c4cc2">location</a> () const -&gt; <a class="el" href="structyume_1_1Loc.html">Loc</a></td></tr>
 <tr class="memdesc:ab30cf0f1bcb19522b1a27a95098c4cc2 inherit pub_methods_classyume_1_1ast_1_1AST"><td class="mdescLeft">&#160;</td><td class="mdescRight">The union of the locations of the <code><a class="el" href="structyume_1_1Token.html" title="A categorized token in source code, created by the tokenizer. These tokens are consumed by the lexer.">Token</a></code>s making up this node.  <a href="classyume_1_1ast_1_1AST.html#ab30cf0f1bcb19522b1a27a95098c4cc2">More...</a><br /></td></tr>
 <tr class="separator:ab30cf0f1bcb19522b1a27a95098c4cc2 inherit pub_methods_classyume_1_1ast_1_1AST"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -196,7 +198,7 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >A logical operator such as <code>||</code> or <code>&amp;&amp;</code>. Since these aren't overloadable, they have their own <a class="el" href="classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class.">AST</a> node. </p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00578">578</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00581">581</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a37cbd6b26e31f547fed22b1a198287a2" name="a37cbd6b26e31f547fed22b1a198287a2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a37cbd6b26e31f547fed22b1a198287a2">&#9670;&nbsp;</a></span>BinaryLogicExpr()</h2>
@@ -244,9 +246,9 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00584">584</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00587">587</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00107">clone()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00116">clone()</a>.</p>
 
 </div>
 </div>
@@ -278,9 +280,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classyume_1_1ast_1_1Expr.html#a29ba94050d310409485ff051d46933e5">yume::ast::Expr</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00107">107</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8cpp_source.html#l00116">116</a> of file <a class="el" href="ast_8cpp_source.html">ast.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00584">BinaryLogicExpr()</a>, <a class="el" href="ast_8hpp_source.html#l00581">lhs</a>, <a class="el" href="ast_8hpp_source.html#l00580">operation</a>, <a class="el" href="ast_8hpp_source.html#l00582">rhs</a>, and <a class="el" href="ast_8hpp_source.html#l00238">yume::ast::AST::tok()</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00587">BinaryLogicExpr()</a>, <a class="el" href="ast_8hpp_source.html#l00584">lhs</a>, <a class="el" href="ast_8hpp_source.html#l00583">operation</a>, <a class="el" href="ast_8hpp_source.html#l00585">rhs</a>, and <a class="el" href="ast_8hpp_source.html#l00239">yume::ast::AST::tok()</a>.</p>
 
 </div>
 </div>
@@ -311,7 +313,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classyume_1_1ast_1_1AST.html#a5394f97a622923069b0e0e8b249bd8cd">yume::ast::AST</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00587">587</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00590">590</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
 </div>
 </div>
@@ -344,11 +346,11 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classyume_1_1ast_1_1AST.html#adb1376044bc6a064fd71a2ea7505e86f">yume::ast::AST</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="visit_8cpp_source.html#l00127">127</a> of file <a class="el" href="visit_8cpp_source.html">visit.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="visit_8cpp_source.html#l00128">128</a> of file <a class="el" href="visit_8cpp_source.html">visit.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00581">lhs</a>, <a class="el" href="ast_8hpp_source.html#l00580">operation</a>, <a class="el" href="ast_8hpp_source.html#l00582">rhs</a>, <a class="el" href="visit_8cpp_source.html#l00127">visit()</a>, and <a class="el" href="visit_8cpp_source.html#l00017">visitor</a>.</p>
+<p class="reference">References <a class="el" href="ast_8hpp_source.html#l00584">lhs</a>, <a class="el" href="ast_8hpp_source.html#l00583">operation</a>, <a class="el" href="ast_8hpp_source.html#l00585">rhs</a>, <a class="el" href="visit_8cpp_source.html#l00128">visit()</a>, and <a class="el" href="visit_8cpp_source.html#l00017">visitor</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="visit_8cpp_source.html#l00127">visit()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="visit_8cpp_source.html#l00128">visit()</a>.</p>
 
 </div>
 </div>
@@ -365,9 +367,9 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00581">581</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00584">584</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00107">clone()</a>, <a class="el" href="type__walker_8cpp_source.html#l00587">yume::semantic::TypeWalker::expression()</a>, and <a class="el" href="visit_8cpp_source.html#l00127">visit()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00116">clone()</a>, <a class="el" href="type__walker_8cpp_source.html#l00590">yume::semantic::TypeWalker::expression()</a>, and <a class="el" href="visit_8cpp_source.html#l00128">visit()</a>.</p>
 
 </div>
 </div>
@@ -383,9 +385,9 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00580">580</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00583">583</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00107">clone()</a>, and <a class="el" href="visit_8cpp_source.html#l00127">visit()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00116">clone()</a>, and <a class="el" href="visit_8cpp_source.html#l00128">visit()</a>.</p>
 
 </div>
 </div>
@@ -401,9 +403,9 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00582">582</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ast_8hpp_source.html#l00585">585</a> of file <a class="el" href="ast_8hpp_source.html">ast.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00107">clone()</a>, <a class="el" href="type__walker_8cpp_source.html#l00587">yume::semantic::TypeWalker::expression()</a>, and <a class="el" href="visit_8cpp_source.html#l00127">visit()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ast_8cpp_source.html#l00116">clone()</a>, <a class="el" href="type__walker_8cpp_source.html#l00590">yume::semantic::TypeWalker::expression()</a>, and <a class="el" href="visit_8cpp_source.html#l00128">visit()</a>.</p>
 
 </div>
 </div>

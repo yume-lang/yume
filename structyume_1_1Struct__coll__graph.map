@@ -1,22 +1,24 @@
 <map id="yume::Struct" name="yume::Struct">
-<area shape="rect" id="node1" title="A struct declaration in the compiler." alt="" coords="1140,500,1235,527"/>
-<area shape="rect" id="node2" href="$structyume_1_1ast_1_1StructDecl.html" title="A declaration of a struct (struct) or an interface (interface)." alt="" coords="813,203,957,229"/>
-<area shape="rect" id="node3" href="$classyume_1_1ast_1_1Decl.html" title="Base class for a named declaration." alt="" coords="515,123,625,149"/>
-<area shape="rect" id="node4" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="215,293,326,320"/>
-<area shape="rect" id="node9" href="$structyume_1_1ast_1_1Compound.html" title="A statement consisting of multiple other statements, i.e. the body of a function." alt="" coords="497,356,643,383"/>
-<area shape="rect" id="node15" href="$structyume_1_1ast_1_1Program.html" title="The top level structure of a file of source code." alt="" coords="504,407,636,433"/>
-<area shape="rect" id="node5" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,293,115,320"/>
-<area shape="rect" id="node6" title=" " alt="" coords="543,173,597,200"/>
-<area shape="rect" id="node7" title=" " alt="" coords="505,225,635,266"/>
-<area shape="rect" id="node8" title=" " alt="" coords="505,290,635,331"/>
-<area shape="rect" id="node10" title=" " alt="" coords="205,377,336,418"/>
-<area shape="rect" id="node11" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title=" " alt="" coords="479,57,661,98"/>
-<area shape="rect" id="node12" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T, or the absence of one. See OptionalExpr and OptionalType..." alt="" coords="164,64,377,91"/>
-<area shape="rect" id="node13" title=" " alt="" coords="547,5,593,32"/>
-<area shape="rect" id="node14" title=" " alt="" coords="823,334,948,375"/>
-<area shape="rect" id="node16" title=" " alt="" coords="809,463,962,505"/>
-<area shape="rect" id="node17" href="$structyume_1_1Substitutions.html" title=" " alt="" coords="818,529,953,556"/>
-<area shape="rect" id="node18" title=" " alt="" coords="809,580,962,636"/>
-<area shape="rect" id="node19" title=" " alt="" coords="792,660,979,687"/>
-<area shape="rect" id="node20" title=" " alt="" coords="780,711,991,737"/>
+<area shape="rect" id="node1" title="A struct declaration in the compiler." alt="" coords="1219,620,1313,647"/>
+<area shape="rect" id="node2" href="$structyume_1_1ast_1_1StructDecl.html" title="A declaration of a struct (struct) or an interface (interface)." alt="" coords="892,271,1036,297"/>
+<area shape="rect" id="node3" href="$classyume_1_1ast_1_1Decl.html" title="Base class for a named declaration." alt="" coords="515,191,625,217"/>
+<area shape="rect" id="node4" href="$classyume_1_1ast_1_1Stmt.html" title="Statements make up most things in source code." alt="" coords="215,412,326,439"/>
+<area shape="rect" id="node9" href="$structyume_1_1ast_1_1Compound.html" title="A statement consisting of multiple other statements, i.e. the body of a function." alt="" coords="497,424,643,451"/>
+<area shape="rect" id="node17" href="$structyume_1_1ast_1_1Program.html" title="The top level structure of a file of source code." alt="" coords="504,525,636,552"/>
+<area shape="rect" id="node5" href="$classyume_1_1ast_1_1AST.html" title="All nodes in the AST tree of the program inherit from this class." alt="" coords="5,412,115,439"/>
+<area shape="rect" id="node6" title=" " alt="" coords="543,241,597,268"/>
+<area shape="rect" id="node7" title=" " alt="" coords="505,293,635,334"/>
+<area shape="rect" id="node8" title=" " alt="" coords="505,358,635,399"/>
+<area shape="rect" id="node10" title=" " alt="" coords="205,495,336,537"/>
+<area shape="rect" id="node11" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title=" " alt="" coords="479,125,661,166"/>
+<area shape="rect" id="node12" href="$classyume_1_1ast_1_1OptionalAnyBase.html" title="Represents &quot;any&quot; kind of ast node of type T, or the absence of one. See OptionalExpr and OptionalType..." alt="" coords="164,132,377,159"/>
+<area shape="rect" id="node13" title=" " alt="" coords="491,475,649,501"/>
+<area shape="rect" id="node14" title=" " alt="" coords="547,15,593,41"/>
+<area shape="rect" id="node15" title=" " alt="" coords="499,73,641,100"/>
+<area shape="rect" id="node16" title=" " alt="" coords="901,454,1027,495"/>
+<area shape="rect" id="node18" title=" " alt="" coords="887,583,1041,625"/>
+<area shape="rect" id="node19" href="$structyume_1_1Substitutions.html" title=" " alt="" coords="897,649,1031,676"/>
+<area shape="rect" id="node20" title=" " alt="" coords="887,700,1041,756"/>
+<area shape="rect" id="node21" title=" " alt="" coords="871,780,1057,807"/>
+<area shape="rect" id="node22" title=" " alt="" coords="859,831,1069,857"/>
 </map>
