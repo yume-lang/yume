@@ -377,6 +377,10 @@ auto Parser::parse_struct_decl() -> unique_ptr<StructDecl> {
   if (!interface)
     consume(KWD_STRUCT);
 
+  auto annotations = std::unordered_set<string>{};
+  while (try_consume(SYM_AT))
+    annotations.emplace(consume_word());
+
   const string name = consume_word();
   if (!is_uword(name))
     emit_fatal_and_terminate() << "Expected capitalized name for struct decl";
@@ -401,7 +405,7 @@ auto Parser::parse_struct_decl() -> unique_ptr<StructDecl> {
   }
 
   return ast_ptr<StructDecl>(entry, name, move(fields), move(type_args), make_ast<Compound>(body_begin, move(body)),
-                             move(implements), interface);
+                             move(implements), move(annotations), interface);
 }
 
 auto Parser::parse_fn_arg() -> FnArg {
@@ -452,7 +456,7 @@ auto Parser::parse_fn_decl() -> unique_ptr<FnDecl> {
 
   consume(KWD_DEF);
 
-  auto annotations = std::set<string>{};
+  auto annotations = std::unordered_set<string>{};
   while (try_consume(SYM_AT))
     annotations.emplace(consume_word());
 

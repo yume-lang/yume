@@ -501,7 +501,7 @@ TEST_CASE_PARSE("extern linkage function declaration", "[fn]") {
   CHECK_PARSER("def @extern foo()\nend", FnDecl("foo").annotation("extern"));
   CHECK_PARSER("def @extern short() = 0", FnDecl("short").annotation("extern").body(Return(0_Num)));
   CHECK_PARSER("def @extern @pure @foo short() = 0",
-               FnDecl("short").annotation("extern").annotation("foo").annotation("pure").body(Return(0_Num)));
+               FnDecl("short").annotation("foo").annotation("pure").annotation("extern").body(Return(0_Num)));
 }
 
 TEST_CASE_PARSE("proxy field function declaration", "[fn]") {

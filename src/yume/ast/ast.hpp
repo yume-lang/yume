@@ -12,6 +12,7 @@
 #include <optional>
 #include <span>
 #include <string>
+#include <unordered_set>
 #include <utility>
 #include <variant>
 #include <vector>
@@ -773,7 +774,7 @@ public:
   static constexpr auto ANN_OVERRIDE = "override";
 
   string name;
-  std::set<string> annotations;
+  std::unordered_set<string> annotations;
   vector<TypeName> args;
   vector<GenericParam> type_args;
   OptionalType ret;
@@ -786,7 +787,7 @@ public:
   Fn* sema_decl{};
 
   FnDecl(span<Token> tok, string name, vector<TypeName> args, vector<GenericParam> type_args, OptionalType ret,
-         Body body, std::set<string> annotations)
+         Body body, std::unordered_set<string> annotations)
       : Decl(K_FnDecl, tok), name{move(name)},
         annotations(move(annotations)), args{move(args)}, type_args{move(type_args)}, ret{move(ret)}, body{move(body)} {
   }
@@ -848,12 +849,13 @@ public:
   vector<GenericParam> type_args;
   Compound body;
   OptionalType implements;
+  std::unordered_set<string> annotations;
   bool is_interface;
 
   StructDecl(span<Token> tok, string name, vector<TypeName> fields, vector<GenericParam> type_args, Compound body,
-             OptionalType implements, bool is_interface = false)
+             OptionalType implements, std::unordered_set<string> annotations, bool is_interface = false)
       : Decl(K_StructDecl, tok), name{move(name)}, fields{move(fields)}, type_args{move(type_args)}, body{move(body)},
-        implements{move(implements)}, is_interface{is_interface} {}
+        implements{move(implements)}, annotations{move(annotations)}, is_interface{is_interface} {}
   void visit(Visitor& visitor) const override;
   [[nodiscard]] auto decl_name() const -> string override { return name; }
 
