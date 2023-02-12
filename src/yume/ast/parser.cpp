@@ -181,15 +181,30 @@ auto Parser::parse_stmt(bool require_sep) -> unique_ptr<Stmt> {
 
 auto Parser::try_parse_function_type() -> optional<unique_ptr<FunctionType>> {
   auto entry = tokens.begin();
-  if (try_consume(SYM_LPAREN)) {
-    auto args = vector<AnyType>{};
-    consume_with_commas_until(SYM_ARROW, [&] { args.emplace_back(parse_type()); });
-    auto fn_ptr = try_consume(KWD_PTR);
-    auto ret = OptionalType{try_parse_type()};
-    consume(SYM_RPAREN);
-    return ast_ptr<FunctionType>(entry, move(ret), move(args), fn_ptr);
-  }
-  return {};
+  auto result = [&]() -> optional<unique_ptr<FunctionType>> {
+    if (try_consume(SYM_LPAREN)) {
+      auto args = vector<AnyType>{};
+      int i = 0;
+      while (!try_consume(SYM_ARROW)) {
+        if (i++ > 0) {
+          if (!try_consume(SYM_COMMA))
+            return {};
+        }
+        auto t = try_parse_type();
+        if (!t.has_value())
+          return {};
+        args.emplace_back(move(*t));
+      }
+      auto fn_ptr = try_consume(KWD_PTR);
+      auto ret = OptionalType{try_parse_type()};
+      consume(SYM_RPAREN);
+      return ast_ptr<FunctionType>(entry, move(ret), move(args), fn_ptr);
+    }
+    return {};
+  }();
+  if (!result.has_value())
+    tokens = {entry, tokens.end()}; // Rewind
+  return result;
 }
 
 auto Parser::parse_type(bool implicit_self) -> unique_ptr<Type> {
@@ -230,10 +245,11 @@ auto Parser::parse_type(bool implicit_self) -> unique_ptr<Type> {
     } else if (try_consume(SYM_LBRACE)) {
       auto generic_args = vector<AnyTypeOrExpr>{};
       consume_with_commas_until(SYM_RBRACE, [&] {
-        if (auto type = try_parse_type(); type.has_value())
-          generic_args.emplace_back(move(*type));
+        auto expr = parse_expr();
+        if (auto* type_expr = dyn_cast<ast::TypeExpr>(expr.get()))
+          generic_args.emplace_back(move(type_expr->type));
         else
-          generic_args.emplace_back(parse_expr());
+          generic_args.emplace_back(move(expr));
       });
 
       base = ast_ptr<TemplatedType>(entry, move(base), move(generic_args));
@@ -707,6 +723,11 @@ auto Parser::parse_primary() -> unique_ptr<Expr> {
   const auto guard = make_guard("Parsing primary expression");
 
   auto entry = tokens.begin();
+
+  // Need to distinguish if this is a function type expr, or a parenthesized expression, as both start with '('.
+  if (auto maybe_fn_type = try_parse_function_type(); maybe_fn_type.has_value())
+    return ast_ptr<TypeExpr>(entry, move(*maybe_fn_type));
+
   if (try_consume(SYM_LPAREN)) {
     auto val = parse_expr();
     consume(SYM_RPAREN);

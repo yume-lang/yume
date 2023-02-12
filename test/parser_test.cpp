@@ -128,6 +128,7 @@ protected:
 struct FunctionTypeBuilder : Builder<"function-type"> {
   auto ret(auto v) { return add(this, "ret", move(v)); }
   auto operator()(auto... v) { return (add(this, "args", move(v)), ...); }
+  auto expr() { return Tree{"type-expr", {"type", move(*this)}}; }
 };
 auto FunctionType(auto ret) { return FunctionTypeBuilder{}.ret(move(ret)); }
 
@@ -324,6 +325,11 @@ TEST_CASE_PARSE("type expression", "") {
   CHECK_PARSER("I32", "I32"_Type.expr());
   CHECK_PARSER("I32[]", "I32"_Type.slice().expr());
   CHECK_PARSER("0.as(I64)", Call("as")(0_Num, "I64"_Type.expr()));
+  CHECK_PARSER("fn.as((->))", Call("as")("fn"_Var, FunctionType(nullptr).expr()));
+  CHECK_PARSER("fn.as((I32 ->))", Call("as")("fn"_Var, FunctionType(nullptr)("I32"_Type).expr()));
+  CHECK_PARSER("fn.as((I32 -> U32))", Call("as")("fn"_Var, FunctionType("U32"_Type)("I32"_Type).expr()));
+  CHECK_PARSER("fn.as((I32, I64 -> U32))",
+               Call("as")("fn"_Var, FunctionType("U32"_Type)("I32"_Type, "I64"_Type).expr()));
 }
 
 TEST_CASE_PARSE("index operator", "") {
