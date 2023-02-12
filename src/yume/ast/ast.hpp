@@ -854,6 +854,9 @@ public:
   std::unordered_set<string> annotations;
   bool is_interface;
 
+  static constexpr auto BUILTIN_TYPE_SLICE = "__builtin_type_Slice";
+  static constexpr auto BUILTIN_TYPE_STATIC_ARRAY = "__builtin_type_StaticArray";
+
   StructDecl(span<Token> tok, string name, vector<TypeName> fields, vector<GenericParam> type_args, Compound body,
              OptionalType implements, std::unordered_set<string> annotations, bool is_interface = false)
       : Decl(K_StructDecl, tok), name{move(name)}, fields{move(fields)}, type_args{move(type_args)}, body{move(body)},

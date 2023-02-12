@@ -782,6 +782,7 @@ auto TypeWalker::get_or_declare_instantiation(Struct* struct_obj, Substitutions 
 }
 
 auto TypeWalker::create_slice_type(const ty::Type& base_type) -> ty::Type {
+  YUME_ASSERT(compiler.m_slice_struct != nullptr, "Can't create slice type if a slice type was never defined");
   Struct* struct_obj = compiler.m_slice_struct;
   Substitutions subs = struct_obj->subs;
   subs.associate(*subs.all_keys().at(0), {base_type});

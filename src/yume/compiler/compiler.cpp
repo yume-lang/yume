@@ -341,8 +341,10 @@ auto Compiler::decl_statement(ast::Stmt& stmt, optional<ty::Type> parent, ast::P
       return {};
     }
 
-    if (st.name() == "Slice") // TODO(rymiel): magic value?
+    if (st.has_annotation(ast::StructDecl::BUILTIN_TYPE_SLICE)) {
+      YUME_ASSERT(m_slice_struct == nullptr, "Can't have multiple slice types");
       m_slice_struct = &st;
+    }
 
     for (auto& f : s_decl->body) {
       // if (st.get_subs().empty() || isa<ast::CtorDecl>(*f))

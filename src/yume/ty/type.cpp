@@ -241,7 +241,7 @@ auto Type::is_generic() const noexcept -> bool {
 
 auto Type::is_slice() const noexcept -> bool {
   if (const auto* base = base_dyn_cast<Struct>())
-    return base->base_name() == "Slice" && (base->m_subs != nullptr) && base->m_subs->size() == 1;
+    return base->m_decl->has_annotation(ast::StructDecl::BUILTIN_TYPE_SLICE);
 
   return false;
 };

@@ -162,6 +162,7 @@ struct Struct {
   [[nodiscard]] auto get_self_ty() const noexcept -> optional<ty::Type> { return self_ty; };
   [[nodiscard]] auto get_subs() const -> const Substitutions& { return subs; }
   [[nodiscard]] auto get_subs() -> Substitutions& { return subs; }
+  [[nodiscard]] auto has_annotation(const string& name) const -> bool { return st_ast.annotations.contains(name); };
 
   [[nodiscard]] auto name() const noexcept -> string;
 
