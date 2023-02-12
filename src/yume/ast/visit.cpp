@@ -107,7 +107,7 @@ void StructDecl::visit(Visitor& visitor) const {
       .visit(fields, "field")
       .visit(type_args, "type-arg")
       .visit(body, "body")
-      .visit(annotations, "annotations")
+      .visit(annotations, "annotation")
       .maybe(is_interface, "interface");
 }
 void SimpleType::visit(Visitor& visitor) const { helper(visitor).visit(name, "name"); }

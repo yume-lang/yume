@@ -575,6 +575,12 @@ TEST_CASE_PARSE("struct declaration", "[struct]") {
 
   CHECK_PARSER("struct Foo() is Bar\nend", StructDecl("Foo").implements("Bar"_Type));
   CHECK_PARSER("struct Foo is Bar\nend", StructDecl("Foo").implements("Bar"_Type));
+
+  CHECK_PARSER("struct @foo Foo()\nend", StructDecl("Foo").annotation("foo"));
+  CHECK_PARSER("struct @__builtin_type_Slice Slice{T type}(pointer T ptr, size ISize)\nend",
+               StructDecl("Slice")(("pointer" / "T"_Type.ptr()), ("size" / "ISize"_Type))
+                   .type_arg("T")
+                   .annotation("__builtin_type_Slice"));
 }
 
 TEST_CASE_PARSE("interface declaration", "[interface]") {
