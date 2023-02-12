@@ -1,5 +1,6 @@
 #include "ast.hpp"
 
+#include "diagnostic/visitor/hash_visitor.hpp"
 #include "token.hpp"
 #include <memory>
 #include <stdexcept>
@@ -31,6 +32,13 @@ auto AST::location() const -> Loc {
     return m_tok[0].loc;
 
   return m_tok[0].loc + m_tok[m_tok.size() - 1].loc;
+}
+
+auto AST::equals_by_hash(ast::AST& other) const -> bool {
+  auto this_hash = std::hash<ast::AST>{}(*this);
+  auto other_hash = std::hash<ast::AST>{}(other);
+
+  return this_hash == other_hash;
 }
 
 namespace {
@@ -90,7 +98,8 @@ auto FnDecl::clone() const -> FnDecl* {
 }
 auto CtorDecl::clone() const -> CtorDecl* { return new CtorDecl(tok(), dup(args), dup(body)); }
 auto StructDecl::clone() const -> StructDecl* {
-  return new StructDecl(tok(), name, dup(fields), dup(type_args), dup(body), dup(implements), is_interface);
+  return new StructDecl(tok(), name, dup(fields), dup(type_args), dup(body), dup(implements), dup(annotations),
+                        is_interface);
 }
 auto SimpleType::clone() const -> SimpleType* { return new SimpleType(tok(), name); }
 auto QualType::clone() const -> QualType* { return new QualType(tok(), dup(base), qualifier); }
@@ -119,3 +128,11 @@ auto ImplicitCastExpr::clone() const -> ImplicitCastExpr* { return new ImplicitC
 auto TypeExpr::clone() const -> TypeExpr* { return new TypeExpr(tok(), dup(type)); }
 auto Program::clone() const -> Program* { return new Program(tok(), dup(body)); }
 } // namespace yume::ast
+
+auto std::hash<yume::ast::AST>::operator()(const yume::ast::AST& s) const noexcept -> std::size_t {
+  uint64_t seed = 0;
+  yume::diagnostic::HashVisitor visitor{seed};
+  visitor.visit(s, "");
+
+  return seed;
+}

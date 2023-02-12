@@ -274,6 +274,8 @@ public:
   [[nodiscard]] auto kind_name() const -> string { return ast::kind_name(kind()); };
   [[nodiscard]] auto token_range() const -> const span<Token>& { return m_tok; };
 
+  [[nodiscard]] auto equals_by_hash(ast::AST& other) const -> bool;
+
   /// The union of the locations of the `Token`s making up this node.
   [[nodiscard]] auto location() const -> Loc;
 
@@ -961,3 +963,7 @@ public:
   [[nodiscard]] auto clone() const -> Program* override;
 };
 } // namespace yume::ast
+
+template <> struct std::hash<yume::ast::AST> {
+  auto operator()(const yume::ast::AST& s) const noexcept -> std::size_t;
+};
